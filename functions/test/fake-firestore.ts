@@ -11,8 +11,7 @@
  * Set FIRESTORE_EMULATOR_HOST to run the same tests against the real emulator instead (see setup.ts).
  */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-type Data = Record<string, any>;
-
+import type { Data, Filter, Scope, Write } from "./fake-firestore.types";
 // ------------------------------------------------------------------ values
 
 let lastMillis = 0;
@@ -91,12 +90,6 @@ const bump = (path: string) => {
   const c = parentOf(path);
   collVersions.set(c, (collVersions.get(c) ?? 0) + 1);
 };
-
-type Write =
-  | { op: "set"; ref: DocRef; data: Data; merge?: boolean }
-  | { op: "create"; ref: DocRef; data: Data }
-  | { op: "update"; ref: DocRef; data: Data }
-  | { op: "delete"; ref: DocRef };
 
 /** Validates every write against the current state first; applies nothing if any of them fails. */
 function applyWrites(writes: Write[]) {
@@ -194,8 +187,6 @@ export class DocRef {
   }
 }
 
-type Filter = { field: string; op: "==" | "in"; value: any };
-type Scope = { collection: string } | { group: string };
 
 export class Query {
   constructor(

@@ -2,7 +2,8 @@ import { Timestamp, getFirestore } from "firebase-admin/firestore";
 import request from "supertest";
 import { beforeEach, describe, expect, it } from "vitest";
 import { MAX_FRIENDS } from "../src/constants";
-import { POOL_SIZE, User, Via, app, assertConsistent, fillCircle, seedPool, sleep } from "./helpers";
+import { POOL_SIZE, User, app, assertConsistent, fillCircle, seedPool, sleep } from "./helpers";
+import type { Via } from "./types";
 
 /**
  * The friend-request rules (see "Connection rules" in CLAUDE.md), played out in a pool of 60 people.
@@ -17,7 +18,8 @@ beforeEach(async () => {
   u = (n) => pool[n];
 });
 
-const ALL_VIAS: Via[] = ["email", "emailUpper", "phone", "phoneNoPrefix", "instagram", "instagramAt", "instagramLink", "linkedinLink", "tiktok"];
+const MATCH_VIAS: Via[] = ["email", "emailUpper", "phone", "phoneSpaced", "phoneNoPrefix"]; // the ways that can find a person
+const SOCIAL_HANDLES = ["instagram", "tiktok", "twitter", "linkedin", "snapchat", "telegram", "facebook"] as const;
 
 describe("the pool", () => {
   it("has at least 50 people, all signed up and with an empty circle", async () => {
@@ -29,7 +31,7 @@ describe("the pool", () => {
 });
 
 describe("adding a friend", () => {
-  it("only writes a pending entry in MY list; nothing exists on the other side yet", async () => {
+  it("only writes a pending entry in MY list; the other side gets a ping, but no request and no seat", async () => {
     const entry = await u(0).add(u(1).p);
     expect(entry).toMatchObject({ status: "pending", waiting: false, incoming: false });
 
@@ -41,6 +43,7 @@ describe("adding a friend", () => {
 
   it.each([
     ["no contact at all", { name: "Nobody" }],
+    ["only a social account (it cannot find anybody)", { name: "X", instagram: "x.person" }],
     ["no name", { email: "x@y.test" }],
     ["a bad email", { name: "X", email: "not-an-email" }],
     ["a bad phone number", { name: "X", phone: "abc" }],
@@ -53,6 +56,7 @@ describe("adding a friend", () => {
   it("stores every social media account", async () => {
     const res = await u(0).raw("post", "/circles/default/friends", {
       name: "Social",
+      email: "social.person@nowhere.test",
       facebook: "fb.person",
       instagram: "@insta.person",
       tiktok: "tt.person",
@@ -102,7 +106,7 @@ describe("how the other person finds the request (the check)", () => {
     await assertConsistent();
   });
 
-  it.each(ALL_VIAS)("finds me by %s", async (via) => {
+  it.each(MATCH_VIAS)("finds me by %s", async (via) => {
     const mine = await u(7).add(u(8).p, via);
     const { requests } = await u(8).check();
     expect(requests.map((r) => r.id)).toEqual([mine.id]);
@@ -247,7 +251,7 @@ describe("deleting removes the connection from BOTH lists", () => {
   });
 
   it("only removes that connection and leaves the others alone", async () => {
-    const [a, b, c] = [await u(0).add(u(1).p), await u(0).add(u(2).p, "phone"), await u(0).add(u(3).p, "instagram")];
+    const [a, b, c] = [await u(0).add(u(1).p), await u(0).add(u(2).p, "phone"), await u(0).add(u(3).p, "phoneSpaced")];
     for (const n of [1, 2, 3]) await u(n).check();
     await u(0).remove(b.id);
 
@@ -388,17 +392,16 @@ describe("both people added each other", () => {
 });
 
 describe("profile matching details", () => {
-  it("phone and social accounts only match after they are saved on the profile", async () => {
-    // person 59 signs up WITHOUT phone or social accounts: only the email can match
-    const lonely = pool[59];
-    await lonely.raw("put", "/profile", { phone: null, instagram: null, tiktok: null, linkedin: null }).expect(200);
+  it.each(SOCIAL_HANDLES)("a %s account never finds anybody: it is contact info only", async (network) => {
+    // person 1 has this account on their profile, but nothing is ever matched on it
+    await u(1).raw("put", "/profile", { [network]: `handle_${network}` }).expect(200);
+    const res = await u(0).raw("post", "/circles/default/friends", { name: "By handle", email: "nobody@nowhere.test", [network]: `handle_${network}` });
+    expect(res.status).toBe(201);
 
-    await u(0).add(lonely.p, "phone");
-    expect((await lonely.check()).requests).toEqual([]); // phone unknown to the system
-
-    await lonely.raw("put", "/profile", { phone: lonely.p.phone }).expect(200); // now saved
-    expect((await lonely.check()).requests).toHaveLength(1);
-    await assertConsistent();
+    expect((await u(1).check()).requests).toEqual([]);
+    const summary = await assertConsistent();
+    expect(summary.signals).toBe(0);
+    expect((await u(0).friends())[0]).toMatchObject({ [network]: `handle_${network}`, invited: false }); // shown, never linked
   });
 
   it("rejects an invalid phone on the profile and returns what was saved", async () => {

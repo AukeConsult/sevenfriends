@@ -1,0 +1,52 @@
+// Sizes, gutters and fonts come from the global variables in src/styles.scss.
+:host {
+  display: block;
+  min-height: 100dvh;
+  padding-bottom: calc(3.5rem + 1.5rem + env(safe-area-inset-bottom)); // room for the bottom menu
+}
+
+.bar {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: calc(0.5rem + env(safe-area-inset-top)) var(--sf-gutter) 0.5rem 0.25rem;
+  background: var(--sf-card);
+  border-bottom: 1px solid var(--sf-border);
+}
+
+.back {
+  width: var(--sf-touch);
+  height: var(--sf-touch);
+  display: grid;
+  place-items: center;
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--sf-primary);
+  text-decoration: none;
+}
+
+.title { margin: 0; font-size: var(--sf-fs-lg); font-weight: 600; }
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-width: 36rem;
+  margin: 0 auto;
+  padding: 1rem var(--sf-gutter);
+}
+
+.intro { margin: 0; color: var(--sf-muted); }
+
+.field { display: grid; gap: 0.25rem; }
+
+.section { margin: 0.75rem 0 0; font-size: var(--sf-fs-lg); }
+
+.actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
