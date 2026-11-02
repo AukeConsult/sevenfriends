@@ -34,9 +34,9 @@ export class AddFriend {
       this.error.set('Write the name of your friend.');
       return;
     }
-    const hasContact = [d.email, d.phone, ...this.networks.map((n) => d[n.key])].some((v) => v.trim());
+    const hasContact = [d.email, d.phone].some((v) => v.trim());
     if (!hasContact) {
-      this.error.set('Add at least one way to reach your friend: email, phone or a social account.');
+      this.error.set('Add an email or a phone number, so your friend can be found.');
       return;
     }
 

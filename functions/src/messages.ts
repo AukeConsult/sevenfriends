@@ -2,23 +2,13 @@ import { Router } from "express";
 import { DecodedIdToken } from "firebase-admin/auth";
 import { FieldValue, Timestamp } from "firebase-admin/firestore";
 import { asyncHandler, requireAuth } from "./auth";
+import { Message } from "./models";
 import { messageCol } from "./paths";
 
 const uidOf = (res: { locals: Record<string, unknown> }) => (res.locals.token as DecodedIdToken).uid;
 
-/**
- * user-account/{uid}/messages/{id}: { time, fromUid, fromName, text, read }
- * `time` is when the message was sent.
- */
-export interface MessageJson {
-  id: string;
-  fromName: string;
-  text: string;
-  time: string | null;
-}
-
 /** My unread incoming messages, newest first. */
-export async function listUnreadMessages(uid: string): Promise<MessageJson[]> {
+export async function listUnreadMessages(uid: string): Promise<Message[]> {
   const snap = await messageCol(uid).where("read", "==", false).get();
   return snap.docs
     .map((d) => {
@@ -28,6 +18,7 @@ export async function listUnreadMessages(uid: string): Promise<MessageJson[]> {
         fromName: (data.fromName as string) ?? "Someone",
         text: (data.text as string) ?? "",
         time: data.time instanceof Timestamp ? data.time.toDate().toISOString() : null,
+        connectionId: (data.connectionId as string | undefined) ?? null,
       };
     })
     .sort((a, b) => (b.time ?? "").localeCompare(a.time ?? ""));

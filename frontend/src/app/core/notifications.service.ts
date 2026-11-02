@@ -1,7 +1,8 @@
 import { Injectable, inject, signal } from '@angular/core';
+import { CheckResult } from '../models';
 import { ApiService } from './api.service';
-import { FriendRequest, FriendsService } from './friends.service';
-import { Message, MessagesService } from './messages.service';
+import { FriendsService } from './friends.service';
+import { MessagesService } from './messages.service';
 
 /**
  * Runs the "check" that fires when Home is opened or clicked:
@@ -28,7 +29,7 @@ export class NotificationsService {
     this.error.set(null);
     this.inflight = (async () => {
       try {
-        const res = await this.api.request<{ requests: FriendRequest[]; messages: Message[] }>(
+        const res = await this.api.request<CheckResult>(
           '/notifications/check',
           { method: 'POST' },
         );

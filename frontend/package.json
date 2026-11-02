@@ -6,7 +6,12 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "sync:models": "node ../scripts/sync-models.mjs",
+    "prestart": "npm run sync:models",
+    "prebuild": "npm run sync:models",
+    "prewatch": "npm run sync:models",
+    "pretest": "npm run sync:models"
   },
   "prettier": {
     "printWidth": 100,

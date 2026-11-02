@@ -1,9 +1,10 @@
 import { DatePipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { FriendRequest, FriendsService } from '../core/friends.service';
-import { Message, MessagesService } from '../core/messages.service';
+import { FriendsService } from '../core/friends.service';
+import { MessagesService } from '../core/messages.service';
 import { NotificationsService } from '../core/notifications.service';
+import { FriendRequest, Message, Notice } from '../models';
 
 /** Home page: a quiet overview of what needs attention (friend requests, incoming messages). */
 @Component({
@@ -26,7 +27,7 @@ export class Notifications {
   protected readonly waitingCount = computed(() => this.requests().filter((r) => !r.seated).length);
 
   /** Result of the last Confirm, shown above the lists. */
-  protected readonly notice = signal<{ kind: 'success' | 'warning'; text: string } | null>(null);
+  protected readonly notice = signal<Notice | null>(null);
 
   protected readonly loaded = this.notifications.loaded;
   protected readonly error = this.notifications.error;

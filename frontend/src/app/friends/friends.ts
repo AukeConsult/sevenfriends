@@ -1,18 +1,11 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { Friend, FriendsService } from '../core/friends.service';
+import { Router, RouterLink } from '@angular/router';
+import { FriendsService } from '../core/friends.service';
 import { NotificationsService } from '../core/notifications.service';
-import { SOCIAL_NETWORKS, SocialDraft, emptySocialDraft, socialsFromDraft } from '../core/social';
+import { SOCIAL_NETWORKS } from '../core/social';
+import { Friend, FriendSlot } from '../models';
 
 const MAX_FRIENDS = 7;
-
-interface Slot {
-  position: number;
-  friend: Friend | null;
-}
-
-type Draft = { name: string; email: string; phone: string } & SocialDraft;
-const emptyDraft = (): Draft => ({ name: '', email: '', phone: '', ...emptySocialDraft() });
 
 @Component({
   selector: 'app-friends',
@@ -23,6 +16,7 @@ const emptyDraft = (): Draft => ({ name: '', email: '', phone: '', ...emptySocia
 export class Friends {
   private readonly friendsService = inject(FriendsService);
   private readonly notifications = inject(NotificationsService);
+  private readonly router = inject(Router);
 
   protected readonly circle = this.friendsService.circle;
   protected readonly max = MAX_FRIENDS;
@@ -30,7 +24,7 @@ export class Friends {
   /** incoming requests that wait for a free seat (shown on the Pending page) */
   protected readonly waiting = computed(() => this.friendsService.requests().filter((r) => !r.seated).length);
   protected readonly filled = computed(() => this.friendsService.friends().length);
-  protected readonly slots = computed<Slot[]>(() =>
+  protected readonly slots = computed<FriendSlot[]>(() =>
     Array.from({ length: MAX_FRIENDS }, (_, i) => ({
       position: i + 1,
       friend: this.friendsService.friends()[i] ?? null,
@@ -38,10 +32,6 @@ export class Friends {
   );
 
   protected readonly loadError = signal<string | null>(null);
-  protected readonly adding = signal(false);
-  protected readonly saving = signal(false);
-  protected readonly formError = signal<string | null>(null);
-  protected readonly draft = signal<Draft>(emptyDraft());
 
   constructor() {
     this.reload();
@@ -57,37 +47,11 @@ export class Friends {
     }
   }
 
-  protected openForm(): void {
-    this.draft.set(emptyDraft());
-    this.formError.set(null);
-    this.adding.set(true);
-  }
-
-  protected closeForm(): void {
-    this.adding.set(false);
-  }
-
-  protected setField(field: keyof Draft, value: string): void {
-    this.draft.update((d) => ({ ...d, [field]: value }));
-  }
-
-  protected async save(): Promise<void> {
-    const d = this.draft();
-    this.saving.set(true);
-    this.formError.set(null);
-    try {
-      await this.friendsService.add({
-        name: d.name,
-        email: d.email || null,
-        phone: d.phone || null,
-        ...socialsFromDraft(d),
-      });
-      this.adding.set(false);
-    } catch (err: any) {
-      this.formError.set(err.message ?? 'Could not save friend');
-    } finally {
-      this.saving.set(false);
-    }
+  /** Clicking a confirmed contact opens the message feed (buttons and links inside the card do their own thing). */
+  protected open(friend: Friend, event: Event): void {
+    if (friend.status !== 'confirmed') return;
+    if ((event.target as HTMLElement).closest('button, a')) return;
+    this.router.navigate(['/friends', friend.id]);
   }
 
   /** Which friend's delete confirmation is open under its card (one at a time). */

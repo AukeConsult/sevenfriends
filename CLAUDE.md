@@ -14,7 +14,7 @@ An app for staying in contact with your 7 closest friends.
 - `/friends/:id` **Conversation**: the message feed with one confirmed friend (click a confirmed contact, or the chat icon on its card, or Open on a message on Home). Incoming messages appear at once while the page is open (live, see Live updates); a slow 30-second refresh is only a safety net.
 - `/pending` **Pending**: incoming friend requests that wait for a free seat (all 7 seats taken). With a free seat they show as a pending friend on `/friends` instead.
 - `/profile` **Profile**: account details, an editable **name**, phone and social accounts, all **autosaved** (no Save button, see Profile); reached from the dropup on the bottom menu (also holds Log out).
-- `/login` **Login**: Google and email/password.
+- `/login` **Login**: Google, phone (SMS code, `/login/phone`), email link (`/login/email`, finished at `/login/link`) and email/password (a verification email is sent at sign-up). `/verify-phone` lets a signed-in user verify a phone by SMS (Profile).
 - Bottom menu (always visible when signed in): Home, Friends, Profile (dropup: My profile, Log out).
 
 ## Mobile first (important)
@@ -62,19 +62,19 @@ These rules are implemented in `functions/src` and covered by the tests in `func
 - **One connection, one id:** the requester's entry id = the request id = the other person's entry id (also stored as `connectionId`). Each side can always find the other.
 
 ### Adding a friend
-- Name is required; at least one of email, phone or a social account (Facebook, Instagram, TikTok, Snapchat, X/Twitter, LinkedIn, Telegram). Email and phone are validated.
+- Name is required; **an email or a phone number is required** (so the friend can be found). Social accounts (Facebook, Instagram, TikTok, Snapchat, X/Twitter, LinkedIn, Telegram) are optional **contact info only**. Email and phone are validated.
 - Adding writes ONE pending entry in the requester's list. **No request and no seat** is created on the other side (that only happens in their check). If the person already has an account, they also get a **ping** (see Pings).
 
 ### How the other person finds the request (the "check")
 - Runs when they open/tap Home, or open Friends or Pending, or when a ping arrives while the app is open (`POST /api/notifications/check`; overlapping runs are shared).
-- It matches *their* email, phone and social accounts against everyone's **pending** entries:
-  - email: case-insensitive. Phone: last 8 digits (`+47 926 55 195` = `92655195`). Social: account id (`instagram.com/john.doe` = `@john.doe`).
-  - Phone and social accounts must be saved on their Profile first (email is automatic).
+- It matches *their* **verified** email and **SMS-verified** phone against everyone's **pending** entries (trust model below):
+  - email: case-insensitive. Phone: last 8 digits (`+47 926 55 195` = `92655195`). Social accounts never match anyone.
+  - The identity comes only from the login token (`verifiedIdentity` in `validation.ts`): `email` counts only when `email_verified` is true, the phone only when it was confirmed by SMS. What someone types on their Profile (phone, social accounts) is contact info and never used for finding people. A verified phone cannot be edited on the Profile.
 - Ignored: their own entries, entries that are not pending, entries already linked to another user, entries that are themselves seats for an incoming request, and any request that already exists (any status).
 - A match creates the request (same id) in their inbox and links the requester's entry (`linkedUid`).
 
 ### Pings (incoming signals)
-- When a friend is added, the backend looks for accounts the new entry points at (same matching as the check: email, phone, social accounts; the person adding is left out) and writes a ping for each: `user-account/{uid}/incoming-signal/{connectionId}` = `{ connectionId, time }`. **A ping holds no names or details.** An entry that points at two accounts pings both. A refused add (full list) pings nobody.
+- When a friend is added, the backend looks for accounts the new entry points at (same matching as the check: verified email and verified phone; the person adding is left out) and writes a ping for each: `user-account/{uid}/incoming-signal/{connectionId}` = `{ connectionId, time }`. **A ping holds no names or details.** An entry that points at two accounts pings both. A refused add (full list) pings nobody.
 - The check reads the pings at its start and deletes exactly those when it has finished (if the check failed they stay; a ping that arrives meanwhile stays for the next check). A ping is only a wake-up: the request itself only ever comes from the check.
 - A ping goes away with its entry: when the requester deletes the entry, when the entry is merged into a connection (both added each other), and when it is dropped as a duplicate.
 
@@ -124,7 +124,7 @@ These rules are implemented in `functions/src` and covered by the tests in `func
 - The **name** is editable. It can never be empty (400) and is at most 100 characters. The name from the login is only the starting point: a name the user chose **stays** at the next login.
 - It is the name others see in **new** requests, pending seats and messages. Copies made earlier (a friend's list entry, old messages) keep the old name.
 - **Autosave**: the page has no Save button. It saves about 0.8 s after typing stops, when a field loses focus, and when the page is left. Every save sends the whole form (`PUT /api/profile`), so saving twice changes nothing. A status line says "Changes not saved yet", "Saving", "All changes saved" or the error with "Try again" (a failed save is retried on the next change or blur).
-- An empty name is not sent (the old name stays) while phone and accounts still save. An invalid value (a bad phone number) is refused and nothing is half-saved. An emptied phone or social account is removed, and invitations then match on the saved details only.
+- An empty name is not sent (the old name stays) while phone and accounts still save. An invalid value (a bad phone number) is refused and nothing is half-saved. An emptied phone or social account is removed.
 
 ### Known gaps
 - The other person only sees changes when their next check runs (and the requester when the page reloads).
@@ -140,7 +140,8 @@ npm test                           # all tests, ~40 s, no Java and no emulator n
 STRESS_SEEDS=1,2,3,4,5,6,7,8 npm test      # more random runs (default seeds: 1-4)
 npm run test:emulator              # same tests on the real Firestore emulator (needs Java 21+)
 ```
-- `connections.test.ts`: focused scenarios: matching (email, phone, every social link style), confirm, reject, delete, waiting list and promotion order, mutual add, duplicates, validation, unread messages.
+- `verification.test.ts`: the trust model: unverified email or typed phone finds nobody, impersonation with an unverified email, stale keys cleared at login, a later verification finds earlier requests, verified phone not editable, social accounts useless for matching.
+- `connections.test.ts`: focused scenarios: matching (email, phone in every format), confirm, reject, delete, waiting list and promotion order, mutual add, duplicates, validation, unread messages.
 - `shared-models.test.ts`: the shared models stay shareable (types only, no outside imports) and the copy script works (copies, only rewrites changes, `--check`, removes stale generated files).
 - `signals.test.ts`: the pings: who gets one (all 9 ways of identifying a person, never yourself, both accounts of a double match), what is in it, that the check consumes exactly what it saw, and that a ping goes with its entry (delete, merge, duplicate); in the pool: the ring (180 pings, one check each empties them) and 49 pings to one person.
 - `rules.test.ts`: the Firestore security rules (user control): own pings and messages readable, nobody else's, no client writes, everything else closed. Emulator only.
@@ -156,7 +157,7 @@ npm run test:emulator              # same tests on the real Firestore emulator (
 - **All interfaces and types live in a `models` folder**, never inside a service, component or router file. Import them from `./models` (backend) / `../models` (frontend).
 - **The API types are written once and copied into the frontend.** The source is `functions/src/models/shared/` (Friend, FriendRequest, Circle, Message, ChatMessage, Conversation, Socials, ... everything that crosses the API). `scripts/sync-models.mjs` copies it to `frontend/src/app/models/shared/` before every `npm start` / `npm run build` / `npm test` in the frontend (npm pre-hooks), and by hand with `npm run sync:models`. The copy is generated and not committed (gitignored): **never edit it, edit the source**. Nothing is shared as a module; each project compiles its own copy.
   - A shared model holds **types only** (no `const`, function, class or enum) and imports only from its own folder (`./`). The script refuses anything else (backend packages do not exist in the frontend), and `functions/test/shared-models.test.ts` guards it.
-  - Backend-only types stay in `functions/src/models/` (`seats.ts`, `matching.ts`, `outcome.ts`); frontend-only types (page / form types) in `frontend/src/app/models/` (`view.ts`, `social.ts`). The backend routes are typed with the shared models, so a change to an API shape fails to compile on the backend and, after the copy, on the frontend.
+  - Backend-only types stay in `functions/src/models/` (`seats.ts`, `outcome.ts`); frontend-only types (page / form types) in `frontend/src/app/models/` (`view.ts`, `social.ts`). The backend routes are typed with the shared models, so a change to an API shape fails to compile on the backend and, after the copy, on the frontend.
   - If you run `ng serve` / `ng build` directly (not through npm), run `npm run sync:models` first. `npm run check:models` (project root) fails if the copy is out of date.
 - Angular 20 (pinned because the dev machine runs Node v22.14.0; do not upgrade to Angular 21+ without upgrading Node to >= 22.22.3).
 - Standalone components only, no NgModules. Prefer signals and the new control flow (`@if`, `@for`).
@@ -170,3 +171,10 @@ npm --prefix frontend run build && npm --prefix functions run build
 firebase emulators:start      # http://localhost:5000
 firebase deploy
 ```
+
+## Login methods and console setup
+- Google, email/password, email link, phone SMS. Only a verified email or an SMS-verified phone lets others find you.
+- Firebase console: Authentication → enable **Google**, **Email/Password** (with **Email link** switched on) and **Phone**; add your domain under Authorized domains. Phone sign-in needs the **Blaze plan**, costs per SMS, and SMS region policy should allow your countries.
+- Emulator: reCAPTCHA is disabled and SMS codes are printed in the auth emulator log; email links are printed there too.
+- After backend changes: `npm --prefix functions install`, restart emulators, `firebase deploy --only firestore` (rules and indexes), then deploy functions.
+- Known gap: email-link, SMS and rules tests are not automated in the cloud (needs the emulator); they are build-verified only.

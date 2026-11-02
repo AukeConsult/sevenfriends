@@ -8,6 +8,8 @@
     "dev:frontend": "npm --prefix frontend start",
     "build": "npm --prefix frontend run build && npm --prefix functions run build",
     "test": "npm --prefix functions run test:run",
-    "test:emulator": "firebase emulators:exec --config firebase.test.json --only firestore --project demo-sevenfriends-test \"npm --prefix functions run test:run\""
+    "test:emulator": "firebase emulators:exec --config firebase.test.json --only firestore --project demo-sevenfriends-test \"npm --prefix functions run test:run\"",
+    "sync:models": "node scripts/sync-models.mjs",
+    "check:models": "node scripts/sync-models.mjs --check"
   }
 }

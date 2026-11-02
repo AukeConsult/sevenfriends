@@ -5,16 +5,11 @@
   padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
 }
 
-.hero {
-  background: linear-gradient(135deg, var(--sf-primary), var(--sf-primary-2));
-  color: #fff;
-  padding: calc(var(--sf-hero-pad) + env(safe-area-inset-top)) var(--sf-gutter) var(--sf-hero-pad);
-  border-radius: 0 0 1.75rem 1.75rem;
-
-  h1 { font-size: var(--sf-fs-xl); }
+.sf-content {
+  padding: calc(1.25rem + env(safe-area-inset-top)) var(--sf-gutter) 1.25rem; // no banner above: keep clear of the notch
+  max-width: 36rem;
+  margin: 0 auto;
 }
-
-.sf-content { padding: 1.25rem var(--sf-gutter); max-width: 36rem; margin: 0 auto; }
 
 .photo {
   width: 5rem;
@@ -32,4 +27,13 @@
     font-size: 2rem;
     font-weight: 600;
   }
+}
+
+// One quiet line that says where the autosave is (its height is reserved so the page does not jump)
+.save-state {
+  min-height: 1.5rem;
+  margin: 0 0 0.5rem;
+  text-align: right;
+  font-size: var(--sf-fs-sm);
+  color: var(--sf-muted);
 }

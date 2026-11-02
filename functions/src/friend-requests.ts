@@ -4,6 +4,7 @@ import { FieldValue, Timestamp, getFirestore } from "firebase-admin/firestore";
 import { asyncHandler, requireAuth } from "./auth";
 import { ensureDefaultCircle } from "./circles";
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAX_FRIENDS } from "./constants";
+import { AcceptOutcome, FriendRequest } from "./models";
 import { circleCol, friendRequestCol, userDoc } from "./paths";
 import { ensureSeat } from "./seats";
 
@@ -12,17 +13,8 @@ const uidOf = (res: { locals: Record<string, unknown> }) => (res.locals.token as
 export const friendRequestsRouter = Router();
 friendRequestsRouter.use(requireAuth);
 
-export interface FriendRequestJson {
-  id: string;
-  fromName: string;
-  fromEmail: string | null;
-  createdAt: string | null;
-  /** true = already shown as a pending seat in my circle; false = waiting for a free seat */
-  seated: boolean;
-}
-
 /** Pending requests from people who added *me* as a friend. */
-export async function listPendingRequests(uid: string): Promise<FriendRequestJson[]> {
+export async function listPendingRequests(uid: string): Promise<FriendRequest[]> {
   const snap = await friendRequestCol(uid).where("status", "==", "pending").get();
   return snap.docs
     .map((d) => {
@@ -45,8 +37,6 @@ friendRequestsRouter.get(
   }),
 );
 
-type AcceptResult = "confirmed" | "no-seats" | "not-found";
-
 /**
  * Confirm a request.
  *  - The requester's entry becomes "confirmed".
@@ -63,7 +53,7 @@ friendRequestsRouter.post(
     const requestRef = friendRequestCol(uid).doc(req.params.id);
     const myFriends = circleCol(uid).doc(DEFAULT_CIRCLE_ID).collection(FRIENDS_SUBCOLLECTION);
 
-    const result = await getFirestore().runTransaction<AcceptResult>(async (tx) => {
+    const result = await getFirestore().runTransaction<AcceptOutcome>(async (tx) => {
       // ---- reads first ----
       const requestSnap = await tx.get(requestRef);
       if (!requestSnap.exists) return "not-found";

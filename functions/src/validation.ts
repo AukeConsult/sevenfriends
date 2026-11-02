@@ -1,3 +1,5 @@
+import { SocialKey, Socials } from "./models";
+
 export const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export const PHONE_RE = /^[+0-9()\-\s.]{5,25}$/;
 
@@ -14,8 +16,8 @@ export function phoneKey(value: string | null | undefined): string | null {
   return digits.length >= 8 ? digits.slice(-8) : null;
 }
 
-/** Social media networks a person can add (one shared list: friends, profile, matching). */
-export const SOCIAL_NETWORKS = [
+/** Social media networks a person can add (one shared list: friends, profile). */
+export const SOCIAL_NETWORKS: readonly SocialKey[] = [
   "facebook",
   "instagram",
   "tiktok",
@@ -23,25 +25,7 @@ export const SOCIAL_NETWORKS = [
   "twitter", // X
   "linkedin",
   "telegram",
-] as const;
-export type SocialNetwork = (typeof SOCIAL_NETWORKS)[number];
-export type Socials = Record<SocialNetwork, string | null>;
-export type SocialKeys = Record<`${SocialNetwork}Key`, string | null>;
-
-/** Social media id/link reduced to a comparable key ("https://instagram.com/John.Doe/" -> "john.doe"). */
-export function socialKey(value: string | null | undefined): string | null {
-  if (!value) return null;
-  let v = value.trim().toLowerCase();
-  v = v.replace(/^https?:\/\//, "").replace(/^(www\.|m\.|web\.|mobile\.)/, "");
-  v = v.replace(
-    /^(facebook\.com|fb\.com|fb\.me|tiktok\.com|instagram\.com|instagr\.am|snapchat\.com\/add|twitter\.com|x\.com|linkedin\.com\/in|t\.me|telegram\.me)\//,
-    "",
-  );
-  const id = v.match(/profile\.php\?id=(\d+)/);
-  if (id) return `id:${id[1]}`;
-  v = v.split(/[?#]/)[0].replace(/\/+$/, "").replace(/^@/, "");
-  return v || null;
-}
+];
 
 /** Reads every social media field from a request body. Handles lose a leading "@". */
 export function parseSocials(body: Record<string, unknown>): Socials {
@@ -53,9 +37,17 @@ export function parseSocials(body: Record<string, unknown>): Socials {
   return out;
 }
 
-/** Comparable keys (facebookKey, instagramKey, ...) used to match invitations. */
-export function socialKeys(socials: Partial<Socials>): SocialKeys {
-  const out = {} as SocialKeys;
-  for (const n of SOCIAL_NETWORKS) out[`${n}Key`] = socialKey(socials[n]);
-  return out;
+/**
+ * Who is this person, as far as the LOGIN proves it? Only these two identifiers may be used to find
+ * people, because the login provider has verified them:
+ *  - an email, only when the token says it is verified (Google, an email link, or a confirmed address)
+ *  - a phone number, only when it was confirmed with an SMS code (the token then has `phone_number`)
+ * Anything the user types on the profile (phone, social accounts) is contact info, never an identity.
+ */
+export function verifiedIdentity(token: { email?: string; email_verified?: boolean; phone_number?: string }) {
+  return {
+    email: token.email && token.email_verified === true ? token.email.toLowerCase() : null,
+    phone: token.phone_number ?? null,
+    phoneKey: phoneKey(token.phone_number),
+  };
 }

@@ -1,43 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { ApiError, ApiService } from './api.service';
-import { Socials } from './social';
-
-export interface Friend extends Socials {
-  id: string;
-  name: string;
-  email: string | null;
-  phone: string | null;
-  /** pending until the other party confirms; rejected when they rejected the request */
-  status: 'pending' | 'confirmed' | 'rejected';
-  /** true when the friend has an account and has been sent a request */
-  invited: boolean;
-  /** true when their list is full and I am on their waiting list */
-  waiting: boolean;
-  /** true when THEY invited ME: this seat can be confirmed by me */
-  incoming: boolean;
-  requestId: string | null;
-  createdAt: string | null;
-}
-
-export interface FriendRequest {
-  id: string;
-  fromName: string;
-  fromEmail: string | null;
-  createdAt: string | null;
-  /** true = shown as a pending seat in my circle; false = waiting for a free seat */
-  seated: boolean;
-}
-
-export type CircleType = 'friends' | 'family' | 'colleagues';
-
-export interface Circle {
-  id: string;
-  name: string;
-  type: CircleType;
-  createdAt: string | null;
-}
-
-export type NewFriend = Pick<Friend, 'name' | 'email' | 'phone'> & Socials;
+import { AcceptResult, Circle, Friend, FriendRequest, NewFriend } from '../models';
 
 @Injectable({ providedIn: 'root' })
 export class FriendsService {
@@ -70,8 +33,8 @@ export class FriendsService {
    * Confirm a request: the requester becomes my friend too.
    * Returns 'no-seats' when my circle is full: the request then stays pending.
    */
-  async acceptRequest(id: string): Promise<'confirmed' | 'no-seats'> {
-    const res = await this.api.request<{ ok: boolean; result: 'confirmed' | 'no-seats' }>(
+  async acceptRequest(id: string): Promise<AcceptResult> {
+    const res = await this.api.request<{ ok: boolean; result: AcceptResult }>(
       `/friend-requests/${id}/accept`,
       { method: 'POST' },
     );

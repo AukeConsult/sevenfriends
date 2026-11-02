@@ -68,6 +68,9 @@
                 <small>{{ message.time | date: 'short' }}</small>
               }
             </span>
+            @if (message.connectionId) {
+              <a [routerLink]="['/friends', message.connectionId]" class="btn btn-primary rounded-pill px-3">Open</a>
+            }
             <button type="button" class="btn btn-outline-secondary rounded-pill px-3" (click)="markRead(message)">Mark read</button>
           </li>
         }

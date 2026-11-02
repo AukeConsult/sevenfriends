@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { MAX_FRIENDS } from "../src/constants";
-import { POOL_SIZE, User, Via, assertConsistent, forEachUser, seedPool } from "./helpers";
+import { POOL_SIZE, User, assertConsistent, forEachUser, seedPool } from "./helpers";
+import type { Via } from "./types";
 
 /**
  * Everybody in the pool at once: busy networks, a very popular person, and a long randomised
@@ -12,7 +13,7 @@ beforeEach(async () => {
   pool = await seedPool();
 });
 
-const VIAS: Via[] = ["email", "emailUpper", "phone", "phoneNoPrefix", "instagram", "instagramAt", "instagramLink", "linkedinLink", "tiktok"];
+const VIAS: Via[] = ["email", "emailUpper", "phone", "phoneSpaced", "phoneNoPrefix"]; // the ways that can find a person
 
 /** Run `fn` for every person at the same time (like a busy evening), see forEachUser. */
 const everyone = <T>(fn: (user: User, i: number) => Promise<T>) => forEachUser(pool, fn);
@@ -58,6 +59,47 @@ describe("everyone in a ring", () => {
       expect(friends.every((f) => f.status === "confirmed")).toBe(true);
     }
     expect((await assertConsistent()).entries).toBe(before);
+  });
+});
+
+describe("everyone chats", () => {
+  it("in the ring, every person writes to all 6 friends: 360 messages, 720 copies, nothing mixed up", async () => {
+    // a confirmed ring: 180 connections, each person has 6 friends
+    await everyone(async (user, i) => {
+      for (const k of [1, 2, 3]) await user.add(pool[(i + k) % pool.length].p, VIAS[(i + k) % VIAS.length]);
+    });
+    await everyone((user) => user.check());
+    await everyone(async (user) => {
+      for (const r of (await user.check()).requests.filter((x) => x.seated)) await user.confirm(r.id);
+    });
+
+    // everybody writes one message to each friend
+    await everyone(async (user) => {
+      for (const friend of await user.friends()) {
+        expect((await user.send(friend.id, `hi from ${user.p.n}`)).status).toBe(201);
+      }
+    });
+    expect((await assertConsistent()).messages).toBe(720);
+
+    // every person has exactly one unread message from each of the 6 friends
+    await everyone(async (user) => {
+      const { messages } = await user.check();
+      expect(messages).toHaveLength(6);
+      expect(new Set(messages.map((m) => m.fromName)).size).toBe(6);
+    });
+
+    // every feed holds exactly 2 messages: one each way, the right ones
+    await everyone(async (user) => {
+      for (const friend of await user.friends()) {
+        const feed = (await user.feed(friend.id)).body.messages as { text: string; mine: boolean }[];
+        expect(feed).toHaveLength(2);
+        expect(feed.filter((m) => m.mine).map((m) => m.text)).toEqual([`hi from ${user.p.n}`]);
+        expect(feed.filter((m) => !m.mine)[0].text).toMatch(/^hi from \d+$/);
+        expect((await user.markFeedRead(friend.id)).status).toBe(200);
+      }
+    });
+    await everyone(async (user) => expect((await user.check()).messages).toEqual([]));
+    await assertConsistent();
   });
 });
 
@@ -137,45 +179,58 @@ function mulberry32(seed: number) {
 /** STRESS_SEEDS=1,2,3,...,50 npm test  runs many more random sequences. */
 const SEEDS = (process.env.STRESS_SEEDS ?? "1,2,3,4").split(",").map(Number);
 
-describe("randomised stress: 60 people, 500 mixed actions", () => {
+describe("randomised stress: 60 people, 500 mixed actions (incl. messages)", () => {
   it.each(SEEDS)("seed %i keeps every rule true", async (seed) => {
     const random = mulberry32(seed);
     const pick = <T>(list: T[]) => list[Math.floor(random() * list.length)];
-    const tally = { add: 0, full: 0, check: 0, confirm: 0, reject: 0, remove: 0 };
+    const tally = { add: 0, full: 0, check: 0, confirm: 0, reject: 0, remove: 0, message: 0, read: 0 };
     const addedBefore = new Set<string>(); // nobody adds the same person twice
 
     for (let step = 1; step <= 500; step++) {
       const actor = pick(pool);
       const roll = random();
 
-      if (roll < 0.4) {
+      if (roll < 0.32) {
         const target = pick(pool.filter((p) => p !== actor));
         const pair = `${actor.p.n}>${target.p.n}`;
         if (addedBefore.has(pair)) continue;
         const res = await actor.addRaw(target.p, pick(VIAS));
         expect([201, 409], `add ${pair}: ${res.status} ${JSON.stringify(res.body)}`).toContain(res.status);
         if (res.status === 201) { addedBefore.add(pair); tally.add++; } else tally.full++;
-      } else if (roll < 0.65) {
+      } else if (roll < 0.52) {
         await actor.check();
         tally.check++;
-      } else if (roll < 0.77) {
+      } else if (roll < 0.62) {
         const seated = (await actor.check()).requests.filter((r) => r.seated);
         if (!seated.length) continue;
         const res = await actor.confirm(pick(seated).id);
         expect(res.status, `confirm: ${JSON.stringify(res.body)}`).toBe(200);
         tally.confirm++;
-      } else if (roll < 0.83) {
+      } else if (roll < 0.67) {
         const requests = (await actor.check()).requests;
         if (!requests.length) continue;
         const res = await actor.reject(pick(requests).id);
         expect(res.status, `reject: ${JSON.stringify(res.body)}`).toBe(200);
         tally.reject++;
-      } else {
+      } else if (roll < 0.75) {
         const friends = await actor.friends();
         if (!friends.length) continue;
         const res = await actor.remove(pick(friends).id);
         expect(res.status).toBe(204);
         tally.remove++;
+      } else {
+        const confirmed = (await actor.friends()).filter((f) => f.status === "confirmed");
+        if (!confirmed.length) continue;
+        const friend = pick(confirmed);
+        if (roll < 0.93) {
+          const res = await actor.send(friend.id, `message ${step} from ${actor.p.n}`);
+          expect(res.status, `send: ${JSON.stringify(res.body)}`).toBe(201);
+          tally.message++;
+        } else {
+          expect((await actor.feed(friend.id)).status).toBe(200);
+          expect((await actor.markFeedRead(friend.id)).status).toBe(200);
+          tally.read++;
+        }
       }
 
       if (step % 50 === 0) await assertConsistent();
@@ -188,11 +243,12 @@ describe("randomised stress: 60 people, 500 mixed actions", () => {
     for (const [circle, count] of summary.perCircle) expect(count, circle).toBeLessThanOrEqual(MAX_FRIENDS);
 
     // the run really exercised every kind of action
-    expect(tally.add).toBeGreaterThan(80);
-    expect(tally.check).toBeGreaterThan(50);
-    expect(tally.confirm).toBeGreaterThan(5);
-    expect(tally.reject).toBeGreaterThan(3);
-    expect(tally.remove).toBeGreaterThan(10);
+    expect(tally.add).toBeGreaterThan(60);
+    expect(tally.check).toBeGreaterThan(40);
+    expect(tally.confirm).toBeGreaterThan(4);
+    expect(tally.reject).toBeGreaterThan(2);
+    expect(tally.remove).toBeGreaterThan(8);
+    expect(tally.message).toBeGreaterThan(10);
     console.log(`seed ${seed}:`, tally, `entries=${summary.entries} requests=${summary.requests} confirmed=${summary.confirmed}`);
   });
 });

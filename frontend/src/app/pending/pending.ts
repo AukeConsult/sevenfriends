@@ -1,8 +1,9 @@
 import { DatePipe } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { FriendRequest, FriendsService } from '../core/friends.service';
+import { FriendsService } from '../core/friends.service';
 import { NotificationsService } from '../core/notifications.service';
+import { FriendRequest } from '../models';
 
 /**
  * Requests that cannot get a seat because all seats are taken.

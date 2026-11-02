@@ -7,4 +7,5 @@ export const auth = getAuth(firebaseApp);
 
 if (environment.useEmulators) {
   connectAuthEmulator(auth, 'http://localhost:9099', { disableWarnings: true });
+  auth.settings.appVerificationDisabledForTesting = true; // phone sign-in without the reCAPTCHA check (the emulator prints the SMS code)
 }

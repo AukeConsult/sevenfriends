@@ -5,12 +5,12 @@ import { asyncHandler, requireAuth } from "./auth";
 import {
   AVAILABLE_CIRCLE_TYPES,
   CIRCLE_TYPES,
-  CircleType,
   DEFAULT_CIRCLE_ID,
   DEFAULT_CIRCLE_NAME,
   DEFAULT_CIRCLE_TYPE,
 } from "./constants";
 import { friendsRouter } from "./friends";
+import { Circle, CircleType } from "./models";
 import { circleCol } from "./paths";
 
 
@@ -28,7 +28,7 @@ export async function ensureDefaultCircle(uid: string): Promise<void> {
   }
 }
 
-function circleJson(doc: DocumentSnapshot) {
+function circleJson(doc: DocumentSnapshot): Circle {
   const data = doc.data() ?? {};
   return {
     id: doc.id,

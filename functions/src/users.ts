@@ -4,6 +4,7 @@ import { FieldValue, getFirestore } from "firebase-admin/firestore";
 import { asyncHandler, requireAuth } from "./auth";
 import { ensureDefaultCircle } from "./circles";
 import { USER_ACCOUNT_COLLECTION } from "./constants";
+import { verifiedIdentity } from "./validation";
 
 export const usersRouter = Router();
 
@@ -17,12 +18,17 @@ usersRouter.post(
 
     await getFirestore().runTransaction(async (tx) => {
       const snap = await tx.get(ref);
+      const verified = verifiedIdentity(token); // only what the login proves may be used to find this person
       const profile = {
         uid: token.uid,
         email: token.email ?? null,
-        emailLower: token.email?.toLowerCase() ?? null,
+        emailLower: verified.email, // null while the email is not verified
+        verifiedPhone: verified.phone,
+        phoneKey: verified.phoneKey, // from the login, never from what is typed on the profile
+        ...(verified.phone ? { phone: verified.phone } : {}), // a verified number is the contact number
         emailVerified: token.email_verified ?? false,
-        displayName: token.name ?? null,
+        // the name from the login is only the starting point: a name the user chose on the profile page stays
+        displayName: (snap.data()?.displayName as string | null | undefined) ?? token.name ?? null,
         photoURL: token.picture ?? null,
         provider: token.firebase?.sign_in_provider ?? null,
         lastLoginAt: FieldValue.serverTimestamp(),

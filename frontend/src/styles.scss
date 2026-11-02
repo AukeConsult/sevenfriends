@@ -121,3 +121,39 @@ app-root {
   html, body { background: #e9ebf3; } // shows the edges of the 1000px view
   app-root { box-shadow: 0 0 24px rgba(0, 0, 0, 0.08); }
 }
+
+// ---- Full-screen sub-pages (login with email link / phone, verify phone, ...) ----
+// A top bar with a back arrow and a title, then a narrow column.
+.sf-bar {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: calc(0.5rem + env(safe-area-inset-top)) var(--sf-gutter) 0.5rem 0.25rem;
+  background: var(--sf-card);
+  border-bottom: 1px solid var(--sf-border);
+}
+
+.sf-back {
+  width: var(--sf-touch);
+  height: var(--sf-touch);
+  display: grid;
+  place-items: center;
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--sf-primary);
+  text-decoration: none;
+}
+
+.sf-bar-title { margin: 0; font-size: var(--sf-fs-lg); font-weight: 600; }
+
+.sf-narrow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-width: var(--sf-form-max);
+  margin: 0 auto;
+  padding: 1.25rem var(--sf-gutter) calc(1.5rem + env(safe-area-inset-bottom));
+}

@@ -1,5 +1,7 @@
+import { SocialDraft, SocialNetworkInfo, Socials } from '../models';
+
 /** Social media networks a person can add. One list used by the profile, the friend form and the friend cards. */
-export const SOCIAL_NETWORKS = [
+export const SOCIAL_NETWORKS: readonly SocialNetworkInfo[] = [
   { key: 'facebook', label: 'Facebook', hint: 'name, id or link' },
   { key: 'instagram', label: 'Instagram', hint: 'username' },
   { key: 'tiktok', label: 'TikTok', hint: 'username' },
@@ -7,11 +9,7 @@ export const SOCIAL_NETWORKS = [
   { key: 'twitter', label: 'X (Twitter)', hint: 'username' },
   { key: 'linkedin', label: 'LinkedIn', hint: 'profile name or link' },
   { key: 'telegram', label: 'Telegram', hint: 'username' },
-] as const;
-
-export type SocialKey = (typeof SOCIAL_NETWORKS)[number]['key'];
-export type Socials = Record<SocialKey, string | null>;
-export type SocialDraft = Record<SocialKey, string>;
+];
 
 export const emptySocialDraft = (): SocialDraft =>
   Object.fromEntries(SOCIAL_NETWORKS.map((n) => [n.key, ''])) as SocialDraft;

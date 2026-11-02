@@ -1,7 +1,29 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // All access goes through the backend (Admin SDK bypasses these rules).
+
+    function isOwner(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    // USER CONTROL
+    // All data goes through the backend, which checks the login and only touches the caller's own data
+    // (the Admin SDK ignores these rules). The app itself may only READ the live data under the
+    // signed-in user's OWN account, to know when something new arrived:
+    //   incoming-signal  pings that somebody added me
+    //   messages         my messages (the app listens to the unread ones)
+    // Nobody writes from the client, and nobody can read somebody else's data.
+    match /user-account/{uid}/incoming-signal/{signalId} {
+      allow read: if isOwner(uid);
+      allow write: if false;
+    }
+
+    match /user-account/{uid}/messages/{messageId} {
+      allow read: if isOwner(uid);
+      allow write: if false;
+    }
+
+    // everything else (profiles, circles, friends, requests, ...) is closed to the client
     match /{document=**} {
       allow read, write: if false;
     }

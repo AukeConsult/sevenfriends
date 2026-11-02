@@ -1,25 +1,26 @@
 import { DecodedIdToken } from "firebase-admin/auth";
 import { FieldValue, QueryDocumentSnapshot, getFirestore } from "firebase-admin/firestore";
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION } from "./constants";
-import { circleCol, friendRequestCol, userDoc } from "./paths";
-import { SOCIAL_NETWORKS } from "./validation";
+import { circleCol, friendRequestCol } from "./paths";
+import { signalRefsOf } from "./signals";
+import { verifiedIdentity } from "./validation";
 
 /**
  * Has someone added me as a friend? Looks through every pending friend entry
- * (every "friends" subcollection of every circle) for my email, phone number or
- * social media account, and creates an incoming friend request for each one found.
+ * (every "friends" subcollection of every circle) for my VERIFIED email or phone number,
+ * and creates an incoming friend request for each one found.
+ *
+ * Only what the login proves counts (see verifiedIdentity): an unverified email, a phone number
+ * that was only typed in, and social accounts never find anything, so nobody can claim an
+ * identifier to receive requests meant for somebody else.
  */
 export async function syncIncomingInvites(token: DecodedIdToken): Promise<void> {
   const uid = token.uid;
-  const me = (await userDoc(uid).get()).data() ?? {};
+  const me = verifiedIdentity(token);
 
   const probes: [string, string][] = [];
-  const email = token.email?.toLowerCase();
-  if (email) probes.push(["email", email]);
+  if (me.email) probes.push(["email", me.email]);
   if (me.phoneKey) probes.push(["phoneKey", me.phoneKey]);
-  for (const n of SOCIAL_NETWORKS) {
-    if (me[`${n}Key`]) probes.push([`${n}Key`, me[`${n}Key`]]);
-  }
   if (!probes.length) return;
 
   const found = new Map<string, QueryDocumentSnapshot>();
@@ -44,7 +45,10 @@ export async function syncIncomingInvites(token: DecodedIdToken): Promise<void> 
     // One connection per pair of people: if we are already connected (or already have a
     // request going), this entry is a duplicate and is dropped from the owner's list.
     if (await isDuplicateConnection(circleRef, ownerRef.id, doc.id, uid)) {
-      await doc.ref.delete();
+      const batch = getFirestore().batch();
+      batch.delete(doc.ref);
+      signalRefsOf(doc.id, data.signaledUids).forEach((ref) => batch.delete(ref));
+      await batch.commit();
       continue;
     }
 

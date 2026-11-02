@@ -1,15 +1,9 @@
-import {
-  CollectionReference,
-  DocumentData,
-  FieldValue,
-  QuerySnapshot,
-  Timestamp,
-  Transaction,
-  getFirestore,
-} from "firebase-admin/firestore";
+import { DocumentData, FieldValue, Timestamp, Transaction, getFirestore } from "firebase-admin/firestore";
 import { ensureDefaultCircle } from "./circles";
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAX_FRIENDS } from "./constants";
+import { EnsureSeatArgs } from "./models";
 import { circleCol, friendRequestCol, userDoc } from "./paths";
+import { signalRefsOf } from "./signals";
 import { SOCIAL_NETWORKS } from "./validation";
 
 /** Friend entry data built from the requester's profile (name + contact details). */
@@ -20,14 +14,13 @@ export function entryFromRequester(requester: DocumentData, request: DocumentDat
     email,
     phone: requester.phone ?? null,
     phoneKey: requester.phoneKey ?? null,
-    // every social media account + its match key
+    // social accounts are contact info only
     ...Object.fromEntries(SOCIAL_NETWORKS.map((n) => [n, requester[n] ?? null])),
-    ...Object.fromEntries(SOCIAL_NETWORKS.map((n) => [`${n}Key`, requester[`${n}Key`] ?? null])),
     linkedUid: request.fromUid as string,
   };
 }
 
-/** Does this friend entry of mine point at the requester (same email, phone or social account)? */
+/** Does this friend entry of mine point at the requester (same verified email or phone number)? */
 function pointsAt(entry: DocumentData, requester: DocumentData): boolean {
   if (entry.incomingRequestId) return false; // already a seat for an incoming request
   if (entry.status === "confirmed") return false; // an established connection is never rewritten
@@ -35,7 +28,7 @@ function pointsAt(entry: DocumentData, requester: DocumentData): boolean {
   const email = (requester.emailLower ?? null) as string | null;
   if (email && entry.email === email) return true;
   if (requester.phoneKey && entry.phoneKey === requester.phoneKey) return true;
-  return SOCIAL_NETWORKS.some((n) => requester[`${n}Key`] && entry[`${n}Key`] === requester[`${n}Key`]);
+  return false;
 }
 
 const millis = (v: unknown) => (v instanceof Timestamp ? v.toMillis() : 0);
@@ -50,14 +43,7 @@ const millis = (v: unknown) => (v instanceof Timestamp ? v.toMillis() : 0);
  */
 export function ensureSeat(
   tx: Transaction,
-  o: {
-    myFriends: CollectionReference;
-    requestId: string;
-    request: DocumentData;
-    mySnap: QuerySnapshot;
-    requester: DocumentData;
-    confirmed: boolean;
-  },
+  o: EnsureSeatArgs,
 ): "ok" | "full" {
   const { myFriends, requestId, request, mySnap, requester, confirmed } = o;
   const confirmedFields = confirmed ? { status: "confirmed", confirmedAt: FieldValue.serverTimestamp() } : {};
@@ -83,6 +69,7 @@ export function ensureSeat(
     });
     tx.delete(mine.ref);
     tx.delete(friendRequestCol(request.fromUid).doc(mine.id)); // my own request to them is merged into theirs
+    signalRefsOf(mine.id, mine.data().signaledUids).forEach((ref) => tx.delete(ref)); // and so are its pings
     return "ok";
   }
 

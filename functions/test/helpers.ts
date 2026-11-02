@@ -4,23 +4,13 @@ import { createApp } from "../src/app";
 import { MAX_FRIENDS } from "../src/constants";
 import { resetFakeFirestore } from "./fake-firestore";
 import { PROJECT, USING_EMULATOR } from "./setup";
+import type { Claims, Entry, Friend, Incoming, Person, Req, Via } from "./types";
 
 export const app = createApp();
 export const POOL_SIZE = 60; // everything below runs in a pool of at least 50 people
 export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 // ------------------------------------------------------------------ people
-
-export interface Person {
-  n: number;
-  uid: string;
-  name: string;
-  email: string;
-  phone: string; // "+47 9000 00NN": the last 8 digits are unique
-  instagram: string;
-  tiktok: string;
-  linkedin: string;
-}
 
 export function person(n: number): Person {
   const id = String(n).padStart(2, "0");
@@ -29,7 +19,7 @@ export function person(n: number): Person {
     uid: `uid${id}`,
     name: `Person ${id}`,
     email: `person${id}@test.dev`,
-    phone: `+47 9000 00${id}`,
+    phone: `+47900000${id}`,
     instagram: `insta_${id}`,
     tiktok: `tt_${id}`,
     linkedin: `lin-${id}`,
@@ -38,25 +28,14 @@ export function person(n: number): Person {
 
 export const makePool = (size = POOL_SIZE) => Array.from({ length: size }, (_, i) => person(i));
 
-/** How I identify the person I add. */
-export type Via =
-  | "email"
-  | "emailUpper"
-  | "phone"
-  | "phoneNoPrefix"
-  | "instagram"
-  | "instagramAt"
-  | "instagramLink"
-  | "linkedinLink"
-  | "tiktok";
-
 export function contactOf(target: Person, via: Via): Record<string, string> {
   const base = { name: `Friend ${target.n}` };
   switch (via) {
     case "email": return { ...base, email: target.email };
     case "emailUpper": return { ...base, email: target.email.toUpperCase() };
     case "phone": return { ...base, phone: target.phone };
-    case "phoneNoPrefix": return { ...base, phone: target.phone.replace("+47 ", "").replace(/ /g, "") };
+    case "phoneSpaced": return { ...base, phone: target.phone.replace(/^\+47(\d{3})(\d{3})(\d{2})$/, "+47 $1 $2 $3") };
+    case "phoneNoPrefix": return { ...base, phone: target.phone.replace("+47", "") };
     case "instagram": return { ...base, instagram: target.instagram };
     case "instagramAt": return { ...base, instagram: `@${target.instagram.toUpperCase()}` };
     case "instagramLink": return { ...base, instagram: `https://www.instagram.com/${target.instagram}/?hl=en` };
@@ -67,27 +46,19 @@ export function contactOf(target: Person, via: Via): Record<string, string> {
 
 // ------------------------------------------------------------------ api client
 
-export interface Friend {
-  id: string;
-  name: string;
-  status: "pending" | "confirmed" | "rejected";
-  waiting: boolean;
-  incoming: boolean;
-  invited: boolean;
-  requestId: string | null;
-  email: string | null;
-}
-export interface Incoming {
-  id: string;
-  fromName: string;
-  seated: boolean;
-}
 
 export class User {
-  constructor(readonly p: Person) {}
+  /** `claims`: what the login proves. By default the email is verified and the phone number was confirmed by SMS. */
+  constructor(readonly p: Person, readonly claims: Claims = {}) {}
 
   private call(method: "get" | "post" | "put" | "delete", path: string, body?: object) {
-    const token = JSON.stringify({ uid: this.p.uid, email: this.p.email, name: this.p.name });
+    const token = JSON.stringify({
+      uid: this.p.uid,
+      email: this.p.email,
+      name: this.p.name,
+      email_verified: this.claims.emailVerified ?? true,
+      ...((this.claims.phoneVerified ?? true) ? { phone_number: this.p.phone } : {}),
+    });
     const req = request(app)[method](`/api${path}`).set("Authorization", `Bearer ${token}`);
     return body ? req.send(body) : req;
   }
@@ -125,6 +96,11 @@ export class User {
 
   async seated() { return (await this.check()).requests.filter((r) => r.seated); }
   async waitingList() { return (await this.check()).requests.filter((r) => !r.seated); }
+
+  /** The message feed of a connection (friend id = connection id). */
+  feed = (friendId: string) => this.call("get", `/circles/default/friends/${friendId}/messages`);
+  send = (friendId: string, text: string) => this.call("post", `/circles/default/friends/${friendId}/messages`, { text });
+  markFeedRead = (friendId: string) => this.call("post", `/circles/default/friends/${friendId}/messages/read`);
 
   confirm = (id: string) => this.call("post", `/friend-requests/${id}/accept`);
   reject = (id: string) => this.call("post", `/friend-requests/${id}/reject`);
@@ -175,6 +151,21 @@ export async function seedPool(size = POOL_SIZE): Promise<User[]> {
   return all;
 }
 
+/** `a` adds `b`, `b` checks and confirms: a confirmed connection. Returns the shared connection id. */
+export async function connect(a: User, b: User, via: Via = "email"): Promise<string> {
+  const entry = await a.add(b.p, via);
+  await b.check();
+  const res = await b.confirm(entry.id);
+  if (res.status !== 200) throw new Error(`connect failed: ${res.status} ${JSON.stringify(res.body)}`);
+  return entry.id;
+}
+
+/** The pings (incoming signals) waiting under a person's account. */
+export async function signalsOf(uid: string): Promise<{ id: string; connectionId?: string; time?: unknown }[]> {
+  const snap = await getFirestore().collection("user-account").doc(uid).collection("incoming-signal").get();
+  return snap.docs.map((d) => ({ ...d.data(), id: d.id }));
+}
+
 /** Fill `owner`'s circle with `count` confirmed-or-pending outgoing entries (people not matching anyone in the pool). */
 export async function fillCircle(owner: User, count = MAX_FRIENDS) {
   const ids: string[] = [];
@@ -188,8 +179,6 @@ export async function fillCircle(owner: User, count = MAX_FRIENDS) {
 
 // ------------------------------------------------------------------ invariants
 
-interface Entry { uid: string; circle: string; id: string; data: FirebaseFirestore.DocumentData }
-interface Req { uid: string; id: string; data: FirebaseFirestore.DocumentData }
 
 /**
  * Reads everything straight from Firestore and checks the connection rules:
@@ -286,12 +275,64 @@ export async function assertConsistent() {
     pairs.add(key);
   }
 
+  // 7. messages of a connection: two copies with the same id (sender read, receiver as set), and
+  //    both people still have the confirmed connection (deleting a connection deletes its feed)
+  const messages = (await db.collectionGroup("messages").get()).docs
+    .map((d) => ({ uid: d.ref.path.split("/")[1], id: d.id, data: d.data() }))
+    .filter((m) => m.data.connectionId);
+  const byMessage = new Map<string, typeof messages>();
+  for (const m of messages) byMessage.set(m.id, [...(byMessage.get(m.id) ?? []), m]);
+  for (const [id, copies] of byMessage) {
+    if (copies.length !== 2) { fail(`message ${id} has ${copies.length} copies (must be 2)`); continue; }
+    const from = copies.find((c) => c.uid === c.data.fromUid);
+    const to = copies.find((c) => c.uid === c.data.toUid);
+    if (!from || !to || from === to) { fail(`message ${id}: copies are not one for the sender and one for the receiver`); continue; }
+    if (from.data.read !== true) fail(`message ${id}: the sender's copy should be read`);
+    if (from.data.text !== to.data.text) fail(`message ${id}: the two copies differ`);
+    const connectionId = from.data.connectionId as string;
+    for (const who of [from.uid, to.uid]) {
+      if (entry(who, connectionId)?.data.status !== "confirmed") fail(`message ${id}: ${who} has no confirmed connection ${connectionId}`);
+    }
+  }
+
+  // 8. incoming signals (pings): the id is the connection id, they hold nothing but a ping,
+  //    and the entry that sent them still exists and remembers whom it pinged
+  const signals = (await db.collectionGroup("incoming-signal").get()).docs.map((d) => ({
+    uid: d.ref.path.split("/")[1],
+    id: d.id,
+    data: d.data(),
+  }));
+  for (const signal of signals) {
+    const where = `signal ${signal.uid}/${signal.id}`;
+    if (signal.data.connectionId !== signal.id) fail(`${where}: connectionId does not match its id`);
+    if (Object.keys(signal.data).sort().join() !== "connectionId,time") fail(`${where}: holds more than a ping`);
+    const sender = entries.find((e) => e.id === signal.id && e.uid !== signal.uid);
+    if (!sender) fail(`${where}: the entry that sent it no longer exists`);
+    else if (!(sender.data.signaledUids ?? []).includes(signal.uid)) fail(`${where}: not recorded on its entry`);
+  }
+
+  // 9. only what the login proved may find people: the account keys come from verified claims, and
+  //    friend entries carry no keys for social accounts (those are contact info only)
+  const accounts = (await db.collection("user-account").get()).docs.map((d) => ({ id: d.id, data: d.data() }));
+  for (const account of accounts) {
+    const { emailLower, emailVerified, phoneKey, verifiedPhone } = account.data;
+    if (emailLower && emailVerified !== true) fail(`account ${account.id}: matches on an email that is not verified`);
+    if (phoneKey && !verifiedPhone) fail(`account ${account.id}: matches on a phone number that is not verified`);
+    if (phoneKey && !String(verifiedPhone).replace(/\D/g, "").endsWith(phoneKey)) fail(`account ${account.id}: phoneKey does not belong to the verified number`);
+  }
+  for (const e of entries) {
+    const socialKey = Object.keys(e.data).find((k) => /^(facebook|instagram|tiktok|snapchat|twitter|linkedin|telegram)Key$/.test(k));
+    if (socialKey) fail(`entry ${e.uid}/${e.id} has ${socialKey}: social accounts must not be used to find people`);
+  }
+
   if (problems.length) throw new Error(`Connection rules broken:\n- ${problems.slice(0, 15).join("\n- ")}${problems.length > 15 ? `\n... and ${problems.length - 15} more` : ""}`);
 
   return {
     entries: entries.length,
     requests: requests.length,
     confirmed: entries.filter((e) => e.data.status === "confirmed").length,
+    messages: messages.length,
+    signals: signals.length,
     perCircle,
   };
 }

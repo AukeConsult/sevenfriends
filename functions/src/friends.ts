@@ -2,26 +2,21 @@ import { Router } from "express";
 import { DecodedIdToken } from "firebase-admin/auth";
 import { DocumentReference, FieldValue, Timestamp, getFirestore } from "firebase-admin/firestore";
 import { asyncHandler } from "./auth";
-import { DEFAULT_CIRCLE_ID, FriendStatus, FRIENDS_SUBCOLLECTION, MAX_FRIENDS, USER_ACCOUNT_COLLECTION } from "./constants";
+import { conversationRouter, deleteConversation } from "./conversation";
+import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAX_FRIENDS, USER_ACCOUNT_COLLECTION } from "./constants";
+import { Friend, FriendStatus, NewFriend, Socials } from "./models";
 import { circleCol, friendRequestCol } from "./paths";
+import { findAccounts, signalRefsOf, writeSignal } from "./signals";
 import {
   EMAIL_RE,
   PHONE_RE,
   SOCIAL_NETWORKS,
-  Socials,
   parseSocials,
   phoneKey,
-  socialKeys,
   text,
 } from "./validation";
 
-type FriendInput = {
-  name: string;
-  email: string | null;
-  phone: string | null;
-} & Socials;
-
-function parseFriend(body: Record<string, unknown>): { data?: FriendInput; error?: string } {
+function parseFriend(body: Record<string, unknown>): { data?: NewFriend; error?: string } {
   const name = text(body.name, 100);
   const email = text(body.email, 200)?.toLowerCase() ?? null;
   const phone = text(body.phone, 25);
@@ -30,20 +25,22 @@ function parseFriend(body: Record<string, unknown>): { data?: FriendInput; error
   if (!name) return { error: "Name is required" };
   if (email && !EMAIL_RE.test(email)) return { error: "Email is not valid" };
   if (phone && !PHONE_RE.test(phone)) return { error: "Phone number is not valid" };
-  if (!email && !phone && !SOCIAL_NETWORKS.some((n) => socials[n])) {
-    return { error: "Add at least one way to reach your friend (email, phone or a social media account)" };
+  // Only an email or a phone number can find your friend (social accounts are extra contact info),
+  // so one of them is needed for the request to ever arrive.
+  if (!email && !phone) {
+    return { error: "Add an email or a phone number, so your friend can be found" };
   }
   return { data: { name, email, phone, ...socials } };
 }
 
-function toJson(doc: FirebaseFirestore.DocumentSnapshot) {
+function toJson(doc: FirebaseFirestore.DocumentSnapshot): Friend {
   const data = doc.data() ?? {};
   return {
     id: doc.id,
     name: data.name,
     email: data.email ?? null,
     phone: data.phone ?? null,
-    ...Object.fromEntries(SOCIAL_NETWORKS.map((n) => [n, data[n] ?? null])),
+    ...(Object.fromEntries(SOCIAL_NETWORKS.map((n) => [n, data[n] ?? null])) as Socials),
     status: (["confirmed", "rejected"].includes(data.status) ? data.status : "pending") as FriendStatus,
     invited: Boolean(data.linkedUid), // true = the friend has a Seven Friends account and got a request
     waiting: Boolean(data.waitingForSeat), // true = their list is full: I am on their waiting list
@@ -58,6 +55,9 @@ const friendCol = (res: { locals: Record<string, unknown> }) =>
 
 // Mounted by circles.ts under /:circleId/friends (auth + circle lookup already done)
 export const friendsRouter = Router({ mergeParams: true });
+
+// The message feed of a connection: /circles/:circleId/friends/:friendId/messages
+friendsRouter.use("/:friendId/messages", conversationRouter);
 
 /** List the friends in a circle. */
 friendsRouter.get(
@@ -79,8 +79,10 @@ friendsRouter.post(
     }
 
     // The request stays ONLY in my list. It reaches the other person when THEY run their check
-    // (Home / Friends / Pending), which matches their email, phone or social accounts against it.
-    const keys = { phoneKey: phoneKey(data.phone), ...socialKeys(data) };
+    // (Home / Friends / Pending), which matches their VERIFIED email or phone number against it.
+    const keys = { phoneKey: phoneKey(data.phone) };
+    // Does the friend already have an account? Then their frontend gets a ping (a signal) to run its search.
+    const accounts = await findAccounts(data.email, keys.phoneKey, (res.locals.token as DecodedIdToken).uid);
 
     const col = friendCol(res);
     const ref = col.doc();
@@ -94,8 +96,10 @@ friendsRouter.post(
         peerCircleId: DEFAULT_CIRCLE_ID, // where the other person's entry will live
         status: "pending" as FriendStatus,
         linkedUid: null, // set when the other person's check finds this entry
+        signaledUids: accounts, // who got a ping for this entry (removed again if the entry is deleted)
         createdAt: FieldValue.serverTimestamp(),
       });
+      for (const account of accounts) writeSignal(tx, account, ref.id);
       return true;
     });
 
@@ -126,6 +130,7 @@ friendsRouter.delete(
     const batch = getFirestore().batch();
     batch.delete(ref);
     batch.delete(friendRequestCol(uid).doc(id)); // a request I received for this connection
+    signalRefsOf(id, data.signaledUids).forEach((ref) => batch.delete(ref)); // pings that were not handled yet
     if (data.linkedUid) {
       batch.delete(friendRequestCol(data.linkedUid).doc(id)); // a request I sent for it
       batch.delete(
@@ -136,6 +141,7 @@ friendsRouter.delete(
       );
     }
     await batch.commit();
+    await deleteConversation(data.linkedUid ? [uid, data.linkedUid] : [uid], id); // its message feed goes too
     res.status(204).end();
   }),
 );
