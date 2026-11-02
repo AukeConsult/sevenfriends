@@ -1,0 +1,10 @@
+node_modules/
+dist/
+lib/
+.angular/
+.firebase/
+*.log
+.env
+.emulator-data/
+firebase-export-*/
+.idea/

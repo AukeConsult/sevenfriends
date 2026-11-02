@@ -1,0 +1,61 @@
+<header class="hero">
+  <h1 class="m-0">Profile</h1>
+</header>
+
+<main class="sf-content container-fluid">
+  <div class="card border-0 shadow-sm">
+    <div class="card-body text-center">
+      @if (user()?.photoURL; as photo) {
+        <img class="photo" [src]="photo" alt="" referrerpolicy="no-referrer" />
+      } @else {
+        <div class="photo initial">{{ initial() }}</div>
+      }
+      <h2 class="mt-3 mb-1">{{ name() }}</h2>
+      <p class="text-secondary mb-0">{{ user()?.email }}</p>
+    </div>
+  </div>
+
+  <ul class="list-group mt-3 border-0 shadow-sm">
+    <li class="list-group-item d-flex justify-content-between">
+      <span class="text-secondary">Signed in with</span><span>{{ provider() }}</span>
+    </li>
+    <li class="list-group-item d-flex justify-content-between">
+      <span class="text-secondary">Email</span>
+      <span class="badge rounded-pill align-self-center" [class.text-bg-success]="user()?.emailVerified" [class.text-bg-warning]="!user()?.emailVerified">
+        {{ user()?.emailVerified ? 'Verified' : 'Not verified' }}
+      </span>
+    </li>
+    @if (memberSince(); as since) {
+      <li class="list-group-item d-flex justify-content-between">
+        <span class="text-secondary">Member since</span><span>{{ since }}</span>
+      </li>
+    }
+  </ul>
+
+  <form class="card border-0 shadow-sm mt-3" (submit)="$event.preventDefault(); save()" aria-label="Contact details">
+    <div class="card-body vstack gap-2">
+      <h2 class="m-0">Contact details</h2>
+      <p class="small text-secondary m-0">So your friends can reach you.</p>
+
+      <label class="d-grid gap-1"><span class="form-label small text-secondary m-0">Phone number</span>
+        <input type="tel" class="form-control" [value]="contact().phone" (input)="setField('phone', $any($event.target).value)"
+               inputmode="tel" autocomplete="tel" [disabled]="loading()" />
+      </label>
+      @for (n of networks; track n.key) {
+        <label class="d-grid gap-1"><span class="form-label small text-secondary m-0">{{ n.label }} ({{ n.hint }})</span>
+          <input type="text" class="form-control" [value]="contact()[n.key]" (input)="setField(n.key, $any($event.target).value)"
+                 autocomplete="off" [disabled]="loading()" />
+        </label>
+      }
+
+      @if (error()) {
+        <div class="alert alert-danger py-2 m-0" role="alert">{{ error() }}</div>
+      }
+      @if (saved()) {
+        <div class="alert alert-success py-2 m-0" role="status">Saved.</div>
+      }
+
+      <button type="submit" class="btn btn-primary" [disabled]="loading() || saving()">{{ saving() ? 'Saving…' : 'Save' }}</button>
+    </div>
+  </form>
+</main>

@@ -1,0 +1,77 @@
+<header class="hero">
+  <div class="logo" aria-hidden="true">7</div>
+  <p class="slogan">Stay close to the people who matter most.</p>
+</header>
+
+<main class="page container-fluid">
+  <h1 class="visually-hidden">Notifications</h1>
+
+  @if (error()) {
+    <div class="alert alert-danger d-flex align-items-center justify-content-between py-2" role="alert">
+      <span>{{ error() }}</span>
+      <button type="button" class="btn btn-link fw-semibold" (click)="load()">Retry</button>
+    </div>
+  }
+
+  @if (notice(); as n) {
+    <div class="alert py-2" [class.alert-success]="n.kind === 'success'" [class.alert-warning]="n.kind === 'warning'" role="status">
+      {{ n.text }}
+    </div>
+  }
+
+  @if (!loaded()) {
+    <p class="quiet">Checking for news…</p>
+  }
+
+  @if (allQuiet()) {
+    <div class="all-quiet">
+      <span class="moon" aria-hidden="true">🌙</span>
+      <p class="mb-0">All quiet. Nothing new right now.</p>
+    </div>
+  }
+
+  @if (seated().length) {
+    <section aria-label="Friend requests">
+      <h2 class="section">Friend requests</h2>
+      <ul class="items">
+        @for (request of seated(); track request.id) {
+          <li class="item">
+            <span class="text">
+              <strong>{{ request.fromName }}</strong>
+              <small>wants to be your friend</small>
+            </span>
+            <button type="button" class="btn btn-primary rounded-pill px-3" (click)="accept(request)">Confirm</button>
+            <button type="button" class="btn btn-outline-secondary rounded-pill px-3" (click)="reject(request)">Reject</button>
+          </li>
+        }
+      </ul>
+    </section>
+  }
+
+  @if (waitingCount() > 0) {
+    <a routerLink="/pending" class="waiting-link">
+      {{ waitingCount() }} {{ waitingCount() === 1 ? 'request is' : 'requests are' }} waiting for a free seat
+      <span aria-hidden="true">›</span>
+    </a>
+  }
+
+  @if (messages().length) {
+    <section aria-label="Messages">
+      <h2 class="section">Messages</h2>
+      <ul class="items">
+        @for (message of messages(); track message.id) {
+          <li class="item">
+            <span class="text">
+              <strong>{{ message.fromName }}</strong>
+              <span class="body">{{ message.text }}</span>
+              @if (message.time) {
+                <small>{{ message.time | date: 'short' }}</small>
+              }
+            </span>
+            <button type="button" class="btn btn-outline-secondary rounded-pill px-3" (click)="markRead(message)">Mark read</button>
+          </li>
+        }
+      </ul>
+    </section>
+  }
+</main>

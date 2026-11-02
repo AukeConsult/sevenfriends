@@ -1,0 +1,123 @@
+// =====================================================================
+// Overall styles for Seven Friends (loaded after Bootstrap).
+// Mobile first: the values below are the phone defaults; each breakpoint
+// only overrides what grows. Components use these variables / rem units,
+// so changing a value here rescales the whole app.
+//
+// Breakpoints:  phone  < 576px   (base)
+//               sm     >= 576px  (large phone / small tablet)
+//               md     >= 768px  (tablet)
+//               lg     >= 1000px (desktop, = max app width)
+// =====================================================================
+
+:root {
+  // ---- Brand ----
+  --sf-primary: #4f46e5;
+  --sf-primary-2: #7c3aed;
+  --sf-bg: #f6f7fb;
+  --sf-card: #ffffff;
+  --sf-text: #1f2937;
+  --sf-muted: #6b7280;
+  --sf-border: #e5e7eb;
+
+  // ---- Basic font sizes (relative to the root font size below) ----
+  --sf-fs-xs: 0.75rem;
+  --sf-fs-sm: 0.875rem;
+  --sf-fs-base: 1rem;
+  --sf-fs-lg: 1.25rem;
+  --sf-fs-xl: 1.625rem;
+  --sf-fs-xxl: 2rem;
+
+  // ---- Basic dimensions (phone defaults) ----
+  --sf-max-width: 1000px;
+  --sf-gutter: 1rem; // side padding of pages
+  --sf-gap: 0.75rem; // space between items
+  --sf-radius: 1rem;
+  --sf-touch: 2.75rem; // minimum tap target
+  --sf-avatar: 2.5rem;
+  --sf-hero-pad: 1.5rem;
+  --sf-form-max: 28rem; // width of forms (login)
+
+  // ---- Bootstrap theme ----
+  --bs-primary: var(--sf-primary);
+  --bs-primary-rgb: 79, 70, 229;
+  --bs-primary-bg-subtle: #e0e7ff;
+  --bs-link-color: var(--sf-primary);
+  --bs-link-hover-color: #4338ca;
+  --bs-body-bg: var(--sf-bg);
+  --bs-body-color: var(--sf-text);
+  --bs-body-font-size: var(--sf-fs-base);
+  --bs-border-radius: 0.75rem;
+  --bs-border-radius-lg: var(--sf-radius);
+  --bs-secondary-color: var(--sf-muted);
+}
+
+// Root font size: every rem (Bootstrap + our own) scales with the view size.
+html { font-size: 16px; }
+
+@media (min-width: 576px) {
+  :root { --sf-gutter: 1.25rem; --sf-avatar: 2.75rem; }
+}
+
+@media (min-width: 768px) {
+  html { font-size: 17px; }
+  :root {
+    --sf-gutter: 1.5rem;
+    --sf-gap: 1rem;
+    --sf-avatar: 3rem;
+    --sf-hero-pad: 2rem;
+    --sf-fs-xl: 1.75rem;
+    --sf-fs-xxl: 2.25rem;
+  }
+}
+
+@media (min-width: 1000px) {
+  html { font-size: 18px; }
+  :root {
+    --sf-gutter: 2rem;
+    --sf-hero-pad: 2.5rem;
+    --sf-avatar: 3.25rem;
+  }
+}
+
+// ---- Base elements ----
+html, body {
+  min-height: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+h1, .h1 { font-size: var(--sf-fs-xxl); }
+h2, .h2 { font-size: var(--sf-fs-lg); }
+h3, .h3 { font-size: var(--sf-fs-xl); }
+small, .small { font-size: var(--sf-fs-sm); }
+
+// Comfortable tap targets for all Bootstrap buttons and inputs
+.btn { min-height: var(--sf-touch); display: inline-flex; align-items: center; justify-content: center; }
+.btn-sm { min-height: var(--sf-touch); }
+.form-control { min-height: var(--sf-touch); font-size: max(16px, var(--sf-fs-base)); } // 16px+ avoids iOS zoom
+
+// Bootstrap primary button, themed with our colour
+.btn-primary {
+  --bs-btn-bg: var(--sf-primary);
+  --bs-btn-border-color: var(--sf-primary);
+  --bs-btn-hover-bg: #4338ca;
+  --bs-btn-hover-border-color: #4338ca;
+  --bs-btn-active-bg: #3730a3;
+  --bs-btn-active-border-color: #3730a3;
+  --bs-btn-disabled-bg: var(--sf-primary);
+  --bs-btn-disabled-border-color: var(--sf-primary);
+}
+
+// ---- The whole app is at most 1000px wide and centred ----
+app-root {
+  display: block;
+  max-width: var(--sf-max-width);
+  min-height: 100dvh;
+  margin: 0 auto;
+  background: var(--sf-bg);
+}
+
+@media (min-width: 1000px) {
+  html, body { background: #e9ebf3; } // shows the edges of the 1000px view
+  app-root { box-shadow: 0 0 24px rgba(0, 0, 0, 0.08); }
+}

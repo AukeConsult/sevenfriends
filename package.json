@@ -1,0 +1,13 @@
+{
+  "name": "sevenfriends",
+  "private": true,
+  "scripts": {
+    "install:all": "npm --prefix frontend install && npm --prefix functions install",
+    "dev:functions": "npm --prefix functions run build:watch",
+    "dev:emulators": "firebase emulators:start --only auth,functions,firestore --project demo-sevenfriends --import=.emulator-data --export-on-exit=.emulator-data",
+    "dev:frontend": "npm --prefix frontend start",
+    "build": "npm --prefix frontend run build && npm --prefix functions run build",
+    "test": "npm --prefix functions run test:run",
+    "test:emulator": "firebase emulators:exec --config firebase.test.json --only firestore --project demo-sevenfriends-test \"npm --prefix functions run test:run\""
+  }
+}

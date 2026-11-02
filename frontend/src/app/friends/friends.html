@@ -1,0 +1,137 @@
+<header class="hero">
+  <h1 class="m-0">{{ circle()?.name ?? 'Friends' }}</h1>
+  <span class="badge rounded-pill bg-light bg-opacity-25 fw-normal">
+    {{ filled() }} / {{ max }} {{ circle()?.type ?? 'friends' }}
+  </span>
+</header>
+
+<main class="sf-content container-fluid">
+  @if (loadError()) {
+    <div class="alert alert-danger d-flex align-items-center justify-content-between py-2" role="alert">
+      <span>{{ loadError() }}</span>
+      <button type="button" class="btn btn-link fw-semibold" (click)="reload()">Retry</button>
+    </div>
+  }
+
+  @if (waiting() > 0) {
+    <a routerLink="/pending" class="alert alert-info d-block py-2 text-decoration-none">
+      {{ waiting() }} {{ waiting() === 1 ? 'request is' : 'requests are' }} waiting for a free seat. View
+    </a>
+  }
+
+  <ul class="list-unstyled row g-1 m-0">
+    @for (slot of slots(); track slot.position) {
+      <li class="col-12 col-md-6 d-flex flex-column">
+        @if (slot.friend; as friend) {
+          <article class="card sf-slot flex-grow-1">
+            <div class="card-body sf-card">
+              <!-- Header: avatar, name + status, delete -->
+              <header class="sf-head">
+                <span class="avatar">{{ friend.name[0].toUpperCase() }}</span>
+                <div class="sf-title">
+                  <strong class="sf-name">{{ friend.name }}</strong>
+                  <span class="badge rounded-pill"
+                        [class.text-bg-warning]="friend.status === 'pending' && !friend.waiting"
+                        [class.text-bg-secondary]="friend.status === 'pending' && friend.waiting"
+                        [class.text-bg-success]="friend.status === 'confirmed'"
+                        [class.text-bg-danger]="friend.status === 'rejected'">
+                    {{ friend.status === 'confirmed' ? 'Confirmed' : friend.status === 'rejected' ? 'Rejected' : friend.waiting ? 'Waiting' : 'Pending' }}
+                  </span>
+                </div>
+                @if (!(friend.incoming && friend.status === 'pending')) {
+                  <button type="button" class="sf-icon-btn" (click)="askDelete(friend)" [attr.aria-label]="'Delete ' + friend.name" [attr.aria-expanded]="deleting() === friend.id">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6" />
+                    </svg>
+                  </button>
+                }
+              </header>
+
+              <!-- Everything below lines up with the name -->
+              <div class="sf-body">
+                @if (friend.status === 'rejected') {
+                  <p class="sf-hint">They rejected your request. Delete it to remove it from both lists.</p>
+                } @else if (friend.status === 'pending') {
+                  <p class="sf-hint">{{ friend.incoming ? 'Wants to be your friend' : friend.waiting ? 'Their list is full. You are on their waiting list.' : 'Waiting for them to confirm' }}</p>
+                }
+
+                <dl class="sf-details">
+                  @if (friend.phone) { <dt>Phone</dt><dd>{{ friend.phone }}</dd> }
+                  @if (friend.email) { <dt>Email</dt><dd>{{ friend.email }}</dd> }
+                  @for (n of networks; track n.key) {
+                    @if (friend[n.key]; as account) { <dt>{{ n.label }}</dt><dd>{{ account }}</dd> }
+                  }
+                </dl>
+
+                @if (friend.incoming && friend.status === 'pending') {
+                  <div class="sf-actions">
+                    <button type="button" class="btn btn-primary rounded-pill flex-fill" (click)="confirm(friend)">Confirm</button>
+                    <button type="button" class="btn btn-outline-secondary rounded-pill flex-fill" (click)="reject(friend)">Reject</button>
+                  </div>
+                }
+              </div>
+            </div>
+          </article>
+
+          <!-- Expandable frame under the card: opens in the page flow and pushes the list down -->
+          <div class="sf-expand" [class.open]="deleting() === friend.id" [attr.inert]="deleting() === friend.id ? null : ''">
+            <div class="sf-expand-inner">
+              <div class="sf-confirm" role="alertdialog" [attr.aria-label]="'Delete ' + friend.name">
+                <p class="sf-confirm-text">{{ deleteMessage(friend) }}</p>
+                <div class="sf-confirm-actions">
+                  <button type="button" class="btn btn-light btn-sm rounded-pill px-3" (click)="cancelDelete()" [disabled]="deleteBusy()">Cancel</button>
+                  <button type="button" class="btn btn-danger btn-sm rounded-pill px-3" (click)="remove(friend)" [disabled]="deleteBusy()">
+                    {{ deleteBusy() ? 'Deleting…' : 'Delete' }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        } @else {
+          <button type="button" class="btn sf-slot-empty w-100 flex-grow-1 text-start d-flex align-items-center gap-3" (click)="openForm()">
+            <span class="avatar">{{ slot.position }}</span>
+            <span class="flex-grow-1">Add a close friend</span>
+            <span class="fs-3 text-primary" aria-hidden="true">+</span>
+          </button>
+        }
+      </li>
+    }
+  </ul>
+</main>
+
+@if (adding()) {
+  <div class="backdrop" (click)="closeForm()"></div>
+  <form class="sheet vstack gap-2" (submit)="$event.preventDefault(); save()" aria-label="Add friend">
+    <h2 class="m-0">Add a friend</h2>
+
+    <label class="d-grid gap-1"><span class="form-label small text-secondary m-0">Name *</span>
+      <input type="text" class="form-control" [value]="draft().name" (input)="setField('name', $any($event.target).value)"
+             autocomplete="off" required maxlength="100" />
+    </label>
+    <label class="d-grid gap-1"><span class="form-label small text-secondary m-0">Phone</span>
+      <input type="tel" class="form-control" [value]="draft().phone" (input)="setField('phone', $any($event.target).value)"
+             inputmode="tel" autocomplete="off" />
+    </label>
+    <label class="d-grid gap-1"><span class="form-label small text-secondary m-0">Email</span>
+      <input type="email" class="form-control" [value]="draft().email" (input)="setField('email', $any($event.target).value)"
+             inputmode="email" autocomplete="off" />
+    </label>
+    @for (n of networks; track n.key) {
+      <label class="d-grid gap-1"><span class="form-label small text-secondary m-0">{{ n.label }} ({{ n.hint }})</span>
+        <input type="text" class="form-control" [value]="draft()[n.key]" (input)="setField(n.key, $any($event.target).value)"
+               autocomplete="off" />
+      </label>
+    }
+    <p class="small text-secondary m-0">Add at least one way to reach your friend.</p>
+
+    @if (formError()) {
+      <div class="alert alert-danger py-2 m-0" role="alert">{{ formError() }}</div>
+    }
+
+    <div class="d-flex gap-2">
+      <button type="button" class="btn btn-light flex-fill" (click)="closeForm()">Cancel</button>
+      <button type="submit" class="btn btn-primary flex-fill" [disabled]="saving()">{{ saving() ? 'Saving…' : 'Save' }}</button>
+    </div>
+  </form>
+}

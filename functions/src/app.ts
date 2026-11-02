@@ -1,0 +1,29 @@
+import cors from "cors";
+import express from "express";
+import { circlesRouter } from "./circles";
+import { friendRequestsRouter } from "./friend-requests";
+import { messagesRouter } from "./messages";
+import { notificationsRouter } from "./notifications";
+import { profileRouter } from "./profile";
+import { usersRouter } from "./users";
+
+/** The Express app behind the `api` Cloud Function (also used directly by the tests). */
+export function createApp(): express.Express {
+  const app = express();
+  app.use(cors({ origin: true }));
+  app.use(express.json());
+
+  // Hosting forwards the full path (including /api) to the function.
+  const router = express.Router();
+  router.get("/health", (_req, res) => {
+    res.json({ status: "ok", app: "sevenfriends" });
+  });
+  router.use("/users", usersRouter);
+  router.use("/circles", circlesRouter);
+  router.use("/friend-requests", friendRequestsRouter);
+  router.use("/messages", messagesRouter);
+  router.use("/notifications", notificationsRouter);
+  router.use("/profile", profileRouter);
+  app.use("/api", router);
+  return app;
+}
