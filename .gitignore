@@ -8,3 +8,5 @@ lib/
 .emulator-data/
 firebase-export-*/
 .idea/
+# generated copy of functions/src/models/shared (scripts/sync-models.mjs)
+frontend/src/app/models/shared/

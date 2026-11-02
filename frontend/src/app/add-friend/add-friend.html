@@ -1,0 +1,46 @@
+<header class="bar">
+  <a routerLink="/friends" class="back" aria-label="Cancel and go back to friends">‹</a>
+  <h1 class="title">Add a friend</h1>
+</header>
+
+<form class="page container-fluid" (submit)="$event.preventDefault(); send()" aria-label="Add a friend">
+  <p class="intro">
+    Tell us who your friend is. They get your request when they open the app, and become your friend
+    when they confirm.
+  </p>
+
+  <label class="field"><span class="form-label small text-secondary m-0">Name *</span>
+    <input type="text" class="form-control" [value]="draft().name" (input)="setField('name', $any($event.target).value)"
+           autocomplete="off" maxlength="100" required />
+  </label>
+
+  <h2 class="section">How can we find them?</h2>
+  <p class="small text-secondary m-0">Add at least one. The more you add, the easier they are to find.</p>
+
+  <label class="field"><span class="form-label small text-secondary m-0">Phone</span>
+    <input type="tel" class="form-control" [value]="draft().phone" (input)="setField('phone', $any($event.target).value)"
+           inputmode="tel" autocomplete="off" />
+  </label>
+  <label class="field"><span class="form-label small text-secondary m-0">Email</span>
+    <input type="email" class="form-control" [value]="draft().email" (input)="setField('email', $any($event.target).value)"
+           inputmode="email" autocomplete="off" />
+  </label>
+  @for (n of networks; track n.key) {
+    <label class="field"><span class="form-label small text-secondary m-0">{{ n.label }} ({{ n.hint }})</span>
+      <input type="text" class="form-control" [value]="draft()[n.key]" (input)="setField(n.key, $any($event.target).value)"
+             autocomplete="off" />
+    </label>
+  }
+
+  @if (error()) {
+    <div class="alert alert-danger py-2 m-0" role="alert">{{ error() }}</div>
+  }
+
+  <!-- The end of the page -->
+  <div class="actions">
+    <a routerLink="/friends" class="btn btn-light flex-fill">Cancel</a>
+    <button type="submit" class="btn btn-primary flex-fill" [disabled]="sending()">
+      {{ sending() ? 'Sending…' : 'Send friend request' }}
+    </button>
+  </div>
+</form>
