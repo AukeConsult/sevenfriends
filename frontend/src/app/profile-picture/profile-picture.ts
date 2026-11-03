@@ -1,6 +1,7 @@
 import { Component, ElementRef, afterNextRender, inject, signal, viewChild } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { ApiService } from '../core/api.service';
+import { Decoded, decodeImage, sizeOf } from '../core/image';
 import { ProfileDetails } from '../models';
 
 /** The side of the square the picture is cropped in, in CSS pixels (the canvas is drawn at twice this for sharpness). */
@@ -11,8 +12,6 @@ const OUTPUT = 256;
 const TARGET_BYTES = 60 * 1024;
 const MAX_ZOOM = 4;
 const MAX_FILE_BYTES = 20 * 1024 * 1024;
-
-type Source = ImageBitmap | HTMLImageElement;
 
 /**
  * A full page to upload a picture for the profile: choose a photo, move and zoom it inside the square (drag, pinch,
@@ -38,7 +37,7 @@ export class ProfilePicturePage {
   /** I already have a picture saved: it can be removed */
   protected readonly existing = signal(false);
 
-  private source: Source | null = null;
+  private source: Decoded | null = null;
   private baseScale = 1; // the scale at which the photo just covers the square
   private offsetX = 0; // where the middle of the photo is, from the middle of the square
   private offsetY = 0;
@@ -67,39 +66,18 @@ export class ProfilePicturePage {
       return;
     }
     try {
-      this.source = await this.decode(file);
+      this.source = await decodeImage(file);
     } catch {
       this.error.set('This image cannot be opened. Try another one (JPEG, PNG or WebP).');
       return;
     }
-    const { width, height } = this.size(this.source);
+    const { width, height } = sizeOf(this.source);
     this.baseScale = Math.max(VIEW / width, VIEW / height);
     this.zoom.set(1);
     this.offsetX = 0;
     this.offsetY = 0;
     this.hasImage.set(true);
     queueMicrotask(() => this.draw());
-  }
-
-  /** The photo as an image, turned the right way up (phones store photos sideways with a note). */
-  private async decode(file: File): Promise<Source> {
-    try {
-      return await createImageBitmap(file, { imageOrientation: 'from-image' });
-    } catch {
-      const url = URL.createObjectURL(file);
-      try {
-        const image = new Image();
-        image.src = url;
-        await image.decode();
-        return image;
-      } finally {
-        URL.revokeObjectURL(url);
-      }
-    }
-  }
-
-  private size(source: Source): { width: number; height: number } {
-    return source instanceof HTMLImageElement ? { width: source.naturalWidth, height: source.naturalHeight } : source;
   }
 
   // ------------------------------------------------------------------ moving and zooming
@@ -150,7 +128,7 @@ export class ProfilePicturePage {
   /** Keeps the photo covering the whole square (no empty corners). */
   private clamp(scale: number): void {
     if (!this.source) return;
-    const { width, height } = this.size(this.source);
+    const { width, height } = sizeOf(this.source);
     const maxX = Math.max(0, (width * scale - VIEW) / 2);
     const maxY = Math.max(0, (height * scale - VIEW) / 2);
     this.offsetX = Math.min(maxX, Math.max(-maxX, this.offsetX));
@@ -166,7 +144,7 @@ export class ProfilePicturePage {
     if (!this.source) return;
     const scale = this.baseScale * this.zoom();
     this.clamp(scale);
-    const { width, height } = this.size(this.source);
+    const { width, height } = sizeOf(this.source);
     const k = side / VIEW;
     context.imageSmoothingQuality = 'high';
     context.drawImage(

@@ -429,11 +429,35 @@ router-outlet + * { display: block; min-height: 100dvh; }
 }
 .sf-composer-row { display: flex; align-items: flex-end; gap: 0.5rem; padding: 0.5rem var(--sf-gutter); }
 .sf-bubble-tap { cursor: pointer; }
+// ---- Images in messages ----
+.sf-bubble-media { display: flex; flex-direction: column; gap: 0.25rem; padding: 0.25rem; }
+.sf-bubble-media .sf-caption { padding: 0.25rem 0.5rem 0.25rem; }
+.sf-media {
+  display: grid;
+  place-items: center;
+  width: min(16rem, 70vw);
+  min-height: 4rem;
+  max-height: 20rem;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  background: var(--sf-bg);
+  img { display: block; width: 100%; height: 100%; object-fit: cover; }
+}
+.sf-media-link { display: block; line-height: 0; }
+.sf-attach-preview { display: block; max-width: 100%; max-height: 60dvh; margin: 0 auto; border-radius: var(--sf-radius); object-fit: contain; }
+.sf-viewer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem var(--sf-gutter) calc(4.5rem + env(safe-area-inset-bottom));
+  img { display: block; max-width: 100%; max-height: calc(100dvh - 12rem); margin: 0 auto; object-fit: contain; }
+}
 .sf-bubble-tap:focus-visible { outline: 2px solid var(--sf-primary); outline-offset: 2px; }
 .sf-msg-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.25rem; }
 .sf-editing { display: flex; align-items: center; justify-content: space-between; padding: 0.25rem var(--sf-gutter); background: var(--bs-primary-bg-subtle); }
 .sf-composer-field { resize: none; max-height: 8rem; overflow-y: auto; line-height: 1.4; }
 .sf-emoji-toggle { margin: 0; font-size: var(--sf-fs-title); }
+.sf-composer-row .sf-icon-btn { margin: 0; } // the buttons in the message row sit level with the field
 .sf-emoji-panel { display: grid; grid-template-columns: repeat(8, 1fr); max-height: 10rem; overflow-y: auto; padding: 0.25rem var(--sf-gutter); border-bottom: 1px solid var(--sf-border); }
 .sf-emoji { padding: 0.25rem 0; border: 0; background: none; font-size: var(--sf-fs-title); line-height: 1.5; border-radius: 0.5rem; &:hover, &:focus-visible { background: var(--sf-bg); } }
 

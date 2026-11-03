@@ -32,6 +32,18 @@ export class ApiService {
   private readonly injector = inject(Injector);
 
   async request<T>(path: string, init: RequestInit = {}): Promise<T> {
+    const res = await this.send(path, init);
+    return (res.status === 204 ? undefined : await res.json()) as T;
+  }
+
+  /** `getObject`: a file of the media cache. An ordinary call that answers with the bytes, and the name of the file. */
+  async file(path: string): Promise<{ blob: Blob; name: string | null }> {
+    const res = await this.send(path);
+    const name = /filename\*=UTF-8''([^;]+)/.exec(res.headers.get('Content-Disposition') ?? '')?.[1];
+    return { blob: await res.blob(), name: name ? decodeURIComponent(name) : null };
+  }
+
+  private async send(path: string, init: RequestInit = {}): Promise<Response> {
     const user = this.auth.user();
     if (!user) throw new ApiError('Not signed in', 401);
 
@@ -48,16 +60,14 @@ export class ApiService {
       const body = await res.json().catch(() => ({}));
       throw new ApiError(body.error ?? `Request failed (${res.status})`, res.status);
     }
-    return (res.status === 204 ? undefined : await res.json()) as T;
+    return res;
   }
 
   private call(path: string, init: RequestInit, token: string): Promise<Response> {
     return fetch(`${environment.apiBase}${path}`, {
       ...init,
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
+      // JSON unless the caller sends something else (a file)
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json', ...(init.headers as Record<string, string> | undefined) },
     });
   }
 

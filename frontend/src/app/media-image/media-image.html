@@ -1,0 +1,9 @@
+<span class="sf-media" [style.aspect-ratio]="ratio()">
+  @if (src(); as url) {
+    <img [src]="url" [alt]="media().name ?? 'Image'" />
+  } @else if (failed()) {
+    <span class="sf-hint">Could not load the image</span>
+  } @else {
+    <span class="sf-hint">Loading…</span>
+  }
+</span>

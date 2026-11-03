@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { ChatMessage, Conversation, MessageDeleteCriteria, MessageDeleteResult } from '../models';
+import { ChatMessage, Conversation, MessageDeleteCriteria, MessageDeleteResult, NewMedia } from '../models';
 import { ApiService } from './api.service';
 import { FriendsService } from './friends.service';
 import { MessagesService } from './messages.service';
@@ -20,8 +20,9 @@ export class ChatService {
     return this.api.request<Conversation>(this.base(friendId));
   }
 
-  send(friendId: string, text: string): Promise<ChatMessage> {
-    return this.api.request<ChatMessage>(this.base(friendId), { method: 'POST', body: JSON.stringify({ text }) });
+  /** Sends a message: a text, a file that was uploaded (then the text is its caption), or both. */
+  send(friendId: string, text: string, media?: NewMedia): Promise<ChatMessage> {
+    return this.api.request<ChatMessage>(this.base(friendId), { method: 'POST', body: JSON.stringify({ text, media }) });
   }
 
   edit(friendId: string, messageId: string, text: string): Promise<ChatMessage> {

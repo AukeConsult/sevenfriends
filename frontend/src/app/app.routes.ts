@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard, guestGuard } from './core/auth.guard';
 import { AddFriend } from './add-friend/add-friend';
+import { AddImage } from './add-image/add-image';
 import { Chat } from './chat/chat';
 import { DeleteAccount } from './delete-account/delete-account';
 import { Friends } from './friends/friends';
@@ -8,6 +9,7 @@ import { InviteFriend } from './invite-friend/invite-friend';
 import { Login } from './login/login';
 import { LoginEmail } from './login-email/login-email';
 import { LoginLink } from './login-link/login-link';
+import { MediaViewer } from './media-viewer/media-viewer';
 import { PhoneAuth } from './phone-auth/phone-auth';
 import { Notifications } from './notifications/notifications';
 import { Pending } from './pending/pending';
@@ -21,7 +23,9 @@ export const routes: Routes = [
   { path: 'friends', component: Friends, canActivate: [authGuard], title: 'Friends – Seven Friends' },
   { path: 'friends/add', component: AddFriend, canActivate: [authGuard], title: 'Add a friend – Seven Friends' },
   { path: 'friends/:id/invite', component: InviteFriend, canActivate: [authGuard], title: 'Invite a friend – Seven Friends' },
+  { path: 'friends/:id/image', component: AddImage, canActivate: [authGuard], title: 'Send an image – Seven Friends' },
   { path: 'friends/:id', component: Chat, canActivate: [authGuard], title: 'Conversation – Seven Friends' },
+  { path: 'media/:ownerId/:objectId', component: MediaViewer, canActivate: [authGuard], title: 'Image – Seven Friends' },
   { path: 'pending', component: Pending, canActivate: [authGuard], title: 'Waiting – Seven Friends' },
   { path: 'profile', component: Profile, canActivate: [authGuard], title: 'Profile – Seven Friends' },
   { path: 'profile/picture', component: ProfilePicturePage, canActivate: [authGuard], title: 'Your picture – Seven Friends' },

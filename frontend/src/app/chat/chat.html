@@ -102,6 +102,13 @@
     <div class="sf-composer-row">
       <button type="button" class="sf-icon-btn sf-emoji-toggle" (click)="emojiOpen.set(!emojiOpen())" [attr.aria-expanded]="emojiOpen()"
               [attr.aria-label]="emojiOpen() ? 'Hide the emojis' : 'Show the emojis'">😊</button>
+      @if (!editing()) {
+        <a [routerLink]="['/friends', friendId, 'image']" class="sf-icon-btn" aria-label="Send an image" title="Send an image">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="9" cy="10" r="1.5" /><path d="M21 16l-5-5-8 9" />
+          </svg>
+        </a>
+      }
       <textarea #field class="form-control sf-composer-field" rows="1" placeholder="Write a message" [value]="text()"
                 (input)="typed()" (keydown.enter)="enterPressed($event)" maxlength="2000" autocomplete="off" autocorrect="off" spellcheck="true" enterkeyhint="enter"
                 aria-label="Message"></textarea>
@@ -132,8 +139,18 @@
     @for (message of shown(); track message.id) {
       <div class="sf-message" [attr.data-id]="message.id" [class.sf-mine]="message.mine" [class.sf-doomed]="doomed().has(message.id)">
         <!-- my own message: tap it to edit or delete it -->
-        <div class="sf-bubble" [class.sf-bubble-tap]="message.mine" [attr.role]="message.mine ? 'button' : null" [attr.tabindex]="message.mine ? 0 : null"
-             [attr.aria-expanded]="message.mine ? selected() === message.id : null" (click)="select(message)" (keydown.enter)="select(message)">{{ message.text }}</div>
+        <div class="sf-bubble" [class.sf-bubble-media]="message.media" [class.sf-bubble-tap]="message.mine" [attr.role]="message.mine ? 'button' : null" [attr.tabindex]="message.mine ? 0 : null"
+             [attr.aria-expanded]="message.mine ? selected() === message.id : null" (click)="select(message)" (keydown.enter)="select(message)">
+          @if (message.media; as media) {
+            <!-- a friend's image opens at once; on my own message the tap opens Edit / Delete (and Open) -->
+            @if (message.mine) {
+              <app-media-image [media]="media" />
+            } @else {
+              <a [routerLink]="['/media', media.ownerId, media.objectId]" class="sf-media-link" aria-label="Open the image"><app-media-image [media]="media" /></a>
+            }
+          }
+          @if (message.text) { <span class="sf-caption">{{ message.text }}</span> }
+        </div>
         @if (message.time) {
           <small class="sf-hint">{{ message.time | date: 'd MMM, HH:mm' }}@if (message.edited) { · edited }@if (doomed().has(message.id)) { · <strong class="text-danger">will be deleted</strong> }</small>
         }
@@ -144,6 +161,9 @@
               <button type="button" class="btn btn-light btn-sm rounded-pill px-3" (click)="deleting.set(null)">Cancel</button>
               <button type="button" class="btn btn-danger btn-sm rounded-pill px-3" (click)="remove(message)">Delete</button>
             } @else {
+              @if (message.media; as media) {
+                <a [routerLink]="['/media', media.ownerId, media.objectId]" class="btn btn-light btn-sm rounded-pill px-3">Open</a>
+              }
               <button type="button" class="btn btn-light btn-sm rounded-pill px-3" (click)="startEdit(message)">Edit</button>
               <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3" (click)="deleting.set(message.id)">Delete</button>
             }

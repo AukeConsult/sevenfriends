@@ -1,0 +1,39 @@
+<header class="sf-bar">
+  <a [routerLink]="['/friends', friendId]" class="sf-back" aria-label="Back to the conversation">‹</a>
+  <h1 class="sf-bar-title">Send an image</h1>
+</header>
+
+<main class="sf-narrow">
+  @if (!image()) {
+    <p class="m-0">Choose a picture from your phone or take a new one. It is made smaller before it is sent, so a big photo is fine.</p>
+    <label class="btn btn-primary btn-lg" [class.disabled]="preparing()">
+      {{ preparing() ? 'Preparing…' : 'Choose an image' }}
+      <input type="file" accept="image/*" hidden [disabled]="preparing()" (change)="onFile($event)" />
+    </label>
+    @if (error()) {
+      <div class="alert alert-danger py-2 m-0" role="alert">{{ error() }}</div>
+    }
+    <a [routerLink]="['/friends', friendId]" class="btn btn-light">Cancel</a>
+  } @else {
+    @if (preview(); as src) {
+      <img class="sf-attach-preview" [src]="src" alt="The image you are about to send" />
+    }
+    @if (image(); as shown) {
+      <p class="sf-hint text-center m-0">{{ shown.name }} · {{ shown.width }} × {{ shown.height }} · {{ formatBytes(shown.blob.size) }}</p>
+    }
+    <label class="sf-field"><span class="sf-hint">Add a text (optional)</span>
+      <textarea appClear class="form-control" rows="2" maxlength="500" [value]="caption()" (input)="caption.set($any($event.target).value)" [disabled]="busy()"></textarea>
+    </label>
+    @if (error()) {
+      <div class="alert alert-danger py-2 m-0" role="alert">{{ error() }}</div>
+    }
+    <div class="d-flex gap-2">
+      <a [routerLink]="['/friends', friendId]" class="btn btn-light btn-lg flex-fill" [class.disabled]="busy()">Cancel</a>
+      <button type="button" class="btn btn-primary btn-lg flex-fill" [disabled]="busy()" (click)="send()">{{ busy() ? 'Sending…' : 'Send' }}</button>
+    </div>
+    <label class="btn btn-link" [class.disabled]="busy()">
+      Choose another image
+      <input type="file" accept="image/*" hidden [disabled]="busy()" (change)="onFile($event)" />
+    </label>
+  }
+</main>
