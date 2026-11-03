@@ -2,9 +2,10 @@ import { Router } from "express";
 import { DecodedIdToken } from "firebase-admin/auth";
 import { FieldValue, getFirestore } from "firebase-admin/firestore";
 import { asyncHandler, requireAuth } from "./auth";
-import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAX_FRIENDS, MAX_MOOD_MESSAGE, MAX_NAME_LENGTH, MAX_PICTURE_BYTES, MOOD_COUNT } from "./constants";
+import { parsePicture, readAvatar, removeAvatar, saveAvatar } from "./avatar";
+import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAX_FRIENDS, MAX_MOOD_MESSAGE, MAX_NAME_LENGTH, MOOD_COUNT } from "./constants";
 import { ProfileDetails, ProfilePicture, Socials } from "./models";
-import { circleCol, profilePictureDoc, userDoc } from "./paths";
+import { circleCol, userDoc } from "./paths";
 import { PHONE_RE, isCountry, SOCIAL_NETWORKS, parseSocials, phoneKey, presenceOf, text } from "./validation";
 
 const uidOf = (res: { locals: Record<string, unknown> }) => (res.locals.token as DecodedIdToken).uid;
@@ -184,22 +185,11 @@ async function touchFriends(uid: string): Promise<void> {
 
 // ---------------------------------------------------------------- my picture
 
-/** A picture the app made (a data URL) is only accepted when it really is a small JPEG, PNG or WebP image. */
-const PICTURE_URL = /^data:image\/(jpeg|png|webp);base64,([A-Za-z0-9+/]+={0,2})$/;
-
-/** Do the first bytes match what the type says? (Nothing else is checked: the app makes the picture itself.) */
-function looksLikeImage(type: string, bytes: Buffer): boolean {
-  if (type === "jpeg") return bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff;
-  if (type === "png") return bytes.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]));
-  return bytes.subarray(0, 4).toString("latin1") === "RIFF" && bytes.subarray(8, 12).toString("latin1") === "WEBP";
-}
-
-/** My uploaded picture, as a data URL (or null). It is in its own document so it does not weigh on every read of my account. */
+/** My uploaded picture, as a data URL (or null). It is an object in the media cache, not part of my account document. */
 profileRouter.get(
   "/picture",
   asyncHandler(async (_req, res) => {
-    const image = ((await profilePictureDoc(uidOf(res)).get()).data()?.image as string | undefined) ?? null;
-    res.json({ image } satisfies ProfilePicture);
+    res.json({ image: await readAvatar(uidOf(res)) } satisfies ProfilePicture);
   }),
 );
 
@@ -207,28 +197,14 @@ profileRouter.get(
 profileRouter.put(
   "/picture",
   asyncHandler(async (req, res) => {
-    const image = req.body?.image;
-    const match = typeof image === "string" ? PICTURE_URL.exec(image) : null;
-    if (!match) {
-      res.status(400).json({ error: "The picture must be a JPEG, PNG or WebP image" });
+    const picture = parsePicture(req.body?.image);
+    if ("error" in picture) {
+      res.status(400).json({ error: picture.error });
       return;
     }
-    const bytes = Buffer.from(match[2], "base64");
-    if (bytes.length > MAX_PICTURE_BYTES) {
-      res.status(400).json({ error: `The picture is too big (at most ${Math.round(MAX_PICTURE_BYTES / 1024)} KB)` });
-      return;
-    }
-    if (!looksLikeImage(match[1], bytes)) {
-      res.status(400).json({ error: "That is not a valid image" });
-      return;
-    }
-    const uid = uidOf(res);
-    await getFirestore().runTransaction(async (tx) => {
-      tx.set(profilePictureDoc(uid), { image, updatedAt: FieldValue.serverTimestamp() });
-      tx.set(userDoc(uid), { profilePictureAt: FieldValue.serverTimestamp() }, { merge: true });
-    });
-    await touchFriends(uid); // confirmed friends see my picture: tell their apps
-    res.json({ image } satisfies ProfilePicture);
+    await saveAvatar(uidOf(res), picture.bytes);
+    await touchFriends(uidOf(res)); // confirmed friends see my picture: tell their apps
+    res.json({ image: req.body.image } satisfies ProfilePicture);
   }),
 );
 
@@ -236,12 +212,8 @@ profileRouter.put(
 profileRouter.delete(
   "/picture",
   asyncHandler(async (_req, res) => {
-    const uid = uidOf(res);
-    await getFirestore().runTransaction(async (tx) => {
-      tx.delete(profilePictureDoc(uid));
-      tx.set(userDoc(uid), { profilePictureAt: null }, { merge: true });
-    });
-    await touchFriends(uid);
+    await removeAvatar(uidOf(res));
+    await touchFriends(uidOf(res));
     res.status(204).end();
   }),
 );

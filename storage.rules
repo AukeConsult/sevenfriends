@@ -1,0 +1,10 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // The media cache (sf-cache/<userid>/<objectid>) is only read and written by the backend (the Admin SDK ignores these rules).
+    // The app gets files from GET /api/sf-cache/<userid>/<objectid>. Nobody reaches the bucket directly.
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

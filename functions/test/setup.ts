@@ -36,6 +36,12 @@ vi.mock("firebase-admin/messaging", () => ({
   }),
 }));
 
+// Google Storage is always the in-memory fake (test/fake-storage.ts); the Storage emulator is not needed for the tests.
+vi.mock("firebase-admin/storage", async () => {
+  const { fakeBucket } = await import("./fake-storage");
+  return { getStorage: () => ({ bucket: () => fakeBucket }) };
+});
+
 /** logins removed by `deleteUser` (the erase route), so tests can check the login went too */
 export const deletedLogins: Set<string> = ((globalThis as any).__deletedLogins ??= new Set<string>());
 

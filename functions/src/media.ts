@@ -1,0 +1,210 @@
+import express, { Request, Response, Router } from "express";
+import { DecodedIdToken } from "firebase-admin/auth";
+import { asyncHandler, requireAuth } from "./auth";
+import { CACHE_ROOT, CHUNK_BYTES, DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAX_CHUNKS, MAX_UPLOAD_BYTES } from "./constants";
+import { MediaKind, MediaUpload } from "./models";
+import { circleCol, messageCol, userDoc } from "./paths";
+import {
+  OBJECT_NAME,
+  checkBytes,
+  checkHead,
+  chunkName,
+  cleanFileName,
+  deleteChunks,
+  isObjectId,
+  joinChunks,
+  objectInfo,
+  putObject,
+  quotaLeft,
+  readHead,
+  readObject,
+} from "./sf-cache";
+
+const uidOf = (res: Response) => (res.locals.token as DecodedIdToken).uid;
+const MESSAGE_KINDS: MediaKind[] = ["image", "video", "audio"];
+
+/** The file comes as the plain request body (any content type except JSON: the type is found from the first bytes, not from the header). */
+const fileBody = express.raw({ type: () => true, limit: MAX_UPLOAD_BYTES });
+const chunkBody = express.raw({ type: () => true, limit: CHUNK_BYTES });
+
+/**
+ * The media cache: /api/sf-cache/<userid>/<objectid>. Files are stored by the person who sends them (in their own folder)
+ * and read through this proxy, never straight from Google Storage.
+ */
+export const cacheRouter = Router();
+
+/** Upload a file to send in a message: `POST /api/sf-cache?kind=image|video|audio&name=<file name>`, the file as the body. Answers where it is stored. */
+cacheRouter.post(
+  "/",
+  requireAuth,
+  fileBody,
+  asyncHandler(async (req, res) => {
+    const kind = req.query.kind as MediaKind;
+    if (!MESSAGE_KINDS.includes(kind)) {
+      res.status(400).json({ error: "kind must be image, video or audio" });
+      return;
+    }
+    const bytes = Buffer.isBuffer(req.body) ? req.body : Buffer.alloc(0);
+    const checked = checkBytes(kind, bytes);
+    if ("error" in checked) {
+      res.status(checked.status).json({ error: checked.error });
+      return;
+    }
+    const uid = uidOf(res);
+    if (bytes.length > (await quotaLeft(uid))) {
+      res.status(413).json({ error: "Your storage for pictures, video and audio is full. Delete some messages first." });
+      return;
+    }
+    const objectId = messageCol(uid).doc().id; // a message with this file gets the same id
+    const name = cleanFileName(req.query.name);
+    await putObject(uid, objectId, bytes, kind, checked.mime, name);
+    res.status(201).json({ ownerId: uid, objectId, kind, mime: checked.mime, name, bytes: bytes.length } satisfies MediaUpload);
+  }),
+);
+
+/**
+ * A big file is sent in pieces, still through the API (at most MAX_CHUNKS of CHUNK_BYTES each):
+ *   1. `POST /api/sf-cache/uploads` answers `{ uploadId }`; the file will get that id as its object id
+ *   2. `PUT /api/sf-cache/uploads/<uploadId>/<n>` for every piece n = 0, 1, 2 ... (a piece sent again replaces the first one)
+ *   3. `POST /api/sf-cache/uploads/<uploadId>/finish?kind=...&parts=<how many>&name=...` joins them; it answers like a single upload
+ * The pieces are in the sender's folder as tmp/<uploadId>/<n> and count towards the quota while they wait.
+ */
+cacheRouter.post("/uploads", requireAuth, (_req, res) => {
+  res.status(201).json({ uploadId: messageCol(uidOf(res)).doc().id, chunkBytes: CHUNK_BYTES, maxChunks: MAX_CHUNKS });
+});
+
+cacheRouter.put(
+  "/uploads/:uploadId/:n",
+  requireAuth,
+  chunkBody,
+  asyncHandler(async (req, res) => {
+    const n = /^\d{1,2}$/.test(req.params.n) ? Number(req.params.n) : -1;
+    if (!isObjectId(req.params.uploadId) || n < 0 || n >= MAX_CHUNKS) {
+      res.status(400).json({ error: `A piece is numbered 0 to ${MAX_CHUNKS - 1}` });
+      return;
+    }
+    const bytes = Buffer.isBuffer(req.body) ? req.body : Buffer.alloc(0);
+    if (!bytes.length) {
+      res.status(400).json({ error: "Send the piece as the request body" });
+      return;
+    }
+    const uid = uidOf(res);
+    const name = chunkName(req.params.uploadId, n);
+    if (bytes.length > (await quotaLeft(uid)) + ((await objectInfo(uid, name))?.bytes ?? 0)) {
+      res.status(413).json({ error: "Your storage for pictures, video and audio is full. Delete some messages first." });
+      return;
+    }
+    await putObject(uid, name, bytes, "chunk", "application/octet-stream");
+    res.status(204).end();
+  }),
+);
+
+cacheRouter.post(
+  "/uploads/:uploadId/finish",
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const kind = req.query.kind as MediaKind;
+    const parts = Number(req.query.parts);
+    if (!isObjectId(req.params.uploadId) || !MESSAGE_KINDS.includes(kind) || !Number.isInteger(parts) || parts < 1 || parts > MAX_CHUNKS) {
+      res.status(400).json({ error: `Say the kind (image, video or audio) and how many pieces there are (1 to ${MAX_CHUNKS})` });
+      return;
+    }
+    const uid = uidOf(res);
+    const objectId = req.params.uploadId;
+    const done = await objectInfo(uid, objectId);
+    if (done?.kind === kind) {
+      // finished before (the answer got lost): the same answer again
+      res.json({ ownerId: uid, objectId, kind, mime: done.mime, name: done.fileName, bytes: done.bytes } satisfies MediaUpload);
+      return;
+    }
+    const pieces = await Promise.all(Array.from({ length: parts }, (_, n) => objectInfo(uid, chunkName(objectId, n))));
+    const missing = pieces.findIndex((p) => !p);
+    if (missing >= 0) {
+      res.status(400).json({ error: `Piece ${missing} has not arrived` });
+      return;
+    }
+    const size = pieces.reduce((sum, p) => sum + p!.bytes, 0);
+    const checked = checkHead(kind, await readHead(uid, chunkName(objectId, 0), 12), size);
+    if ("error" in checked) {
+      await deleteChunks(uid, objectId);
+      res.status(checked.status).json({ error: checked.error });
+      return;
+    }
+    const name = cleanFileName(req.query.name);
+    await joinChunks(uid, objectId, parts, objectId, kind, checked.mime, name);
+    await deleteChunks(uid, objectId);
+    res.status(201).json({ ownerId: uid, objectId, kind, mime: checked.mime, name, bytes: size } satisfies MediaUpload);
+  }),
+);
+
+/** Add the small preview to one of my uploads (an image or a video): `PUT /api/sf-cache/<objectid>/thumb`, the picture as the body. */
+cacheRouter.put(
+  "/:objectId/thumb",
+  requireAuth,
+  fileBody,
+  asyncHandler(async (req, res) => {
+    const uid = uidOf(res);
+    const info = isObjectId(req.params.objectId) ? await objectInfo(uid, req.params.objectId) : null;
+    if (!info || !(info.kind === "image" || info.kind === "video")) {
+      res.status(404).json({ error: "Upload the file first (a preview is for an image or a video)" });
+      return;
+    }
+    const bytes = Buffer.isBuffer(req.body) ? req.body : Buffer.alloc(0);
+    const checked = checkBytes("thumb", bytes);
+    if ("error" in checked) {
+      res.status(checked.status).json({ error: checked.error });
+      return;
+    }
+    await putObject(uid, `${req.params.objectId}.thumb`, bytes, "thumb", checked.mime);
+    res.status(204).end();
+  }),
+);
+
+/** Is `reader` one of `owner`'s confirmed friends? */
+async function isFriendOf(reader: string, owner: string): Promise<boolean> {
+  const mine = await circleCol(reader).doc(DEFAULT_CIRCLE_ID).collection(FRIENDS_SUBCOLLECTION).where("linkedUid", "==", owner).get();
+  return mine.docs.some((d) => d.data().status === "confirmed");
+}
+
+/**
+ * May `reader` open this object of `owner`? The owner always. A message file: the person it was sent to, who has the message
+ * (the message has the id of its file, so deleting the message closes the file). A profile picture: the owner's confirmed friends.
+ * Anything else, also an unknown object, is simply "not found" (so nobody can find out what exists).
+ */
+async function mayRead(reader: string, owner: string, objectId: string): Promise<boolean> {
+  if (reader === owner) return true;
+  const message = (await messageCol(reader).doc(objectId).get()).data();
+  if (message?.media && message.fromUid === owner) return true;
+  const account = (await userDoc(owner).get()).data();
+  return account?.avatarObjectId === objectId && (await isFriendOf(reader, owner));
+}
+
+/**
+ * The proxy, `getObject(userid/objectid)`: `GET /api/sf-cache/<userid>/<objectid>` (or `<objectid>.thumb`), an ordinary API call
+ * with the login header. It answers with the bytes of the file, its type (`Content-Type`) and its name (`Content-Disposition`).
+ */
+cacheRouter.get(
+  "/:ownerId/:name",
+  requireAuth,
+  asyncHandler(async (req: Request, res: Response) => {
+    const { ownerId, name } = req.params;
+    const parsed = OBJECT_NAME.exec(name);
+    const info = parsed && (await mayRead(uidOf(res), ownerId, parsed[1])) ? await objectInfo(ownerId, name) : null;
+    if (!info) {
+      res.status(404).json({ error: "Not found" });
+      return;
+    }
+    const etag = `"${name}"`; // a file never changes under its name
+    res.set({ "Content-Type": info.mime, "Content-Length": String(info.bytes), "Content-Disposition": `inline; filename*=UTF-8''${encodeURIComponent(info.fileName ?? name)}`, "Cache-Control": "private, max-age=31536000, immutable", ETag: etag, "X-Content-Type-Options": "nosniff" });
+    if (req.header("If-None-Match") === etag) {
+      res.status(304).end();
+      return;
+    }
+    const stream = readObject(ownerId, name);
+    stream.on("error", (err) => {
+      console.error(`Could not read ${CACHE_ROOT}/${ownerId}/${name}`, err);
+      res.destroy();
+    });
+    stream.pipe(res);
+  }),
+);

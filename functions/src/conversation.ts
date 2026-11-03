@@ -3,9 +3,10 @@ import { DecodedIdToken } from "firebase-admin/auth";
 import { DocumentReference, FieldValue, Timestamp, getFirestore } from "firebase-admin/firestore";
 import { asyncHandler } from "./auth";
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION } from "./constants";
-import { ChatMessage, Conversation, MessageDeleteCriteria, MessageDeleteResult } from "./models";
+import { ChatMessage, Conversation, MediaRef, MessageDeleteCriteria, MessageDeleteResult, NewMedia } from "./models";
 import { circleCol, messageCol, userDoc } from "./paths";
 import { sendPush } from "./push";
+import { deleteObject, isObjectId, mediaLabel, objectInfo } from "./sf-cache";
 
 export const MAX_MESSAGE_LENGTH = 2000;
 const FEED_LIMIT = 200; // the feed shows the latest 200 messages
@@ -58,7 +59,7 @@ conversationRouter.get(
     const messages: ChatMessage[] = snap.docs
       .map((d) => {
         const m = d.data();
-        return { id: d.id, text: m.text as string, mine: m.fromUid === uid, read: Boolean(m.read), time: iso(m.time), edited: Boolean(m.editedAt) };
+        return { id: d.id, text: m.text as string, mine: m.fromUid === uid, read: Boolean(m.read), time: iso(m.time), edited: Boolean(m.editedAt), media: (m.media as MediaRef | undefined) ?? null };
       })
       .sort((a, b) => (a.time ?? "").localeCompare(b.time ?? ""))
       .slice(-FEED_LIMIT);
@@ -67,7 +68,33 @@ conversationRouter.get(
   }),
 );
 
-/** Send a message: { text }. Both people get a copy. */
+/** The file of a message I am sending: I must have uploaded it (`POST /api/sf-cache`) and not sent it yet. Answers with an error and returns null otherwise. */
+async function attachedMedia(uid: string, body: NewMedia, res: Response): Promise<MediaRef | null> {
+  const info = isObjectId(body?.objectId) ? await objectInfo(uid, body.objectId) : null;
+  if (!info || !(info.kind === "image" || info.kind === "video" || info.kind === "audio")) {
+    res.status(400).json({ error: "Upload the file first" });
+    return null;
+  }
+  if ((await messageCol(uid).doc(body.objectId).get()).exists) {
+    res.status(409).json({ error: "That file has been sent already" });
+    return null;
+  }
+  const whole = (v: unknown, max: number) => (Number.isInteger(v) && (v as number) >= 1 && (v as number) <= max ? (v as number) : null);
+  return {
+    ownerId: uid,
+    objectId: body.objectId,
+    kind: info.kind,
+    mime: info.mime,
+    name: info.fileName,
+    bytes: info.bytes,
+    width: whole(body.width, 20_000),
+    height: whole(body.height, 20_000),
+    durationMs: whole(body.durationMs, 86_400_000),
+    hasThumb: Boolean(await objectInfo(uid, `${body.objectId}.thumb`)),
+  };
+}
+
+/** Send a message: { text?, media? }, a text, a file you uploaded (the text is then its caption) or both. Both people get a copy. */
 conversationRouter.post(
   "/",
   asyncHandler(async (req, res) => {
@@ -76,7 +103,7 @@ conversationRouter.post(
     const token = res.locals.token as DecodedIdToken;
 
     const text = typeof req.body?.text === "string" ? req.body.text.trim() : "";
-    if (!text) {
+    if (!text && !req.body?.media) {
       res.status(400).json({ error: "Write a message first" });
       return;
     }
@@ -84,6 +111,8 @@ conversationRouter.post(
       res.status(400).json({ error: `A message can be at most ${MAX_MESSAGE_LENGTH} characters` });
       return;
     }
+    const media = req.body?.media ? await attachedMedia(token.uid, req.body.media, res) : null;
+    if (req.body?.media && !media) return;
 
     // the other side of the connection must still be there and confirmed
     const peerEntry = await circleCol(connection.peerUid)
@@ -96,7 +125,7 @@ conversationRouter.post(
       return;
     }
 
-    const mine = messageCol(token.uid).doc();
+    const mine = media ? messageCol(token.uid).doc(media.objectId) : messageCol(token.uid).doc(); // a message with a file has the id of the file: that is how the receiver is let in
     const theirs = messageCol(connection.peerUid).doc(mine.id); // same message id on both sides
     const common = {
       connectionId: connection.id,
@@ -104,6 +133,7 @@ conversationRouter.post(
       fromName: ((await userDoc(token.uid).get()).data()?.displayName as string | undefined) ?? token.name ?? token.email ?? "Someone",
       toUid: connection.peerUid,
       text,
+      ...(media ? { media } : {}),
       time: FieldValue.serverTimestamp(),
     };
     const batch = getFirestore().batch();
@@ -115,9 +145,9 @@ conversationRouter.post(
     await batch.commit();
 
     const saved = (await mine.get()).data()!;
-    const created: ChatMessage = { id: mine.id, text, mine: true, read: true, time: iso(saved.time), edited: false };
+    const created: ChatMessage = { id: mine.id, text, media, mine: true, read: true, time: iso(saved.time), edited: false };
     // wake the other person's devices (before the answer: the function may stop right after it)
-    await sendPush(connection.peerUid, { id: `message-${mine.id}`, title: common.fromName, body: text, url: `/friends/${connection.id}` });
+    await sendPush(connection.peerUid, { id: `message-${mine.id}`, title: common.fromName, body: text || mediaLabel(media!.kind), url: `/friends/${connection.id}` });
     res.status(201).json(created);
   }),
 );
@@ -160,6 +190,7 @@ conversationRouter.post(
 
     let deleted = 0;
     if (body.dryRun !== true && matching.length) {
+      const files = matching.flatMap((d) => (d.data().media as MediaRef | undefined) ?? []);
       for (let i = 0; i < matching.length; i += DELETE_CHUNK) {
         const batch = getFirestore().batch();
         for (const d of matching.slice(i, i + DELETE_CHUNK)) {
@@ -170,6 +201,7 @@ conversationRouter.post(
         if (i + DELETE_CHUNK >= matching.length) await tellPeer(batch, peerEntryOf(connection));
         await batch.commit();
       }
+      for (const file of files) await deleteObject(file.ownerId, file.objectId);
     }
     const result: MessageDeleteResult = { matched: matching.length, deleted };
     res.json(result);
@@ -191,7 +223,7 @@ async function ownMessage(req: Request, res: Response) {
     res.status(403).json({ error: "You can only change your own messages" });
     return null;
   }
-  return { mine, theirs: messageCol(connection.peerUid).doc(mine.id), peerEntry: peerEntryOf(connection) };
+  return { mine, theirs: messageCol(connection.peerUid).doc(mine.id), peerEntry: peerEntryOf(connection), media: (data.media as MediaRef | undefined) ?? null };
 }
 
 /** The friend's copy of the friendship. */
@@ -204,14 +236,14 @@ async function tellPeer(batch: FirebaseFirestore.WriteBatch, peerEntry: Document
   if ((await peerEntry.get()).exists) batch.update(peerEntry, { messagesChangedAt: FieldValue.serverTimestamp() });
 }
 
-/** Edit one of my messages: { text }. Both copies change; the message is marked as edited. */
+/** Edit one of my messages: { text } (the caption, for a message with a file). Both copies change; the message is marked as edited. */
 conversationRouter.put(
   "/:messageId",
   asyncHandler(async (req, res) => {
     const own = await ownMessage(req, res);
     if (!own) return;
     const text = typeof req.body?.text === "string" ? req.body.text.trim() : "";
-    if (!text) {
+    if (!text && !own.media) {
       res.status(400).json({ error: "Write a message first" });
       return;
     }
@@ -226,12 +258,12 @@ conversationRouter.put(
     await tellPeer(batch, own.peerEntry);
     await batch.commit();
     const saved = (await own.mine.get()).data()!;
-    const edited: ChatMessage = { id: own.mine.id, text, mine: true, read: true, time: iso(saved.time), edited: true };
+    const edited: ChatMessage = { id: own.mine.id, text, media: own.media, mine: true, read: true, time: iso(saved.time), edited: true };
     res.json(edited);
   }),
 );
 
-/** Delete one of my messages: it disappears for both people. */
+/** Delete one of my messages: it disappears for both people, and so does its file. */
 conversationRouter.delete(
   "/:messageId",
   asyncHandler(async (req, res) => {
@@ -242,6 +274,7 @@ conversationRouter.delete(
     batch.delete(own.theirs); // deleting a copy that is not there is fine
     await tellPeer(batch, own.peerEntry);
     await batch.commit();
+    if (own.media) await deleteObject(own.media.ownerId, own.media.objectId);
     res.status(204).end();
   }),
 );

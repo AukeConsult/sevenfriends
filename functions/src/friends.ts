@@ -11,8 +11,10 @@ import {
   MAX_REQUEST_MESSAGE,
 } from "./constants";
 import { invitesSentToday, queueInvite } from "./outbox";
-import { Friend, FriendInvite, FriendStatus, NewFriend, ProfilePicture, Socials } from "./models";
-import { circleCol, friendRequestCol, messageCol, profilePictureDoc, userDoc } from "./paths";
+import { Friend, FriendInvite, MediaRef, FriendStatus, NewFriend, ProfilePicture, Socials } from "./models";
+import { circleCol, friendRequestCol, messageCol, userDoc } from "./paths";
+import { readAvatar } from "./avatar";
+import { deleteObject } from "./sf-cache";
 import { nameOf, sendPush } from "./push";
 import { findAccounts, signalRefsOf, writeSignal } from "./signals";
 import {
@@ -71,6 +73,7 @@ function toJson(doc: FirebaseFirestore.DocumentSnapshot): Friend {
     presence: "offline", // filled in by withUnverified (confirmed friends only)
     icon: null, // filled in by withUnverified (confirmed friends only)
     pictureAt: null,
+    pictureId: null,
     unverified: [], // filled in by withUnverified (needs a look at the other accounts)
   };
 }
@@ -102,8 +105,9 @@ async function withUnverified(friend: Friend, entry: FirebaseFirestore.DocumentD
           presence: presenceOf(account),
           icon: Number.isInteger(account.profileIcon) ? (account.profileIcon as number) : null,
           pictureAt: iso(account.profilePictureAt),
+          pictureId: (account.avatarObjectId as string | null | undefined) ?? null,
         }
-      : { country: null, mood: null, moodMessage: null, presence: "offline" as const, icon: null, pictureAt: null };
+      : { country: null, mood: null, moodMessage: null, presence: "offline" as const, icon: null, pictureAt: null, pictureId: null };
   // I did not give a name: a confirmed friend is shown by the name of their account
   const name = entry.nameGiven === false && friend.status === "confirmed" ? ((account?.displayName as string | undefined) || friend.name) : friend.name;
   const lastSpokenAt = friend.lastSpokenAt ?? (friend.status === "confirmed" ? await lastSpoken(uid, friend.id) : null);
@@ -203,8 +207,7 @@ friendsRouter.get(
       res.status(404).json({ error: "Friend not found" });
       return;
     }
-    const image = ((await profilePictureDoc(entry.linkedUid as string).get()).data()?.image as string | undefined) ?? null;
-    res.json({ image } satisfies ProfilePicture);
+    res.json({ image: await readAvatar(entry.linkedUid as string) } satisfies ProfilePicture);
   }),
 );
 
@@ -276,8 +279,10 @@ friendsRouter.delete(
     const ref = friendCol(res).doc(id);
 
     let endedWith: string | null = null; // a confirmed friend, who is told
+    let files: MediaRef[] = []; // the files of the conversation
     await getFirestore().runTransaction(async (tx) => {
       endedWith = null;
+      files = [];
       // ---- reads first ----
       const data = (await tx.get(ref)).data();
       if (!data) return; // already gone
@@ -299,7 +304,9 @@ friendsRouter.delete(
         );
       }
       feeds.forEach((feed) => feed.docs.forEach((d) => tx.delete(d.ref))); // its message feed, on both sides
+      files = feeds.flatMap((feed) => feed.docs.flatMap((d) => (d.data().media as MediaRef | undefined) ?? []));
     });
+    for (const file of new Map(files.map((f) => [f.objectId, f])).values()) await deleteObject(file.ownerId, file.objectId); // both copies of a message name the same file
     if (endedWith) {
       const name = await nameOf(uid, res.locals.token as DecodedIdToken);
       await sendPush(endedWith, { id: `removed-${id}`, title: `${name} removed the friendship`, body: "The conversation is deleted for both of you.", url: "/friends" });

@@ -2,6 +2,7 @@ import cors from "cors";
 import express from "express";
 import { circlesRouter } from "./circles";
 import { friendRequestsRouter } from "./friend-requests";
+import { cacheRouter } from "./media";
 import { messagesRouter } from "./messages";
 import { notificationsRouter } from "./notifications";
 import { preferencesRouter } from "./preferences";
@@ -21,6 +22,7 @@ export function createApp(): express.Express {
     res.json({ status: "ok", app: "sevenfriends" });
   });
   router.use("/users", usersRouter);
+  router.use("/sf-cache", cacheRouter);
   router.use("/circles", circlesRouter);
   router.use("/friend-requests", friendRequestsRouter);
   router.use("/messages", messagesRouter);

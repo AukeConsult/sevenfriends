@@ -2,6 +2,8 @@ import { getAuth } from "firebase-admin/auth";
 import { DocumentReference, Transaction, getFirestore } from "firebase-admin/firestore";
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAIL_COLLECTION } from "./constants";
 import { circleCol, friendRequestCol, messageCol, profilePictureDoc, pushDeviceCol, signalCol, userDoc } from "./paths";
+import { MediaRef } from "./models";
+import { deleteFolder, deleteObject } from "./sf-cache";
 import { signalRefsOf } from "./signals";
 import { phoneKey } from "./validation";
 
@@ -10,14 +12,14 @@ type Peer = { uid: string | null; circleId: string | null; signaled: string[] };
 
 /**
  * Erases a person from the system: the account, the profile, every friend entry and request on both
- * sides, every message they sent or received, the pings, and finally the login itself (Firebase Auth).
+ * sides, every message they sent or received (and the files of those messages), the pings, and finally the login itself (Firebase Auth).
  *
  * A connection lives in several places that all share its id, so each one is removed with the same
  * rules as deleting a friend (friends.ts), for every connection the person has:
  *   - their own entry, the request they received, the messages in their feed
  *   - the other person's entry, the request that person received, the other person's copy of the feed
  *   - the pings (incoming-signal) that connection sent
- * Invitations they sent by email (the `mail` outbox), their push devices and their uploaded picture go too.
+ * Invitations they sent by email (the `mail` outbox), their push devices and their uploaded picture and everything else in their media cache folder go too.
  * Entries other people wrote for this person but that were never found (the person never opened the
  * app after being added) are removed too: they hold the person's name, email and phone number.
  *
@@ -28,7 +30,10 @@ type Peer = { uid: string | null; circleId: string | null; signaled: string[] };
  * the data is already gone and the request can simply be repeated (safe to run twice).
  */
 export async function eraseUser(uid: string): Promise<void> {
-  await getFirestore().runTransaction((tx) => eraseInTransaction(tx, uid));
+  const files = new Map<string, MediaRef>(); // the files of the messages that go (they may be in the friends' folders)
+  await getFirestore().runTransaction((tx) => eraseInTransaction(tx, uid, files));
+  for (const file of files.values()) await deleteObject(file.ownerId, file.objectId);
+  await deleteFolder(uid); // everything I have in the media cache: pictures, anything not sent yet
 
   try {
     await getAuth().deleteUser(uid);
@@ -37,12 +42,17 @@ export async function eraseUser(uid: string): Promise<void> {
   }
 }
 
-async function eraseInTransaction(tx: Transaction, uid: string): Promise<void> {
+async function eraseInTransaction(tx: Transaction, uid: string, files: Map<string, MediaRef>): Promise<void> {
   const db = getFirestore();
   const account = (await tx.get(userDoc(uid))).data() ?? {};
 
   const doomed = new Map<string, DocumentReference>(); // path → document
   const drop = (ref: DocumentReference) => doomed.set(ref.path, ref);
+  const dropMessage = (d: FirebaseFirestore.QueryDocumentSnapshot) => {
+    drop(d.ref);
+    const file = d.data().media as MediaRef | undefined;
+    if (file) files.set(file.objectId, file);
+  };
   const peers = new Map<string, Peer>(); // connection id → the other side
   const note = (id: string, peer: Partial<Peer>) => {
     const known = peers.get(id) ?? { uid: null, circleId: null, signaled: [] };
@@ -96,14 +106,14 @@ async function eraseInTransaction(tx: Transaction, uid: string): Promise<void> {
     drop(friendRequestCol(peer.uid).doc(id)); // a request I sent
     drop(circleCol(peer.uid).doc(peer.circleId ?? DEFAULT_CIRCLE_ID).collection(FRIENDS_SUBCOLLECTION).doc(id));
     drop(signalCol(peer.uid).doc(id));
-    (await tx.get(messageCol(peer.uid).where("connectionId", "==", id))).docs.forEach((d) => drop(d.ref));
+    (await tx.get(messageCol(peer.uid).where("connectionId", "==", id))).docs.forEach(dropMessage);
   }
 
   // 5. what is still under my account: my messages (also any whose connection was gone already), pings
-  (await tx.get(messageCol(uid))).docs.forEach((d) => drop(d.ref));
+  (await tx.get(messageCol(uid))).docs.forEach(dropMessage);
   (await tx.get(signalCol(uid))).docs.forEach((d) => drop(d.ref));
   for (const field of ["fromUid", "toUid"]) {
-    (await tx.get(db.collectionGroup("messages").where(field, "==", uid))).docs.forEach((d) => drop(d.ref));
+    (await tx.get(db.collectionGroup("messages").where(field, "==", uid))).docs.forEach(dropMessage);
   }
 
   // 6. invitation emails I sent (they carry my name and my message)
@@ -112,7 +122,7 @@ async function eraseInTransaction(tx: Transaction, uid: string): Promise<void> {
   // 7. the devices registered for push
   (await tx.get(pushDeviceCol(uid))).docs.forEach((d) => drop(d.ref));
 
-  // 8. the picture the person uploaded
+  // 8. a picture saved before the media cache existed (the new one is in the cache folder, deleted after the commit)
   drop(profilePictureDoc(uid));
 
   // 9. the account itself

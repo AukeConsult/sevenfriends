@@ -4,6 +4,7 @@ import { FieldValue, Timestamp } from "firebase-admin/firestore";
 import { asyncHandler, requireAuth } from "./auth";
 import { Message } from "./models";
 import { messageCol } from "./paths";
+import { mediaLabel } from "./sf-cache";
 
 const uidOf = (res: { locals: Record<string, unknown> }) => (res.locals.token as DecodedIdToken).uid;
 
@@ -16,7 +17,7 @@ export async function listUnreadMessages(uid: string): Promise<Message[]> {
       return {
         id: d.id,
         fromName: (data.fromName as string) ?? "Someone",
-        text: (data.text as string) ?? "",
+        text: (data.text as string) || (data.media ? mediaLabel(data.media.kind) : ""),
         time: data.time instanceof Timestamp ? data.time.toDate().toISOString() : null,
         connectionId: (data.connectionId as string | undefined) ?? null,
       };

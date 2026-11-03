@@ -3,6 +3,7 @@ import request from "supertest";
 import { createApp } from "../src/app";
 import { MAX_FRIENDS } from "../src/constants";
 import { resetFakeFirestore } from "./fake-firestore";
+import { resetFakeStorage } from "./fake-storage";
 import { PROJECT, USING_EMULATOR } from "./setup";
 import type { Claims, Entry, Friend, Incoming, Person, Req, Via } from "./types";
 
@@ -51,16 +52,33 @@ export class User {
   /** `claims`: what the login proves. By default the email is verified and the phone number was confirmed by SMS. */
   constructor(readonly p: Person, readonly claims: Claims = {}) {}
 
-  private call(method: "get" | "post" | "put" | "delete", path: string, body?: object) {
-    const token = JSON.stringify({
+  private token() {
+    return JSON.stringify({
       uid: this.p.uid,
       email: this.p.email,
       name: this.p.name,
       email_verified: this.claims.emailVerified ?? true,
       ...((this.claims.phoneVerified ?? true) ? { phone_number: this.p.phone } : {}),
     });
-    const req = request(app)[method](`/api${path}`).set("Authorization", `Bearer ${token}`);
+  }
+
+  private call(method: "get" | "post" | "put" | "delete", path: string, body?: object) {
+    const req = request(app)[method](`/api${path}`).set("Authorization", `Bearer ${this.token()}`);
     return body ? req.send(body) : req;
+  }
+
+  /** A request whose body is a file (any content type but JSON; the server finds the type from the bytes). */
+  file(method: "post" | "put", path: string, bytes: Buffer, type = "application/x-test") {
+    return request(app)[method](`/api${path}`).set("Authorization", `Bearer ${this.token()}`).set("Content-Type", type).send(bytes);
+  }
+
+  /** `getObject(userid/objectid)`: the bytes come back as a Buffer. */
+  getObject(ownerId: string, name: string, headers: Record<string, string> = {}) {
+    return request(app).get(`/api/sf-cache/${ownerId}/${name}`).set("Authorization", `Bearer ${this.token()}`).set(headers).buffer(true).parse((res, done) => {
+      const parts: Buffer[] = [];
+      res.on("data", (c: Buffer) => parts.push(c));
+      res.on("end", () => done(null, Buffer.concat(parts)));
+    });
   }
 
   /** Sign up like the real app: login sync, then phone + social accounts on the profile. */
@@ -117,6 +135,7 @@ export const users = (pool: Person[]) => pool.map((p) => new User(p));
 // ------------------------------------------------------------------ database
 
 export async function clearDatabase() {
+  resetFakeStorage();
   if (!USING_EMULATOR) {
     resetFakeFirestore();
     return;

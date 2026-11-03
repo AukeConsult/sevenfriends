@@ -1,3 +1,5 @@
+import { MediaRef } from "./media";
+
 /** An unread message, as listed on Home. */
 export interface Message {
   id: string;
@@ -12,7 +14,10 @@ export interface Message {
 /** A message in the feed of one connection. */
 export interface ChatMessage {
   id: string;
+  /** the text; for a message with a file it is the caption and may be empty */
   text: string;
+  /** the attached file, or null */
+  media: MediaRef | null;
   /** true = I wrote it */
   mine: boolean;
   read: boolean;

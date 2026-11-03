@@ -30,6 +30,8 @@ export interface Friend extends Socials {
   icon: number | null;
   /** when the friend last changed their uploaded picture; null = no picture. It tells the app when to fetch it again (`GET .../friends/:id/picture`). Confirmed friends only. */
   pictureAt: string | null;
+  /** the object id of that picture in the media cache (`/api/sf-cache/<friend's user id>/<pictureId>`), null = no picture. Confirmed friends only. */
+  pictureId: string | null;
   /** whether the friend is using the app right now (set by the system, confirmed friends only; 'offline' otherwise) */
   presence: Presence;
   /** the message I wrote with the request (the friend sees it with the request) */
