@@ -3,8 +3,6 @@ import { DecodedIdToken } from "firebase-admin/auth";
 import { DocumentSnapshot, FieldValue, Timestamp } from "firebase-admin/firestore";
 import { asyncHandler, requireAuth } from "./auth";
 import {
-  AVAILABLE_CIRCLE_TYPES,
-  CIRCLE_TYPES,
   DEFAULT_CIRCLE_ID,
   DEFAULT_CIRCLE_NAME,
   DEFAULT_CIRCLE_TYPE,
@@ -52,34 +50,7 @@ circlesRouter.get(
     const snap = await circleCol(uid).orderBy("createdAt", "asc").get();
     res.json({
       circles: snap.docs.filter((d) => d.data().type).map(circleJson),
-      types: CIRCLE_TYPES.map((type) => ({ type, available: AVAILABLE_CIRCLE_TYPES.includes(type) })),
     });
-  }),
-);
-
-/** Create a circle: { name, type? }. Type defaults to "friends". */
-circlesRouter.post(
-  "/",
-  asyncHandler(async (req, res) => {
-    const name = typeof req.body?.name === "string" ? req.body.name.trim().slice(0, 60) : "";
-    const type = (req.body?.type ?? DEFAULT_CIRCLE_TYPE) as CircleType;
-
-    if (!name) {
-      res.status(400).json({ error: "Name is required" });
-      return;
-    }
-    if (!CIRCLE_TYPES.includes(type)) {
-      res.status(400).json({ error: "Unknown circle type" });
-      return;
-    }
-    if (!AVAILABLE_CIRCLE_TYPES.includes(type)) {
-      res.status(400).json({ error: `Circle type '${type}' is not available yet` });
-      return;
-    }
-
-    const ref = circleCol(uidOf(res)).doc();
-    await ref.set({ name, type, createdAt: FieldValue.serverTimestamp() });
-    res.status(201).json(circleJson(await ref.get()));
   }),
 );
 

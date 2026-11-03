@@ -67,3 +67,32 @@ describe("the friend's country", () => {
     expect(await friendOf(u(0), pending.id)).toMatchObject({ country: null });
   });
 });
+
+describe("adding a friend without a name", () => {
+  it("is fine with an email or a phone number: that is shown instead", async () => {
+    const byEmail = await u(0).call("post", "/circles/default/friends", { email: "nobody@nowhere.test" }).expect(201);
+    expect(byEmail.body.name).toBe("nobody@nowhere.test");
+    const byPhone = await u(0).call("post", "/circles/default/friends", { phone: "+4790012345" }).expect(201);
+    expect(byPhone.body.name).toBe("+4790012345");
+  });
+
+  it("still needs an email or a phone number", async () => {
+    await u(0).call("post", "/circles/default/friends", { name: "Only a name" }).expect(400);
+    await u(0).call("post", "/circles/default/friends", {}).expect(400);
+  });
+
+  it("a confirmed friend added without a name is shown by their own name", async () => {
+    const entry = (await u(0).call("post", "/circles/default/friends", { email: u(1).p.email }).expect(201)).body;
+    expect(entry.name).toBe(u(1).p.email);
+    await u(1).check();
+    await u(1).confirm(entry.id).expect(200);
+    expect((await friendOf(u(0), entry.id)).name).toBe(u(1).p.name);
+  });
+
+  it("a name that was typed is kept", async () => {
+    const entry = (await u(0).call("post", "/circles/default/friends", { name: "My pal", email: u(1).p.email }).expect(201)).body;
+    await u(1).check();
+    await u(1).confirm(entry.id).expect(200);
+    expect((await friendOf(u(0), entry.id)).name).toBe("My pal");
+  });
+});

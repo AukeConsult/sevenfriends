@@ -1,4 +1,6 @@
-import { SocialKey, Socials } from "./models";
+import { Timestamp } from "firebase-admin/firestore";
+import { PRESENCE_STALE_MS } from "./constants";
+import { Presence, SocialKey, Socials } from "./models";
 
 export const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export const PHONE_RE = /^[+0-9()\-\s.]{5,25}$/;
@@ -68,6 +70,14 @@ export function unverifiedDetails(account: {
   if (account.emailLower) out.push("email");
   if (account.phoneKey) out.push("phone");
   return out;
+}
+
+/** Is the person using the app: the state their app last reported, unless it has not reported for a while (then offline). */
+export function presenceOf(account: { presence?: unknown; lastSeenAt?: unknown }, now = Date.now()): Presence {
+  const state = account.presence;
+  if (state !== "active" && state !== "passive") return "offline";
+  const seen = account.lastSeenAt instanceof Timestamp ? account.lastSeenAt.toMillis() : 0;
+  return now - seen <= PRESENCE_STALE_MS ? state : "offline";
 }
 
 /**

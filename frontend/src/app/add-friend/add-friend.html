@@ -9,13 +9,13 @@
     when they confirm.
   </p>
 
-  <label class="sf-field"><span class="form-label small text-secondary m-0">Name *</span>
+  <label class="sf-field"><span class="form-label small text-secondary m-0">Name (optional)</span>
     <input type="text" class="form-control" [value]="draft().name" (input)="setField('name', $any($event.target).value)"
-           autocomplete="off" maxlength="100" required />
+           autocomplete="off" maxlength="100" />
   </label>
 
   <h2 class="sf-section">How can we find them?</h2>
-  <p class="small text-secondary m-0">Add an email, a phone number, or both. Only these two are used to find your friend, and only if they have verified them in the app.</p>
+  <p class="small text-secondary m-0">Add an email, a phone number, or both. Only these two are used to find your friend. Without a name, the email or number is shown until your friend confirms.</p>
 
   <label class="sf-field"><span class="form-label small text-secondary m-0">Phone</span>
     <input type="tel" class="form-control" [value]="draft().phone" (input)="setField('phone', $any($event.target).value)"

@@ -1,7 +1,12 @@
 <header class="sf-bar">
   <a routerLink="/friends" class="sf-back" aria-label="Back to friends">‹</a>
   @if (seat() > 0) {
-    <img class="sf-avatar sf-avatar-sm" [src]="'icons/friends/friend' + seat() + '.svg'" [alt]="''" width="36" height="36" />
+    <span class="sf-seat">
+      <img class="sf-avatar sf-avatar-sm" [src]="'icons/friends/friend' + seat() + '.svg'" [alt]="''" width="36" height="36" />
+      @if (friend(); as f) {
+        <span class="sf-dot" [class]="'sf-dot-' + f.presence" [title]="presenceLabel(f.presence)" role="img" [attr.aria-label]="presenceLabel(f.presence)"></span>
+      }
+    </span>
   }
   <div class="sf-bar-text">
     <strong class="sf-fs-title">{{ name() || 'Conversation' }}</strong>
@@ -18,7 +23,7 @@
   </div>
 </header>
 
-<main class="sf-feed">
+<main class="sf-feed" [style.padding-bottom]="'calc(' + composerHeight() + 'px + 3.5rem + 1rem + env(safe-area-inset-bottom))'">
   @if (blocked()) {
     <div class="alert alert-warning" role="alert">{{ blocked() }}</div>
     <a routerLink="/friends" class="btn btn-primary">Back to friends</a>
@@ -31,9 +36,23 @@
 
     @for (message of messages(); track message.id) {
       <div class="sf-message" [class.sf-mine]="message.mine">
-        <div class="sf-bubble">{{ message.text }}</div>
+        <!-- my own message: tap it to edit or delete it -->
+        <div class="sf-bubble" [class.sf-bubble-tap]="message.mine" [attr.role]="message.mine ? 'button' : null" [attr.tabindex]="message.mine ? 0 : null"
+             [attr.aria-expanded]="message.mine ? selected() === message.id : null" (click)="select(message)" (keydown.enter)="select(message)">{{ message.text }}</div>
         @if (message.time) {
-          <small class="sf-hint">{{ message.time | date: 'd MMM, HH:mm' }}</small>
+          <small class="sf-hint">{{ message.time | date: 'd MMM, HH:mm' }}@if (message.edited) { · edited }</small>
+        }
+        @if (message.mine && selected() === message.id) {
+          <div class="sf-msg-actions">
+            @if (deleting() === message.id) {
+              <span class="sf-hint">Delete for both of you?</span>
+              <button type="button" class="btn btn-light btn-sm rounded-pill px-3" (click)="deleting.set(null)">Cancel</button>
+              <button type="button" class="btn btn-danger btn-sm rounded-pill px-3" (click)="remove(message)">Delete</button>
+            } @else {
+              <button type="button" class="btn btn-light btn-sm rounded-pill px-3" (click)="startEdit(message)">Edit</button>
+              <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3" (click)="deleting.set(message.id)">Delete</button>
+            }
+          </div>
         }
       </div>
     }
@@ -46,9 +65,27 @@
 </main>
 
 @if (!blocked()) {
-  <form class="sf-composer" (submit)="$event.preventDefault(); send()" aria-label="Write a message">
-    <input type="text" class="form-control" placeholder="Write a message" [value]="text()"
-           (input)="text.set($any($event.target).value)" maxlength="2000" autocomplete="off" />
-    <button type="submit" class="btn btn-primary" [disabled]="sending() || !text().trim()">Send</button>
+  <form #composer class="sf-composer" (submit)="$event.preventDefault(); send()" aria-label="Write a message">
+    @if (emojiOpen()) {
+      <div class="sf-emoji-panel" role="group" aria-label="Emojis">
+        @for (emoji of emojis; track emoji) {
+          <button type="button" class="sf-emoji" (click)="addEmoji(emoji)" [attr.aria-label]="'Add ' + emoji">{{ emoji }}</button>
+        }
+      </div>
+    }
+    @if (editing()) {
+      <div class="sf-editing">
+        <span class="sf-hint">Editing your message</span>
+        <button type="button" class="btn btn-link btn-sm p-0" (click)="cancelEdit()">Cancel</button>
+      </div>
+    }
+    <div class="sf-composer-row">
+      <button type="button" class="sf-icon-btn sf-emoji-toggle" (click)="emojiOpen.set(!emojiOpen())" [attr.aria-expanded]="emojiOpen()"
+              [attr.aria-label]="emojiOpen() ? 'Hide the emojis' : 'Show the emojis'">😊</button>
+      <textarea #field class="form-control sf-composer-field" rows="1" placeholder="Write a message" [value]="text()"
+                (input)="typed()" (keydown.enter)="enterPressed($event)" maxlength="2000" autocomplete="off" autocorrect="off" spellcheck="true" enterkeyhint="enter"
+                aria-label="Message"></textarea>
+      <button type="submit" class="btn btn-primary" [disabled]="sending() || !text().trim()">{{ editing() ? 'Save' : 'Send' }}</button>
+    </div>
   </form>
 }

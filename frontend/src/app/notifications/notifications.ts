@@ -64,6 +64,8 @@ export class Notifications {
    * not verified, so I am told here too (with a way to fix it).
    */
   protected readonly unverified = signal<('email' | 'phone')[]>([]);
+  /** the note about unverified details is closed at first: only a small mark shows that there is something to do */
+  protected readonly unverifiedOpen = signal(false);
 
   protected readonly requests = this.friendsService.requests;
   protected readonly messages = this.messagesService.messages;

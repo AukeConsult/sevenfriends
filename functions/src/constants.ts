@@ -7,10 +7,8 @@ export const FRIEND_CIRCLE_COLLECTION = "friend-circle";
 export const FRIENDS_SUBCOLLECTION = "friends";
 
 export const MAX_FRIENDS = 7; // per circle
-
-export const CIRCLE_TYPES: readonly CircleType[] = ["friends", "family", "colleagues"];
-/** Types that can be created right now. */
-export const AVAILABLE_CIRCLE_TYPES: readonly CircleType[] = ["friends"];
+/** A signed-in app reports every minute; after this long without a report the person counts as offline. */
+export const PRESENCE_STALE_MS = 150_000;
 
 export const DEFAULT_CIRCLE_TYPE: CircleType = "friends";
 export const DEFAULT_CIRCLE_ID = "default";

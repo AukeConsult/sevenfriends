@@ -23,12 +23,6 @@ export class FriendsService {
     this.friends.set(res.friends);
   }
 
-  /** Requests from people who added me and wait for my confirmation. */
-  async loadRequests(): Promise<void> {
-    const res = await this.api.request<{ requests: FriendRequest[] }>('/friend-requests');
-    this.requests.set(res.requests);
-  }
-
   /**
    * Confirm a request: the requester becomes my friend too.
    * Returns 'no-seats' when my circle is full: the request then stays pending.

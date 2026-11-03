@@ -24,6 +24,14 @@ export class ChatService {
     return this.api.request<ChatMessage>(this.base(friendId), { method: 'POST', body: JSON.stringify({ text }) });
   }
 
+  edit(friendId: string, messageId: string, text: string): Promise<ChatMessage> {
+    return this.api.request<ChatMessage>(`${this.base(friendId)}/${messageId}`, { method: 'PUT', body: JSON.stringify({ text }) });
+  }
+
+  remove(friendId: string, messageId: string): Promise<void> {
+    return this.api.request<void>(`${this.base(friendId)}/${messageId}`, { method: 'DELETE' });
+  }
+
   /** Opening the feed marks the other person's messages as read. */
   async markRead(friendId: string): Promise<{ ok: boolean; marked: number }> {
     const result = await this.api.request<{ ok: boolean; marked: number }>(`${this.base(friendId)}/read`, { method: 'POST' });

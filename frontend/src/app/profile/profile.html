@@ -59,7 +59,8 @@
     </div>
   </div>
 
-  <div class="mt-3"><app-mood-editor /></div>
+  <p class="sf-hint mt-3 mb-0">Your mood (your friends see it)</p>
+  <app-mood-editor class="d-block" />
 
   <ul class="list-group mt-3 border-0 shadow-sm sf-fs-description">
     <li class="list-group-item d-flex justify-content-between">
@@ -141,6 +142,29 @@
       }
     </div>
   </div>
+
+  @if (!app.installed()) {
+    <div class="card border-0 shadow-sm mt-3">
+      <div class="card-body vstack gap-2">
+        <h2 class="m-0">Install the app</h2>
+        <p class="small text-secondary m-0">Get the icon in your app menu, open the app full screen, and never miss a friend.</p>
+        @if (app.canInstall()) {
+          <button type="button" class="btn btn-primary" (click)="app.install()">Install the app</button>
+        } @else if (app.ios) {
+          <p class="small m-0">In Safari, tap the Share button, then <strong>Add to Home Screen</strong>.</p>
+        } @else {
+          <p class="small m-0">In your browser's menu (⋮), choose <strong>Install app</strong> or <strong>Add to Home screen</strong>. The site must be opened from its web address (https).</p>
+        }
+        @if (!app.mobile) {
+          <p class="small text-secondary m-0">
+            <strong>Start it when you sign in to your computer</strong> (after installing; notifications then arrive without opening the browser).
+            Edge: open <code>edge://apps</code>, press ⋯ on Seven Friends and choose <em>Auto-start on device login</em>.
+            Chrome: open <code>chrome://apps</code>, right-click Seven Friends and choose <em>Start app when you sign in</em>.
+          </p>
+        }
+      </div>
+    </div>
+  }
 
   <div class="card border-danger-subtle shadow-sm mt-3 mb-3">
     <div class="card-body vstack gap-2">

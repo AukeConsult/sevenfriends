@@ -1,4 +1,4 @@
-<div class="card border-0 shadow-sm">
+<div class="card border-0 shadow-none bg-transparent">
   <!-- closed: my mood icon and message. Tap it to open the frame and change them -->
   <button type="button" class="sf-summary" [attr.aria-expanded]="open()" aria-controls="mood-panel" [disabled]="!loaded()"
           (click)="open.set(!open())">
@@ -8,8 +8,7 @@
       <span class="sf-summary-none" aria-hidden="true">+</span>
     }
     <span class="sf-summary-text">
-      <span class="small text-secondary">Your mood (your friends see it)</span>
-      <span class="sf-ellipsis">
+      <span class="sf-wrap">
         @if (mood() || message()) {
           {{ moodLabel(mood()) }}{{ mood() && message() ? ' · ' : '' }}{{ message() }}
         } @else {
@@ -17,7 +16,10 @@
         }
       </span>
     </span>
-    <span class="sf-chevron" aria-hidden="true">{{ open() ? '▴' : '▾' }}</span>
+    <span class="sf-chevron" aria-hidden="true">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+           [style.transform]="open() ? 'rotate(180deg)' : null"><path d="M6 9l6 6 6-6" /></svg>
+    </span>
   </button>
 
   @if (open()) {

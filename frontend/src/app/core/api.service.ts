@@ -1,5 +1,6 @@
 import { Injectable, Injector, inject } from '@angular/core';
 import { Router } from '@angular/router';
+import type { User } from 'firebase/auth';
 import { environment } from '../../environments/environment';
 import { AuthService } from './auth.service';
 
@@ -34,27 +35,44 @@ export class ApiService {
     const user = this.auth.user();
     if (!user) throw new ApiError('Not signed in', 401);
 
-    let token: string;
-    try {
-      token = await user.getIdToken();
-    } catch (err) {
-      if (!DEAD_SESSION.has((err as { code?: string }).code ?? '')) throw err;
-      await this.auth.forceLogout('You were signed out because the connection to sign-in failed. Please sign in again.');
-      await this.injector.get(Router).navigateByUrl('/login');
-      throw new ApiError('Signed out', 401);
+    let res = await this.call(path, init, await this.token(user, false));
+    if (res.status === 401) {
+      // the server did not accept the token: ask for a fresh one once, then give up and sign the person out
+      res = await this.call(path, init, await this.token(user, true));
+      if (res.status === 401) {
+        await this.signOutDeadSession('You were signed out because your login is no longer valid. Please sign in again.');
+        throw new ApiError('Signed out', 401);
+      }
     }
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      throw new ApiError(body.error ?? `Request failed (${res.status})`, res.status);
+    }
+    return (res.status === 204 ? undefined : await res.json()) as T;
+  }
 
-    const res = await fetch(`${environment.apiBase}${path}`, {
+  private call(path: string, init: RequestInit, token: string): Promise<Response> {
+    return fetch(`${environment.apiBase}${path}`, {
       ...init,
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
     });
-    if (!res.ok) {
-      const body = await res.json().catch(() => ({}));
-      throw new ApiError(body.error ?? `Request failed (${res.status})`, res.status);
+  }
+
+  private async token(user: User, refresh: boolean): Promise<string> {
+    try {
+      return await user.getIdToken(refresh);
+    } catch (err) {
+      if (!DEAD_SESSION.has((err as { code?: string }).code ?? '')) throw err;
+      await this.signOutDeadSession('You were signed out because the connection to sign-in failed. Please sign in again.');
+      throw new ApiError('Signed out', 401);
     }
-    return (res.status === 204 ? undefined : await res.json()) as T;
+  }
+
+  private async signOutDeadSession(reason: string): Promise<void> {
+    await this.auth.forceLogout(reason);
+    await this.injector.get(Router).navigateByUrl('/login');
   }
 }

@@ -3,7 +3,7 @@ import { DecodedIdToken } from "firebase-admin/auth";
 import { FieldValue, Timestamp, getFirestore } from "firebase-admin/firestore";
 import { asyncHandler, requireAuth } from "./auth";
 import { ensureDefaultCircle } from "./circles";
-import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAX_FRIENDS } from "./constants";
+import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION } from "./constants";
 import { AcceptOutcome, FriendRequest } from "./models";
 import { circleCol, friendRequestCol, userDoc } from "./paths";
 import { ensureSeat } from "./seats";
@@ -35,13 +35,6 @@ export async function listPendingRequests(uid: string): Promise<FriendRequest[]>
   );
   return requests.sort((a, b) => (a.createdAt ?? "").localeCompare(b.createdAt ?? ""));
 }
-
-friendRequestsRouter.get(
-  "/",
-  asyncHandler(async (_req, res) => {
-    res.json({ requests: await listPendingRequests(uidOf(res)) });
-  }),
-);
 
 /**
  * Confirm a request.

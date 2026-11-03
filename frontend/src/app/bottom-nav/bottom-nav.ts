@@ -2,6 +2,7 @@ import { Component, HostListener, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../core/auth.service';
 import { NotificationsService } from '../core/notifications.service';
+import { PresenceService } from '../core/presence.service';
 import { PushService } from '../core/push.service';
 
 /** Always-visible banner menu at the bottom of the screen (shown when signed in). */
@@ -15,6 +16,7 @@ export class BottomNav {
   private readonly router = inject(Router);
   private readonly notifications = inject(NotificationsService);
   private readonly push = inject(PushService);
+  private readonly presence = inject(PresenceService);
 
   /** The Profile item opens a dropup menu (profile page + log out). */
   protected readonly menuOpen = signal(false);
@@ -40,6 +42,7 @@ export class BottomNav {
 
   protected async logout(): Promise<void> {
     this.closeMenu();
+    await this.presence.goOffline(); // friends see the gray dot at once
     await this.push.forgetDevice(); // this device stops getting the person's pushes
     await this.auth.logout();
     await this.router.navigateByUrl('/login');

@@ -1,0 +1,64 @@
+import { Injectable, signal } from '@angular/core';
+
+/** The browser's install offer (Chrome / Edge on Android and desktop); not in the standard TypeScript types. */
+interface InstallPrompt extends Event {
+  prompt(): Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+}
+
+/**
+ * Putting the app on the phone: the browser decides when the app can be installed (https, manifest, service worker) and
+ * hands over an install offer; it can only be shown after a tap, so the Profile page has a button for it. An installed
+ * app gets its icon in the app menu and opens full screen. iPhones have no such offer: there the person uses
+ * Share → Add to Home Screen themselves, so the page explains that. On a computer an installed app can also start when
+ * the person signs in; that is a setting of the browser (the page cannot switch it on), so the page explains where it is.
+ */
+@Injectable({ providedIn: 'root' })
+export class InstallService {
+  /** the browser has an install offer ready: the button works */
+  readonly canInstall = signal(false);
+  /** the app is already running as an installed app */
+  readonly installed = signal(this.isStandalone());
+  /** an iPhone / iPad: installing is a manual step in Safari */
+  readonly ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  /** a phone or tablet (Android or iOS): there is no start-at-sign-in setting there, the apps are opened from the app menu */
+  readonly mobile = this.ios || /android/i.test(navigator.userAgent);
+
+  private offer: InstallPrompt | null = null;
+
+  constructor() {
+    // opened in a browser tab while the app is installed on this device: the browser can tell (Chrome / Edge)
+    void (navigator as { getInstalledRelatedApps?: () => Promise<unknown[]> }).getInstalledRelatedApps?.()
+      .then((apps) => apps.length && this.installed.set(true))
+      .catch(() => undefined);
+    window.addEventListener('beforeinstallprompt', (event) => {
+      event.preventDefault(); // keep the offer for the button
+      this.offer = event as InstallPrompt;
+      this.canInstall.set(true);
+    });
+    window.addEventListener('appinstalled', () => {
+      this.offer = null;
+      this.canInstall.set(false);
+      this.installed.set(true);
+    });
+  }
+
+  /** Shows the browser's install dialog. */
+  async install(): Promise<void> {
+    const offer = this.offer;
+    if (!offer) return;
+    this.offer = null; // an offer can be used once
+    this.canInstall.set(false);
+    await offer.prompt();
+    await offer.userChoice.catch(() => undefined);
+  }
+
+  /** this window IS the installed app (not a browser tab) */
+  runsAsApp(): boolean {
+    return this.isStandalone();
+  }
+
+  private isStandalone(): boolean {
+    return matchMedia('(display-mode: standalone)').matches || (navigator as { standalone?: boolean }).standalone === true;
+  }
+}

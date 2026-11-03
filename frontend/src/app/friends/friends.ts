@@ -5,6 +5,7 @@ import { FriendsService } from '../core/friends.service';
 import { MessagesService } from '../core/messages.service';
 import { countries } from '../core/countries';
 import { moodIcon, moodLabel } from '../core/moods';
+import { presenceLabel } from '../core/presence';
 import { timeAgo } from '../core/time-ago';
 import { NotificationsService } from '../core/notifications.service';
 import { SOCIAL_NETWORKS } from '../core/social';
@@ -51,8 +52,11 @@ export class Friends {
   private readonly now = signal(Date.now());
   private readonly countryNames = new Map(countries().map((c) => [c.code, c.name]));
 
+  protected readonly presenceLabel = presenceLabel;
+
   protected toggleProfile(friend: Friend): void {
     this.expanded.update((id) => (id === friend.id ? null : friend.id));
+    this.deleting.set(null); // a delete question is part of the profile: it closes with it
   }
 
   /** "Last spoken to 3 days ago", or that you have not spoken yet. */

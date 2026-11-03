@@ -5,7 +5,7 @@ import { asyncHandler, requireAuth } from "./auth";
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAX_FRIENDS, MAX_MOOD_MESSAGE, MAX_NAME_LENGTH, MAX_PICTURE_BYTES, MOOD_COUNT } from "./constants";
 import { ProfileDetails, ProfilePicture, Socials } from "./models";
 import { circleCol, profilePictureDoc, userDoc } from "./paths";
-import { PHONE_RE, isCountry, SOCIAL_NETWORKS, parseSocials, phoneKey, text } from "./validation";
+import { PHONE_RE, isCountry, SOCIAL_NETWORKS, parseSocials, phoneKey, presenceOf, text } from "./validation";
 
 const uidOf = (res: { locals: Record<string, unknown> }) => (res.locals.token as DecodedIdToken).uid;
 
@@ -142,6 +142,26 @@ profileRouter.put(
     // confirmed friends see the mood: tell their apps (it changes their copy of the friendship, which they listen to)
     if ((saved.mood ?? null) !== (before?.mood ?? null) || (saved.moodMessage ?? null) !== (before?.moodMessage ?? null)) await touchFriends(uidOf(res));
     res.json(detailsOf(saved));
+  }),
+);
+
+/**
+ * The app reports what it is doing: { state: "active" | "passive" | "offline" } (screen on / hidden or off / signed out),
+ * now and once a minute. Friends see it as a dot; an app that stops reporting counts as offline after a while.
+ */
+profileRouter.put(
+  "/presence",
+  asyncHandler(async (req, res) => {
+    const state = req.body?.state;
+    if (state !== "active" && state !== "passive" && state !== "offline") {
+      res.status(400).json({ error: "state must be active, passive or offline" });
+      return;
+    }
+    const ref = userDoc(uidOf(res));
+    const before = presenceOf((await ref.get()).data() ?? {});
+    await ref.set({ presence: state, lastSeenAt: FieldValue.serverTimestamp() }, { merge: true });
+    if (before !== state) await touchFriends(uidOf(res)); // friends' apps reload at once and show the new dot
+    res.json({ ok: true });
   }),
 );
 

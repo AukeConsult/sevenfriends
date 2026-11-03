@@ -28,10 +28,6 @@ export class AddFriend {
     const d = this.draft();
     if (this.sending()) return;
 
-    if (!d.name.trim()) {
-      this.error.set('Write the name of your friend.');
-      return;
-    }
     const hasContact = [d.email, d.phone].some((v) => v.trim());
     if (!hasContact) {
       this.error.set('Add an email or a phone number, so your friend can be found.');

@@ -44,7 +44,6 @@ describe("adding a friend", () => {
   it.each([
     ["no contact at all", { name: "Nobody" }],
     ["only a social account (it cannot find anybody)", { name: "X", instagram: "x.person" }],
-    ["no name", { email: "x@y.test" }],
     ["a bad email", { name: "X", email: "not-an-email" }],
     ["a bad phone number", { name: "X", phone: "abc" }],
   ])("refuses %s", async (_label, body) => {

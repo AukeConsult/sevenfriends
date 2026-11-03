@@ -44,7 +44,11 @@ export class RealtimeService {
   /** The newest message that arrived live. The Chat page refreshes when it belongs to its feed. */
   readonly latestMessage = signal<LiveMessage | null>(null);
 
+  /** A feed whose messages were edited or deleted by the friend (the Chat page of that feed reloads). */
+  readonly feedChanged = signal<{ connectionId: string; seq: number } | null>(null);
+
   private stops: (() => void)[] = [];
+  private messagesChangedAt = new Map<string, number>();
   private friendsTimer: ReturnType<typeof setTimeout> | undefined;
   private listeningFor: string | null = null;
   private seq = 0;
@@ -148,6 +152,13 @@ export class RealtimeService {
       sdk,
       source,
       (snapshot, first) => {
+        // the friend edited or deleted a message: the friendship was touched with a new `messagesChangedAt`
+        for (const change of snapshot.docChanges()) {
+          const stamp = change.doc.data()['messagesChangedAt']?.toMillis?.() as number | undefined;
+          if (stamp === undefined) continue;
+          if (!first && this.messagesChangedAt.get(change.doc.id) !== stamp) this.feedChanged.set({ connectionId: change.doc.id, seq: ++this.seq });
+          this.messagesChangedAt.set(change.doc.id, stamp);
+        }
         if (first || !snapshot.docChanges().length) return;
         clearTimeout(this.friendsTimer);
         this.friendsTimer = setTimeout(() => void this.onFriendsChanged(), 250);

@@ -4,6 +4,7 @@ import { MoodEditor } from '../mood-editor/mood-editor';
 import { ApiService } from '../core/api.service';
 import { authMessage } from '../core/auth-errors';
 import { AuthService } from '../core/auth.service';
+import { InstallService } from '../core/install.service';
 import { countries, dialCode, fullNumber, isValidPhone, nationalNumber } from '../core/countries';
 import { SOCIAL_NETWORKS, draftFromSocials, emptySocialDraft, socialsFromDraft } from '../core/social';
 import { ProfileDetails, ProfileDraft, ProfilePicture, SaveState } from '../models';
@@ -20,6 +21,7 @@ const RETRY_MS = 5000;
 })
 export class Profile {
   private readonly api = inject(ApiService);
+  protected readonly app = inject(InstallService);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
 

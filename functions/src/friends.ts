@@ -9,7 +9,6 @@ import {
   MAX_FRIENDS,
   MAX_INVITES_PER_DAY,
   MAX_REQUEST_MESSAGE,
-  USER_ACCOUNT_COLLECTION,
 } from "./constants";
 import { invitesSentToday, queueInvite } from "./outbox";
 import { Friend, FriendInvite, FriendStatus, NewFriend, Socials } from "./models";
@@ -23,11 +22,12 @@ import {
   unverifiedDetails,
   parseSocials,
   phoneKey,
+  presenceOf,
   text,
 } from "./validation";
 
-function parseFriend(body: Record<string, unknown>): { data?: NewFriend; error?: string } {
-  const name = text(body.name, 100);
+function parseFriend(body: Record<string, unknown>): { data?: NewFriend; nameGiven?: boolean; error?: string } {
+  const givenName = text(body.name, 100);
   const email = text(body.email, 200)?.toLowerCase() ?? null;
   const phone = text(body.phone, 25);
   const socials = parseSocials(body);
@@ -36,7 +36,6 @@ function parseFriend(body: Record<string, unknown>): { data?: NewFriend; error?:
   if (message && message.length > MAX_REQUEST_MESSAGE) {
     return { error: `The message can be at most ${MAX_REQUEST_MESSAGE} characters` };
   }
-  if (!name) return { error: "Name is required" };
   if (email && !EMAIL_RE.test(email)) return { error: "Email is not valid" };
   if (phone && !PHONE_RE.test(phone)) return { error: "Phone number is not valid" };
   // Only an email or a phone number can find your friend (social accounts are extra contact info),
@@ -44,7 +43,9 @@ function parseFriend(body: Record<string, unknown>): { data?: NewFriend; error?:
   if (!email && !phone) {
     return { error: "Add an email or a phone number, so your friend can be found" };
   }
-  return { data: { name, email, phone, message, ...socials } };
+  // the name is optional: without it the email or phone number is shown, until the friend confirms (then their own name is shown)
+  const name = givenName ?? email ?? phone!;
+  return { data: { name, email, phone, message, ...socials }, nameGiven: Boolean(givenName) };
 }
 
 function toJson(doc: FirebaseFirestore.DocumentSnapshot): Friend {
@@ -67,6 +68,7 @@ function toJson(doc: FirebaseFirestore.DocumentSnapshot): Friend {
     country: null, // filled in by withUnverified (confirmed friends only)
     mood: null, // filled in by withUnverified (confirmed friends only)
     moodMessage: null,
+    presence: "offline", // filled in by withUnverified (confirmed friends only)
     unverified: [], // filled in by withUnverified (needs a look at the other accounts)
   };
 }
@@ -95,10 +97,13 @@ async function withUnverified(friend: Friend, entry: FirebaseFirestore.DocumentD
           country: (account.country as string | null | undefined) ?? null,
           mood: Number.isInteger(account.mood) ? (account.mood as number) : null,
           moodMessage: (account.moodMessage as string | null | undefined) ?? null,
+          presence: presenceOf(account),
         }
-      : { country: null, mood: null, moodMessage: null };
+      : { country: null, mood: null, moodMessage: null, presence: "offline" as const };
+  // I did not give a name: a confirmed friend is shown by the name of their account
+  const name = entry.nameGiven === false && friend.status === "confirmed" ? ((account?.displayName as string | undefined) || friend.name) : friend.name;
   const lastSpokenAt = friend.lastSpokenAt ?? (friend.status === "confirmed" ? await lastSpoken(uid, friend.id) : null);
-  return { ...friend, ...mood, lastSpokenAt, ...(unverified.length ? { unverified } : {}) };
+  return { ...friend, name, ...mood, lastSpokenAt, ...(unverified.length ? { unverified } : {}) };
 }
 
 const iso = (t: unknown) => (t instanceof Timestamp ? t.toDate().toISOString() : null);
@@ -134,7 +139,7 @@ friendsRouter.get(
 friendsRouter.post(
   "/",
   asyncHandler(async (req, res) => {
-    const { data, error } = parseFriend(req.body ?? {});
+    const { data, nameGiven, error } = parseFriend(req.body ?? {});
     if (!data) {
       res.status(400).json({ error });
       return;
@@ -156,6 +161,7 @@ friendsRouter.post(
         ...keys,
         connectionId: ref.id, // one id for the whole connection: both lists and the request use it
         peerCircleId: DEFAULT_CIRCLE_ID, // where the other person's entry will live
+        nameGiven, // false = the name shown is the email / phone I typed
         status: "pending" as FriendStatus,
         linkedUid: null, // set when the other person's check finds this entry
         signaledUids: accounts, // who got a ping for this entry (removed again if the entry is deleted)

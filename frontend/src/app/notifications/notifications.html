@@ -31,7 +31,15 @@
   }
 
   @if (unverified().length) {
-    <div class="alert alert-warning py-2 d-flex align-items-center justify-content-between gap-2" role="status">
+    <!-- closed: just a small mark that something should be done; tap it to read what -->
+    <div class="d-flex justify-content-center mb-2">
+      <button type="button" class="sf-mark" [attr.aria-expanded]="unverifiedOpen()" aria-controls="unverified-note"
+              [attr.aria-label]="unverifiedOpen() ? 'Hide the verification note' : 'Something to do: verify your ' + (unverified().length === 2 ? 'email and phone' : unverified()[0])"
+              title="Something to do: verify your contact details" (click)="unverifiedOpen.set(!unverifiedOpen())">!</button>
+    </div>
+  }
+  @if (unverified().length && unverifiedOpen()) {
+    <div id="unverified-note" class="alert alert-warning py-2 d-flex align-items-center justify-content-between gap-2" role="status">
       <span>
         Your {{ unverified().length === 2 ? 'email and phone are' : unverified()[0] === 'email' ? 'email is' : 'phone is' }} not verified.
         You still receive friend requests, but your friends are told that you have not verified,

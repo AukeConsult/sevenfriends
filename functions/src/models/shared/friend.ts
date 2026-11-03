@@ -26,6 +26,8 @@ export interface Friend extends Socials {
   mood: number | null;
   /** the friend's short mood message, shown for confirmed friends only; null = none */
   moodMessage: string | null;
+  /** whether the friend is using the app right now (set by the system, confirmed friends only; 'offline' otherwise) */
+  presence: Presence;
   /** the message I wrote with the request (the friend sees it with the request) */
   message: string | null;
   /**
@@ -64,3 +66,9 @@ export interface FriendRequest {
 
 /** What confirming a request leads to ('no-seats': the request stays pending). */
 export type AcceptResult = "confirmed" | "no-seats";
+
+/**
+ * What the system knows about a person using the app: 'active' = the app is open and the screen is on,
+ * 'passive' = signed in but the screen is hidden or off, 'offline' = signed out or not heard from for a while.
+ */
+export type Presence = "active" | "passive" | "offline";
