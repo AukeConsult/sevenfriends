@@ -5,6 +5,7 @@ import { Component, DestroyRef, ElementRef, HostListener, computed, effect, inje
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ApiError } from '../core/api.service';
 import { FriendAvatar } from '../friend-avatar/friend-avatar';
+import { MediaAudio } from '../media-audio/media-audio';
 import { MediaImage } from '../media-image/media-image';
 import { MediaVideo } from '../media-video/media-video';
 import { ChatService } from '../core/chat.service';
@@ -31,7 +32,7 @@ function readNewestFirst(): boolean {
 /** The message feed with one friend: /friends/:id (the id of the connection). */
 @Component({
   selector: 'app-chat',
-  imports: [DatePipe, FriendAvatar, MediaImage, MediaVideo, NgTemplateOutlet, RouterLink, Clearable],
+  imports: [DatePipe, FriendAvatar, MediaAudio, MediaImage, MediaVideo, NgTemplateOutlet, RouterLink, Clearable],
   templateUrl: './chat.html',
 })
 export class Chat {

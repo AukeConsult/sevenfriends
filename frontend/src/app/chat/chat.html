@@ -103,20 +103,26 @@
       <button type="button" class="sf-icon-btn sf-emoji-toggle" (click)="emojiOpen.set(!emojiOpen())" [attr.aria-expanded]="emojiOpen()"
               [attr.aria-label]="emojiOpen() ? 'Hide the emojis' : 'Show the emojis'">😊</button>
       @if (!editing()) {
-        <a [routerLink]="['/friends', friendId, 'image']" class="sf-icon-btn" aria-label="Send an image" title="Send an image">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="9" cy="10" r="1.5" /><path d="M21 16l-5-5-8 9" />
-          </svg>
-        </a>
+        <!-- the attach buttons slide back and hide as soon as a text is being typed -->
+        <div class="sf-attach" [class.sf-attach-away]="text().length > 0" [attr.inert]="text().length > 0 ? '' : null" [attr.aria-hidden]="text().length > 0 ? 'true' : null">
+          <a [routerLink]="['/friends', friendId, 'image']" class="sf-icon-btn" aria-label="Send an image" title="Send an image">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="9" cy="10" r="1.5" /><path d="M21 16l-5-5-8 9" />
+            </svg>
+          </a>
+          <a [routerLink]="['/friends', friendId, 'video']" class="sf-icon-btn" aria-label="Send a video" title="Send a video">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="2" y="6" width="14" height="12" rx="2" /><path d="M16 10l6-3v10l-6-3z" />
+            </svg>
+          </a>
+          <a [routerLink]="['/friends', friendId, 'audio']" class="sf-icon-btn" aria-label="Send a voice message" title="Send a voice message">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="9" y="3" width="6" height="11" rx="3" /><path d="M5 11a7 7 0 0014 0M12 18v3" />
+            </svg>
+          </a>
+        </div>
       }
-      @if (!editing()) {
-        <a [routerLink]="['/friends', friendId, 'video']" class="sf-icon-btn" aria-label="Send a video" title="Send a video">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <rect x="2" y="6" width="14" height="12" rx="2" /><path d="M16 10l6-3v10l-6-3z" />
-          </svg>
-        </a>
-      }
-      <textarea #field class="form-control sf-composer-field" rows="1" placeholder="Write a message" [value]="text()"
+      <textarea #field class="form-control sf-composer-field" rows="1" placeholder="Message" [value]="text()"
                 (input)="typed()" (keydown.enter)="enterPressed($event)" maxlength="2000" autocomplete="off" autocorrect="off" spellcheck="true" enterkeyhint="enter"
                 aria-label="Message"></textarea>
       <button type="submit" class="btn btn-primary sf-send" [disabled]="sending() || !text().trim()" [attr.aria-label]="editing() ? 'Save' : 'Send'" [title]="editing() ? 'Save' : 'Send'">
@@ -144,7 +150,7 @@
     }
 
     @for (message of shown(); track message.id) {
-      <div class="sf-message" [attr.data-id]="message.id" [class.sf-mine]="message.mine" [class.sf-doomed]="doomed().has(message.id)">
+      <div class="sf-message" [attr.data-id]="message.id" [class.sf-mine]="message.mine" [class.sf-message-media]="message.media" [class.sf-doomed]="doomed().has(message.id)">
         <!-- my own message: tap it to edit or delete it -->
         <div class="sf-bubble" [class.sf-bubble-media]="message.media" [class.sf-bubble-tap]="message.mine" [attr.role]="message.mine ? 'button' : null" [attr.tabindex]="message.mine ? 0 : null"
              [attr.aria-expanded]="message.mine ? selected() === message.id : null" (click)="select(message)" (keydown.enter)="select(message)">
@@ -153,7 +159,7 @@
             @if (media.kind === 'video') {
               <app-media-video [media]="media" />
             } @else if (media.kind === 'audio') {
-              <span class="sf-hint">🎤 Audio message (the app cannot play it yet)</span>
+              <app-media-audio [media]="media" />
             } @else if (message.mine) {
               <app-media-image [media]="media" />
             } @else {
@@ -173,7 +179,7 @@
               <button type="button" class="btn btn-danger btn-sm rounded-pill px-3" (click)="remove(message)">Delete</button>
             } @else {
               @if (message.media; as media) {
-                @if (media.kind === 'image' || media.kind === 'video') {
+                @if (media) {
                   <a [routerLink]="['/media', media.ownerId, media.objectId]" class="btn btn-light btn-sm rounded-pill px-3">Open</a>
                 }
               }

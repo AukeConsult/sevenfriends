@@ -5,7 +5,7 @@ import { formatBytes } from '../core/image';
 import { MediaService, StoredFile } from '../core/media.service';
 
 /**
- * An image or a video of a message in full: /media/:ownerId/:objectId. It is read from the server like the one in the conversation,
+ * An image, a video or an audio message in full: /media/:ownerId/:objectId. It is read from the server like the one in the conversation,
  * and can be saved on the device (Download: the bytes already read, saved under the file name of the message).
  */
 @Component({
@@ -25,6 +25,10 @@ export class MediaViewer {
       .object(params.get('ownerId') ?? '', params.get('objectId') ?? '')
       .then((file) => this.file.set(file))
       .catch((err) => this.error.set(err.message ?? 'Could not load the file'));
+  }
+
+  protected isAudio(file: StoredFile): boolean {
+    return file.type.startsWith('audio/');
   }
 
   protected isVideo(file: StoredFile): boolean {

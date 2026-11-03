@@ -1,31 +1,38 @@
 <header class="sf-bar">
   <a [routerLink]="['/friends', friendId]" class="sf-back" aria-label="Back to the conversation">‹</a>
-  <h1 class="sf-bar-title">{{ cameraOpen() ? (kind === 'image' ? 'Take a photo' : 'Record a video') : (kind === 'image' ? 'Send an image' : 'Send a video') }}</h1>
+  <h1 class="sf-bar-title">{{ cameraOpen() ? text.recording : text.title }}</h1>
 </header>
 
 <main class="sf-narrow">
   @if (cameraOpen()) {
-    <!-- the camera of a computer, on this page -->
-    <app-camera [mode]="kind === 'image' ? 'photo' : 'video'" (photo)="photoTaken($event)" (recorded)="filmed($event)" (closed)="cameraOpen.set(false)" (failed)="cameraFailed($event)" />
+    @if (kind === 'audio') {
+      <!-- the voice recorder, on this page -->
+      <app-voice (recorded)="voiceRecorded($event)" (closed)="cameraOpen.set(false)" (failed)="cameraFailed($event)" />
+    } @else {
+      <!-- the camera of a computer, on this page -->
+      <app-camera [mode]="kind === 'image' ? 'photo' : 'video'" (photo)="photoTaken($event)" (recorded)="filmed($event)" (closed)="cameraOpen.set(false)" (failed)="cameraFailed($event)" />
+    }
   } @else if (!file()) {
     <p class="m-0">
       @if (kind === 'image') {
         Take a photo or choose a picture from your {{ phoneCamera ? 'phone' : 'computer' }}. It is made smaller before it is sent, so a big photo is fine.
-      } @else {
+      } @else if (kind === 'video') {
         Film a video or choose one from your {{ phoneCamera ? 'phone' : 'computer' }}. It is made smaller before it is sent, and only the first {{ maxSeconds }} seconds are kept.
+      } @else {
+        Record your voice or choose an audio file from your {{ phoneCamera ? 'phone' : 'computer' }}. A voice message can be up to {{ maxMinutes }} minutes.
       }
     </p>
-    @if (phoneCamera) {
+    @if (nativeCapture) {
       <!-- the camera app of the phone (Android and iPhone) -->
       <label class="btn btn-primary btn-lg" [class.disabled]="working()">
-        {{ kind === 'image' ? 'Take a photo' : 'Record a video' }}
+        {{ text.take }}
         <input type="file" [accept]="kind + '/*'" capture="environment" hidden [disabled]="!!working()" (change)="onFile($event)" />
       </label>
     } @else if (pageCamera) {
-      <button type="button" class="btn btn-primary btn-lg" [disabled]="!!working()" (click)="cameraOpen.set(true)">{{ kind === 'image' ? 'Take a photo' : 'Record a video' }}</button>
+      <button type="button" class="btn btn-primary btn-lg" [disabled]="!!working()" (click)="cameraOpen.set(true)">{{ text.take }}</button>
     }
-    <label class="btn btn-lg" [class.btn-outline-primary]="phoneCamera || pageCamera" [class.btn-primary]="!phoneCamera && !pageCamera" [class.disabled]="working()">
-      {{ kind === 'image' ? 'Choose an image' : 'Choose a video' }}
+    <label class="btn btn-lg" [class.btn-outline-primary]="nativeCapture || pageCamera" [class.btn-primary]="!nativeCapture && !pageCamera" [class.disabled]="working()">
+      {{ text.choose }}
       <input type="file" [accept]="kind + '/*'" hidden [disabled]="!!working()" (change)="onFile($event)" />
     </label>
     @if (working(); as what) {
@@ -39,14 +46,14 @@
     @if (preview(); as src) {
       @if (kind === 'image') {
         <img class="sf-attach-preview" [src]="src" alt="The image you are about to send" />
-      } @else {
+      } @else if (kind === 'video') {
         <video class="sf-attach-preview" [src]="src" controls playsinline aria-label="The video you are about to send"></video>
+      } @else {
+        <audio class="sf-attach-audio" [src]="src" controls aria-label="The voice message you are about to send"></audio>
       }
     }
     @if (file(); as shown) {
-      <p class="sf-hint text-center m-0">
-        {{ shown.name }} · {{ shown.width }} × {{ shown.height }}@if (durationMs(); as ms) { · {{ (ms / 1000).toFixed(0) }} s} · {{ formatBytes(shown.blob.size) }}
-      </p>
+      <p class="sf-hint text-center m-0">{{ details(shown) }}</p>
     }
     @if (trimmed()) {
       <p class="sf-hint text-center m-0">The video is longer than {{ maxSeconds }} seconds: only the first {{ maxSeconds }} seconds are sent.</p>
@@ -61,6 +68,6 @@
       <a [routerLink]="['/friends', friendId]" class="btn btn-light btn-lg flex-fill" [class.disabled]="working()">Cancel</a>
       <button type="button" class="btn btn-primary btn-lg flex-fill" [disabled]="!!working()" (click)="send()">{{ working() ?? 'Send' }}</button>
     </div>
-    <button type="button" class="btn btn-link" [disabled]="!!working()" (click)="startAgain()">{{ kind === 'image' ? 'Take or choose another' : 'Record or choose another' }}</button>
+    <button type="button" class="btn btn-link" [disabled]="!!working()" (click)="startAgain()">{{ text.another }}</button>
   }
 </main>

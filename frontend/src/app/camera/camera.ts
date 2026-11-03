@@ -54,6 +54,10 @@ export class Camera implements OnInit, OnDestroy {
       const element = this.video()?.nativeElement;
       const stream = this.stream();
       if (!element || !stream) return;
+      // the picture is shown, the sound is NOT played: it would come out of the speakers and be heard again by the microphone (feedback).
+      // The `muted` attribute in the template does not set this property on an element Angular creates, so it is set here.
+      element.muted = true;
+      element.volume = 0;
       element.srcObject = stream;
       void element.play().catch(() => undefined);
     });

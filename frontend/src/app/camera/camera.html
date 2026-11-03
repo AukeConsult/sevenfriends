@@ -1,5 +1,5 @@
 <div class="sf-camera">
-  <video #video autoplay playsinline muted [attr.aria-label]="'The camera'"></video>
+  <video #video autoplay playsinline [muted]="true" [attr.aria-label]="'The camera'"></video>
   @if (recording()) {
     <span class="sf-rec" role="status">● {{ seconds() }} / {{ maxSeconds }} s</span>
   }

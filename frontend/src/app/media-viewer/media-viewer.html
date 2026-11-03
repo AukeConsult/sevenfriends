@@ -1,11 +1,13 @@
 <header class="sf-bar">
   <button type="button" class="sf-back border-0 bg-transparent" (click)="back()" aria-label="Back">‹</button>
-  <h1 class="sf-bar-title">{{ file()?.name ?? 'Image or video' }}</h1>
+  <h1 class="sf-bar-title">{{ file()?.name ?? 'Image, video or audio' }}</h1>
 </header>
 
 <main class="sf-viewer">
   @if (file(); as shown) {
-    @if (isVideo(shown)) {
+    @if (isAudio(shown)) {
+      <audio [src]="shown.url" controls autoplay [attr.aria-label]="shown.name ?? 'Audio'"></audio>
+    } @else if (isVideo(shown)) {
       <video [src]="shown.url" controls autoplay playsinline [attr.aria-label]="shown.name ?? 'Video'"></video>
     } @else {
       <img [src]="shown.url" [alt]="shown.name ?? 'Image'" />

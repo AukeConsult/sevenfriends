@@ -29,6 +29,7 @@
 
   // ---- Basic dimensions (phone defaults) ----
   --sf-max-width: 1000px;
+  --sf-media-max: 640px; // the widest an image, video or audio in a message gets: a mobile screen (pixels, so it does not grow with the text size on wide screens)
   --sf-gutter: 1rem; // side padding of pages
   --sf-gap: 0.75rem; // space between items
   --sf-radius: 1rem;
@@ -268,6 +269,17 @@ router-outlet + * { display: block; min-height: 100dvh; }
   border-bottom: 1px solid var(--sf-border);
   &:last-child { border-bottom: 0; }
 }
+.sf-message-item { // a message on the Home page: name and buttons on the first line, the text below over the whole width
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.875rem 0;
+  border-bottom: 1px solid var(--sf-border);
+  &:last-child { border-bottom: 0; }
+}
+.sf-message-head { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; strong { flex: 1; min-width: 0; } }
+.sf-message-actions { display: flex; flex: none; gap: 0.5rem; .btn { min-height: 2.25rem; padding-top: 0.125rem; padding-bottom: 0.125rem; } } // smaller than the usual 44 px buttons (the global rule gives every button a big tap area)
+.sf-message-time { color: var(--sf-muted); }
 .sf-list-text {
   flex: 1;
   min-width: 0;
@@ -427,17 +439,19 @@ router-outlet + * { display: block; min-height: 100dvh; }
   background: var(--sf-card);
   border-top: 1px solid var(--sf-border);
 }
-.sf-composer-row { display: flex; align-items: flex-end; gap: 0.5rem; padding: 0.5rem var(--sf-gutter); }
+.sf-composer-row { display: flex; align-items: center; gap: 0.25rem; padding: 0.5rem var(--sf-gutter); }
 .sf-bubble-tap { cursor: pointer; }
 // ---- Images in messages ----
+.sf-message-media { width: min(var(--sf-media-max), 94%); max-width: 94%; } // a message with an image, video or audio fills the feed, up to 640 px
+.sf-message-media .sf-bubble-media { align-self: stretch; }
 .sf-bubble-media { display: flex; flex-direction: column; gap: 0.25rem; padding: 0.25rem; }
 .sf-bubble-media .sf-caption { padding: 0.25rem 0.5rem 0.25rem; }
 .sf-media {
   display: grid;
   place-items: center;
-  width: min(16rem, 70vw);
+  width: 100%;
   min-height: 4rem;
-  max-height: 20rem;
+  max-height: min(32rem, 70dvh);
   overflow: hidden;
   border-radius: 0.75rem;
   background: var(--sf-bg);
@@ -469,6 +483,16 @@ app-camera { display: contents; }
 }
 .sf-media-open { position: absolute; z-index: 1; top: 0.5rem; right: 0.5rem; width: 2rem; height: 2rem; display: grid; place-items: center; border-radius: 50%; background: rgba(0, 0, 0, 0.55); color: #fff; text-decoration: none; font-size: 1.1rem; line-height: 1; }
 .sf-viewer video { display: block; width: 100%; max-height: calc(100dvh - 12rem); background: #000; }
+.sf-media-audio { display: flex; align-items: center; gap: 0.5rem; width: 100%; audio { flex: 1; min-width: 0; height: 2.5rem; } }
+.sf-play-small { position: static; margin: 0; width: 2.25rem; height: 2.25rem; flex: none; background: var(--bs-primary, #4f46e5); }
+.sf-audio-info { flex: 1; }
+.sf-audio-open { flex: none; width: 2rem; height: 2rem; display: grid; place-items: center; border-radius: 50%; background: rgba(0, 0, 0, 0.12); color: inherit; text-decoration: none; font-size: 1.1rem; line-height: 1; }
+.sf-viewer audio { display: block; width: 100%; }
+.sf-attach-audio { width: 100%; }
+app-voice { display: contents; }
+.sf-voice { display: flex; flex-direction: column; align-items: center; gap: 0.75rem; padding: 1.5rem 1rem; border-radius: var(--sf-radius); background: #fff; }
+.sf-voice-time { font-size: 2rem; font-variant-numeric: tabular-nums; &.sf-voice-live { color: #dc2626; } }
+.sf-voice-meter { width: 100%; height: 0.75rem; border-radius: 1rem; background: rgba(0, 0, 0, 0.08); overflow: hidden; span { display: block; height: 100%; background: #16a34a; transition: width 0.08s linear; } }
 .sf-media-info { position: absolute; left: 0.5rem; bottom: 0.5rem; padding: 0 0.5rem; border-radius: 1rem; background: rgba(0, 0, 0, 0.55); color: #fff; font-size: var(--sf-fs-description); }
 .sf-viewer {
   display: flex;
@@ -482,7 +506,18 @@ app-camera { display: contents; }
 .sf-editing { display: flex; align-items: center; justify-content: space-between; padding: 0.25rem var(--sf-gutter); background: var(--bs-primary-bg-subtle); }
 .sf-composer-field { resize: none; max-height: 8rem; overflow-y: auto; line-height: 1.4; }
 .sf-emoji-toggle { margin: 0; font-size: var(--sf-fs-title); }
-.sf-composer-row .sf-icon-btn { margin: 0; } // the buttons in the message row sit level with the field
+.sf-composer-row .sf-icon-btn { margin: 0; width: 2.25rem; height: 2.25rem; } // the buttons in the message row are close together and level with the middle of the field
+// the image, video and audio buttons: they slide back to the left and hide while a text is typed, and come back when it is empty
+.sf-attach {
+  display: flex;
+  gap: 0;
+  flex: none; // the field must not squeeze the buttons
+  overflow: hidden;
+  max-width: 10rem;
+  transition: max-width 0.25s ease, opacity 0.2s ease, transform 0.25s ease, margin 0.25s ease;
+  &.sf-attach-away { max-width: 0; margin-right: -0.25rem; opacity: 0; transform: translateX(-1.5rem); pointer-events: none; }
+  @media (prefers-reduced-motion: reduce) { transition: none; }
+}
 .sf-emoji-panel { display: grid; grid-template-columns: repeat(8, 1fr); max-height: 10rem; overflow-y: auto; padding: 0.25rem var(--sf-gutter); border-bottom: 1px solid var(--sf-border); }
 .sf-emoji { padding: 0.25rem 0; border: 0; background: none; font-size: var(--sf-fs-title); line-height: 1.5; border-radius: 0.5rem; &:hover, &:focus-visible { background: var(--sf-bg); } }
 

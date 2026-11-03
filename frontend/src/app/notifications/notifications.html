@@ -100,18 +100,21 @@
       <h2 class="sf-section">Messages</h2>
       <ul class="sf-list">
         @for (message of messages(); track message.id) {
-          <li class="sf-list-item">
-            <span class="sf-list-text">
-              <strong>{{ message.fromName }}</strong>
-              <span class="sf-wrap">{{ message.text }}</span>
-              @if (message.time) {
-                <small>{{ message.time | date: 'short' }}</small>
-              }
-            </span>
-            @if (message.connectionId) {
-              <a [routerLink]="['/friends', message.connectionId]" class="btn btn-primary rounded-pill px-3">Open</a>
+          <li class="sf-message-item">
+            <!-- the name and the buttons on the first line, the message (and its time) on the lines below, over the whole width -->
+            <div class="sf-message-head">
+              <strong class="sf-ellipsis">{{ message.fromName }}</strong>
+              <span class="sf-message-actions">
+                @if (message.connectionId) {
+                  <a [routerLink]="['/friends', message.connectionId]" class="btn btn-primary btn-sm rounded-pill px-3">Open</a>
+                }
+                <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3" (click)="markRead(message)">Mark read</button>
+              </span>
+            </div>
+            <span class="sf-wrap">{{ message.text }}</span>
+            @if (message.time) {
+              <small class="sf-message-time">{{ message.time | date: 'short' }}</small>
             }
-            <button type="button" class="btn btn-outline-secondary rounded-pill px-3" (click)="markRead(message)">Mark read</button>
           </li>
         }
       </ul>

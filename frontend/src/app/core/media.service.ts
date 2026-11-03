@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { MediaUpload } from '../models';
 import { ApiService } from './api.service';
+import { PreparedAudio } from './audio';
 import { PreparedImage } from './image';
 import { PreparedVideo } from './video';
 
@@ -34,6 +35,11 @@ export class MediaService {
     return this.uploadWithPreview('video', video, progress);
   }
 
+  /** The same for audio (a recorded voice, or a chosen file as it is): no preview picture. */
+  async uploadAudio(audio: PreparedAudio, progress?: Progress): Promise<MediaUpload> {
+    return this.upload('audio', audio.blob, audio.name, progress);
+  }
+
   private async uploadWithPreview(kind: 'image' | 'video', file: PreparedImage, progress?: Progress): Promise<MediaUpload> {
     const stored = await this.upload(kind, file.blob, file.name, progress);
     await this.api.request<void>(`/sf-cache/${stored.objectId}/thumb`, { method: 'PUT', body: file.thumb, headers: { 'Content-Type': file.thumb.type } });
@@ -41,7 +47,7 @@ export class MediaService {
   }
 
   /** One request for a small file; a file over 8 MB goes in pieces (the server joins them), still through the API. */
-  private async upload(kind: 'image' | 'video', blob: Blob, name: string, progress?: Progress): Promise<MediaUpload> {
+  private async upload(kind: 'image' | 'video' | 'audio', blob: Blob, name: string, progress?: Progress): Promise<MediaUpload> {
     const query = `kind=${kind}&name=${encodeURIComponent(name)}`;
     if (blob.size <= CHUNK_BYTES) {
       return this.api.request<MediaUpload>(`/sf-cache?${query}`, { method: 'POST', body: blob, headers: { 'Content-Type': blob.type || 'application/octet-stream' } });

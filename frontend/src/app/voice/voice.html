@@ -1,0 +1,28 @@
+<div class="sf-voice">
+  <div class="sf-voice-time" role="status" [class.sf-voice-live]="recording()">{{ format(seconds()) }} / {{ format(maxSeconds) }}</div>
+  <div class="sf-voice-meter" aria-hidden="true"><span [style.width.%]="level() * 100"></span></div>
+  @if (micName()) {
+    <p class="sf-hint m-0 text-center">Microphone: {{ micName() }}</p>
+  }
+  @if (muted()) {
+    <div class="alert alert-danger py-2 m-0 w-100" role="alert">The microphone is <strong>muted</strong> (the computer reports it as muted). Unmute it: the mute key of the keyboard, or Windows Settings › System › Sound › Input, or Settings › Privacy &amp; security › Microphone. This message goes away by itself when it is unmuted.</div>
+  }
+  <p class="sf-hint m-0 text-center">{{ !ready() ? 'Waiting for the microphone…' : recording() ? 'Recording… speak now.' : 'Press Start and speak.' }}</p>
+</div>
+<div class="d-flex gap-2">
+  <button type="button" class="btn btn-light btn-lg flex-fill" [disabled]="recording()" (click)="closed.emit()">Cancel</button>
+  @if (!recording()) {
+    <button type="button" class="btn btn-primary btn-lg flex-fill" [disabled]="!ready()" (click)="start()">Start recording</button>
+  } @else {
+    <button type="button" class="btn btn-danger btn-lg flex-fill" (click)="stop()">Stop</button>
+  }
+</div>
+@if (retried()) {
+  <div class="alert alert-warning py-2 m-0" role="alert">Nothing was heard, so the recording was not kept. The microphone was set up again without the sound filters of the browser: record once more.</div>
+}
+@if (silent()) {
+  <div class="alert alert-warning py-2 m-0" role="alert">Nothing was heard, so the recording was not kept. Check that the microphone is not muted and speak close to it{{ microphones().length > 1 ? ', or use another microphone' : '' }}, then record again.</div>
+}
+@if (microphones().length > 1 && !recording()) {
+  <button type="button" class="btn btn-link" (click)="nextMicrophone()">Use another microphone</button>
+}
