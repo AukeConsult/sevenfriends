@@ -1,9 +1,9 @@
-<header class="head">
+<header class="sf-page-head">
   <h1>{{ circle()?.name ?? 'Friends' }}</h1>
-  <span class="count">{{ filled() }} / {{ max }}</span>
+  <span class="sf-hint">{{ filled() }} / {{ max }}</span>
 </header>
 
-<main class="sf-content container-fluid">
+<main class="sf-content">
   @if (loadError()) {
     <div class="alert alert-danger d-flex align-items-center justify-content-between py-2" role="alert">
       <span>{{ loadError() }}</span>
@@ -28,9 +28,13 @@
             <div class="card-body sf-card">
               <!-- Header: avatar, name + status, delete -->
               <header class="sf-head">
-                <span class="avatar">{{ friend.name[0].toUpperCase() }}</span>
+                <!-- the icon of this seat: friend1.svg ... friend7.svg (public/icons/friends) -->
+                <img class="sf-avatar" [src]="'icons/friends/friend' + slot.position + '.svg'" [alt]="''" width="32" height="32" />
                 <div class="sf-title">
                   <strong class="sf-name">{{ friend.name }}</strong>
+                  @if (friend.mood; as mood) {
+                    <img class="sf-mood" [src]="moodIcon(mood)" [alt]="moodLabel(mood)" [title]="moodLabel(mood)" width="20" height="20" />
+                  }
                   <!-- a confirmed friend needs no badge: only the other statuses are shown -->
                   @if (friend.status !== 'confirmed') {
                     <span class="badge rounded-pill"
@@ -52,6 +56,13 @@
                     </svg>
                   </a>
                 }
+                <button type="button" class="sf-icon-btn" (click)="toggleProfile(friend)" [attr.aria-expanded]="expanded() === friend.id"
+                        [attr.aria-label]="(expanded() === friend.id ? 'Hide the profile of ' : 'Show the profile of ') + friend.name">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                       stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" [style.transform]="expanded() === friend.id ? 'rotate(180deg)' : null">
+                    <path d="M6 9l6 6 6-6" />
+                  </svg>
+                </button>
                 @if (!(friend.incoming && friend.status === 'pending')) {
                   <button type="button" class="sf-icon-btn" (click)="askDelete(friend)" [attr.aria-label]="'Delete ' + friend.name" [attr.aria-expanded]="deleting() === friend.id">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -64,6 +75,9 @@
 
               <!-- Everything below lines up with the name -->
               <div class="sf-body">
+                @if (friend.moodMessage) {
+                  <p class="sf-hint">“{{ friend.moodMessage }}”</p>
+                }
                 @if (friend.status === 'rejected') {
                   <p class="sf-hint">They rejected your request. Delete it to remove it from both lists.</p>
                 } @else if (friend.status === 'pending') {
@@ -76,20 +90,9 @@
                     }
                   }
                 }
-                @if (friend.unverified.length && friend.status !== 'rejected') {
-                  <p class="sf-hint text-warning-emphasis">
-                    {{ friend.name }} has not verified {{ friend.unverified.length === 2 ? 'their email or phone' : friend.unverified[0] === 'email' ? 'their email' : 'their phone' }},
-                    so we cannot be sure it is really them.
-                  </p>
+                @if (friend.status === 'confirmed') {
+                  <p class="sf-hint sf-spoken">{{ lastSpoken(friend) }}</p>
                 }
-
-                <dl class="sf-details">
-                  @if (friend.phone) { <dt>Phone</dt><dd>{{ friend.phone }}</dd> }
-                  @if (friend.email) { <dt>Email</dt><dd>{{ friend.email }}</dd> }
-                  @for (n of networks; track n.key) {
-                    @if (friend[n.key]; as account) { <dt>{{ n.label }}</dt><dd>{{ account }}</dd> }
-                  }
-                </dl>
 
                 @if (friend.incoming && friend.status === 'pending') {
                   <div class="sf-actions">
@@ -100,6 +103,49 @@
               </div>
             </div>
           </article>
+
+          <!-- The profile of the friend: opens under the card (tap the arrow), shows who they are and how to reach them -->
+          <div class="sf-expand" [class.open]="expanded() === friend.id" [attr.inert]="expanded() === friend.id ? null : ''">
+            <div class="sf-expand-inner">
+              <section class="sf-profile" [attr.aria-label]="'Profile of ' + friend.name">
+                <div class="sf-profile-head">
+                  <img class="sf-avatar" [src]="'icons/friends/friend' + slot.position + '.svg'" [alt]="''" width="48" height="48" />
+                  <div class="min-w-0">
+                    <strong class="d-block">{{ friend.name }}</strong>
+                    @if (countryName(friend.country); as country) {
+                      <span class="sf-hint">{{ country }}</span>
+                    }
+                  </div>
+                </div>
+
+                @if (friend.mood; as mood) {
+                  <p class="sf-profile-mood">
+                    <img [src]="moodIcon(mood)" [alt]="''" width="24" height="24" />
+                    <span>{{ moodLabel(mood) }}@if (friend.moodMessage) { · “{{ friend.moodMessage }}” }</span>
+                  </p>
+                } @else if (friend.moodMessage) {
+                  <p class="sf-profile-mood"><span>“{{ friend.moodMessage }}”</span></p>
+                }
+
+                @if (friend.unverified.length && friend.status !== 'rejected') {
+                  <p class="sf-hint text-warning-emphasis">
+                    {{ friend.name }} has not verified {{ friend.unverified.length === 2 ? 'their email or phone' : friend.unverified[0] === 'email' ? 'their email' : 'their phone' }},
+                    so we cannot be sure it is really them.
+                  </p>
+                }
+
+
+                <dl class="sf-details">
+                  @if (friend.phone) { <dt>Phone</dt><dd>{{ friend.phone }}</dd> }
+                  @if (friend.email) { <dt>Email</dt><dd>{{ friend.email }}</dd> }
+                  @for (n of networks; track n.key) {
+                    @if (friend[n.key]; as account) { <dt>{{ n.label }}</dt><dd>{{ account }}</dd> }
+                  }
+                  @if (friend.createdAt) { <dt>Added</dt><dd>{{ friend.createdAt | date: 'mediumDate' }}</dd> }
+                </dl>
+              </section>
+            </div>
+          </div>
 
           <!-- Expandable frame under the card: opens in the page flow and pushes the list down -->
           <div class="sf-expand" [class.open]="deleting() === friend.id" [attr.inert]="deleting() === friend.id ? null : ''">
@@ -117,9 +163,9 @@
           </div>
         } @else {
           <a routerLink="/friends/add" class="btn sf-slot-empty w-100 flex-grow-1 text-start d-flex align-items-center gap-3">
-            <span class="avatar">{{ slot.position }}</span>
+            <img class="sf-avatar sf-avatar-empty" [src]="'icons/friends/friend' + slot.position + '.svg'" [alt]="''" width="40" height="40" />
             <span class="flex-grow-1">Add a close friend</span>
-            <span class="fs-3 text-primary" aria-hidden="true">+</span>
+            <span class="sf-fs-heading text-primary" aria-hidden="true">+</span>
           </a>
         }
       </li>

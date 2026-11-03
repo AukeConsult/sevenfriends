@@ -69,3 +69,17 @@ export function unverifiedDetails(account: {
   if (account.phoneKey) out.push("phone");
   return out;
 }
+
+/**
+ * Is this a country code: two CAPITAL letters that the system knows as a country or region (NO, SE, US, XK ...)?
+ * The names come from the system's own data (ICU), so there is no list to keep here; the app lists the same codes.
+ */
+export function isCountry(code: unknown): code is string {
+  if (typeof code !== "string" || !/^[A-Z]{2}$/.test(code)) return false;
+  try {
+    const name = new Intl.DisplayNames(["en"], { type: "region" }).of(code);
+    return Boolean(name) && name !== code && name !== "Unknown Region";
+  } catch {
+    return false;
+  }
+}

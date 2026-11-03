@@ -37,6 +37,9 @@ export class AuthService {
   private confirmation: ConfirmationResult | null = null;
   private verifier: RecaptchaVerifier | null = null;
 
+  /** Why the person was signed out against their will (shown on the login page); null when they were not. */
+  readonly signedOutNotice = signal<string | null>(null);
+
   /** Resolves once Firebase has restored (or not) the previous session. */
   readonly ready = new Promise<void>((resolve) => {
     onAuthStateChanged(
@@ -168,6 +171,16 @@ export class AuthService {
     return sendPasswordResetEmail(auth, email);
   }
 
+  /** Signs out because the login can no longer be used (see ApiService), and leaves a note for the login page. */
+  async forceLogout(reason: string): Promise<void> {
+    this.signedOutNotice.set(reason);
+    try {
+      await signOut(auth);
+    } catch {
+      /* the local session is dropped even if this fails */
+    }
+  }
+
   logout(): Promise<void> {
     return signOut(auth);
   }
@@ -183,6 +196,7 @@ export class AuthService {
 
   /** Saves the user, and signs out again if that fails so state stays consistent. */
   private async finishLogin(user: User): Promise<void> {
+    this.signedOutNotice.set(null);
     // the account was created by this very sign-in (any method: Google, password, link, phone)
     this.newAccount = user.metadata.creationTime === user.metadata.lastSignInTime;
     try {

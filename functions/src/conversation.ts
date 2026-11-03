@@ -109,6 +109,9 @@ conversationRouter.post(
     const batch = getFirestore().batch();
     batch.set(mine, { ...common, read: true }); // my own message needs no reading
     batch.set(theirs, { ...common, read: false });
+    // "last spoken to": both sides of the friendship remember when the last message was written
+    batch.update((res.locals.circleRef as DocumentReference).collection(FRIENDS_SUBCOLLECTION).doc(connection.id), { lastMessageAt: FieldValue.serverTimestamp() });
+    batch.update(circleCol(connection.peerUid).doc(connection.peerCircleId).collection(FRIENDS_SUBCOLLECTION).doc(connection.id), { lastMessageAt: FieldValue.serverTimestamp() });
     await batch.commit();
 
     const saved = (await mine.get()).data()!;

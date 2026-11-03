@@ -1,11 +1,11 @@
-<main class="login container-fluid">
+<main class="sf-landing">
   <div class="brand text-center">
-    <div class="logo">7</div>
+    <div class="sf-logo sf-logo-lg">7</div>
     <h1 class="mt-3 mb-2">Seven Friends</h1>
     <p class="text-secondary m-0">Stay close to the people who matter most.</p>
   </div>
 
-  <div class="actions mx-auto w-100">
+  <div class="sf-form-width mx-auto w-100">
     <!-- the ways to sign in without a password -->
     <div class="vstack gap-2">
       <button type="button" class="btn btn-outline-secondary btn-lg bg-white text-body w-100 gap-2" (click)="google()" [disabled]="busy()">
@@ -21,7 +21,7 @@
       <a routerLink="/login/email" class="btn btn-outline-secondary btn-lg bg-white text-body w-100">Email me a sign-in link</a>
     </div>
 
-    <div class="divider"><span>or use a password</span></div>
+    <div class="sf-divider"><span>or use a password</span></div>
 
     <form class="vstack gap-2" (submit)="$event.preventDefault(); submit(email.value, password.value, name.value)">
       <input #name type="text" name="name" class="form-control form-control-lg" placeholder="Your name (optional)"
@@ -44,6 +44,9 @@
       {{ mode() === 'signin' ? 'No account? Create one' : 'Have an account? Sign in' }}
     </button>
 
+    @if (signedOutNotice(); as notice) {
+      <div class="alert alert-warning py-2 mt-2 mb-0 text-center" role="alert">{{ notice }}</div>
+    }
     @if (error()) {
       <div class="alert alert-danger py-2 mt-2 mb-0 text-center" role="alert">{{ error() }}</div>
     }

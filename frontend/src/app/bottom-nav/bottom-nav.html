@@ -1,29 +1,29 @@
 @if (menuOpen()) {
-  <div class="menu-backdrop" (click)="closeMenu()"></div>
+  <div class="sf-menu-backdrop" (click)="closeMenu()"></div>
 }
 
-<nav class="banner" aria-label="Main">
-  <a class="item" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="onHome()">
-    <span class="icon" aria-hidden="true">🏠</span>
+<nav class="sf-menu" aria-label="Main">
+  <a class="sf-menu-item" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="onHome()">
+    <span class="sf-menu-icon" aria-hidden="true">🏠</span>
     <span class="text">Home</span>
   </a>
-  <a class="item" routerLink="/friends" routerLinkActive="active" (click)="closeMenu()">
-    <span class="icon" aria-hidden="true">👥</span>
+  <a class="sf-menu-item" routerLink="/friends" routerLinkActive="active" (click)="closeMenu()">
+    <span class="sf-menu-icon" aria-hidden="true">👥</span>
     <span class="text">Friends</span>
   </a>
 
-  <div class="item-wrap">
-    <button type="button" class="item" [class.active]="menuOpen() || profileActive()"
+  <div class="sf-menu-wrap">
+    <button type="button" class="sf-menu-item" [class.active]="menuOpen() || profileActive()"
             aria-haspopup="menu" [attr.aria-expanded]="menuOpen()" (click)="toggleMenu()">
-      <span class="icon" aria-hidden="true">👤</span>
-      <span class="text">Profile</span>
+      <span class="sf-menu-icon" aria-hidden="true">👤</span>
+      <span class="text">Me</span>
     </button>
 
     @if (menuOpen()) {
-      <div class="dropup" role="menu">
-        <a class="entry" role="menuitem" routerLink="/profile" (click)="closeMenu()">My profile</a>
-        <a class="entry" role="menuitem" routerLink="/settings" (click)="closeMenu()">Settings</a>
-        <button type="button" class="entry danger" role="menuitem" (click)="logout()">Log out</button>
+      <div class="sf-dropup" role="menu">
+        <a class="sf-dropup-entry" role="menuitem" routerLink="/profile" (click)="closeMenu()">My profile</a>
+        <a class="sf-dropup-entry" role="menuitem" routerLink="/sound-and-notifications" (click)="closeMenu()">Sound and notifications</a>
+        <button type="button" class="sf-dropup-entry sf-danger" role="menuitem" (click)="logout()">Log out</button>
       </div>
     }
   </div>

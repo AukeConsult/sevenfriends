@@ -1,0 +1,42 @@
+<div class="card border-0 shadow-sm">
+  <!-- closed: my mood icon and message. Tap it to open the frame and change them -->
+  <button type="button" class="sf-summary" [attr.aria-expanded]="open()" aria-controls="mood-panel" [disabled]="!loaded()"
+          (click)="open.set(!open())">
+    @if (mood(); as current) {
+      <img [src]="moodIcon(current)" [alt]="moodLabel(current)" width="40" height="40" />
+    } @else {
+      <span class="sf-summary-none" aria-hidden="true">+</span>
+    }
+    <span class="sf-summary-text">
+      <span class="small text-secondary">Your mood (your friends see it)</span>
+      <span class="sf-ellipsis">
+        @if (mood() || message()) {
+          {{ moodLabel(mood()) }}{{ mood() && message() ? ' · ' : '' }}{{ message() }}
+        } @else {
+          Tap to say how you are
+        }
+      </span>
+    </span>
+    <span class="sf-chevron" aria-hidden="true">{{ open() ? '▴' : '▾' }}</span>
+  </button>
+
+  @if (open()) {
+    <div id="mood-panel" class="card-body vstack gap-2 pt-0">
+      <div class="sf-choices sf-choices-grid" role="radiogroup" aria-label="Your mood">
+        @for (m of moods; track m.id) {
+          <button type="button" class="sf-choice" role="radio" [attr.aria-checked]="mood() === m.id" [class.sf-chosen]="mood() === m.id"
+                  [attr.aria-label]="m.label" [title]="m.label" (click)="choose(m.id)">
+            <img [src]="moodIcon(m.id)" alt="" width="36" height="36" />
+            <span class="small">{{ m.label }}</span>
+          </button>
+        }
+      </div>
+      <input type="text" class="form-control" maxlength="60" placeholder="A few words about how you are (optional)"
+             [value]="message()" (input)="typed($any($event.target).value)" (blur)="leftField()" aria-label="Mood message" />
+    </div>
+  }
+
+  @if (error()) {
+    <span class="small text-danger px-3 pb-2" role="alert">{{ error() }}</span>
+  }
+</div>

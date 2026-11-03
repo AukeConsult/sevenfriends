@@ -11,7 +11,6 @@ const emptyDraft = (): FriendDraft => ({ name: '', email: '', phone: '', message
   selector: 'app-add-friend',
   imports: [RouterLink],
   templateUrl: './add-friend.html',
-  styleUrl: './add-friend.scss',
 })
 export class AddFriend {
   private readonly friends = inject(FriendsService);

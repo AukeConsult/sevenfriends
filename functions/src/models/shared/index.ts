@@ -4,5 +4,6 @@ export * from "./circle";
 export * from "./friend";
 export * from "./message";
 export * from "./notifications";
+export * from "./preferences";
 export * from "./profile";
 export * from "./social";

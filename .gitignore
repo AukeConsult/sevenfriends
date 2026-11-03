@@ -10,3 +10,6 @@ firebase-export-*/
 .idea/
 # generated copy of functions/src/models/shared (scripts/sync-models.mjs)
 frontend/src/app/models/shared/
+functions/assets/mail/preview*.html
+# generated list of the jingles in frontend/public/sounds (scripts/sounds-manifest.mjs)
+frontend/public/sounds/sounds.json

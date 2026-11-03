@@ -30,6 +30,10 @@ export const INCOMING_SIGNAL_COLLECTION = "incoming-signal";
 
 export const MAX_NAME_LENGTH = 100; // display name
 
+/** The moods (mood1.svg ... mood4.svg) and the short mood message a person can stick to their profile. */
+export const MOOD_COUNT = 4;
+export const MAX_MOOD_MESSAGE = 60;
+
 /** The message a person can add to a friend request. */
 export const MAX_REQUEST_MESSAGE = 500;
 
@@ -46,3 +50,12 @@ export const MAX_INVITES_PER_DAY = 20;
  * ({ token, createdAt, updatedAt }). The id is a hash of the token. Erased with the account.
  */
 export const PUSH_DEVICE_COLLECTION = "push-device";
+
+/**
+ * user-account/{uid}/profile-picture/current: the picture the person uploaded ({ image: a data URL, updatedAt }). It is
+ * kept in its own document so the (many) reads of the account document do not carry the image. Erased with the account.
+ */
+export const PROFILE_PICTURE_COLLECTION = "profile-picture";
+export const PROFILE_PICTURE_DOC = "current";
+/** The biggest picture kept (the app sends about 256 x 256 pixels, a JPEG of 15-50 KB). */
+export const MAX_PICTURE_BYTES = 70 * 1024;

@@ -8,9 +8,10 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "sync:models": "node ../scripts/sync-models.mjs",
-    "prestart": "npm run sync:models",
-    "prebuild": "npm run sync:models",
-    "prewatch": "npm run sync:models",
+    "sync:sounds": "node ../scripts/sounds-manifest.mjs",
+    "prestart": "npm run sync:models && npm run sync:sounds",
+    "prebuild": "npm run sync:models && npm run sync:sounds",
+    "prewatch": "npm run sync:models && npm run sync:sounds",
     "pretest": "npm run sync:models"
   },
   "prettier": {

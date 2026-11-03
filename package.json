@@ -11,6 +11,7 @@
     "test": "npm --prefix functions run test:run",
     "test:emulator": "firebase emulators:exec --config firebase.test.json --only firestore --project demo-sevenfriends-test \"npm --prefix functions run test:run\"",
     "sync:models": "node scripts/sync-models.mjs",
+    "sync:sounds": "node scripts/sounds-manifest.mjs",
     "check:models": "node scripts/sync-models.mjs --check"
   }
 }

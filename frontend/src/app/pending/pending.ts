@@ -13,7 +13,6 @@ import { FriendRequest } from '../models';
   selector: 'app-pending',
   imports: [DatePipe, RouterLink],
   templateUrl: './pending.html',
-  styleUrl: './pending.scss',
 })
 export class Pending {
   private readonly notifications = inject(NotificationsService);

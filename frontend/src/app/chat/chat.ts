@@ -1,8 +1,10 @@
 import { DatePipe } from '@angular/common';
-import { Component, DestroyRef, ElementRef, effect, inject, signal, untracked, viewChild } from '@angular/core';
+import { Component, DestroyRef, ElementRef, computed, effect, inject, signal, untracked, viewChild } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ApiError } from '../core/api.service';
 import { ChatService } from '../core/chat.service';
+import { FriendsService } from '../core/friends.service';
+import { moodIcon, moodLabel } from '../core/moods';
 import { RealtimeService } from '../core/realtime.service';
 import { ChatMessage } from '../models';
 
@@ -14,16 +16,22 @@ const SAFETY_REFRESH_MS = 30000;
   selector: 'app-chat',
   imports: [DatePipe, RouterLink],
   templateUrl: './chat.html',
-  styleUrl: './chat.scss',
 })
 export class Chat {
   private readonly chat = inject(ChatService);
   private readonly realtime = inject(RealtimeService);
+  private readonly friendsService = inject(FriendsService);
   private lastLive = this.realtime.latestMessage()?.seq ?? 0; // live messages before this page opened are not news
   private readonly end = viewChild<ElementRef<HTMLElement>>('end');
 
   protected readonly friendId = inject(ActivatedRoute).snapshot.paramMap.get('id') ?? '';
   protected readonly name = signal('');
+  protected readonly moodIcon = moodIcon;
+  protected readonly moodLabel = moodLabel;
+  /** this friend, from the list (for the mood) */
+  protected readonly friend = computed(() => this.friendsService.friends().find((f) => f.id === this.friendId) ?? null);
+  /** the seat of this friend (1-7): its icon friend{seat}.svg is shown in the header; 0 while the list is not loaded */
+  protected readonly seat = computed(() => this.friendsService.friends().findIndex((f) => f.id === this.friendId) + 1);
   protected readonly messages = signal<ChatMessage[]>([]);
   protected readonly loaded = signal(false);
   protected readonly error = signal<string | null>(null);
@@ -33,6 +41,7 @@ export class Chat {
   protected readonly sending = signal(false);
 
   constructor() {
+    if (!this.friendsService.friends().length) void this.friendsService.load().catch(() => undefined); // opened directly (a reload): the seat comes from the list
     this.realtime.openFeed.set(this.friendId); // new messages from this friend come here, not to the Home list
     this.refresh(true);
 

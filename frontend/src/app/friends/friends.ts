@@ -1,7 +1,11 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FriendsService } from '../core/friends.service';
 import { MessagesService } from '../core/messages.service';
+import { countries } from '../core/countries';
+import { moodIcon, moodLabel } from '../core/moods';
+import { timeAgo } from '../core/time-ago';
 import { NotificationsService } from '../core/notifications.service';
 import { SOCIAL_NETWORKS } from '../core/social';
 import { Friend, FriendSlot } from '../models';
@@ -10,9 +14,8 @@ const MAX_FRIENDS = 7;
 
 @Component({
   selector: 'app-friends',
-  imports: [RouterLink],
+  imports: [DatePipe, RouterLink],
   templateUrl: './friends.html',
-  styleUrl: './friends.scss',
 })
 export class Friends {
   private readonly friendsService = inject(FriendsService);
@@ -42,9 +45,33 @@ export class Friends {
     return counts;
   });
 
+  /** which friend's profile is open under the card (one at a time); closed = just the card */
+  protected readonly expanded = signal<string | null>(null);
+  /** "now", refreshed every minute, so "5 minutes ago" keeps counting */
+  private readonly now = signal(Date.now());
+  private readonly countryNames = new Map(countries().map((c) => [c.code, c.name]));
+
+  protected toggleProfile(friend: Friend): void {
+    this.expanded.update((id) => (id === friend.id ? null : friend.id));
+  }
+
+  /** "Last spoken to 3 days ago", or that you have not spoken yet. */
+  protected lastSpoken(friend: Friend): string {
+    return friend.lastSpokenAt ? `Last spoken to ${timeAgo(friend.lastSpokenAt, this.now())}` : 'You have not spoken yet';
+  }
+
+  protected countryName(code: string | null): string {
+    return (code && this.countryNames.get(code)) || '';
+  }
+
+  protected readonly moodIcon = moodIcon;
+  protected readonly moodLabel = moodLabel;
+
   protected readonly loadError = signal<string | null>(null);
 
   constructor() {
+    const tick = setInterval(() => this.now.set(Date.now()), 60000);
+    inject(DestroyRef).onDestroy(() => clearInterval(tick));
     this.reload();
   }
 

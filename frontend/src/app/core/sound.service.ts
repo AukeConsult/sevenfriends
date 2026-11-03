@@ -1,10 +1,22 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, effect, inject, signal, untracked } from '@angular/core';
+import { Preferences, SoundPreferences } from '../models';
+import { ApiService } from './api.service';
+import { AuthService } from './auth.service';
 
 /** What can make a sound. */
 export type SoundEvent = 'message' | 'request' | 'answer';
 
-/** One of the sounds to choose from ('none' = silent). */
-export type SoundId = 'none' | 'ding' | 'chime' | 'bell' | 'pop' | 'marimba' | 'soft';
+/** A built-in sound ('none' = silent). */
+export type BuiltInSoundId = 'none' | 'ding' | 'chime' | 'bell' | 'pop' | 'marimba' | 'soft';
+
+/** One of the sounds to choose from: a built-in one, or a jingle file from `public/sounds` (`file:<file name>`). */
+export type SoundId = BuiltInSoundId | `file:${string}`;
+
+/** A music jingle: an audio file in `frontend/public/sounds/` (listed in sounds.json by scripts/sounds-manifest.mjs). */
+export interface Jingle {
+  file: string;
+  label: string;
+}
 
 interface Tune {
   label: string;
@@ -16,7 +28,7 @@ interface Tune {
 }
 
 /** The sounds, all made in the browser (Web Audio API, no sound files). */
-export const TUNES: Record<Exclude<SoundId, 'none'>, Tune> = {
+export const TUNES: Record<Exclude<BuiltInSoundId, 'none'>, Tune> = {
   ding: { label: 'Ding', wave: 'sine', notes: [[880, 0], [1175, 0.12]], ring: 0.22 },
   chime: { label: 'Chime', wave: 'sine', notes: [[660, 0], [880, 0.14], [1100, 0.28]], ring: 0.3 },
   bell: { label: 'Bell', wave: 'triangle', notes: [[1320, 0], [990, 0.25]], ring: 0.6 },
@@ -26,10 +38,17 @@ export const TUNES: Record<Exclude<SoundId, 'none'>, Tune> = {
 };
 
 /** The choices in the order they are listed on the Settings page. */
-export const SOUND_CHOICES: { id: SoundId; label: string }[] = [
+export const SOUND_CHOICES: { id: BuiltInSoundId; label: string }[] = [
   { id: 'none', label: 'No sound' },
-  ...(Object.entries(TUNES) as [Exclude<SoundId, 'none'>, Tune][]).map(([id, t]) => ({ id, label: t.label })),
+  ...(Object.entries(TUNES) as [Exclude<BuiltInSoundId, 'none'>, Tune][]).map(([id, t]) => ({ id, label: t.label })),
 ];
+
+const JINGLES_URL = '/sounds/sounds.json';
+const JINGLES_FOLDER = '/sounds/';
+/** A jingle that is longer than this is stopped. */
+const JINGLE_MAX_MS = 20000;
+/** How long after the last change the choices are saved on the account (a slider sends many changes). */
+const SAVE_DELAY_MS = 600;
 
 export const SOUND_EVENTS: { event: SoundEvent; label: string; hint: string }[] = [
   { event: 'message', label: 'New message', hint: 'A friend wrote to you' },
@@ -49,45 +68,210 @@ const MAX_GAIN = 0.9;
  * The sound when something arrives (a message, a friend request, an answer to my request). Each of the three
  * can have its own sound (or none), chosen on the Settings page. Browsers only allow sound after the person has
  * tapped or clicked the page once, so audio is unlocked at the first tap; before that a sound is silently skipped.
- * The choices are per device (localStorage). Only works while the app is open.
+ * The choices belong to the ACCOUNT (`PUT /preferences/sounds`), so they follow the person to every device: they are
+ * loaded when somebody signs in and saved a moment after every change, and kept in localStorage only as a copy for a
+ * quick start. At sign-out the copy is cleared, so the next person on the device starts with the defaults.
+ * Only works while the app is open.
  */
 @Injectable({ providedIn: 'root' })
 export class SoundService {
   /** The sound chosen for each event. */
   readonly choices = signal<Record<SoundEvent, SoundId>>(this.read());
 
-  /** true once the person has chosen their sounds (or looked at the Settings page) on this device */
+  /** The music jingles that were dropped in `public/sounds` (empty when there are none). */
+  readonly jingles = signal<Jingle[]>([]);
+
+  private readonly api = inject(ApiService);
+  private readonly auth = inject(AuthService);
+
+  /** true once the person has chosen their sounds (or looked at the Settings page) */
   readonly defined = signal(this.hasSaved());
 
-  /** How loud the sounds are, 0-100 (per device). */
+  /** How loud the sounds are, 0-100. */
   readonly volume = signal(this.readVolume());
 
   private context: AudioContext | null = null;
+  private jingle: HTMLAudioElement | null = null;
+  private oscillators: OscillatorNode[] = [];
+  /** The volume knob of the built-in sound that is playing: moving the slider changes it while it plays. */
+  private master: GainNode | null = null;
+  private endTimer: ReturnType<typeof setTimeout> | undefined;
+
+  /** Which tune is playing on the Settings page right now (the key it was started with), or null. */
+  readonly playingKey = signal<string | null>(null);
+  private jingleTimer: ReturnType<typeof setTimeout> | undefined;
+  private accountUid: string | null = null;
+  private saveTimer: ReturnType<typeof setTimeout> | undefined;
 
   constructor() {
     const unlock = () => this.unlock();
     // the first tap or key press makes sound allowed
     document.addEventListener('pointerdown', unlock, { once: true, capture: true });
     document.addEventListener('keydown', unlock, { once: true, capture: true });
+    void this.loadJingles();
+
+    // a change that is waiting to be saved is not lost when the page is hidden or closed
+    const onHide = () => {
+      if (this.saveTimer && this.accountUid) {
+        clearTimeout(this.saveTimer);
+        this.saveTimer = undefined;
+        void this.saveNow(true);
+      }
+    };
+    document.addEventListener('visibilitychange', () => document.visibilityState === 'hidden' && onHide());
+    window.addEventListener('pagehide', onHide);
+
+    // follow the login: load this person's sounds, and clear them again at sign-out
+    effect(() => {
+      const uid = this.auth.user()?.uid ?? null;
+      untracked(() => void this.follow(uid));
+    });
+  }
+
+  private async follow(uid: string | null): Promise<void> {
+    if (uid === this.accountUid) return;
+    const previous = this.accountUid;
+    this.accountUid = uid;
+    clearTimeout(this.saveTimer);
+    if (!uid) {
+      if (previous) this.reset(); // signed out: the next person starts with the defaults
+      return;
+    }
+    try {
+      const { sounds } = await this.api.request<Preferences>('/preferences');
+      if (this.accountUid !== uid) return; // somebody else signed in while it loaded
+      if (sounds) this.apply(sounds);
+      else if (this.defined()) await this.saveNow(); // first time after the account got sounds: this device's choices become the account's
+    } catch {
+      /* offline: the choices on this device are used until the next change */
+    }
+  }
+
+  /** The sounds of the account are now the sounds in use (and the copy on this device). */
+  private apply(sounds: SoundPreferences): void {
+    this.choices.set({ message: sounds.message as SoundId, request: sounds.request as SoundId, answer: sounds.answer as SoundId });
+    this.volume.set(sounds.volume);
+    this.defined.set(true);
+    this.writeLocal();
+  }
+
+  private reset(): void {
+    this.choices.set({ ...DEFAULTS });
+    this.volume.set(DEFAULT_VOLUME);
+    this.defined.set(false);
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(VOLUME_KEY);
+    } catch {
+      /* nothing to clear */
+    }
+  }
+
+  private writeLocal(): void {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.choices()));
+      localStorage.setItem(VOLUME_KEY, String(this.volume()));
+    } catch {
+      /* private mode: the choice lasts until the page is closed */
+    }
+  }
+
+  /** A change: keep the copy on this device now, and save it on the account in a moment. */
+  private changed(): void {
+    this.defined.set(true);
+    this.writeLocal();
+    if (!this.accountUid) return;
+    clearTimeout(this.saveTimer);
+    this.saveTimer = setTimeout(() => {
+      this.saveTimer = undefined;
+      void this.saveNow();
+    }, SAVE_DELAY_MS);
+  }
+
+  private async saveNow(keepalive = false): Promise<void> {
+    if (!this.accountUid) return;
+    const { message, request, answer } = this.choices();
+    try {
+      await this.api.request<Preferences>('/preferences/sounds', {
+        method: 'PUT',
+        body: JSON.stringify({ message, request, answer, volume: this.volume() }),
+        keepalive,
+      });
+    } catch {
+      /* not saved: the next change tries again, and this device keeps working with its copy */
+    }
+  }
+
+  /** Reads the list of jingles (written by scripts/sounds-manifest.mjs). No list, or no network: just no jingles. */
+  private async loadJingles(): Promise<void> {
+    try {
+      const response = await fetch(JINGLES_URL, { cache: 'no-cache' });
+      if (!response.ok) return;
+      const list = (await response.json()) as { jingles?: Jingle[] };
+      this.jingles.set((list.jingles ?? []).filter((j) => typeof j.file === 'string' && typeof j.label === 'string'));
+    } catch {
+      /* no jingles */
+    }
+  }
+
+  /** Plays a jingle file at the chosen volume, one at a time, and never longer than JINGLE_MAX_MS. */
+  private playJingle(file: string): void {
+    this.stopJingle();
+    try {
+      const audio = new Audio(JINGLES_FOLDER + encodeURIComponent(file));
+      audio.volume = this.level(); // the same curve as the built-in sounds
+      this.jingle = audio;
+      audio.onended = () => { if (this.jingle === audio) this.stop(); };
+      void audio.play().catch(() => this.stopJingle()); // blocked until the first tap, or the file is gone
+      this.jingleTimer = setTimeout(() => this.stopJingle(), JINGLE_MAX_MS);
+    } catch {
+      /* no audio on this device */
+    }
+  }
+
+  private stopJingle(): void {
+    clearTimeout(this.jingleTimer);
+    this.jingle?.pause();
+    this.jingle = null;
+    this.playingKey.set(null);
+  }
+
+  /** Stops whatever tune is playing (a built-in sound or a jingle). */
+  stop(): void {
+    this.stopJingle();
+    clearTimeout(this.endTimer);
+    for (const oscillator of this.oscillators) {
+      try { oscillator.stop(); } catch { /* already ended */ }
+    }
+    this.oscillators = [];
+    this.master = null;
+    this.playingKey.set(null);
+  }
+
+  /** Play/Stop button of the Settings pages: starts the tune, or stops it when it is the one that is playing. Another tune replaces the first. */
+  toggle(key: string, sound: SoundId): void {
+    if (this.playingKey() === key) {
+      this.stop();
+      return;
+    }
+    this.preview(sound, key);
   }
 
   choose(event: SoundEvent, sound: SoundId): void {
     this.choices.update((c) => ({ ...c, [event]: sound }));
-    this.save();
+    this.changed();
   }
 
   /** The person has seen the sound settings: what is there now (the defaults, if nothing was changed) counts as chosen. */
   markDefined(): void {
-    if (!this.defined()) this.save();
+    if (!this.defined()) this.changed();
   }
 
-  private save(): void {
-    this.defined.set(true);
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.choices()));
-    } catch {
-      /* private mode: the choice then lasts until the page is closed */
-    }
+  setVolume(percent: number): void {
+    this.volume.set(Math.min(100, Math.max(0, Math.round(percent))));
+    if (this.jingle) this.jingle.volume = this.level(); // a tune that is playing follows the slider
+    this.master?.gain.setTargetAtTime(this.level(), this.context?.currentTime ?? 0, 0.01);
+    this.changed();
   }
 
   private hasSaved(): boolean {
@@ -98,29 +282,34 @@ export class SoundService {
     }
   }
 
-  setVolume(percent: number): void {
-    const value = Math.min(100, Math.max(0, Math.round(percent)));
-    this.volume.set(value);
-    try {
-      localStorage.setItem(VOLUME_KEY, String(value));
-    } catch {
-      /* private mode: the choice lasts until the page is closed */
-    }
-  }
-
   /** Plays the sound chosen for this event. */
   play(event: SoundEvent): void {
-    this.preview(this.choices()[event]);
+    this.start(this.choices()[event]); // does not cut off a sound that is already playing
   }
 
-  /** Plays one sound (also used to try it out on the Settings page). Never throws. */
-  preview(sound: SoundId): void {
-    if (sound === 'none') return;
+  /** Plays one sound to try it out on the Settings page: it replaces the one that is playing. Never throws. */
+  preview(sound: SoundId, key: string | null = null): void {
+    this.stop();
+    if (this.start(sound)) this.playingKey.set(key);
+  }
+
+  /** Starts a sound; true when it plays. */
+  private start(sound: SoundId): boolean {
+    if (sound === 'none') return false;
+    if (sound.startsWith('file:')) {
+      this.playJingle(sound.slice('file:'.length));
+      return this.jingle !== null;
+    }
     try {
       const context = this.unlock();
-      if (!context || context.state !== 'running') return; // no tap on the page yet: the browser would refuse
-      const tune = TUNES[sound];
-      const peak = Math.max(0.0002, MAX_GAIN * (this.volume() / 100) ** 2);
+      if (!context || context.state !== 'running') return false; // no tap on the page yet: the browser would refuse
+      const tune = TUNES[sound as Exclude<BuiltInSoundId, 'none'>];
+      if (!tune) return false; // a choice that no longer exists
+      const peak = MAX_GAIN;
+      const master = context.createGain();
+      master.gain.value = this.level();
+      master.connect(context.destination);
+      this.master = master;
       const now = context.currentTime;
       for (const [frequency, start] of tune.notes) {
         const oscillator = context.createOscillator();
@@ -130,13 +319,24 @@ export class SoundService {
         gain.gain.setValueAtTime(0.0001, now + start);
         gain.gain.exponentialRampToValueAtTime(peak, now + start + 0.02);
         gain.gain.exponentialRampToValueAtTime(0.0001, now + start + tune.ring);
-        oscillator.connect(gain).connect(context.destination);
+        oscillator.connect(gain).connect(master);
         oscillator.start(now + start);
         oscillator.stop(now + start + tune.ring + 0.03);
+        this.oscillators.push(oscillator);
       }
+      const last = Math.max(...tune.notes.map(([, at]) => at)) + tune.ring + 0.05;
+      clearTimeout(this.endTimer);
+      this.endTimer = setTimeout(() => this.stop(), last * 1000);
+      return true;
     } catch {
       /* no audio on this device: the app works the same without it */
+      return false;
     }
+  }
+
+  /** The volume as a 0-1 gain, on a curve so the slider feels even. */
+  private level(): number {
+    return Math.min(1, Math.max(0, (this.volume() / 100) ** 2));
   }
 
   private unlock(): AudioContext | null {
@@ -161,7 +361,9 @@ export class SoundService {
   private read(): Record<SoundEvent, SoundId> {
     try {
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '{}') as Partial<Record<SoundEvent, SoundId>>;
-      const valid = (id: unknown): id is SoundId => SOUND_CHOICES.some((c) => c.id === id);
+      // a jingle choice is kept even before the list of jingles has been read (a deleted file simply stays silent)
+      const valid = (id: unknown): id is SoundId =>
+        SOUND_CHOICES.some((c) => c.id === id) || (typeof id === 'string' && id.startsWith('file:') && id.length > 'file:'.length);
       return {
         message: valid(saved.message) ? saved.message : DEFAULTS.message,
         request: valid(saved.request) ? saved.request : DEFAULTS.request,

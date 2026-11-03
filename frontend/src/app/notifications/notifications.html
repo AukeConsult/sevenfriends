@@ -1,9 +1,9 @@
-<header class="hero">
-  <div class="logo" aria-hidden="true">7</div>
-  <p class="slogan">Stay close to the people who matter most.</p>
+<header class="sf-hero">
+  <div class="sf-logo" aria-hidden="true">7</div>
+  <p class="sf-hint">Stay close to the people who matter most.</p>
 </header>
 
-<main class="page container-fluid">
+<main class="sf-page">
   <h1 class="visually-hidden">Notifications</h1>
 
   @if (error()) {
@@ -12,6 +12,8 @@
       <button type="button" class="btn btn-link fw-semibold" (click)="load()">Retry</button>
     </div>
   }
+
+  <app-mood-editor class="d-block mb-3" />
 
   @if (setupMissing().length) {
     <div class="alert alert-info py-2 d-flex align-items-center justify-content-between gap-2" role="status">
@@ -22,7 +24,7 @@
         not set up on this device yet, so you may miss a message or a friend request.
       </span>
       <span class="d-flex gap-2 flex-shrink-0">
-        <a routerLink="/settings" class="btn btn-sm btn-primary">Settings</a>
+        <a routerLink="/sound-and-notifications" class="btn btn-sm btn-primary">Set up</a>
         <button type="button" class="btn btn-sm btn-light" (click)="hideSetup()" aria-label="Not now">✕</button>
       </span>
     </div>
@@ -46,26 +48,26 @@
   }
 
   @if (!loaded()) {
-    <p class="quiet">Checking for news…</p>
+    <p class="text-secondary">Checking for news…</p>
   }
 
   @if (allQuiet()) {
-    <div class="all-quiet">
-      <span class="moon" aria-hidden="true">🌙</span>
+    <div class="sf-empty">
+      <span class="sf-empty-icon" aria-hidden="true">🌙</span>
       <p class="mb-0">All quiet. Nothing new right now.</p>
     </div>
   }
 
   @if (seated().length) {
     <section aria-label="Friend requests">
-      <h2 class="section">Friend requests</h2>
-      <ul class="items">
+      <h2 class="sf-section">Friend requests</h2>
+      <ul class="sf-list">
         @for (request of seated(); track request.id) {
-          <li class="item">
-            <span class="text">
+          <li class="sf-list-item">
+            <span class="sf-list-text">
               <strong>{{ request.fromName }}</strong>
               <small>wants to be your friend</small>
-              @if (request.message) { <small class="request-message">“{{ request.message }}”</small> }
+              @if (request.message) { <small class="fst-italic">“{{ request.message }}”</small> }
               @if (request.fromUnverified.length) {
                 <small class="text-warning-emphasis">Has not verified {{ request.fromUnverified.length === 2 ? 'their email or phone' : request.fromUnverified[0] === 'email' ? 'their email' : 'their phone' }}: we cannot be sure it is really them.</small>
               }
@@ -79,7 +81,7 @@
   }
 
   @if (waitingCount() > 0) {
-    <a routerLink="/pending" class="waiting-link">
+    <a routerLink="/pending" class="sf-link-row">
       {{ waitingCount() }} {{ waitingCount() === 1 ? 'request is' : 'requests are' }} waiting for a free seat
       <span aria-hidden="true">›</span>
     </a>
@@ -87,13 +89,13 @@
 
   @if (messages().length) {
     <section aria-label="Messages">
-      <h2 class="section">Messages</h2>
-      <ul class="items">
+      <h2 class="sf-section">Messages</h2>
+      <ul class="sf-list">
         @for (message of messages(); track message.id) {
-          <li class="item">
-            <span class="text">
+          <li class="sf-list-item">
+            <span class="sf-list-text">
               <strong>{{ message.fromName }}</strong>
-              <span class="body">{{ message.text }}</span>
+              <span class="sf-wrap">{{ message.text }}</span>
               @if (message.time) {
                 <small>{{ message.time | date: 'short' }}</small>
               }

@@ -1,24 +1,39 @@
-<header class="bar">
-  <a routerLink="/friends" class="back" aria-label="Back to friends">‹</a>
-  <strong class="who">{{ name() || 'Conversation' }}</strong>
+<header class="sf-bar">
+  <a routerLink="/friends" class="sf-back" aria-label="Back to friends">‹</a>
+  @if (seat() > 0) {
+    <img class="sf-avatar sf-avatar-sm" [src]="'icons/friends/friend' + seat() + '.svg'" [alt]="''" width="36" height="36" />
+  }
+  <div class="sf-bar-text">
+    <strong class="sf-fs-title">{{ name() || 'Conversation' }}</strong>
+    @if (friend(); as f) {
+      @if (f.mood || f.moodMessage) {
+        <span class="sf-mood-line">
+          @if (f.mood; as mood) {
+            <img [src]="moodIcon(mood)" [alt]="moodLabel(mood)" [title]="moodLabel(mood)" width="16" height="16" />
+          }
+          @if (f.moodMessage) { <span>{{ f.moodMessage }}</span> }
+        </span>
+      }
+    }
+  </div>
 </header>
 
-<main class="feed container-fluid">
+<main class="sf-feed">
   @if (blocked()) {
     <div class="alert alert-warning" role="alert">{{ blocked() }}</div>
     <a routerLink="/friends" class="btn btn-primary">Back to friends</a>
   } @else {
     @if (!loaded()) {
-      <p class="hint">Loading…</p>
+      <p class="sf-hint-center">Loading…</p>
     } @else if (!messages().length) {
-      <p class="hint">No messages yet. Say hello to {{ name() }}.</p>
+      <p class="sf-hint-center">No messages yet. Say hello to {{ name() }}.</p>
     }
 
     @for (message of messages(); track message.id) {
-      <div class="message" [class.mine]="message.mine">
-        <div class="bubble">{{ message.text }}</div>
+      <div class="sf-message" [class.sf-mine]="message.mine">
+        <div class="sf-bubble">{{ message.text }}</div>
         @if (message.time) {
-          <small class="when">{{ message.time | date: 'd MMM, HH:mm' }}</small>
+          <small class="sf-hint">{{ message.time | date: 'd MMM, HH:mm' }}</small>
         }
       </div>
     }
@@ -31,7 +46,7 @@
 </main>
 
 @if (!blocked()) {
-  <form class="composer" (submit)="$event.preventDefault(); send()" aria-label="Write a message">
+  <form class="sf-composer" (submit)="$event.preventDefault(); send()" aria-label="Write a message">
     <input type="text" class="form-control" placeholder="Write a message" [value]="text()"
            (input)="text.set($any($event.target).value)" maxlength="2000" autocomplete="off" />
     <button type="submit" class="btn btn-primary" [disabled]="sending() || !text().trim()">Send</button>

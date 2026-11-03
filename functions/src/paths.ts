@@ -4,6 +4,8 @@ import {
   FRIEND_REQUEST_COLLECTION,
   INCOMING_SIGNAL_COLLECTION,
   MESSAGE_COLLECTION,
+  PROFILE_PICTURE_COLLECTION,
+  PROFILE_PICTURE_DOC,
   PUSH_DEVICE_COLLECTION,
   USER_ACCOUNT_COLLECTION,
 } from "./constants";
@@ -14,3 +16,4 @@ export const friendRequestCol = (uid: string) => userDoc(uid).collection(FRIEND_
 export const messageCol = (uid: string) => userDoc(uid).collection(MESSAGE_COLLECTION);
 export const signalCol = (uid: string) => userDoc(uid).collection(INCOMING_SIGNAL_COLLECTION);
 export const pushDeviceCol = (uid: string) => userDoc(uid).collection(PUSH_DEVICE_COLLECTION);
+export const profilePictureDoc = (uid: string) => userDoc(uid).collection(PROFILE_PICTURE_COLLECTION).doc(PROFILE_PICTURE_DOC);

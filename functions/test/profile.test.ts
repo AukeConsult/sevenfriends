@@ -117,3 +117,85 @@ describe("autosave: the whole form is sent again and again", () => {
   });
 
 });
+
+describe("my own icon", () => {
+  it("none at first; one of the seven can be chosen, changed and removed", async () => {
+    const { seedPool } = await import("./helpers");
+    const me = (await seedPool())[0];
+    expect((await me.raw("get", "/profile").expect(200)).body.icon).toBeNull();
+    expect((await me.raw("put", "/profile", { icon: 3 }).expect(200)).body.icon).toBe(3);
+    expect((await me.raw("get", "/profile").expect(200)).body.icon).toBe(3);
+    expect((await me.raw("put", "/profile", { phone: "+4790000000" }).expect(200)).body.icon).toBe(3); // left out = unchanged
+    expect((await me.raw("put", "/profile", { icon: 7 }).expect(200)).body.icon).toBe(7);
+    expect((await me.raw("put", "/profile", { icon: null }).expect(200)).body.icon).toBeNull();
+  });
+
+  it.each([[0], [8], [-1], [2.5], ["3"], [true]])("refuses %s and keeps the old icon", async (bad) => {
+    const { seedPool } = await import("./helpers");
+    const me = (await seedPool())[0];
+    await me.raw("put", "/profile", { icon: 2 }).expect(200);
+    await me.raw("put", "/profile", { icon: bad }).expect(400);
+    expect((await me.raw("get", "/profile")).body.icon).toBe(2);
+  });
+
+  it("everybody has their own", async () => {
+    const { seedPool } = await import("./helpers");
+    const pool = await seedPool();
+    await pool[0].raw("put", "/profile", { icon: 5 }).expect(200);
+    expect((await pool[1].raw("get", "/profile")).body.icon).toBeNull();
+  });
+});
+
+describe("my country", () => {
+  it("not set at first; set, kept when left out, changed and removed", async () => {
+    const { seedPool } = await import("./helpers");
+    const me = (await seedPool())[0];
+    expect((await me.raw("get", "/profile").expect(200)).body.country).toBeNull();
+    expect((await me.raw("put", "/profile", { country: "NO" }).expect(200)).body.country).toBe("NO");
+    expect((await me.raw("put", "/profile", { phone: "+4790000000" }).expect(200)).body.country).toBe("NO"); // left out = unchanged
+    expect((await me.raw("put", "/profile", { country: "XK" }).expect(200)).body.country).toBe("XK");
+    expect((await me.raw("put", "/profile", { country: "" }).expect(200)).body.country).toBeNull();
+    await me.raw("put", "/profile", { country: "SE" }).expect(200);
+    expect((await me.raw("put", "/profile", { country: null }).expect(200)).body.country).toBeNull();
+  });
+
+  it.each([["no"], ["NOR"], ["ZZ"], ["AA"], ["N1"], [" "], [7], [true]])("refuses %j, and keeps the old country", async (bad) => {
+    const { seedPool } = await import("./helpers");
+    const me = (await seedPool())[0];
+    await me.raw("put", "/profile", { country: "DK" }).expect(200);
+    const res = await me.raw("put", "/profile", { country: bad });
+    // a blank string means "not set", the rest is refused
+    if (typeof bad === "string" && !bad.trim()) expect(res.status).toBe(200);
+    else expect(res.status).toBe(400);
+    expect((await me.raw("get", "/profile")).body.country).toBe(typeof bad === "string" && !bad.trim() ? null : "DK");
+  });
+
+  it("everybody has their own", async () => {
+    const { seedPool } = await import("./helpers");
+    const pool = await seedPool();
+    await pool[0].raw("put", "/profile", { country: "FI" }).expect(200);
+    expect((await pool[1].raw("get", "/profile")).body.country).toBeNull();
+  });
+});
+
+describe("a save only changes what it carries", () => {
+  it("leaving the phone, the accounts, the country and the icon out keeps them", async () => {
+    const { User, person, seedPool } = await import("./helpers");
+    await seedPool();
+    const me = await new User(person(90), { emailVerified: true, phoneVerified: false }).signUp(); // typed phone, not confirmed
+    await me.raw("put", "/profile", { phone: "+4790000090", instagram: "my_insta", linkedin: "my-lin", country: "NO", icon: 5 }).expect(200);
+
+    const saved = (await me.raw("put", "/profile", { name: "Only the name" }).expect(200)).body;
+    expect(saved).toMatchObject({ name: "Only the name", phone: "+4790000090", instagram: "my_insta", linkedin: "my-lin", country: "NO", icon: 5 });
+  });
+
+  it("a value sent as null or empty is removed, and only that one", async () => {
+    const { User, person, seedPool } = await import("./helpers");
+    await seedPool();
+    const me = await new User(person(91), { emailVerified: true, phoneVerified: false }).signUp();
+    await me.raw("put", "/profile", { phone: "+4790000091", instagram: "a", tiktok: "b" }).expect(200);
+    const saved = (await me.raw("put", "/profile", { instagram: null }).expect(200)).body;
+    expect(saved).toMatchObject({ phone: "+4790000091", instagram: null, tiktok: "b" });
+    expect((await me.raw("put", "/profile", { phone: null }).expect(200)).body).toMatchObject({ phone: null, tiktok: "b" });
+  });
+});

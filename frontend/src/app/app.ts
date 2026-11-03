@@ -7,8 +7,7 @@ import { RealtimeService } from './core/realtime.service';
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet, BottomNav],
-  templateUrl: './app.html',
-  styleUrl: './app.scss'
+  templateUrl: './app.html'
 })
 export class App {
   protected readonly auth = inject(AuthService);

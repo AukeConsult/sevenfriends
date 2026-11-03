@@ -1,6 +1,6 @@
 <header class="sf-bar">
   <a routerLink="/profile" class="sf-back" aria-label="Back to your profile">‹</a>
-  <h1 class="sf-bar-title">Settings</h1>
+  <h1 class="sf-bar-title">Sound and notifications</h1>
 </header>
 
 <main class="sf-narrow">
@@ -12,7 +12,7 @@
   <h2 class="h5 m-0 mt-2">Sounds</h2>
   <p class="small text-secondary m-0">
     Choose the sound for each thing that can arrive. Sounds only play while Seven Friends is open, and
-    the choice is kept on this device.
+    your choices are saved on your account, so they follow you to every device.
   </p>
 
   <div class="card border-0 shadow-sm">
@@ -21,8 +21,8 @@
         <strong>Volume</strong><span class="text-secondary">{{ sounds.volume() }} %</span>
       </label>
       <input type="range" class="form-range" id="volume" min="0" max="100" step="5" [value]="sounds.volume()"
-             (input)="setVolume($any($event.target).value)" (change)="sample()" aria-label="Volume of the sounds" />
-      <span class="small text-secondary">Also turn up the volume of your device. Let go of the slider to hear a sample.</span>
+             (input)="setVolume($any($event.target).value)" aria-label="Volume of the sounds" />
+      <span class="small text-secondary">Also turn up the volume of your device. Press Play on a sound to hear the new volume.</span>
     </div>
   </div>
 
@@ -33,15 +33,11 @@
           <strong>{{ item.label }}</strong>
           <span class="small text-secondary d-block">{{ item.hint }}</span>
         </div>
-        <div class="input-group">
-          <select class="form-select" [attr.aria-label]="'Sound for ' + item.label"
-                  [value]="sounds.choices()[item.event]" (change)="choose(item.event, $any($event.target).value)">
-            @for (option of choices; track option.id) {
-              <option [value]="option.id" [selected]="option.id === sounds.choices()[item.event]">{{ option.label }}</option>
-            }
-          </select>
-          <button type="button" class="btn btn-outline-primary" [disabled]="sounds.choices()[item.event] === 'none'"
-                  (click)="tryOut(item.event)" [attr.aria-label]="'Play the sound for ' + item.label">▶ Play</button>
+        <div class="input-group flex-nowrap">
+          <a class="btn btn-outline-secondary flex-grow-1 min-w-0 justify-content-between text-start" [routerLink]="['/sound-and-notifications', item.event]"
+             [attr.aria-label]="'Choose the sound for ' + item.label"><span class="sf-ellipsis">{{ soundLabel(item.event) }}</span><span class="ms-2" aria-hidden="true">›</span></a>
+          <button type="button" class="btn btn-outline-primary flex-shrink-0 text-nowrap" [disabled]="sounds.choices()[item.event] === 'none'"
+                  (click)="tryOut(item.event)" [attr.aria-label]="(sounds.playingKey() === item.event ? 'Stop the sound for ' : 'Play the sound for ') + item.label">{{ sounds.playingKey() === item.event ? '■ Stop' : '▶ Play' }}</button>
         </div>
       </div>
     </div>

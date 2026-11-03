@@ -9,7 +9,6 @@ import { PushService } from '../core/push.service';
   selector: 'app-bottom-nav',
   imports: [RouterLink, RouterLinkActive],
   templateUrl: './bottom-nav.html',
-  styleUrl: './bottom-nav.scss',
 })
 export class BottomNav {
   private readonly auth = inject(AuthService);
@@ -36,7 +35,7 @@ export class BottomNav {
   }
 
   protected profileActive(): boolean {
-    return this.router.url.startsWith('/profile') || this.router.url.startsWith('/settings');
+    return this.router.url.startsWith('/profile') || this.router.url.startsWith('/sound-and-notifications');
   }
 
   protected async logout(): Promise<void> {

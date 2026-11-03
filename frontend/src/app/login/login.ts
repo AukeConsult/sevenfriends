@@ -8,11 +8,13 @@ import { AuthMode } from '../models';
   selector: 'app-login',
   imports: [RouterLink],
   templateUrl: './login.html',
-  styleUrl: './login.scss',
 })
 export class Login {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+
+  /** Why the person was signed out (for example a failed connection to sign-in), if they were. */
+  protected readonly signedOutNotice = this.auth.signedOutNotice;
 
   protected readonly mode = signal<AuthMode>('signin');
   protected readonly busy = signal(false);

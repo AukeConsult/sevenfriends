@@ -18,6 +18,14 @@ export interface Friend extends Socials {
   incoming: boolean;
   requestId: string | null;
   createdAt: string | null;
+  /** when the two of you last wrote to each other (either way), for confirmed friends; null = never */
+  lastSpokenAt: string | null;
+  /** the friend's country (a two-letter code), shown for confirmed friends only; null = not set */
+  country: string | null;
+  /** the friend's mood (1-4), shown for confirmed friends only; null = none */
+  mood: number | null;
+  /** the friend's short mood message, shown for confirmed friends only; null = none */
+  moodMessage: string | null;
   /** the message I wrote with the request (the friend sees it with the request) */
   message: string | null;
   /**

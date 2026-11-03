@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import path from "node:path";
 import { DocumentReference, FieldValue, Timestamp, Transaction, getFirestore } from "firebase-admin/firestore";
 import { MAIL_COLLECTION } from "./constants";
 import { fill, setting } from "./settings";
@@ -30,12 +32,36 @@ export function inviteSubject(invite: InviteMail): string {
   return fill(setting("INVITE_EMAIL_SUBJECT"), placeholders(invite));
 }
 
+const escapeHtml = (text: string) =>
+  text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+
+/**
+ * The HTML version of the invitation: the template file (INVITE_EMAIL_TEMPLATE, `assets/mail/invite.html`) with the
+ * places filled in. Every value is made safe for HTML (a message can never add markup). The part between
+ * `<!--message-->` and `<!--/message-->` only stays when there is a message. Undefined when the file is missing or
+ * unreadable: then the email is sent as text only.
+ */
+export function inviteHtml(invite: InviteMail): string | undefined {
+  const file = path.resolve(__dirname, "..", setting("INVITE_EMAIL_TEMPLATE"));
+  let template: string;
+  try {
+    template = readFileSync(file, "utf8");
+  } catch {
+    return undefined;
+  }
+  const values: Record<string, string> = { ...placeholders(invite), subject: inviteSubject(invite) };
+  template = template.replace(/<!--message-->([\s\S]*?)<!--\/message-->/g, values.message ? "$1" : "");
+  // the note at the top of the template is not part of the email
+  template = template.replace(/<!--\s*HOW THE INVITATION EMAIL LOOKS[\s\S]*?-->/, "");
+  return template.replace(/\{(\w+)\}/g, (_all, key: string) => escapeHtml(values[key] ?? ""));
+}
+
 /** Writes the invitation email into the outbox (part of the caller's transaction). Returns the outbox document. */
 export function queueInvite(tx: Transaction, invite: InviteMail): DocumentReference {
   const ref = getFirestore().collection(MAIL_COLLECTION).doc();
   tx.set(ref, {
     to: [invite.to],
-    message: { subject: inviteSubject(invite), text: inviteText(invite) },
+    message: { subject: inviteSubject(invite), text: inviteText(invite), ...(inviteHtml(invite) ? { html: inviteHtml(invite) } : {}) },
     kind: "invite",
     fromUid: invite.fromUid,
     createdAt: FieldValue.serverTimestamp(),

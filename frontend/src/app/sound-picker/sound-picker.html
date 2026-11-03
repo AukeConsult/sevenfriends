@@ -1,0 +1,42 @@
+<header class="sf-bar">
+  <a routerLink="/sound-and-notifications" class="sf-back" (click)="sounds.stop()" aria-label="Back to sound and notifications">‹</a>
+  <h1 class="sf-bar-title">{{ item().label }}</h1>
+</header>
+
+<main class="sf-narrow">
+  <p class="sf-hint">{{ item().hint }}. Tap a sound to choose it and hear it.</p>
+
+  @if (jingles().length) {
+    <h2 class="sf-section">Seven Friends jingles</h2>
+    <ul class="sf-list" role="radiogroup" aria-label="Seven Friends jingles">
+      @for (jingle of jingles(); track jingle.file) {
+        <li class="sf-list-item">
+          <button type="button" class="sf-pick" role="radio" [attr.aria-checked]="current() === 'file:' + jingle.file" (click)="choose('file:' + jingle.file)">
+            <span class="sf-pick-mark" aria-hidden="true">{{ current() === 'file:' + jingle.file ? '✓' : '' }}</span>{{ jingle.label }}
+          </button>
+          <button type="button" class="btn btn-sm btn-outline-primary" (click)="toggle('file:' + jingle.file)"
+                  [attr.aria-label]="(sounds.playingKey() === 'file:' + jingle.file ? 'Stop ' : 'Play ') + jingle.label">{{ sounds.playingKey() === 'file:' + jingle.file ? '■ Stop' : '▶ Play' }}</button>
+        </li>
+      }
+    </ul>
+  }
+
+  @if (jingles().length) {
+    <h2 class="sf-section">Other sounds</h2>
+  }
+  <ul class="sf-list" role="radiogroup" [attr.aria-label]="'Sound for ' + item().label">
+    @for (option of choices; track option.id) {
+      <li class="sf-list-item">
+        <button type="button" class="sf-pick" role="radio" [attr.aria-checked]="current() === option.id" (click)="choose(option.id)">
+          <span class="sf-pick-mark" aria-hidden="true">{{ current() === option.id ? '✓' : '' }}</span>{{ option.label }}
+        </button>
+        @if (option.id !== 'none') {
+          <button type="button" class="btn btn-sm btn-outline-primary" (click)="toggle(option.id)"
+                  [attr.aria-label]="(sounds.playingKey() === option.id ? 'Stop ' : 'Play ') + option.label">{{ sounds.playingKey() === option.id ? '■ Stop' : '▶ Play' }}</button>
+        }
+      </li>
+    }
+  </ul>
+
+  <a routerLink="/sound-and-notifications" class="btn btn-primary" (click)="sounds.stop()">Done</a>
+</main>

@@ -1,7 +1,7 @@
 import { getAuth } from "firebase-admin/auth";
 import { DocumentReference, Transaction, getFirestore } from "firebase-admin/firestore";
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAIL_COLLECTION } from "./constants";
-import { circleCol, friendRequestCol, messageCol, pushDeviceCol, signalCol, userDoc } from "./paths";
+import { circleCol, friendRequestCol, messageCol, profilePictureDoc, pushDeviceCol, signalCol, userDoc } from "./paths";
 import { signalRefsOf } from "./signals";
 import { phoneKey } from "./validation";
 
@@ -17,7 +17,7 @@ type Peer = { uid: string | null; circleId: string | null; signaled: string[] };
  *   - their own entry, the request they received, the messages in their feed
  *   - the other person's entry, the request that person received, the other person's copy of the feed
  *   - the pings (incoming-signal) that connection sent
- * Invitations they sent by email (the `mail` outbox) and their push devices go too.
+ * Invitations they sent by email (the `mail` outbox), their push devices and their uploaded picture go too.
  * Entries other people wrote for this person but that were never found (the person never opened the
  * app after being added) are removed too: they hold the person's name, email and phone number.
  *
@@ -112,7 +112,10 @@ async function eraseInTransaction(tx: Transaction, uid: string): Promise<void> {
   // 7. the devices registered for push
   (await tx.get(pushDeviceCol(uid))).docs.forEach((d) => drop(d.ref));
 
-  // 8. the account itself
+  // 8. the picture the person uploaded
+  drop(profilePictureDoc(uid));
+
+  // 9. the account itself
   drop(userDoc(uid));
 
   // ---- writes ----

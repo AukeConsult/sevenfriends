@@ -1,33 +1,33 @@
-<header class="bar">
-  <a routerLink="/friends" class="back" aria-label="Cancel and go back to friends">‹</a>
-  <h1 class="title">Add a friend</h1>
+<header class="sf-bar">
+  <a routerLink="/friends" class="sf-back" aria-label="Cancel and go back to friends">‹</a>
+  <h1 class="sf-bar-title">Add a friend</h1>
 </header>
 
-<form class="page container-fluid" (submit)="$event.preventDefault(); send()" aria-label="Add a friend">
-  <p class="intro">
+<form class="sf-narrow" (submit)="$event.preventDefault(); send()" aria-label="Add a friend">
+  <p class="text-secondary m-0">
     Tell us who your friend is. They get your request when they open the app, and become your friend
     when they confirm.
   </p>
 
-  <label class="field"><span class="form-label small text-secondary m-0">Name *</span>
+  <label class="sf-field"><span class="form-label small text-secondary m-0">Name *</span>
     <input type="text" class="form-control" [value]="draft().name" (input)="setField('name', $any($event.target).value)"
            autocomplete="off" maxlength="100" required />
   </label>
 
-  <h2 class="section">How can we find them?</h2>
+  <h2 class="sf-section">How can we find them?</h2>
   <p class="small text-secondary m-0">Add an email, a phone number, or both. Only these two are used to find your friend, and only if they have verified them in the app.</p>
 
-  <label class="field"><span class="form-label small text-secondary m-0">Phone</span>
+  <label class="sf-field"><span class="form-label small text-secondary m-0">Phone</span>
     <input type="tel" class="form-control" [value]="draft().phone" (input)="setField('phone', $any($event.target).value)"
            inputmode="tel" autocomplete="off" />
   </label>
-  <label class="field"><span class="form-label small text-secondary m-0">Email</span>
+  <label class="sf-field"><span class="form-label small text-secondary m-0">Email</span>
     <input type="email" class="form-control" [value]="draft().email" (input)="setField('email', $any($event.target).value)"
            inputmode="email" autocomplete="off" />
   </label>
 
-  <h2 class="section">Message</h2>
-  <label class="field"><span class="form-label small text-secondary m-0">Add a message (optional)</span>
+  <h2 class="sf-section">Message</h2>
+  <label class="sf-field"><span class="form-label small text-secondary m-0">Add a message (optional)</span>
     <textarea class="form-control" rows="3" maxlength="500" [value]="draft().message"
               (input)="setField('message', $any($event.target).value)"
               placeholder="Hi! I would like to have you as a close friend."></textarea>
@@ -39,7 +39,7 @@
   }
 
   <!-- The end of the page -->
-  <div class="actions">
+  <div class="sf-actions">
     <a routerLink="/friends" class="btn btn-light flex-fill">Cancel</a>
     <button type="submit" class="btn btn-primary flex-fill" [disabled]="sending()">
       {{ sending() ? 'Sending…' : 'Send friend request' }}

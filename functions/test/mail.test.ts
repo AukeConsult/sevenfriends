@@ -150,3 +150,57 @@ describe("with the invitation emails of the app", () => {
     expect(sent[0].text).toContain("https://sevenfriends.web.app/");
   });
 });
+
+describe("how the invitation email looks (assets/mail/invite.html)", () => {
+  const sample = { fromUid: "x", fromName: "Leif Auke", to: "friend@example.com", message: "Hi! Be my friend." };
+
+  it("fills in the places and keeps the message block", async () => {
+    const { inviteHtml } = await import("../src/outbox");
+    const html = inviteHtml(sample)!;
+    expect(html).toContain("Leif Auke wants you as a close friend");
+    expect(html).toContain("friend@example.com");
+    expect(html).toContain("&quot;Hi! Be my friend.&quot;");
+    expect(html).toContain('href="https://sevenfriends.web.app/"');
+    expect(html).not.toMatch(/\{\w+\}/); // nothing left unfilled
+    expect(html).not.toContain("HOW THE INVITATION EMAIL LOOKS"); // the note at the top is not sent
+    expect(html.trimStart().startsWith("<!DOCTYPE html>")).toBe(true);
+    expect(html.replace(/^<!DOCTYPE html>\s*/i, "").startsWith("<html")).toBe(true); // nothing but the page itself: no stray text of the note
+    expect(html).not.toContain("npm --prefix");
+  });
+
+  it("without a message the block is gone", async () => {
+    const { inviteHtml } = await import("../src/outbox");
+    const html = inviteHtml({ ...sample, message: null })!;
+    expect(html).not.toContain("border-left:4px solid");
+    expect(html).toContain("Open Seven Friends");
+  });
+
+  it("nothing a person writes can add markup", async () => {
+    const { inviteHtml } = await import("../src/outbox");
+    const html = inviteHtml({ ...sample, fromName: "<b>Bad</b>", message: '<script>alert("x")</script>' })!;
+    expect(html).not.toContain("<script>");
+    expect(html).not.toContain("<b>Bad</b>");
+    expect(html).toContain("&lt;script&gt;");
+  });
+
+  it("an invitation of the app carries the html next to the text", async () => {
+    const pool = await seedPool();
+    const entry = await pool[0].raw("post", "/circles/default/friends", { name: "N", email: person(70).email, message: "Come!" }).expect(201);
+    await pool[0].raw("post", `/circles/default/friends/${entry.body.id}/invite`).expect(200);
+    const [doc] = (await getFirestore().collection("mail").get()).docs;
+    expect(doc.data().message.html).toContain("Person 00 wants you as a close friend");
+    expect(doc.data().message.text).toContain("Come!");
+    expect(await deliverMail(doc.id, transportFor)).toBe("sent");
+    expect(sent[0].html).toContain("Open Seven Friends");
+  });
+
+  it("a missing template file means text only", async () => {
+    const { inviteHtml } = await import("../src/outbox");
+    process.env.INVITE_EMAIL_TEMPLATE = "assets/mail/does-not-exist.html";
+    try {
+      expect(inviteHtml(sample)).toBeUndefined();
+    } finally {
+      delete process.env.INVITE_EMAIL_TEMPLATE;
+    }
+  });
+});

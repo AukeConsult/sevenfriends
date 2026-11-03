@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DesktopNoticeService } from '../core/desktop-notice.service';
 import { PushService } from '../core/push.service';
-import { SOUND_CHOICES, SOUND_EVENTS, SoundEvent, SoundId, SoundService } from '../core/sound.service';
+import { SOUND_CHOICES, SOUND_EVENTS, SoundEvent, SoundService } from '../core/sound.service';
 
 /** A full page for the person's own settings: for now, which sound plays for what. */
 @Component({
@@ -20,12 +20,14 @@ export class Settings {
     this.sounds.markDefined(); // the person has now seen the sound settings
   }
   protected readonly events = SOUND_EVENTS;
-  protected readonly choices = SOUND_CHOICES;
+  private readonly choices = SOUND_CHOICES;
+  protected readonly jingles = this.sounds.jingles;
 
-  /** Choosing a sound plays it, so you hear what you picked. */
-  protected choose(event: SoundEvent, sound: string): void {
-    this.sounds.choose(event, sound as SoundId);
-    this.sounds.preview(sound as SoundId);
+  /** The name of the sound chosen for an event. */
+  protected soundLabel(event: SoundEvent): string {
+    const id = this.sounds.choices()[event];
+    if (id.startsWith('file:')) return this.jingles().find((j) => `file:${j.file}` === id)?.label ?? id.slice(5);
+    return this.choices.find((c) => c.id === id)?.label ?? id;
   }
 
   protected async setPush(on: boolean, input: HTMLInputElement): Promise<void> {
@@ -52,7 +54,7 @@ export class Settings {
       if (!this.desktop.wanted()) return; // not allowed: the reason is shown
     }
     await this.desktop.show(
-      { title: 'Seven Friends', body: 'This is how a notification looks.', id: `test-${Date.now()}`, silent: false, go: '/settings' },
+      { title: 'Seven Friends', body: 'This is how a notification looks.', id: `test-${Date.now()}`, silent: false, go: '/sound-and-notifications' },
       true,
     );
   }
@@ -61,13 +63,7 @@ export class Settings {
     this.sounds.setVolume(Number(percent));
   }
 
-  /** When the slider is let go, play a sample at the new volume (the sound chosen for messages, or Ding). */
-  protected sample(): void {
-    const chosen = this.sounds.choices().message;
-    this.sounds.preview(chosen === 'none' ? 'ding' : chosen);
-  }
-
   protected tryOut(event: SoundEvent): void {
-    this.sounds.play(event);
+    this.sounds.toggle(event, this.sounds.choices()[event]);
   }
 }

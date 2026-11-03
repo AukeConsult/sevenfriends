@@ -2,6 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { ApiService } from '../core/api.service';
+import { MoodEditor } from '../mood-editor/mood-editor';
 import { AuthService } from '../core/auth.service';
 import { FriendsService } from '../core/friends.service';
 import { MessagesService } from '../core/messages.service';
@@ -14,9 +15,8 @@ import { FriendRequest, Message, Notice, ProfileDetails } from '../models';
 /** Home page: a quiet overview of what needs attention (friend requests, incoming messages). */
 @Component({
   selector: 'app-notifications',
-  imports: [DatePipe, RouterLink],
+  imports: [DatePipe, RouterLink, MoodEditor],
   templateUrl: './notifications.html',
-  styleUrl: './notifications.scss',
 })
 export class Notifications {
   private readonly notifications = inject(NotificationsService);

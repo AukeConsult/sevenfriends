@@ -63,6 +63,10 @@ function toJson(doc: FirebaseFirestore.DocumentSnapshot): Friend {
     createdAt: data.createdAt instanceof Timestamp ? data.createdAt.toDate().toISOString() : null,
     message: (data.message as string | null | undefined) ?? null,
     invite: inviteOf(data),
+    lastSpokenAt: iso(data.lastMessageAt),
+    country: null, // filled in by withUnverified (confirmed friends only)
+    mood: null, // filled in by withUnverified (confirmed friends only)
+    moodMessage: null,
     unverified: [], // filled in by withUnverified (needs a look at the other accounts)
   };
 }
@@ -71,13 +75,30 @@ function toJson(doc: FirebaseFirestore.DocumentSnapshot): Friend {
  * Tells me when the friend I am connected to (or have just added) has not verified who they are: they have an
  * account, but neither a verified email nor a confirmed phone. They are still reachable, but I should know.
  */
-async function withUnverified(friend: Friend, entry: FirebaseFirestore.DocumentData | undefined): Promise<Friend> {
+/** For conversations from before the friendship remembered it: the time of the newest message of the feed (or null). */
+async function lastSpoken(uid: string, connectionId: string): Promise<string | null> {
+  const feed = await messageCol(uid).where("connectionId", "==", connectionId).get();
+  const times = feed.docs.map((d) => d.data().time).filter((t): t is Timestamp => t instanceof Timestamp);
+  return times.length ? new Date(Math.max(...times.map((t) => t.toMillis()))).toISOString() : null;
+}
+
+async function withUnverified(friend: Friend, entry: FirebaseFirestore.DocumentData | undefined, uid: string): Promise<Friend> {
   if (!entry || friend.status === "rejected") return friend;
   const other = (entry.linkedUid as string | null | undefined) ?? (entry.signaledUids as string[] | undefined)?.[0];
   if (!other) return friend;
   const account = (await userDoc(other).get()).data();
   const unverified = account ? unverifiedDetails(account) : [];
-  return unverified.length ? { ...friend, unverified } : friend;
+  // the mood is for confirmed friends only
+  const mood =
+    friend.status === "confirmed" && account
+      ? {
+          country: (account.country as string | null | undefined) ?? null,
+          mood: Number.isInteger(account.mood) ? (account.mood as number) : null,
+          moodMessage: (account.moodMessage as string | null | undefined) ?? null,
+        }
+      : { country: null, mood: null, moodMessage: null };
+  const lastSpokenAt = friend.lastSpokenAt ?? (friend.status === "confirmed" ? await lastSpoken(uid, friend.id) : null);
+  return { ...friend, ...mood, lastSpokenAt, ...(unverified.length ? { unverified } : {}) };
 }
 
 const iso = (t: unknown) => (t instanceof Timestamp ? t.toDate().toISOString() : null);
@@ -87,6 +108,8 @@ function inviteOf(data: FirebaseFirestore.DocumentData): FriendInvite | null {
   if (!invite || data.linkedUid) return null; // once the friend has an account, no invitation is needed
   return { to: invite.to, sentAt: iso(invite.sentAt) };
 }
+
+const uidOfRequest = (res: { locals: Record<string, unknown> }) => (res.locals.token as DecodedIdToken).uid;
 
 const friendCol = (res: { locals: Record<string, unknown> }) =>
   (res.locals.circleRef as DocumentReference).collection(FRIENDS_SUBCOLLECTION);
@@ -102,7 +125,7 @@ friendsRouter.get(
   "/",
   asyncHandler(async (_req, res) => {
     const snap = await friendCol(res).orderBy("createdAt", "asc").get();
-    const friends = await Promise.all(snap.docs.map((d) => withUnverified(toJson(d), d.data())));
+    const friends = await Promise.all(snap.docs.map((d) => withUnverified(toJson(d), d.data(), uidOfRequest(res))));
     res.json({ friends, max: MAX_FRIENDS });
   }),
 );
@@ -157,7 +180,7 @@ friendsRouter.post(
       }
     }
     const saved = await ref.get();
-    res.status(201).json(await withUnverified(toJson(saved), saved.data()));
+    res.status(201).json(await withUnverified(toJson(saved), saved.data(), (res.locals.token as DecodedIdToken).uid));
   }),
 );
 
