@@ -1,0 +1,18 @@
+<span class="sf-media sf-media-video" [style.aspect-ratio]="ratio()">
+  <a class="sf-media-open" [routerLink]="['/media', media().ownerId, media().objectId]" (click)="stop($event)" aria-label="Open the video to download it">⤓</a>
+  @if (src(); as url) {
+    <video [src]="url" controls autoplay playsinline (click)="stop($event)"></video>
+  } @else {
+    @if (poster(); as picture) {
+      <img [src]="picture" alt="Video preview" />
+    }
+    <button type="button" class="sf-play" [disabled]="loading()" (click)="play($event)" aria-label="Play the video">
+      @if (loading()) {
+        <span class="sf-hint">…</span>
+      } @else {
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
+      }
+    </button>
+    <span class="sf-media-info">{{ failed() ? 'Could not load the video' : info() }}</span>
+  }
+</span>

@@ -17,7 +17,8 @@ export async function decodeImage(file: Blob): Promise<Decoded> {
   }
 }
 
-export function sizeOf(image: Decoded): { width: number; height: number } {
+export function sizeOf(image: Decoded | HTMLVideoElement): { width: number; height: number } {
+  if (image instanceof HTMLVideoElement) return { width: image.videoWidth, height: image.videoHeight };
   return image instanceof HTMLImageElement ? { width: image.naturalWidth, height: image.naturalHeight } : image;
 }
 
@@ -54,7 +55,8 @@ export async function prepareImage(file: File): Promise<PreparedImage> {
   }
 }
 
-async function scaled(source: Decoded, longestSide: number, quality: number): Promise<{ blob: Blob; width: number; height: number }> {
+/** The picture (or the frame of a video on the screen) scaled down to `longestSide` pixels, as a JPEG. */
+export async function scaled(source: Decoded | HTMLVideoElement, longestSide: number, quality: number): Promise<{ blob: Blob; width: number; height: number }> {
   const size = sizeOf(source);
   const k = Math.min(1, longestSide / Math.max(size.width, size.height));
   const canvas = document.createElement('canvas');

@@ -1,0 +1,19 @@
+<div class="sf-camera">
+  <video #video autoplay playsinline muted [attr.aria-label]="'The camera'"></video>
+  @if (recording()) {
+    <span class="sf-rec" role="status">● {{ seconds() }} / {{ maxSeconds }} s</span>
+  }
+</div>
+<div class="d-flex gap-2">
+  <button type="button" class="btn btn-light btn-lg flex-fill" [disabled]="recording()" (click)="closed.emit()">Cancel</button>
+  @if (mode() === 'photo') {
+    <button type="button" class="btn btn-primary btn-lg flex-fill" (click)="takePhoto()">Take the photo</button>
+  } @else if (!recording()) {
+    <button type="button" class="btn btn-primary btn-lg flex-fill" (click)="startRecording()">Start recording</button>
+  } @else {
+    <button type="button" class="btn btn-danger btn-lg flex-fill" (click)="stopRecording()">Stop</button>
+  }
+</div>
+@if (cameras().length > 1 && !recording()) {
+  <button type="button" class="btn btn-link" (click)="nextCamera()">Use another camera</button>
+}

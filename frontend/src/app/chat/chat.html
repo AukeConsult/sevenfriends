@@ -109,6 +109,13 @@
           </svg>
         </a>
       }
+      @if (!editing()) {
+        <a [routerLink]="['/friends', friendId, 'video']" class="sf-icon-btn" aria-label="Send a video" title="Send a video">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="2" y="6" width="14" height="12" rx="2" /><path d="M16 10l6-3v10l-6-3z" />
+          </svg>
+        </a>
+      }
       <textarea #field class="form-control sf-composer-field" rows="1" placeholder="Write a message" [value]="text()"
                 (input)="typed()" (keydown.enter)="enterPressed($event)" maxlength="2000" autocomplete="off" autocorrect="off" spellcheck="true" enterkeyhint="enter"
                 aria-label="Message"></textarea>
@@ -143,7 +150,11 @@
              [attr.aria-expanded]="message.mine ? selected() === message.id : null" (click)="select(message)" (keydown.enter)="select(message)">
           @if (message.media; as media) {
             <!-- a friend's image opens at once; on my own message the tap opens Edit / Delete (and Open) -->
-            @if (message.mine) {
+            @if (media.kind === 'video') {
+              <app-media-video [media]="media" />
+            } @else if (media.kind === 'audio') {
+              <span class="sf-hint">🎤 Audio message (the app cannot play it yet)</span>
+            } @else if (message.mine) {
               <app-media-image [media]="media" />
             } @else {
               <a [routerLink]="['/media', media.ownerId, media.objectId]" class="sf-media-link" aria-label="Open the image"><app-media-image [media]="media" /></a>
@@ -162,7 +173,9 @@
               <button type="button" class="btn btn-danger btn-sm rounded-pill px-3" (click)="remove(message)">Delete</button>
             } @else {
               @if (message.media; as media) {
-                <a [routerLink]="['/media', media.ownerId, media.objectId]" class="btn btn-light btn-sm rounded-pill px-3">Open</a>
+                @if (media.kind === 'image' || media.kind === 'video') {
+                  <a [routerLink]="['/media', media.ownerId, media.objectId]" class="btn btn-light btn-sm rounded-pill px-3">Open</a>
+                }
               }
               <button type="button" class="btn btn-light btn-sm rounded-pill px-3" (click)="startEdit(message)">Edit</button>
               <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3" (click)="deleting.set(message.id)">Delete</button>
