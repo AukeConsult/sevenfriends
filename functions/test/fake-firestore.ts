@@ -55,6 +55,7 @@ function resolve(data: Data, existing: Data | undefined): Data {
     if (v === undefined) throw new Error(`Cannot use "undefined" as a Firestore value (field "${k}")`);
     if (v instanceof ServerTimestamp) out[k] = Timestamp.now();
     else if (v instanceof Increment) out[k] = (existing?.[k] ?? 0) + v.n;
+    else if (v && typeof v === "object" && Object.getPrototypeOf(v) === Object.prototype) out[k] = resolve(v as Data, undefined); // nested map: its server timestamps too
     else out[k] = clone(v);
   }
   return out;
@@ -89,6 +90,8 @@ const bump = (path: string) => {
   versions.set(path, (versions.get(path) ?? 0) + 1);
   const c = parentOf(path);
   collVersions.set(c, (collVersions.get(c) ?? 0) + 1);
+  const g = `group:${c.split("/").pop()}`; // a collection group query sees every collection with that name
+  collVersions.set(g, (collVersions.get(g) ?? 0) + 1);
 };
 
 /** Validates every write against the current state first; applies nothing if any of them fails. */
@@ -207,9 +210,9 @@ export class Query {
     return new Query(this.scope, this.filters, this.sort, n);
   }
 
-  /** @internal */
+  /** @internal: the key a transaction watches: the collection path, or `group:<name>` for a group query */
   collectionPath() {
-    return "collection" in this.scope ? this.scope.collection : undefined;
+    return "collection" in this.scope ? this.scope.collection : `group:${this.scope.group}`;
   }
 
   async get(): Promise<QuerySnap> {
@@ -265,7 +268,6 @@ class Tx {
       return snapOf(target.path);
     }
     const coll = target.collectionPath();
-    if (coll === undefined) throw new Error("fake-firestore: collection group queries are not supported inside transactions");
     this.readColls.set(coll, collVersions.get(coll) ?? 0);
     return target.get();
   }

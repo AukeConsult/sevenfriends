@@ -7,6 +7,8 @@ import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAX_FRIENDS } from "./constan
 import { AcceptOutcome, FriendRequest } from "./models";
 import { circleCol, friendRequestCol, userDoc } from "./paths";
 import { ensureSeat } from "./seats";
+import { nameOf, sendPush } from "./push";
+import { unverifiedDetails } from "./validation";
 
 const uidOf = (res: { locals: Record<string, unknown> }) => (res.locals.token as DecodedIdToken).uid;
 
@@ -16,18 +18,22 @@ friendRequestsRouter.use(requireAuth);
 /** Pending requests from people who added *me* as a friend. */
 export async function listPendingRequests(uid: string): Promise<FriendRequest[]> {
   const snap = await friendRequestCol(uid).where("status", "==", "pending").get();
-  return snap.docs
-    .map((d) => {
+  const requests = await Promise.all(
+    snap.docs.map(async (d): Promise<FriendRequest> => {
       const data = d.data();
+      const sender = (await userDoc(data.fromUid as string).get()).data();
       return {
         id: d.id,
         fromName: data.fromName as string,
         fromEmail: (data.fromEmail as string | null) ?? null,
+        message: (data.message as string | null) ?? null,
         createdAt: data.createdAt instanceof Timestamp ? data.createdAt.toDate().toISOString() : null,
         seated: Boolean(data.seatFriendId),
+        fromUnverified: sender ? unverifiedDetails(sender) : [],
       };
-    })
-    .sort((a, b) => (a.createdAt ?? "").localeCompare(b.createdAt ?? ""));
+    }),
+  );
+  return requests.sort((a, b) => (a.createdAt ?? "").localeCompare(b.createdAt ?? ""));
 }
 
 friendRequestsRouter.get(
@@ -53,7 +59,9 @@ friendRequestsRouter.post(
     const requestRef = friendRequestCol(uid).doc(req.params.id);
     const myFriends = circleCol(uid).doc(DEFAULT_CIRCLE_ID).collection(FRIENDS_SUBCOLLECTION);
 
+    let requester: { uid: string; friendId: string } | null = null; // who is told about the answer
     const result = await getFirestore().runTransaction<AcceptOutcome>(async (tx) => {
+      requester = null;
       // ---- reads first ----
       const requestSnap = await tx.get(requestRef);
       if (!requestSnap.exists) return "not-found";
@@ -90,12 +98,18 @@ friendRequestsRouter.post(
         confirmedAt: FieldValue.serverTimestamp(),
       });
       tx.update(requestRef, { status: "accepted", seatFriendId: requestRef.id, acceptedAt: FieldValue.serverTimestamp() });
+      requester = { uid: request.fromUid as string, friendId: request.friendId as string };
       return "confirmed";
     });
 
     if (result === "not-found") {
       res.status(404).json({ error: "Request not found" });
       return;
+    }
+    if (result === "confirmed" && requester) {
+      const { uid: to, friendId } = requester as { uid: string; friendId: string };
+      const name = await nameOf(uid, res.locals.token as DecodedIdToken);
+      await sendPush(to, { id: `answer-${friendId}-confirmed`, title: `${name} accepted your friend request`, body: "", url: "/friends" });
     }
     res.json({ ok: true, result });
   }),
@@ -114,7 +128,9 @@ friendRequestsRouter.post(
     const requestRef = friendRequestCol(uid).doc(req.params.id);
     const mySeatRef = circleCol(uid).doc(DEFAULT_CIRCLE_ID).collection(FRIENDS_SUBCOLLECTION).doc(req.params.id);
 
+    let requester: { uid: string; friendId: string } | null = null; // who is told about the answer
     const result = await getFirestore().runTransaction(async (tx) => {
+      requester = null;
       const requestSnap = await tx.get(requestRef);
       if (!requestSnap.exists) return "not-found" as const;
       const request = requestSnap.data()!;
@@ -128,12 +144,13 @@ friendRequestsRouter.post(
       const seatSnap = await tx.get(mySeatRef);
 
       if (requesterFriendSnap.exists) {
+        requester = { uid: request.fromUid as string, friendId: request.friendId as string };
         tx.update(requesterFriendRef, {
           status: "rejected",
           waitingForSeat: false,
           rejectedAt: FieldValue.serverTimestamp(),
         });
-      }
+        }
       tx.update(requestRef, { status: "rejected", rejectedAt: FieldValue.serverTimestamp() });
       const seat = seatSnap.data();
       if (seat && seat.incomingRequestId === requestRef.id && seat.status !== "confirmed") {
@@ -149,6 +166,11 @@ friendRequestsRouter.post(
     if (result === "already-confirmed") {
       res.status(409).json({ error: "This request is already confirmed" });
       return;
+    }
+    if (requester) {
+      const { uid: to, friendId } = requester as { uid: string; friendId: string };
+      const name = await nameOf(uid, res.locals.token as DecodedIdToken);
+      await sendPush(to, { id: `answer-${friendId}-rejected`, title: `${name} rejected your friend request`, body: "", url: "/friends" });
     }
     res.json({ ok: true });
   }),

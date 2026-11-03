@@ -2,6 +2,8 @@
 export const environment = {
   useEmulators: false,
   apiBase: '/api',
+  // Web push key (public): Firebase console > Project settings > Cloud Messaging > Web Push certificates
+  vapidKey: 'BPhHFk1-leLph-Xlk8fq-xVttucfYvITVJCqnhZIxa59qB_TMkKHy7V2IZrIhWpsz7aXV-hMtggmlP6fALGdyig',
   firebase: {
     apiKey: "AIzaSyDy-ZStO1xAoNpPHU5EGFaRHD7dUHLtPdQ",
     authDomain: "sevenfriends.firebaseapp.com",

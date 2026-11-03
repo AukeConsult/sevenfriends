@@ -29,3 +29,22 @@ export const MESSAGE_COLLECTION = "messages";
 export const INCOMING_SIGNAL_COLLECTION = "incoming-signal";
 
 export const MAX_NAME_LENGTH = 100; // display name
+
+/** The message a person can add to a friend request. */
+export const MAX_REQUEST_MESSAGE = 500;
+
+/**
+ * Invitations to people without an account leave through two top-level "outboxes" (the backend writes, nobody else reads):
+ *  - `mail/{id}`: the format of the Firebase "Trigger Email" extension ({ to, message: { subject, text } }), which sends it
+ *  - `sms-outbox/{id}`: the text message; sent by the SMS provider when one is configured (see outbox.ts)
+ * Both carry `fromUid`, so they are erased with the sender (erase.ts).
+ */
+export const MAIL_COLLECTION = "mail";
+export const SMS_COLLECTION = "sms-outbox";
+export const MAX_INVITES_PER_DAY = 20;
+
+/**
+ * user-account/{uid}/push-device/{id}: one document per phone / browser that wants push notifications
+ * ({ token, createdAt, updatedAt }). The id is a hash of the token. Erased with the account.
+ */
+export const PUSH_DEVICE_COLLECTION = "push-device";

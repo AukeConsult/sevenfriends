@@ -1,6 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FriendsService } from '../core/friends.service';
+import { MessagesService } from '../core/messages.service';
 import { NotificationsService } from '../core/notifications.service';
 import { SOCIAL_NETWORKS } from '../core/social';
 import { Friend, FriendSlot } from '../models';
@@ -16,6 +17,7 @@ const MAX_FRIENDS = 7;
 export class Friends {
   private readonly friendsService = inject(FriendsService);
   private readonly notifications = inject(NotificationsService);
+  private readonly messagesService = inject(MessagesService);
   private readonly router = inject(Router);
 
   protected readonly circle = this.friendsService.circle;
@@ -30,6 +32,15 @@ export class Friends {
       friend: this.friendsService.friends()[i] ?? null,
     })),
   );
+
+  /** How many unread messages each friend has sent me (by connection id): marks the card. Kept live by the realtime service. */
+  protected readonly unread = computed(() => {
+    const counts = new Map<string, number>();
+    for (const m of this.messagesService.messages()) {
+      if (m.connectionId) counts.set(m.connectionId, (counts.get(m.connectionId) ?? 0) + 1);
+    }
+    return counts;
+  });
 
   protected readonly loadError = signal<string | null>(null);
 

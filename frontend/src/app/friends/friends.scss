@@ -181,3 +181,10 @@
   text-decoration: none;
   &:hover, &:focus-visible { background: #e0e7ff; color: var(--sf-primary); }
 }
+
+// A friend who has sent me a message I have not read: the chat button is filled
+.sf-chat-unread {
+  background: var(--sf-primary);
+  color: #fff;
+  &:hover, &:focus-visible { background: var(--sf-primary); color: #fff; }
+}

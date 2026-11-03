@@ -1,5 +1,7 @@
-import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, computed, effect, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { ApiService } from '../core/api.service';
+import { authMessage } from '../core/auth-errors';
 import { AuthService } from '../core/auth.service';
 import { SOCIAL_NETWORKS, draftFromSocials, emptySocialDraft, socialsFromDraft } from '../core/social';
 import { ProfileDetails, ProfileDraft, SaveState } from '../models';
@@ -14,12 +16,20 @@ const AUTOSAVE_MS = 800;
 })
 export class Profile {
   private readonly api = inject(ApiService);
+  private readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
 
-  protected readonly user = inject(AuthService).user;
+  protected readonly user = this.auth.user;
   protected readonly networks = SOCIAL_NETWORKS;
 
   protected readonly form = signal<ProfileDraft>({ name: '', phone: '', ...emptySocialDraft() });
   protected readonly loading = signal(true);
+  /** the phone is confirmed by SMS: it can no longer be typed over */
+  protected readonly phoneVerified = signal(false);
+  /** from the server (the login token), so it always agrees with what friends can find */
+  protected readonly emailVerified = signal(false);
+  protected readonly verificationSent = signal(false);
+  protected readonly verificationError = signal<string | null>(null);
   protected readonly state = signal<SaveState>('idle');
   protected readonly error = signal<string | null>(null);
 
@@ -29,7 +39,7 @@ export class Profile {
   protected readonly initial = computed(() => (this.form().name.trim() || this.user()?.email || '?')[0].toUpperCase());
   protected readonly provider = computed(() => {
     const id = this.user()?.providerData[0]?.providerId;
-    return id === 'google.com' ? 'Google' : id === 'password' ? 'Email and password' : (id ?? 'Unknown');
+    return id === 'google.com' ? 'Google' : id === 'password' ? 'Email' : id === 'phone' ? 'Phone' : (id ?? 'Unknown');
   });
   protected readonly memberSince = computed(() => {
     const created = this.user()?.metadata.creationTime;
@@ -42,6 +52,14 @@ export class Profile {
   private loadFailed = false;
 
   constructor() {
+    // verifying the phone or email changes what the server knows about this person: load again
+    let first = true;
+    effect(() => {
+      this.auth.accountVersion();
+      if (first) first = false;
+      else void this.load();
+    });
+    void this.refreshVerification();
     this.load();
     inject(DestroyRef).onDestroy(() => {
       clearTimeout(this.timer);
@@ -49,11 +67,43 @@ export class Profile {
     });
   }
 
+  /** Picks up a verification done in another tab or on another device. */
+  private async refreshVerification(): Promise<void> {
+    try {
+      await this.auth.refreshAccount();
+    } catch {
+      /* offline or signed out: the page still works with what it has */
+    }
+  }
+
+  protected deleteAccount(): void {
+    void this.router.navigateByUrl('/delete-account');
+  }
+
+  /** Saves the number as typed, then opens the SMS page for exactly that number. */
+  protected async verifyPhone(): Promise<void> {
+    await this.flush();
+    if (this.state() === 'error') return; // the number was refused: the message is shown here
+    await this.router.navigate(['/verify-phone'], { queryParams: { phone: this.form().phone.trim() } });
+  }
+
+  protected async sendVerificationEmail(): Promise<void> {
+    this.verificationError.set(null);
+    try {
+      await this.auth.sendVerificationEmail();
+      this.verificationSent.set(true);
+    } catch (err) {
+      this.verificationError.set(authMessage(err, 'Could not send the email. Please try again.'));
+    }
+  }
+
   protected async load(): Promise<void> {
     this.error.set(null);
     this.loadFailed = false;
     try {
       const res = await this.api.request<ProfileDetails>('/profile');
+      this.phoneVerified.set(res.phoneVerified);
+      this.emailVerified.set(res.emailVerified);
       this.form.set({ name: res.name ?? '', phone: res.phone ?? '', ...draftFromSocials(res) });
     } catch (err: any) {
       this.loadFailed = true;

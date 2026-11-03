@@ -31,16 +31,21 @@
                 <span class="avatar">{{ friend.name[0].toUpperCase() }}</span>
                 <div class="sf-title">
                   <strong class="sf-name">{{ friend.name }}</strong>
-                  <span class="badge rounded-pill"
-                        [class.text-bg-warning]="friend.status === 'pending' && !friend.waiting"
-                        [class.text-bg-secondary]="friend.status === 'pending' && friend.waiting"
-                        [class.text-bg-success]="friend.status === 'confirmed'"
-                        [class.text-bg-danger]="friend.status === 'rejected'">
-                    {{ friend.status === 'confirmed' ? 'Confirmed' : friend.status === 'rejected' ? 'Rejected' : friend.waiting ? 'Waiting' : 'Pending' }}
-                  </span>
+                  <!-- a confirmed friend needs no badge: only the other statuses are shown -->
+                  @if (friend.status !== 'confirmed') {
+                    <span class="badge rounded-pill"
+                          [class.text-bg-warning]="friend.status === 'pending' && !friend.waiting"
+                          [class.text-bg-secondary]="friend.status === 'pending' && friend.waiting"
+                          [class.text-bg-danger]="friend.status === 'rejected'">
+                      {{ friend.status === 'rejected' ? 'Rejected' : friend.waiting ? 'Waiting' : 'Pending' }}
+                    </span>
+                  }
+                  @if (unread().get(friend.id); as count) {
+                    <span class="badge rounded-pill text-bg-primary">{{ count === 1 ? 'New message' : count + ' new messages' }}</span>
+                  }
                 </div>
                 @if (friend.status === 'confirmed') {
-                  <a class="sf-icon-btn sf-chat" [routerLink]="['/friends', friend.id]" [attr.aria-label]="'Messages with ' + friend.name">
+                  <a class="sf-icon-btn sf-chat" [class.sf-chat-unread]="unread().has(friend.id)" [routerLink]="['/friends', friend.id]" [attr.aria-label]="'Messages with ' + friend.name">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                       <path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z" />
@@ -63,6 +68,19 @@
                   <p class="sf-hint">They rejected your request. Delete it to remove it from both lists.</p>
                 } @else if (friend.status === 'pending') {
                   <p class="sf-hint">{{ friend.incoming ? 'Wants to be your friend' : friend.waiting ? 'Their list is full. You are on their waiting list.' : 'Waiting for them to confirm' }}</p>
+                  @if (friend.invite; as invite) {
+                    @if (invite.sentAt) {
+                      <p class="sf-hint">Invitation sent by {{ invite.channel === 'email' ? 'email' : 'SMS' }} to {{ invite.to }}.</p>
+                    } @else {
+                      <p class="sf-hint">Not on Seven Friends yet. <a [routerLink]="['/friends', friend.id, 'invite']">Send an invitation</a></p>
+                    }
+                  }
+                }
+                @if (friend.unverified.length && friend.status !== 'rejected') {
+                  <p class="sf-hint text-warning-emphasis">
+                    {{ friend.name }} has not verified {{ friend.unverified.length === 2 ? 'their email or phone' : friend.unverified[0] === 'email' ? 'their email' : 'their phone' }},
+                    so we cannot be sure it is really them.
+                  </p>
                 }
 
                 <dl class="sf-details">

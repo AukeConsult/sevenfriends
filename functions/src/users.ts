@@ -4,6 +4,7 @@ import { FieldValue, getFirestore } from "firebase-admin/firestore";
 import { asyncHandler, requireAuth } from "./auth";
 import { ensureDefaultCircle } from "./circles";
 import { USER_ACCOUNT_COLLECTION } from "./constants";
+import { eraseUser } from "./erase";
 import { verifiedIdentity } from "./validation";
 
 export const usersRouter = Router();
@@ -22,11 +23,13 @@ usersRouter.post(
       const profile = {
         uid: token.uid,
         email: token.email ?? null,
-        emailLower: verified.email, // null while the email is not verified
+        // People are reachable by their email whether or not it is verified; their friends are told when it is not
+        emailLower: token.email?.toLowerCase() ?? null,
+        emailVerified: verified.email !== null, // Google, email link and confirmed passwords arrive verified
         verifiedPhone: verified.phone,
-        phoneKey: verified.phoneKey, // from the login, never from what is typed on the profile
+        // a confirmed number is the key; otherwise the number typed on the profile stays (set there)
+        ...(verified.phoneKey ? { phoneKey: verified.phoneKey } : {}),
         ...(verified.phone ? { phone: verified.phone } : {}), // a verified number is the contact number
-        emailVerified: token.email_verified ?? false,
         // the name from the login is only the starting point: a name the user chose on the profile page stays
         displayName: (snap.data()?.displayName as string | null | undefined) ?? token.name ?? null,
         photoURL: token.picture ?? null,
@@ -45,5 +48,22 @@ usersRouter.post(
 
     const saved = await ref.get();
     res.json({ ok: true, user: saved.data() });
+  }),
+);
+
+/**
+ * Erase me completely: account, profile, friendships (on both sides), messages and the login itself.
+ * Needs the body { "confirm": "DELETE" } so it can never happen by accident.
+ */
+usersRouter.delete(
+  "/me",
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    if (req.body?.confirm !== "DELETE") {
+      res.status(400).json({ error: 'Send { "confirm": "DELETE" } to erase your account' });
+      return;
+    }
+    await eraseUser((res.locals.token as DecodedIdToken).uid);
+    res.status(204).end();
   }),
 );

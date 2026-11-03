@@ -5,6 +5,7 @@ import { friendRequestsRouter } from "./friend-requests";
 import { messagesRouter } from "./messages";
 import { notificationsRouter } from "./notifications";
 import { profileRouter } from "./profile";
+import { pushRouter } from "./push";
 import { usersRouter } from "./users";
 
 /** The Express app behind the `api` Cloud Function (also used directly by the tests). */
@@ -24,6 +25,7 @@ export function createApp(): express.Express {
   router.use("/messages", messagesRouter);
   router.use("/notifications", notificationsRouter);
   router.use("/profile", profileRouter);
+  router.use("/push", pushRouter);
   app.use("/api", router);
   return app;
 }

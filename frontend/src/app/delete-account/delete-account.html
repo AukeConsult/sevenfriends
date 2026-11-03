@@ -1,0 +1,37 @@
+<header class="sf-bar">
+  <a routerLink="/profile" class="sf-back" aria-label="Cancel and go back to your profile">‹</a>
+  <h1 class="sf-bar-title">Delete my account</h1>
+</header>
+
+<main class="sf-narrow">
+  <div class="alert alert-danger m-0" role="alert">
+    <strong>This cannot be undone.</strong> You will be erased from Seven Friends, completely.
+  </div>
+
+  <p class="m-0">Everything about you is deleted:</p>
+  <ul class="m-0">
+    <li>your account, your profile and your login</li>
+    <li>all your friends and every request, sent or received</li>
+    <li>every message you sent or received. Your friends lose the conversation too</li>
+    <li>your name and contact details in other people's lists</li>
+  </ul>
+  <p class="small text-secondary m-0">Your friends are not told. They simply no longer have you as a friend.</p>
+
+  <form class="vstack gap-2" (submit)="$event.preventDefault(); erase()">
+    <label class="d-grid gap-1"><span class="form-label small text-secondary m-0">Type {{ word }} to confirm</span>
+      <input type="text" class="form-control form-control-lg" [value]="typed()" (input)="typed.set($any($event.target).value)"
+             autocomplete="off" autocapitalize="characters" [disabled]="busy()" />
+    </label>
+
+    @if (error()) {
+      <div class="alert alert-danger py-2 m-0" role="alert">{{ error() }}</div>
+    }
+
+    <div class="d-flex gap-2">
+      <a routerLink="/profile" class="btn btn-light btn-lg flex-fill">Cancel</a>
+      <button type="submit" class="btn btn-danger btn-lg flex-fill" [disabled]="!confirmed() || busy()">
+        {{ busy() ? 'Deleting…' : 'Delete everything' }}
+      </button>
+    </div>
+  </form>
+</main>

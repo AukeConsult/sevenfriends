@@ -25,6 +25,8 @@
             @if (request.createdAt) {
               <small>since {{ request.createdAt | date: 'mediumDate' }}</small>
             }
+            @if (request.message) { <small>“{{ request.message }}”</small> }
+            @if (request.fromUnverified.length) { <small class="text-warning-emphasis">Has not verified their email or phone: we cannot be sure it is really them.</small> }
           </span>
           <span class="badge rounded-pill text-bg-warning">Pending</span>
           <button type="button" class="btn btn-outline-secondary rounded-pill px-3" (click)="reject(request)">Reject</button>

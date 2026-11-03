@@ -311,14 +311,12 @@ export async function assertConsistent() {
     else if (!(sender.data.signaledUids ?? []).includes(signal.uid)) fail(`${where}: not recorded on its entry`);
   }
 
-  // 9. only what the login proved may find people: the account keys come from verified claims, and
-  //    friend entries carry no keys for social accounts (those are contact info only)
+  // 9. people are reachable by their email / phone whether or not it is verified, but a confirmed phone must be
+  //    the account's key, and friend entries carry no keys for social accounts (those are contact info only)
   const accounts = (await db.collection("user-account").get()).docs.map((d) => ({ id: d.id, data: d.data() }));
   for (const account of accounts) {
-    const { emailLower, emailVerified, phoneKey, verifiedPhone } = account.data;
-    if (emailLower && emailVerified !== true) fail(`account ${account.id}: matches on an email that is not verified`);
-    if (phoneKey && !verifiedPhone) fail(`account ${account.id}: matches on a phone number that is not verified`);
-    if (phoneKey && !String(verifiedPhone).replace(/\D/g, "").endsWith(phoneKey)) fail(`account ${account.id}: phoneKey does not belong to the verified number`);
+    const { phoneKey, verifiedPhone } = account.data;
+    if (verifiedPhone && !String(verifiedPhone).replace(/\D/g, "").endsWith(String(phoneKey))) fail(`account ${account.id}: phoneKey does not belong to the verified number`);
   }
   for (const e of entries) {
     const socialKey = Object.keys(e.data).find((k) => /^(facebook|instagram|tiktok|snapchat|twitter|linkedin|telegram)Key$/.test(k));

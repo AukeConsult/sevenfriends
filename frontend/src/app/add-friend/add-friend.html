@@ -15,7 +15,7 @@
   </label>
 
   <h2 class="section">How can we find them?</h2>
-  <p class="small text-secondary m-0">Add an email or a phone number. They are found by the email or phone they have verified.</p>
+  <p class="small text-secondary m-0">Add an email, a phone number, or both. Only these two are used to find your friend, and only if they have verified them in the app.</p>
 
   <label class="field"><span class="form-label small text-secondary m-0">Phone</span>
     <input type="tel" class="form-control" [value]="draft().phone" (input)="setField('phone', $any($event.target).value)"
@@ -25,12 +25,14 @@
     <input type="email" class="form-control" [value]="draft().email" (input)="setField('email', $any($event.target).value)"
            inputmode="email" autocomplete="off" />
   </label>
-  @for (n of networks; track n.key) {
-    <label class="field"><span class="form-label small text-secondary m-0">{{ n.label }} ({{ n.hint }})</span>
-      <input type="text" class="form-control" [value]="draft()[n.key]" (input)="setField(n.key, $any($event.target).value)"
-             autocomplete="off" />
-    </label>
-  }
+
+  <h2 class="section">Message</h2>
+  <label class="field"><span class="form-label small text-secondary m-0">Add a message (optional)</span>
+    <textarea class="form-control" rows="3" maxlength="500" [value]="draft().message"
+              (input)="setField('message', $any($event.target).value)"
+              placeholder="Hi! I would like to have you as a close friend."></textarea>
+    <span class="small text-secondary text-end">{{ draft().message.length }} / 500</span>
+  </label>
 
   @if (error()) {
     <div class="alert alert-danger py-2 m-0" role="alert">{{ error() }}</div>

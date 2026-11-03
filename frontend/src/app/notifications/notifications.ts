@@ -1,10 +1,12 @@
 import { DatePipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { ApiService } from '../core/api.service';
+import { AuthService } from '../core/auth.service';
 import { FriendsService } from '../core/friends.service';
 import { MessagesService } from '../core/messages.service';
 import { NotificationsService } from '../core/notifications.service';
-import { FriendRequest, Message, Notice } from '../models';
+import { FriendRequest, Message, Notice, ProfileDetails } from '../models';
 
 /** Home page: a quiet overview of what needs attention (friend requests, incoming messages). */
 @Component({
@@ -17,6 +19,16 @@ export class Notifications {
   private readonly notifications = inject(NotificationsService);
   private readonly friendsService = inject(FriendsService);
   private readonly messagesService = inject(MessagesService);
+  private readonly api = inject(ApiService);
+  private readonly router = inject(Router);
+
+  private readonly user = inject(AuthService).user;
+
+  /**
+   * My own details, when none of them is verified. I still receive requests, but my friends are told that I have
+   * not verified, so I am told here too (with a way to fix it).
+   */
+  protected readonly unverified = signal<('email' | 'phone')[]>([]);
 
   protected readonly requests = this.friendsService.requests;
   protected readonly messages = this.messagesService.messages;
@@ -37,6 +49,22 @@ export class Notifications {
 
   constructor() {
     this.load();
+    void this.checkOwnDetails();
+  }
+
+  private async checkOwnDetails(): Promise<void> {
+    try {
+      const profile = await this.api.request<ProfileDetails>('/profile');
+      const missing: ('email' | 'phone')[] = [];
+      // one verified detail is enough to prove who I am: the warning only shows when nothing is verified
+      if (!profile.emailVerified && !profile.phoneVerified) {
+        if (this.user()?.email) missing.push('email');
+        if (profile.phone) missing.push('phone');
+      }
+      this.unverified.set(missing);
+    } catch {
+      /* the banner is a help, not a requirement: the page works without it */
+    }
   }
 
   protected load(): Promise<void> {
@@ -47,14 +75,14 @@ export class Notifications {
     this.notice.set(null);
     try {
       const result = await this.friendsService.acceptRequest(request.id);
-      this.notice.set(
-        result === 'confirmed'
-          ? { kind: 'success', text: `${request.fromName} is now your friend.` }
-          : {
-              kind: 'warning',
-              text: `You have no free seats. The request from ${request.fromName} stays pending: remove a friend to make room, then confirm.`,
-            },
-      );
+      if (result === 'confirmed') {
+        await this.router.navigateByUrl('/friends'); // the new friend is there
+        return;
+      }
+      this.notice.set({
+        kind: 'warning',
+        text: `You have no free seats. The request from ${request.fromName} stays pending: remove a friend to make room, then confirm.`,
+      });
     } catch (err: any) {
       this.error.set(err.message);
     }

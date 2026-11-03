@@ -12,6 +12,7 @@ service cloud.firestore {
     // signed-in user's OWN account, to know when something new arrived:
     //   incoming-signal  pings that somebody added me
     //   messages         my messages (the app listens to the unread ones)
+    //   friends          my own friend list (the app listens, so an answer to my request shows at once)
     // Nobody writes from the client, and nobody can read somebody else's data.
     match /user-account/{uid}/incoming-signal/{signalId} {
       allow read: if isOwner(uid);
@@ -19,6 +20,11 @@ service cloud.firestore {
     }
 
     match /user-account/{uid}/messages/{messageId} {
+      allow read: if isOwner(uid);
+      allow write: if false;
+    }
+
+    match /user-account/{uid}/friend-circle/{circleId}/friends/{friendId} {
       allow read: if isOwner(uid);
       allow write: if false;
     }

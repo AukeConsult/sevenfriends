@@ -3,24 +3,29 @@ import { FieldValue, QueryDocumentSnapshot, getFirestore } from "firebase-admin/
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION } from "./constants";
 import { circleCol, friendRequestCol } from "./paths";
 import { signalRefsOf } from "./signals";
-import { verifiedIdentity } from "./validation";
+import { userDoc } from "./paths";
+import { phoneKey } from "./validation";
 
 /**
  * Has someone added me as a friend? Looks through every pending friend entry
- * (every "friends" subcollection of every circle) for my VERIFIED email or phone number,
+ * (every "friends" subcollection of every circle) for my email or phone number,
  * and creates an incoming friend request for each one found.
  *
- * Only what the login proves counts (see verifiedIdentity): an unverified email, a phone number
- * that was only typed in, and social accounts never find anything, so nobody can claim an
- * identifier to receive requests meant for somebody else.
+ * A person is reachable whether or not the email / phone is verified (social accounts never find anybody).
+ * Whoever is connected to somebody who has verified nothing is told so (unverifiedDetails), because an
+ * unverified address could be claimed by somebody else.
  */
 export async function syncIncomingInvites(token: DecodedIdToken): Promise<void> {
   const uid = token.uid;
-  const me = verifiedIdentity(token);
+  const account = (await userDoc(uid).get()).data() ?? {};
 
   const probes: [string, string][] = [];
-  if (me.email) probes.push(["email", me.email]);
-  if (me.phoneKey) probes.push(["phoneKey", me.phoneKey]);
+  const email = token.email?.toLowerCase();
+  if (email) probes.push(["email", email]);
+  // the number from the login (confirmed) and the one typed on the profile
+  new Set([phoneKey(token.phone_number), account.phoneKey as string | null | undefined].filter(Boolean) as string[]).forEach((k) =>
+    probes.push(["phoneKey", k]),
+  );
   if (!probes.length) return;
 
   const found = new Map<string, QueryDocumentSnapshot>();
@@ -57,6 +62,7 @@ export async function syncIncomingInvites(token: DecodedIdToken): Promise<void> 
       fromUid: ownerRef.id,
       fromName: owner.displayName ?? owner.email ?? "Someone",
       fromEmail: owner.email ?? null,
+      message: (data.message as string | null | undefined) ?? null, // what the sender wrote with the request
       circleId: circleRef.id,
       friendId: doc.id,
       status: "pending",

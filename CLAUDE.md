@@ -10,10 +10,14 @@ An app for staying in contact with your 7 closest friends.
 ## Pages
 - `/` **Notifications** (home): a quiet page with incoming friend requests and unread messages. No banner, light styling; shows "All quiet" when empty.
 - `/friends` **Friends**: the friend circle (7 slots), add/remove friends, pending/confirmed badges.
+- `/friends/:id/invite` **Invite your friend**: full-screen page shown after adding somebody who has no account yet. It shows the address / number and the message so the sender can **verify them first**, then **Send email / Send SMS**, **Not now**, or "wrong address, remove and add again".
 - `/friends/add` **Add a friend**: a full-screen form that ends with **Cancel** and **Send friend request** (opened from an empty seat on the Friends page).
 - `/friends/:id` **Conversation**: the message feed with one confirmed friend (click a confirmed contact, or the chat icon on its card, or Open on a message on Home). Incoming messages appear at once while the page is open (live, see Live updates); a slow 30-second refresh is only a safety net.
 - `/pending` **Pending**: incoming friend requests that wait for a free seat (all 7 seats taken). With a free seat they show as a pending friend on `/friends` instead.
 - `/profile` **Profile**: account details, an editable **name**, phone and social accounts, all **autosaved** (no Save button, see Profile); reached from the dropup on the bottom menu (also holds Log out).
+- `/settings` **Settings**: full-screen page (dropup menu on Profile → Settings) with desktop notifications on/off and where the user picks the sound for each of the three events (new message, friend request, answer to my request) from: No sound, Ding, Chime, Bell, Pop, Marimba, Soft note. Choosing a sound plays it; each row has a Play button.
+- `/delete-account` **Delete my account**: full-screen page that erases the user and everything shared with others (see Deleting my account).
+- After **creating an account** (any login method) the app opens `/profile` so the person can fill in their details; later logins go to Home. (`AuthService.landingPath()`.)
 - `/login` **Login**: Google, phone (SMS code, `/login/phone`), email link (`/login/email`, finished at `/login/link`) and email/password (a verification email is sent at sign-up). `/verify-phone` lets a signed-in user verify a phone by SMS (Profile).
 - Bottom menu (always visible when signed in): Home, Friends, Profile (dropup: My profile, Log out).
 
@@ -29,6 +33,7 @@ An app for staying in contact with your 7 closest friends.
 - Use the bottom tab bar for primary navigation; keep key actions reachable with one thumb.
 - Respect safe areas (`env(safe-area-inset-*)`) and use `100dvh` instead of `100vh`.
 - Keep the viewport meta tag (`viewport-fit=cover`) in `frontend/src/index.html`.
+- **The bottom menu is always shown when signed in, so every page needs room under its content** (about 4.5rem plus the safe area): `.sf-narrow` already has it; a page with its own layout must add the same bottom padding.
 - Test every change in a mobile viewport (browser devtools device mode) before desktop.
 - Keep the bundle small and avoid heavy dependencies; assume a slow mobile connection.
 
@@ -62,34 +67,79 @@ These rules are implemented in `functions/src` and covered by the tests in `func
 - **One connection, one id:** the requester's entry id = the request id = the other person's entry id (also stored as `connectionId`). Each side can always find the other.
 
 ### Adding a friend
-- Name is required; **an email or a phone number is required** (so the friend can be found). Social accounts (Facebook, Instagram, TikTok, Snapchat, X/Twitter, LinkedIn, Telegram) are optional **contact info only**. Email and phone are validated.
+- Name is required; **an email or a phone number is required** (so the friend can be found). The add-friend page shows only these two search fields (social accounts are not asked for there; they are only contact info on a Profile). Email and phone are validated.
 - Adding writes ONE pending entry in the requester's list. **No request and no seat** is created on the other side (that only happens in their check). If the person already has an account, they also get a **ping** (see Pings).
+
+- **A message can be added** to the request (optional, max 500 characters). It is stored on the entry, copied to the other person's request, and shown with the request on Home and on the waiting-list page. It is also part of the invitation below.
+
+### Inviting somebody who is not a user yet
+- When adding a friend, if **nobody has an account** for that email or phone (the same search as the pings), the new entry gets `invite: { channel, to, sentAt: null }`: **email** when an email was given, otherwise **SMS**. `Friend.invite` is null for people who already have an account (they get the request in the app) and once the friend has signed up.
+- **Nothing is sent when the request is added.** The app opens the verify page (`/friends/:id/invite`); only `POST /circles/default/friends/:id/invite` sends. It is refused (409) when the friend has no invitation, was invited already (**once per friend**), or has signed up in the meantime; 429 after `MAX_INVITES_PER_DAY` (20) invitations in 24 hours; 404 for somebody else's friend.
+- Sending writes to an outbox in the same transaction that marks `sentAt`: email → `mail/{id}` (the Firebase **Trigger Email** extension format, so installing that extension sends it), SMS → `sms-outbox/{id}` with `status: "queued"`, sent right away by Twilio when `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN` and `TWILIO_FROM` are set (otherwise it stays queued). Set `APP_URL` for the sign-up link in the text. Both outboxes carry `fromUid`, are closed to clients (no rules) and are **erased with the sender**.
+- The text holds the sender's name, the message and where to sign up with that same email / number. The friend then finds the request through the normal check once they have signed up with it.
+- Known trade-off: the add response tells the sender whether the address already has an account (needed to decide whether to offer an invitation). The 20 per day limit and the verified-sender rule limit abuse.
+
+### People who have not verified their email / phone
+- **Everybody is reachable**, verified or not: a request arrives whether the address was verified or not. The cost of that (somebody could sign up with your friend's address without proving it is theirs) is paid by **telling the other side**:
+  - **Friend card / request card**: the friend entry carries `unverified: ("email" | "phone")[]` and a request carries `fromUnverified`, from the other person's account (`unverifiedDetails` in `validation.ts`): `[]` as soon as ONE detail is verified (a verified email or an SMS-confirmed phone), otherwise every detail the account has. The card says "{Name} has not verified their email / phone, so we cannot be sure it is really them". It shows for both sides, pending or confirmed, until they verify. No invitation is offered (they are a user already).
+  - **Front page banner (for the unverified person themselves)**: shown only when nothing of theirs is verified: "Your email is not verified. You still receive friend requests, but your friends are told that you have not verified, because someone else could be using it", with a Verify button to the Profile.
+- Known trade-off: somebody who signs up with an address that is not theirs, without verifying it, receives the requests meant for it; the sender's card shows the warning, so they can drop the friend. The requester also learns whether an account exists for an address.
 
 ### How the other person finds the request (the "check")
 - Runs when they open/tap Home, or open Friends or Pending, or when a ping arrives while the app is open (`POST /api/notifications/check`; overlapping runs are shared).
-- It matches *their* **verified** email and **SMS-verified** phone against everyone's **pending** entries (trust model below):
-  - email: case-insensitive. Phone: last 8 digits (`+47 926 55 195` = `92655195`). Social accounts never match anyone.
-  - The identity comes only from the login token (`verifiedIdentity` in `validation.ts`): `email` counts only when `email_verified` is true, the phone only when it was confirmed by SMS. What someone types on their Profile (phone, social accounts) is contact info and never used for finding people. A verified phone cannot be edited on the Profile.
+- It matches *their* email and phone against everyone's **pending** entries, verified or not (see "People who have not verified"):
+  - email: case-insensitive. Phone: last 8 digits (`+47 926 55 195` = `92655195`), from the login (confirmed) or the number typed on the Profile. Social accounts never match anyone.
+  - Account fields: `emailLower` (the address, any), `emailVerified`, `phoneKey` (confirmed number, else the typed one, kept up to date by the Profile), `verifiedPhone` (only when confirmed by SMS; then the number cannot be edited on the Profile).
 - Ignored: their own entries, entries that are not pending, entries already linked to another user, entries that are themselves seats for an incoming request, and any request that already exists (any status).
 - A match creates the request (same id) in their inbox and links the requester's entry (`linkedUid`).
 
 ### Pings (incoming signals)
-- When a friend is added, the backend looks for accounts the new entry points at (same matching as the check: verified email and verified phone; the person adding is left out) and writes a ping for each: `user-account/{uid}/incoming-signal/{connectionId}` = `{ connectionId, time }`. **A ping holds no names or details.** An entry that points at two accounts pings both. A refused add (full list) pings nobody.
+- When a friend is added, the backend looks for accounts the new entry points at (same matching as the check: email and phone, verified or not; the person adding is left out) and writes a ping for each: `user-account/{uid}/incoming-signal/{connectionId}` = `{ connectionId, time }`. **A ping holds no names or details.** An entry that points at two accounts pings both. A refused add (full list) pings nobody.
 - The check reads the pings at its start and deletes exactly those when it has finished (if the check failed they stay; a ping that arrives meanwhile stays for the next check). A ping is only a wake-up: the request itself only ever comes from the check.
 - A ping goes away with its entry: when the requester deletes the entry, when the entry is merged into a connection (both added each other), and when it is dropped as a duplicate.
 
 ### Live updates (one common service in the frontend)
 `core/realtime.service.ts` is the only place that listens for changes, with Firestore realtime listeners (`onSnapshot`) under the signed-in user's own account. It starts at login and stops at sign-out. The Firestore SDK is loaded after login (a separate download, not in the first one).
 - **A ping** (new document in `incoming-signal`): run the ordinary backend search (the check) and reload the friends, so the request shows in the incoming events on Home (and as a pending seat on Friends).
+- **A change in my friend list** (any change of an entry under `friend-circle/default/friends`, after the first snapshot): the friends are reloaded at once (changes arriving together are one reload). This is how the **sender hears the answer**: when the other person confirms or rejects, their entry in my list changes, the Friends page updates live, and a desktop notification says "X accepted / rejected your friend request". The same listener catches a friend deleting me or a request being linked.
+- **A friend deleting me** is the same change (my entry disappears): the Friends list loses them live and a desktop notification says "X removed the friendship".
+- **Listeners restart themselves**: if a listener breaks (connection lost, rules reloading), it starts again after 5 seconds, so live updates do not silently stop until a page reload.
 - **A new message** (new unread document in `messages`):
   - if the feed of the person who wrote is **open**, the Chat page shows the message at once and marks it read (it does not turn up on Home);
   - otherwise the search runs, so the message shows in the incoming events on Home.
 - Only **new** documents count; documents going away (the backend deleting a handled ping, a message being marked read) never start a search. What is already there when the listener starts is shown once.
 
+### Sound (stage one: while the app is open)
+- `core/sound.service.ts` plays a short sound, made in the browser with the Web Audio API (no sound files). Three events, each with **its own chosen sound** (Settings page): **message** (default Ding), **request**, somebody added me (default Chime), **answer**, the other person confirmed or rejected my request (default Soft note). The choices are Ding, Chime, Bell, Pop, Marimba, Soft note, or No sound (that is also how a sound is turned off).
+- Triggered only by the realtime service, for **new** things (what was there at start is not announced), and **not for a message in the conversation that is open**. My own messages never make a sound.
+- Browsers only allow sound after a first tap/click/key press on the page; before that the sound is silently skipped (it is unlocked at the first interaction).
+- The choices are **per device** (`localStorage`, key `sf-sounds`).
+- **Volume**: a 0-100 % slider on the Settings page (default 80 %, louder than the first version; per device, `localStorage` key `sf-volume`). The volume is applied on a curve (`MAX_GAIN * (volume/100)^2`), so the slider feels even; letting go of it plays a sample. The device's own volume still applies on top.
+- To add a sound: add it to `TUNES` in `sound.service.ts`; the Settings page lists it by itself.
+### No notifications inside the page
+- **Notifications are shown on the PC screen (the system's own notification, outside the browser), never as a card or pop-up inside the browser page.** There is no toast component. The page itself just updates (lists, badges, the title count); the sound plays. A new kind of notification goes through `DesktopNoticeService.show` (see below), not through an in-page alert.
+
+### Getting attention while the app is in the background
+- **Tab title** (`core/attention.service.ts` + `core/app-title.strategy.ts`): the title shows how many things wait, `(2) Friends – Seven Friends` (unread messages + friend requests that have a seat to confirm). While the tab is in the background it flashes between that and "💬 New in Seven Friends". The page titles still come from the route `title`s; the title strategy hands them to the AttentionService.
+- **Desktop notification** (`core/desktop-notice.service.ts` + the app's one service worker `frontend/public/firebase-messaging-sw.js`): the operating system's own notification on the **PC screen** (outside the browser window) with the sender and the message (or "X wants to be your friend", "X accepted your friend request", "X removed the friendship"). It shows when something new arrives and the person is **not looking at the app**: the tab is hidden (another tab selected, window minimized) **or the browser window is not in front** (`document.visibilityState` hidden, or `document.hasFocus()` false). Never while the tab is in view and its window is in front. It is shown through the **service worker** (`registration.showNotification`), which Chrome and Edge handle more reliably than `new Notification` from the page (fallback to `new Notification` when no worker). **Every event has its own unique notification id** (`DesktopNotice.id`, used as the notification's tag): the message id (`message-{id}`), the request id (`request-{id}`), `answer-{connectionId}-{status}`, `removed-{connectionId}`. So a new event is never swallowed by an older notice still waiting (the first version re-used a tag per conversation and only the first one showed), and one event is announced **once**, however often it is reported (a listener restarting, the check and the live listener both seeing it). New kinds of notice must pass the id of their event. A click focuses the tab and opens the right page (the worker posts `{type:'open', url}` to the page, which navigates). If the app plays its own sound for that event the notice is silent (no double sound).
+- Settings page → Notifications: a switch that is **per browser** (`localStorage` `sf-desktop-notices` + the browser's permission, so Chrome and Edge each must be switched on), a test button, the permission state and "Last notification: ..." (shown / why it was not shown), to find out why nothing appeared. Windows must also allow notifications for the browser (Settings → System → Notifications; Focus assist off).
+- "Show a test pop-up" is always active: if the switch is still off it asks for permission first, then shows the pop-up.
+- A page cannot force the browser to the front (browsers forbid it); the pop-up and the title are the way to get attention.
+
+### Push notifications (also when the app is closed)
+- The phone's or computer's own notification system wakes the device through **Firebase Cloud Messaging**, so a new message, friend request, answer or removal arrives also when the app is closed or the screen is locked (the page itself cannot listen then). The device plays its own notification sound.
+- **Frontend**: `core/push.service.ts` (per device, Settings → Push notifications): turning the switch on asks the browser for permission, gets the device's push token (`getToken` with the VAPID key in `environment.vapidKey`) and registers it with `POST /api/push/devices`; switching off or **logging out** removes it (`DELETE /api/push/devices`; `PushService.forgetDevice()` is called before sign-out, so the next person on the same phone gets nothing; the next login does not turn it on again by itself). Push is only available on the deployed site (not with the emulator demo project: `environment.development.ts` has an empty key) and on iPhone only from the Home Screen app.
+- **One service worker** (`public/firebase-messaging-sw.js`, scope `/`; a scope can only have one): on `push` it shows the notification (data-only message: `{ id, title, body, url }`), **unless the app is in view and in front** (then the page itself shows the sound and list); `tag` = the event id, so the same event is shown once, also when the open page shows it too; on click it focuses the app and opens `url`. It caches nothing. `firebase.json` serves it with `Cache-Control: no-cache`.
+- **Installable app**: `public/manifest.webmanifest` + `public/icons/` (192, 512, apple-touch) and the tags in `index.html`. iPhone only supports push for a site added to the Home Screen (iOS 16.4+).
+- **Backend** (`functions/src/push.ts`): devices are `user-account/{uid}/push-device/{hash of token}` (`{ token, createdAt, updatedAt }`). A token belongs to **one account** (registering it takes it away from any other account; needs the `push-device.token` collection-group index exemption in `firestore.indexes.json`). `sendPush(uid, { id, title, body, url })` sends to all devices of the person (high priority, TTL 1 h, title ≤ 100, body ≤ 120 characters), removes tokens FCM says are gone, and **never throws** (a failing push never fails the request; it is awaited, because the function may stop after the response). Sent when: a message is written (to the receiver), a friend is added who has an account (`request-{id}`, with the message), a request is confirmed or rejected (`answer-{connection}-confirmed|rejected`, to the requester), a **confirmed** friendship is ended (`removed-{connection}`, to the other person). The ids are the same as the desktop notification's.
+- Push devices are erased with the account (`erase.ts`). The push text carries the sender's name and the start of the message and passes through Google / Apple: mention this to users.
+- **Setup once**: Firebase console → Project settings → Cloud Messaging: the Cloud Messaging API enabled, a Web Push key pair generated (its public key is `vapidKey` in `frontend/src/environments/environment.ts`). Deploy to Firebase Hosting (push needs https). The emulator cannot deliver pushes, so `push.test.ts` replaces `firebase-admin/messaging` with a recorder; real delivery is only checked on the deployed site. If a push never arrives: check the browser's notification permission, that the switch is on in Settings, and the function logs for "Could not send the push notification".
+- Tests: `functions/test/push.test.ts` (devices register / remove / move between accounts, what is pushed for message / request / answers / removal and to whom, dead tokens removed, a failing push does not fail the request, erase removes devices).
+
 ### Security: user control (`firestore.rules`)
 - All data goes through the backend: it checks the login on every route and only touches the caller's own data (the Admin SDK ignores the rules).
-- The app may only **read** the live data under the signed-in user's **own** account: `incoming-signal` and `messages`. Nobody reads somebody else's, nobody reads with a collection group query, and **nobody writes from the client**, not even on their own account.
-- Everything else (profiles, circles, friends, requests) is closed to the client. A new collection is closed until a rule opens it on purpose.
+- The app may only **read** the live data under the signed-in user's **own** account: `incoming-signal`, `messages` and my own friend list (`friend-circle/{circle}/friends`, read by its path, never by a group query). Nobody reads somebody else's, nobody reads with a collection group query, and **nobody writes from the client**, not even on their own account.
+- Everything else (profiles, circles, requests) is closed to the client. A new collection is closed until a rule opens it on purpose.
 - `functions/test/rules.test.ts` tests all of this against the rules engine, so it only runs with the emulator (`npm run test:emulator`, skipped in `npm test`).
 
 ### Seats and the waiting list
@@ -105,13 +155,24 @@ These rules are implemented in `functions/src` and covered by the tests in `func
 - A confirmed connection is never rewritten or merged.
 
 ### Answering a request
-- **Confirm:** both entries become `confirmed` (same id, both lists), request `accepted`. Confirming with no free seat changes nothing (stays pending). This is NOT a rejection.
+- **Confirm:** both entries become `confirmed` (same id, both lists), request `accepted`. Confirming with no free seat changes nothing (stays pending). This is NOT a rejection. In the app, confirming on Home opens the Friends page (where the new friend is); with no free seat you stay on Home and see the warning.
 - **Reject:** request `rejected`; the requester's entry shows **Rejected** (they can see it); the recipient's pending seat is freed. A confirmed request cannot be rejected (409). A rejected request is never recreated by later checks. Rejection is not a permanent block: after deleting the rejected entry, the requester can add the person again.
 
 ### Deleting
-- Either side can delete; the connection (both entries + the request) is removed from **both lists**, whatever its status.
+- Either side can close a friendship. **Everything the two share is wiped, for both people:** both entries, the request, the pings not yet handled and the whole message feed (both copies of every message). Nothing of it is kept.
+- **It happens in ONE Firestore transaction** (`DELETE /circles/default/friends/:id`): all reads first, then all deletes, committed together. All of it goes or none of it.
 - Delete before the other person has checked: nothing exists on their side, so only the requester's entry goes. Deleting a waiting request removes it from the other person's waiting list.
+- A friend card is **marked when that friend has sent me a message I have not read**: a blue "New message" / "N new messages" badge by the name and a filled chat button. It comes from the unread messages (kept live by the realtime service) and disappears when the feed is opened.
+- A friend card shows a status badge (Pending, Waiting, Rejected) **only for those statuses; a confirmed friend has no badge**.
 - UI: the trash icon opens an expandable frame under the card (no browser pop-up). Incoming pending seats show Confirm / Reject instead of the trash icon.
+
+### Deleting my account (erase everything)
+- **Rule: when a user is deleted, all information about that user is wiped out**: the account and profile, the login (Firebase Auth), every friendship (both entries on both sides, requests sent and received, pings), and every message they sent or received, including the other person's copy of the conversation, and every invitation they sent by email or SMS (the `mail` and `sms-outbox` outboxes). Other people's entries that only name this person (written for their email or phone, never found yet) go too, because they hold the person's name and contact details. Whatever someone writes in a new feature that stores data about a person must be added to `functions/src/erase.ts`.
+- API: `DELETE /api/users/me` with the body `{ "confirm": "DELETE" }` (400 without it, so it cannot happen by accident). Code: `functions/src/erase.ts`. Friends are not told; they just lose the friend.
+- **All of it happens in ONE Firestore transaction** (all reads first, then every delete, committed together): either the person is gone from every list or nothing changed. Only the login is outside Firestore, so it is removed right after the commit; if that fails the data is already gone and the request can be repeated (it is safe to run twice).
+- UI: a full-screen page `/delete-account` (reached from the red "Delete my account" card at the bottom of Profile): explains what is erased, asks to type `DELETE`, ends with Cancel / Delete everything. After success the app signs out and reloads the front page (a full reload, so nothing of the erased account stays in memory).
+- Tests: `functions/test/erase.test.ts` (needs the word, removes account/entries/messages/pings/login on both sides, an unrelated connection survives, repeat is harmless, a new sign-up with the same email gets nothing, erase racing with other actions stays consistent, everybody erased leaves nothing, closing a friendship wipes everything shared).
+- Needs the Firestore index exemptions in `firestore.indexes.json` (`friends.linkedUid`, `messages.fromUid`, `messages.toUid`): deploy with `firebase deploy --only firestore`.
 
 ### Messages (the feed of a connection)
 - Only **confirmed** connections can exchange messages (pending, waiting, rejected or unknown friends: 403/404). The feed of a connection is identified by the connection id (the shared id of the two entries).
@@ -140,7 +201,10 @@ npm test                           # all tests, ~40 s, no Java and no emulator n
 STRESS_SEEDS=1,2,3,4,5,6,7,8 npm test      # more random runs (default seeds: 1-4)
 npm run test:emulator              # same tests on the real Firestore emulator (needs Java 21+)
 ```
-- `verification.test.ts`: the trust model: unverified email or typed phone finds nobody, impersonation with an unverified email, stale keys cleared at login, a later verification finds earlier requests, verified phone not editable, social accounts useless for matching.
+- `invitations.test.ts`: (also the unverified-friend warning) the message with a request (kept, trimmed, 500 limit, reaches the other person), who is offered an invitation (email, SMS, nobody if they have an account), sending (outbox content, once only, owner only, not after sign-up, daily limit, erased with the sender).
+- `push.test.ts`: push devices and what is pushed (see Push notifications).
+- `erase.test.ts`: deleting an account and closing a friendship wipe everything on both sides, in one transaction.
+- `verification.test.ts`: unverified people are reachable and their friends are told (`unverified`, `fromUnverified`, gone once one detail is verified, the claimant case, typed phone, clearing it), the confirmed phone (not editable, fills the contact number), social accounts never find anybody and anybody can add a friend, verified or not.
 - `connections.test.ts`: focused scenarios: matching (email, phone in every format), confirm, reject, delete, waiting list and promotion order, mutual add, duplicates, validation, unread messages.
 - `shared-models.test.ts`: the shared models stay shareable (types only, no outside imports) and the copy script works (copies, only rewrites changes, `--check`, removes stale generated files).
 - `signals.test.ts`: the pings: who gets one (all 9 ways of identifying a person, never yourself, both accounts of a double match), what is in it, that the check consumes exactly what it saw, and that a ping goes with its entry (delete, merge, duplicate); in the pool: the ring (180 pings, one check each empties them) and 49 pings to one person.
@@ -168,13 +232,16 @@ npm run test:emulator              # same tests on the real Firestore emulator (
 npm run sync:models           # copy the shared models into the frontend (also runs before frontend start/build)
 npm --prefix frontend install && npm --prefix functions install
 npm --prefix frontend run build && npm --prefix functions run build
-firebase emulators:start      # http://localhost:5000
+npm run dev:emulators         # builds the backend first (predev:emulators), then starts auth + functions + firestore. Use this, not a bare `firebase emulators:start`: the emulator runs the COMPILED backend in functions/lib, so without the build it runs old code (new routes answer 404)
+npm run dev:frontend          # copies the shared models, then ng serve (http://localhost:4200)
 firebase deploy
 ```
 
 ## Login methods and console setup
-- Google, email/password, email link, phone SMS. Only a verified email or an SMS-verified phone lets others find you.
+- Google, email/password, email link, phone SMS. People are reachable by their email or phone even when unverified; their friends are told (see People who have not verified).
+- **Nobody has to be verified to add a friend or to be added.** Verification only decides what the other side is told (see People who have not verified). A phone login has no email and is confirmed by the SMS code; Google and email-link logins arrive with a verified email. The account document keeps `emailVerified` and `verifiedPhone`, written from the login token at every login, and `GET /profile` returns `emailVerified` / `phoneVerified`. The Verify buttons only appear for what is not verified yet.
 - Firebase console: Authentication → enable **Google**, **Email/Password** (with **Email link** switched on) and **Phone**; add your domain under Authorized domains. Phone sign-in needs the **Blaze plan**, costs per SMS, and SMS region policy should allow your countries.
 - Emulator: reCAPTCHA is disabled and SMS codes are printed in the auth emulator log; email links are printed there too.
 - After backend changes: `npm --prefix functions install`, restart emulators, `firebase deploy --only firestore` (rules and indexes), then deploy functions.
 - Known gap: email-link, SMS and rules tests are not automated in the cloud (needs the emulator); they are build-verified only.
+- **Never write `firestore.rules` in place while the emulator runs** (a truncating write can be read as an empty file; the emulator then fails every database request with "Rules content empty"). Save the file in one step; if it happens, save the file again and look for "Rules updated" in the emulator log.

@@ -7,4 +7,6 @@ export type ProfileDetails = {
   phone: string | null;
   /** true = the phone number was confirmed with an SMS code, so it can be used to find this person */
   phoneVerified: boolean;
+  /** true = the email was verified (Google, email link or a clicked verification mail), so it is used to find this person */
+  emailVerified: boolean;
 } & Socials;

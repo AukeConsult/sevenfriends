@@ -58,7 +58,7 @@ export class Login {
     this.info.set(null);
     try {
       await action();
-      await this.router.navigateByUrl('/');
+      await this.router.navigateByUrl(this.auth.landingPath());
     } catch (err) {
       if (!wasCancelled(err)) this.error.set(authMessage(err, 'Sign-in failed. Please try again.'));
     } finally {

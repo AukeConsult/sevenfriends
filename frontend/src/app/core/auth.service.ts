@@ -172,8 +172,19 @@ export class AuthService {
     return signOut(auth);
   }
 
+  private newAccount = false;
+
+  /** Where to go after signing in: a brand-new account fills in its profile first. */
+  landingPath(): string {
+    const path = this.newAccount ? '/profile' : '/';
+    this.newAccount = false;
+    return path;
+  }
+
   /** Saves the user, and signs out again if that fails so state stays consistent. */
   private async finishLogin(user: User): Promise<void> {
+    // the account was created by this very sign-in (any method: Google, password, link, phone)
+    this.newAccount = user.metadata.creationTime === user.metadata.lastSignInTime;
     try {
       await this.syncUser(user);
     } catch (err) {

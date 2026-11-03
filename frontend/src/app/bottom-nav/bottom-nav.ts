@@ -2,6 +2,7 @@ import { Component, HostListener, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../core/auth.service';
 import { NotificationsService } from '../core/notifications.service';
+import { PushService } from '../core/push.service';
 
 /** Always-visible banner menu at the bottom of the screen (shown when signed in). */
 @Component({
@@ -14,6 +15,7 @@ export class BottomNav {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
   private readonly notifications = inject(NotificationsService);
+  private readonly push = inject(PushService);
 
   /** The Profile item opens a dropup menu (profile page + log out). */
   protected readonly menuOpen = signal(false);
@@ -34,11 +36,12 @@ export class BottomNav {
   }
 
   protected profileActive(): boolean {
-    return this.router.url.startsWith('/profile');
+    return this.router.url.startsWith('/profile') || this.router.url.startsWith('/settings');
   }
 
   protected async logout(): Promise<void> {
     this.closeMenu();
+    await this.push.forgetDevice(); // this device stops getting the person's pushes
     await this.auth.logout();
     await this.router.navigateByUrl('/login');
   }

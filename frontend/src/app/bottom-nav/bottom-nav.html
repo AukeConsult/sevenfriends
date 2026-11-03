@@ -22,6 +22,7 @@
     @if (menuOpen()) {
       <div class="dropup" role="menu">
         <a class="entry" role="menuitem" routerLink="/profile" (click)="closeMenu()">My profile</a>
+        <a class="entry" role="menuitem" routerLink="/settings" (click)="closeMenu()">Settings</a>
         <button type="button" class="entry danger" role="menuitem" (click)="logout()">Log out</button>
       </div>
     }

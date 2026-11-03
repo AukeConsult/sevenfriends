@@ -155,5 +155,5 @@ app-root {
   gap: 0.75rem;
   max-width: var(--sf-form-max);
   margin: 0 auto;
-  padding: 1.25rem var(--sf-gutter) calc(1.5rem + env(safe-area-inset-bottom));
+  padding: 1.25rem var(--sf-gutter) calc(4.5rem + env(safe-area-inset-bottom)); // clear of the bottom menu, which is always shown
 }

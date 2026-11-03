@@ -13,13 +13,15 @@ import { PhoneStep } from '../models/view';
 export class PhoneAuth {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
-  protected readonly linking = inject(ActivatedRoute).snapshot.data['mode'] === 'link';
+  private readonly route = inject(ActivatedRoute).snapshot;
+  protected readonly linking = this.route.data['mode'] === 'link';
   protected readonly backLink = this.linking ? '/profile' : '/login';
 
   private readonly recaptcha = viewChild.required<ElementRef<HTMLElement>>('recaptcha');
 
   protected readonly step = signal<PhoneStep>('number');
-  protected readonly phone = signal('');
+  /** the number typed on the Profile page comes along as ?phone= */
+  protected readonly phone = signal(this.route.queryParamMap.get('phone') ?? '');
   protected readonly code = signal('');
   protected readonly busy = signal(false);
   protected readonly error = signal<string | null>(null);
@@ -60,7 +62,7 @@ export class PhoneAuth {
     this.error.set(null);
     try {
       await this.auth.confirmPhoneCode(code, this.linking);
-      await this.router.navigateByUrl(this.linking ? '/profile' : '/');
+      await this.router.navigateByUrl(this.linking ? '/profile' : this.auth.landingPath());
     } catch (err) {
       this.error.set(authMessage(err, 'That code did not work. Please try again.'));
     } finally {

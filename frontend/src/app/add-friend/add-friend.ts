@@ -1,10 +1,10 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FriendsService } from '../core/friends.service';
-import { SOCIAL_NETWORKS, emptySocialDraft, socialsFromDraft } from '../core/social';
+import { emptySocialDraft, socialsFromDraft } from '../core/social';
 import { FriendDraft } from '../models';
 
-const emptyDraft = (): FriendDraft => ({ name: '', email: '', phone: '', ...emptySocialDraft() });
+const emptyDraft = (): FriendDraft => ({ name: '', email: '', phone: '', message: '' });
 
 /** A full page to add a friend: a form that ends with Cancel or Send friend request. */
 @Component({
@@ -17,7 +17,6 @@ export class AddFriend {
   private readonly friends = inject(FriendsService);
   private readonly router = inject(Router);
 
-  protected readonly networks = SOCIAL_NETWORKS;
   protected readonly draft = signal<FriendDraft>(emptyDraft());
   protected readonly sending = signal(false);
   protected readonly error = signal<string | null>(null);
@@ -43,13 +42,15 @@ export class AddFriend {
     this.sending.set(true);
     this.error.set(null);
     try {
-      await this.friends.add({
+      const added = await this.friends.add({
         name: d.name,
         email: d.email || null,
         phone: d.phone || null,
-        ...socialsFromDraft(d),
+        message: d.message.trim() || null,
+        ...socialsFromDraft(emptySocialDraft()), // no social accounts are asked for here
       });
-      await this.router.navigateByUrl('/friends'); // back to the list, where the new friend shows as pending
+      // nobody has an account for this email / phone yet: confirm the address first, then invite them
+      await this.router.navigateByUrl(added.invite ? `/friends/${added.id}/invite` : '/friends');
     } catch (err: any) {
       this.error.set(err.message ?? 'Could not send the friend request');
     } finally {

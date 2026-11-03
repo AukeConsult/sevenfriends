@@ -13,6 +13,17 @@
     </div>
   }
 
+  @if (unverified().length) {
+    <div class="alert alert-warning py-2 d-flex align-items-center justify-content-between gap-2" role="status">
+      <span>
+        Your {{ unverified().length === 2 ? 'email and phone are' : unverified()[0] === 'email' ? 'email is' : 'phone is' }} not verified.
+        You still receive friend requests, but your friends are told that you have not verified,
+        because someone else could be using it.
+      </span>
+      <a routerLink="/profile" class="btn btn-sm btn-warning flex-shrink-0">Verify</a>
+    </div>
+  }
+
   @if (notice(); as n) {
     <div class="alert py-2" [class.alert-success]="n.kind === 'success'" [class.alert-warning]="n.kind === 'warning'" role="status">
       {{ n.text }}
@@ -39,6 +50,10 @@
             <span class="text">
               <strong>{{ request.fromName }}</strong>
               <small>wants to be your friend</small>
+              @if (request.message) { <small class="request-message">“{{ request.message }}”</small> }
+              @if (request.fromUnverified.length) {
+                <small class="text-warning-emphasis">Has not verified {{ request.fromUnverified.length === 2 ? 'their email or phone' : request.fromUnverified[0] === 'email' ? 'their email' : 'their phone' }}: we cannot be sure it is really them.</small>
+              }
             </span>
             <button type="button" class="btn btn-primary rounded-pill px-3" (click)="accept(request)">Confirm</button>
             <button type="button" class="btn btn-outline-secondary rounded-pill px-3" (click)="reject(request)">Reject</button>

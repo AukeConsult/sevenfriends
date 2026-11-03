@@ -51,3 +51,21 @@ export function verifiedIdentity(token: { email?: string; email_verified?: boole
     phoneKey: phoneKey(token.phone_number),
   };
 }
+
+/**
+ * Which contact details of an ACCOUNT are unverified: [] as soon as one detail is verified (a verified email or an
+ * SMS-confirmed phone proves who the person is), otherwise every detail the account has. Friends are shown this, so
+ * they know when the person they are connected to has not proven who they are.
+ */
+export function unverifiedDetails(account: {
+  emailLower?: string | null;
+  emailVerified?: boolean;
+  phoneKey?: string | null;
+  verifiedPhone?: string | null;
+}): ("email" | "phone")[] {
+  if (account.emailVerified === true || account.verifiedPhone) return [];
+  const out: ("email" | "phone")[] = [];
+  if (account.emailLower) out.push("email");
+  if (account.phoneKey) out.push("phone");
+  return out;
+}

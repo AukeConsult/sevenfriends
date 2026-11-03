@@ -7,8 +7,8 @@ import { USING_EMULATOR } from "./setup";
 /**
  * The Firestore security rules (firestore.rules): USER CONTROL.
  * All data goes through the backend (the Admin SDK ignores the rules). The only thing the app reads
- * directly is the live data under the signed-in user's OWN account: the pings (incoming-signal) and
- * the messages. Everything else is closed, and nobody writes from the client.
+ * directly is the live data under the signed-in user's OWN account: the pings (incoming-signal), the
+ * messages and the friend list. Everything else is closed, and nobody writes from the client.
  *
  * These tests need the real Firestore emulator (the rules engine): `npm run test:emulator`.
  * With the default `npm test` they are skipped.
@@ -58,6 +58,13 @@ describe.skipIf(!USING_EMULATOR)("firestore security rules: every user controls 
     });
   });
 
+  describe("my own friend list may be read by me (the app listens to it)", () => {
+    it("the list and one entry", async () => {
+      await assertSucceeds(me().collection("user-account/uid01/friend-circle/default/friends").get());
+      await assertSucceeds(me().doc("user-account/uid01/friend-circle/default/friends/f1").get());
+    });
+  });
+
   describe("nobody else can read them", () => {
     it.each([
       ["a signed-in stranger: pings", () => stranger().collection("user-account/uid01/incoming-signal").get()],
@@ -65,6 +72,9 @@ describe.skipIf(!USING_EMULATOR)("firestore security rules: every user controls 
       ["a signed-in stranger: messages", () => stranger().collection("user-account/uid01/messages").get()],
       ["a signed-in stranger: unread messages query", () => stranger().collection("user-account/uid01/messages").where("read", "==", false).get()],
       ["a signed-in stranger: one message", () => stranger().doc("user-account/uid01/messages/m1").get()],
+      ["a signed-in stranger: my friend list", () => stranger().collection("user-account/uid01/friend-circle/default/friends").get()],
+      ["a signed-in stranger: one friend", () => stranger().doc("user-account/uid01/friend-circle/default/friends/f1").get()],
+      ["somebody not signed in: my friend list", () => anonymous().collection("user-account/uid01/friend-circle/default/friends").get()],
       ["somebody not signed in: pings", () => anonymous().collection("user-account/uid01/incoming-signal").get()],
       ["somebody not signed in: messages", () => anonymous().collection("user-account/uid01/messages").get()],
     ])("%s", async (_label, read) => {
@@ -86,6 +96,9 @@ describe.skipIf(!USING_EMULATOR)("firestore security rules: every user controls 
       ["change a message", () => me().doc("user-account/uid01/messages/m1").update({ read: true })],
       ["delete a message", () => me().doc("user-account/uid01/messages/m1").delete()],
       ["write a ping to somebody else", () => me().doc("user-account/uid02/incoming-signal/new").set({ connectionId: "c9" })],
+      ["create a friend", () => me().doc("user-account/uid01/friend-circle/default/friends/new").set({ name: "forged" })],
+      ["change a friend (an answer cannot be forged)", () => me().doc("user-account/uid01/friend-circle/default/friends/f1").update({ status: "confirmed" })],
+      ["delete a friend", () => me().doc("user-account/uid01/friend-circle/default/friends/f1").delete()],
       ["write a message to somebody else", () => me().doc("user-account/uid02/messages/new").set({ text: "spam", read: false })],
     ])("cannot %s", async (_label, write) => {
       await assertFails(write());
@@ -96,7 +109,6 @@ describe.skipIf(!USING_EMULATOR)("firestore security rules: every user controls 
     it.each([
       ["my profile", "user-account/uid01"],
       ["my circle", "user-account/uid01/friend-circle/default"],
-      ["my friends", "user-account/uid01/friend-circle/default/friends/f1"],
       ["my friend requests", "user-account/uid01/friend-request/r1"],
       ["somebody else's profile", "user-account/uid02"],
       ["somebody else's friends", "user-account/uid02/friend-circle/default/friends/f1"],
@@ -109,7 +121,7 @@ describe.skipIf(!USING_EMULATOR)("firestore security rules: every user controls 
 
     it("cannot list the user accounts or read friend lists with a collection group query", async () => {
       await assertFails(me().collection("user-account").get());
-      await assertFails(me().collectionGroup("friends").get());
+      await assertFails(me().collectionGroup("friends").get()); // my own list is read by its path, never by a group query
       await assertFails(me().collectionGroup("friend-request").get());
     });
   });

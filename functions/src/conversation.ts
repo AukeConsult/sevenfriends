@@ -5,6 +5,7 @@ import { asyncHandler } from "./auth";
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION } from "./constants";
 import { ChatMessage, Conversation } from "./models";
 import { circleCol, messageCol, userDoc } from "./paths";
+import { sendPush } from "./push";
 
 export const MAX_MESSAGE_LENGTH = 2000;
 const FEED_LIMIT = 200; // the feed shows the latest 200 messages
@@ -112,6 +113,8 @@ conversationRouter.post(
 
     const saved = (await mine.get()).data()!;
     const created: ChatMessage = { id: mine.id, text, mine: true, read: true, time: iso(saved.time) };
+    // wake the other person's devices (before the answer: the function may stop right after it)
+    await sendPush(connection.peerUid, { id: `message-${mine.id}`, title: common.fromName, body: text, url: `/friends/${connection.id}` });
     res.status(201).json(created);
   }),
 );
@@ -133,17 +136,3 @@ conversationRouter.post(
     res.json({ ok: true, marked: unread.size });
   }),
 );
-
-/** Deleting a connection also deletes its feed, on both sides. */
-export async function deleteConversation(uids: string[], connectionId: string): Promise<void> {
-  const refs: DocumentReference[] = [];
-  for (const uid of uids) {
-    const snap = await messageCol(uid).where("connectionId", "==", connectionId).get();
-    refs.push(...snap.docs.map((d) => d.ref));
-  }
-  for (let i = 0; i < refs.length; i += 400) {
-    const batch = getFirestore().batch();
-    refs.slice(i, i + 400).forEach((ref) => batch.delete(ref));
-    await batch.commit();
-  }
-}

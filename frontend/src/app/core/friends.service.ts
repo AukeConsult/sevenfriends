@@ -50,7 +50,7 @@ export class FriendsService {
     this.requests.update((list) => list.filter((r) => r.id !== id));
   }
 
-  async add(friend: NewFriend): Promise<void> {
+  async add(friend: NewFriend): Promise<Friend> {
     if (!this.circle()) await this.load(); // the first load may have failed: try again
     if (!this.circle()) throw new ApiError('Could not load your circle. Is the backend running?', 503);
     const created = await this.api.request<Friend>(`${this.friendsPath()}`, {
@@ -58,6 +58,14 @@ export class FriendsService {
       body: JSON.stringify(friend),
     });
     this.friends.update((list) => [...list, created]);
+    return created;
+  }
+
+  /** Sends the invitation (email or SMS) to a friend who has no account yet. */
+  async sendInvite(id: string): Promise<Friend> {
+    const sent = await this.api.request<Friend>(`${this.friendsPath()}/${id}/invite`, { method: 'POST' });
+    this.friends.update((list) => list.map((f) => (f.id === id ? sent : f)));
+    return sent;
   }
 
   async remove(id: string): Promise<void> {

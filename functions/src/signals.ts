@@ -3,9 +3,9 @@ import { USER_ACCOUNT_COLLECTION } from "./constants";
 import { signalCol } from "./paths";
 
 /**
- * Which accounts does a new friend entry point at? Matches the entry's email and phone number against
- * the VERIFIED email / phone of the accounts (set at login from the token). The person adding is left out.
- * Social accounts never find anybody.
+ * Which accounts does a new friend entry point at? Matches the entry's email and phone number against the
+ * email / phone of the accounts, verified or not (a person must be reachable; their friends are told when a detail
+ * is not verified, see unverifiedDetails). The person adding is left out. Social accounts never find anybody.
  */
 export async function findAccounts(email: string | null, phoneKey: string | null, excludeUid: string): Promise<string[]> {
   const probes: [string, string | null][] = [

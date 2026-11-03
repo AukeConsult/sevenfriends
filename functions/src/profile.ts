@@ -5,7 +5,7 @@ import { asyncHandler, requireAuth } from "./auth";
 import { MAX_NAME_LENGTH } from "./constants";
 import { ProfileDetails, Socials } from "./models";
 import { userDoc } from "./paths";
-import { PHONE_RE, SOCIAL_NETWORKS, parseSocials, text } from "./validation";
+import { PHONE_RE, SOCIAL_NETWORKS, parseSocials, phoneKey, text } from "./validation";
 
 const uidOf = (res: { locals: Record<string, unknown> }) => (res.locals.token as DecodedIdToken).uid;
 
@@ -18,6 +18,7 @@ function detailsOf(data: Record<string, unknown>): ProfileDetails {
     name: (data.displayName as string | null | undefined) ?? null,
     phone: (data.verifiedPhone as string | null | undefined) ?? (data.phone as string | null | undefined) ?? null,
     phoneVerified: Boolean(data.verifiedPhone),
+    emailVerified: Boolean(data.emailLower),
     ...(Object.fromEntries(SOCIAL_NETWORKS.map((n) => [n, data[n] ?? null])) as Socials),
   };
 }
@@ -64,6 +65,7 @@ profileRouter.put(
       {
         ...(nameGiven ? { displayName: name } : {}),
         phone: verifiedPhone ?? phone,
+        phoneKey: phoneKey(verifiedPhone ?? phone), // reachable by this number, verified or not
         ...socials,
         profileUpdatedAt: FieldValue.serverTimestamp(),
       },

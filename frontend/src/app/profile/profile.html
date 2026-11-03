@@ -30,19 +30,12 @@
           <span class="invalid-feedback d-block">A name is needed. Your old name stays until you type a new one.</span>
         }
       </label>
-      <p class="text-secondary mb-0 mt-2">{{ user()?.email }}</p>
     </div>
   </div>
 
   <ul class="list-group mt-3 border-0 shadow-sm">
     <li class="list-group-item d-flex justify-content-between">
       <span class="text-secondary">Signed in with</span><span>{{ provider() }}</span>
-    </li>
-    <li class="list-group-item d-flex justify-content-between">
-      <span class="text-secondary">Email</span>
-      <span class="badge rounded-pill align-self-center" [class.text-bg-success]="user()?.emailVerified" [class.text-bg-warning]="!user()?.emailVerified">
-        {{ user()?.emailVerified ? 'Verified' : 'Not verified' }}
-      </span>
     </li>
     @if (memberSince(); as since) {
       <li class="list-group-item d-flex justify-content-between">
@@ -56,16 +49,58 @@
       <h2 class="m-0">Contact details</h2>
       <p class="small text-secondary m-0">So your friends can reach you. Saved as you type.</p>
 
-      <label class="d-grid gap-1"><span class="form-label small text-secondary m-0">Phone number</span>
-        <input type="tel" class="form-control" [value]="form().phone" (input)="setField('phone', $any($event.target).value)" (blur)="flush()"
-               inputmode="tel" autocomplete="tel" [disabled]="loading()" />
-      </label>
+      @if (user()?.email) {
+        <div class="d-grid gap-1">
+          <span class="form-label small text-secondary m-0">Email</span>
+          <div class="input-group">
+            <input type="email" class="form-control" [value]="user()?.email" disabled />
+            @if (emailVerified()) {
+              <span class="input-group-text text-success fw-semibold">Verified</span>
+            } @else {
+              <button type="button" class="btn btn-outline-primary" [disabled]="verificationSent()" (click)="sendVerificationEmail()">
+                {{ verificationSent() ? 'Sent' : 'Verify' }}
+              </button>
+            }
+          </div>
+          @if (verificationSent()) {
+            <span class="small text-success">Verification email sent to this address. Open the link in it, then come back here.</span>
+          } @else if (!emailVerified()) {
+            <span class="small text-secondary">Friends can only find you by email once it is verified.</span>
+          }
+          @if (verificationError()) { <span class="small text-danger">{{ verificationError() }}</span> }
+        </div>
+      }
+
+      <div class="d-grid gap-1"><span class="form-label small text-secondary m-0">Phone number (with country code)</span>
+        <div class="input-group">
+          <input type="tel" class="form-control" placeholder="+47 900 00 000" [value]="form().phone" (input)="setField('phone', $any($event.target).value)" (blur)="flush()"
+                 inputmode="tel" autocomplete="tel" [disabled]="loading() || phoneVerified()" />
+          @if (phoneVerified()) {
+            <span class="input-group-text text-success fw-semibold">Verified</span>
+          } @else {
+            <button type="button" class="btn btn-outline-primary" [disabled]="loading() || !form().phone.trim()" (click)="verifyPhone()">Verify</button>
+          }
+        </div>
+        @if (phoneVerified()) {
+          <span class="small text-secondary">Verified by text message, so it cannot be edited.</span>
+        } @else {
+          <span class="small text-secondary">Friends can only find you by phone once it is verified.</span>
+        }
+      </div>
       @for (n of networks; track n.key) {
         <label class="d-grid gap-1"><span class="form-label small text-secondary m-0">{{ n.label }} ({{ n.hint }})</span>
           <input type="text" class="form-control" [value]="form()[n.key]" (input)="setField(n.key, $any($event.target).value)" (blur)="flush()"
                  autocomplete="off" [disabled]="loading()" />
         </label>
       }
+    </div>
+  </div>
+
+  <div class="card border-danger-subtle shadow-sm mt-3 mb-3">
+    <div class="card-body vstack gap-2">
+      <h2 class="m-0 text-danger">Delete my account</h2>
+      <p class="small text-secondary m-0">Erases you, your friendships and all messages for good.</p>
+      <button type="button" class="btn btn-outline-danger" (click)="flush(); deleteAccount()">Delete my account…</button>
     </div>
   </div>
 </main>

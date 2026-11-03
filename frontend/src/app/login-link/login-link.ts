@@ -37,7 +37,7 @@ export class LoginLink {
     this.error.set(null);
     try {
       await this.auth.completeSignInLink(email);
-      await this.router.navigateByUrl('/');
+      await this.router.navigateByUrl(this.auth.landingPath());
     } catch (err) {
       this.error.set(authMessage(err, 'Could not sign you in with this link. Ask for a new one.'));
       this.needEmail.set(true);
