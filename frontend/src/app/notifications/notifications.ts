@@ -5,7 +5,10 @@ import { ApiService } from '../core/api.service';
 import { AuthService } from '../core/auth.service';
 import { FriendsService } from '../core/friends.service';
 import { MessagesService } from '../core/messages.service';
+import { DesktopNoticeService } from '../core/desktop-notice.service';
 import { NotificationsService } from '../core/notifications.service';
+import { PushService } from '../core/push.service';
+import { SoundService } from '../core/sound.service';
 import { FriendRequest, Message, Notice, ProfileDetails } from '../models';
 
 /** Home page: a quiet overview of what needs attention (friend requests, incoming messages). */
@@ -21,6 +24,38 @@ export class Notifications {
   private readonly messagesService = inject(MessagesService);
   private readonly api = inject(ApiService);
   private readonly router = inject(Router);
+  private readonly sounds = inject(SoundService);
+  private readonly desktop = inject(DesktopNoticeService);
+  private readonly push = inject(PushService);
+
+  /** "Not now" for this visit (the reminder comes back the next time the app is opened). */
+  private readonly setupHidden = signal(this.readHidden());
+
+  /** What has not been set up on this device yet: the sounds, and/or any kind of notification. */
+  protected readonly setupMissing = computed(() => {
+    if (this.setupHidden() || !this.push.checked()) return [];
+    const missing: string[] = [];
+    if (!this.sounds.defined()) missing.push('sounds');
+    if (!this.desktop.wanted() && !this.push.enabled()) missing.push('notifications');
+    return missing;
+  });
+
+  protected hideSetup(): void {
+    this.setupHidden.set(true);
+    try {
+      sessionStorage.setItem('sf-setup-hidden', '1');
+    } catch {
+      /* the reminder just comes back sooner */
+    }
+  }
+
+  private readHidden(): boolean {
+    try {
+      return sessionStorage.getItem('sf-setup-hidden') === '1';
+    } catch {
+      return false;
+    }
+  }
 
   private readonly user = inject(AuthService).user;
 

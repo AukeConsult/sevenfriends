@@ -13,6 +13,21 @@
     </div>
   }
 
+  @if (setupMissing().length) {
+    <div class="alert alert-info py-2 d-flex align-items-center justify-content-between gap-2" role="status">
+      <span>
+        <strong>Seven Friends is about being there for the people who matter most.</strong>
+        Your friends can only reach you if you notice them.
+        {{ setupMissing().length === 2 ? 'Sounds and notifications are' : setupMissing()[0] === 'sounds' ? 'Sounds are' : 'Notifications are' }}
+        not set up on this device yet, so you may miss a message or a friend request.
+      </span>
+      <span class="d-flex gap-2 flex-shrink-0">
+        <a routerLink="/settings" class="btn btn-sm btn-primary">Settings</a>
+        <button type="button" class="btn btn-sm btn-light" (click)="hideSetup()" aria-label="Not now">✕</button>
+      </span>
+    </div>
+  }
+
   @if (unverified().length) {
     <div class="alert alert-warning py-2 d-flex align-items-center justify-content-between gap-2" role="status">
       <span>

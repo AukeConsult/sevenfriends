@@ -32,6 +32,9 @@ export class PushService {
   /** push is on for this device */
   readonly enabled = signal(false);
 
+  /** the first look at what this browser can do is done (before that, `enabled` is not known yet) */
+  readonly checked = signal(false);
+
   /** why turning it on did not work */
   readonly problem = signal<string | null>(null);
 
@@ -53,6 +56,8 @@ export class PushService {
       this.enabled.set(this.supported() && this.read(ENABLED_KEY) === 'on' && Notification.permission === 'granted');
     } catch {
       this.supported.set(false);
+    } finally {
+      this.checked.set(true);
     }
   }
 

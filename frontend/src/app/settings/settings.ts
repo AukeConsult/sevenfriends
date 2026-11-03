@@ -15,6 +15,10 @@ export class Settings {
   protected readonly desktop = inject(DesktopNoticeService);
   protected readonly push = inject(PushService);
   protected readonly noticeProblem = signal<string | null>(null);
+
+  constructor() {
+    this.sounds.markDefined(); // the person has now seen the sound settings
+  }
   protected readonly events = SOUND_EVENTS;
   protected readonly choices = SOUND_CHOICES;
 

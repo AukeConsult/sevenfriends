@@ -1,10 +1,10 @@
 import { getFirestore } from "firebase-admin/firestore";
-import { beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { User, assertConsistent, person, seedPool } from "./helpers";
 
 /**
- * A friend request to somebody who has no account yet: the person is offered an invitation by email (or SMS when
- * only a phone number was given), confirms the address on a page first, and then it goes to the outbox.
+ * A friend request to somebody who has no account yet: the person is offered an invitation by email, confirms the
+ * address on a page first, and then it goes to the outbox. (There is no SMS invitation: texts are only for login codes.)
  * A request can carry a message, which the friend sees with the request and in the invitation.
  */
 let pool: User[];
@@ -39,13 +39,20 @@ describe("the message with a request", () => {
 describe("who is offered an invitation", () => {
   it("nobody with an account: an invitation by email is offered, not sent yet", async () => {
     const entry = await u(0).add(stranger, "email");
-    expect(entry.invite).toEqual({ channel: "email", to: stranger.email, sentAt: null });
+    expect(entry.invite).toEqual({ to: stranger.email, sentAt: null });
     expect(await docs("mail")).toEqual([]); // nothing is sent before the address is confirmed
   });
 
-  it("only a phone number: by SMS", async () => {
+  it("only a phone number: no invitation (there is no SMS invitation), and nothing can be sent", async () => {
     const entry = (await addByPhone(u(0)).expect(201)).body;
-    expect(entry.invite).toEqual({ channel: "sms", to: stranger.phone, sentAt: null });
+    expect(entry.invite).toBeNull();
+    await invite(u(0), entry.id).expect(409);
+    expect(await docs("mail")).toEqual([]);
+  });
+
+  it("both an email and a phone number: by email", async () => {
+    const entry = (await u(0).raw("post", "/circles/default/friends", { name: "Both", email: stranger.email, phone: stranger.phone }).expect(201)).body;
+    expect(entry.invite).toEqual({ to: stranger.email, sentAt: null });
   });
 
   it("somebody who has an account gets the request in the app: no invitation", async () => {
@@ -67,20 +74,9 @@ describe("sending the invitation", () => {
     expect(mail[0].message.subject).toContain("Person 00");
     expect(mail[0].message.text).toContain("Join me!");
     expect(mail[0].message.text).toContain(stranger.email);
-    expect(await docs("sms-outbox")).toEqual([]);
 
     await invite(u(0), entry.id).expect(409); // never twice
     expect(await docs("mail")).toHaveLength(1);
-  });
-
-  it("SMS: one queued text in the sms-outbox", async () => {
-    const entry = (await addByPhone(u(0), stranger, "Hello there").expect(201)).body;
-    await invite(u(0), entry.id).expect(200);
-    const sms = await docs("sms-outbox");
-    expect(sms).toHaveLength(1);
-    expect(sms[0]).toMatchObject({ to: stranger.phone, status: "queued", fromUid: "uid00" });
-    expect(sms[0].body).toContain("Hello there");
-    expect(await docs("mail")).toEqual([]);
   });
 
   it("only the owner can send it", async () => {
@@ -106,10 +102,11 @@ describe("sending the invitation", () => {
   it("is erased with the sender", async () => {
     const entry = await u(0).add(stranger);
     await invite(u(0), entry.id).expect(200);
-    await addByPhone(u(1)).then(async (r) => invite(u(1), r.body.id).expect(200));
+    const other = await u(1).add(person(71));
+    await invite(u(1), other.id).expect(200);
     await u(0).raw("delete", "/users/me", { confirm: "DELETE" }).expect(204);
     expect((await docs("mail")).filter((m) => m.fromUid === "uid00")).toEqual([]);
-    expect(await docs("sms-outbox")).toHaveLength(1); // somebody else's invitation stays
+    expect((await docs("mail")).filter((m) => m.fromUid === "uid01")).toHaveLength(1); // somebody else's invitation stays
     await assertConsistent();
   });
 });
@@ -130,5 +127,41 @@ describe("a friend who is a user but has verified nothing", () => {
   it("nobody is flagged for a stranger or for a verified user", async () => {
     expect((await u(0).add(stranger)).unverified).toEqual([]);
     expect((await u(0).add(person(1))).unverified).toEqual([]);
+  });
+});
+
+describe("the invitation text comes from the settings (environment)", () => {
+  const keys = ["APP_URL", "INVITE_EMAIL_SUBJECT", "INVITE_EMAIL_TEXT"];
+  const saved: Record<string, string | undefined> = {};
+  beforeEach(() => keys.forEach((k) => { saved[k] = process.env[k]; delete process.env[k]; }));
+  afterEach(() => keys.forEach((k) => { if (saved[k] === undefined) delete process.env[k]; else process.env[k] = saved[k]; }));
+
+  it("the defaults: the real site link, and no hole when there is no message", async () => {
+    const entry = await u(0).add(stranger);
+    await invite(u(0), entry.id).expect(200);
+    const [mail] = await docs("mail");
+    expect(mail.message.text).toBe(
+      `Person 00 wants you as one of their 7 closest friends on Seven Friends.\n\nSign up with this email address (${stranger.email}) to see the request: https://sevenfriends.web.app/`,
+    );
+    expect(mail.message.subject).toBe("Person 00 invited you to Seven Friends");
+  });
+
+  it("APP_URL, the subject and the text can be changed", async () => {
+    process.env.APP_URL = "https://example.test/join";
+    process.env.INVITE_EMAIL_SUBJECT = "Join {fromName}!";
+    process.env.INVITE_EMAIL_TEXT = "Hi from {fromName}.\\n{message}\\nJoin with {to}: {appUrl}";
+    const email = (await u(0).raw("post", "/circles/default/friends", { name: "E", email: stranger.email, message: "Come!" }).expect(201)).body;
+    await invite(u(0), email.id).expect(200);
+
+    const [mail] = await docs("mail");
+    expect(mail.message.subject).toBe("Join Person 00!");
+    expect(mail.message.text).toBe(`Hi from Person 00.\n"Come!"\nJoin with ${stranger.email}: https://example.test/join`);
+  });
+
+  it("an empty setting falls back to the default", async () => {
+    process.env.APP_URL = "  ";
+    const entry = await u(0).add(stranger);
+    await invite(u(0), entry.id).expect(200);
+    expect((await docs("mail"))[0].message.text).toContain("https://sevenfriends.web.app/");
   });
 });

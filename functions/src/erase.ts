@@ -1,6 +1,6 @@
 import { getAuth } from "firebase-admin/auth";
 import { DocumentReference, Transaction, getFirestore } from "firebase-admin/firestore";
-import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAIL_COLLECTION, SMS_COLLECTION } from "./constants";
+import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAIL_COLLECTION } from "./constants";
 import { circleCol, friendRequestCol, messageCol, pushDeviceCol, signalCol, userDoc } from "./paths";
 import { signalRefsOf } from "./signals";
 import { phoneKey } from "./validation";
@@ -17,7 +17,7 @@ type Peer = { uid: string | null; circleId: string | null; signaled: string[] };
  *   - their own entry, the request they received, the messages in their feed
  *   - the other person's entry, the request that person received, the other person's copy of the feed
  *   - the pings (incoming-signal) that connection sent
- * Invitations they sent by email or SMS (the outboxes) and their push devices go too.
+ * Invitations they sent by email (the `mail` outbox) and their push devices go too.
  * Entries other people wrote for this person but that were never found (the person never opened the
  * app after being added) are removed too: they hold the person's name, email and phone number.
  *
@@ -106,10 +106,8 @@ async function eraseInTransaction(tx: Transaction, uid: string): Promise<void> {
     (await tx.get(db.collectionGroup("messages").where(field, "==", uid))).docs.forEach((d) => drop(d.ref));
   }
 
-  // 6. invitations I sent by email or SMS (they carry my name and my message)
-  for (const name of [MAIL_COLLECTION, SMS_COLLECTION]) {
-    (await tx.get(db.collection(name).where("fromUid", "==", uid))).docs.forEach((d) => drop(d.ref));
-  }
+  // 6. invitation emails I sent (they carry my name and my message)
+  (await tx.get(db.collection(MAIL_COLLECTION).where("fromUid", "==", uid))).docs.forEach((d) => drop(d.ref));
 
   // 7. the devices registered for push
   (await tx.get(pushDeviceCol(uid))).docs.forEach((d) => drop(d.ref));

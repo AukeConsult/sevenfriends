@@ -4,7 +4,7 @@ import { FriendsService } from '../core/friends.service';
 
 /**
  * A full page between adding a friend who has no account yet and sending the invitation:
- * check the address (a wrong one would send your message to a stranger), then send by email or SMS.
+ * check the address (a wrong one would send your message to a stranger), then send it by email.
  */
 @Component({
   selector: 'app-invite-friend',

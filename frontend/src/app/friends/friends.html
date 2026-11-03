@@ -70,7 +70,7 @@
                   <p class="sf-hint">{{ friend.incoming ? 'Wants to be your friend' : friend.waiting ? 'Their list is full. You are on their waiting list.' : 'Waiting for them to confirm' }}</p>
                   @if (friend.invite; as invite) {
                     @if (invite.sentAt) {
-                      <p class="sf-hint">Invitation sent by {{ invite.channel === 'email' ? 'email' : 'SMS' }} to {{ invite.to }}.</p>
+                      <p class="sf-hint">Invitation sent by email to {{ invite.to }}.</p>
                     } @else {
                       <p class="sf-hint">Not on Seven Friends yet. <a [routerLink]="['/friends', friend.id, 'invite']">Send an invitation</a></p>
                     }

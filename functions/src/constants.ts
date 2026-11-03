@@ -34,13 +34,11 @@ export const MAX_NAME_LENGTH = 100; // display name
 export const MAX_REQUEST_MESSAGE = 500;
 
 /**
- * Invitations to people without an account leave through two top-level "outboxes" (the backend writes, nobody else reads):
- *  - `mail/{id}`: the format of the Firebase "Trigger Email" extension ({ to, message: { subject, text } }), which sends it
- *  - `sms-outbox/{id}`: the text message; sent by the SMS provider when one is configured (see outbox.ts)
- * Both carry `fromUid`, so they are erased with the sender (erase.ts).
+ * Invitations to people without an account go by EMAIL only (there is no SMS provider: text messages are only used for
+ * login codes, which Firebase sends itself). The backend writes `mail/{id}` in the format of the Firebase "Trigger Email"
+ * extension ({ to, message: { subject, text } }), which sends it. It carries `fromUid`, so it is erased with the sender.
  */
 export const MAIL_COLLECTION = "mail";
-export const SMS_COLLECTION = "sms-outbox";
 export const MAX_INVITES_PER_DAY = 20;
 
 /**

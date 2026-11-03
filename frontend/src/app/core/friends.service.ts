@@ -61,7 +61,7 @@ export class FriendsService {
     return created;
   }
 
-  /** Sends the invitation (email or SMS) to a friend who has no account yet. */
+  /** Sends the invitation email to a friend who has no account yet. */
   async sendInvite(id: string): Promise<Friend> {
     const sent = await this.api.request<Friend>(`${this.friendsPath()}/${id}/invite`, { method: 'POST' });
     this.friends.update((list) => list.map((f) => (f.id === id ? sent : f)));

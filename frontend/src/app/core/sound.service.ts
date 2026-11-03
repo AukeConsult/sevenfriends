@@ -56,6 +56,9 @@ export class SoundService {
   /** The sound chosen for each event. */
   readonly choices = signal<Record<SoundEvent, SoundId>>(this.read());
 
+  /** true once the person has chosen their sounds (or looked at the Settings page) on this device */
+  readonly defined = signal(this.hasSaved());
+
   /** How loud the sounds are, 0-100 (per device). */
   readonly volume = signal(this.readVolume());
 
@@ -70,10 +73,28 @@ export class SoundService {
 
   choose(event: SoundEvent, sound: SoundId): void {
     this.choices.update((c) => ({ ...c, [event]: sound }));
+    this.save();
+  }
+
+  /** The person has seen the sound settings: what is there now (the defaults, if nothing was changed) counts as chosen. */
+  markDefined(): void {
+    if (!this.defined()) this.save();
+  }
+
+  private save(): void {
+    this.defined.set(true);
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(this.choices()));
     } catch {
       /* private mode: the choice then lasts until the page is closed */
+    }
+  }
+
+  private hasSaved(): boolean {
+    try {
+      return localStorage.getItem(STORAGE_KEY) !== null;
+    } catch {
+      return false;
     }
   }
 

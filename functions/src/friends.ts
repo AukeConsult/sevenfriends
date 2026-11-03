@@ -11,7 +11,7 @@ import {
   MAX_REQUEST_MESSAGE,
   USER_ACCOUNT_COLLECTION,
 } from "./constants";
-import { deliverSms, invitesSentToday, queueInvite } from "./outbox";
+import { invitesSentToday, queueInvite } from "./outbox";
 import { Friend, FriendInvite, FriendStatus, NewFriend, Socials } from "./models";
 import { circleCol, friendRequestCol, messageCol, userDoc } from "./paths";
 import { nameOf, sendPush } from "./push";
@@ -83,9 +83,9 @@ async function withUnverified(friend: Friend, entry: FirebaseFirestore.DocumentD
 const iso = (t: unknown) => (t instanceof Timestamp ? t.toDate().toISOString() : null);
 
 function inviteOf(data: FirebaseFirestore.DocumentData): FriendInvite | null {
-  const invite = data.invite as { channel: "email" | "sms"; to: string; sentAt?: unknown } | null | undefined;
+  const invite = data.invite as { to: string; sentAt?: unknown } | null | undefined;
   if (!invite || data.linkedUid) return null; // once the friend has an account, no invitation is needed
-  return { channel: invite.channel, to: invite.to, sentAt: iso(invite.sentAt) };
+  return { to: invite.to, sentAt: iso(invite.sentAt) };
 }
 
 const friendCol = (res: { locals: Record<string, unknown> }) =>
@@ -136,10 +136,9 @@ friendsRouter.post(
         status: "pending" as FriendStatus,
         linkedUid: null, // set when the other person's check finds this entry
         signaledUids: accounts, // who got a ping for this entry (removed again if the entry is deleted)
-        // nobody has an account for this email / phone yet: the friend can be invited (email first), once I confirm the address
-        invite: accounts.length
-          ? null
-          : { channel: data.email ? "email" : "sms", to: (data.email ?? data.phone) as string, sentAt: null },
+        // nobody has an account for this email / phone yet: a friend added by EMAIL can be invited by email, once I confirm
+        // the address (a friend added only by phone number cannot: texts are only used for login codes)
+        invite: accounts.length || !data.email ? null : { to: data.email, sentAt: null },
         createdAt: FieldValue.serverTimestamp(),
       });
       for (const account of accounts) writeSignal(tx, account, ref.id);
@@ -164,7 +163,7 @@ friendsRouter.post(
 
 /**
  * Send the invitation to a friend who has no account yet (the person has confirmed the address on the
- * verify page first). Email goes through the `mail` outbox, SMS through `sms-outbox` (see outbox.ts).
+ * verify page first). The email goes through the `mail` outbox (see outbox.ts).
  * It is sent once per friend, at most MAX_INVITES_PER_DAY per person per day, and never when the
  * friend has an account by now (they get the request in the app instead).
  */
@@ -178,7 +177,7 @@ friendsRouter.post(
       res.status(404).json({ error: "Friend not found" });
       return;
     }
-    const invite = first.invite as { channel: "email" | "sms"; to: string; sentAt?: unknown } | null | undefined;
+    const invite = first.invite as { to: string; sentAt?: unknown } | null | undefined;
     if (!invite || first.linkedUid) {
       res.status(409).json({ error: "This friend does not need an invitation" });
       return;
@@ -197,24 +196,22 @@ friendsRouter.post(
     }
     const fromName = ((await userDoc(token.uid).get()).data()?.displayName as string | undefined) ?? token.name ?? token.email ?? "Someone";
 
-    const outbox = await getFirestore().runTransaction(async (tx) => {
+    const sent = await getFirestore().runTransaction(async (tx) => {
       const entry = (await tx.get(ref)).data();
       if (!entry?.invite || entry.invite.sentAt) return null; // changed meanwhile
-      const queued = queueInvite(tx, {
+      queueInvite(tx, {
         fromUid: token.uid,
         fromName,
-        channel: entry.invite.channel,
         to: entry.invite.to,
         message: (entry.message as string | null | undefined) ?? null,
       });
       tx.update(ref, { invite: { ...entry.invite, sentAt: FieldValue.serverTimestamp() } });
-      return queued;
+      return true;
     });
-    if (!outbox) {
+    if (!sent) {
       res.status(409).json({ error: "This friend has been invited already" });
       return;
     }
-    if (invite.channel === "sms") await deliverSms(outbox);
     res.json(toJson(await ref.get()));
   }),
 );

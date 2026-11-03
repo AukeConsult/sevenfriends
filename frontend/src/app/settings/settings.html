@@ -4,7 +4,12 @@
 </header>
 
 <main class="sf-narrow">
-  <h2 class="h5 m-0">Sounds</h2>
+  <p class="m-0">
+    <strong>Seven Friends is about being there for your closest friends.</strong>
+    They can only reach you if you notice them, so set up how you want to be told when a friend writes or asks to connect.
+  </p>
+
+  <h2 class="h5 m-0 mt-2">Sounds</h2>
   <p class="small text-secondary m-0">
     Choose the sound for each thing that can arrive. Sounds only play while Seven Friends is open, and
     the choice is kept on this device.
@@ -98,4 +103,48 @@
       <span class="small text-secondary">This is set per device, and is turned off when you log out.</span>
     </div>
   </div>
+
+  @if (desktop.permission() === 'denied' || noticeProblem() || push.problem()) {
+    <details class="card border-0 shadow-sm" open>
+      <summary class="card-body fw-semibold">How do I allow notifications?</summary>
+      <div class="card-body pt-0 vstack gap-3 small">
+        <p class="m-0">
+          Your browser has been told to block notifications from this site. The switches here cannot change that:
+          you allow it once in the browser, then come back and turn the switch on again.
+        </p>
+        <div>
+          <strong>Chrome or Edge on a computer</strong>
+          <ol class="mb-0">
+            <li>Click the icon at the left end of the address bar (a lock or sliders).</li>
+            <li>Find <strong>Notifications</strong> and set it to <strong>Allow</strong>.</li>
+            <li>Reload this page, then turn the switch on again.</li>
+          </ol>
+          <span class="text-secondary">Or open <code>chrome://settings/content/notifications</code> (Edge: <code>edge://settings/content/notifications</code>)
+          and move this site from <em>Block</em> to <em>Allow</em>.</span>
+        </div>
+        <div>
+          <strong>Android</strong>
+          <ol class="mb-0">
+            <li>Tap the icon next to the address, then <strong>Permissions → Notifications → Allow</strong>.</li>
+            <li>Also check Android Settings → Apps → your browser → Notifications: it must be on.</li>
+          </ol>
+        </div>
+        <div>
+          <strong>iPhone</strong>
+          <ol class="mb-0">
+            <li>Notifications only work from the Home Screen app: in Safari tap Share → <strong>Add to Home Screen</strong>, and open the app from its icon.</li>
+            <li>Check iPhone Settings → Notifications → Seven Friends → <strong>Allow Notifications</strong>.</li>
+            <li>If you once tapped "Don't Allow", delete the Home Screen app, add it again and allow when asked.</li>
+          </ol>
+        </div>
+        <div>
+          <strong>Windows</strong>
+          <ol class="mb-0">
+            <li>Settings → System → Notifications: turn notifications on, and turn on your browser in the list.</li>
+            <li>Turn off Do not disturb or Focus assist.</li>
+          </ol>
+        </div>
+      </div>
+    </details>
+  }
 </main>

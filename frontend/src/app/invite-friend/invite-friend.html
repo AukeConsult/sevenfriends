@@ -14,7 +14,7 @@
       <div class="card border-0 shadow-sm">
         <div class="card-body vstack gap-2">
           <div>
-            <span class="form-label small text-secondary m-0 d-block">{{ invite.channel === 'email' ? 'Email' : 'Text message (SMS)' }} to</span>
+            <span class="form-label small text-secondary m-0 d-block">Email to</span>
             <strong class="fs-5">{{ invite.to }}</strong>
           </div>
           @if (f.message) {
@@ -27,8 +27,8 @@
       </div>
 
       <p class="small text-secondary m-0">
-        Check that the {{ invite.channel === 'email' ? 'address' : 'number' }} is right: the invitation goes there with your name.
-        Your friend sees your request once they sign up with the same {{ invite.channel === 'email' ? 'email address' : 'phone number' }}.
+        Check that the address is right: the invitation goes there with your name.
+        Your friend sees your request once they sign up with the same email address.
       </p>
 
       @if (error()) {
@@ -38,11 +38,11 @@
       <div class="d-flex gap-2">
         <a routerLink="/friends" class="btn btn-light btn-lg flex-fill" [class.disabled]="busy()">Not now</a>
         <button type="button" class="btn btn-primary btn-lg flex-fill" [disabled]="busy()" (click)="send()">
-          {{ busy() ? 'Sending…' : invite.channel === 'email' ? 'Send email' : 'Send SMS' }}
+          {{ busy() ? 'Sending…' : 'Send email' }}
         </button>
       </div>
       <button type="button" class="btn btn-link" [disabled]="busy()" (click)="wrongAddress()">
-        Wrong {{ invite.channel === 'email' ? 'address' : 'number' }}? Remove and add again
+        Wrong address? Remove and add again
       </button>
     }
   } @else if (error()) {

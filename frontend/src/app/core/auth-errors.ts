@@ -7,7 +7,8 @@ const MESSAGES: Record<string, string> = {
   'auth/email-already-in-use': 'An account with this email already exists.',
   'auth/weak-password': 'Password must be at least 6 characters.',
   'auth/too-many-requests': 'Too many attempts. Try again later.',
-  'auth/operation-not-allowed': 'This sign-in method is not enabled in Firebase.',
+  'auth/operation-not-allowed':
+    'This sign-in method is not enabled in Firebase, or (for phone) texts to this country are not allowed there: Authentication → Settings → SMS region policy.',
   'auth/invalid-phone-number': 'Check the number: write it with the country code, for example +47 900 00 000.',
   'auth/missing-phone-number': 'Write your phone number first.',
   'auth/quota-exceeded': 'Too many text messages were sent. Try again later.',

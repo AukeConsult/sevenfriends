@@ -25,13 +25,12 @@ export interface Friend extends Socials {
    * a verified email nor a confirmed phone, so I cannot be sure it is really them. Empty when they are verified.
    */
   unverified: ("email" | "phone")[];
-  /** set when nobody with this email or phone has an account yet: the friend can be invited by email or SMS */
+  /** set when nobody with this email or phone has an account yet: the friend can be invited by email */
   invite: FriendInvite | null;
 }
 
 /** An invitation to Seven Friends for somebody who has no account yet. */
 export interface FriendInvite {
-  channel: "email" | "sms";
   /** the email address or phone number the invitation goes to */
   to: string;
   /** when it was sent; null = not sent yet (I still have to confirm the address) */

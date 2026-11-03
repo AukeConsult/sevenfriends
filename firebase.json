@@ -1,6 +1,9 @@
 {
   "hosting": {
     "public": "frontend/dist/frontend/browser",
+    "predeploy": [
+      "npm --prefix frontend run build"
+    ],
     "ignore": [
       "firebase.json",
       "**/.*",
