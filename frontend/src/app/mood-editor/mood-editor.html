@@ -33,7 +33,7 @@
           </button>
         }
       </div>
-      <input type="text" class="form-control" maxlength="60" placeholder="A few words about how you are (optional)"
+      <input appClear type="text" class="form-control" maxlength="60" placeholder="A few words about how you are (optional)"
              [value]="message()" (input)="typed($any($event.target).value)" (blur)="leftField()" aria-label="Mood message" />
     </div>
   }

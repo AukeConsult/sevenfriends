@@ -24,7 +24,7 @@
     <div class="sf-divider"><span>or use a password</span></div>
 
     <form class="vstack gap-2" (submit)="$event.preventDefault(); submit(email.value, password.value, name.value)">
-      <input #name type="text" name="name" class="form-control form-control-lg" placeholder="Your name (optional)"
+      <input appClear #name type="text" name="name" class="form-control form-control-lg" placeholder="Your name (optional)"
              autocomplete="name" [hidden]="mode() === 'signin'" />
       <input #email type="email" name="email" class="form-control form-control-lg" placeholder="Email"
              autocomplete="email" inputmode="email" required />

@@ -1,3 +1,4 @@
+import { Clearable } from '../core/clearable';
 import { Component, DestroyRef, computed, effect, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { MoodEditor } from '../mood-editor/mood-editor';
@@ -16,7 +17,7 @@ const RETRY_MS = 5000;
 
 @Component({
   selector: 'app-profile',
-  imports: [RouterLink, MoodEditor],
+  imports: [RouterLink, MoodEditor, Clearable],
   templateUrl: './profile.html',
 })
 export class Profile {

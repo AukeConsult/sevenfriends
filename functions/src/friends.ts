@@ -11,8 +11,8 @@ import {
   MAX_REQUEST_MESSAGE,
 } from "./constants";
 import { invitesSentToday, queueInvite } from "./outbox";
-import { Friend, FriendInvite, FriendStatus, NewFriend, Socials } from "./models";
-import { circleCol, friendRequestCol, messageCol, userDoc } from "./paths";
+import { Friend, FriendInvite, FriendStatus, NewFriend, ProfilePicture, Socials } from "./models";
+import { circleCol, friendRequestCol, messageCol, profilePictureDoc, userDoc } from "./paths";
 import { nameOf, sendPush } from "./push";
 import { findAccounts, signalRefsOf, writeSignal } from "./signals";
 import {
@@ -69,6 +69,8 @@ function toJson(doc: FirebaseFirestore.DocumentSnapshot): Friend {
     mood: null, // filled in by withUnverified (confirmed friends only)
     moodMessage: null,
     presence: "offline", // filled in by withUnverified (confirmed friends only)
+    icon: null, // filled in by withUnverified (confirmed friends only)
+    pictureAt: null,
     unverified: [], // filled in by withUnverified (needs a look at the other accounts)
   };
 }
@@ -98,8 +100,10 @@ async function withUnverified(friend: Friend, entry: FirebaseFirestore.DocumentD
           mood: Number.isInteger(account.mood) ? (account.mood as number) : null,
           moodMessage: (account.moodMessage as string | null | undefined) ?? null,
           presence: presenceOf(account),
+          icon: Number.isInteger(account.profileIcon) ? (account.profileIcon as number) : null,
+          pictureAt: iso(account.profilePictureAt),
         }
-      : { country: null, mood: null, moodMessage: null, presence: "offline" as const };
+      : { country: null, mood: null, moodMessage: null, presence: "offline" as const, icon: null, pictureAt: null };
   // I did not give a name: a confirmed friend is shown by the name of their account
   const name = entry.nameGiven === false && friend.status === "confirmed" ? ((account?.displayName as string | undefined) || friend.name) : friend.name;
   const lastSpokenAt = friend.lastSpokenAt ?? (friend.status === "confirmed" ? await lastSpoken(uid, friend.id) : null);
@@ -187,6 +191,20 @@ friendsRouter.post(
     }
     const saved = await ref.get();
     res.status(201).json(await withUnverified(toJson(saved), saved.data(), (res.locals.token as DecodedIdToken).uid));
+  }),
+);
+
+/** The uploaded picture of a confirmed friend (a data URL), or null when there is none. The list only says WHEN it changed (`pictureAt`). */
+friendsRouter.get(
+  "/:friendId/picture",
+  asyncHandler(async (req, res) => {
+    const entry = (await friendCol(res).doc(req.params.friendId).get()).data();
+    if (!entry || entry.status !== "confirmed" || !entry.linkedUid) {
+      res.status(404).json({ error: "Friend not found" });
+      return;
+    }
+    const image = ((await profilePictureDoc(entry.linkedUid as string).get()).data()?.image as string | undefined) ?? null;
+    res.json({ image } satisfies ProfilePicture);
   }),
 );
 

@@ -30,7 +30,7 @@
               <header class="sf-head">
                 <!-- the icon of this seat: friend1.svg ... friend7.svg (public/icons/friends) -->
                 <span class="sf-seat">
-                  <img class="sf-avatar" [src]="'icons/friends/friend' + slot.position + '.svg'" [alt]="''" width="32" height="32" />
+                  <app-friend-avatar [friend]="friend" [seat]="slot.position" [size]="32" />
                   @if (friend.status === 'confirmed') {
                     <span class="sf-dot" [class]="'sf-dot-' + friend.presence" [title]="presenceLabel(friend.presence)" role="img" [attr.aria-label]="presenceLabel(friend.presence)"></span>
                   }
@@ -107,7 +107,7 @@
               <section class="sf-profile" [attr.aria-label]="'Profile of ' + friend.name">
                 <div class="sf-profile-head">
                   <span class="sf-seat">
-                    <img class="sf-avatar" [src]="'icons/friends/friend' + slot.position + '.svg'" [alt]="''" width="48" height="48" />
+                    <app-friend-avatar [friend]="friend" [seat]="slot.position" [size]="48" />
                     @if (friend.status === 'confirmed') {
                       <span class="sf-dot sf-dot-lg" [class]="'sf-dot-' + friend.presence" aria-hidden="true"></span>
                     }

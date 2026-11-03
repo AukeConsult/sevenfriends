@@ -26,6 +26,10 @@ export interface Friend extends Socials {
   mood: number | null;
   /** the friend's short mood message, shown for confirmed friends only; null = none */
   moodMessage: string | null;
+  /** the icon (1-7) the friend chose for themselves; null = none (then the seat icon is shown). Confirmed friends only. */
+  icon: number | null;
+  /** when the friend last changed their uploaded picture; null = no picture. It tells the app when to fetch it again (`GET .../friends/:id/picture`). Confirmed friends only. */
+  pictureAt: string | null;
   /** whether the friend is using the app right now (set by the system, confirmed friends only; 'offline' otherwise) */
   presence: Presence;
   /** the message I wrote with the request (the friend sees it with the request) */

@@ -126,8 +126,8 @@ const DAY_MS = 86_400_000;
 const DELETE_CHUNK = 200; // messages per batch: two deletes each, a batch holds 500 writes
 
 /**
- * Delete several of my messages at once: `{ olderThanDays?, contains?, dryRun? }` (see MessageDeleteCriteria; nothing
- * given = all of my messages in this feed). Both copies go. `dryRun` only counts, so the app can say how many will go.
+ * Delete several messages of the conversation at once: `{ whose?, olderThanDays?, contains?, dryRun? }` (see
+ * MessageDeleteCriteria; whose = mine (default) or both, never the friend's alone; nothing else given = all of them). Always both people's copies go. `dryRun` only counts, so the app can say how many will go.
  */
 conversationRouter.post(
   "/delete",
@@ -137,6 +137,11 @@ conversationRouter.post(
     const uid = uidOf(res);
     const body = (req.body ?? {}) as MessageDeleteCriteria;
 
+    const whose = body.whose ?? "mine";
+    if (whose !== "mine" && whose !== "both") {
+      res.status(400).json({ error: "whose must be mine or both" });
+      return;
+    }
     const days = body.olderThanDays ?? null;
     if (days !== null && (!Number.isInteger(days) || days < 1 || days > 3650)) {
       res.status(400).json({ error: "olderThanDays must be a whole number of days (1-3650)" });
@@ -148,7 +153,7 @@ conversationRouter.post(
     const snap = await messageCol(uid).where("connectionId", "==", connection.id).get();
     const matching = snap.docs.filter((d) => {
       const m = d.data();
-      if (m.fromUid !== uid) return false; // only my own messages can be deleted
+      if (whose === "mine" && m.fromUid !== uid) return false;
       if (cutoff !== null && !(m.time instanceof Timestamp && m.time.toMillis() < cutoff)) return false;
       return !contains || String(m.text).toLowerCase().includes(contains);
     });

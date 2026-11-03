@@ -112,7 +112,7 @@
           @if (showCode()) {
             <span class="input-group-text fw-semibold" aria-label="Country code">+{{ dial() }}</span>
           }
-          <input type="tel" class="form-control" [placeholder]="showCode() ? '900 00 000' : '+47 900 00 000'" [value]="phoneField()"
+          <input appClear type="tel" class="form-control" [placeholder]="showCode() ? '900 00 000' : '+47 900 00 000'" [value]="phoneField()"
                  (input)="setPhone($any($event.target).value)" (blur)="flush()"
                  inputmode="tel" autocomplete="tel-national" [disabled]="loading() || phoneVerified()" />
           @if (phoneVerified()) {
@@ -136,7 +136,7 @@
       </div>
       @for (n of networks; track n.key) {
         <label class="d-grid gap-1"><span class="form-label small text-secondary m-0">{{ n.label }} ({{ n.hint }})</span>
-          <input type="text" class="form-control" [value]="form()[n.key]" (input)="setField(n.key, $any($event.target).value)" (blur)="flush()"
+          <input appClear type="text" class="form-control" [value]="form()[n.key]" (input)="setField(n.key, $any($event.target).value)" (blur)="flush()"
                  autocomplete="off" [disabled]="loading()" />
         </label>
       }

@@ -27,8 +27,10 @@ export interface Conversation {
   messages: ChatMessage[];
 }
 
-/** Which of my messages to delete in one go (`POST .../messages/delete`). Both fields narrow it down; none = all of them. */
+/** Which messages of a conversation to delete in one go (`POST .../messages/delete`). The fields narrow it down; none = all of MY messages. */
 export interface MessageDeleteCriteria {
+  /** whose messages: 'mine' (default) = the ones I wrote; 'both' = mine and the friend's. Never the friend's alone. Either way both people's copies are deleted. */
+  whose?: "mine" | "both";
   /** only messages older than this many days; absent = no age limit */
   olderThanDays?: number | null;
   /** only messages that contain this text (any capitals); absent = any text */
@@ -37,7 +39,7 @@ export interface MessageDeleteCriteria {
   dryRun?: boolean;
 }
 
-/** What `POST .../messages/delete` did: how many of my messages matched, and how many were deleted (0 for a dry run). */
+/** What `POST .../messages/delete` did: how many messages matched, and how many were deleted (0 for a dry run). */
 export interface MessageDeleteResult {
   matched: number;
   deleted: number;

@@ -1,9 +1,9 @@
-<header class="sf-bar">
+<header #bar class="sf-bar">
   <a routerLink="/friends" class="sf-back" aria-label="Back to friends">‹</a>
   @if (seat() > 0) {
     <span class="sf-seat">
-      <img class="sf-avatar sf-avatar-sm" [src]="'icons/friends/friend' + seat() + '.svg'" [alt]="''" width="36" height="36" />
       @if (friend(); as f) {
+        <app-friend-avatar [friend]="f" [seat]="seat()" [small]="true" [size]="36" />
         <span class="sf-dot" [class]="'sf-dot-' + f.presence" [title]="presenceLabel(f.presence)" role="img" [attr.aria-label]="presenceLabel(f.presence)"></span>
       }
     </span>
@@ -21,9 +21,104 @@
       }
     }
   </div>
+  @if (!blocked()) {
+    <div class="sf-bar-actions">
+      <!-- sort: oldest first (default) or newest first -->
+      <button type="button" class="sf-icon-btn" (click)="toggleSort()" [title]="sortDesc() ? 'Newest first' : 'Oldest first'"
+              [attr.aria-label]="sortDesc() ? 'Newest first. Tap to show the oldest first' : 'Oldest first. Tap to show the newest first'">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+             [style.transform]="sortDesc() ? 'scaleY(-1)' : null">
+          <path d="M12 5v14M6 13l6 6 6-6" />
+        </svg>
+      </button>
+      <button type="button" class="sf-icon-btn" (click)="toggleCleanup()" [attr.aria-expanded]="cleanupOpen()" aria-controls="cleanup" aria-label="Delete messages" title="Delete messages">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6" />
+        </svg>
+      </button>
+    </div>
+  }
 </header>
 
-<main class="sf-feed" [style.padding-bottom]="'calc(' + composerHeight() + 'px + 3.5rem + 1rem + env(safe-area-inset-bottom))'">
+<!-- Expanding frame: delete several of my messages at once (by age and / or text) -->
+<div class="sf-expand" [class.open]="cleanupOpen()" [attr.inert]="cleanupOpen() ? null : ''">
+  <div class="sf-expand-inner">
+    <section id="cleanup" class="sf-cleanup" aria-label="Delete messages">
+      <p class="sf-hint">Delete several messages of this conversation. They disappear for both of you.</p>
+      <div role="radiogroup" aria-label="Whose messages" class="sf-options">
+        @for (choice of whoseChoices(); track choice.value) {
+          <label class="form-check m-0">
+            <input class="form-check-input" type="radio" name="cleanup-whose" [checked]="cleanupWhose() === choice.value" (change)="setWhose(choice.value)" />
+            <span class="form-check-label">{{ choice.label }}</span>
+          </label>
+        }
+      </div>
+      <div role="radiogroup" aria-label="How old" class="sf-options">
+        @for (choice of ageChoices; track choice.label) {
+          <label class="form-check m-0">
+            <input class="form-check-input" type="radio" name="cleanup-age" [checked]="cleanupDays() === choice.days" (change)="setDays(choice.days)" />
+            <span class="form-check-label">{{ choice.label }}</span>
+          </label>
+        }
+      </div>
+      <label class="sf-field"><span class="sf-hint">Only messages that contain (optional)</span>
+        <input appClear type="text" class="form-control" maxlength="100" [value]="cleanupText()" (input)="setText($any($event.target).value)" autocomplete="off" />
+      </label>
+      @if (cleanupDone(); as done) { <p class="sf-hint text-success">{{ done }}</p> }
+      @if (cleanupAsk()) {
+        <div class="sf-confirm" role="alertdialog" aria-label="Delete the messages">
+          <p class="sf-confirm-text">Delete {{ cleanupCount() }} {{ cleanupCount() === 1 ? 'message' : 'messages' }}{{ cleanupWhose() === 'both' ? ', also ' + (name() || 'your friend') + '\'s,' : '' }} for both of you? This cannot be undone.</p>
+          <div class="sf-confirm-actions">
+            <button type="button" class="btn btn-light btn-sm rounded-pill px-3" (click)="cleanupAsk.set(false)" [disabled]="cleanupBusy()">Cancel</button>
+            <button type="button" class="btn btn-danger btn-sm rounded-pill px-3" (click)="deleteMatching()" [disabled]="cleanupBusy()">{{ cleanupBusy() ? 'Deleting…' : 'Delete' }}</button>
+          </div>
+        </div>
+      } @else {
+        <p class="sf-hint">{{ cleanupCount() === null ? 'Counting…' : cleanupCount() + (cleanupCount() === 1 ? ' message matches' : ' messages match') }}</p>
+        @if (cleanupCount()) {
+          <button type="button" class="btn btn-outline-danger btn-sm rounded-pill align-self-start px-3" (click)="cleanupAsk.set(true)">Delete these messages…</button>
+        }
+      }
+    </section>
+  </div>
+</div>
+
+<!-- the message field: under the header when the newest message is on top, fixed above the menu otherwise -->
+<ng-template #composerTpl>
+  <form #composer class="sf-composer" [class.sf-composer-top]="sortDesc()" [style.top.px]="sortDesc() ? barHeight() : null" (submit)="$event.preventDefault(); send()" aria-label="Write a message">
+    @if (emojiOpen()) {
+      <div class="sf-emoji-panel" role="group" aria-label="Emojis">
+        @for (emoji of emojis; track emoji) {
+          <button type="button" class="sf-emoji" (click)="addEmoji(emoji)" [attr.aria-label]="'Add ' + emoji">{{ emoji }}</button>
+        }
+      </div>
+    }
+    @if (editing()) {
+      <div class="sf-editing">
+        <span class="sf-hint">Editing your message</span>
+        <button type="button" class="btn btn-link btn-sm p-0" (click)="cancelEdit()">Cancel</button>
+      </div>
+    }
+    <div class="sf-composer-row">
+      <button type="button" class="sf-icon-btn sf-emoji-toggle" (click)="emojiOpen.set(!emojiOpen())" [attr.aria-expanded]="emojiOpen()"
+              [attr.aria-label]="emojiOpen() ? 'Hide the emojis' : 'Show the emojis'">😊</button>
+      <textarea #field class="form-control sf-composer-field" rows="1" placeholder="Write a message" [value]="text()"
+                (input)="typed()" (keydown.enter)="enterPressed($event)" maxlength="2000" autocomplete="off" autocorrect="off" spellcheck="true" enterkeyhint="enter"
+                aria-label="Message"></textarea>
+      <button type="submit" class="btn btn-primary sf-send" [disabled]="sending() || !text().trim()" [attr.aria-label]="editing() ? 'Save' : 'Send'" [title]="editing() ? 'Save' : 'Send'">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          @if (editing()) { <path d="M5 13l4 4L19 7" /> } @else { <path d="M5 12h14M13 6l6 6-6 6" /> }
+        </svg>
+      </button>
+    </div>
+  </form>
+</ng-template>
+
+@if (sortDesc() && !blocked()) {
+  <ng-container [ngTemplateOutlet]="composerTpl" />
+}
+
+<main class="sf-feed" [style.padding-bottom]="sortDesc() ? null : 'calc(' + composerHeight() + 'px + 3.5rem + 1rem + env(safe-area-inset-bottom))'">
   @if (blocked()) {
     <div class="alert alert-warning" role="alert">{{ blocked() }}</div>
     <a routerLink="/friends" class="btn btn-primary">Back to friends</a>
@@ -34,13 +129,13 @@
       <p class="sf-hint-center">No messages yet. Say hello to {{ name() }}.</p>
     }
 
-    @for (message of messages(); track message.id) {
-      <div class="sf-message" [class.sf-mine]="message.mine">
+    @for (message of shown(); track message.id) {
+      <div class="sf-message" [attr.data-id]="message.id" [class.sf-mine]="message.mine" [class.sf-doomed]="doomed().has(message.id)">
         <!-- my own message: tap it to edit or delete it -->
         <div class="sf-bubble" [class.sf-bubble-tap]="message.mine" [attr.role]="message.mine ? 'button' : null" [attr.tabindex]="message.mine ? 0 : null"
              [attr.aria-expanded]="message.mine ? selected() === message.id : null" (click)="select(message)" (keydown.enter)="select(message)">{{ message.text }}</div>
         @if (message.time) {
-          <small class="sf-hint">{{ message.time | date: 'd MMM, HH:mm' }}@if (message.edited) { · edited }</small>
+          <small class="sf-hint">{{ message.time | date: 'd MMM, HH:mm' }}@if (message.edited) { · edited }@if (doomed().has(message.id)) { · <strong class="text-danger">will be deleted</strong> }</small>
         }
         @if (message.mine && selected() === message.id) {
           <div class="sf-msg-actions">
@@ -64,28 +159,6 @@
   <div #end class="end"></div>
 </main>
 
-@if (!blocked()) {
-  <form #composer class="sf-composer" (submit)="$event.preventDefault(); send()" aria-label="Write a message">
-    @if (emojiOpen()) {
-      <div class="sf-emoji-panel" role="group" aria-label="Emojis">
-        @for (emoji of emojis; track emoji) {
-          <button type="button" class="sf-emoji" (click)="addEmoji(emoji)" [attr.aria-label]="'Add ' + emoji">{{ emoji }}</button>
-        }
-      </div>
-    }
-    @if (editing()) {
-      <div class="sf-editing">
-        <span class="sf-hint">Editing your message</span>
-        <button type="button" class="btn btn-link btn-sm p-0" (click)="cancelEdit()">Cancel</button>
-      </div>
-    }
-    <div class="sf-composer-row">
-      <button type="button" class="sf-icon-btn sf-emoji-toggle" (click)="emojiOpen.set(!emojiOpen())" [attr.aria-expanded]="emojiOpen()"
-              [attr.aria-label]="emojiOpen() ? 'Hide the emojis' : 'Show the emojis'">😊</button>
-      <textarea #field class="form-control sf-composer-field" rows="1" placeholder="Write a message" [value]="text()"
-                (input)="typed()" (keydown.enter)="enterPressed($event)" maxlength="2000" autocomplete="off" autocorrect="off" spellcheck="true" enterkeyhint="enter"
-                aria-label="Message"></textarea>
-      <button type="submit" class="btn btn-primary" [disabled]="sending() || !text().trim()">{{ editing() ? 'Save' : 'Send' }}</button>
-    </div>
-  </form>
+@if (!sortDesc() && !blocked()) {
+  <ng-container [ngTemplateOutlet]="composerTpl" />
 }

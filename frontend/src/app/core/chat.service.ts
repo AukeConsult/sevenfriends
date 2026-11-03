@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { ChatMessage, Conversation } from '../models';
+import { ChatMessage, Conversation, MessageDeleteCriteria, MessageDeleteResult } from '../models';
 import { ApiService } from './api.service';
 import { FriendsService } from './friends.service';
 import { MessagesService } from './messages.service';
@@ -30,6 +30,11 @@ export class ChatService {
 
   remove(friendId: string, messageId: string): Promise<void> {
     return this.api.request<void>(`${this.base(friendId)}/${messageId}`, { method: 'DELETE' });
+  }
+
+  /** Deletes (or, with `dryRun`, only counts) several of my messages at once. */
+  deleteMatching(friendId: string, criteria: MessageDeleteCriteria): Promise<MessageDeleteResult> {
+    return this.api.request<MessageDeleteResult>(`${this.base(friendId)}/delete`, { method: 'POST', body: JSON.stringify(criteria) });
   }
 
   /** Opening the feed marks the other person's messages as read. */

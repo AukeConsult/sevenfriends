@@ -1,3 +1,4 @@
+import { Clearable } from '../core/clearable';
 import { Component, DestroyRef, ElementRef, inject, signal } from '@angular/core';
 import { ApiService } from '../core/api.service';
 import { MOODS, moodIcon, moodLabel } from '../core/moods';
@@ -12,6 +13,7 @@ const SAVE_MESSAGE_MS = 800;
  */
 @Component({
   selector: 'app-mood-editor',
+  imports: [Clearable],
   templateUrl: './mood-editor.html',
 })
 export class MoodEditor {

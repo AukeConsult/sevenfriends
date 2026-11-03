@@ -125,12 +125,25 @@ describe("delete several messages", () => {
     expect(await feedOf(u(0), id)).toEqual([]);
   });
 
-  it("only my own messages go: the friend's stay", async () => {
+  it("whose: mine is the default, both is the whole conversation (never the friend's alone); always on both sides", async () => {
+    const id = await connect(u(0), u(1));
+    const mine = await sendOne(u(0), id, "mine");
+    await sendOne(u(1), id, "theirs");
+    expect((await bulk(u(0), id, { dryRun: true }).expect(200)).body.matched).toBe(1); // no choice = mine
+    expect((await bulk(u(0), id, { whose: "both", dryRun: true }).expect(200)).body.matched).toBe(2);
+    await bulk(u(0), id, { whose: "theirs" }).expect(400); // the friend's messages alone cannot be chosen
+    expect((await bulk(u(0), id, { whose: "both", contains: "THEIRS" }).expect(200)).body.deleted).toBe(1);
+    expect((await feedOf(u(0), id)).map((m) => m.id)).toEqual([mine]);
+    expect((await feedOf(u(1), id)).map((m) => m.id)).toEqual([mine]); // gone for the friend too
+    expect((await bulk(u(0), id, { whose: "both" }).expect(200)).body.deleted).toBe(1);
+    expect(await feedOf(u(1), id)).toEqual([]);
+  });
+
+  it("only my own messages go by default: the friend's stay", async () => {
     const id = await connect(u(0), u(1));
     await sendOne(u(0), id, "mine");
     const theirs = await sendOne(u(1), id, "theirs");
     expect((await bulk(u(0), id, {}).expect(200)).body.deleted).toBe(1);
-    expect((await feedOf(u(0), id)).map((m) => m.id)).toEqual([theirs]);
     expect((await feedOf(u(1), id)).map((m) => m.id)).toEqual([theirs]);
   });
 
@@ -146,6 +159,7 @@ describe("delete several messages", () => {
     await bulk(u(0), id, { olderThanDays: 0 }).expect(400);
     await bulk(u(0), id, { olderThanDays: 1.5 }).expect(400);
     await bulk(u(0), id, { olderThanDays: "7" }).expect(400);
+    await bulk(u(0), id, { whose: "everyone" }).expect(400);
     await bulk(u(2), id, {}).expect(404);
   });
 

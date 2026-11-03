@@ -81,7 +81,8 @@ profileRouter.put(
     }
 
     const ref = userDoc(uidOf(res));
-    const verifiedPhone = ((await ref.get()).data()?.verifiedPhone as string | null | undefined) ?? null;
+    const before = (await ref.get()).data();
+    const verifiedPhone = (before?.verifiedPhone as string | null | undefined) ?? null;
     // Phone and social accounts are CONTACT INFO for friends: nothing typed here is ever used to find people.
     // (A verified phone number is the contact number and cannot be changed here.)
     // set+merge so it also works if the account document does not exist yet
@@ -99,6 +100,8 @@ profileRouter.put(
       },
       { merge: true },
     );
+    // confirmed friends see my icon: tell their apps
+    if (iconGiven && (body.icon ?? null) !== (before?.profileIcon ?? null)) await touchFriends(uidOf(res));
     res.json(detailsOf((await ref.get()).data() ?? {}));
   }),
 );
@@ -224,6 +227,7 @@ profileRouter.put(
       tx.set(profilePictureDoc(uid), { image, updatedAt: FieldValue.serverTimestamp() });
       tx.set(userDoc(uid), { profilePictureAt: FieldValue.serverTimestamp() }, { merge: true });
     });
+    await touchFriends(uid); // confirmed friends see my picture: tell their apps
     res.json({ image } satisfies ProfilePicture);
   }),
 );
@@ -237,6 +241,7 @@ profileRouter.delete(
       tx.delete(profilePictureDoc(uid));
       tx.set(userDoc(uid), { profilePictureAt: null }, { merge: true });
     });
+    await touchFriends(uid);
     res.status(204).end();
   }),
 );

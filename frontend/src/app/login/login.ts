@@ -1,3 +1,4 @@
+import { Clearable } from '../core/clearable';
 import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { authMessage, wasCancelled } from '../core/auth-errors';
@@ -6,7 +7,7 @@ import { AuthMode } from '../models';
 
 @Component({
   selector: 'app-login',
-  imports: [RouterLink],
+  imports: [RouterLink, Clearable],
   templateUrl: './login.html',
 })
 export class Login {

@@ -1,3 +1,4 @@
+import { FriendAvatar } from '../friend-avatar/friend-avatar';
 import { DatePipe } from '@angular/common';
 import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
@@ -15,7 +16,7 @@ const MAX_FRIENDS = 7;
 
 @Component({
   selector: 'app-friends',
-  imports: [DatePipe, RouterLink],
+  imports: [DatePipe, FriendAvatar, RouterLink],
   templateUrl: './friends.html',
 })
 export class Friends {

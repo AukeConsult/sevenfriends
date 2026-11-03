@@ -1,3 +1,4 @@
+import { Clearable } from '../core/clearable';
 import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FriendsService } from '../core/friends.service';
@@ -9,7 +10,7 @@ const emptyDraft = (): FriendDraft => ({ name: '', email: '', phone: '', message
 /** A full page to add a friend: a form that ends with Cancel or Send friend request. */
 @Component({
   selector: 'app-add-friend',
-  imports: [RouterLink],
+  imports: [RouterLink, Clearable],
   templateUrl: './add-friend.html',
 })
 export class AddFriend {

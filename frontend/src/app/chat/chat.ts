@@ -1,22 +1,35 @@
+import { Clearable } from '../core/clearable';
 import { DatePipe } from '@angular/common';
-import { Component, DestroyRef, ElementRef, computed, effect, inject, signal, untracked, viewChild } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
+import { Component, DestroyRef, ElementRef, HostListener, computed, effect, inject, signal, untracked, viewChild } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ApiError } from '../core/api.service';
+import { FriendAvatar } from '../friend-avatar/friend-avatar';
 import { ChatService } from '../core/chat.service';
 import { EMOJIS } from '../core/emojis';
 import { FriendsService } from '../core/friends.service';
 import { moodIcon, moodLabel } from '../core/moods';
 import { presenceLabel } from '../core/presence';
 import { RealtimeService } from '../core/realtime.service';
-import { ChatMessage } from '../models';
+import { ChatMessage, MessageDeleteCriteria } from '../models';
 
 // New messages, edits and deletes arrive live (RealtimeService). This refresh is only a safety net.
 const SAFETY_REFRESH_MS = 30000;
 
+const SORT_KEY = 'sf-chat-order';
+
+function readNewestFirst(): boolean {
+  try {
+    return localStorage.getItem(SORT_KEY) === 'newest';
+  } catch {
+    return false;
+  }
+}
+
 /** The message feed with one friend: /friends/:id (the id of the connection). */
 @Component({
   selector: 'app-chat',
-  imports: [DatePipe, RouterLink],
+  imports: [DatePipe, FriendAvatar, NgTemplateOutlet, RouterLink, Clearable],
   templateUrl: './chat.html',
 })
 export class Chat {
@@ -28,6 +41,7 @@ export class Chat {
   private readonly end = viewChild<ElementRef<HTMLElement>>('end');
   private readonly field = viewChild<ElementRef<HTMLTextAreaElement>>('field');
   private readonly composer = viewChild<ElementRef<HTMLElement>>('composer');
+  private readonly bar = viewChild<ElementRef<HTMLElement>>('bar');
 
   protected readonly friendId = inject(ActivatedRoute).snapshot.paramMap.get('id') ?? '';
   protected readonly name = signal('');
@@ -39,6 +53,47 @@ export class Chat {
   /** the seat of this friend (1-7): its icon friend{seat}.svg is shown in the header; 0 while the list is not loaded */
   protected readonly seat = computed(() => this.friendsService.friends().findIndex((f) => f.id === this.friendId) + 1);
   protected readonly messages = signal<ChatMessage[]>([]);
+  /** false = oldest first (the default); true = newest first. Remembered on this device. */
+  protected readonly sortDesc = signal(readNewestFirst());
+  protected readonly shown = computed(() => (this.sortDesc() ? [...this.messages()].reverse() : this.messages()));
+
+  // deleting several of my messages: the expanding frame under the header
+  protected readonly ageChoices: { label: string; days: number | null }[] = [
+    { label: 'Older than a day', days: 1 },
+    { label: 'Older than a week', days: 7 },
+    { label: 'Older than a month', days: 30 },
+    { label: 'All of them', days: null },
+  ];
+  protected readonly cleanupOpen = signal(false);
+  protected readonly cleanupWhose = signal<'mine' | 'both'>('mine');
+  /** my messages, or both sides' (never the friend's alone) */
+  protected readonly whoseChoices = computed<{ value: 'mine' | 'both'; label: string }[]>(() => [
+    { value: 'mine', label: 'My messages' },
+    { value: 'both', label: `Both: mine and ${this.name() || 'my friend'}'s` },
+  ]);
+  protected readonly cleanupDays = signal<number | null>(30);
+  protected readonly cleanupText = signal('');
+  /** how many messages match (counted by the server); null while counting */
+  protected readonly cleanupCount = signal<number | null>(null);
+  protected readonly cleanupAsk = signal(false);
+  protected readonly cleanupBusy = signal(false);
+  protected readonly cleanupDone = signal<string | null>(null);
+  /** the messages in view that the delete frame would delete right now (marked in the feed; same rules as the server) */
+  protected readonly doomed = computed(() => {
+    const ids = new Set<string>();
+    if (!this.cleanupOpen()) return ids;
+    const cutoff = this.cleanupDays() === null ? null : Date.now() - this.cleanupDays()! * 86_400_000;
+    const text = this.cleanupText().trim().toLowerCase();
+    for (const m of this.messages()) {
+      if (this.cleanupWhose() === 'mine' && !m.mine) continue;
+      if (cutoff !== null && !(m.time && new Date(m.time).getTime() < cutoff)) continue;
+      if (text && !m.text.toLowerCase().includes(text)) continue;
+      ids.add(m.id);
+    }
+    return ids;
+  });
+  private countTimer: ReturnType<typeof setTimeout> | undefined;
+  private countSeq = 0;
   protected readonly loaded = signal(false);
   protected readonly error = signal<string | null>(null);
   /** set when this conversation cannot be opened (not confirmed, or not found) */
@@ -56,6 +111,8 @@ export class Chat {
   protected readonly editing = signal<string | null>(null);
   /** the height of the message field with its panel: the feed keeps this much room at the bottom, so no message hides behind it */
   protected readonly composerHeight = signal(64);
+  /** the height of the header: the message field sticks right under it when the newest message is on top */
+  protected readonly barHeight = signal(56);
 
   constructor() {
     if (!this.friendsService.friends().length) void this.friendsService.load().catch(() => undefined); // opened directly (a reload): the seat comes from the list
@@ -68,6 +125,15 @@ export class Chat {
       if (!live || live.seq <= this.lastLive) return;
       this.lastLive = live.seq;
       if (live.connectionId === this.friendId) untracked(() => void this.refresh(false));
+    });
+
+    // the header's height (it changes with the notch and the font size)
+    effect((onCleanup) => {
+      const header = this.bar()?.nativeElement;
+      if (!header) return;
+      const watch = new ResizeObserver(() => this.barHeight.set(header.offsetHeight));
+      watch.observe(header);
+      onCleanup(() => watch.disconnect());
     });
 
     // the message field grows with its text: keep the feed clear of it
@@ -222,7 +288,114 @@ export class Chat {
     }
   }
 
+  protected toggleSort(): void {
+    this.sortDesc.update((desc) => !desc);
+    try {
+      localStorage.setItem(SORT_KEY, this.sortDesc() ? 'newest' : 'oldest');
+    } catch {
+      /* private mode: the choice lasts until the page is closed */
+    }
+    this.scrollDown();
+  }
+
+  /** A click somewhere else closes the open things: the delete frame (its criteria are forgotten) and the Edit / Delete buttons of a message. Escape does the same. */
+  @HostListener('document:click', ['$event'])
+  protected onDocumentClick(event: Event): void {
+    const target = event.target as Element | null;
+    if (this.cleanupOpen() && !target?.closest('.sf-cleanup, [aria-controls="cleanup"]')) this.closeCleanup();
+    const selected = this.selected();
+    if (selected && (target?.closest('.sf-message') as HTMLElement | null)?.dataset['id'] !== selected) {
+      this.selected.set(null);
+      this.deleting.set(null);
+    }
+  }
+
+  @HostListener('document:keydown.escape')
+  protected onEscape(): void {
+    this.closeCleanup();
+    this.selected.set(null);
+    this.deleting.set(null);
+  }
+
+  /** Closes the delete frame and forgets what was chosen in it (the next opening starts fresh). */
+  private closeCleanup(): void {
+    if (!this.cleanupOpen()) return;
+    this.cleanupOpen.set(false);
+    this.cleanupWhose.set('mine');
+    this.cleanupDays.set(30);
+    this.cleanupText.set('');
+    this.cleanupCount.set(null);
+    this.cleanupAsk.set(false);
+    this.cleanupDone.set(null);
+    clearTimeout(this.countTimer);
+    this.countSeq++; // an answer that is still on its way is dropped
+  }
+
+  protected toggleCleanup(): void {
+    if (this.cleanupOpen()) {
+      this.closeCleanup();
+      return;
+    }
+    this.cleanupOpen.set(true);
+    this.cleanupDone.set(null);
+    window.scrollTo({ top: 0, behavior: 'smooth' }); // the frame is at the top of the page: bring it into view
+    this.recount(0);
+  }
+
+  protected setWhose(whose: 'mine' | 'both'): void {
+    this.cleanupWhose.set(whose);
+    this.recount(0);
+  }
+
+  protected setDays(days: number | null): void {
+    this.cleanupDays.set(days);
+    this.recount(0);
+  }
+
+  protected setText(text: string): void {
+    this.cleanupText.set(text);
+    this.recount(300);
+  }
+
+  private criteria(): MessageDeleteCriteria {
+    return { whose: this.cleanupWhose(), olderThanDays: this.cleanupDays(), contains: this.cleanupText().trim() || null };
+  }
+
+  /** Asks the server how many of my messages match (a moment after the last change). */
+  private recount(delay: number): void {
+    this.cleanupAsk.set(false);
+    this.cleanupCount.set(null);
+    clearTimeout(this.countTimer);
+    const seq = ++this.countSeq;
+    this.countTimer = setTimeout(async () => {
+      try {
+        const { matched } = await this.chat.deleteMatching(this.friendId, { ...this.criteria(), dryRun: true });
+        if (seq === this.countSeq) this.cleanupCount.set(matched);
+      } catch (err: any) {
+        if (seq === this.countSeq) this.error.set(err.message ?? 'Could not count the messages');
+      }
+    }, delay);
+  }
+
+  protected async deleteMatching(): Promise<void> {
+    this.cleanupBusy.set(true);
+    this.error.set(null);
+    try {
+      const { deleted } = await this.chat.deleteMatching(this.friendId, this.criteria());
+      this.cleanupDone.set(`${deleted} ${deleted === 1 ? 'message' : 'messages'} deleted.`);
+      await this.refresh(false);
+      this.recount(0);
+    } catch (err: any) {
+      this.error.set(err.message ?? 'Could not delete the messages');
+    } finally {
+      this.cleanupBusy.set(false);
+      this.cleanupAsk.set(false);
+    }
+  }
+
   private scrollDown(): void {
-    setTimeout(() => this.end()?.nativeElement.scrollIntoView({ block: 'end' }));
+    // oldest first: the newest is at the bottom; newest first: it is at the top
+    // a moment later: the feed and the message field have been drawn in their new places by then
+    setTimeout(() => (this.sortDesc() ? window.scrollTo({ top: 0 }) : this.end()?.nativeElement.scrollIntoView({ block: 'end' })), 50);
   }
 }

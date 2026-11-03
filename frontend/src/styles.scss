@@ -105,6 +105,9 @@ h4, .h4, h5, .h5, h6, .h6 { font-size: var(--sf-fs-title); }
 .btn-sm { min-height: var(--sf-touch); }
 .form-control { min-height: var(--sf-touch); font-size: max(16px, var(--sf-fs-text)); } // 16px+ avoids iOS zoom
 
+// Radio buttons, checkboxes and switches stay clearly visible when they are not selected (Bootstrap's default border is very faint)
+.form-check-input:not(:checked) { border-color: #6b7280; border-width: 2px; background-color: #fff; }
+
 // Bootstrap primary button, themed with our colour
 .btn-primary {
   --bs-btn-bg: var(--sf-primary);
@@ -597,3 +600,31 @@ router-outlet + * { display: block; min-height: 100dvh; }
   &::after { content: ''; position: absolute; inset: -0.5rem; } // the tap area is as big as for any button
   &:focus-visible { outline: 2px solid var(--sf-primary); outline-offset: 2px; }
 }
+
+// ---- Message feed: header buttons and the delete-several frame ----
+.sf-bar-actions { display: flex; margin-left: auto; }
+.sf-bar-actions .sf-icon-btn { margin: 0; }
+.sf-cleanup { display: flex; flex-direction: column; gap: 0.5rem; padding: 0.75rem var(--sf-gutter); background: var(--sf-card); border-bottom: 1px solid var(--sf-border); }
+.sf-doomed .sf-bubble { outline: 2px dashed #dc2626; outline-offset: 2px; opacity: 0.7; } // marked by the delete frame: will be deleted
+
+// Newest message on top: the message field sits right under the header (sticky) and grows downwards; the emoji panel opens below the field
+.sf-composer-top { position: sticky; inset-inline: 0; bottom: auto; z-index: 2; flex-direction: column-reverse; border-top: 0; border-bottom: 1px solid var(--sf-border); }
+.sf-composer-top .sf-emoji-panel { border-bottom: 0; border-top: 1px solid var(--sf-border); }
+.sf-composer-top .sf-composer-row { align-items: flex-start; }
+.sf-feed { overflow-anchor: none; } // no jumping when the feed is turned around (sort order) or the message field changes height
+
+// Radio choices in two columns (the delete frame in the message feed)
+.sf-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--sf-border); .form-check { margin: 0; overflow-wrap: anywhere; } }
+
+// ---- The clear button ("×") inside optional text fields (directive `appClear`) ----
+.sf-clearable { position: relative; display: block; }
+.sf-clearable > .form-control { padding-right: 2.5rem; }
+.sf-clear { position: absolute; right: 0.375rem; top: 50%; transform: translateY(-50%); width: 1.75rem; height: 1.75rem; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--sf-muted); font-size: var(--sf-fs-title); line-height: 1; }
+.sf-clear::after { content: ''; position: absolute; inset: -0.25rem; } // a bigger tap area
+.sf-clear:hover, .sf-clear:focus-visible { background: var(--sf-bg); color: var(--sf-text); }
+.sf-clearable-area .sf-clear { top: 0.375rem; transform: none; }
+.sf-clear[hidden] { display: none; }
+.sf-clear-group { position: static; transform: none; width: auto; border-radius: 0; border: var(--bs-border-width) solid var(--bs-border-color); font-size: var(--sf-fs-title); }
+
+// The Send button of the message field: a small round button with an arrow
+.sf-send { flex: none; width: 2.25rem; min-height: 2.25rem; height: 2.25rem; padding: 0; border-radius: 50%; } // just an arrow (a check mark while editing)
