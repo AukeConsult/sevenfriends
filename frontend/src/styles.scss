@@ -445,6 +445,7 @@ router-outlet + * { display: block; min-height: 100dvh; }
 }
 .sf-media-link { display: block; line-height: 0; }
 .sf-attach-preview { display: block; max-width: 100%; max-height: 60dvh; margin: 0 auto; border-radius: var(--sf-radius); object-fit: contain; }
+.sf-camera { background: #000; border-radius: var(--sf-radius); overflow: hidden; video { display: block; width: 100%; max-height: 65dvh; object-fit: contain; transform: scaleX(-1); } } // the view is mirrored like a mirror; the photo is not
 .sf-viewer {
   display: flex;
   flex-direction: column;
