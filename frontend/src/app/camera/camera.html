@@ -5,13 +5,13 @@
   }
 </div>
 <div class="d-flex gap-2">
-  <button type="button" class="btn btn-light btn-lg flex-fill" [disabled]="recording()" (click)="closed.emit()">Cancel</button>
+  <button type="button" class="btn btn-light flex-fill" [disabled]="recording()" (click)="closed.emit()">Cancel</button>
   @if (mode() === 'photo') {
-    <button type="button" class="btn btn-primary btn-lg flex-fill" (click)="takePhoto()">Take the photo</button>
+    <button type="button" class="btn btn-primary flex-fill" (click)="takePhoto()">Take the photo</button>
   } @else if (!recording()) {
-    <button type="button" class="btn btn-primary btn-lg flex-fill" (click)="startRecording()">Start recording</button>
+    <button type="button" class="btn btn-primary flex-fill" (click)="startRecording()">Start recording</button>
   } @else {
-    <button type="button" class="btn btn-danger btn-lg flex-fill" (click)="stopRecording()">Stop</button>
+    <button type="button" class="btn btn-danger flex-fill" (click)="stopRecording()">Stop</button>
   }
 </div>
 @if (cameras().length > 1 && !recording()) {

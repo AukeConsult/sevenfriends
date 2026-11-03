@@ -3,7 +3,7 @@ import { DocumentReference, Transaction, getFirestore } from "firebase-admin/fir
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAIL_COLLECTION } from "./constants";
 import { circleCol, friendRequestCol, messageCol, profilePictureDoc, pushDeviceCol, signalCol, userDoc } from "./paths";
 import { MediaRef } from "./models";
-import { deleteFolder, deleteObject } from "./sf-cache";
+import { deleteFolder, deleteObjects } from "./sf-cache";
 import { signalRefsOf } from "./signals";
 import { phoneKey } from "./validation";
 
@@ -23,6 +23,10 @@ type Peer = { uid: string | null; circleId: string | null; signaled: string[] };
  * Entries other people wrote for this person but that were never found (the person never opened the
  * app after being added) are removed too: they hold the person's name, email and phone number.
  *
+ * The media goes FIRST: a read-only pass finds the files of every message that will go, they are deleted together with the
+ * whole media cache folder of the person, and only then the transaction starts. If the database part fails, the files are
+ * wiped anyway (the request can be repeated). Files of messages that arrived in between are swept once more after the commit.
+ *
  * Everything in Firestore happens in ONE transaction: all the reading first, then all the deleting,
  * committed together. Either the person is gone from every list, or nothing changed at all (and the
  * transaction runs again if somebody wrote to something it read). Only the login (Firebase Auth) is
@@ -31,9 +35,14 @@ type Peer = { uid: string | null; circleId: string | null; signaled: string[] };
  */
 export async function eraseUser(uid: string): Promise<void> {
   const files = new Map<string, MediaRef>(); // the files of the messages that go (they may be in the friends' folders)
-  await getFirestore().runTransaction((tx) => eraseInTransaction(tx, uid, files));
-  for (const file of files.values()) await deleteObject(file.ownerId, file.objectId);
+  await getFirestore().runTransaction((tx) => eraseInTransaction(tx, uid, files, false)); // read only: which files will go
+  await deleteObjects([...files.values()]);
   await deleteFolder(uid); // everything I have in the media cache: pictures, anything not sent yet
+
+  const late = new Map<string, MediaRef>();
+  await getFirestore().runTransaction((tx) => eraseInTransaction(tx, uid, late, true));
+  await deleteObjects([...late.values()]); // messages that arrived while the first pass ran
+  await deleteFolder(uid);
 
   try {
     await getAuth().deleteUser(uid);
@@ -42,7 +51,7 @@ export async function eraseUser(uid: string): Promise<void> {
   }
 }
 
-async function eraseInTransaction(tx: Transaction, uid: string, files: Map<string, MediaRef>): Promise<void> {
+async function eraseInTransaction(tx: Transaction, uid: string, files: Map<string, MediaRef>, write: boolean): Promise<void> {
   const db = getFirestore();
   const account = (await tx.get(userDoc(uid))).data() ?? {};
 
@@ -129,5 +138,5 @@ async function eraseInTransaction(tx: Transaction, uid: string, files: Map<strin
   drop(userDoc(uid));
 
   // ---- writes ----
-  doomed.forEach((ref) => tx.delete(ref));
+  if (write) doomed.forEach((ref) => tx.delete(ref));
 }

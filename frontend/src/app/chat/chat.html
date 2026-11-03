@@ -23,18 +23,20 @@
   </div>
   @if (!blocked()) {
     <div class="sf-bar-actions">
-      <!-- sort: oldest first (default) or newest first -->
-      <button type="button" class="sf-icon-btn" (click)="toggleSort()" [title]="sortDesc() ? 'Newest first' : 'Oldest first'"
+      <!-- sort: oldest first (default) or newest first; the text says which one it is now -->
+      <button type="button" class="sf-tool-btn" (click)="toggleSort()" [title]="sortDesc() ? 'Newest first: tap to show the oldest first' : 'Oldest first: tap to show the newest first'"
               [attr.aria-label]="sortDesc() ? 'Newest first. Tap to show the oldest first' : 'Oldest first. Tap to show the newest first'">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
              [style.transform]="sortDesc() ? 'scaleY(-1)' : null">
-          <path d="M12 5v14M6 13l6 6 6-6" />
+          <path d="M3 6h9M3 12h6M3 18h3M18 5v14M14.5 15.5L18 19l3.5-3.5" />
         </svg>
+        <span>{{ sortDesc() ? 'Newest first' : 'Oldest first' }}</span>
       </button>
-      <button type="button" class="sf-icon-btn" (click)="toggleCleanup()" [attr.aria-expanded]="cleanupOpen()" aria-controls="cleanup" aria-label="Delete messages" title="Delete messages">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <button type="button" class="sf-tool-btn" (click)="toggleCleanup()" [attr.aria-expanded]="cleanupOpen()" aria-controls="cleanup" aria-label="Delete messages" title="Delete messages">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6" />
         </svg>
+        <span>Delete</span>
       </button>
     </div>
   }
@@ -69,15 +71,18 @@
         <div class="sf-confirm" role="alertdialog" aria-label="Delete the messages">
           <p class="sf-confirm-text">Delete {{ cleanupCount() }} {{ cleanupCount() === 1 ? 'message' : 'messages' }}{{ cleanupWhose() === 'both' ? ', also ' + (name() || 'your friend') + '\'s,' : '' }} for both of you? This cannot be undone.</p>
           <div class="sf-confirm-actions">
-            <button type="button" class="btn btn-light btn-sm rounded-pill px-3" (click)="cleanupAsk.set(false)" [disabled]="cleanupBusy()">Cancel</button>
-            <button type="button" class="btn btn-danger btn-sm rounded-pill px-3" (click)="deleteMatching()" [disabled]="cleanupBusy()">{{ cleanupBusy() ? 'Deleting…' : 'Delete' }}</button>
+            <button type="button" class="btn btn-light btn-sm" (click)="cleanupAsk.set(false)" [disabled]="cleanupBusy()">Cancel</button>
+            <button type="button" class="btn btn-danger btn-sm" (click)="deleteMatching()" [disabled]="cleanupBusy()">{{ cleanupBusy() ? 'Deleting…' : 'Delete' }}</button>
           </div>
         </div>
       } @else {
-        <p class="sf-hint">{{ cleanupCount() === null ? 'Counting…' : cleanupCount() + (cleanupCount() === 1 ? ' message matches' : ' messages match') }}</p>
-        @if (cleanupCount()) {
-          <button type="button" class="btn btn-outline-danger btn-sm rounded-pill align-self-start px-3" (click)="cleanupAsk.set(true)">Delete these messages…</button>
-        }
+        <!-- the count and the button on ONE line (they only wrap on a very narrow screen) -->
+        <div class="sf-cleanup-row">
+          <p class="sf-hint">{{ cleanupCount() === null ? 'Counting…' : cleanupCount() + (cleanupCount() === 1 ? ' message matches' : ' messages match') }}</p>
+          @if (cleanupCount()) {
+            <button type="button" class="btn btn-outline-danger btn-sm" (click)="cleanupAsk.set(true)">Delete these messages…</button>
+          }
+        </div>
       }
     </section>
   </div>
@@ -171,20 +176,28 @@
         @if (message.time) {
           <small class="sf-hint">{{ message.time | date: 'd MMM, HH:mm' }}@if (message.edited) { · edited }@if (doomed().has(message.id)) { · <strong class="text-danger">will be deleted</strong> }</small>
         }
+        @if (!message.mine && message.media; as media) {
+          <!-- the friend's image, video or voice message: always open and download it -->
+          <div class="sf-msg-actions">
+            <a [routerLink]="['/media', media.ownerId, media.objectId]" class="btn btn-light btn-sm">Open</a>
+            <button type="button" class="btn btn-light btn-sm" (click)="download(media)">Download</button>
+          </div>
+        }
         @if (message.mine && selected() === message.id) {
           <div class="sf-msg-actions">
             @if (deleting() === message.id) {
               <span class="sf-hint">Delete for both of you?</span>
-              <button type="button" class="btn btn-light btn-sm rounded-pill px-3" (click)="deleting.set(null)">Cancel</button>
-              <button type="button" class="btn btn-danger btn-sm rounded-pill px-3" (click)="remove(message)">Delete</button>
+              <button type="button" class="btn btn-light btn-sm" (click)="deleting.set(null)">Cancel</button>
+              <button type="button" class="btn btn-danger btn-sm" (click)="remove(message)">Delete</button>
             } @else {
               @if (message.media; as media) {
                 @if (media) {
-                  <a [routerLink]="['/media', media.ownerId, media.objectId]" class="btn btn-light btn-sm rounded-pill px-3">Open</a>
+                  <a [routerLink]="['/media', media.ownerId, media.objectId]" class="btn btn-light btn-sm">Open</a>
+                  <button type="button" class="btn btn-light btn-sm" (click)="download(media)">Download</button>
                 }
               }
-              <button type="button" class="btn btn-light btn-sm rounded-pill px-3" (click)="startEdit(message)">Edit</button>
-              <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3" (click)="deleting.set(message.id)">Delete</button>
+              <button type="button" class="btn btn-light btn-sm" (click)="startEdit(message)">Edit</button>
+              <button type="button" class="btn btn-outline-danger btn-sm" (click)="deleting.set(message.id)">Delete</button>
             }
           </div>
         }
@@ -192,7 +205,7 @@
     }
 
     @if (error()) {
-      <div class="alert alert-danger py-2" role="alert">{{ error() }}</div>
+      <div class="alert alert-danger" role="alert">{{ error() }}</div>
     }
   }
   <div #end class="end"></div>

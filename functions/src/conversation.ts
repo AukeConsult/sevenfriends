@@ -6,7 +6,7 @@ import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION } from "./constants";
 import { ChatMessage, Conversation, MediaRef, MessageDeleteCriteria, MessageDeleteResult, NewMedia } from "./models";
 import { circleCol, messageCol, userDoc } from "./paths";
 import { sendPush } from "./push";
-import { deleteObject, isObjectId, mediaLabel, objectInfo } from "./sf-cache";
+import { deleteObject, deleteObjects, isObjectId, mediaLabel, objectInfo } from "./sf-cache";
 
 export const MAX_MESSAGE_LENGTH = 2000;
 const FEED_LIMIT = 200; // the feed shows the latest 200 messages
@@ -191,6 +191,7 @@ conversationRouter.post(
     let deleted = 0;
     if (body.dryRun !== true && matching.length) {
       const files = matching.flatMap((d) => (d.data().media as MediaRef | undefined) ?? []);
+      await deleteObjects(files); // the files go FIRST: if the database delete fails they are wiped anyway
       for (let i = 0; i < matching.length; i += DELETE_CHUNK) {
         const batch = getFirestore().batch();
         for (const d of matching.slice(i, i + DELETE_CHUNK)) {
@@ -201,7 +202,6 @@ conversationRouter.post(
         if (i + DELETE_CHUNK >= matching.length) await tellPeer(batch, peerEntryOf(connection));
         await batch.commit();
       }
-      for (const file of files) await deleteObject(file.ownerId, file.objectId);
     }
     const result: MessageDeleteResult = { matched: matching.length, deleted };
     res.json(result);
@@ -269,12 +269,12 @@ conversationRouter.delete(
   asyncHandler(async (req, res) => {
     const own = await ownMessage(req, res);
     if (!own) return;
+    if (own.media) await deleteObject(own.media.ownerId, own.media.objectId); // the file goes FIRST: if the database delete fails it is wiped anyway
     const batch = getFirestore().batch();
     batch.delete(own.mine);
     batch.delete(own.theirs); // deleting a copy that is not there is fine
     await tellPeer(batch, own.peerEntry);
     await batch.commit();
-    if (own.media) await deleteObject(own.media.ownerId, own.media.objectId);
     res.status(204).end();
   }),
 );

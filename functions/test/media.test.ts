@@ -1,9 +1,8 @@
 import { getFirestore } from "firebase-admin/firestore";
 import { beforeEach, describe, expect, it } from "vitest";
-import { MAX_CACHE_BYTES } from "../src/constants";
 import { User, connect, seedPool } from "./helpers";
 import { sentPushes } from "./setup";
-import { storedData, storedNames, stuffStorage } from "./fake-storage";
+import { storedData, storedNames } from "./fake-storage";
 
 /** Files in messages: stored in the media cache (sf-cache/<userid>/<objectid>), read through the proxy. */
 let pool: User[];
@@ -70,12 +69,6 @@ describe("upload", () => {
   it("refuses a file that is too big", async () => {
     await upload(u(0), "image", png(10 * 1024 * 1024)).expect(413);
     expect(stored()).toEqual([]);
-  });
-
-  it("refuses when the storage of the person is full", async () => {
-    stuffStorage("uid00", MAX_CACHE_BYTES - 1000);
-    await upload(u(0), "image", png(2000)).expect(413);
-    await uploaded(u(1), "image", png(2000)); // somebody else has their own
   });
 
   it("needs a login", async () => {
@@ -321,14 +314,6 @@ describe("a big file in pieces (chunked upload)", () => {
     await piece(u(0), big.uploadId, 1, filler(6 * MB)).expect(204);
     await finish(u(0), big.uploadId, "kind=image&parts=2").expect(413); // 12 MB is over the 10 MB of an image
     expect(stored()).toEqual([]);
-  });
-
-  it("the pieces count towards the storage of the person while they wait", async () => {
-    stuffStorage("uid00", MAX_CACHE_BYTES - 5000);
-    const { uploadId } = await open(u(0));
-    await piece(u(0), uploadId, 0, mp4(3000)).expect(204);
-    await piece(u(0), uploadId, 1, filler(3000)).expect(413);
-    await piece(u(0), uploadId, 0, mp4(4000)).expect(204); // replacing a piece only needs the difference
   });
 
   it("is somebody's own: the pieces are in the folder of the sender", async () => {

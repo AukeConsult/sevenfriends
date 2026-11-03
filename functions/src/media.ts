@@ -15,7 +15,6 @@ import {
   joinChunks,
   objectInfo,
   putObject,
-  quotaLeft,
   readHead,
   readObject,
 } from "./sf-cache";
@@ -51,10 +50,6 @@ cacheRouter.post(
       return;
     }
     const uid = uidOf(res);
-    if (bytes.length > (await quotaLeft(uid))) {
-      res.status(413).json({ error: "Your storage for pictures, video and audio is full. Delete some messages first." });
-      return;
-    }
     const objectId = messageCol(uid).doc().id; // a message with this file gets the same id
     const name = cleanFileName(req.query.name);
     await putObject(uid, objectId, bytes, kind, checked.mime, name);
@@ -67,7 +62,7 @@ cacheRouter.post(
  *   1. `POST /api/sf-cache/uploads` answers `{ uploadId }`; the file will get that id as its object id
  *   2. `PUT /api/sf-cache/uploads/<uploadId>/<n>` for every piece n = 0, 1, 2 ... (a piece sent again replaces the first one)
  *   3. `POST /api/sf-cache/uploads/<uploadId>/finish?kind=...&parts=<how many>&name=...` joins them; it answers like a single upload
- * The pieces are in the sender's folder as tmp/<uploadId>/<n> and count towards the quota while they wait.
+ * The pieces are in the sender's folder as tmp/<uploadId>/<n>.
  */
 cacheRouter.post("/uploads", requireAuth, (_req, res) => {
   res.status(201).json({ uploadId: messageCol(uidOf(res)).doc().id, chunkBytes: CHUNK_BYTES, maxChunks: MAX_CHUNKS });
@@ -90,10 +85,6 @@ cacheRouter.put(
     }
     const uid = uidOf(res);
     const name = chunkName(req.params.uploadId, n);
-    if (bytes.length > (await quotaLeft(uid)) + ((await objectInfo(uid, name))?.bytes ?? 0)) {
-      res.status(413).json({ error: "Your storage for pictures, video and audio is full. Delete some messages first." });
-      return;
-    }
     await putObject(uid, name, bytes, "chunk", "application/octet-stream");
     res.status(204).end();
   }),

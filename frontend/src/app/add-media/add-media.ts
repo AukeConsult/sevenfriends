@@ -22,7 +22,7 @@ const TEXT = {
 /**
  * A full page to send an image, a video or a voice message to a friend (`/friends/:id/image`, `/video` and `/audio`): take or
  * record it, or choose a file, see (or hear) it, add a text if you like, and Send. The file is made smaller in the browser
- * (an image to 1600 pixels, a video to 1280 pixels, about 1.2 Mbit/s and at most 30 seconds; a voice is recorded at 32 kbit/s,
+ * (an image to 1600 pixels, a video to 1280 pixels, about 1.2 Mbit/s and at most 2 minutes; a voice is recorded at 32 kbit/s,
  * at most 2 minutes, and a chosen audio file is sent as it is, at most 2 minutes and 25 MB). It and its name go to the server,
  * which stores it in the media cache; the message then carries the reference, and the conversation reads the file back from
  * the server.

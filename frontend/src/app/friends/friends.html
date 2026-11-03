@@ -1,18 +1,22 @@
-<header class="sf-page-head">
-  <h1>{{ circle()?.name ?? 'Friends' }}</h1>
-  <span class="sf-hint">{{ filled() }} / {{ max }}</span>
+<header class="sf-bar">
+  <h1 class="sf-bar-title">{{ circle()?.name ?? 'Friends' }}</h1>
+  <span class="sf-hint sf-bar-extra">{{ filled() }} / {{ max }}</span>
+  <a routerLink="/friends/sleeping" class="sf-tool-btn" aria-label="Sleep list">
+    <span aria-hidden="true">😴</span>
+    <span>Sleep list</span>
+  </a>
 </header>
 
 <main class="sf-content">
   @if (loadError()) {
-    <div class="alert alert-danger d-flex align-items-center justify-content-between py-2" role="alert">
+    <div class="alert alert-danger d-flex align-items-center justify-content-between" role="alert">
       <span>{{ loadError() }}</span>
-      <button type="button" class="btn btn-link fw-semibold" (click)="reload()">Retry</button>
+      <button type="button" class="btn btn-link" (click)="reload()">Retry</button>
     </div>
   }
 
   @if (waiting() > 0) {
-    <a routerLink="/pending" class="alert alert-info d-block py-2 text-decoration-none">
+    <a routerLink="/pending" class="alert alert-info d-block text-decoration-none">
       {{ waiting() }} {{ waiting() === 1 ? 'request is' : 'requests are' }} waiting for a free seat. View
     </a>
   }
@@ -50,7 +54,7 @@
                     </span>
                   }
                   @if (unread().get(friend.id); as count) {
-                    <span class="badge rounded-pill text-bg-primary">{{ count === 1 ? 'New message' : count + ' new messages' }}</span>
+                    <span class="badge rounded-pill text-bg-danger">{{ count === 1 ? 'New message' : count + ' new messages' }}</span>
                   }
                 </div>
                 @if (friend.status === 'confirmed') {
@@ -93,8 +97,8 @@
 
                 @if (friend.incoming && friend.status === 'pending') {
                   <div class="sf-actions">
-                    <button type="button" class="btn btn-primary rounded-pill flex-fill" (click)="confirm(friend)">Confirm</button>
-                    <button type="button" class="btn btn-outline-secondary rounded-pill flex-fill" (click)="reject(friend)">Reject</button>
+                    <button type="button" class="btn btn-primary flex-fill" (click)="confirm(friend)">Confirm</button>
+                    <button type="button" class="btn btn-outline-secondary flex-fill" (click)="reject(friend)">Reject</button>
                   </div>
                 }
               </div>
@@ -151,17 +155,17 @@
 
                 @if (!(friend.incoming && friend.status === 'pending')) {
                   @if (deleting() === friend.id) {
-                    <div class="sf-confirm" role="alertdialog" [attr.aria-label]="'Delete ' + friend.name">
+                    <div class="sf-confirm" role="alertdialog" [attr.aria-label]="(sleepable(friend) ? 'Put to sleep ' : 'Delete ') + friend.name">
                       <p class="sf-confirm-text">{{ deleteMessage(friend) }}</p>
                       <div class="sf-confirm-actions">
-                        <button type="button" class="btn btn-light btn-sm rounded-pill px-3" (click)="cancelDelete()" [disabled]="deleteBusy()">Cancel</button>
-                        <button type="button" class="btn btn-danger btn-sm rounded-pill px-3" (click)="remove(friend)" [disabled]="deleteBusy()">
-                          {{ deleteBusy() ? 'Deleting…' : 'Delete' }}
+                        <button type="button" class="btn btn-light btn-sm" (click)="cancelDelete()" [disabled]="deleteBusy()">Cancel</button>
+                        <button type="button" class="btn btn-danger btn-sm" (click)="remove(friend)" [disabled]="deleteBusy()">
+                          {{ deleteBusy() ? 'Please wait…' : sleepable(friend) ? 'Put to sleep' : 'Delete' }}
                         </button>
                       </div>
                     </div>
                   } @else {
-                    <button type="button" class="btn btn-outline-danger btn-sm rounded-pill align-self-start px-3" (click)="askDelete(friend)">Delete {{ friend.name }}…</button>
+                    <button type="button" class="btn btn-outline-danger btn-sm align-self-start" (click)="askDelete(friend)">{{ sleepable(friend) ? 'Add ' + friend.name + ' to the sleep list…' : 'Delete ' + friend.name + '…' }}</button>
                   }
                 }
               </section>
@@ -176,5 +180,13 @@
         }
       </li>
     }
+    <!-- one more row like an empty seat: opens the waiting list -->
+    <li class="col-12 col-md-6 d-flex flex-column">
+      <a routerLink="/friends/sleeping" class="btn sf-slot-empty w-100 flex-grow-1 text-start d-flex align-items-center gap-3">
+        <span class="sf-slot-waiting" aria-hidden="true">😴</span>
+        <span class="flex-grow-1">Sleep list@if (sleeping() > 0) { ({{ sleeping() }}) }</span>
+        <span class="sf-fs-heading text-primary" aria-hidden="true">›</span>
+      </a>
+    </li>
   </ul>
 </main>

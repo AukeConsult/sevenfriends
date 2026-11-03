@@ -17,15 +17,15 @@
       <p class="text-secondary m-0">To finish, confirm the email address this link was sent to.</p>
       <form class="vstack gap-2" (submit)="$event.preventDefault(); submit()">
         <label class="d-grid gap-1"><span class="form-label small text-secondary m-0">Your email address</span>
-          <input type="email" class="form-control form-control-lg" [value]="email()" (input)="email.set($any($event.target).value)"
+          <input type="email" class="form-control" [value]="email()" (input)="email.set($any($event.target).value)"
                  autocomplete="email" inputmode="email" required />
         </label>
-        <button type="submit" class="btn btn-primary btn-lg">Sign in</button>
+        <button type="submit" class="btn btn-primary">Sign in</button>
       </form>
     }
 
     @if (error()) {
-      <div class="alert alert-danger py-2 m-0" role="alert">{{ error() }}</div>
+      <div class="alert alert-danger" role="alert">{{ error() }}</div>
       <a routerLink="/login/email" class="btn btn-link">Send me a new link</a>
     }
   }

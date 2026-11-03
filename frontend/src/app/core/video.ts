@@ -1,10 +1,10 @@
 import { PreparedImage, scaled } from './image';
 
 /** A video can be this long. */
-export const MAX_VIDEO_SECONDS = 30;
+export const MAX_VIDEO_SECONDS = 120;
 /** The backend takes at most 100 MB for a video. */
 const MAX_VIDEO_BYTES = 100 * 1024 * 1024;
-/** What a video is made into: at most 1280 pixels on the long side, about 1.2 Mbit/s (a 30 second video is about 4.5 MB). */
+/** What a video is made into: at most 1280 pixels on the long side, about 1.2 Mbit/s (a 2 minute video is about 19 MB, the server accepts up to 30 MB). */
 const VIDEO_SIDE = 1280;
 const VIDEO_BPS = 1_200_000;
 const AUDIO_BPS = 96_000;
@@ -62,8 +62,8 @@ async function previewOf(video: HTMLVideoElement): Promise<Blob> {
 
 /**
  * Makes a video ready to send, in the browser: a chosen or filmed video is played into a recorder at 1280 pixels and about
- * 1.2 Mbit/s (so it takes as long as the video itself, at most 30 seconds, keep the page open), and a longer video is cut
- * after 30 seconds. If that makes it bigger (or the browser cannot record) the original is sent when the server can keep it.
+ * 1.2 Mbit/s (so it takes as long as the video itself, at most 2 minutes, keep the page open), and a longer video is cut
+ * after 2 minutes. If that makes it bigger (or the browser cannot record) the original is sent when the server can keep it.
  */
 export async function prepareVideo(file: File, onProgress: (fraction: number) => void): Promise<PreparedVideo> {
   const { video, done } = await open(file);

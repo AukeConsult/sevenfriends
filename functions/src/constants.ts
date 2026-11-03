@@ -64,8 +64,6 @@ export const MAX_PICTURE_BYTES = 70 * 1024;
  * (the bucket is closed to clients, see storage.rules); the app gets files from /api/sf-cache/<userid>/<objectid>.
  */
 export const CACHE_ROOT = "sf-cache";
-/** What one person may keep as images, video and audio together (pictures and icons are small and do not count). */
-export const MAX_CACHE_BYTES = 500 * 1024 * 1024;
 /** One upload in a single request: Cloud Functions accepts at most 32 MB. Anything bigger is sent in pieces. */
 export const MAX_UPLOAD_BYTES = 30 * 1024 * 1024;
 /** The biggest piece of a chunked upload, and the most pieces (Google Storage joins at most 32 files in one go). */

@@ -1,6 +1,6 @@
 import { getStorage } from "firebase-admin/storage";
 import { Readable } from "stream";
-import { CACHE_ROOT, MAX_CACHE_BYTES, MAX_PICTURE_BYTES } from "./constants";
+import { CACHE_ROOT, MAX_PICTURE_BYTES } from "./constants";
 import { CacheKind, MediaKind } from "./models";
 
 const MB = 1024 * 1024;
@@ -29,13 +29,13 @@ const PICTURES: Container[] = ["jpeg", "png", "webp"];
  * What each kind of object may be: the one place with the limits and the allowed formats.
  * 'thumb' is the small preview of an image or video (stored next to it as <objectid>.thumb).
  */
-const KIND_RULES: Record<CacheKind | "thumb", { family: Family; containers: Container[]; maxBytes: number; countsInQuota: boolean }> = {
-  image: { family: "image", containers: [...PICTURES, "gif"], maxBytes: 10 * MB, countsInQuota: true },
-  video: { family: "video", containers: ["mp4", "quicktime", "webm"], maxBytes: 100 * MB, countsInQuota: true },
-  audio: { family: "audio", containers: ["mp4", "webm", "ogg", "mp3", "wav"], maxBytes: 25 * MB, countsInQuota: true },
-  avatar: { family: "image", containers: PICTURES, maxBytes: MAX_PICTURE_BYTES, countsInQuota: false },
-  icon: { family: "image", containers: PICTURES, maxBytes: 32 * 1024, countsInQuota: false },
-  thumb: { family: "image", containers: PICTURES, maxBytes: 100 * 1024, countsInQuota: true },
+const KIND_RULES: Record<CacheKind | "thumb", { family: Family; containers: Container[]; maxBytes: number }> = {
+  image: { family: "image", containers: [...PICTURES, "gif"], maxBytes: 10 * MB },
+  video: { family: "video", containers: ["mp4", "quicktime", "webm"], maxBytes: 100 * MB },
+  audio: { family: "audio", containers: ["mp4", "webm", "ogg", "mp3", "wav"], maxBytes: 25 * MB },
+  avatar: { family: "image", containers: PICTURES, maxBytes: MAX_PICTURE_BYTES },
+  icon: { family: "image", containers: PICTURES, maxBytes: 32 * 1024 },
+  thumb: { family: "image", containers: PICTURES, maxBytes: 100 * 1024 },
 };
 
 /** What a stored object can be: the kinds above, a preview, or one piece of an upload that is not finished (`tmp/<uploadid>/<n>`). */
@@ -173,7 +173,14 @@ export async function deleteObject(owner: string, objectId: string): Promise<voi
   }
 }
 
+/** Delete the files (and previews) of several messages; the same file listed twice (both copies of a message) is deleted once. */
+export async function deleteObjects(files: { ownerId: string; objectId: string }[]): Promise<void> {
+  const unique = new Map(files.map((f) => [`${f.ownerId}/${f.objectId}`, f]));
+  for (const file of unique.values()) await deleteObject(file.ownerId, file.objectId);
+}
+
 /** Delete everything a person has in the cache. */
+
 export async function deleteFolder(owner: string): Promise<void> {
   try {
     await bucket().deleteFiles({ prefix: `${CACHE_ROOT}/${owner}/`, force: true });
@@ -182,13 +189,3 @@ export async function deleteFolder(owner: string): Promise<void> {
   }
 }
 
-/** How much of a person's quota is used (images, video and audio, with their previews). */
-export async function usedBytes(owner: string): Promise<number> {
-  const [files] = await bucket().getFiles({ prefix: `${CACHE_ROOT}/${owner}/` });
-  return files.reduce((sum, f) => {
-    const kind = f.metadata.metadata?.kind as StoredKind | undefined;
-    return sum + (kind && (kind === "chunk" || KIND_RULES[kind].countsInQuota) ? Number(f.metadata.size) : 0);
-  }, 0);
-}
-
-export const quotaLeft = async (owner: string) => MAX_CACHE_BYTES - (await usedBytes(owner));

@@ -14,7 +14,7 @@ import { invitesSentToday, queueInvite } from "./outbox";
 import { Friend, FriendInvite, MediaRef, FriendStatus, NewFriend, ProfilePicture, Socials } from "./models";
 import { circleCol, friendRequestCol, messageCol, userDoc } from "./paths";
 import { readAvatar } from "./avatar";
-import { deleteObject } from "./sf-cache";
+import { deleteObjects } from "./sf-cache";
 import { nameOf, sendPush } from "./push";
 import { findAccounts, signalRefsOf, writeSignal } from "./signals";
 import {
@@ -61,6 +61,7 @@ function toJson(doc: FirebaseFirestore.DocumentSnapshot): Friend {
     status: (["confirmed", "rejected"].includes(data.status) ? data.status : "pending") as FriendStatus,
     invited: Boolean(data.linkedUid), // true = the friend has a Seven Friends account and got a request
     waiting: Boolean(data.waitingForSeat), // true = their list is full: I am on their waiting list
+    asleep: data.asleep === true, // true = on my sleep list (no seat)
     incoming: Boolean(data.incomingRequestId), // true = THEY invited ME; I can confirm
     requestId: (data.incomingRequestId as string | undefined) ?? null,
     createdAt: data.createdAt instanceof Timestamp ? data.createdAt.toDate().toISOString() : null,
@@ -163,7 +164,7 @@ friendsRouter.post(
     const ref = col.doc();
     const added = await getFirestore().runTransaction(async (tx) => {
       const existing = await tx.get(col);
-      if (existing.size >= MAX_FRIENDS) return false;
+      if (existing.docs.filter((d) => d.data().asleep !== true).length >= MAX_FRIENDS) return false; // friends on the sleep list have no seat
       tx.set(ref, {
         ...data,
         ...keys,
@@ -195,6 +196,42 @@ friendsRouter.post(
     }
     const saved = await ref.get();
     res.status(201).json(await withUnverified(toJson(saved), saved.data(), (res.locals.token as DecodedIdToken).uid));
+  }),
+);
+
+/**
+ * Put a friend to sleep or wake them up: `{ asleep: true | false }`. A sleeping friend has no seat (the seat is free for somebody
+ * else, also for a request that waits for one), but the connection, the conversation and its files are kept. Waking needs a free seat.
+ */
+friendsRouter.post(
+  "/:friendId/sleep",
+  asyncHandler(async (req, res) => {
+    const asleep = (req.body ?? {}).asleep;
+    if (typeof asleep !== "boolean") {
+      res.status(400).json({ error: "asleep must be true or false" });
+      return;
+    }
+    const col = friendCol(res);
+    const ref = col.doc(req.params.friendId);
+    const result = await getFirestore().runTransaction(async (tx) => {
+      const all = await tx.get(col);
+      const entry = all.docs.find((d) => d.id === ref.id);
+      if (!entry) return "missing" as const;
+      if ((entry.data().asleep === true) === asleep) return "ok" as const; // nothing to change
+      if (!asleep && all.docs.filter((d) => d.data().asleep !== true).length >= MAX_FRIENDS) return "full" as const;
+      tx.update(ref, { asleep });
+      return "ok" as const;
+    });
+    if (result === "missing") {
+      res.status(404).json({ error: "Friend not found" });
+      return;
+    }
+    if (result === "full") {
+      res.status(409).json({ error: "All your seats are taken. Free a seat first." });
+      return;
+    }
+    const saved = await ref.get();
+    res.json(await withUnverified(toJson(saved), saved.data(), uidOfRequest(res)));
   }),
 );
 
@@ -278,8 +315,16 @@ friendsRouter.delete(
     const id = req.params.friendId;
     const ref = friendCol(res).doc(id);
 
+    // The files of the conversation go FIRST, before the transaction: if the database delete fails they are wiped anyway.
+    const before = (await ref.get()).data();
+    if (before) {
+      const people = before.linkedUid ? [uid, before.linkedUid as string] : [uid];
+      const feeds = await Promise.all(people.map((p) => messageCol(p).where("connectionId", "==", id).get()));
+      await deleteObjects(feeds.flatMap((feed) => feed.docs.flatMap((d) => (d.data().media as MediaRef | undefined) ?? [])));
+    }
+
     let endedWith: string | null = null; // a confirmed friend, who is told
-    let files: MediaRef[] = []; // the files of the conversation
+    let files: MediaRef[] = []; // files of messages that arrived while the transaction was being prepared (a second sweep)
     await getFirestore().runTransaction(async (tx) => {
       endedWith = null;
       files = [];
@@ -306,7 +351,7 @@ friendsRouter.delete(
       feeds.forEach((feed) => feed.docs.forEach((d) => tx.delete(d.ref))); // its message feed, on both sides
       files = feeds.flatMap((feed) => feed.docs.flatMap((d) => (d.data().media as MediaRef | undefined) ?? []));
     });
-    for (const file of new Map(files.map((f) => [f.objectId, f])).values()) await deleteObject(file.ownerId, file.objectId); // both copies of a message name the same file
+    await deleteObjects(files);
     if (endedWith) {
       const name = await nameOf(uid, res.locals.token as DecodedIdToken);
       await sendPush(endedWith, { id: `removed-${id}`, title: `${name} removed the friendship`, body: "The conversation is deleted for both of you.", url: "/friends" });

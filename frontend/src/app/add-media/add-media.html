@@ -24,14 +24,14 @@
     </p>
     @if (nativeCapture) {
       <!-- the camera app of the phone (Android and iPhone) -->
-      <label class="btn btn-primary btn-lg" [class.disabled]="working()">
+      <label class="btn btn-primary" [class.disabled]="working()">
         {{ text.take }}
         <input type="file" [accept]="kind + '/*'" capture="environment" hidden [disabled]="!!working()" (change)="onFile($event)" />
       </label>
     } @else if (pageCamera) {
-      <button type="button" class="btn btn-primary btn-lg" [disabled]="!!working()" (click)="cameraOpen.set(true)">{{ text.take }}</button>
+      <button type="button" class="btn btn-primary" [disabled]="!!working()" (click)="cameraOpen.set(true)">{{ text.take }}</button>
     }
-    <label class="btn btn-lg" [class.btn-outline-primary]="nativeCapture || pageCamera" [class.btn-primary]="!nativeCapture && !pageCamera" [class.disabled]="working()">
+    <label class="btn" [class.btn-outline-primary]="nativeCapture || pageCamera" [class.btn-primary]="!nativeCapture && !pageCamera" [class.disabled]="working()">
       {{ text.choose }}
       <input type="file" [accept]="kind + '/*'" hidden [disabled]="!!working()" (change)="onFile($event)" />
     </label>
@@ -39,7 +39,7 @@
       <p class="sf-hint text-center m-0" role="status">{{ what }}</p>
     }
     @if (error()) {
-      <div class="alert alert-danger py-2 m-0" role="alert">{{ error() }}</div>
+      <div class="alert alert-danger" role="alert">{{ error() }}</div>
     }
     <a [routerLink]="['/friends', friendId]" class="btn btn-light">Cancel</a>
   } @else {
@@ -62,11 +62,11 @@
       <textarea appClear class="form-control" rows="2" maxlength="500" [value]="caption()" (input)="caption.set($any($event.target).value)" [disabled]="!!working()"></textarea>
     </label>
     @if (error()) {
-      <div class="alert alert-danger py-2 m-0" role="alert">{{ error() }}</div>
+      <div class="alert alert-danger" role="alert">{{ error() }}</div>
     }
     <div class="d-flex gap-2">
-      <a [routerLink]="['/friends', friendId]" class="btn btn-light btn-lg flex-fill" [class.disabled]="working()">Cancel</a>
-      <button type="button" class="btn btn-primary btn-lg flex-fill" [disabled]="!!working()" (click)="send()">{{ working() ?? 'Send' }}</button>
+      <a [routerLink]="['/friends', friendId]" class="btn btn-light flex-fill" [class.disabled]="working()">Cancel</a>
+      <button type="button" class="btn btn-primary flex-fill" [disabled]="!!working()" (click)="send()">{{ working() ?? 'Send' }}</button>
     </div>
     <button type="button" class="btn btn-link" [disabled]="!!working()" (click)="startAgain()">{{ text.another }}</button>
   }

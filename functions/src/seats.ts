@@ -73,7 +73,7 @@ export function ensureSeat(
     return "ok";
   }
 
-  if (mySnap.size >= MAX_FRIENDS) return "full";
+  if (mySnap.docs.filter((d) => d.data().asleep !== true).length >= MAX_FRIENDS) return "full"; // friends on the sleep list have no seat
 
   tx.set(myFriends.doc(requestId), {
     ...entryFromRequester(requester, request),

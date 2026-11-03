@@ -1,5 +1,8 @@
-<main class="sf-page sf-page-first">
-  <h1 class="visually-hidden">Profile</h1>
+<header class="sf-bar">
+  <h1 class="sf-bar-title">Profile</h1>
+</header>
+
+<main class="sf-page">
 
   <!-- Everything on this page saves itself -->
   <p class="sf-status" role="status" aria-live="polite" [class.text-danger]="state() === 'error'">
@@ -9,12 +12,12 @@
       @case ('saved') { All changes saved }
       @case ('error') {
         {{ error() }}
-        <button type="button" class="btn btn-link p-0 align-baseline fw-semibold" (click)="retry()">Try again</button>
+        <button type="button" class="btn btn-link p-0 align-baseline" (click)="retry()">Try again</button>
       }
     }
   </p>
 
-  <div class="card border-0 shadow-sm">
+  <div class="card">
     <div class="card-body text-center">
       @if (picture(); as uploaded) {
         <img class="sf-photo" [src]="uploaded" alt="" />
@@ -62,7 +65,7 @@
   <p class="sf-hint mt-3 mb-0">Your mood (your friends see it)</p>
   <app-mood-editor class="d-block" />
 
-  <ul class="list-group mt-3 border-0 shadow-sm sf-fs-description">
+  <ul class="list-group mt-3 sf-fs-description">
     <li class="list-group-item d-flex justify-content-between">
       <span class="text-secondary">Signed in with</span><span>{{ provider() }}</span>
     </li>
@@ -73,7 +76,7 @@
     }
   </ul>
 
-  <div class="card border-0 shadow-sm mt-3">
+  <div class="card mt-3">
     <div class="card-body vstack gap-2">
       @if (user()?.email) {
         <div class="d-grid gap-1">
@@ -144,7 +147,7 @@
   </div>
 
   @if (!app.installed()) {
-    <div class="card border-0 shadow-sm mt-3">
+    <div class="card mt-3">
       <div class="card-body vstack gap-2">
         <h2 class="m-0">Install the app</h2>
         <p class="small text-secondary m-0">Get the icon in your app menu, open the app full screen, and never miss a friend.</p>
@@ -166,7 +169,7 @@
     </div>
   }
 
-  <div class="card border-danger-subtle shadow-sm mt-3 mb-3">
+  <div class="card border-danger-subtle mt-3 mb-3">
     <div class="card-body vstack gap-2">
       <h2 class="m-0 text-danger">Delete my account</h2>
       <p class="small text-secondary m-0">Erases you, your friendships and all messages for good.</p>

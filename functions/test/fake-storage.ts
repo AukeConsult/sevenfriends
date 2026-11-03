@@ -63,7 +63,3 @@ export const fakeBucket = {
   },
 };
 
-/** pretend `owner` already keeps `bytes` of video (without really holding that many bytes), for the quota test */
-export function stuffStorage(owner: string, bytes: number) {
-  objects.set(`sf-cache/${owner}/stuffing`, { data: Buffer.alloc(0), metadata: { metadata: { kind: "video" }, size: String(bytes), contentType: "video/mp4" } });
-}

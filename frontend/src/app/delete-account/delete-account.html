@@ -4,7 +4,7 @@
 </header>
 
 <main class="sf-narrow">
-  <div class="alert alert-danger m-0" role="alert">
+  <div class="alert alert-danger" role="alert">
     <strong>This cannot be undone.</strong> You will be erased from Seven Friends, completely.
   </div>
 
@@ -19,17 +19,17 @@
 
   <form class="vstack gap-2" (submit)="$event.preventDefault(); erase()">
     <label class="d-grid gap-1"><span class="form-label small text-secondary m-0">Type {{ word }} to confirm</span>
-      <input type="text" class="form-control form-control-lg" [value]="typed()" (input)="typed.set($any($event.target).value)"
+      <input type="text" class="form-control" [value]="typed()" (input)="typed.set($any($event.target).value)"
              autocomplete="off" autocapitalize="characters" [disabled]="busy()" />
     </label>
 
     @if (error()) {
-      <div class="alert alert-danger py-2 m-0" role="alert">{{ error() }}</div>
+      <div class="alert alert-danger" role="alert">{{ error() }}</div>
     }
 
     <div class="d-flex gap-2">
-      <a routerLink="/profile" class="btn btn-light btn-lg flex-fill">Cancel</a>
-      <button type="submit" class="btn btn-danger btn-lg flex-fill" [disabled]="!confirmed() || busy()">
+      <a routerLink="/profile" class="btn btn-light flex-fill">Cancel</a>
+      <button type="submit" class="btn btn-danger flex-fill" [disabled]="!confirmed() || busy()">
         {{ busy() ? 'Deleting…' : 'Delete everything' }}
       </button>
     </div>

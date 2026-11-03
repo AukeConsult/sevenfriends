@@ -30,11 +30,13 @@ export class Friends {
   protected readonly networks = SOCIAL_NETWORKS;
   /** incoming requests that wait for a free seat (shown on the Pending page) */
   protected readonly waiting = computed(() => this.friendsService.requests().filter((r) => !r.seated).length);
-  protected readonly filled = computed(() => this.friendsService.friends().length);
+  protected readonly filled = computed(() => this.friendsService.awake().length);
+  /** friends on the sleep list (the last row opens it) */
+  protected readonly sleeping = computed(() => this.friendsService.sleeping().length);
   protected readonly slots = computed<FriendSlot[]>(() =>
     Array.from({ length: MAX_FRIENDS }, (_, i) => ({
       position: i + 1,
-      friend: this.friendsService.friends()[i] ?? null,
+      friend: this.friendsService.awake()[i] ?? null,
     })),
   );
 
@@ -109,7 +111,15 @@ export class Friends {
     this.deleting.set(null);
   }
 
+  /** A confirmed friend is put to sleep (the conversation is kept); anything else (pending, rejected) is deleted. */
+  protected sleepable(friend: Friend): boolean {
+    return friend.status === 'confirmed';
+  }
+
   protected deleteMessage(friend: Friend): string {
+    if (this.sleepable(friend)) {
+      return `Put ${friend.name} to sleep? ${friend.name} leaves your list and the seat is free again. Your conversation is kept, and you can wake ${friend.name} up from the sleep list.`;
+    }
     return friend.invited || friend.incoming
       ? `Delete ${friend.name}? This removes the connection from your list and from theirs.`
       : `Remove ${friend.name} from your circle?`;
@@ -118,7 +128,8 @@ export class Friends {
   protected async remove(friend: Friend): Promise<void> {
     this.deleteBusy.set(true);
     try {
-      await this.friendsService.remove(friend.id);
+      if (this.sleepable(friend)) await this.friendsService.sleep(friend.id, true);
+      else await this.friendsService.remove(friend.id);
       this.deleting.set(null);
       await this.reload(); // a freed seat is given to the next waiting request
     } catch (err: any) {

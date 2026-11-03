@@ -1,4 +1,4 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
 import { ApiError, ApiService } from './api.service';
 import { AcceptResult, Circle, Friend, FriendRequest, NewFriend } from '../models';
 
@@ -8,6 +8,10 @@ export class FriendsService {
 
   readonly circle = signal<Circle | null>(null);
   readonly friends = signal<Friend[]>([]);
+  /** the friends in a seat (all but the sleep list) */
+  readonly awake = computed(() => this.friends().filter((f) => !f.asleep));
+  /** the sleep list */
+  readonly sleeping = computed(() => this.friends().filter((f) => f.asleep));
   readonly requests = signal<FriendRequest[]>([]);
 
   /** Loads the user's circle (the first one, i.e. the default) and its friends. */
@@ -60,6 +64,13 @@ export class FriendsService {
     const sent = await this.api.request<Friend>(`${this.friendsPath()}/${id}/invite`, { method: 'POST' });
     this.friends.update((list) => list.map((f) => (f.id === id ? sent : f)));
     return sent;
+  }
+
+  /** Put a friend on the sleep list (no seat, conversation kept) or wake them up (needs a free seat). */
+  async sleep(id: string, asleep: boolean): Promise<Friend> {
+    const saved = await this.api.request<Friend>(`${this.friendsPath()}/${id}/sleep`, { method: 'POST', body: JSON.stringify({ asleep }) });
+    this.friends.update((list) => list.map((f) => (f.id === id ? saved : f)));
+    return saved;
   }
 
   async remove(id: string): Promise<void> {

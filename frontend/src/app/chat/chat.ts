@@ -9,6 +9,7 @@ import { MediaAudio } from '../media-audio/media-audio';
 import { MediaImage } from '../media-image/media-image';
 import { MediaVideo } from '../media-video/media-video';
 import { ChatService } from '../core/chat.service';
+import { MediaService } from '../core/media.service';
 import { EMOJIS } from '../core/emojis';
 import { FriendsService } from '../core/friends.service';
 import { moodIcon, moodLabel } from '../core/moods';
@@ -37,6 +38,7 @@ function readNewestFirst(): boolean {
 })
 export class Chat {
   private readonly chat = inject(ChatService);
+  private readonly mediaService = inject(MediaService);
   private readonly realtime = inject(RealtimeService);
   private readonly friendsService = inject(FriendsService);
   private lastChange = this.realtime.feedChanged()?.seq ?? 0;
@@ -54,7 +56,7 @@ export class Chat {
   /** this friend, from the list (for the mood) */
   protected readonly friend = computed(() => this.friendsService.friends().find((f) => f.id === this.friendId) ?? null);
   /** the seat of this friend (1-7): its icon friend{seat}.svg is shown in the header; 0 while the list is not loaded */
-  protected readonly seat = computed(() => this.friendsService.friends().findIndex((f) => f.id === this.friendId) + 1);
+  protected readonly seat = computed(() => this.friendsService.awake().findIndex((f) => f.id === this.friendId) + 1);
   protected readonly messages = signal<ChatMessage[]>([]);
   /** false = oldest first (the default); true = newest first. Remembered on this device. */
   protected readonly sortDesc = signal(readNewestFirst());
@@ -182,6 +184,21 @@ export class Chat {
       else if (first) this.error.set(err.message ?? 'Could not load the conversation');
     } finally {
       this.loaded.set(true);
+    }
+  }
+
+  /** Saves the image, video or voice message of a message on this device (works for my own and for the friend's). */
+  protected async download(media: NonNullable<ChatMessage['media']>): Promise<void> {
+    try {
+      const file = await this.mediaService.object(media.ownerId, media.objectId);
+      const name = file.name || 'file';
+      const extension = file.type.split('/')[1]?.split(';')[0].replace('jpeg', 'jpg').replace('quicktime', 'mov');
+      const link = document.createElement('a');
+      link.href = file.url;
+      link.download = /\.[A-Za-z0-9]{2,5}$/.test(name) || !extension ? name : `${name}.${extension}`;
+      link.click();
+    } catch (err: any) {
+      this.error.set(err.message ?? 'Could not download the file');
     }
   }
 

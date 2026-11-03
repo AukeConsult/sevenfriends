@@ -19,7 +19,7 @@ export function cameraProblem(err: unknown): string {
 
 /**
  * The camera of a computer, on the page (`getUserMedia`; a phone uses the camera app instead, see the add-media page).
- * In `photo` mode there is a shutter; in `video` mode the film is recorded straight into a small file (at most 30 seconds,
+ * In `photo` mode there is a shutter; in `video` mode the film is recorded straight into a small file (at most 2 minutes,
  * it stops by itself). The camera is stopped (its light goes out) when this is removed from the page.
  */
 @Component({

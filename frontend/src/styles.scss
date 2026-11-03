@@ -12,13 +12,19 @@
 
 :root {
   // ---- Brand ----
-  --sf-primary: #4f46e5;
-  --sf-primary-2: #7c3aed;
-  --sf-bg: #f6f7fb;
+  --sf-primary: #2f4b7c; // a soft Norwegian navy (the flag's blue, calmer): buttons, links, my bubbles (white text on it 8.7:1)
+  --sf-red: #ba0c2f; // the red of the Norwegian flag: only small accents (new-message badges, danger), never the main buttons
+  --sf-primary-2: #4a76c4; // the lighter end of the logo gradient and of my message bubbles
+  // The colours of the page: a slightly yellow background, headers a tint more red (orange) of the same yellow.
+  // Cards, fields and the message field stay white, so they stand out from the yellow.
+  --sf-bg: #fffbe9; // the page: slightly yellow
+  --sf-header: #fde6c6; // the header bars: the same yellow, a tint more red
+  --sf-header-border: #f1cfa0;
   --sf-card: #ffffff;
   --sf-text: #1f2937;
-  --sf-muted: #6b7280;
-  --sf-border: #e5e7eb;
+  --sf-muted: #5b6270; // readable on the yellow background and on the header
+  --sf-border: #eadfc4; // lines and frames: a warm grey instead of a cold one
+  --sf-surface: #fff6d8; // hover and quiet areas
 
   // ---- The 4 standard font sizes (relative to the root font size below). NO other font size is used in the app:
   //      pick one of these four (or the matching utility class .sf-fs-description / -text / -title / -heading).
@@ -32,24 +38,29 @@
   --sf-media-max: 640px; // the widest an image, video or audio in a message gets: a mobile screen (pixels, so it does not grow with the text size on wide screens)
   --sf-gutter: 1rem; // side padding of pages
   --sf-gap: 0.75rem; // space between items
-  --sf-radius: 1rem;
-  --sf-touch: 2.75rem; // minimum tap target
+  --sf-radius: 1.25rem; // rounder corners: friendlier
+  --sf-touch: 2.75rem; // minimum tap target (icon buttons)
+  --sf-control: 3rem; // height of every button and field
+  --sf-control-sm: 2.25rem; // height of the small buttons (in rows)
   --sf-avatar: 2.5rem;
-  --sf-hero-pad: 1.5rem;
   --sf-form-max: 28rem; // width of forms (login)
 
   // ---- Bootstrap theme ----
   --bs-primary: var(--sf-primary);
-  --bs-primary-rgb: 79, 70, 229;
-  --bs-primary-bg-subtle: #e0e7ff;
+  --bs-primary-rgb: 47, 75, 124;
+  --bs-danger: #ba0c2f;
+  --bs-danger-rgb: 186, 12, 47;
+  --bs-primary-bg-subtle: #dbe4f3; // a light tint of the brand colour (chosen items, the editing bar)
   --bs-link-color: var(--sf-primary);
-  --bs-link-hover-color: #4338ca;
+  --bs-link-hover-color: #223a63;
   --bs-body-bg: var(--sf-bg);
   --bs-body-color: var(--sf-text);
   --bs-body-font-size: var(--sf-fs-text);
   --bs-border-radius: 0.75rem;
   --bs-border-radius-lg: var(--sf-radius);
   --bs-secondary-color: var(--sf-muted);
+  --bs-border-color: var(--sf-border);
+  --bs-focus-ring-color: rgba(47, 75, 124, 0.25);
 }
 
 // Root font size: every rem (Bootstrap + our own) scales with the view size.
@@ -65,7 +76,6 @@ html { font-size: 16px; }
     --sf-gutter: 1.5rem;
     --sf-gap: 1rem;
     --sf-avatar: 3rem;
-    --sf-hero-pad: 2rem;
     --sf-fs-heading: 1.75rem;
   }
 }
@@ -74,7 +84,6 @@ html { font-size: 16px; }
   html { font-size: 18px; }
   :root {
     --sf-gutter: 2rem;
-    --sf-hero-pad: 2.5rem;
     --sf-avatar: 3.25rem;
   }
 }
@@ -98,13 +107,100 @@ h4, .h4, h5, .h5, h6, .h6 { font-size: var(--sf-fs-title); }
 .sf-fs-heading { font-size: var(--sf-fs-heading); }
 
 // Bootstrap pieces that bring their own font sizes use the 4 standard ones too
-.btn-sm, .badge, .form-text, .invalid-feedback, .valid-feedback, .dropdown-menu, code { font-size: var(--sf-fs-description); }
-.btn-lg, .form-control-lg, .form-select-lg { --bs-btn-font-size: var(--sf-fs-title); font-size: var(--sf-fs-title); }
+.badge, .form-text, .invalid-feedback, .valid-feedback, .dropdown-menu, code { font-size: var(--sf-fs-description); }
 
-// Comfortable tap targets for all Bootstrap buttons and inputs
-.btn { min-height: var(--sf-touch); display: inline-flex; align-items: center; justify-content: center; }
-.btn-sm { min-height: var(--sf-touch); }
-.form-control { min-height: var(--sf-touch); font-size: max(16px, var(--sf-fs-text)); } // 16px+ avoids iOS zoom
+// ONE size for buttons and fields everywhere (there is no -lg): normal = 48 px, small (.btn-sm, in rows) = 36 px.
+// All buttons are pills. Fields have the same height as the buttons, so a field and its button line up.
+.btn {
+  min-height: var(--sf-control);
+  padding-inline: 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  font-size: var(--sf-fs-text);
+  font-weight: 500;
+}
+.btn-sm { min-height: var(--sf-control-sm); padding-inline: 1rem; font-size: var(--sf-fs-description); }
+.btn-link { padding-inline: 0.5rem; font-weight: 600; text-decoration: none; &:hover { text-decoration: underline; } }
+// pressing something moves it a little: it feels alive
+.btn, .sf-icon-btn, .sf-slot, .sf-menu-item, .sf-choice { transition: transform 0.12s ease, background-color 0.15s ease, color 0.15s ease; }
+.btn:active:not(:disabled), .sf-icon-btn:active, .sf-slot:active, .sf-choice:active { transform: scale(0.96); }
+@media (prefers-reduced-motion: reduce) { .btn, .sf-icon-btn, .sf-slot, .sf-menu-item, .sf-choice { transition: none; } .btn:active, .sf-icon-btn:active, .sf-slot:active, .sf-choice:active { transform: none; } }
+// the quiet button: white with a line (cancel, back, secondary choices)
+.btn-light, .btn-outline-secondary {
+  --bs-btn-bg: var(--sf-card);
+  --bs-btn-color: var(--sf-text);
+  --bs-btn-border-color: var(--sf-border);
+  --bs-btn-hover-bg: var(--sf-surface);
+  --bs-btn-hover-color: var(--sf-text);
+  --bs-btn-hover-border-color: var(--sf-border);
+  --bs-btn-active-bg: var(--sf-surface);
+  --bs-btn-active-color: var(--sf-text);
+  --bs-btn-active-border-color: var(--sf-border);
+  --bs-btn-disabled-bg: var(--sf-card);
+  --bs-btn-disabled-color: var(--sf-muted);
+  --bs-btn-disabled-border-color: var(--sf-border);
+}
+.form-control, .form-select {
+  min-height: var(--sf-control);
+  border-color: var(--sf-border);
+  border-radius: 0.75rem;
+  background-color: var(--sf-card);
+  font-size: max(16px, var(--sf-fs-text)); // 16px+ avoids iOS zoom
+}
+textarea.form-control { min-height: var(--sf-control); }
+// the flag red: danger buttons and badges (small accents)
+.btn-danger {
+  --bs-btn-bg: var(--sf-red);
+  --bs-btn-border-color: var(--sf-red);
+  --bs-btn-hover-bg: #96092a;
+  --bs-btn-hover-border-color: #96092a;
+  --bs-btn-active-bg: #7d0824;
+  --bs-btn-active-border-color: #7d0824;
+  --bs-btn-disabled-bg: var(--sf-red);
+  --bs-btn-disabled-border-color: var(--sf-red);
+}
+.btn-outline-danger {
+  --bs-btn-color: var(--sf-red);
+  --bs-btn-border-color: var(--sf-red);
+  --bs-btn-hover-bg: var(--sf-red);
+  --bs-btn-hover-border-color: var(--sf-red);
+  --bs-btn-active-bg: #96092a;
+  --bs-btn-active-border-color: #96092a;
+  --bs-btn-disabled-color: var(--sf-red);
+  --bs-btn-disabled-border-color: var(--sf-red);
+}
+// Bootstrap paints these pieces with its own fixed blue, not with the theme colour: they take the brand colour here
+.btn-outline-primary {
+  --bs-btn-color: var(--sf-primary);
+  --bs-btn-border-color: var(--sf-primary);
+  --bs-btn-hover-bg: var(--sf-primary);
+  --bs-btn-hover-border-color: var(--sf-primary);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-active-bg: #223a63;
+  --bs-btn-active-border-color: #223a63;
+  --bs-btn-active-color: #fff;
+  --bs-btn-disabled-color: var(--sf-primary);
+  --bs-btn-disabled-border-color: var(--sf-primary);
+}
+.form-control:focus, .form-select:focus { border-color: var(--sf-primary); box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.2); }
+.btn:focus-visible, .form-check-input:focus, .form-range:focus::-webkit-slider-thumb { box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.3); }
+.form-check-input:checked, .form-check-input[type='checkbox']:indeterminate { background-color: var(--sf-primary); border-color: var(--sf-primary); }
+.form-check-input:focus { border-color: var(--sf-primary); }
+.form-range::-webkit-slider-thumb { background-color: var(--sf-primary); }
+.form-range::-moz-range-thumb { background-color: var(--sf-primary); }
+.form-range::-webkit-slider-thumb:active { background-color: #223a63; }
+.form-control:disabled, .form-control[readonly], .form-select:disabled { background-color: var(--sf-surface); color: var(--sf-text); opacity: 1; } // a field that cannot be changed: a quiet yellow, still readable
+// the other Bootstrap pieces take the same lines, corners and spacing
+.alert { --bs-alert-padding-y: 0.625rem; --bs-alert-padding-x: 0.875rem; --bs-alert-margin-bottom: 0; --bs-alert-border-radius: 0.75rem; }
+// alert colours that sit well on the yellow background (info = a quiet sand, warning = amber with a clear line)
+.alert-info { --bs-alert-bg: #f4eedc; --bs-alert-border-color: #e0d4b2; --bs-alert-color: #4a3f22; --bs-alert-link-color: #4a3f22; }
+.alert-warning { --bs-alert-bg: #ffefbf; --bs-alert-border-color: #ecc866; --bs-alert-color: #664700; --bs-alert-link-color: #664700; }
+.alert-success { --bs-alert-bg: #e3f6e5; --bs-alert-border-color: #b5e0ba; --bs-alert-color: #1b5e2b; }
+.alert-danger { --bs-alert-bg: #fde4e4; --bs-alert-border-color: #f3b7b7; --bs-alert-color: #7f1d1d; }
+.card { --bs-card-border-color: var(--sf-border); --bs-card-bg: var(--sf-card); --bs-card-border-radius: var(--sf-radius); box-shadow: 0 2px 10px rgba(var(--bs-primary-rgb), 0.07); } // a soft lift, in the colour of the brand
+.list-group { --bs-list-group-border-color: var(--sf-border); --bs-list-group-bg: var(--sf-card); --bs-list-group-border-radius: var(--sf-radius); }
 
 // Radio buttons, checkboxes and switches stay clearly visible when they are not selected (Bootstrap's default border is very faint)
 .form-check-input:not(:checked) { border-color: #6b7280; border-width: 2px; background-color: #fff; }
@@ -113,10 +209,10 @@ h4, .h4, h5, .h5, h6, .h6 { font-size: var(--sf-fs-title); }
 .btn-primary {
   --bs-btn-bg: var(--sf-primary);
   --bs-btn-border-color: var(--sf-primary);
-  --bs-btn-hover-bg: #4338ca;
-  --bs-btn-hover-border-color: #4338ca;
-  --bs-btn-active-bg: #3730a3;
-  --bs-btn-active-border-color: #3730a3;
+  --bs-btn-hover-bg: #223a63;
+  --bs-btn-hover-border-color: #223a63;
+  --bs-btn-active-bg: #1a2d4d;
+  --bs-btn-active-border-color: #1a2d4d;
   --bs-btn-disabled-bg: var(--sf-primary);
   --bs-btn-disabled-border-color: var(--sf-primary);
 }
@@ -131,7 +227,7 @@ app-root {
 }
 
 @media (min-width: 1000px) {
-  html, body { background: #e9ebf3; } // shows the edges of the 1000px view
+  html, body { background: #efe5cc; } // shows the edges of the 1000px view
   app-root { box-shadow: 0 0 24px rgba(0, 0, 0, 0.08); }
 }
 
@@ -143,11 +239,15 @@ app-root {
   z-index: 3;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: calc(0.5rem + env(safe-area-inset-top)) var(--sf-gutter) 0.5rem 0.25rem;
-  background: var(--sf-card);
-  border-bottom: 1px solid var(--sf-border);
+  gap: 0.25rem;
+  min-height: calc(3.25rem + env(safe-area-inset-top));
+  padding: calc(0.375rem + env(safe-area-inset-top)) calc(var(--sf-gutter) - 0.25rem) 0.375rem 0;
+  background: var(--sf-header);
+  border-bottom: 1px solid var(--sf-header-border);
+  box-shadow: 0 3px 12px rgba(120, 70, 20, 0.1);
+  > :first-child:not(.sf-back) { margin-left: calc(var(--sf-gutter) - 0.25rem); } // a page without a back arrow: the title starts at the page margin
 }
+.sf-bar-extra { margin-left: auto; } // something on the right of the title (a count, a button)
 
 .sf-back {
   width: var(--sf-touch);
@@ -160,7 +260,7 @@ app-root {
   text-decoration: none;
 }
 
-.sf-bar-title { margin: 0; font-size: var(--sf-fs-title); font-weight: 600; }
+.sf-bar-title { margin: 0; font-size: var(--sf-fs-title); font-weight: 700; }
 
 .sf-narrow {
   display: flex;
@@ -184,7 +284,6 @@ router-outlet + * { display: block; min-height: 100dvh; }
   padding: 1.5rem var(--sf-gutter) calc(4.5rem + env(safe-area-inset-bottom));
 }
 .sf-page { max-width: 40rem; margin: 0 auto; }
-.sf-page-first { padding-top: calc(1.5rem + env(safe-area-inset-top)); } // no bar above: keep clear of the notch
 .sf-content { padding-top: 0.75rem; }
 .sf-feed { display: flex; flex-direction: column; gap: 0.5rem; padding-top: 0.75rem; padding-bottom: calc(3.5rem + 4rem + env(safe-area-inset-bottom)); } // + the composer
 .sf-landing {
@@ -194,26 +293,29 @@ router-outlet + * { display: block; min-height: 100dvh; }
   gap: 2rem;
   padding: calc(3rem + env(safe-area-inset-top)) var(--sf-gutter) calc(2rem + env(safe-area-inset-bottom));
 }
+// Home: logo and name in the page itself (no header bar)
+.sf-home-brand {
+  display: flex; align-items: center; justify-content: center; gap: 0.625rem; margin-bottom: 0.25rem;
+  .sf-logo { margin: 0; width: 2.25rem; height: 2.25rem; font-size: 1.25rem; }
+  h1 { margin: 0; font-size: 1.375rem; font-weight: 800; color: var(--sf-primary); }
+}
+// Login hero: tinted band running edge to edge (no rounded corners), logo, name, tagline, seven dots
+.sf-hero {
+  margin: calc(-3rem - env(safe-area-inset-top)) calc(-1 * var(--sf-gutter)) 0;
+  padding: calc(3rem + env(safe-area-inset-top)) var(--sf-gutter) 2rem;
+  background: linear-gradient(180deg, var(--sf-header) 0%, var(--sf-bg) 100%);
+  h1 { font-size: 2rem; font-weight: 800; color: var(--sf-primary); }
+}
+.sf-hero-tag { color: var(--sf-muted); }
+.sf-hero-dots {
+  display: flex; justify-content: center; gap: 0.5rem; margin-top: 1.25rem;
+  i { width: 0.75rem; height: 0.75rem; border-radius: 50%; background: var(--sf-primary); opacity: 0.85;
+    &:nth-child(odd) { background: var(--sf-red); }
+    &:nth-child(4) { background: #fff; box-shadow: inset 0 0 0 2px var(--sf-primary); } }
+}
 .sf-form-width { max-width: var(--sf-form-max); margin: 0 auto; width: 100%; }
 
 // ---- Headings, texts, sections ----
-.sf-heading { margin: 0 0 0.5rem; font-size: var(--sf-fs-heading); font-weight: 600; }
-.sf-page-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0.75rem;
-  padding: calc(1.25rem + env(safe-area-inset-top)) var(--sf-gutter) 0;
-  h1 { margin: 0; font-size: var(--sf-fs-heading); font-weight: 600; }
-}
-.sf-hero {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.375rem;
-  text-align: center;
-  padding: calc(1.25rem + env(safe-area-inset-top)) var(--sf-gutter) 0.5rem;
-}
 .sf-section {
   margin: 1.5rem 0 0.25rem;
   font-size: var(--sf-fs-description);
@@ -257,6 +359,7 @@ router-outlet + * { display: block; min-height: 100dvh; }
   font-weight: 700;
   line-height: 1;
 }
+.sf-logo-sm { width: 2rem; height: 2rem; margin: 0; border-radius: 0.5rem; font-size: 1.125rem; } // in the header bar
 .sf-logo-lg { width: 5.5rem; height: 5.5rem; border-radius: 1.75rem; font-size: 2.75rem; }
 
 // ---- Lists (rows with a text column and buttons) ----
@@ -278,7 +381,7 @@ router-outlet + * { display: block; min-height: 100dvh; }
   &:last-child { border-bottom: 0; }
 }
 .sf-message-head { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; strong { flex: 1; min-width: 0; } }
-.sf-message-actions { display: flex; flex: none; gap: 0.5rem; .btn { min-height: 2.25rem; padding-top: 0.125rem; padding-bottom: 0.125rem; } } // smaller than the usual 44 px buttons (the global rule gives every button a big tap area)
+.sf-message-actions { display: flex; flex: none; gap: 0.5rem; }
 .sf-message-time { color: var(--sf-muted); }
 .sf-list-text {
   flex: 1;
@@ -311,7 +414,7 @@ router-outlet + * { display: block; min-height: 100dvh; }
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: #e0e7ff;
+  background: var(--bs-primary-bg-subtle);
   color: var(--sf-primary);
   font-weight: 600;
   object-fit: cover; // the seat icons (friend1.svg ... friend7.svg) fill the circle
@@ -329,7 +432,7 @@ router-outlet + * { display: block; min-height: 100dvh; }
 .sf-photo-initial {
   display: grid;
   place-items: center;
-  background: #e0e7ff;
+  background: var(--bs-primary-bg-subtle);
   color: var(--sf-primary);
   font-size: 2rem;
   font-weight: 600;
@@ -407,6 +510,28 @@ router-outlet + * { display: block; min-height: 100dvh; }
 
 // ---- Bar extras (message feed header) ----
 .sf-bar-text { display: flex; flex-direction: column; min-width: 0; }
+.sf-bar-text strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sf-tool-btn { // an action in the header with a text under its icon, so it is clear what it does
+  flex: none;
+  min-width: 3rem;
+  padding: 0.125rem 0.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  border: 0;
+  border-radius: 0.75rem;
+  background: none;
+  color: var(--sf-text);
+  font-size: var(--sf-fs-description);
+  line-height: 1.1;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  &:hover, &:focus-visible, &[aria-expanded='true'] { background: rgba(255, 255, 255, 0.6); }
+  svg { flex: none; transition: transform 0.2s ease; }
+}
 .sf-mood-line {
   display: flex;
   align-items: center;
@@ -421,12 +546,12 @@ router-outlet + * { display: block; min-height: 100dvh; }
 .sf-message { display: flex; flex-direction: column; align-items: flex-start; max-width: 85%; &.sf-mine { align-self: flex-end; align-items: flex-end; } }
 .sf-bubble {
   padding: 0.5rem 0.75rem;
-  border-radius: 1rem 1rem 1rem 0.25rem;
+  border-radius: 1.25rem 1.25rem 1.25rem 0.25rem;
   background: var(--sf-card);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
   white-space: pre-wrap;
   overflow-wrap: anywhere;
-  .sf-mine & { border-radius: 1rem 1rem 0.25rem 1rem; background: var(--sf-primary); color: #fff; }
+  .sf-mine & { border-radius: 1.25rem 1.25rem 0.25rem 1.25rem; background: linear-gradient(135deg, var(--sf-primary), var(--sf-primary-2)); color: #fff; }
 }
 .sf-composer {
   position: fixed;
@@ -484,7 +609,7 @@ app-camera { display: contents; }
 .sf-media-open { position: absolute; z-index: 1; top: 0.5rem; right: 0.5rem; width: 2rem; height: 2rem; display: grid; place-items: center; border-radius: 50%; background: rgba(0, 0, 0, 0.55); color: #fff; text-decoration: none; font-size: 1.1rem; line-height: 1; }
 .sf-viewer video { display: block; width: 100%; max-height: calc(100dvh - 12rem); background: #000; }
 .sf-media-audio { display: flex; align-items: center; gap: 0.5rem; width: 100%; audio { flex: 1; min-width: 0; height: 2.5rem; } }
-.sf-play-small { position: static; margin: 0; width: 2.25rem; height: 2.25rem; flex: none; background: var(--bs-primary, #4f46e5); }
+.sf-play-small { position: static; margin: 0; width: 2.25rem; height: 2.25rem; flex: none; background: var(--sf-primary); }
 .sf-audio-info { flex: 1; }
 .sf-audio-open { flex: none; width: 2rem; height: 2rem; display: grid; place-items: center; border-radius: 50%; background: rgba(0, 0, 0, 0.12); color: inherit; text-decoration: none; font-size: 1.1rem; line-height: 1; }
 .sf-viewer audio { display: block; width: 100%; }
@@ -502,7 +627,9 @@ app-voice { display: contents; }
   img { display: block; max-width: 100%; max-height: calc(100dvh - 12rem); margin: 0 auto; object-fit: contain; }
 }
 .sf-bubble-tap:focus-visible { outline: 2px solid var(--sf-primary); outline-offset: 2px; }
-.sf-msg-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.25rem; }
+.sf-msg-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 0.375rem; margin-top: 0.25rem;
+  .btn { min-height: 1.75rem; padding: 0 0.75rem; font-size: var(--sf-fs-description); } // small, quiet buttons under a message
+}
 .sf-editing { display: flex; align-items: center; justify-content: space-between; padding: 0.25rem var(--sf-gutter); background: var(--bs-primary-bg-subtle); }
 .sf-composer-field { resize: none; max-height: 8rem; overflow-y: auto; line-height: 1.4; }
 .sf-emoji-toggle { margin: 0; font-size: var(--sf-fs-title); }
@@ -535,7 +662,7 @@ app-voice { display: contents; }
   padding-bottom: env(safe-area-inset-bottom);
   background: var(--sf-card);
   border-top: 1px solid var(--sf-border);
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 -2px 12px rgba(120, 70, 20, 0.08);
 }
 .sf-menu-item, .sf-menu-wrap { flex: 1 1 0; }
 .sf-menu-wrap { position: relative; display: flex; }
@@ -555,7 +682,8 @@ app-voice { display: contents; }
   cursor: pointer;
   &.active { color: var(--sf-primary); font-weight: 600; }
 }
-.sf-menu-icon { font-size: var(--sf-fs-title); line-height: 1; }
+.sf-menu-icon { padding: 0.125rem 1.125rem; border-radius: 999px; font-size: var(--sf-fs-title); line-height: 1; transition: background-color 0.2s ease; }
+.sf-menu-item.active .sf-menu-icon { background: var(--bs-primary-bg-subtle); } // the open tab is marked with a soft pill
 .sf-menu-backdrop { position: fixed; inset: 0; z-index: 4; } // click-away layer behind the open menu
 .sf-dropup { // opens upwards from the Me item
   position: absolute;
@@ -589,10 +717,11 @@ app-voice { display: contents; }
 }
 
 // ---- Friends: slots, card, expandable frames, profile ----
-.sf-slot { min-height: 3.5rem; border: 0; border-radius: var(--sf-radius); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); }
+.sf-slot { min-height: 3.5rem; border: 0; border-radius: var(--sf-radius); box-shadow: 0 2px 10px rgba(var(--bs-primary-rgb), 0.08); }
+.sf-slot-waiting { display: grid; place-items: center; width: 2.5rem; height: 2.5rem; border-radius: 50%; background: var(--sf-surface); font-size: 1.25rem; flex: none; }
 .btn.sf-slot-empty {
   min-height: 3.5rem;
-  border: 2px dashed #c7c9d9;
+  border: 2px dashed #d8c79f;
   border-radius: var(--sf-radius);
   background: transparent;
   color: var(--sf-muted);
@@ -613,7 +742,7 @@ app-voice { display: contents; }
   background: none;
   color: var(--sf-muted);
   cursor: pointer;
-  &:hover, &:focus-visible { background: #e0e7ff; color: var(--sf-primary); }
+  &:hover, &:focus-visible { background: var(--bs-primary-bg-subtle); color: var(--sf-primary); }
 }
 .sf-body { padding-left: 2.5rem; } // details line up under the name (avatar 2rem + gap)
 .sf-spoken { margin-top: 0.125rem; }
@@ -633,12 +762,12 @@ app-voice { display: contents; }
 .sf-confirm { margin-top: 0.25rem; padding: 0.5rem 0.75rem 0.625rem; border: 1px solid #fecaca; border-radius: var(--sf-radius); background: #fef2f2; }
 .sf-confirm-text { margin: 0 0 0.5rem; font-size: var(--sf-fs-description); color: #7f1d1d; }
 .sf-confirm-actions { display: flex; justify-content: flex-end; gap: 0.5rem; }
-.sf-clickable { cursor: pointer; &:hover { background: #fafaff; } &:focus-visible { outline: 2px solid var(--sf-primary); outline-offset: 2px; } }
+.sf-clickable { cursor: pointer; &:hover { background: var(--sf-surface); } &:focus-visible { outline: 2px solid var(--sf-primary); outline-offset: 2px; } }
 .sf-chat {
   margin-right: 0;
   color: var(--sf-primary);
   text-decoration: none;
-  &:hover, &:focus-visible { background: #e0e7ff; color: var(--sf-primary); }
+  &:hover, &:focus-visible { background: var(--bs-primary-bg-subtle); color: var(--sf-primary); }
 }
 .sf-chat-unread { background: var(--sf-primary); color: #fff; &:hover, &:focus-visible { background: var(--sf-primary); color: #fff; } } // a message I have not read: filled
 .sf-mood { flex: none; width: 1.25rem; height: 1.25rem; }
@@ -688,6 +817,7 @@ app-voice { display: contents; }
 // ---- Message feed: header buttons and the delete-several frame ----
 .sf-bar-actions { display: flex; margin-left: auto; }
 .sf-bar-actions .sf-icon-btn { margin: 0; }
+.sf-cleanup-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem 0.75rem; } // the count on the left, the button on the right, on one line
 .sf-cleanup { display: flex; flex-direction: column; gap: 0.5rem; padding: 0.75rem var(--sf-gutter); background: var(--sf-card); border-bottom: 1px solid var(--sf-border); }
 .sf-doomed .sf-bubble { outline: 2px dashed #dc2626; outline-offset: 2px; opacity: 0.7; } // marked by the delete frame: will be deleted
 

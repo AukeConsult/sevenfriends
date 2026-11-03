@@ -1,22 +1,20 @@
-<header class="sf-hero">
-  <div class="sf-logo" aria-hidden="true">7</div>
-  <p class="sf-hint">Stay close to the people who matter most.</p>
-</header>
-
 <main class="sf-page">
-  <h1 class="visually-hidden">Notifications</h1>
+  <div class="sf-home-brand">
+    <div class="sf-logo" aria-hidden="true">7</div>
+    <h1>Seven Friends</h1>
+  </div>
 
   @if (error()) {
-    <div class="alert alert-danger d-flex align-items-center justify-content-between py-2" role="alert">
+    <div class="alert alert-danger d-flex align-items-center justify-content-between" role="alert">
       <span>{{ error() }}</span>
-      <button type="button" class="btn btn-link fw-semibold" (click)="load()">Retry</button>
+      <button type="button" class="btn btn-link" (click)="load()">Retry</button>
     </div>
   }
 
   <app-mood-editor class="d-block mb-3" />
 
   @if (setupMissing().length) {
-    <div class="alert alert-info py-2 d-flex align-items-center justify-content-between gap-2" role="status">
+    <div class="alert alert-info d-flex align-items-center justify-content-between gap-2" role="status">
       <span>
         <strong>Seven Friends is about being there for the people who matter most.</strong>
         Your friends can only reach you if you notice them.
@@ -39,7 +37,7 @@
     </div>
   }
   @if (unverified().length && unverifiedOpen()) {
-    <div id="unverified-note" class="alert alert-warning py-2 d-flex align-items-center justify-content-between gap-2" role="status">
+    <div id="unverified-note" class="alert alert-warning d-flex align-items-center justify-content-between gap-2" role="status">
       <span>
         Your {{ unverified().length === 2 ? 'email and phone are' : unverified()[0] === 'email' ? 'email is' : 'phone is' }} not verified.
         You still receive friend requests, but your friends are told that you have not verified,
@@ -50,7 +48,7 @@
   }
 
   @if (notice(); as n) {
-    <div class="alert py-2" [class.alert-success]="n.kind === 'success'" [class.alert-warning]="n.kind === 'warning'" role="status">
+    <div class="alert" [class.alert-success]="n.kind === 'success'" [class.alert-warning]="n.kind === 'warning'" role="status">
       {{ n.text }}
     </div>
   }
@@ -80,8 +78,8 @@
                 <small class="text-warning-emphasis">Has not verified {{ request.fromUnverified.length === 2 ? 'their email or phone' : request.fromUnverified[0] === 'email' ? 'their email' : 'their phone' }}: we cannot be sure it is really them.</small>
               }
             </span>
-            <button type="button" class="btn btn-primary rounded-pill px-3" (click)="accept(request)">Confirm</button>
-            <button type="button" class="btn btn-outline-secondary rounded-pill px-3" (click)="reject(request)">Reject</button>
+            <button type="button" class="btn btn-primary" (click)="accept(request)">Confirm</button>
+            <button type="button" class="btn btn-outline-secondary" (click)="reject(request)">Reject</button>
           </li>
         }
       </ul>
@@ -106,9 +104,9 @@
               <strong class="sf-ellipsis">{{ message.fromName }}</strong>
               <span class="sf-message-actions">
                 @if (message.connectionId) {
-                  <a [routerLink]="['/friends', message.connectionId]" class="btn btn-primary btn-sm rounded-pill px-3">Open</a>
+                  <a [routerLink]="['/friends', message.connectionId]" class="btn btn-primary btn-sm">Open</a>
                 }
-                <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3" (click)="markRead(message)">Mark read</button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" (click)="markRead(message)">Mark read</button>
               </span>
             </div>
             <span class="sf-wrap">{{ message.text }}</span>

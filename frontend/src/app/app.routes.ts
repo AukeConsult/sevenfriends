@@ -5,6 +5,7 @@ import { AddMedia } from './add-media/add-media';
 import { Chat } from './chat/chat';
 import { DeleteAccount } from './delete-account/delete-account';
 import { Friends } from './friends/friends';
+import { Sleeping } from './sleeping/sleeping';
 import { InviteFriend } from './invite-friend/invite-friend';
 import { Login } from './login/login';
 import { LoginEmail } from './login-email/login-email';
@@ -21,6 +22,7 @@ import { SoundPicker } from './sound-picker/sound-picker';
 export const routes: Routes = [
   { path: '', component: Notifications, canActivate: [authGuard], title: 'Notifications – Seven Friends' },
   { path: 'friends', component: Friends, canActivate: [authGuard], title: 'Friends – Seven Friends' },
+  { path: 'friends/sleeping', component: Sleeping, canActivate: [authGuard], title: 'Sleep list – Seven Friends' },
   { path: 'friends/add', component: AddFriend, canActivate: [authGuard], title: 'Add a friend – Seven Friends' },
   { path: 'friends/:id/invite', component: InviteFriend, canActivate: [authGuard], title: 'Invite a friend – Seven Friends' },
   { path: 'friends/:id/image', component: AddMedia, data: { kind: 'image' }, canActivate: [authGuard], title: 'Send an image – Seven Friends' },

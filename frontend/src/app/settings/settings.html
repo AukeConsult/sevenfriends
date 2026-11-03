@@ -15,7 +15,7 @@
     your choices are saved on your account, so they follow you to every device.
   </p>
 
-  <div class="card border-0 shadow-sm">
+  <div class="card">
     <div class="card-body vstack gap-2">
       <label for="volume" class="d-flex justify-content-between m-0">
         <strong>Volume</strong><span class="text-secondary">{{ sounds.volume() }} %</span>
@@ -27,7 +27,7 @@
   </div>
 
   @for (item of events; track item.event) {
-    <div class="card border-0 shadow-sm">
+    <div class="card">
       <div class="card-body vstack gap-2">
         <div>
           <strong>{{ item.label }}</strong>
@@ -48,7 +48,7 @@
     When Seven Friends is open but you are not looking at it (another tab is selected, the window is minimized, or another window is in front), a message or friend request shows a notification on your screen. While you look at the app nothing pops up; only the sound plays.
     Click it to come back. The tab title also shows how many things are waiting. A closed app cannot notify you.
   </p>
-  <div class="card border-0 shadow-sm">
+  <div class="card">
     <div class="card-body vstack gap-2">
       <div class="form-check form-switch m-0">
         <input class="form-check-input" type="checkbox" role="switch" id="desktop-switch" [checked]="desktop.wanted()"
@@ -56,7 +56,7 @@
         <label class="form-check-label" for="desktop-switch">Show a pop-up when the app is in the background</label>
       </div>
       @if (noticeProblem()) {
-        <div class="alert alert-warning py-2 m-0" role="alert">{{ noticeProblem() }}</div>
+        <div class="alert alert-warning" role="alert">{{ noticeProblem() }}</div>
       } @else if (desktop.permission() === 'denied' && desktop.supported) {
         <span class="small text-secondary">Notifications are blocked for this site in the browser settings.</span>
       }
@@ -80,7 +80,7 @@
     The phone or computer wakes up for a new message or friend request, also when the app is closed or the screen is locked,
     and plays its own notification sound.
   </p>
-  <div class="card border-0 shadow-sm">
+  <div class="card">
     <div class="card-body vstack gap-2">
       <div class="form-check form-switch m-0">
         <input #pushSwitch class="form-check-input" type="checkbox" role="switch" id="push-switch" [checked]="push.enabled()"
@@ -88,7 +88,7 @@
         <label class="form-check-label" for="push-switch">Notify this device, also when the app is closed</label>
       </div>
       @if (push.problem()) {
-        <div class="alert alert-warning py-2 m-0" role="alert">{{ push.problem() }}</div>
+        <div class="alert alert-warning" role="alert">{{ push.problem() }}</div>
       } @else if (!push.configured) {
         <span class="small text-secondary">Push only works on the deployed site, not in the local setup.</span>
       } @else if (!push.supported()) {
@@ -101,7 +101,7 @@
   </div>
 
   @if (desktop.permission() === 'denied' || noticeProblem() || push.problem()) {
-    <details class="card border-0 shadow-sm" open>
+    <details class="card" open>
       <summary class="card-body fw-semibold">How do I allow notifications?</summary>
       <div class="card-body pt-0 vstack gap-3 small">
         <p class="m-0">

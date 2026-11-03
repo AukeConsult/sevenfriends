@@ -13,9 +13,9 @@
       <img [src]="shown.url" [alt]="shown.name ?? 'Image'" />
     }
     <p class="sf-hint text-center m-0">{{ shown.type }} · {{ formatBytes(shown.bytes) }}</p>
-    <a class="btn btn-primary rounded-pill align-self-center px-4" [href]="shown.url" [download]="saveName(shown)">Download</a>
+    <a class="btn btn-primary align-self-center" [href]="shown.url" [download]="saveName(shown)">Download</a>
   } @else if (error()) {
-    <div class="alert alert-danger py-2 m-0" role="alert">{{ error() }}</div>
+    <div class="alert alert-danger" role="alert">{{ error() }}</div>
   } @else {
     <p class="sf-hint-center">Loading…</p>
   }
