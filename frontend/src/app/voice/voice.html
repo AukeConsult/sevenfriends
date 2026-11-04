@@ -7,6 +7,14 @@
   @if (muted()) {
     <div class="alert alert-danger w-100" role="alert">The microphone is <strong>muted</strong> (the computer reports it as muted). Unmute it: the mute key of the keyboard, or Windows Settings › System › Sound › Input, or Settings › Privacy &amp; security › Microphone. This message goes away by itself when it is unmuted.</div>
   }
+  @if (problem()) {
+    <div class="alert alert-warning w-100" role="alert">@if (stillBlocked()) {<strong>Nothing popped up. </strong>{{ settingsSteps }}} @else {{{ problem() }}}</div>
+    @if (chromeLink && stillBlocked()) {
+      <p class="m-0 w-100">Or open the site in Chrome: tap the <strong>lock or sliders icon</strong> at the left of the address, then <strong>Permissions</strong>, and allow the <strong>Microphone</strong>. No icon? Tap the three dots, then <strong>Settings</strong>, <strong>Site settings</strong>, <strong>Microphone</strong>.</p>
+      <a class="btn btn-outline-primary w-100" [href]="chromeLink">Open in Chrome</a>
+    }
+    <button type="button" class="btn btn-primary btn-lg w-100" (click)="allow()">{{ stillBlocked() ? 'Try again' : 'Allow the microphone' }}</button>
+  }
   <p class="sf-hint m-0 text-center">{{ !ready() ? 'Waiting for the microphone…' : recording() ? 'Recording… speak now.' : 'Press Start and speak.' }}</p>
 </div>
 <div class="d-flex gap-2">

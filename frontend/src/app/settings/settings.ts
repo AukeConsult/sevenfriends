@@ -41,7 +41,7 @@ export class Settings {
     if (on && !allowed) {
       this.noticeProblem.set(
         this.desktop.supported
-          ? 'Notifications are blocked for this site. Allow them in the browser settings (the lock icon next to the address), then try again.'
+          ? 'Notifications are blocked for this site. Allow them in the browser settings (the lock or sliders icon at the left of the address), then try again.'
           : 'This browser cannot show desktop notifications.',
       );
     }

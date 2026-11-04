@@ -23,20 +23,17 @@ export function micProblem(err: unknown, permission: string | null = null): stri
     case 'SecurityError':
       if (permission === 'denied') {
         return installedOnAndroid()
-          ? 'The microphone is blocked for this app. Open your phone\'s Settings, then Apps, Seven Friends, Permissions, Microphone, and choose Allow. Then come back and try again.'
-          : 'The microphone is blocked. Allow it for this site in the browser settings, or choose a file instead.';
+          ? 'The microphone is switched off for this app. Open your phone Settings, tap Apps, Seven Friends, Permissions, Microphone, and choose Allow. Then come back here. If it still does not work, Android must also allow Chrome to use the microphone: Settings, Apps, Chrome, Permissions, Microphone, Allow.'
+          : 'The microphone is switched off for this site. Tap the lock or settings icon next to the web address, allow the microphone, and try again.';
       }
-      // not blocked for good: the question was dismissed, or Android itself is not letting the browser use the microphone
-      return installedOnAndroid()
-        ? 'The microphone was not allowed. Tap Record again and choose Allow. If no question appears: Settings, Apps, Seven Friends, Permissions, Microphone, Allow.'
-        : 'The microphone was not allowed. Tap Record again and choose Allow when the browser asks, or choose a file instead.';
+      return 'Please tap the button below and choose Allow.';
     case 'NotFoundError':
     case 'OverconstrainedError':
-      return 'No microphone was found. Choose a file instead.';
+      return 'No microphone was found on this device.';
     case 'NotReadableError':
-      return 'The microphone is in use by another program. Close it and try again, or choose a file instead.';
+      return 'Another app is using the microphone. Close it and tap the button below.';
     default:
-      return 'The microphone could not be started. Choose a file instead.';
+      return 'The microphone did not start. Tap the button below to try again.';
   }
 }
 
@@ -74,6 +71,16 @@ export class Voice implements OnInit, OnDestroy {
   protected readonly muted = signal(false);
   /** the last recording had no sound at all */
   protected readonly silent = signal(false);
+  /** the microphone could not be opened: what to do about it (shown here, with a button to ask again, so the person stays in the app) */
+  protected readonly problem = signal('');
+  /** the person already tapped "Allow" once and it did not work: says so, so the tap is not felt as doing nothing */
+  protected readonly stillBlocked = signal(false);
+  /** Only inside the installed app on Android: a link that opens this site in Chrome itself (a normal tab), where the lock icon next to the address leads to the microphone setting. A page cannot open the settings, this is the nearest it can go. */
+  /** said when "Allow" was tapped and the browser did not ask anything: it is switched off, and only the person can switch it on, in the settings */
+  protected readonly settingsSteps = installedOnAndroid()
+    ? 'The phone is not letting the app use the microphone. Press and hold the Seven Friends icon, tap App info, Permissions, Microphone, and choose Allow. Then come back here.'
+    : 'The microphone is switched off. Tap the lock or sliders icon at the left of the web address, then Permissions, and allow the Microphone (no icon: three dots, Settings, Site settings, Microphone). Then tap Try again.';
+  protected readonly chromeLink = installedOnAndroid() ? `intent://${location.host}/#Intent;scheme=https;package=com.android.chrome;end` : null;
   /** nothing was heard with the filters on: the microphone was opened again without them, record again */
   protected readonly retried = signal(false);
   protected readonly maxSeconds = MAX_AUDIO_SECONDS;
@@ -92,13 +99,27 @@ export class Voice implements OnInit, OnDestroy {
   private raw = this.prefs.get('micRaw');
 
   async ngOnInit(): Promise<void> {
+    // A web page cannot open the phone's settings. So the person goes there by hand and comes back: when the app is shown
+    // again (or the browser says the permission changed) it tries the microphone again by itself.
+    document.addEventListener('visibilitychange', this.comeBack);
+    await this.allow();
+  }
+
+  private readonly comeBack = (): void => {
+    if (document.visibilityState === 'visible' && this.problem() && !this.recording()) void this.allow();
+  };
+
+  /** Asks for the microphone (the browser asks the person if it has not been answered). Also the "Allow the microphone" button: asking again from a tap works unless the permission is blocked for good, and then the steps are shown. */
+  protected async allow(): Promise<void> {
+    this.stillBlocked.set(this.problem() !== '');
+    this.problem.set('');
     try {
       await this.open(null);
       // the names of the microphones are only known once the person has allowed one
       this.microphones.set((await navigator.mediaDevices.enumerateDevices()).filter((d) => d.kind === 'audioinput' && d.deviceId !== 'default' && d.deviceId !== 'communications'));
       this.ready.set(true);
     } catch (err) {
-      void micMessage(err).then((message) => this.failed.emit(message));
+      this.problem.set(await micMessage(err));
     }
   }
 
@@ -127,7 +148,7 @@ export class Voice implements OnInit, OnDestroy {
     try {
       await this.open(all[this.micIndex].deviceId);
     } catch (err) {
-      void micMessage(err).then((message) => this.failed.emit(message));
+      void micMessage(err).then((message) => this.problem.set(message));
     }
   }
 
@@ -172,7 +193,7 @@ export class Voice implements OnInit, OnDestroy {
           this.raw = true;
           this.prefs.set('micRaw', true); // remembered for the next recordings
           this.retried.set(true);
-          void this.open(this.deviceId).catch((err) => micMessage(err).then((message) => this.failed.emit(message)));
+          void this.open(this.deviceId).catch((err) => micMessage(err).then((message) => this.problem.set(message)));
         } else {
           this.silent.set(true);
         }
@@ -198,6 +219,7 @@ export class Voice implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    document.removeEventListener('visibilitychange', this.comeBack);
     clearInterval(this.clock);
     if (this.recorder?.state === 'recording') {
       this.recorder.onstop = null;

@@ -5,7 +5,6 @@
       @switch (state()) {
         @case ('dirty') { Changes not saved yet… }
         @case ('saving') { Saving… }
-        @case ('saved') { All changes saved }
         @case ('error') {
           {{ error() }}
           <button type="button" class="btn btn-link p-0 align-baseline" (click)="retry()">Try again</button>

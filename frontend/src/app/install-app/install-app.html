@@ -3,29 +3,32 @@
 </div>
 
 <main class="sf-narrow vstack gap-3">
-  <section class="vstack gap-2">
-    <h2 class="m-0">What is installing?</h2>
-    <p class="m-0">
-      It puts Seven Friends on your home screen like any other app: own icon, full screen, one tap to open.
-      It is the same app and account, it needs no app store, and you can remove it any time without deleting your account.
-    </p>
-    <p class="small text-secondary m-0">Optional: the app works in the browser too.</p>
-  </section>
-
-  <section class="vstack gap-2">
-    <h2 class="m-0">Install it on this device</h2>
-    @if (app.installed()) {
-      <p class="m-0">The app is installed: Seven Friends is already on this device.</p>
+  @if (app.installed()) {
+    <div class="alert alert-success m-0" role="status">✓ You are using the installed app. Nothing more to do.</div>
+  } @else {
+    <h2 class="m-0">1. Allow the microphone</h2>
+    @if (mic() === 'granted') {
+      <div class="alert alert-success m-0" role="status">✓ The microphone is allowed.</div>
     } @else {
-      @if (app.canInstall()) {
-        <p class="m-0">Your browser can install it for you: tap the button.</p>
-        <button type="button" class="btn btn-primary align-self-start" (click)="app.install()">Install the app</button>
+      <p class="m-0">So you can send voice messages. Tap the button and choose <strong>Allow</strong>.</p>
+      <button type="button" class="btn btn-primary btn-lg w-100" (click)="allowMic()">Allow the microphone</button>
+      @if (app.mobile && !app.ios) {
+        <p class="small text-secondary m-0">On Android, <strong>Chrome</strong> itself must also be allowed to use the microphone: Settings, Apps, Chrome, Permissions, Microphone, Allow.</p>
       }
-      <p class="small text-secondary m-0">The steps depend on your device. The one for this device is open; the others are one tap away.</p>
+      @if (mic() === 'denied') {
+        <div class="alert alert-warning m-0" role="alert">The microphone is switched off. Tap the <strong>lock or sliders icon</strong> at the left of the web address, then <strong>Permissions</strong>, and allow the <strong>Microphone</strong>. No icon? Tap the three dots, then <strong>Settings</strong>, <strong>Site settings</strong>, <strong>Microphone</strong>. Then tap the button again.</div>
+      }
     }
-  </section>
+    <h2 class="m-0">2. Install the app</h2>
+    <button type="button" class="btn btn-primary btn-lg w-100" (click)="press()">Install the app</button>
+    @if (warned() && mic() === 'ask') {
+      <div class="alert alert-warning m-0" role="alert">The microphone is not allowed yet. Do step 1 first, or tap <strong>Install the app</strong> again to install without it.</div>
+    }
+    <p class="small text-secondary m-0">It puts Seven Friends on your home screen like any other app. It is free, needs no app store, and you can remove it any time.</p>
+  }
 
-  @if (!app.installed()) {
+  @if (!app.installed() && steps()) {
+    <p class="m-0">This device needs a few steps. Follow the ones for your device:</p>
     <details class="sf-how" [open]="app.ios">
       <summary>iPhone or iPad (Safari)</summary>
       <div class="vstack gap-2">
@@ -51,11 +54,10 @@
       <div class="vstack gap-2">
         <ol class="m-0">
           <li>Open <strong>Seven Friends in Chrome</strong>.</li>
-          <li>If the button above says <em>Install the app</em>, tap it, and go to step 4.</li>
-          <li>Otherwise tap the <strong>menu</strong> (three dots ⋮ in the top right corner) and choose <strong>Install app</strong>. On some phones it is called <em>Add to Home screen</em>: choose <em>Install</em> when it asks.</li>
-          <li>Tap <strong>Install</strong> to confirm. The Seven Friends icon is now on your home screen and in your app list.</li>
-          <li>Open the app from that icon. When it asks to send you <strong>notifications</strong>, tap <em>Allow</em>.</li>
+          <li>Tap the <strong>menu</strong> (three dots ⋮ in the top right corner) and choose <strong>Install app</strong>. On some phones it is called <em>Add to Home screen</em>.</li>
+          <li>Tap <strong>Install</strong> to confirm.</li>
         </ol>
+        <p class="small text-secondary m-0">Then open the app from its new icon. When it asks to send you notifications, tap <em>Allow</em>.</p>
         <p class="small text-secondary m-0">
           Samsung Internet: tap the menu (three lines ≡), then <em>Add page to</em>, then <em>Home screen</em>.
           Firefox: menu (⋮), then <em>Install</em>. To remove the app: press and hold the icon and choose Uninstall.

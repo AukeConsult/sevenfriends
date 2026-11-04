@@ -1,0 +1,251 @@
+﻿Country,Code,Main language(s) in the country,Default language of the app,"Languages the country offers (before English, French, Spanish)"
+Afghanistan,AF,"Pashto, Dari",English,English
+Albania,AL,Albanian,English,English
+Algeria,DZ,Arabic,Arabic,"Arabic, French"
+American Samoa,AS,English,English,English
+Andorra,AD,Catalan,Spanish,"Spanish, French"
+Angola,AO,Portuguese,Portuguese,Portuguese
+Anguilla,AI,English,English,English
+Antarctica,AQ,(none),English,English
+Antigua & Barbuda,AG,English,English,English
+Argentina,AR,Spanish,Spanish,Spanish
+Armenia,AM,Armenian,English,English
+Aruba,AW,Dutch,Dutch,Dutch
+Australia,AU,English,English,English
+Austria,AT,German,German,German
+Azerbaijan,AZ,Azerbaijani,English,English
+Bahamas,BS,English,English,English
+Bahrain,BH,Arabic,Arabic,Arabic
+Bangladesh,BD,Bengali,English,English
+Barbados,BB,English,English,English
+Belarus,BY,Russian,Russian,Russian
+Belgium,BE,"Dutch, French, German",Dutch,"Dutch, French, German"
+Belize,BZ,English,English,English
+Benin,BJ,French,French,French
+Bermuda,BM,English,English,English
+Bhutan,BT,Dzongkha,English,English
+Bolivia,BO,Spanish,Spanish,Spanish
+Bosnia & Herzegovina,BA,"Bosnian, Croatian, Serbian",English,English
+Botswana,BW,"English, Setswana",English,English
+Bouvet Island,BV,Norwegian,Norwegian,Norwegian
+Brazil,BR,Portuguese,Portuguese,Portuguese
+British Indian Ocean Territory,IO,English,English,English
+British Virgin Islands,VG,English,English,English
+Brunei,BN,Malay,English,English
+Bulgaria,BG,Bulgarian,English,English
+Burkina Faso,BF,French,French,French
+Burundi,BI,"Kirundi, French, English",French,French
+Cambodia,KH,Khmer,English,English
+Cameroon,CM,"French, English",French,"French, English"
+Canada,CA,"English, French",English,"English, French"
+Cape Verde,CV,Portuguese,Portuguese,Portuguese
+Caribbean Netherlands,BQ,Dutch,Dutch,Dutch
+Cayman Islands,KY,English,English,English
+Central African Republic,CF,French,French,French
+Chad,TD,French,French,French
+Chile,CL,Spanish,Spanish,Spanish
+China,CN,Chinese (Mandarin),Chinese,Chinese
+Christmas Island,CX,English,English,English
+Cocos (Keeling) Islands,CC,English,English,English
+Colombia,CO,Spanish,Spanish,Spanish
+Comoros,KM,"Comorian, Arabic, French",French,"French, Arabic"
+Congo - Brazzaville,CG,French,French,French
+Congo - Kinshasa,CD,French,French,French
+Cook Islands,CK,"English, Maori",English,English
+Costa Rica,CR,Spanish,Spanish,Spanish
+Croatia,HR,Croatian,English,English
+Cuba,CU,Spanish,Spanish,Spanish
+Curaçao,CW,Dutch,Dutch,Dutch
+Cyprus,CY,"Greek, Turkish",English,"English, Turkish"
+Czechia,CZ,Czech,English,English
+Côte d’Ivoire,CI,French,French,French
+Denmark,DK,Danish,Danish,Danish
+Djibouti,DJ,"French, Arabic",French,"French, Arabic"
+Dominica,DM,English,English,English
+Dominican Republic,DO,Spanish,Spanish,Spanish
+Ecuador,EC,Spanish,Spanish,Spanish
+Egypt,EG,Arabic,Arabic,Arabic
+El Salvador,SV,Spanish,Spanish,Spanish
+Equatorial Guinea,GQ,"Spanish, French, Portuguese",Spanish,"Spanish, French, Portuguese"
+Eritrea,ER,"Tigrinya, Arabic",English,English
+Estonia,EE,Estonian,English,English
+Eswatini,SZ,"Swazi, English",English,English
+Ethiopia,ET,Amharic,English,English
+Falkland Islands,FK,English,English,English
+Faroe Islands,FO,"Faroese, Danish",Danish,Danish
+Fiji,FJ,"English, Fijian, Hindi",English,English
+Finland,FI,"Finnish, Swedish",Finnish,"Finnish, Swedish"
+France,FR,French,French,French
+French Guiana,GF,French,French,French
+French Polynesia,PF,French,French,French
+French Southern Territories,TF,French,French,French
+Gabon,GA,French,French,French
+Gambia,GM,English,English,English
+Georgia,GE,Georgian,English,English
+Germany,DE,German,German,German
+Ghana,GH,English,English,English
+Gibraltar,GI,English,English,English
+Greece,GR,Greek,English,English
+Greenland,GL,"Greenlandic, Danish",Danish,Danish
+Grenada,GD,English,English,English
+Guadeloupe,GP,French,French,French
+Guam,GU,English,English,English
+Guatemala,GT,Spanish,Spanish,Spanish
+Guernsey,GG,English,English,English
+Guinea,GN,French,French,French
+Guinea-Bissau,GW,Portuguese,Portuguese,Portuguese
+Guyana,GY,English,English,English
+Haiti,HT,French,French,French
+Heard & McDonald Islands,HM,(none),English,English
+Honduras,HN,Spanish,Spanish,Spanish
+Hong Kong SAR China,HK,"Chinese (Cantonese), English",Chinese,"Chinese, English"
+Hungary,HU,Hungarian,English,English
+Iceland,IS,Icelandic,English,English
+India,IN,"Hindi, English (+21 regional)",Hindi,"Hindi, English"
+Indonesia,ID,Indonesian,Indonesian,Indonesian
+Iran,IR,Persian,English,English
+Iraq,IQ,Arabic,Arabic,Arabic
+Ireland,IE,English,English,English
+Isle of Man,IM,English,English,English
+Israel,IL,"Hebrew, Arabic",English,"English, Arabic"
+Italy,IT,Italian,Italian,Italian
+Jamaica,JM,English,English,English
+Japan,JP,Japanese,Japanese,Japanese
+Jersey,JE,English,English,English
+Jordan,JO,Arabic,Arabic,Arabic
+Kazakhstan,KZ,Russian,Russian,Russian
+Kenya,KE,"Swahili, English",English,English
+Kiribati,KI,English,English,English
+Kosovo,XK,"Albanian, Serbian",English,English
+Kuwait,KW,Arabic,Arabic,Arabic
+Kyrgyzstan,KG,Russian,Russian,Russian
+Laos,LA,Lao,English,English
+Latvia,LV,Latvian,English,English
+Lebanon,LB,Arabic,Arabic,"Arabic, French, English"
+Lesotho,LS,"Sesotho, English",English,English
+Liberia,LR,English,English,English
+Libya,LY,Arabic,Arabic,Arabic
+Liechtenstein,LI,German,German,German
+Lithuania,LT,Lithuanian,English,English
+Luxembourg,LU,"Luxembourgish, French, German",French,"French, German"
+Macao SAR China,MO,"Chinese, Portuguese",Chinese,"Chinese, Portuguese"
+Madagascar,MG,"Malagasy, French",French,French
+Malawi,MW,"English, Chichewa",English,English
+Malaysia,MY,Malay,English,English
+Maldives,MV,Dhivehi,English,English
+Mali,ML,French,French,French
+Malta,MT,"Maltese, English",English,"English, Italian"
+Marshall Islands,MH,"Marshallese, English",English,English
+Martinique,MQ,French,French,French
+Mauritania,MR,Arabic,Arabic,"Arabic, French"
+Mauritius,MU,"English, French, Creole",English,"English, French"
+Mayotte,YT,French,French,French
+Mexico,MX,Spanish,Spanish,Spanish
+Micronesia,FM,English,English,English
+Moldova,MD,Romanian,English,English
+Monaco,MC,French,French,"French, Italian"
+Mongolia,MN,Mongolian,English,English
+Montenegro,ME,Montenegrin,English,English
+Montserrat,MS,English,English,English
+Morocco,MA,Arabic,Arabic,"Arabic, French"
+Mozambique,MZ,Portuguese,Portuguese,Portuguese
+Myanmar (Burma),MM,Burmese,English,English
+Namibia,NA,English,English,English
+Nauru,NR,"Nauruan, English",English,English
+Nepal,NP,Nepali,English,English
+Netherlands,NL,Dutch,Dutch,Dutch
+New Caledonia,NC,French,French,French
+New Zealand,NZ,"English, Maori",English,English
+Nicaragua,NI,Spanish,Spanish,Spanish
+Niger,NE,French,French,French
+Nigeria,NG,English,English,English
+Niue,NU,"Niuean, English",English,English
+Norfolk Island,NF,English,English,English
+North Korea,KP,Korean,Korean,Korean
+North Macedonia,MK,Macedonian,English,English
+Northern Mariana Islands,MP,English,English,English
+Norway,NO,Norwegian,Norwegian,Norwegian
+Oman,OM,Arabic,Arabic,Arabic
+Pakistan,PK,"Urdu, English",English,English
+Palau,PW,"Palauan, English",English,English
+Palestinian Territories,PS,Arabic,Arabic,"Arabic, English"
+Panama,PA,Spanish,Spanish,Spanish
+Papua New Guinea,PG,"Tok Pisin, English, Hiri Motu",English,English
+Paraguay,PY,Spanish,Spanish,Spanish
+Peru,PE,Spanish,Spanish,Spanish
+Philippines,PH,"Filipino, English",English,English
+Pitcairn Islands,PN,English,English,English
+Poland,PL,Polish,Polish,Polish
+Portugal,PT,Portuguese,Portuguese,Portuguese
+Puerto Rico,PR,"Spanish, English",Spanish,"Spanish, English"
+Qatar,QA,Arabic,Arabic,Arabic
+Romania,RO,Romanian,English,English
+Russia,RU,Russian,Russian,Russian
+Rwanda,RW,"Kinyarwanda, French, English",English,"English, French"
+Réunion,RE,French,French,French
+Samoa,WS,"Samoan, English",English,English
+San Marino,SM,Italian,Italian,Italian
+Saudi Arabia,SA,Arabic,Arabic,Arabic
+Senegal,SN,French,French,French
+Serbia,RS,Serbian,English,English
+Seychelles,SC,"Seychellois Creole, English, French",English,"English, French"
+Sierra Leone,SL,English,English,English
+Singapore,SG,"English, Chinese, Malay, Tamil",English,"English, Chinese"
+Sint Maarten,SX,Dutch,Dutch,Dutch
+Slovakia,SK,Slovak,English,English
+Slovenia,SI,Slovene,English,English
+Solomon Islands,SB,English,English,English
+Somalia,SO,Arabic,Arabic,Arabic
+South Africa,ZA,"Zulu, Xhosa, Afrikaans, English",English,English
+South Georgia & South Sandwich Islands,GS,(none),English,English
+South Korea,KR,Korean,Korean,Korean
+South Sudan,SS,English,English,English
+Spain,ES,Spanish,Spanish,Spanish
+Sri Lanka,LK,"Sinhala, Tamil",English,English
+St. Barthélemy,BL,French,French,French
+St. Helena,SH,English,English,English
+St. Kitts & Nevis,KN,English,English,English
+St. Lucia,LC,English,English,English
+St. Martin,MF,French,French,French
+St. Pierre & Miquelon,PM,French,French,French
+St. Vincent & Grenadines,VC,English,English,English
+Sudan,SD,Arabic,Arabic,Arabic
+Suriname,SR,Dutch,Dutch,Dutch
+Svalbard & Jan Mayen,SJ,Norwegian,Norwegian,Norwegian
+Sweden,SE,Swedish,Swedish,Swedish
+Switzerland,CH,"German, French, Italian",German,"German, French, Italian"
+Syria,SY,Arabic,Arabic,Arabic
+São Tomé & Príncipe,ST,Portuguese,Portuguese,Portuguese
+Taiwan,TW,Chinese (Mandarin),Chinese,Chinese
+Tajikistan,TJ,Tajik,English,English
+Tanzania,TZ,"Swahili, English",English,English
+Thailand,TH,Thai,English,English
+Timor-Leste,TL,"Tetum, Portuguese",Portuguese,"Portuguese, Indonesian"
+Togo,TG,French,French,French
+Tokelau,TK,"Tokelauan, English",English,English
+Tonga,TO,"Tongan, English",English,English
+Trinidad & Tobago,TT,English,English,English
+Tunisia,TN,Arabic,Arabic,"Arabic, French"
+Turkmenistan,TM,Turkmen,English,English
+Turks & Caicos Islands,TC,English,English,English
+Tuvalu,TV,"Tuvaluan, English",English,English
+Türkiye,TR,Turkish,Turkish,Turkish
+U.S. Outlying Islands,UM,English,English,English
+U.S. Virgin Islands,VI,English,English,English
+Uganda,UG,"English, Swahili",English,English
+Ukraine,UA,Ukrainian,Ukrainian,"Ukrainian, Russian"
+United Arab Emirates,AE,Arabic,Arabic,Arabic
+United Kingdom,GB,English,English,English
+United States,US,English,English,English
+Uruguay,UY,Spanish,Spanish,Spanish
+Uzbekistan,UZ,Uzbek,English,English
+Vanuatu,VU,"Bislama, English, French",English,"English, French"
+Vatican City,VA,Italian,Italian,Italian
+Venezuela,VE,Spanish,Spanish,Spanish
+Vietnam,VN,Vietnamese,English,English
+Wallis & Futuna,WF,French,French,French
+Western Sahara,EH,"Arabic, Spanish (disputed)",Arabic,"Arabic, Spanish"
+Yemen,YE,Arabic,Arabic,Arabic
+Zambia,ZM,English,English,English
+Zimbabwe,ZW,"English, Shona, Ndebele",English,English
+Åland Islands,AX,Swedish,Swedish,"Swedish, Finnish"

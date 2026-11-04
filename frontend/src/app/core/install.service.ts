@@ -17,20 +17,23 @@ interface InstallPrompt extends Event {
 export class InstallService {
   /** the browser has an install offer ready: the button works */
   readonly canInstall = signal(false);
-  /** the app is already running as an installed app */
+  /** this window is the installed app (a browser tab is never "installed", so the install can always be done again) */
   readonly installed = signal(this.isStandalone());
   /** an iPhone / iPad: installing is a manual step in Safari */
-  readonly ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  // an iPad in its default settings says it is a Mac: a Mac with a touch screen is an iPad
+  readonly ios = /iphone|ipad|ipod/i.test(navigator.userAgent) || (/Macintosh/i.test(navigator.userAgent) && navigator.maxTouchPoints > 1);
   /** a phone or tablet (Android or iOS): there is no start-at-sign-in setting there, the apps are opened from the app menu */
   readonly mobile = this.ios || /android/i.test(navigator.userAgent);
 
   private offer: InstallPrompt | null = null;
 
   constructor() {
-    // opened in a browser tab while the app is installed on this device: the browser can tell (Chrome / Edge)
-    void (navigator as { getInstalledRelatedApps?: () => Promise<unknown[]> }).getInstalledRelatedApps?.()
-      .then((apps) => apps.length && this.installed.set(true))
-      .catch(() => undefined);
+    // Only a window that IS the installed app counts as installed. Chrome on Android can keep saying "installed" after the icon was removed, so a browser tab always offers the install again.
+    const early = (window as { __sfInstallOffer?: Event }).__sfInstallOffer; // arrived before the app started (see index.html)
+    if (early) {
+      this.offer = early as InstallPrompt;
+      this.canInstall.set(true);
+    }
     window.addEventListener('beforeinstallprompt', (event) => {
       event.preventDefault(); // keep the offer for the button
       this.offer = event as InstallPrompt;

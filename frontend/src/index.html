@@ -9,6 +9,10 @@
       if (host === '7friends.io' || host === 'www.7friends.io' || host === 'www.' + main) location.replace('https://' + main + location.pathname + location.search + location.hash);
     })();
   </script>
+  <script>
+    // The browser's install offer can arrive before the app has started: keep it here, the install page picks it up (core/install.service.ts)
+    window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); window.__sfInstallOffer = e; });
+  </script>
   <title>Seven Friends</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">

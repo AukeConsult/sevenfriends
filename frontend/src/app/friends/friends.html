@@ -32,17 +32,17 @@
               <header class="sf-head">
                 <!-- the icon of this seat: friend1.svg ... friend7.svg (public/icons/friends) -->
                 <span class="sf-seat">
-                  <app-friend-avatar [friend]="friend" [seat]="slot.position" [size]="32" />
+                  <!-- the icon opens the profile; the name (and the rest of the card) opens the conversation -->
+                  <button type="button" class="sf-name-btn" (click)="toggleProfile(friend)" [attr.aria-expanded]="expanded() === friend.id"
+                          [attr.aria-label]="(expanded() === friend.id ? 'Hide the profile of ' : 'Show the profile of ') + friend.name">
+                    <app-friend-avatar [friend]="friend" [seat]="slot.position" [size]="32" />
+                  </button>
                   @if (friend.status === 'confirmed') {
                     <span class="sf-dot" [class]="'sf-dot-' + friend.presence" [title]="presenceLabel(friend.presence)" role="img" [attr.aria-label]="presenceLabel(friend.presence)"></span>
                   }
                 </span>
                 <div class="sf-title">
-                  <button type="button" class="sf-name-btn" (click)="toggleProfile(friend)" [attr.aria-expanded]="expanded() === friend.id"
-                          [attr.aria-label]="(expanded() === friend.id ? 'Hide the profile of ' : 'Show the profile of ') + friend.name">
-                    <strong class="sf-name">{{ friend.name }}</strong>
-                    <span class="sf-name-arrow" aria-hidden="true">{{ expanded() === friend.id ? '▴' : '▾' }}</span>
-                  </button>
+                  <strong class="sf-name">{{ friend.name }}</strong>
                   @if (friend.mood; as mood) {
                     <img class="sf-mood" [src]="moodIcon(mood)" [alt]="moodLabel(mood)" [title]="moodLabel(mood)" width="20" height="20" />
                   }
