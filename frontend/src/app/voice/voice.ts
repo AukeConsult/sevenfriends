@@ -3,12 +3,33 @@ import { UiPreferencesService } from '../core/ui-preferences';
 import { MAX_AUDIO_SECONDS, audioRecorderOptions, audioRecorderType } from '../core/audio';
 
 
-/** What went wrong with the microphone, in words for the person. */
-export function micProblem(err: unknown): string {
+/** The app runs installed on an Android phone (not as a tab of the browser). */
+const installedOnAndroid = (): boolean =>
+  /Android/i.test(navigator.userAgent) && (matchMedia('(display-mode: standalone)').matches || (navigator as { standalone?: boolean }).standalone === true);
+
+/** What the browser says about the microphone permission: "granted", "denied" (blocked) or "prompt" (not asked yet, or not answered); null = it cannot say. */
+async function micPermission(): Promise<string | null> {
+  try {
+    return (await navigator.permissions.query({ name: 'microphone' as PermissionName })).state;
+  } catch {
+    return null;
+  }
+}
+
+/** What went wrong with the microphone, in words for the person. `permission` is what the browser says about the permission. */
+export function micProblem(err: unknown, permission: string | null = null): string {
   switch ((err as { name?: string }).name) {
     case 'NotAllowedError':
     case 'SecurityError':
-      return 'The microphone is blocked. Allow it for this site in the browser settings, or choose a file instead.';
+      if (permission === 'denied') {
+        return installedOnAndroid()
+          ? 'The microphone is blocked for this app. Open your phone\'s Settings, then Apps, Seven Friends, Permissions, Microphone, and choose Allow. Then come back and try again.'
+          : 'The microphone is blocked. Allow it for this site in the browser settings, or choose a file instead.';
+      }
+      // not blocked for good: the question was dismissed, or Android itself is not letting the browser use the microphone
+      return installedOnAndroid()
+        ? 'The microphone was not allowed. Tap Record again and choose Allow. If no question appears: Settings, Apps, Seven Friends, Permissions, Microphone, Allow.'
+        : 'The microphone was not allowed. Tap Record again and choose Allow when the browser asks, or choose a file instead.';
     case 'NotFoundError':
     case 'OverconstrainedError':
       return 'No microphone was found. Choose a file instead.';
@@ -18,6 +39,9 @@ export function micProblem(err: unknown): string {
       return 'The microphone could not be started. Choose a file instead.';
   }
 }
+
+/** The same, with the permission looked up first. */
+export const micMessage = async (err: unknown): Promise<string> => micProblem(err, await micPermission());
 
 /**
  * The voice recorder, on the page (`getUserMedia`, on computers and phones alike): Start, Stop, the time, the name of the
@@ -74,7 +98,7 @@ export class Voice implements OnInit, OnDestroy {
       this.microphones.set((await navigator.mediaDevices.enumerateDevices()).filter((d) => d.kind === 'audioinput' && d.deviceId !== 'default' && d.deviceId !== 'communications'));
       this.ready.set(true);
     } catch (err) {
-      this.failed.emit(micProblem(err));
+      void micMessage(err).then((message) => this.failed.emit(message));
     }
   }
 
@@ -103,7 +127,7 @@ export class Voice implements OnInit, OnDestroy {
     try {
       await this.open(all[this.micIndex].deviceId);
     } catch (err) {
-      this.failed.emit(micProblem(err));
+      void micMessage(err).then((message) => this.failed.emit(message));
     }
   }
 
@@ -148,7 +172,7 @@ export class Voice implements OnInit, OnDestroy {
           this.raw = true;
           this.prefs.set('micRaw', true); // remembered for the next recordings
           this.retried.set(true);
-          void this.open(this.deviceId).catch((err) => this.failed.emit(micProblem(err)));
+          void this.open(this.deviceId).catch((err) => micMessage(err).then((message) => this.failed.emit(message)));
         } else {
           this.silent.set(true);
         }

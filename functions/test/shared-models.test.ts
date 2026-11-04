@@ -67,9 +67,6 @@ describe("the shared models folder", () => {
   });
 
   it.each([
-    ["a value (const)", 'export const LIMIT = 7;\n', /is a value/],
-    ["a function", "export function f() { return 1; }\n", /is a value/],
-    ["an enum", "export enum Kind { A, B }\n", /is a value/],
     ["an import from a package", 'import { Timestamp } from "firebase-admin/firestore";\nexport type T = Timestamp;\n', /imports "firebase-admin\/firestore"/],
     ["an import from outside the folder", 'import { X } from "../constants";\nexport type T = X;\n', /imports "\.\.\/constants"/],
   ])("refuses %s in a shared model", (_label, content, message) => {
@@ -80,6 +77,13 @@ describe("the shared models folder", () => {
     expect(result.code).toBe(1);
     expect(result.out).toMatch(message);
     expect(fs.existsSync(path.join(tmp, "copy"))).toBe(false); // nothing was copied
+  });
+
+  it("allows plain data and small functions (the languages)", () => {
+    const from = path.join(tmp, "src");
+    fs.mkdirSync(from);
+    fs.writeFileSync(path.join(from, "data.ts"), 'export const LIMIT = 7;\nexport function twice(n: number) { return n * 2; }\n');
+    expect(run("--from", from, "--to", path.join(tmp, "copy")).code).toBe(0);
   });
 
   it("allows type-only files that import each other", () => {

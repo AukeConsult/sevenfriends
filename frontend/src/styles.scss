@@ -293,6 +293,22 @@ router-outlet + * { display: block; min-height: 100dvh; }
   gap: 2rem;
   padding: calc(3rem + env(safe-area-inset-top)) var(--sf-gutter) calc(2rem + env(safe-area-inset-bottom));
 }
+// The sign-in page: the three ways to sign in are compact (small gap under the hero, lower buttons)
+.sf-landing { gap: 1rem; }
+.sf-landing .sf-hero { padding-bottom: 1rem; }
+.sf-signin-options { gap: 0.5rem !important; }
+.sf-signin-options .btn { min-height: 2.5rem; padding-block: 0.25rem; }
+.sf-landing .sf-divider { margin-block: 0.75rem; }
+// A phone with the browser's bars (an iPhone in Safari shows about 660px): the sign-in page is made more compact so the
+// whole form, with the email and password fields, fits without scrolling.
+@media (max-height: 780px) {
+  .sf-landing { gap: 1rem; padding-top: calc(1.25rem + env(safe-area-inset-top)); padding-bottom: calc(1.25rem + env(safe-area-inset-bottom)); }
+  .sf-landing .sf-hero { margin-top: calc(-1.25rem - env(safe-area-inset-top)); padding-top: calc(1.25rem + env(safe-area-inset-top)); padding-bottom: 1rem; }
+  .sf-landing .sf-logo-lg { width: 3.75rem; height: 3.75rem; border-radius: 1.2rem; font-size: 1.9rem; }
+  .sf-landing .sf-hero h1 { font-size: 1.6rem; margin: 0.5rem 0 0.25rem !important; }
+  .sf-landing .sf-hero-dots { margin-top: 0.75rem; }
+  .sf-landing .sf-divider { margin-block: 0.75rem; }
+}
 // Login hero: tinted band running edge to edge (no rounded corners), logo, name, tagline, seven dots
 .sf-hero {
   margin: calc(-3rem - env(safe-area-inset-top)) calc(-1 * var(--sf-gutter)) 0;
@@ -326,6 +342,16 @@ router-outlet + * { display: block; min-height: 100dvh; }
 .sf-ellipsis, .sf-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sf-name { max-width: 100%; }
 .min-w-0 { min-width: 0; }
+// The "how to install" steps, one folding block per kind of device (Install the app)
+.sf-how { border: 1px solid var(--sf-border); border-radius: var(--sf-radius); background: var(--sf-card); }
+.sf-how > summary { cursor: pointer; font-weight: 600; padding: 0.875rem 1rem; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+.sf-how > summary::-webkit-details-marker { display: none; }
+.sf-how > summary::after { content: '⌄'; font-size: 1.25rem; line-height: 1; transition: transform 0.2s; }
+.sf-how[open] > summary::after { transform: rotate(180deg); }
+.sf-how > div { padding: 0 1rem 1rem; }
+.sf-how ol { padding-left: 1.25rem; display: flex; flex-direction: column; gap: 0.5rem; }
+.sf-install-chip { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.35rem 0.9rem; border: 1px solid var(--sf-border); border-radius: 999px; background: var(--sf-card); color: var(--sf-primary); font-size: var(--sf-fs-description); font-weight: 600; text-decoration: none; }
+.sf-lang-field { flex: 0 0 46%; } // the language next to the country (Profile): wide enough for a language name
 
 // ---- Forms ----
 .sf-field { display: grid; gap: 0.25rem; }

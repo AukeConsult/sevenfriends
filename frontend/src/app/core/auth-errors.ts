@@ -31,3 +31,7 @@ export const authMessage = (err: unknown, fallback: string): string => MESSAGES[
 /** The user closed the pop-up: not an error to show. */
 export const wasCancelled = (err: unknown): boolean =>
   ['auth/popup-closed-by-user', 'auth/cancelled-popup-request'].includes(code(err));
+
+/** The email or the password did not fit: for somebody new, that usually means "there is no account yet". */
+export const wasRejected = (err: unknown): boolean =>
+  ['auth/invalid-credential', 'auth/wrong-password', 'auth/user-not-found'].includes(code(err));

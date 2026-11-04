@@ -6,35 +6,75 @@
   <section class="vstack gap-2">
     <h2 class="m-0">What is installing?</h2>
     <p class="m-0">
-      Seven Friends is a web page that can also live on your device like any other app. "Installing" does not download anything
-      big and does not use the app store: your browser puts the same app in your app menu or on your home screen.
+      It puts Seven Friends on your home screen like any other app: own icon, full screen, one tap to open.
+      It is the same app and account, it needs no app store, and you can remove it any time without deleting your account.
     </p>
-    <ul class="m-0 ps-3">
-      <li>It has its own icon, and opens full screen without the browser's address bar.</li>
-      <li>You can find it again in one tap, so you notice your friends sooner.</li>
-      <li>It is the same app and the same account: your friends and messages are all there, and the app updates itself.</li>
-      <li>You can remove it at any time like any other app. That does not delete your account.</li>
-    </ul>
-    <p class="small text-secondary m-0">Installing is optional: the app works in the browser too.</p>
+    <p class="small text-secondary m-0">Optional: the app works in the browser too.</p>
   </section>
 
-  <section class="card">
-    <div class="card-body vstack gap-2">
-      @if (app.installed()) {
-        <h2 class="m-0">The app is installed</h2>
-        <p class="m-0">Seven Friends is already installed on this device.</p>
-      } @else {
-        <h2 class="m-0">Install it on this device</h2>
-        @if (app.canInstall()) {
-          <button type="button" class="btn btn-primary" (click)="app.install()">Install the app</button>
-        } @else if (app.ios) {
-          <p class="m-0">On an iPhone or iPad this is done in Safari: tap the Share button, then <strong>Add to Home Screen</strong>.</p>
-        } @else {
-          <p class="m-0">In your browser's menu (⋮), choose <strong>Install app</strong> or <strong>Add to Home screen</strong>. The site must be opened from its web address (https).</p>
-        }
+  <section class="vstack gap-2">
+    <h2 class="m-0">Install it on this device</h2>
+    @if (app.installed()) {
+      <p class="m-0">The app is installed: Seven Friends is already on this device.</p>
+    } @else {
+      @if (app.canInstall()) {
+        <p class="m-0">Your browser can install it for you: tap the button.</p>
+        <button type="button" class="btn btn-primary align-self-start" (click)="app.install()">Install the app</button>
       }
-    </div>
+      <p class="small text-secondary m-0">The steps depend on your device. The one for this device is open; the others are one tap away.</p>
+    }
   </section>
+
+  @if (!app.installed()) {
+    <details class="sf-how" [open]="app.ios">
+      <summary>iPhone or iPad (Safari)</summary>
+      <div class="vstack gap-2">
+        <p class="m-0">An iPhone has no "Install" button, so you put the app on your home screen yourself. It takes less than a minute.</p>
+        <ol class="m-0">
+          <li>Open <strong>Seven Friends in Safari</strong>, the blue compass app. This does not work from inside another app's browser (Facebook, Instagram, mail), so if you got a link there, copy it and paste it in Safari.</li>
+          <li>Tap the <strong>Share button</strong>: a square with an arrow pointing up. It is at the bottom of the screen on an iPhone, and at the top right on an iPad.</li>
+          <li>Scroll down in the list that opens and tap <strong>Add to Home Screen</strong>. If you do not see it, scroll further, or tap <em>More</em> or <em>View More</em> first.</li>
+          <li>You can keep the name <em>Seven Friends</em>. If you are asked, leave <em>Open as Web App</em> switched on. Tap <strong>Add</strong> in the top right corner.</li>
+          <li>Go to your home screen: the Seven Friends icon is there, like any other app. <strong>Open it from that icon</strong>, not from Safari. Only the icon opens it as an app.</li>
+          <li>Sign in again the first time. The app on the home screen keeps its own login, separate from Safari.</li>
+          <li>When it asks to send you <strong>notifications</strong>, tap <em>Allow</em>, or your friends cannot reach you when the app is closed.</li>
+        </ol>
+        <p class="small text-secondary m-0">
+          Notifications on an iPhone need iOS 16.4 or newer (Settings → General → Software Update shows your version).
+          To change them later: Settings → Notifications → Seven Friends. To remove the app: press and hold the icon and choose Remove App.
+        </p>
+      </div>
+    </details>
+
+    <details class="sf-how" [open]="app.mobile && !app.ios">
+      <summary>Android phone or tablet (Chrome)</summary>
+      <div class="vstack gap-2">
+        <ol class="m-0">
+          <li>Open <strong>Seven Friends in Chrome</strong>.</li>
+          <li>If the button above says <em>Install the app</em>, tap it, and go to step 4.</li>
+          <li>Otherwise tap the <strong>menu</strong> (three dots ⋮ in the top right corner) and choose <strong>Install app</strong>. On some phones it is called <em>Add to Home screen</em>: choose <em>Install</em> when it asks.</li>
+          <li>Tap <strong>Install</strong> to confirm. The Seven Friends icon is now on your home screen and in your app list.</li>
+          <li>Open the app from that icon. When it asks to send you <strong>notifications</strong>, tap <em>Allow</em>.</li>
+        </ol>
+        <p class="small text-secondary m-0">
+          Samsung Internet: tap the menu (three lines ≡), then <em>Add page to</em>, then <em>Home screen</em>.
+          Firefox: menu (⋮), then <em>Install</em>. To remove the app: press and hold the icon and choose Uninstall.
+        </p>
+      </div>
+    </details>
+
+    <details class="sf-how" [open]="!app.mobile">
+      <summary>Computer (Chrome, Edge or Safari)</summary>
+      <div class="vstack gap-2">
+        <ol class="m-0">
+          <li>Open <strong>Seven Friends in Chrome or Edge</strong>.</li>
+          <li>Click the <strong>install icon</strong> at the right end of the address bar (a screen with a small arrow), or open the browser menu and choose <strong>Install Seven Friends</strong> (Chrome: under <em>Cast, save and share</em>).</li>
+          <li>Click <strong>Install</strong>. The app opens in its own window and gets an icon in your app list.</li>
+        </ol>
+        <p class="small text-secondary m-0">Safari on a Mac: choose File → <em>Add to Dock</em>.</p>
+      </div>
+    </details>
+  }
 
   @if (!app.mobile) {
     <section class="vstack gap-2">

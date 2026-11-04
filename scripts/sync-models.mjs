@@ -14,8 +14,8 @@
  *   --to <dir>     copy to another folder (used by the tests)
  *   --from <dir>   read from another folder (used by the tests)
  *
- * The shared folder may only hold TYPES (no const / function / class / enum) and may only import
- * from itself ("./"), because the frontend has none of the backend's packages.
+ * The shared folder holds TYPES and plain DATA (constants and small pure functions, e.g. the languages), and may only
+ * import from itself ("./"), because the frontend has none of the backend's packages.
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -43,15 +43,13 @@ if (!fs.existsSync(source)) fail(`source folder not found: ${source}`);
 const files = fs.readdirSync(source).filter((f) => f.endsWith(".ts")).sort();
 if (!files.length) fail(`no .ts files in ${source}`);
 
-// 1. types only, imports only from the folder itself
+// 1. imports only from the folder itself (types and plain data are fine)
 const problems = [];
 for (const file of files) {
   const text = fs.readFileSync(path.join(source, file), "utf8");
   for (const m of text.matchAll(/^\s*(?:import|export)\b[^;]*?\bfrom\s+["']([^"']+)["']/gm)) {
     if (!m[1].startsWith("./")) problems.push(`${file}: imports "${m[1]}" (shared models may only import from "./")`);
   }
-  const value = text.match(/^\s*export\s+(?:default|const|let|var|function|class|enum|abstract|async)\b[^\n]*/m);
-  if (value) problems.push(`${file}: "${value[0].trim()}" is a value (shared models hold types only)`);
 }
 if (problems.length) fail(`the shared models are not shareable:\n  - ${problems.join("\n  - ")}`);
 

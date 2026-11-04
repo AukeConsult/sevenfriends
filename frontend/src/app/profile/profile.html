@@ -99,15 +99,26 @@
         </div>
       }
 
-      <label class="d-grid gap-1"><span class="form-label small text-secondary m-0">Country</span>
-        <select class="form-select" [value]="form().country" (change)="setCountry($any($event.target).value)" (blur)="flush()"
-                autocomplete="country" [disabled]="loading()">
-          <option value="" [selected]="!form().country">Not set</option>
-          @for (c of countries; track c.code) {
-            <option [value]="c.code" [selected]="c.code === form().country">{{ c.name }}</option>
-          }
-        </select>
-      </label>
+      <div class="d-flex gap-2"><!-- the country, and the language of the app on the same line -->
+        <label class="d-grid gap-1 flex-fill min-w-0"><span class="form-label small text-secondary m-0">Country</span>
+          <select class="form-select" [value]="form().country" (change)="setCountry($any($event.target).value)" (blur)="flush()"
+                  autocomplete="country" [disabled]="loading()">
+            <option value="" [selected]="!form().country">Not set</option>
+            @for (c of countries; track c.code) {
+              <option [value]="c.code" [selected]="c.code === form().country">{{ c.name }}</option>
+            }
+          </select>
+        </label>
+        @if (form().country) {
+          <label class="d-grid gap-1 min-w-0 sf-lang-field"><span class="form-label small text-secondary m-0">Language</span>
+            <select class="form-select" [value]="languageShown()" (change)="setLanguage($any($event.target).value)" (blur)="flush()" [disabled]="loading()">
+              @for (l of languageChoices(); track l.code) {
+                <option [value]="l.code" [selected]="l.code === languageShown()">{{ l.name }}</option>
+              }
+            </select>
+          </label>
+        }
+      </div>
 
       <div class="d-grid gap-1"><span class="form-label small text-secondary m-0">Phone number</span>
         <div class="input-group">

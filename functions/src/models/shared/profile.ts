@@ -15,6 +15,8 @@ export type ProfileDetails = {
   hasPicture: boolean;
   /** the country (a two-letter ISO code such as "NO") the person lives in; null = not set */
   country: string | null;
+  /** the language the person chose for the app (a code such as "nb"); null = not chosen: the language of the country is used */
+  language: string | null;
   /** the mood (1-4) stuck to the profile, which confirmed friends see; null = none */
   mood: number | null;
   /** a short mood message (at most 60 characters), which confirmed friends see; null = none */

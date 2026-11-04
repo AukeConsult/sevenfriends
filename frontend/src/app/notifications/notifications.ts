@@ -9,6 +9,7 @@ import { InviteLinkService } from '../core/invite-link.service';
 import { MessagesService } from '../core/messages.service';
 import { DesktopNoticeService } from '../core/desktop-notice.service';
 import { NotificationsService } from '../core/notifications.service';
+import { InstallService } from '../core/install.service';
 import { PushService } from '../core/push.service';
 import { SeatDots } from '../seat-dots/seat-dots';
 import { SoundService } from '../core/sound.service';
@@ -29,6 +30,7 @@ export class Notifications {
   private readonly sounds = inject(SoundService);
   private readonly desktop = inject(DesktopNoticeService);
   private readonly push = inject(PushService);
+  protected readonly install = inject(InstallService);
   protected readonly invite = inject(InviteLinkService);
 
   /** "Not now" for this visit (the reminder comes back the next time the app is opened). */

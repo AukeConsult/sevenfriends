@@ -2,7 +2,7 @@ import { Clearable } from '../core/clearable';
 import { SeatDots } from '../seat-dots/seat-dots';
 import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { authMessage, wasCancelled } from '../core/auth-errors';
+import { authMessage, wasCancelled, wasRejected } from '../core/auth-errors';
 import { AuthService } from '../core/auth.service';
 import { FriendLinkService } from '../core/friend-link.service';
 import { AuthMode } from '../models';
@@ -25,18 +25,27 @@ export class Login {
   protected readonly busy = signal(false);
   protected readonly error = signal<string | null>(null);
   protected readonly info = signal<string | null>(null);
+  /** a sign-in with email and password was turned down: the person may not have an account yet, so creating one is offered clearly */
+  protected readonly rejected = signal(false);
+  /** the password is shown as text (the Show / Hide button) */
+  protected readonly showPassword = signal(false);
 
   protected toggleMode(): void {
     this.mode.update((m) => (m === 'signin' ? 'signup' : 'signin'));
     this.error.set(null);
     this.info.set(null);
+    this.rejected.set(false);
   }
 
   protected google(): Promise<void> {
     return this.run(() => this.auth.signInWithGoogle());
   }
 
-  protected submit(email: string, password: string, name: string): Promise<void> {
+  protected submit(email: string, password: string, name: string, again: string): Promise<void> {
+    if (this.mode() === 'signup' && password !== again) {
+      this.error.set('The two passwords are not the same. Type them again.');
+      return Promise.resolve();
+    }
     return this.run(() =>
       this.mode() === 'signin'
         ? this.auth.signInWithEmail(email.trim(), password)
@@ -63,11 +72,13 @@ export class Login {
     this.busy.set(true);
     this.error.set(null);
     this.info.set(null);
+    this.rejected.set(false);
     try {
       await action();
       await this.router.navigateByUrl(this.auth.landingPath());
     } catch (err) {
       if (!wasCancelled(err)) this.error.set(authMessage(err, 'Sign-in failed. Please try again.'));
+      if (this.mode() === 'signin' && wasRejected(err)) this.rejected.set(true);
     } finally {
       this.busy.set(false);
     }

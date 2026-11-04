@@ -7,6 +7,7 @@ import { parsePicture, readAvatar, removeAvatar, saveAvatar } from "./avatar";
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAX_FRIENDS, MAX_MOOD_MESSAGE, MAX_NAME_LENGTH, MOOD_COUNT } from "./constants";
 import { ProfileDetails, ProfilePicture, Socials } from "./models";
 import { circleCol, userDoc } from "./paths";
+import { isLanguage } from "./models/shared/languages";
 import { PHONE_RE, isCountry, SOCIAL_NETWORKS, parseSocials, phoneKey, presenceOf, text } from "./validation";
 
 const uidOf = (res: { locals: Record<string, unknown> }) => (res.locals.token as DecodedIdToken).uid;
@@ -24,6 +25,7 @@ function detailsOf(data: Record<string, unknown>): ProfileDetails {
     icon: Number.isInteger(data.profileIcon) ? (data.profileIcon as number) : null,
     hasPicture: Boolean(data.profilePictureAt),
     country: (data.country as string | null | undefined) ?? null,
+    language: (data.language as string | null | undefined) ?? null,
     mood: Number.isInteger(data.mood) ? (data.mood as number) : null,
     moodMessage: (data.moodMessage as string | null | undefined) ?? null,
     ...(Object.fromEntries(SOCIAL_NETWORKS.map((n) => [n, data[n] ?? null])) as Socials),
@@ -82,6 +84,18 @@ profileRouter.put(
       return;
     }
 
+    // the language of the app: one of the codes in LANGUAGES ("nb"); left out = unchanged, null / empty = not chosen
+    const languageGiven = "language" in body;
+    const language = typeof body.language === "string" && body.language.trim() ? body.language.trim() : null;
+    if (languageGiven && body.language !== null && typeof body.language !== "string") {
+      res.status(400).json({ error: "The language must be a language code such as nb" });
+      return;
+    }
+    if (language && !isLanguage(language)) {
+      res.status(400).json({ error: "The language must be a language code such as nb" });
+      return;
+    }
+
     const ref = userDoc(uidOf(res));
     const before = (await ref.get()).data();
     const verifiedPhone = (before?.verifiedPhone as string | null | undefined) ?? null;
@@ -93,6 +107,7 @@ profileRouter.put(
         ...(nameGiven ? { displayName: name } : {}),
         ...(iconGiven ? { profileIcon: body.icon } : {}),
         ...(countryGiven ? { country } : {}),
+        ...(languageGiven ? { language } : {}),
         // only what the request carries is changed: a save that leaves the phone or an account out keeps it
         ...(phoneGiven || verifiedPhone
           ? { phone: verifiedPhone ?? phone, phoneKey: phoneKey(verifiedPhone ?? phone) } // reachable by this number, verified or not

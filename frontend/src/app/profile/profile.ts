@@ -8,6 +8,7 @@ import { ApiService } from '../core/api.service';
 import { authMessage } from '../core/auth-errors';
 import { AuthService } from '../core/auth.service';
 import { LiveChanges } from '../core/live-changes';
+import { defaultLanguage, languagesFor } from '../models/shared/languages';
 import { countries, dialCode, fullNumber, isValidPhone, nationalNumber } from '../core/countries';
 import { SOCIAL_NETWORKS, draftFromSocials, emptySocialDraft, socialsFromDraft } from '../core/social';
 import { ProfileDetails, ProfileDraft, ProfilePicture, SaveState } from '../models';
@@ -35,7 +36,7 @@ export class Profile {
   protected readonly confirmNewLink = signal(false);
   protected readonly networks = SOCIAL_NETWORKS;
 
-  protected readonly form = signal<ProfileDraft>({ name: '', phone: '', country: '', ...emptySocialDraft() });
+  protected readonly form = signal<ProfileDraft>({ name: '', phone: '', country: '', language: '', ...emptySocialDraft() });
   protected readonly loading = signal(true);
   /** the seat icon (1-7) chosen as my own picture, when I have no photo; null = none */
   protected readonly icon = signal<number | null>(null);
@@ -44,6 +45,10 @@ export class Profile {
   protected readonly icons = [1, 2, 3, 4, 5, 6, 7];
   protected readonly countries = countries();
 
+  /** the languages to choose from for the chosen country (its own first, then English, French and Spanish) */
+  protected readonly languageChoices = computed(() => languagesFor(this.form().country));
+  /** the language shown: the one chosen, or the language of the country while none is chosen */
+  protected readonly languageShown = computed(() => this.form().language || defaultLanguage(this.form().country));
   /** the calling code of the chosen country (without the +): "47" for Norway; null while no country is chosen */
   protected readonly dial = computed(() => dialCode(this.form().country));
   /** the number has the code of ANOTHER country than the chosen one */
@@ -156,6 +161,11 @@ export class Profile {
     this.setField('phone', full ?? typed);
   }
 
+  /** A language was chosen: the language of the country is not stored (it follows the country). */
+  protected setLanguage(code: string): void {
+    this.setField('language', code === defaultLanguage(this.form().country) ? '' : code);
+  }
+
   /** A country was chosen: the code in front of the number changes with it (the number itself is kept). */
   protected setCountry(country: string): void {
     const oldDial = this.dial();
@@ -168,6 +178,8 @@ export class Profile {
     }
     if (next !== phone) this.form.update((f) => ({ ...f, phone: next }));
     this.setField('country', country);
+    // a language that this country does not offer is dropped: the language of the new country is used
+    if (!languagesFor(country).some((l) => l.code === this.form().language)) this.setField('language', '');
   }
 
   protected async verifyPhone(): Promise<void> {
@@ -207,7 +219,7 @@ export class Profile {
       this.emailVerified.set(res.emailVerified);
       this.icon.set(res.icon);
       this.picture.set(res.hasPicture ? (await this.api.request<ProfilePicture>('/profile/picture').catch(() => null))?.image ?? null : null);
-      this.form.set({ name: res.name ?? '', phone: res.phone ?? '', country: res.country ?? '', ...draftFromSocials(res) });
+      this.form.set({ name: res.name ?? '', phone: res.phone ?? '', country: res.country ?? '', language: res.language ?? '', ...draftFromSocials(res) });
     } catch (err: any) {
       this.loadFailed = true;
       this.state.set('error');
@@ -266,6 +278,7 @@ export class Profile {
             ...(!sent.phone.trim() || isValidPhone(sent.phone) ? { phone: sent.phone.trim() || null } : {}),
             icon: this.icon(),
             country: sent.country || null,
+            language: sent.language || null,
             ...socialsFromDraft(sent),
           }),
         });

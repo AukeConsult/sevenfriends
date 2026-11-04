@@ -199,3 +199,25 @@ describe("a save only changes what it carries", () => {
     expect((await me.raw("put", "/profile", { phone: null }).expect(200)).body).toMatchObject({ phone: null, tiktok: "b" });
   });
 });
+
+describe("my language", () => {
+  it("not chosen at first; chosen, kept when left out, changed and removed", async () => {
+    const { seedPool } = await import("./helpers");
+    const me = (await seedPool())[0];
+    expect((await me.raw("get", "/profile").expect(200)).body.language).toBeNull();
+    expect((await me.raw("put", "/profile", { language: "nb" }).expect(200)).body.language).toBe("nb");
+    expect((await me.raw("put", "/profile", { country: "NO" }).expect(200)).body.language).toBe("nb"); // left out = unchanged
+    expect((await me.raw("put", "/profile", { language: "fr" }).expect(200)).body.language).toBe("fr");
+    expect((await me.raw("put", "/profile", { language: "" }).expect(200)).body.language).toBeNull();
+    await me.raw("put", "/profile", { language: "es" }).expect(200);
+    expect((await me.raw("put", "/profile", { language: null }).expect(200)).body.language).toBeNull();
+  });
+
+  it.each([["xx"], ["NB"], ["nob"], ["en-GB"], [7], [true]])("refuses %j, and keeps the old language", async (bad) => {
+    const { seedPool } = await import("./helpers");
+    const me = (await seedPool())[0];
+    await me.raw("put", "/profile", { language: "de" }).expect(200);
+    await me.raw("put", "/profile", { language: bad }).expect(400);
+    expect((await me.raw("get", "/profile")).body.language).toBe("de");
+  });
+});
