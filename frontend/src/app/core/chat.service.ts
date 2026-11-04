@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { ChatMessage, Conversation, MessageDeleteCriteria, MessageDeleteResult, NewMedia } from '../models';
+import { ChatMessage, Conversation, MessageDeleteCriteria, MessageDeleteResult, MessageLink, NewMedia } from '../models';
 import { ApiService } from './api.service';
 import { FriendsService } from './friends.service';
 import { MessagesService } from './messages.service';
@@ -27,6 +27,12 @@ export class ChatService {
 
   edit(friendId: string, messageId: string, text: string): Promise<ChatMessage> {
     return this.api.request<ChatMessage>(`${this.base(friendId)}/${messageId}`, { method: 'PUT', body: JSON.stringify({ text }) });
+  }
+
+  /** The link of a text and whether its page can be shown in a frame (the same check the server makes when the message is sent). */
+  async previewLink(text: string): Promise<MessageLink | null> {
+    const { link } = await this.api.request<{ link: MessageLink | null }>('/link-preview', { method: 'POST', body: JSON.stringify({ text }) });
+    return link;
   }
 
   remove(friendId: string, messageId: string): Promise<void> {

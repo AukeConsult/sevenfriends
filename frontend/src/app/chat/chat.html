@@ -105,6 +105,23 @@
         <button type="button" class="btn btn-link btn-sm p-0" (click)="cancelEdit()">Cancel</button>
       </div>
     }
+    @if (draftLink(); as draft) {
+      <!-- a link in the text that is being written: its page can be previewed before sending -->
+      <div class="sf-draft-link">
+        <div class="sf-draft-link-bar">
+          <span class="sf-hint sf-ellipsis">🔗 {{ draft.url }}</span>
+          @if (draft.embedUrl) {
+            <button type="button" class="btn btn-light btn-sm" (click)="draftOpen.set(!draftOpen())">{{ draftOpen() ? 'Hide preview' : 'Show preview' }}</button>
+          } @else {
+            <span class="sf-hint">No preview: the site does not allow it</span>
+          }
+          <button type="button" class="sf-icon-btn" (click)="dismissDraftLink()" aria-label="Close the link preview">✕</button>
+        </div>
+        @if (draftOpen() && draft.embedUrl) {
+          <iframe [src]="frameUrl(draft.embedUrl)" title="Preview of the link" sandbox="allow-scripts allow-same-origin allow-forms allow-presentation" referrerpolicy="no-referrer" allow="fullscreen"></iframe>
+        }
+      </div>
+    }
     <div class="sf-composer-row">
       <button type="button" class="sf-icon-btn sf-emoji-toggle" (click)="emojiOpen.set(!emojiOpen())" [attr.aria-expanded]="emojiOpen()"
               [attr.aria-label]="emojiOpen() ? 'Hide the emojis' : 'Show the emojis'">😊</button>
@@ -156,32 +173,58 @@
     }
 
     @for (message of shown(); track message.id) {
-      <div class="sf-message" [attr.data-id]="message.id" [class.sf-mine]="message.mine" [class.sf-message-media]="message.media" [class.sf-doomed]="doomed().has(message.id)">
+      <div class="sf-message" [attr.data-id]="message.id" [class.sf-mine]="message.mine" [class.sf-message-media]="message.media || (message.link && previewing().has(message.id))" [class.sf-doomed]="doomed().has(message.id)">
         <!-- my own message: tap it to edit or delete it -->
         <div class="sf-bubble" [class.sf-bubble-media]="message.media" [class.sf-bubble-tap]="message.mine" [attr.role]="message.mine ? 'button' : null" [attr.tabindex]="message.mine ? 0 : null"
              [attr.aria-expanded]="message.mine ? selected() === message.id : null" (click)="select(message)" (keydown.enter)="select(message)">
           @if (message.media; as media) {
             <!-- a friend's image opens at once; on my own message the tap opens Edit / Delete (and Open) -->
-            @if (media.kind === 'video') {
-              <app-media-video [media]="media" />
-            } @else if (media.kind === 'audio') {
+            @if (media.kind === 'audio') {
               <app-media-audio [media]="media" />
-            } @else if (message.mine) {
-              <app-media-image [media]="media" />
-            } @else {
-              <a [routerLink]="['/media', media.ownerId, media.objectId]" class="sf-media-link" aria-label="Open the image"><app-media-image [media]="media" /></a>
+            } @else if (!pictureHidden().has(message.id)) {
+              @if (media.kind === 'video') {
+                <app-media-video [media]="media" />
+              } @else if (message.mine) {
+                <app-media-image [media]="media" />
+              } @else {
+                <a [routerLink]="['/media', media.ownerId, media.objectId]" class="sf-media-link" aria-label="Open the image"><app-media-image [media]="media" /></a>
+              }
             }
           }
-          @if (message.text) { <span class="sf-caption">{{ message.text }}</span> }
+          @if (message.text) { <span class="sf-caption">@for (part of parts(message.text); track $index) {@if (part.url) {<a [href]="part.url" target="_blank" rel="noopener noreferrer nofollow">{{ part.text }}</a>} @else {<ng-container>{{ part.text }}</ng-container>}}</span> }
         </div>
+        @if (message.link?.embedUrl; as embedUrl) {
+          <!-- the page of the link, shown here when its site allows it; it is loaded only after a tap -->
+          @if (previewing().has(message.id)) {
+            <div class="sf-link-frame">
+              <div class="sf-msg-actions">
+                <a [href]="message.link!.url" target="_blank" rel="noopener noreferrer nofollow" class="btn btn-light btn-sm">Open in a new tab</a>
+                <button type="button" class="btn btn-light btn-sm" (click)="togglePreview(message.id)">Hide preview</button>
+              </div>
+              <iframe [src]="frameUrl(embedUrl)" title="Preview of the link" sandbox="allow-scripts allow-same-origin allow-forms allow-presentation" referrerpolicy="no-referrer" loading="lazy" allow="fullscreen"></iframe>
+            </div>
+          } @else {
+            <div class="sf-msg-actions">
+              <button type="button" class="btn btn-light btn-sm" (click)="togglePreview(message.id)">Show preview</button>
+            </div>
+          }
+        }
         @if (message.time) {
           <small class="sf-hint">{{ message.time | date: 'd MMM, HH:mm' }}@if (message.edited) { · edited }@if (doomed().has(message.id)) { · <strong class="text-danger">will be deleted</strong> }</small>
         }
         @if (!message.mine && message.media; as media) {
           <!-- the friend's image, video or voice message: always open and download it -->
           <div class="sf-msg-actions">
+            @if (media.kind !== 'audio') {
+              <button type="button" class="btn btn-light btn-sm" (click)="togglePicture(message.id)">{{ pictureHidden().has(message.id) ? 'Show' : 'Hide' }}</button>
+            }
             <a [routerLink]="['/media', media.ownerId, media.objectId]" class="btn btn-light btn-sm">Open</a>
             <button type="button" class="btn btn-light btn-sm" (click)="download(media)">Download</button>
+          </div>
+        }
+        @if (message.mine && message.media && message.media.kind !== 'audio') {
+          <div class="sf-msg-actions">
+            <button type="button" class="btn btn-light btn-sm" (click)="togglePicture(message.id)">{{ pictureHidden().has(message.id) ? 'Show' : 'Hide' }}</button>
           </div>
         }
         @if (message.mine && selected() === message.id) {

@@ -3,6 +3,7 @@ import { DatePipe } from '@angular/common';
 import { NgTemplateOutlet } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Component, DestroyRef, ElementRef, HostListener, computed, effect, inject, signal, untracked, viewChild } from '@angular/core';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ApiError } from '../core/api.service';
 import { FriendAvatar } from '../friend-avatar/friend-avatar';
@@ -18,7 +19,7 @@ import { FriendsService } from '../core/friends.service';
 import { moodIcon, moodLabel } from '../core/moods';
 import { presenceLabel } from '../core/presence';
 import { RealtimeService } from '../core/realtime.service';
-import { ChatMessage, MessageDeleteCriteria } from '../models';
+import { ChatMessage, MessageDeleteCriteria, MessageLink } from '../models';
 
 // New messages, edits and deletes arrive live (RealtimeService). This refresh is only a safety net.
 const SAFETY_REFRESH_MS = 30000;
@@ -127,6 +128,12 @@ export class Chat {
       if (live.connectionId === this.friendId) untracked(() => void this.refresh(false));
     });
 
+    // a link in the message field: check it after the last key press
+    effect(() => {
+      const text = this.text();
+      untracked(() => this.watchDraft(text));
+    });
+
     // the header's height (it changes with the notch and the font size)
     effect((onCleanup) => {
       const header = this.bar()?.nativeElement;
@@ -177,6 +184,90 @@ export class Chat {
     } finally {
       this.loaded.set(true);
     }
+  }
+
+  /** The link in the text that is being written (checked a moment after the last key press), and whether its preview is open. */
+  protected readonly draftLink = signal<MessageLink | null>(null);
+  protected readonly draftOpen = signal(false);
+  private draftDismissed: string | null = null;
+  private draftTimer: ReturnType<typeof setTimeout> | undefined;
+  private draftSeq = 0;
+
+  protected dismissDraftLink(): void {
+    this.draftDismissed = this.draftLink()?.url ?? null; // the same link does not come back while it stays in the text
+    this.draftLink.set(null);
+    this.draftOpen.set(false);
+  }
+
+  /** The text changed: look for a link in it. */
+  private watchDraft(text: string): void {
+    clearTimeout(this.draftTimer);
+    const url = this.parts(text).find((p) => p.url)?.url ?? null;
+    if (!url || this.editing()) {
+      this.draftSeq++;
+      this.draftLink.set(null);
+      this.draftOpen.set(false);
+      this.draftDismissed = null;
+      return;
+    }
+    if (url === this.draftLink()?.url || url === this.draftDismissed) return;
+    const seq = ++this.draftSeq;
+    this.draftTimer = setTimeout(async () => {
+      try {
+        const link = await this.chat.previewLink(text);
+        if (seq === this.draftSeq) this.draftLink.set(link);
+      } catch {
+        if (seq === this.draftSeq) this.draftLink.set(null); // not checked: nothing is shown, the message still goes
+      }
+    }, 700);
+  }
+
+  /** The messages whose link preview is open (the page is loaded only after a tap: it shows the friend's address to that site and runs its scripts). */
+  protected readonly previewing = signal<ReadonlySet<string>>(new Set());
+  /** The pictures and videos the person has hidden in the feed (they are shown until hidden). */
+  protected readonly pictureHidden = signal<ReadonlySet<string>>(new Set());
+
+  protected togglePicture(id: string): void {
+    this.pictureHidden.update((hidden) => {
+      const next = new Set(hidden);
+      if (!next.delete(id)) next.add(id);
+      return next;
+    });
+  }
+
+  private readonly sanitizer = inject(DomSanitizer);
+  private readonly frames = new Map<string, SafeResourceUrl>();
+
+  protected togglePreview(id: string): void {
+    this.previewing.update((open) => {
+      const next = new Set(open);
+      if (!next.delete(id)) next.add(id);
+      return next;
+    });
+  }
+
+  /** The address for the frame. It comes from the server, which only gives http(s) addresses; anything else is refused here too. */
+  protected frameUrl(url: string): SafeResourceUrl {
+    let safe = this.frames.get(url);
+    if (!safe) {
+      safe = this.sanitizer.bypassSecurityTrustResourceUrl(/^https?:\/\//i.test(url) ? url : 'about:blank');
+      this.frames.set(url, safe);
+    }
+    return safe;
+  }
+
+  /** The text cut into pieces: plain text and web addresses (shown as links that open in a new tab). */
+  protected parts(text: string): { text: string; url: string | null }[] {
+    const result: { text: string; url: string | null }[] = [];
+    let last = 0;
+    for (const match of text.matchAll(/https?:\/\/[^\s<>"']+/gi)) {
+      const shown = match[0].replace(/[.,;:!?)\]}]+$/, '');
+      if (match.index > last) result.push({ text: text.slice(last, match.index), url: null });
+      result.push({ text: shown, url: /^https?:\/\/[^/\s]+/i.test(shown) ? shown : null });
+      last = match.index + shown.length;
+    }
+    if (last < text.length) result.push({ text: text.slice(last), url: null });
+    return result;
   }
 
   /** Saves the image, video or voice message of a message on this device (works for my own and for the friend's). */

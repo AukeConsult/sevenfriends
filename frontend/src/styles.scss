@@ -567,6 +567,11 @@ router-outlet + * { display: block; min-height: 100dvh; }
 }
 .sf-composer-row { display: flex; align-items: center; gap: 0.25rem; padding: 0.5rem var(--sf-gutter); }
 .sf-bubble-tap { cursor: pointer; }
+.sf-bubble a { color: inherit; text-decoration: underline; overflow-wrap: anywhere; } // a link in a message: same colour as its text
+.sf-draft-link { max-width: var(--sf-media-max); margin: 0 auto; width: 100%; border-bottom: 1px solid var(--sf-border); padding: 0.25rem var(--sf-gutter) 0.5rem; display: flex; flex-direction: column; gap: 0.25rem;
+  iframe { width: 100%; height: min(16rem, 35dvh); border: 1px solid var(--sf-border); border-radius: var(--sf-radius); background: #fff; } }
+.sf-draft-link-bar { display: flex; align-items: center; gap: 0.5rem; > .sf-hint:first-child { flex: 1; min-width: 0; } }
+.sf-link-frame { width: 100%; display: flex; flex-direction: column; gap: 0.25rem; iframe { width: 100%; height: min(24rem, 60dvh); border: 1px solid var(--sf-border); border-radius: var(--sf-radius); background: #fff; } } // the page of a link, shown in the feed
 // ---- Images in messages ----
 .sf-message-media { width: min(var(--sf-media-max), 94%); max-width: 94%; } // a message with an image, video or audio fills the feed, up to 640 px
 .sf-message-media .sf-bubble-media { align-self: stretch; }

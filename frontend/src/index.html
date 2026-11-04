@@ -2,6 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <script>
+    // sevenfriends.io is the main address: the other names send people there (same path), before the app starts
+    (function () {
+      var main = 'sevenfriends.io', host = location.hostname;
+      if (host === '7friends.io' || host === 'www.7friends.io' || host === 'www.' + main) location.replace('https://' + main + location.pathname + location.search + location.hash);
+    })();
+  </script>
   <title>Seven Friends</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">

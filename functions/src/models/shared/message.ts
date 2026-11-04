@@ -11,6 +11,13 @@ export interface Message {
   connectionId: string | null;
 }
 
+/** The first web address of a message, and (when the site allows it) the address of its page to show in a frame. */
+export interface MessageLink {
+  url: string;
+  /** what to show in a frame (the page itself, or the official player of a video / song); null = the site does not allow it: only the link */
+  embedUrl: string | null;
+}
+
 /** A message in the feed of one connection. */
 export interface ChatMessage {
   id: string;
@@ -24,6 +31,8 @@ export interface ChatMessage {
   time: string | null;
   /** true = the text was changed after it was sent */
   edited: boolean;
+  /** the first link of the text, or null */
+  link: MessageLink | null;
 }
 
 /** The feed of one connection. */

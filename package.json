@@ -10,6 +10,10 @@
     "build": "npm --prefix frontend run build && npm --prefix functions run build",
     "test": "npm --prefix functions run test:run",
     "test:emulator": "firebase emulators:exec --config firebase.test.json --only firestore --project demo-sevenfriends-test \"npm --prefix functions run test:run\"",
+    "deploy": "node scripts/sync-models.mjs && firebase deploy --only functions,firestore,storage,hosting",
+    "deploy:hosting": "node scripts/sync-models.mjs && firebase deploy --only hosting",
+    "deploy:functions": "node scripts/sync-models.mjs && firebase deploy --only functions",
+    "deploy:rules": "firebase deploy --only firestore,storage",
     "sync:models": "node scripts/sync-models.mjs",
     "sync:sounds": "node scripts/sounds-manifest.mjs",
     "check:models": "node scripts/sync-models.mjs --check"
