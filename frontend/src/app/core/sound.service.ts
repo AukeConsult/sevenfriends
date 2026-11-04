@@ -1,7 +1,9 @@
 import { Injectable, effect, inject, signal, untracked } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Preferences, SoundPreferences } from '../models';
 import { ApiService } from './api.service';
 import { AuthService } from './auth.service';
+import { LiveChanges } from './live-changes';
 
 /** What can make a sound. */
 export type SoundEvent = 'message' | 'request' | 'answer';
@@ -83,6 +85,7 @@ export class SoundService {
 
   private readonly api = inject(ApiService);
   private readonly auth = inject(AuthService);
+  private readonly live = inject(LiveChanges);
 
   /** true once the person has chosen their sounds (or looked at the Settings page) */
   readonly defined = signal(this.hasSaved());
@@ -104,6 +107,8 @@ export class SoundService {
   private saveTimer: ReturnType<typeof setTimeout> | undefined;
 
   constructor() {
+    // another device of mine saved other sounds
+    this.live.on('sounds').pipe(takeUntilDestroyed()).subscribe(() => void this.reloadFromAccount());
     const unlock = () => this.unlock();
     // the first tap or key press makes sound allowed
     document.addEventListener('pointerdown', unlock, { once: true, capture: true });
@@ -144,6 +149,18 @@ export class SoundService {
       else if (this.defined()) await this.saveNow(); // first time after the account got sounds: this device's choices become the account's
     } catch {
       /* offline: the choices on this device are used until the next change */
+    }
+  }
+
+  /** Another device of mine saved other sounds: take them (unless I am changing something right now). */
+  async reloadFromAccount(): Promise<void> {
+    const uid = this.accountUid;
+    if (!uid || this.saveTimer) return;
+    try {
+      const { sounds } = await this.api.request<Preferences>('/preferences');
+      if (this.accountUid === uid && !this.saveTimer && sounds) this.apply(sounds);
+    } catch {
+      /* offline: keep the sounds of this device */
     }
   }
 

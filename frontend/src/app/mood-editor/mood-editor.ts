@@ -1,7 +1,9 @@
 import { Clearable } from '../core/clearable';
 import { Component, DestroyRef, ElementRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ApiService } from '../core/api.service';
 import { MOODS, moodIcon, moodLabel } from '../core/moods';
+import { LiveChanges } from '../core/live-changes';
 import { ProfileDetails } from '../models';
 
 /** How long after the last key press the mood message is saved. */
@@ -19,6 +21,7 @@ const SAVE_MESSAGE_MS = 800;
 export class MoodEditor {
   private readonly api = inject(ApiService);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly live = inject(LiveChanges);
 
   protected readonly moods = MOODS;
   protected readonly moodIcon = moodIcon;
@@ -35,6 +38,10 @@ export class MoodEditor {
 
   constructor() {
     void this.load();
+    // my mood was changed on another device of mine: show it here too (not while I am typing a message)
+    this.live.on('profile').pipe(takeUntilDestroyed()).subscribe(() => {
+      if (!this.messageDirty) void this.load();
+    });
     // leaving the page with a message that is not saved yet: save it now
     // the message is not lost when the page is hidden, closed or left: it is saved, and the request may finish after the page is gone
     const onHide = () => {

@@ -1,11 +1,13 @@
 import { Clearable } from '../core/clearable';
 import { Component, DestroyRef, computed, effect, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 import { MoodEditor } from '../mood-editor/mood-editor';
 import { ApiService } from '../core/api.service';
 import { authMessage } from '../core/auth-errors';
 import { AuthService } from '../core/auth.service';
 import { InstallService } from '../core/install.service';
+import { LiveChanges } from '../core/live-changes';
 import { countries, dialCode, fullNumber, isValidPhone, nationalNumber } from '../core/countries';
 import { SOCIAL_NETWORKS, draftFromSocials, emptySocialDraft, socialsFromDraft } from '../core/social';
 import { ProfileDetails, ProfileDraft, ProfilePicture, SaveState } from '../models';
@@ -25,6 +27,7 @@ export class Profile {
   protected readonly app = inject(InstallService);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly live = inject(LiveChanges);
 
   protected readonly user = this.auth.user;
   protected readonly networks = SOCIAL_NETWORKS;
@@ -94,6 +97,8 @@ export class Profile {
       if (first) first = false;
       else void this.load();
     });
+    // changed on another device of mine: the picture, the icon and the verification follow at once (the form is not touched while I may be typing)
+    this.live.on('profile').pipe(takeUntilDestroyed()).subscribe(() => void this.refreshLive());
     void this.refreshVerification();
     this.load();
     // nothing may be lost: save when the page is hidden or closed (the request is allowed to finish after the page is gone)
@@ -174,6 +179,18 @@ export class Profile {
       this.verificationSent.set(true);
     } catch (err) {
       this.verificationError.set(authMessage(err, 'Could not send the email. Please try again.'));
+    }
+  }
+
+  private async refreshLive(): Promise<void> {
+    try {
+      const res = await this.api.request<ProfileDetails>('/profile');
+      this.phoneVerified.set(res.phoneVerified);
+      this.emailVerified.set(res.emailVerified);
+      this.icon.set(res.icon);
+      this.picture.set(res.hasPicture ? (await this.api.request<ProfilePicture>('/profile/picture').catch(() => null))?.image ?? null : null);
+    } catch {
+      /* the next change tries again */
     }
   }
 

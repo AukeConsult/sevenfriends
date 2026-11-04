@@ -1,3 +1,4 @@
+import { touchSync } from "./sync";
 import { Router } from "express";
 import { DecodedIdToken } from "firebase-admin/auth";
 import { FieldValue } from "firebase-admin/firestore";
@@ -54,6 +55,7 @@ preferencesRouter.put(
     const sounds: SoundPreferences = { message, request, answer, volume };
     // set + merge so it also works if the account document does not exist yet
     await userDoc(uidOf(res)).set({ soundPreferences: sounds, preferencesUpdatedAt: FieldValue.serverTimestamp() }, { merge: true });
+    await touchSync(uidOf(res), "preferencesAt");
     res.json({ sounds } satisfies Preferences);
   }),
 );

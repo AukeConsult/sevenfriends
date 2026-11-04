@@ -3,9 +3,11 @@ import { DecodedIdToken } from "firebase-admin/auth";
 import { DocumentReference, FieldValue, Timestamp, getFirestore } from "firebase-admin/firestore";
 import { asyncHandler } from "./auth";
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION } from "./constants";
-import { ChatMessage, Conversation, MediaRef, MessageDeleteCriteria, MessageDeleteResult, NewMedia } from "./models";
+import { ChatMessage, Conversation, MediaRef, MessageDeleteCriteria, MessageLink, MessageDeleteResult, NewMedia } from "./models";
 import { circleCol, messageCol, userDoc } from "./paths";
 import { sendPush } from "./push";
+import { linkOf } from "./link-preview";
+import { touchFeed, touchFeedIfExists } from "./sync";
 import { deleteObject, deleteObjects, isObjectId, mediaLabel, objectInfo } from "./sf-cache";
 
 export const MAX_MESSAGE_LENGTH = 2000;
@@ -59,7 +61,7 @@ conversationRouter.get(
     const messages: ChatMessage[] = snap.docs
       .map((d) => {
         const m = d.data();
-        return { id: d.id, text: m.text as string, mine: m.fromUid === uid, read: Boolean(m.read), time: iso(m.time), edited: Boolean(m.editedAt), media: (m.media as MediaRef | undefined) ?? null };
+        return { id: d.id, text: m.text as string, mine: m.fromUid === uid, read: Boolean(m.read), time: iso(m.time), edited: Boolean(m.editedAt), media: (m.media as MediaRef | undefined) ?? null, link: (m.link as MessageLink | undefined) ?? null };
       })
       .sort((a, b) => (a.time ?? "").localeCompare(b.time ?? ""))
       .slice(-FEED_LIMIT);
@@ -125,6 +127,7 @@ conversationRouter.post(
       return;
     }
 
+    const link = await linkOf(text); // the page of the link may be shown in a frame (checked once, here)
     const mine = media ? messageCol(token.uid).doc(media.objectId) : messageCol(token.uid).doc(); // a message with a file has the id of the file: that is how the receiver is let in
     const theirs = messageCol(connection.peerUid).doc(mine.id); // same message id on both sides
     const common = {
@@ -134,18 +137,21 @@ conversationRouter.post(
       toUid: connection.peerUid,
       text,
       ...(media ? { media } : {}),
+      ...(link ? { link } : {}),
       time: FieldValue.serverTimestamp(),
     };
     const batch = getFirestore().batch();
     batch.set(mine, { ...common, read: true }); // my own message needs no reading
     batch.set(theirs, { ...common, read: false });
     // "last spoken to": both sides of the friendship remember when the last message was written
-    batch.update((res.locals.circleRef as DocumentReference).collection(FRIENDS_SUBCOLLECTION).doc(connection.id), { lastMessageAt: FieldValue.serverTimestamp() });
+    const myEntry = (res.locals.circleRef as DocumentReference).collection(FRIENDS_SUBCOLLECTION).doc(connection.id);
+    batch.update(myEntry, { lastMessageAt: FieldValue.serverTimestamp() });
+    touchFeed(batch, myEntry); // my other devices reload this feed
     batch.update(circleCol(connection.peerUid).doc(connection.peerCircleId).collection(FRIENDS_SUBCOLLECTION).doc(connection.id), { lastMessageAt: FieldValue.serverTimestamp() });
     await batch.commit();
 
     const saved = (await mine.get()).data()!;
-    const created: ChatMessage = { id: mine.id, text, media, mine: true, read: true, time: iso(saved.time), edited: false };
+    const created: ChatMessage = { id: mine.id, text, media, mine: true, read: true, time: iso(saved.time), edited: false, link };
     // wake the other person's devices (before the answer: the function may stop right after it)
     await sendPush(connection.peerUid, { id: `message-${mine.id}`, title: common.fromName, body: text || mediaLabel(media!.kind), url: `/friends/${connection.id}` });
     res.status(201).json(created);
@@ -199,7 +205,10 @@ conversationRouter.post(
           batch.delete(messageCol(connection.peerUid).doc(d.id));
         }
         deleted += Math.min(DELETE_CHUNK, matching.length - i);
-        if (i + DELETE_CHUNK >= matching.length) await tellPeer(batch, peerEntryOf(connection));
+        if (i + DELETE_CHUNK >= matching.length) {
+          await touchFeedIfExists(batch, peerEntryOf(connection));
+          touchFeed(batch, (res.locals.circleRef as DocumentReference).collection(FRIENDS_SUBCOLLECTION).doc(connection.id)); // my other devices reload the feed
+        }
         await batch.commit();
       }
     }
@@ -223,17 +232,13 @@ async function ownMessage(req: Request, res: Response) {
     res.status(403).json({ error: "You can only change your own messages" });
     return null;
   }
-  return { mine, theirs: messageCol(connection.peerUid).doc(mine.id), peerEntry: peerEntryOf(connection), media: (data.media as MediaRef | undefined) ?? null };
+  const myEntry = (res.locals.circleRef as DocumentReference).collection(FRIENDS_SUBCOLLECTION).doc(connection.id);
+  return { mine, theirs: messageCol(connection.peerUid).doc(mine.id), peerEntry: peerEntryOf(connection), myEntry, media: (data.media as MediaRef | undefined) ?? null };
 }
 
 /** The friend's copy of the friendship. */
 function peerEntryOf(connection: { id: string; peerUid: string; peerCircleId: string }): DocumentReference {
   return circleCol(connection.peerUid).doc(connection.peerCircleId).collection(FRIENDS_SUBCOLLECTION).doc(connection.id);
-}
-
-/** The friend's app listens to its copy of the friendship: touching it makes an open feed reload at once. */
-async function tellPeer(batch: FirebaseFirestore.WriteBatch, peerEntry: DocumentReference): Promise<void> {
-  if ((await peerEntry.get()).exists) batch.update(peerEntry, { messagesChangedAt: FieldValue.serverTimestamp() });
 }
 
 /** Edit one of my messages: { text } (the caption, for a message with a file). Both copies change; the message is marked as edited. */
@@ -251,14 +256,16 @@ conversationRouter.put(
       res.status(400).json({ error: `A message can be at most ${MAX_MESSAGE_LENGTH} characters` });
       return;
     }
-    const change = { text, editedAt: FieldValue.serverTimestamp() };
+    const link = await linkOf(text);
+    const change = { text, editedAt: FieldValue.serverTimestamp(), link: link ?? FieldValue.delete() }; // the link follows the new text
     const batch = getFirestore().batch();
     batch.update(own.mine, change);
     if ((await own.theirs.get()).exists) batch.update(own.theirs, change);
-    await tellPeer(batch, own.peerEntry);
+    await touchFeedIfExists(batch, own.peerEntry);
+    touchFeed(batch, own.myEntry); // my other devices reload the feed
     await batch.commit();
     const saved = (await own.mine.get()).data()!;
-    const edited: ChatMessage = { id: own.mine.id, text, media: own.media, mine: true, read: true, time: iso(saved.time), edited: true };
+    const edited: ChatMessage = { id: own.mine.id, text, media: own.media, mine: true, read: true, time: iso(saved.time), edited: true, link };
     res.json(edited);
   }),
 );
@@ -273,7 +280,8 @@ conversationRouter.delete(
     const batch = getFirestore().batch();
     batch.delete(own.mine);
     batch.delete(own.theirs); // deleting a copy that is not there is fine
-    await tellPeer(batch, own.peerEntry);
+    await touchFeedIfExists(batch, own.peerEntry);
+    touchFeed(batch, own.myEntry); // my other devices reload the feed
     await batch.commit();
     res.status(204).end();
   }),

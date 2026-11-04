@@ -134,6 +134,9 @@ async function eraseInTransaction(tx: Transaction, uid: string, files: Map<strin
   // 8. a picture saved before the media cache existed (the new one is in the cache folder, deleted after the commit)
   drop(profilePictureDoc(uid));
 
+  // 8b. the "something changed" stamp for my other devices
+  drop(userDoc(uid).collection("sync").doc("state"));
+
   // 9. the account itself
   drop(userDoc(uid));
 

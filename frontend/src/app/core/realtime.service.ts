@@ -4,6 +4,7 @@ import { LiveMessage } from '../models';
 import { AuthService } from './auth.service';
 import { DesktopNoticeService } from './desktop-notice.service';
 import { FriendsService } from './friends.service';
+import { LiveChanges } from './live-changes';
 import { NotificationsService } from './notifications.service';
 import { SoundService } from './sound.service';
 
@@ -37,6 +38,7 @@ export class RealtimeService {
   private readonly friends = inject(FriendsService);
   private readonly sound = inject(SoundService);
   private readonly desktop = inject(DesktopNoticeService);
+  private readonly live = inject(LiveChanges);
 
   /** The message feed that is open right now (set by the Chat page): its messages are shown there, not on Home. */
   readonly openFeed = signal<string | null>(null);
@@ -44,9 +46,7 @@ export class RealtimeService {
   /** The newest message that arrived live. The Chat page refreshes when it belongs to its feed. */
   readonly latestMessage = signal<LiveMessage | null>(null);
 
-  /** A feed whose messages were edited or deleted by the friend (the Chat page of that feed reloads). */
-  readonly feedChanged = signal<{ connectionId: string; seq: number } | null>(null);
-
+  private syncStamps = new Map<string, number>();
   private stops: (() => void)[] = [];
   private messagesChangedAt = new Map<string, number>();
   private friendsTimer: ReturnType<typeof setTimeout> | undefined;
@@ -86,6 +86,8 @@ export class RealtimeService {
         }),
         // 2. my own friend list: a change means an answer, a deletion or a new link
         this.watchFriends(sdk, sdk.collection(db, 'user-account', uid, 'friend-circle', 'default', 'friends')),
+        // 2b. my other devices: a changed profile or sounds (times only, written by the backend)
+        this.watchSync(sdk, mine('sync')),
         // 3. messages: only the unread ones (what I wrote is already read), so a new document is a new message for me
         this.watch(sdk, sdk.query(mine('messages'), sdk.where('read', '==', false)), (added, first) => this.onMessages(added, first)),
       ];
@@ -146,6 +148,26 @@ export class RealtimeService {
     );
   }
 
+  /** Listens to the "something changed" stamps: my profile and my sounds, changed on any of my devices. */
+  private watchSync(sdk: FirestoreSdk, source: Query<DocumentData>): () => void {
+    return this.listen(
+      sdk,
+      source,
+      (snapshot, first) => {
+        for (const change of snapshot.docChanges()) {
+          for (const field of ['profileAt', 'preferencesAt']) {
+            const stamp = change.doc.data()[field]?.toMillis?.() as number | undefined;
+            if (stamp === undefined || this.syncStamps.get(field) === stamp) continue;
+            this.syncStamps.set(field, stamp);
+            if (first) continue; // what was already there is loaded by the pages themselves
+            this.live.emit({ type: field === 'profileAt' ? 'profile' : 'sounds' });
+          }
+        }
+      },
+      'my other devices',
+    );
+  }
+
   /** Listens to the friend list: every change after the first snapshot reloads the list (changes that come together are one reload). */
   private watchFriends(sdk: FirestoreSdk, source: Query<DocumentData>): () => void {
     const stop = this.listen(
@@ -156,7 +178,7 @@ export class RealtimeService {
         for (const change of snapshot.docChanges()) {
           const stamp = change.doc.data()['messagesChangedAt']?.toMillis?.() as number | undefined;
           if (stamp === undefined) continue;
-          if (!first && this.messagesChangedAt.get(change.doc.id) !== stamp) this.feedChanged.set({ connectionId: change.doc.id, seq: ++this.seq });
+          if (!first && this.messagesChangedAt.get(change.doc.id) !== stamp) this.live.emit({ type: 'feed', connectionId: change.doc.id });
           this.messagesChangedAt.set(change.doc.id, stamp);
         }
         if (first || !snapshot.docChanges().length) return;

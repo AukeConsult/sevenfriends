@@ -1,14 +1,7 @@
-import { Component, OnDestroy, OnInit, output, signal } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, output, signal } from '@angular/core';
+import { UiPreferencesService } from '../core/ui-preferences';
 import { MAX_AUDIO_SECONDS, audioRecorderOptions, audioRecorderType } from '../core/audio';
 
-const RAW_KEY = 'sf-mic-raw';
-const readRaw = () => {
-  try {
-    return localStorage.getItem(RAW_KEY) === '1';
-  } catch {
-    return false;
-  }
-};
 
 /** What went wrong with the microphone, in words for the person. */
 export function micProblem(err: unknown): string {
@@ -71,7 +64,8 @@ export class Voice implements OnInit, OnDestroy {
   private micIndex = 0;
   private deviceId: string | null = null;
   /** the microphone is opened without the filters of the browser */
-  private raw = readRaw();
+  private readonly prefs = inject(UiPreferencesService);
+  private raw = this.prefs.get('micRaw');
 
   async ngOnInit(): Promise<void> {
     try {
@@ -152,11 +146,7 @@ export class Voice implements OnInit, OnDestroy {
         // nothing was heard: not kept. First the microphone is opened again without the filters of the browser, and the person records again
         if (!this.raw) {
           this.raw = true;
-          try {
-            localStorage.setItem(RAW_KEY, '1');
-          } catch {
-            /* not remembered */
-          }
+          this.prefs.set('micRaw', true); // remembered for the next recordings
           this.retried.set(true);
           void this.open(this.deviceId).catch((err) => this.failed.emit(micProblem(err)));
         } else {

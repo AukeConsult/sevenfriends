@@ -15,6 +15,7 @@ import { Friend, FriendInvite, MediaRef, FriendStatus, NewFriend, ProfilePicture
 import { circleCol, friendRequestCol, messageCol, userDoc } from "./paths";
 import { readAvatar } from "./avatar";
 import { deleteObjects } from "./sf-cache";
+import { tellFriendAsleep } from "./sync";
 import { nameOf, sendPush } from "./push";
 import { findAccounts, signalRefsOf, writeSignal } from "./signals";
 import {
@@ -247,7 +248,7 @@ friendsRouter.post(
         : null;
       const theirsExists = theirs ? (await tx.get(theirs)).exists : false;
       tx.update(ref, { asleep });
-      if (theirs && theirsExists) tx.update(theirs, { theyAsleep: asleep });
+      if (theirs && theirsExists) tellFriendAsleep(tx, theirs, asleep);
       return "ok" as const;
     });
     if (result === "missing") {

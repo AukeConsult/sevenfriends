@@ -2,6 +2,7 @@ import { Router } from "express";
 import { DecodedIdToken } from "firebase-admin/auth";
 import { FieldValue, getFirestore } from "firebase-admin/firestore";
 import { asyncHandler, requireAuth } from "./auth";
+import { touchSync } from "./sync";
 import { parsePicture, readAvatar, removeAvatar, saveAvatar } from "./avatar";
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAX_FRIENDS, MAX_MOOD_MESSAGE, MAX_NAME_LENGTH, MOOD_COUNT } from "./constants";
 import { ProfileDetails, ProfilePicture, Socials } from "./models";
@@ -103,6 +104,7 @@ profileRouter.put(
     );
     // confirmed friends see my icon: tell their apps
     if (iconGiven && (body.icon ?? null) !== (before?.profileIcon ?? null)) await touchFriends(uidOf(res));
+    await touchSync(uidOf(res), "profileAt");
     res.json(detailsOf((await ref.get()).data() ?? {}));
   }),
 );
@@ -145,6 +147,7 @@ profileRouter.put(
     const saved = (await ref.get()).data() ?? {};
     // confirmed friends see the mood: tell their apps (it changes their copy of the friendship, which they listen to)
     if ((saved.mood ?? null) !== (before?.mood ?? null) || (saved.moodMessage ?? null) !== (before?.moodMessage ?? null)) await touchFriends(uidOf(res));
+    await touchSync(uidOf(res), "profileAt");
     res.json(detailsOf(saved));
   }),
 );
@@ -204,6 +207,7 @@ profileRouter.put(
     }
     await saveAvatar(uidOf(res), picture.bytes);
     await touchFriends(uidOf(res)); // confirmed friends see my picture: tell their apps
+    await touchSync(uidOf(res), "profileAt");
     res.json({ image: req.body.image } satisfies ProfilePicture);
   }),
 );
@@ -214,6 +218,7 @@ profileRouter.delete(
   asyncHandler(async (_req, res) => {
     await removeAvatar(uidOf(res));
     await touchFriends(uidOf(res));
+    await touchSync(uidOf(res), "profileAt");
     res.status(204).end();
   }),
 );

@@ -1,6 +1,7 @@
 import { Clearable } from '../core/clearable';
 import { DatePipe } from '@angular/common';
 import { NgTemplateOutlet } from '@angular/common';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Component, DestroyRef, ElementRef, HostListener, computed, effect, inject, signal, untracked, viewChild } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ApiError } from '../core/api.service';
@@ -10,6 +11,8 @@ import { MediaImage } from '../media-image/media-image';
 import { MediaVideo } from '../media-video/media-video';
 import { ChatService } from '../core/chat.service';
 import { MediaService } from '../core/media.service';
+import { LiveChanges } from '../core/live-changes';
+import { UiPreferencesService } from '../core/ui-preferences';
 import { EMOJIS } from '../core/emojis';
 import { FriendsService } from '../core/friends.service';
 import { moodIcon, moodLabel } from '../core/moods';
@@ -20,16 +23,6 @@ import { ChatMessage, MessageDeleteCriteria } from '../models';
 // New messages, edits and deletes arrive live (RealtimeService). This refresh is only a safety net.
 const SAFETY_REFRESH_MS = 30000;
 
-const SORT_KEY = 'sf-chat-order';
-
-function readNewestFirst(): boolean {
-  try {
-    return localStorage.getItem(SORT_KEY) === 'newest';
-  } catch {
-    return false;
-  }
-}
-
 /** The message feed with one friend: /friends/:id (the id of the connection). */
 @Component({
   selector: 'app-chat',
@@ -38,10 +31,11 @@ function readNewestFirst(): boolean {
 })
 export class Chat {
   private readonly chat = inject(ChatService);
+  private readonly prefs = inject(UiPreferencesService);
+  private readonly live = inject(LiveChanges);
   private readonly mediaService = inject(MediaService);
   private readonly realtime = inject(RealtimeService);
   private readonly friendsService = inject(FriendsService);
-  private lastChange = this.realtime.feedChanged()?.seq ?? 0;
   private lastLive = this.realtime.latestMessage()?.seq ?? 0; // live messages before this page opened are not news
   private readonly end = viewChild<ElementRef<HTMLElement>>('end');
   private readonly field = viewChild<ElementRef<HTMLTextAreaElement>>('field');
@@ -59,7 +53,8 @@ export class Chat {
   protected readonly seat = computed(() => this.friendsService.awake().findIndex((f) => f.id === this.friendId) + 1);
   protected readonly messages = signal<ChatMessage[]>([]);
   /** false = oldest first (the default); true = newest first. Remembered on this device. */
-  protected readonly sortDesc = signal(readNewestFirst());
+  /** newest first? (a remembered choice, the same in every window; a refresh of the feed never changes it) */
+  protected readonly sortDesc = computed(() => this.prefs.value('chatOrder')() === 'newest');
   protected readonly shown = computed(() => (this.sortDesc() ? [...this.messages()].reverse() : this.messages()));
 
   // deleting several of my messages: the expanding frame under the header
@@ -150,12 +145,9 @@ export class Chat {
       onCleanup(() => watch.disconnect());
     });
 
-    // the friend edited or deleted a message: show it at once
-    effect(() => {
-      const change = this.realtime.feedChanged();
-      if (!change || change.seq <= this.lastChange) return;
-      this.lastChange = change.seq;
-      if (change.connectionId === this.friendId) untracked(() => void this.refresh(false));
+    // the messages of this friendship changed (the friend edited or deleted one, or I did on another device): show it at once
+    this.live.on('feed').pipe(takeUntilDestroyed()).subscribe((change) => {
+      if (change.connectionId === this.friendId) void this.refresh(false);
     });
 
     const timer = setInterval(() => this.refresh(false), SAFETY_REFRESH_MS);
@@ -309,12 +301,7 @@ export class Chat {
   }
 
   protected toggleSort(): void {
-    this.sortDesc.update((desc) => !desc);
-    try {
-      localStorage.setItem(SORT_KEY, this.sortDesc() ? 'newest' : 'oldest');
-    } catch {
-      /* private mode: the choice lasts until the page is closed */
-    }
+    this.prefs.set('chatOrder', this.sortDesc() ? 'oldest' : 'newest');
     this.scrollDown();
   }
 
