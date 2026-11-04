@@ -25,6 +25,26 @@ export interface PushMessage {
   body: string;
   /** the page a tap opens */
   url: string;
+  /** which of the person's three sound choices applies (none: the normal sound) */
+  sound?: "message" | "request" | "answer";
+}
+
+/**
+ * The Android app plays a jingle through a notification channel (one per jingle, made in android/.../MainActivity.java:
+ * the ids must match). Android never changes the sound of a channel that already exists on a phone: a changed or new
+ * jingle needs a NEW channel id here and in MainActivity.java. Any other choice (a built-in sound, no sound) uses the "default" channel.
+ */
+const CHANNEL_BY_JINGLE: Record<string, string> = {
+  "SevenFriends_raw1_Drill.mp3": "sound_drill",
+  "SevenFriends_raw2_Hyper.mp3": "sound_hyper",
+  "SevenFriends_raw3_AcidBreaks.mp3": "sound_acidbreaks",
+};
+
+/** The channel for the sound this person chose for this kind of push ("file:<file name>" on their account). */
+async function channelFor(uid: string, kind: PushMessage["sound"]): Promise<string> {
+  if (!kind) return "default";
+  const choice = ((await userDoc(uid).get()).data()?.soundPreferences as Record<string, unknown> | undefined)?.[kind];
+  return typeof choice === "string" && choice.startsWith("file:") ? (CHANNEL_BY_JINGLE[choice.slice(5)] ?? "default") : "default";
 }
 
 const MAX_BODY = 120;
@@ -49,12 +69,14 @@ export async function sendPush(uid: string, push: PushMessage): Promise<void> {
       .filter((d) => d.token);
     if (!devices.length) return;
 
+    const channelId = await channelFor(uid, push.sound);
     const result = await getMessaging().sendEachForMulticast({
       tokens: devices.map((d) => d.token),
       // data only: the app's service worker shows it (so it can use the event id and open the right page)
       data: { id: push.id, title: cut(push.title, MAX_TITLE), body: cut(push.body, MAX_BODY), url: push.url },
       webpush: { headers: { Urgency: "high", TTL: "3600" } },
-      android: { priority: "high" },
+      // the notification block is what lets Android show it in the chosen channel (with its jingle) while the app is closed
+      android: { priority: "high", notification: { channelId, title: cut(push.title, MAX_TITLE), body: cut(push.body, MAX_BODY) } },
     });
 
     const dead: DocumentReference[] = [];
