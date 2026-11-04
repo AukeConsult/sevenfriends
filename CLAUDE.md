@@ -381,3 +381,6 @@ request to …?" (nothing is sent without the tap) and then uses the ordinary `f
 A new code makes the old link stop working. `FieldValue.delete` is supported by the test fake (`functions/test/fake-firestore.ts`).
 A friend link whose owner has ALREADY sent me a request (`requestId` from `/invite/lookup`, or the request's `fromEmail` for plain links) shows that
 request with "Confirm request" instead of the form: no second request is made. The join page first runs `notifications.refresh()`.
+`InviteLinkService` (core/invite-link.service.ts) holds my link and the Share / Copy / New link buttons: used by the profile page and by Add a friend
+(there the link card appears as soon as an email or phone number is typed; "Send the link to them" is disabled on purpose: not built yet).
+The Home page has an expandable card ("Invite people with a link") under the band: the plain friend link `/?friend=<my email or phone>` with Share / Copy and a short explanation.

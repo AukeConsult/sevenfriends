@@ -3,6 +3,7 @@ import { Component, DestroyRef, computed, effect, inject, signal } from '@angula
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 import { MoodEditor } from '../mood-editor/mood-editor';
+import { InviteLinkService } from '../core/invite-link.service';
 import { ApiService } from '../core/api.service';
 import { authMessage } from '../core/auth-errors';
 import { AuthService } from '../core/auth.service';
@@ -29,11 +30,8 @@ export class Profile {
 
   protected readonly user = this.auth.user;
 
-  /** my invite code (made on the server the first time); the link is built from it */
-  protected readonly inviteCode = signal<string | null>(null);
-  protected readonly inviteLink = computed(() => (this.inviteCode() ? `${location.origin}/?invite=${this.inviteCode()}` : null));
-  /** what the buttons just did ("Copied", "New link made"), shown for a moment */
-  protected readonly inviteNote = signal<string | null>(null);
+  protected readonly invite = inject(InviteLinkService);
+  /** "New link…" asks first: the old link stops working */
   protected readonly confirmNewLink = signal(false);
   protected readonly networks = SOCIAL_NETWORKS;
 
@@ -95,7 +93,7 @@ export class Profile {
   private loadFailed = false;
 
   constructor() {
-    void this.loadInvite();
+    void this.invite.load();
     // verifying the phone or email changes what the server knows about this person: load again
     let first = true;
     effect(() => {
@@ -285,54 +283,6 @@ export class Profile {
       this.retryTimer = setTimeout(() => void this.flush(), RETRY_MS);
     } finally {
       this.saving = false;
-    }
-  }
-
-  private async loadInvite(): Promise<void> {
-    try {
-      this.inviteCode.set((await this.api.request<{ code: string }>('/invite/code')).code);
-    } catch {
-      /* no link shown; the rest of the page works */
-    }
-  }
-
-  private note(text: string): void {
-    this.inviteNote.set(text);
-    setTimeout(() => this.inviteNote.set(null), 2500);
-  }
-
-  /** Shares the link (the phone's share sheet), or copies it where there is none. */
-  protected async shareInvite(): Promise<void> {
-    const url = this.inviteLink();
-    if (!url) return;
-    try {
-      if (navigator.share) {
-        await navigator.share({ title: 'Seven Friends', text: 'Be my friend on Seven Friends:', url });
-        return;
-      }
-      await navigator.clipboard.writeText(url);
-      this.note('Link copied');
-    } catch (err) {
-      if ((err as Error)?.name !== 'AbortError') this.note('Could not copy: select the link and copy it');
-    }
-  }
-
-  protected async copyInvite(): Promise<void> {
-    try {
-      await navigator.clipboard.writeText(this.inviteLink() ?? '');
-      this.note('Link copied');
-    } catch {
-      this.note('Could not copy: select the link and copy it');
-    }
-  }
-
-  protected async newInviteLink(): Promise<void> {
-    this.confirmNewLink.set(false);
-    try {
-      this.inviteCode.set((await this.api.request<{ code: string }>('/invite/code/reset', { method: 'POST' })).code);
-      this.note('New link made: the old one no longer works');
-    } catch {
-      this.note('Could not make a new link');
     }
   }
 }

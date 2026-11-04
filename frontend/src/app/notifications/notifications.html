@@ -6,6 +6,26 @@
     <app-seat-dots [taken]="seatsTaken()" />
   </div>
 
+  @if (friendLink(); as url) {
+    <!-- the friend link: send it to the people who should take part -->
+    <details class="sf-expand sf-expand-quiet mb-3">
+      <summary>Invite people with a link</summary>
+      <div class="card card-body vstack gap-2 mt-2">
+        <p class="m-0">Just send this link to the people you would like to take part. When they open it, sign in (or create an account) and confirm, a friend request is sent to you.</p>
+        <input type="text" class="form-control" [value]="url" readonly aria-label="Your friend link" (focus)="$any($event.target).select()" />
+        <div class="d-flex flex-wrap gap-2">
+          <button type="button" class="btn btn-primary btn-sm" (click)="invite.share(url)">Share link</button>
+          <button type="button" class="btn btn-light btn-sm" (click)="invite.copy(url)">Copy link</button>
+        </div>
+        @if (invite.note(); as note) { <span class="small text-secondary" role="status">{{ note }}</span> }
+        @if (unverified().length) {
+          <span class="small text-danger">Your {{ unverified().join(' and ') }} is not verified yet: confirm it (on your profile) so the requests can reach you.</span>
+        }
+        <span class="small text-secondary">The link contains your {{ url.includes('%40') ? 'email address' : 'phone number' }}.</span>
+      </div>
+    </details>
+  }
+
   @if (error()) {
     <div class="alert alert-danger d-flex align-items-center justify-content-between" role="alert">
       <span>{{ error() }}</span>

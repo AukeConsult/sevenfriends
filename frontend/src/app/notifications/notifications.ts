@@ -5,6 +5,7 @@ import { ApiService } from '../core/api.service';
 import { MoodEditor } from '../mood-editor/mood-editor';
 import { AuthService } from '../core/auth.service';
 import { FriendsService } from '../core/friends.service';
+import { InviteLinkService } from '../core/invite-link.service';
 import { MessagesService } from '../core/messages.service';
 import { DesktopNoticeService } from '../core/desktop-notice.service';
 import { NotificationsService } from '../core/notifications.service';
@@ -28,6 +29,7 @@ export class Notifications {
   private readonly sounds = inject(SoundService);
   private readonly desktop = inject(DesktopNoticeService);
   private readonly push = inject(PushService);
+  protected readonly invite = inject(InviteLinkService);
 
   /** "Not now" for this visit (the reminder comes back the next time the app is opened). */
   private readonly setupHidden = signal(this.readHidden());
@@ -59,6 +61,13 @@ export class Notifications {
   }
 
   private readonly user = inject(AuthService).user;
+
+  /** the link to hand out: whoever opens it, signs in and confirms sends ME a friend request (my email, or my phone number without an email) */
+  protected readonly friendLink = computed(() => {
+    const me = this.user();
+    const contact = me?.email ?? me?.phoneNumber;
+    return contact ? `${location.origin}/?friend=${encodeURIComponent(contact)}` : null;
+  });
 
   /**
    * My own details, when none of them is verified. I still receive requests, but my friends are told that I have

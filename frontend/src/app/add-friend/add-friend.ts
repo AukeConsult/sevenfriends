@@ -1,7 +1,8 @@
 import { Clearable } from '../core/clearable';
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FriendsService } from '../core/friends.service';
+import { InviteLinkService } from '../core/invite-link.service';
 import { emptySocialDraft, socialsFromDraft } from '../core/social';
 import { FriendDraft } from '../models';
 
@@ -16,10 +17,17 @@ const emptyDraft = (): FriendDraft => ({ name: '', email: '', phone: '', message
 export class AddFriend {
   private readonly friends = inject(FriendsService);
   private readonly router = inject(Router);
+  protected readonly invite = inject(InviteLinkService);
 
   protected readonly draft = signal<FriendDraft>(emptyDraft());
+  /** an email or a phone number is filled in: my invite link is offered */
+  protected readonly hasContact = computed(() => Boolean(this.draft().email.trim() || this.draft().phone.trim()));
   protected readonly sending = signal(false);
   protected readonly error = signal<string | null>(null);
+
+  constructor() {
+    void this.invite.load();
+  }
 
   protected setField(field: keyof FriendDraft, value: string): void {
     this.draft.update((d) => ({ ...d, [field]: value }));
