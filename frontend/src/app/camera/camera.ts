@@ -104,6 +104,7 @@ export class Camera implements OnInit, OnDestroy {
     canvas.height = element.videoHeight;
     canvas.getContext('2d')?.drawImage(element, 0, 0); // the photo itself is not mirrored, only the view of it is
     const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.92));
+    canvas.width = canvas.height = 0; // its pixels are not needed any more
     if (!blob) {
       this.failed.emit('The photo could not be taken. Try again.');
       return;

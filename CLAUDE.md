@@ -384,3 +384,8 @@ request with "Confirm request" instead of the form: no second request is made. T
 `InviteLinkService` (core/invite-link.service.ts) holds my link and the Share / Copy / New link buttons: used by the profile page and by Add a friend
 (there the link card appears as soon as an email or phone number is typed; "Send the link to them" is disabled on purpose: not built yet).
 The Home page has an expandable card ("Invite people with a link") under the band: the plain friend link `/?friend=<my email or phone>` with Share / Copy and a short explanation.
+
+## Pictures and memory
+A phone photo can be 50 million pixels. `decodeImage` (core/image.ts) reads the size and the position note (EXIF) from the first bytes and asks the browser to make
+the picture small WHILE decoding it (never the full picture first); `prepareImage` makes the preview from the small picture and empties its canvases at once.
+Do not decode a chosen photo at full size anywhere.

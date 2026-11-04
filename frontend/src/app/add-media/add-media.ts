@@ -102,7 +102,7 @@ export class AddMedia implements OnDestroy {
             : await prepareVideo(file, (done) => this.working.set(`Preparing the video… ${Math.round(done * 100)} % (keep this page open)`)),
       );
     } catch (err: any) {
-      this.error.set(this.kind === 'image' ? 'This image cannot be opened. Try another one (JPEG, PNG, WebP or GIF).' : err.message ?? 'This file cannot be opened. Try another one.');
+      this.error.set(this.kind === 'image' ? 'This image could not be prepared (it may be too big for the memory of this phone). Close other apps and try again, take the photo at a lower resolution, or choose another one (JPEG, PNG, WebP or GIF).' : err.message ?? 'This file cannot be opened. Try another one.');
     } finally {
       this.working.set(null);
     }

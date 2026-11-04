@@ -16,6 +16,7 @@
     </div>
   } @else if (incoming(); as request) {
     <section class="vstack gap-3" aria-label="A request is waiting for you">
+      <p class="alert alert-info small m-0" role="note">The link you opened was an <strong>invitation</strong>, so this page opened to answer it. This person has already asked you, so you only need to confirm.</p>
       <p class="m-0"><strong>{{ request.fromName }}</strong> has already sent you a friend request.</p>
       @if (request.message) {
         <p class="alert alert-light border m-0">{{ request.message }}</p>
@@ -31,6 +32,10 @@
     </section>
   } @else {
     <form class="vstack gap-3" (submit)="$event.preventDefault(); send()" aria-label="Send a friend request">
+      <p class="alert alert-info small m-0" role="note">
+        The link you opened was an <strong>invitation</strong>, so this page opened to let you answer it: you can send a friend request to the person who sent it.
+        Nothing is sent until you tap <em>Send friend request</em>.
+      </p>
       <p class="m-0">Send a friend request to <strong>{{ label() }}</strong>?</p>
       <p class="small text-secondary m-0">They get your request when they open the app, and become your friend when they confirm.</p>
 
