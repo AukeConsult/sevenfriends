@@ -14,6 +14,12 @@
     "deploy:hosting": "node scripts/sync-models.mjs && firebase deploy --only hosting",
     "deploy:functions": "node scripts/sync-models.mjs && firebase deploy --only functions",
     "deploy:rules": "firebase deploy --only firestore,storage",
+    "android:sync": "npm --prefix frontend run build && npm --prefix frontend exec cap -- sync android",
+    "android:config": "node scripts/android-config.mjs",
+    "ios:config": "node scripts/ios-config.mjs",
+    "ios:sync": "npm --prefix frontend run build && npm --prefix frontend exec cap -- sync ios",
+    "ios:open": "npm --prefix frontend exec cap -- open ios",
+    "android:open": "npm --prefix frontend exec cap -- open android",
     "sync:models": "node scripts/sync-models.mjs",
     "sync:sounds": "node scripts/sounds-manifest.mjs",
     "check:models": "node scripts/sync-models.mjs --check"

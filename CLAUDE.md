@@ -359,3 +359,16 @@ firebase deploy                # builds the frontend first (hosting predeploy), 
 - Needs the backend deploy (functions) and hosting.
 - **Preview while writing:** the message field looks for a link a moment (700 ms) after the last key press and asks `POST /api/link-preview { text }` (`linkPreviewRouter` in `link-preview.ts`, login needed, 20 asks per person per minute, then 429) which answers `{ link }` with the same check as at send time. A bar above the field shows the address and "Show preview" (the page is loaded only after a tap) or "No preview: the site does not allow it", with ✕ to close it (the same link does not come back while it stays in the text). It is only a convenience: the server checks again when the message is sent. Needs the backend deploy.
 - `npm run deploy` deploys everything (functions, Firestore + Storage rules, hosting); `deploy:hosting`, `deploy:functions`, `deploy:rules` deploy one part.
+
+## Android app (`android/`)
+A Capacitor wrapper that loads the live web app (`frontend/capacitor.config.json`, `server.url`). `npm run android:sync` after changing the
+config or plugins; `npm run android:open` for Android Studio. Details and what is still missing: `android/README.md`. Never edit the generated
+files in `android/` (capacitor.settings.gradle, app/src/main/assets); the native code of our own goes in `android/app/src/main/java/io/sevenfriends/app`.
+
+## Secrets (`.env`)
+`.env` (in `.gitignore`, template in `.env.example`) holds the Firebase service account key and the Android settings. `npm run android:config`
+(`scripts/android-config.mjs`) uses the key to make `android/app/google-services.json` (also in `.gitignore`). Never commit or print the key.
+
+## iPhone app (`ios/`)
+Same wrapper as `android/` (`npm run ios:sync`, `ios:open` on a Mac, `ios:config` for `GoogleService-Info.plist` from the key in `.env`). Details and what
+is missing: `ios/README.md`. Generated files (`Package.swift`, `App/App/public`) are not edited; our own native code is in `ios/App/App`.

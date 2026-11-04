@@ -2,6 +2,14 @@
   "appId": "io.sevenfriends.app",
   "appName": "Seven Friends",
   "webDir": "dist/frontend/browser",
-  "android": { "path": "../android" },
-  "server": { "url": "https://sevenfriends.web.app", "cleartext": false }
+  "android": {
+    "path": "../android"
+  },
+  "server": {
+    "url": "https://sevenfriends.web.app",
+    "cleartext": false
+  },
+  "ios": {
+    "path": "../ios"
+  }
 }
