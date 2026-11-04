@@ -175,7 +175,7 @@
     @for (message of shown(); track message.id) {
       <div class="sf-message" [attr.data-id]="message.id" [class.sf-mine]="message.mine" [class.sf-message-media]="message.media || (message.link && previewing().has(message.id))" [class.sf-doomed]="doomed().has(message.id)">
         <!-- my own message: tap it to edit or delete it -->
-        <div class="sf-bubble" [class.sf-bubble-media]="message.media" [class.sf-bubble-tap]="message.mine" [attr.role]="message.mine ? 'button' : null" [attr.tabindex]="message.mine ? 0 : null"
+        <div class="sf-bubble" [class.sf-bubble-media]="message.media" [class.sf-bubble-hidden]="message.media && pictureHidden().has(message.id)" [class.sf-bubble-tap]="message.mine" [attr.role]="message.mine ? 'button' : null" [attr.tabindex]="message.mine ? 0 : null"
              [attr.aria-expanded]="message.mine ? selected() === message.id : null" (click)="select(message)" (keydown.enter)="select(message)">
           @if (message.media; as media) {
             <!-- a friend's image opens at once; on my own message the tap opens Edit / Delete (and Open) -->
@@ -209,23 +209,27 @@
             </div>
           }
         }
-        @if (message.time) {
+        @if (message.time && !(message.media && pictureHidden().has(message.id))) {
           <small class="sf-hint">{{ message.time | date: 'd MMM, HH:mm' }}@if (message.edited) { · edited }@if (doomed().has(message.id)) { · <strong class="text-danger">will be deleted</strong> }</small>
         }
         @if (!message.mine && message.media; as media) {
           <!-- the friend's image, video or voice message: always open and download it -->
           <div class="sf-msg-actions">
             @if (media.kind !== 'audio') {
+              @if (pictureHidden().has(message.id)) { @if (message.time) { <small class="sf-hint">{{ message.time | date: 'd MMM, HH:mm' }}@if (message.edited) { · edited }@if (doomed().has(message.id)) { · <strong class="text-danger">will be deleted</strong> } ·</small> } <span class="sf-hint">{{ media.kind === 'video' ? '🎞️ Video' : '🖼️ Picture' }} hidden</span> }
               <button type="button" class="btn btn-light btn-sm" (click)="togglePicture(message.id)">{{ pictureHidden().has(message.id) ? 'Show' : 'Hide' }}</button>
             }
             <a [routerLink]="['/media', media.ownerId, media.objectId]" class="btn btn-light btn-sm">Open</a>
             <button type="button" class="btn btn-light btn-sm" (click)="download(media)">Download</button>
           </div>
         }
-        @if (message.mine && message.media && message.media.kind !== 'audio') {
+        @if (message.mine && message.media; as media) {
+         @if (media.kind !== 'audio') {
           <div class="sf-msg-actions">
+            @if (pictureHidden().has(message.id)) { @if (message.time) { <small class="sf-hint">{{ message.time | date: 'd MMM, HH:mm' }}@if (message.edited) { · edited }@if (doomed().has(message.id)) { · <strong class="text-danger">will be deleted</strong> } ·</small> } <span class="sf-hint">{{ media.kind === 'video' ? '🎞️ Video' : '🖼️ Picture' }} hidden</span> }
             <button type="button" class="btn btn-light btn-sm" (click)="togglePicture(message.id)">{{ pictureHidden().has(message.id) ? 'Show' : 'Hide' }}</button>
           </div>
+         }
         }
         @if (message.mine && selected() === message.id) {
           <div class="sf-msg-actions">

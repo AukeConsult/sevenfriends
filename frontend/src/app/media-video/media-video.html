@@ -1,4 +1,4 @@
-<span class="sf-media sf-media-video" [style.aspect-ratio]="ratio()">
+<span class="sf-media sf-media-video" [style.--sf-ratio]="ratio()">
   <a class="sf-media-open" [routerLink]="['/media', media().ownerId, media().objectId]" (click)="stop($event)" aria-label="Open the video to download it">⤓</a>
   @if (src(); as url) {
     <video [src]="url" controls autoplay playsinline (click)="stop($event)"></video>

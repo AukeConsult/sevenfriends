@@ -49,9 +49,10 @@ export class MediaVideo {
     }
   }
 
-  protected ratio(): string {
+  /** width divided by height (a number: the stylesheet needs it to fit the whole video in the feed) */
+  protected ratio(): number {
     const { width, height } = this.media();
-    return width && height ? `${width} / ${height}` : '16 / 9';
+    return width && height ? width / height : 16 / 9;
   }
 
   protected info(): string {

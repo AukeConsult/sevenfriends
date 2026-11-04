@@ -37,7 +37,7 @@ export class BottomNav {
   }
 
   protected profileActive(): boolean {
-    return this.router.url.startsWith('/profile') || this.router.url.startsWith('/sound-and-notifications');
+    return this.router.url.startsWith('/profile') || this.router.url.startsWith('/sound-and-notifications') || this.router.url.startsWith('/install-app');
   }
 
   protected async logout(): Promise<void> {

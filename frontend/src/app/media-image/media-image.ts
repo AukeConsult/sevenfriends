@@ -26,8 +26,9 @@ export class MediaImage {
     });
   }
 
-  protected ratio(): string | null {
+  /** width divided by height (a number: the stylesheet needs it to fit the whole picture in the feed); null = not known */
+  protected ratio(): number | null {
     const { width, height } = this.media();
-    return width && height ? `${width} / ${height}` : null;
+    return width && height ? width / height : null;
   }
 }

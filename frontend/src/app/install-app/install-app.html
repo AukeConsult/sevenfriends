@@ -1,0 +1,50 @@
+<header class="sf-bar">
+  <a routerLink="/profile" class="sf-back" aria-label="Back to your profile">‹</a>
+  <h1 class="sf-bar-title">Install the app</h1>
+</header>
+
+<main class="sf-narrow vstack gap-3">
+  <section class="vstack gap-2">
+    <h2 class="m-0">What is installing?</h2>
+    <p class="m-0">
+      Seven Friends is a web page that can also live on your device like any other app. "Installing" does not download anything
+      big and does not use the app store: your browser puts the same app in your app menu or on your home screen.
+    </p>
+    <ul class="m-0 ps-3">
+      <li>It has its own icon, and opens full screen without the browser's address bar.</li>
+      <li>You can find it again in one tap, so you notice your friends sooner.</li>
+      <li>It is the same app and the same account: your friends and messages are all there, and the app updates itself.</li>
+      <li>You can remove it at any time like any other app. That does not delete your account.</li>
+    </ul>
+    <p class="small text-secondary m-0">Installing is optional: the app works in the browser too.</p>
+  </section>
+
+  <section class="card">
+    <div class="card-body vstack gap-2">
+      @if (app.installed()) {
+        <h2 class="m-0">The app is installed</h2>
+        <p class="m-0">Seven Friends is already installed on this device.</p>
+      } @else {
+        <h2 class="m-0">Install it on this device</h2>
+        @if (app.canInstall()) {
+          <button type="button" class="btn btn-primary" (click)="app.install()">Install the app</button>
+        } @else if (app.ios) {
+          <p class="m-0">On an iPhone or iPad this is done in Safari: tap the Share button, then <strong>Add to Home Screen</strong>.</p>
+        } @else {
+          <p class="m-0">In your browser's menu (⋮), choose <strong>Install app</strong> or <strong>Add to Home screen</strong>. The site must be opened from its web address (https).</p>
+        }
+      }
+    </div>
+  </section>
+
+  @if (!app.mobile) {
+    <section class="vstack gap-2">
+      <h2 class="m-0">Start it when you sign in to your computer</h2>
+      <p class="m-0">After installing, you can let the app start by itself so that notifications arrive without opening the browser.</p>
+      <ul class="m-0 ps-3">
+        <li><strong>Edge:</strong> open <code>edge://apps</code>, press ⋯ on Seven Friends and choose <em>Auto-start on device login</em>.</li>
+        <li><strong>Chrome:</strong> open <code>chrome://apps</code>, right-click Seven Friends and choose <em>Start app when you sign in</em>.</li>
+      </ul>
+    </section>
+  }
+</main>

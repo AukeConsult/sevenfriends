@@ -1,4 +1,4 @@
-<span class="sf-media" [style.aspect-ratio]="ratio()">
+<span class="sf-media" [style.--sf-ratio]="ratio()">
   @if (src(); as url) {
     <img [src]="url" [alt]="media().name ?? 'Image'" />
   } @else if (failed()) {

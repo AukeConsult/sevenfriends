@@ -293,12 +293,6 @@ router-outlet + * { display: block; min-height: 100dvh; }
   gap: 2rem;
   padding: calc(3rem + env(safe-area-inset-top)) var(--sf-gutter) calc(2rem + env(safe-area-inset-bottom));
 }
-// Home: logo and name in the page itself (no header bar)
-.sf-home-brand {
-  display: flex; align-items: center; justify-content: center; gap: 0.625rem; margin-bottom: 0.25rem;
-  .sf-logo { margin: 0; width: 2.25rem; height: 2.25rem; font-size: 1.25rem; }
-  h1 { margin: 0; font-size: 1.375rem; font-weight: 800; color: var(--sf-primary); }
-}
 // Login hero: tinted band running edge to edge (no rounded corners), logo, name, tagline, seven dots
 .sf-hero {
   margin: calc(-3rem - env(safe-area-inset-top)) calc(-1 * var(--sf-gutter)) 0;
@@ -306,12 +300,13 @@ router-outlet + * { display: block; min-height: 100dvh; }
   background: linear-gradient(180deg, var(--sf-header) 0%, var(--sf-bg) 100%);
   h1 { font-size: 2rem; font-weight: 800; color: var(--sf-primary); }
 }
+.sf-hero-home { margin-top: -1.5rem; padding-top: calc(1.5rem + env(safe-area-inset-top)); margin-bottom: 1rem; } // the same band on the Home page (the page has 1.5rem of padding on top)
 .sf-hero-tag { color: var(--sf-muted); }
 .sf-hero-dots {
   display: flex; justify-content: center; gap: 0.5rem; margin-top: 1.25rem;
-  i { width: 0.75rem; height: 0.75rem; border-radius: 50%; background: var(--sf-primary); opacity: 0.85;
-    &:nth-child(odd) { background: var(--sf-red); }
-    &:nth-child(4) { background: #fff; box-shadow: inset 0 0 0 2px var(--sf-primary); } }
+  i { width: 0.75rem; height: 0.75rem; border-radius: 50%; box-shadow: inset 0 0 0 2px var(--sf-muted); opacity: 0.55; // an empty seat: a ring
+    &.sf-taken { opacity: 1; box-shadow: none; background: var(--sf-primary); } // a seat that is taken: filled, the colours alternate
+    &.sf-taken:nth-child(odd) { background: var(--sf-red); } }
 }
 .sf-form-width { max-width: var(--sf-form-max); margin: 0 auto; width: 100%; }
 
@@ -573,20 +568,26 @@ router-outlet + * { display: block; min-height: 100dvh; }
 .sf-draft-link-bar { display: flex; align-items: center; gap: 0.5rem; > .sf-hint:first-child { flex: 1; min-width: 0; } }
 .sf-link-frame { width: 100%; display: flex; flex-direction: column; gap: 0.25rem; iframe { width: 100%; height: min(24rem, 60dvh); border: 1px solid var(--sf-border); border-radius: var(--sf-radius); background: #fff; } } // the page of a link, shown in the feed
 // ---- Images in messages ----
-.sf-message-media { width: min(var(--sf-media-max), 94%); max-width: 94%; } // a message with an image, video or audio fills the feed, up to 640 px
-.sf-message-media .sf-bubble-media { align-self: stretch; }
-.sf-bubble-media { display: flex; flex-direction: column; gap: 0.25rem; padding: 0.25rem; }
-.sf-bubble-media .sf-caption { padding: 0.25rem 0.5rem 0.25rem; }
+.sf-message-media { max-width: 94%; } // a message with an image, video or audio is as wide as its picture (see .sf-media), never wider than the feed
+// A picture, video or voice message has no box round it: only the picture is shown. Its caption is a small bubble of its own under it.
+.sf-bubble.sf-bubble-media, .sf-mine .sf-bubble.sf-bubble-media { display: flex; flex-direction: column; gap: 0.25rem; padding: 0; background: none; box-shadow: none; color: inherit; border-radius: 0; }
+.sf-bubble-media .sf-caption { align-self: flex-start; width: 0; min-width: 100%; /* the caption is as wide as the picture, it does not widen the message */ padding: 0.5rem 0.75rem; border-radius: 1.25rem 1.25rem 1.25rem 0.25rem; background: var(--sf-card); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08); }
+.sf-bubble-hidden .sf-caption { width: auto; min-width: 0; } // nothing to be as wide as: the caption takes the room it needs
+.sf-mine .sf-bubble-media .sf-caption { align-self: flex-end; border-radius: 1.25rem 1.25rem 0.25rem 1.25rem; background: linear-gradient(135deg, var(--sf-primary), var(--sf-primary-2)); color: #fff; }
+// An image or video is shown whole, never cropped: it keeps its own shape and is made to fit the width of the feed (and at most 32 rem / 70% of the screen high).
 .sf-media {
+  --sf-media-height: min(32rem, 70dvh);
   display: grid;
   place-items: center;
-  width: 100%;
+  // the picture sets the size: its own shape at the height allowed, but never wider than a mobile screen (640 px) or the feed
+  width: min(calc(var(--sf-media-height) * var(--sf-ratio, 1.5)), var(--sf-media-max), calc((100vw - 2 * var(--sf-gutter)) * 0.94));
+  aspect-ratio: var(--sf-ratio, 3 / 2);
   min-height: 4rem;
-  max-height: min(32rem, 70dvh);
+  margin: 0 auto;
   overflow: hidden;
   border-radius: 0.75rem;
   background: var(--sf-bg);
-  img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  img { display: block; width: 100%; height: 100%; object-fit: contain; }
 }
 .sf-media-link { display: block; line-height: 0; }
 .sf-attach-preview { display: block; max-width: 100%; max-height: 60dvh; margin: 0 auto; border-radius: var(--sf-radius); object-fit: contain; }
@@ -614,7 +615,7 @@ app-camera { display: contents; }
 }
 .sf-media-open { position: absolute; z-index: 1; top: 0.5rem; right: 0.5rem; width: 2rem; height: 2rem; display: grid; place-items: center; border-radius: 50%; background: rgba(0, 0, 0, 0.55); color: #fff; text-decoration: none; font-size: 1.1rem; line-height: 1; }
 .sf-viewer video { display: block; width: 100%; max-height: calc(100dvh - 12rem); background: #000; }
-.sf-media-audio { display: flex; align-items: center; gap: 0.5rem; width: 100%; audio { flex: 1; min-width: 0; height: 2.5rem; } }
+.sf-media-audio { min-width: min(16rem, 100%); display: flex; align-items: center; gap: 0.5rem; width: 100%; audio { flex: 1; min-width: 0; height: 2.5rem; } }
 .sf-play-small { position: static; margin: 0; width: 2.25rem; height: 2.25rem; flex: none; background: var(--sf-primary); }
 .sf-audio-info { flex: 1; }
 .sf-audio-open { flex: none; width: 2rem; height: 2rem; display: grid; place-items: center; border-radius: 50%; background: rgba(0, 0, 0, 0.12); color: inherit; text-decoration: none; font-size: 1.1rem; line-height: 1; }

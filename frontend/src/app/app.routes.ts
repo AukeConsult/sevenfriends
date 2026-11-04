@@ -7,6 +7,7 @@ import { DeleteAccount } from './delete-account/delete-account';
 import { Friends } from './friends/friends';
 import { Sleeping } from './sleeping/sleeping';
 import { InviteFriend } from './invite-friend/invite-friend';
+import { InstallApp } from './install-app/install-app';
 import { Login } from './login/login';
 import { LoginEmail } from './login-email/login-email';
 import { LoginLink } from './login-link/login-link';
@@ -35,6 +36,7 @@ export const routes: Routes = [
   { path: 'profile/picture', component: ProfilePicturePage, canActivate: [authGuard], title: 'Your picture – Seven Friends' },
   { path: 'sound-and-notifications', component: Settings, canActivate: [authGuard], title: 'Sound and notifications – Seven Friends' },
   { path: 'sound-and-notifications/:event', component: SoundPicker, canActivate: [authGuard], title: 'Choose a sound – Seven Friends' },
+  { path: 'install-app', component: InstallApp, canActivate: [authGuard], title: 'Install the app – Seven Friends' },
   { path: 'login', component: Login, canActivate: [guestGuard], title: 'Sign in – Seven Friends' },
   { path: 'login/email', component: LoginEmail, canActivate: [guestGuard], title: 'Email link – Seven Friends' },
   { path: 'login/phone', component: PhoneAuth, canActivate: [guestGuard], data: { mode: 'login' }, title: 'Phone sign-in – Seven Friends' },

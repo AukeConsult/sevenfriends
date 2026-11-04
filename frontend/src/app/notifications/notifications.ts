@@ -9,13 +9,14 @@ import { MessagesService } from '../core/messages.service';
 import { DesktopNoticeService } from '../core/desktop-notice.service';
 import { NotificationsService } from '../core/notifications.service';
 import { PushService } from '../core/push.service';
+import { SeatDots } from '../seat-dots/seat-dots';
 import { SoundService } from '../core/sound.service';
 import { FriendRequest, Message, Notice, ProfileDetails } from '../models';
 
 /** Home page: a quiet overview of what needs attention (friend requests, incoming messages). */
 @Component({
   selector: 'app-notifications',
-  imports: [DatePipe, RouterLink, MoodEditor],
+  imports: [DatePipe, RouterLink, MoodEditor, SeatDots],
   templateUrl: './notifications.html',
 })
 export class Notifications {
@@ -67,6 +68,9 @@ export class Notifications {
   /** the note about unverified details is closed at first: only a small mark shows that there is something to do */
   protected readonly unverifiedOpen = signal(false);
 
+  /** the seats taken: my friends who are not on the sleep list (the same count the Friends page uses) */
+  protected readonly seatsTaken = computed(() => Math.min(7, this.friendsService.awake().length));
+
   protected readonly requests = this.friendsService.requests;
   protected readonly messages = this.messagesService.messages;
 
@@ -87,6 +91,7 @@ export class Notifications {
   constructor() {
     this.load();
     void this.checkOwnDetails();
+    if (!this.friendsService.circle()) void this.friendsService.load().catch(() => undefined); // opened directly: the seats come from the list
   }
 
   private async checkOwnDetails(): Promise<void> {
