@@ -1,16 +1,14 @@
-<header class="sf-bar">
-  <a routerLink="/friends" class="sf-back" aria-label="Cancel and go back to friends">‹</a>
-  <h1 class="sf-bar-title">Add a friend</h1>
-</header>
+<div class="sf-back-row">
+  <a routerLink="/friends" class="btn btn-light" aria-label="Go back to friends">‹ Back</a>
+</div>
 
-<form class="sf-narrow" (submit)="$event.preventDefault(); send()" aria-label="Add a friend">
-  <p class="text-secondary m-0">
-    Tell us who your friend is. They get your request when they open the app, and become your friend
-    when they confirm.
+<form class="sf-narrow" (submit)="$event.preventDefault(); send()" aria-label="Send a friend request">
+  <h2 class="sf-section">Send a friend request in Seven Friends</h2>
+  <p class="small text-secondary m-0">
+    The request is saved here. Your friend gets it as soon as they sign in (or sign up) with this email or phone
+    number, and becomes your friend when they confirm. Add an email, a phone number, or both: only these two are used
+    to find your friend. Without a name (at the bottom), the email or number is shown until they confirm.
   </p>
-
-  <h2 class="sf-section">How can we find them?</h2>
-  <p class="small text-secondary m-0">Add an email, a phone number, or both. Only these two are used to find your friend. Without a name (at the bottom), the email or number is shown until your friend confirms.</p>
 
   <label class="sf-field"><span class="form-label small text-secondary m-0">Phone</span>
     <input appClear type="tel" class="form-control" [value]="draft().phone" (input)="setField('phone', $any($event.target).value)"
@@ -20,31 +18,6 @@
     <input appClear type="email" class="form-control" [value]="draft().email" (input)="setField('email', $any($event.target).value)"
            inputmode="email" autocomplete="off" />
   </label>
-
-  @if (hasContact()) {
-    <!-- another way: give them my invite link; they open it, sign in (or create an account) and send ME a request -->
-    <section class="card" aria-label="Or send them your invite link">
-      <div class="card-body vstack gap-2">
-        <h2 class="m-0 fs-6">Or give them your invite link</h2>
-        <p class="small text-secondary m-0">They open it, sign in or create an account, and send you a friend request.</p>
-        @if (invite.link(); as url) {
-          <input type="text" class="form-control" [value]="url" readonly aria-label="Your invite link" (focus)="$any($event.target).select()" />
-          <div class="d-flex flex-wrap gap-2">
-            <button type="button" class="btn btn-light" (click)="invite.copy()">Copy link</button>
-            <button type="button" class="btn btn-light" (click)="invite.share()">Share link</button>
-            <button type="button" class="btn btn-light" disabled aria-describedby="send-link-note">Send the link to them</button>
-          </div>
-          <p id="send-link-note" class="small text-secondary m-0">Sending the link from here is not ready yet: copy it or share it yourself.</p>
-          @if (invite.note(); as note) { <p class="small m-0" role="status">{{ note }}</p> }
-        } @else if (invite.problem(); as why) {
-          <p class="small text-danger m-0" role="alert">{{ why }}</p>
-          <button type="button" class="btn btn-light align-self-start" (click)="invite.load()">Try again</button>
-        } @else {
-          <p class="small text-secondary m-0">Loading…</p>
-        }
-      </div>
-    </section>
-  }
 
   <h2 class="sf-section">Message</h2>
   <label class="sf-field"><span class="form-label small text-secondary m-0">Add a message (optional)</span>
@@ -71,3 +44,30 @@
     </button>
   </div>
 </form>
+
+<!-- Last: for people who do not have the app yet. The other way round: they send ME a request. -->
+<section class="sf-narrow" aria-label="Send your link to someone who is not on Seven Friends yet">
+  <h2 class="sf-section">Not on Seven Friends yet? Send them your link</h2>
+  <div class="card">
+    <div class="card-body vstack gap-2">
+      <p class="small text-secondary m-0">
+        A request above waits inside Seven Friends until your friend signs in. Your link works the other way round:
+        you send the link yourself (in a message, an email, anywhere), your friend opens it, creates an account and
+        sends <strong>you</strong> a friend request. You confirm it on your Home page.
+      </p>
+      @if (invite.link(); as url) {
+        <input type="text" class="form-control" [value]="url" readonly aria-label="Your invite link" (focus)="$any($event.target).select()" />
+        <div class="d-flex flex-wrap gap-2">
+          <button type="button" class="btn btn-light" (click)="invite.copy()">Copy link</button>
+          <button type="button" class="btn btn-light" (click)="invite.share()">Share link</button>
+        </div>
+        @if (invite.note(); as note) { <p class="small m-0" role="status">{{ note }}</p> }
+      } @else if (invite.problem(); as why) {
+        <p class="small text-danger m-0" role="alert">{{ why }}</p>
+        <button type="button" class="btn btn-light align-self-start" (click)="invite.load()">Try again</button>
+      } @else {
+        <p class="small text-secondary m-0">Loading…</p>
+      }
+    </div>
+  </div>
+</section>

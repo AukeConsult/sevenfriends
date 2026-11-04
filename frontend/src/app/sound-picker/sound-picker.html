@@ -1,7 +1,9 @@
-<header class="sf-bar">
-  <a routerLink="/sound-and-notifications" class="sf-back" (click)="sounds.stop()" aria-label="Back to sound and notifications">‹</a>
-  <h1 class="sf-bar-title">{{ item().label }}</h1>
-</header>
+<div class="sf-back-row">
+  <a routerLink="/sound-and-notifications" class="btn btn-light" (click)="sounds.stop()" aria-label="Back to sound and notifications">‹ Back</a>
+</div>
+<div class="sf-page-head">
+  <h1>{{ item().label }}</h1>
+</div>
 
 <main class="sf-narrow">
   <p class="sf-hint">{{ item().hint }}. Tap a sound to choose it and hear it.</p>

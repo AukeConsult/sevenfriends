@@ -1,7 +1,9 @@
-<header class="sf-bar">
-  <a href="/" class="sf-back" aria-label="Not now, go to the start page" (click)="$event.preventDefault(); notNow()">‹</a>
-  <h1 class="sf-bar-title">Friend request</h1>
-</header>
+<div class="sf-back-row">
+  <a href="/" class="btn btn-light" aria-label="Not now, go to the start page" (click)="$event.preventDefault(); notNow()">‹ Back</a>
+</div>
+<div class="sf-page-head">
+  <h1>Friend request</h1>
+</div>
 
 <main class="sf-narrow">
   @if (loading()) {

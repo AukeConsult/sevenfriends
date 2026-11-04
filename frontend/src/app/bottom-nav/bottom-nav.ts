@@ -5,6 +5,9 @@ import { NotificationsService } from '../core/notifications.service';
 import { PresenceService } from '../core/presence.service';
 import { PushService } from '../core/push.service';
 
+/** The pages under the Settings button. */
+const SETTINGS_PAGES = ['/sound-and-notifications', '/install-app', '/privacy', '/terms', '/about'];
+
 /** Always-visible banner menu at the bottom of the screen (shown when signed in). */
 @Component({
   selector: 'app-bottom-nav',
@@ -18,16 +21,16 @@ export class BottomNav {
   private readonly push = inject(PushService);
   private readonly presence = inject(PresenceService);
 
-  /** The Profile item opens a dropup menu (profile page + log out). */
-  protected readonly menuOpen = signal(false);
+  /** Two buttons open a dropup menu: Profile (my profile, log out) and Settings (all the other pages). One at a time. */
+  protected readonly menuOpen = signal<'profile' | 'settings' | null>(null);
 
-  protected toggleMenu(): void {
-    this.menuOpen.update((open) => !open);
+  protected toggleMenu(which: 'profile' | 'settings'): void {
+    this.menuOpen.update((open) => (open === which ? null : which));
   }
 
   @HostListener('document:keydown.escape')
   protected closeMenu(): void {
-    this.menuOpen.set(false);
+    this.menuOpen.set(null);
   }
 
   /** Clicking Home runs the invite + message check (also when already on Home). */
@@ -37,7 +40,11 @@ export class BottomNav {
   }
 
   protected profileActive(): boolean {
-    return this.router.url.startsWith('/profile') || this.router.url.startsWith('/sound-and-notifications') || this.router.url.startsWith('/install-app');
+    return this.router.url.startsWith('/profile');
+  }
+
+  protected settingsActive(): boolean {
+    return SETTINGS_PAGES.some((page) => this.router.url.startsWith(page));
   }
 
   protected async logout(): Promise<void> {

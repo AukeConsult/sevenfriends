@@ -1,23 +1,22 @@
-<header class="sf-bar">
-  <h1 class="sf-bar-title">Profile</h1>
-</header>
+<div class="sf-page-head">
+  <h1>Profile</h1>
+  <!-- Everything on this page saves itself -->
+    <p class="sf-status" role="status" aria-live="polite" [class.text-danger]="state() === 'error'">
+      @switch (state()) {
+        @case ('dirty') { Changes not saved yet… }
+        @case ('saving') { Saving… }
+        @case ('saved') { All changes saved }
+        @case ('error') {
+          {{ error() }}
+          <button type="button" class="btn btn-link p-0 align-baseline" (click)="retry()">Try again</button>
+        }
+      }
+    </p>
+</div>
 
 <main class="sf-page">
 
-  <!-- Everything on this page saves itself -->
-  <p class="sf-status" role="status" aria-live="polite" [class.text-danger]="state() === 'error'">
-    @switch (state()) {
-      @case ('dirty') { Changes not saved yet… }
-      @case ('saving') { Saving… }
-      @case ('saved') { All changes saved }
-      @case ('error') {
-        {{ error() }}
-        <button type="button" class="btn btn-link p-0 align-baseline" (click)="retry()">Try again</button>
-      }
-    }
-  </p>
-
-  <div class="card">
+  <div class="card sf-unframed">
     <div class="card-body text-center">
       @if (picture(); as uploaded) {
         <img class="sf-photo" [src]="uploaded" alt="" />
@@ -173,11 +172,7 @@
     </div>
   </div>
 
-  <div class="card border-danger-subtle mt-3 mb-3">
-    <div class="card-body vstack gap-2">
-      <h2 class="m-0 text-danger">Delete my account</h2>
-      <p class="small text-secondary m-0">Erases you, your friendships and all messages for good.</p>
-      <button type="button" class="btn btn-outline-danger" (click)="flush(); deleteAccount()">Delete my account…</button>
-    </div>
+  <div class="text-center mt-4 mb-3">
+    <button type="button" class="btn btn-outline-danger btn-sm" (click)="flush(); deleteAccount()">Delete my account…</button>
   </div>
 </main>

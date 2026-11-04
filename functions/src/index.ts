@@ -6,5 +6,5 @@ initializeApp();
 
 export const api = onRequest({ region: "europe-west1", invoker: "public" }, createApp());
 
-// sends the emails written to the `mail` collection through your own mail server (see mail.ts)
-export { sendMail } from "./mail-trigger";
+// Not deployed for now: nobody sends invitation emails (friends are invited with a link). To send mail again, export it:
+// export { sendMail } from "./mail-trigger";

@@ -16,9 +16,11 @@ import { LiveChanges } from '../core/live-changes';
 import { UiPreferencesService } from '../core/ui-preferences';
 import { EMOJIS } from '../core/emojis';
 import { FriendsService } from '../core/friends.service';
+import { countries } from '../core/countries';
 import { moodIcon, moodLabel } from '../core/moods';
 import { presenceLabel } from '../core/presence';
 import { RealtimeService } from '../core/realtime.service';
+import { SOCIAL_NETWORKS } from '../core/social';
 import { ChatMessage, MessageDeleteCriteria, MessageLink } from '../models';
 
 // New messages, edits and deletes arrive live (RealtimeService). This refresh is only a safety net.
@@ -66,6 +68,17 @@ export class Chat {
     { label: 'All of them', days: null },
   ];
   protected readonly cleanupOpen = signal(false);
+  /** the profile of the friend, opened by tapping the name in the header */
+  protected readonly profileOpen = signal(false);
+  protected readonly networks = SOCIAL_NETWORKS;
+  private readonly countryNames = new Map(countries().map((c) => [c.code, c.name]));
+  protected toggleProfile(): void {
+    this.profileOpen.update((open) => !open);
+    if (this.profileOpen()) window.scrollTo({ top: 0, behavior: 'smooth' }); // the frame is at the top of the page: bring it into view
+  }
+  protected countryName(code: string | null): string {
+    return (code && this.countryNames.get(code)) || '';
+  }
   protected readonly cleanupWhose = signal<'mine' | 'both'>('mine');
   /** my messages, or both sides' (never the friend's alone) */
   protected readonly whoseChoices = computed<{ value: 'mine' | 'both'; label: string }[]>(() => [

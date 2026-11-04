@@ -1,7 +1,9 @@
-<header class="sf-bar">
-  <a routerLink="/login" class="sf-back" aria-label="Back to sign in">‹</a>
-  <h1 class="sf-bar-title">Email me a sign-in link</h1>
-</header>
+<div class="sf-back-row">
+  <a routerLink="/login" class="btn btn-light" aria-label="Back to sign in">‹ Back</a>
+</div>
+<div class="sf-page-head">
+  <h1>Email me a sign-in link</h1>
+</div>
 
 <main class="sf-narrow">
   @if (sentTo(); as address) {

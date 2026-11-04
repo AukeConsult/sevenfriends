@@ -10,7 +10,7 @@ An app for staying in contact with your 7 closest friends.
 ## Pages
 - `/` **Notifications** (home): a quiet page with incoming friend requests and unread messages. No banner, light styling; shows "All quiet" when empty.
 - `/friends` **Friends**: the friend circle (7 slots), add/remove friends, pending/confirmed badges.
-- `/friends/:id/invite` **Invite your friend**: full-screen page shown after adding somebody who has no account yet. It shows the address / number and the message so the sender can **verify them first**, then **Send email / Send SMS**, **Not now**, or "wrong address, remove and add again".
+- *(removed)* The `/friends/:id/invite` page is gone: the app sends no email or SMS invitations. People are invited with a friend link (see Friend links).
 - `/friends/add` **Add a friend**: a full-screen form that ends with **Cancel** and **Send friend request** (opened from an empty seat on the Friends page).
 - `/friends/:id` **Conversation**: the message feed with one confirmed friend (click a confirmed contact, or the chat icon on its card, or Open on a message on Home). Incoming messages appear at once while the page is open (live, see Live updates); a slow 30-second refresh is only a safety net.
 - `/friends/:id/image` **Send an image** and `/friends/:id/video` **Send a video** (one page, `add-media`, the route has `data: {kind}`): full-screen page opened from the image or video icon in the message field of a conversation: **Take a photo** / **Record a video** and **Choose an image** / **Choose a video**, a preview (picture or a video with controls) with its name, size in pixels, length and bytes, an optional text (the caption), **Cancel** and **Send**. See "Media cache" (app side).
@@ -77,7 +77,11 @@ These rules are implemented in `functions/src` and covered by the tests in `func
 
 - **A message can be added** to the request (optional, max 500 characters). It is stored on the entry, copied to the other person's request, and shown with the request on Home and on the waiting-list page. It is also part of the invitation below.
 
-### Inviting somebody who is not a user yet
+### Sending invitations by email: NOT used now
+- The app has **no UI for sending email or SMS**: no invite page, no "Send an invitation" link, no "Send the link to them" button; the frontend never calls `POST /circles/default/friends/:id/invite`. Friends are invited with a link only.
+- The backend is kept for later and is harmless: the invite route, `outbox.ts`, `mail.ts`, `mail-trigger.ts`, the mail settings and their tests. **The `sendMail` trigger is not exported from `functions/src/index.ts`, so it is not deployed**; export it again to send mail. The sections below describe that dormant code.
+
+### Inviting somebody who is not a user yet (dormant backend, see above)
 - When adding a friend, if **nobody has an account** for that email or phone (the same search as the pings), the new entry gets `invite: { to, sentAt: null }` **when an email was given**. **There is no SMS invitation**: text messages are only used for login codes (Firebase sends those itself; there is no SMS provider, no Twilio). A friend added only by phone number gets no invitation offer (`invite` is null; nothing can be sent), and the sender can add an email instead. `Friend.invite` is null for people who already have an account (they get the request in the app) and once the friend has signed up.
 - **Nothing is sent when the request is added.** The app opens the verify page (`/friends/:id/invite`); only `POST /circles/default/friends/:id/invite` sends. It is refused (409) when the friend has no invitation, was invited already (**once per friend**), or has signed up in the meantime; 429 after `MAX_INVITES_PER_DAY` (20) invitations in 24 hours; 404 for somebody else's friend.
 - Sending writes to an outbox in the same transaction that marks `sentAt`: `mail/{id}` (the format of the Firebase Trigger Email extension), which the `sendMail` function sends through your own mail server (see "Sending email"). The document carries `fromUid`, is closed to clients (no rules) and is **erased with the sender**.

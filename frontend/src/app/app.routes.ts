@@ -7,8 +7,10 @@ import { DeleteAccount } from './delete-account/delete-account';
 import { Friends } from './friends/friends';
 import { Sleeping } from './sleeping/sleeping';
 import { FriendJoin } from './friend-join/friend-join';
-import { InviteFriend } from './invite-friend/invite-friend';
 import { InstallApp } from './install-app/install-app';
+import { Privacy } from './privacy/privacy';
+import { Terms } from './terms/terms';
+import { About } from './about/about';
 import { Login } from './login/login';
 import { LoginEmail } from './login-email/login-email';
 import { LoginLink } from './login-link/login-link';
@@ -27,7 +29,6 @@ export const routes: Routes = [
   { path: 'friends/sleeping', component: Sleeping, canActivate: [authGuard], title: 'Sleep list – Seven Friends' },
   { path: 'friends/join', component: FriendJoin, canActivate: [authGuard], title: 'Friend request – Seven Friends' },
   { path: 'friends/add', component: AddFriend, canActivate: [authGuard], title: 'Add a friend – Seven Friends' },
-  { path: 'friends/:id/invite', component: InviteFriend, canActivate: [authGuard], title: 'Invite a friend – Seven Friends' },
   { path: 'friends/:id/image', component: AddMedia, data: { kind: 'image' }, canActivate: [authGuard], title: 'Send an image – Seven Friends' },
   { path: 'friends/:id/audio', component: AddMedia, data: { kind: 'audio' }, canActivate: [authGuard], title: 'Send a voice message – Seven Friends' },
   { path: 'friends/:id/video', component: AddMedia, data: { kind: 'video' }, canActivate: [authGuard], title: 'Send a video – Seven Friends' },
@@ -38,6 +39,9 @@ export const routes: Routes = [
   { path: 'profile/picture', component: ProfilePicturePage, canActivate: [authGuard], title: 'Your picture – Seven Friends' },
   { path: 'sound-and-notifications', component: Settings, canActivate: [authGuard], title: 'Sound and notifications – Seven Friends' },
   { path: 'sound-and-notifications/:event', component: SoundPicker, canActivate: [authGuard], title: 'Choose a sound – Seven Friends' },
+  { path: 'privacy', component: Privacy, title: 'Your data and privacy – Seven Friends' },
+  { path: 'terms', component: Terms, title: 'Terms of use – Seven Friends' },
+  { path: 'about', component: About, title: 'About – Seven Friends' },
   { path: 'install-app', component: InstallApp, canActivate: [authGuard], title: 'Install the app – Seven Friends' },
   { path: 'login', component: Login, canActivate: [guestGuard], title: 'Sign in – Seven Friends' },
   { path: 'login/email', component: LoginEmail, canActivate: [guestGuard], title: 'Email link – Seven Friends' },

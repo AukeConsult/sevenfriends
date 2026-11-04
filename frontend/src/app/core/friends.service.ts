@@ -59,13 +59,6 @@ export class FriendsService {
     return created;
   }
 
-  /** Sends the invitation email to a friend who has no account yet. */
-  async sendInvite(id: string): Promise<Friend> {
-    const sent = await this.api.request<Friend>(`${this.friendsPath()}/${id}/invite`, { method: 'POST' });
-    this.friends.update((list) => list.map((f) => (f.id === id ? sent : f)));
-    return sent;
-  }
-
   /** "This is really them": hides the unverified warning of a friend. */
   async trust(id: string): Promise<Friend> {
     const saved = await this.api.request<Friend>(`${this.friendsPath()}/${id}/trust`, { method: 'POST', body: JSON.stringify({ trusted: true }) });

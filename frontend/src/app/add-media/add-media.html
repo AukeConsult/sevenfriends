@@ -1,7 +1,9 @@
-<header class="sf-bar">
-  <a [routerLink]="['/friends', friendId]" class="sf-back" aria-label="Back to the conversation">‹</a>
-  <h1 class="sf-bar-title">{{ cameraOpen() ? text.recording : text.title }}</h1>
-</header>
+<div class="sf-back-row">
+  <a [routerLink]="['/friends', friendId]" class="btn btn-light" aria-label="Back to the conversation">‹ Back</a>
+</div>
+<div class="sf-page-head">
+  <h1>{{ cameraOpen() ? text.recording : text.title }}</h1>
+</div>
 
 <main class="sf-narrow">
   @if (cameraOpen()) {

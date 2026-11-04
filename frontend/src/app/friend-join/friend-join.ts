@@ -126,7 +126,7 @@ export class FriendJoin {
     this.sending.set(true);
     this.error.set(null);
     try {
-      const added = await this.friends.add({
+      await this.friends.add({
         name: this.name().trim(),
         email: target.email,
         phone: target.email ? null : target.phone, // the email finds them best; the phone number only when there is no email
@@ -134,7 +134,7 @@ export class FriendJoin {
         ...socialsFromDraft(emptySocialDraft()),
       });
       this.link.clear();
-      await this.router.navigateByUrl(added.invite ? `/friends/${added.id}/invite` : '/friends', { replaceUrl: true });
+      await this.router.navigateByUrl('/friends', { replaceUrl: true });
     } catch (err: any) {
       this.error.set(err.message ?? 'Could not send the friend request');
     } finally {

@@ -74,8 +74,6 @@ export class Notifications {
    * not verified, so I am told here too (with a way to fix it).
    */
   protected readonly unverified = signal<('email' | 'phone')[]>([]);
-  /** the note about unverified details is closed at first: only a small mark shows that there is something to do */
-  protected readonly unverifiedOpen = signal(false);
 
   /** the seats taken: my friends who are not on the sleep list (the same count the Friends page uses) */
   protected readonly seatsTaken = computed(() => Math.min(7, this.friendsService.awake().length));

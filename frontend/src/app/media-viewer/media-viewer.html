@@ -1,7 +1,9 @@
-<header class="sf-bar">
-  <button type="button" class="sf-back border-0 bg-transparent" (click)="back()" aria-label="Back">‹</button>
-  <h1 class="sf-bar-title">{{ file()?.name ?? 'Image, video or audio' }}</h1>
-</header>
+<div class="sf-back-row">
+  <button type="button" class="btn btn-light" (click)="back()" aria-label="Back">‹ Back</button>
+</div>
+<div class="sf-page-head">
+  <h1>{{ file()?.name ?? 'Image, video or audio' }}</h1>
+</div>
 
 <main class="sf-viewer">
   @if (file(); as shown) {

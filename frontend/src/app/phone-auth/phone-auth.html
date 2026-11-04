@@ -1,7 +1,9 @@
-<header class="sf-bar">
-  <a [routerLink]="backLink" class="sf-back" aria-label="Back">‹</a>
-  <h1 class="sf-bar-title">{{ linking ? 'Verify your phone' : 'Sign in with phone' }}</h1>
-</header>
+<div class="sf-back-row">
+  <a [routerLink]="backLink" class="btn btn-light" aria-label="Back">‹ Back</a>
+</div>
+<div class="sf-page-head">
+  <h1>{{ linking ? 'Verify your phone' : 'Sign in with phone' }}</h1>
+</div>
 
 <main class="sf-narrow">
   @if (step() === 'number') {

@@ -9,7 +9,11 @@
     </span>
   }
   <div class="sf-bar-text">
-    <strong class="sf-fs-title">{{ name() || 'Conversation' }}</strong>
+    <button type="button" class="sf-name-btn" (click)="toggleProfile()" [attr.aria-expanded]="profileOpen()" aria-controls="friend-profile"
+            [attr.aria-label]="(profileOpen() ? 'Hide the profile of ' : 'Show the profile of ') + (name() || 'your friend')">
+      <strong class="sf-fs-title">{{ name() || 'Conversation' }}</strong>
+      <span class="sf-name-arrow" aria-hidden="true">{{ profileOpen() ? '▴' : '▾' }}</span>
+    </button>
     @if (friend(); as f) {
       @if (f.sleepsMe) { <span class="sf-mood-line"><span>😴 Has you on their sleep list</span></span> }
       @if (f.mood || f.moodMessage) {
@@ -42,6 +46,38 @@
     </div>
   }
 </header>
+
+<!-- Expanding frame: the profile of the friend (tap the name) -->
+<div class="sf-expand" [class.open]="profileOpen()" [attr.inert]="profileOpen() ? null : ''">
+  <div class="sf-expand-inner">
+    @if (friend(); as f) {
+      <section id="friend-profile" class="sf-profile sf-profile-bar" [attr.aria-label]="'Profile of ' + f.name">
+        @if (countryName(f.country); as country) { <p class="sf-hint m-0">{{ country }}</p> }
+        @if (f.mood; as mood) {
+          <p class="sf-profile-mood">
+            <img [src]="moodIcon(mood)" [alt]="''" width="24" height="24" />
+            <span>{{ moodLabel(mood) }}</span>
+          </p>
+        }
+        @if (f.moodMessage) { <p class="sf-hint m-0">“{{ f.moodMessage }}”</p> }
+        @if (f.unverified.length && f.status !== 'rejected') {
+          <p class="sf-hint text-warning-emphasis m-0">
+            {{ f.name }} has not verified {{ f.unverified.length === 2 ? 'their email or phone' : f.unverified[0] === 'email' ? 'their email' : 'their phone' }},
+            so we cannot be sure it is really them.
+          </p>
+        }
+        <dl class="sf-details">
+          @if (f.phone) { <dt>Phone</dt><dd>{{ f.phone }}</dd> }
+          @if (f.email) { <dt>Email</dt><dd>{{ f.email }}</dd> }
+          @for (n of networks; track n.key) {
+            @if (f[n.key]; as account) { <dt>{{ n.label }}</dt><dd>{{ account }}</dd> }
+          }
+          @if (f.createdAt) { <dt>Added</dt><dd>{{ f.createdAt | date: 'mediumDate' }}</dd> }
+        </dl>
+      </section>
+    }
+  </div>
+</div>
 
 <!-- Expanding frame: delete several of my messages at once (by age and / or text) -->
 <div class="sf-expand" [class.open]="cleanupOpen()" [attr.inert]="cleanupOpen() ? null : ''">

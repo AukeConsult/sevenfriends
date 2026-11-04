@@ -1,5 +1,5 @@
 import { Clearable } from '../core/clearable';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FriendsService } from '../core/friends.service';
 import { InviteLinkService } from '../core/invite-link.service';
@@ -20,8 +20,6 @@ export class AddFriend {
   protected readonly invite = inject(InviteLinkService);
 
   protected readonly draft = signal<FriendDraft>(emptyDraft());
-  /** an email or a phone number is filled in: my invite link is offered */
-  protected readonly hasContact = computed(() => Boolean(this.draft().email.trim() || this.draft().phone.trim()));
   protected readonly sending = signal(false);
   protected readonly error = signal<string | null>(null);
 
@@ -46,15 +44,14 @@ export class AddFriend {
     this.sending.set(true);
     this.error.set(null);
     try {
-      const added = await this.friends.add({
+      await this.friends.add({
         name: d.name,
         email: d.email || null,
         phone: d.phone || null,
         message: d.message.trim() || null,
         ...socialsFromDraft(emptySocialDraft()), // no social accounts are asked for here
       });
-      // nobody has an account for this email / phone yet: confirm the address first, then invite them
-      await this.router.navigateByUrl(added.invite ? `/friends/${added.id}/invite` : '/friends');
+      await this.router.navigateByUrl('/friends');
     } catch (err: any) {
       this.error.set(err.message ?? 'Could not send the friend request');
     } finally {

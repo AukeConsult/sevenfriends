@@ -1,13 +1,11 @@
-<header class="sf-bar">
-  <h1 class="sf-bar-title">{{ circle()?.name ?? 'Friends' }}</h1>
-  <span class="sf-hint">{{ filled() }} / {{ max }}</span>
-  <a routerLink="/friends/sleeping" class="sf-tool-btn sf-bar-extra" aria-label="Sleep list">
-    <span aria-hidden="true">😴</span>
-    <span>Sleep list</span>
-  </a>
-</header>
-
 <main class="sf-content">
+  <!-- no coloured header: a plain title, the seats as dots, and how many are taken -->
+  <div class="sf-page-head">
+    <h1>My close friends</h1>
+    <app-seat-dots [taken]="filled()" />
+    <p class="sf-hint m-0">{{ filled() }} of {{ max }} seats taken</p>
+  </div>
+
   @if (loadError()) {
     <div class="alert alert-danger d-flex align-items-center justify-content-between" role="alert">
       <span>{{ loadError() }}</span>
@@ -40,7 +38,11 @@
                   }
                 </span>
                 <div class="sf-title">
-                  <strong class="sf-name">{{ friend.name }}</strong>
+                  <button type="button" class="sf-name-btn" (click)="toggleProfile(friend)" [attr.aria-expanded]="expanded() === friend.id"
+                          [attr.aria-label]="(expanded() === friend.id ? 'Hide the profile of ' : 'Show the profile of ') + friend.name">
+                    <strong class="sf-name">{{ friend.name }}</strong>
+                    <span class="sf-name-arrow" aria-hidden="true">{{ expanded() === friend.id ? '▴' : '▾' }}</span>
+                  </button>
                   @if (friend.mood; as mood) {
                     <img class="sf-mood" [src]="moodIcon(mood)" [alt]="moodLabel(mood)" [title]="moodLabel(mood)" width="20" height="20" />
                   }
@@ -66,14 +68,6 @@
                     <span>Chat</span>
                   </a>
                 }
-                <button type="button" class="sf-tool-btn sf-card-btn" (click)="toggleProfile(friend)" [attr.aria-expanded]="expanded() === friend.id"
-                        [attr.aria-label]="(expanded() === friend.id ? 'Hide the profile of ' : 'Show the profile of ') + friend.name">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                       stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" [style.transform]="expanded() === friend.id ? 'rotate(180deg)' : null">
-                    <path d="M6 9l6 6 6-6" />
-                  </svg>
-                  <span>{{ expanded() === friend.id ? 'Hide' : 'Details' }}</span>
-                </button>
               </header>
 
               <!-- Everything below lines up with the name -->
@@ -85,13 +79,6 @@
                   <p class="sf-hint">They rejected your request. Delete it to remove it from both lists.</p>
                 } @else if (friend.status === 'pending') {
                   <p class="sf-hint">{{ friend.incoming ? 'Wants to be your friend' : friend.waiting ? 'Their list is full. You are on their waiting list.' : 'Waiting for them to confirm' }}</p>
-                  @if (friend.invite; as invite) {
-                    @if (invite.sentAt) {
-                      <p class="sf-hint">Invitation sent by email to {{ invite.to }}.</p>
-                    } @else {
-                      <p class="sf-hint">Not on Seven Friends yet. <a [routerLink]="['/friends', friend.id, 'invite']">Send an invitation</a></p>
-                    }
-                  }
                 }
                 @if (friend.status === 'confirmed') {
                   <p class="sf-hint sf-spoken">{{ lastSpoken(friend) }}</p>
