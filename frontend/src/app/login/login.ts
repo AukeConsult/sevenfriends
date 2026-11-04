@@ -4,6 +4,7 @@ import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { authMessage, wasCancelled } from '../core/auth-errors';
 import { AuthService } from '../core/auth.service';
+import { FriendLinkService } from '../core/friend-link.service';
 import { AuthMode } from '../models';
 
 @Component({
@@ -12,6 +13,8 @@ import { AuthMode } from '../models';
   templateUrl: './login.html',
 })
 export class Login {
+  /** a friend link was opened: what it is about (shown above the sign-in buttons) */
+  protected readonly link = inject(FriendLinkService).pending;
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
 

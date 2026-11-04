@@ -34,13 +34,17 @@ export class Timestamp {
 }
 
 class ServerTimestamp {}
+class DeleteField {}
 class Increment {
   constructor(readonly n: number) {}
 }
 export const FieldValue = {
   serverTimestamp: () => new ServerTimestamp(),
   increment: (n: number) => new Increment(n),
+  delete: () => new DeleteField(),
 };
+
+const withoutDeleted = (data: Data): Data => Object.fromEntries(Object.entries(data).filter(([, v]) => v !== undefined));
 
 function clone<T>(v: T): T {
   if (v instanceof Timestamp) return v;
@@ -53,7 +57,8 @@ function resolve(data: Data, existing: Data | undefined): Data {
   const out: Data = {};
   for (const [k, v] of Object.entries(data)) {
     if (v === undefined) throw new Error(`Cannot use "undefined" as a Firestore value (field "${k}")`);
-    if (v instanceof ServerTimestamp) out[k] = Timestamp.now();
+    if (v instanceof DeleteField) out[k] = undefined; // removed by `withoutDeleted` after the merge
+    else if (v instanceof ServerTimestamp) out[k] = Timestamp.now();
     else if (v instanceof Increment) out[k] = (existing?.[k] ?? 0) + v.n;
     else if (v && typeof v === "object" && Object.getPrototypeOf(v) === Object.prototype) out[k] = resolve(v as Data, undefined); // nested map: its server timestamps too
     else out[k] = clone(v);
@@ -104,7 +109,7 @@ function applyWrites(writes: Write[]) {
     const existing = current(path);
     switch (w.op) {
       case "set":
-        overlay.set(path, w.merge ? { ...(existing ?? {}), ...resolve(w.data, existing ?? undefined) } : resolve(w.data, undefined));
+        overlay.set(path, withoutDeleted(w.merge ? { ...(existing ?? {}), ...resolve(w.data, existing ?? undefined) } : resolve(w.data, undefined)));
         break;
       case "create":
         if (existing) throw fail(6, `ALREADY_EXISTS: ${path}`);
@@ -113,7 +118,7 @@ function applyWrites(writes: Write[]) {
       case "update":
         if (!existing) throw fail(5, `NOT_FOUND: no document to update: ${path}`);
         for (const k of Object.keys(w.data)) if (k.includes(".")) throw new Error(`fake-firestore: dotted field "${k}" not supported`);
-        overlay.set(path, { ...existing, ...resolve(w.data, existing) });
+        overlay.set(path, withoutDeleted({ ...existing, ...resolve(w.data, existing) }));
         break;
       case "delete":
         overlay.set(path, null);

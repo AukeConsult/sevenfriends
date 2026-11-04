@@ -146,6 +146,30 @@
     </div>
   </div>
 
+  <div class="card mt-3">
+    <div class="card-body vstack gap-2">
+      <h2 class="m-0">Your invite link</h2>
+      <p class="small text-secondary m-0">Send this link to someone. When they open it, sign in (or create an account) and confirm, a friend request is sent to you.</p>
+      @if (inviteLink(); as url) {
+        <input type="text" class="form-control" [value]="url" readonly aria-label="Your invite link" (focus)="$any($event.target).select()" />
+        <div class="d-flex flex-wrap gap-2">
+          <button type="button" class="btn btn-primary" (click)="shareInvite()">Share link</button>
+          <button type="button" class="btn btn-light" (click)="copyInvite()">Copy link</button>
+          @if (confirmNewLink()) {
+            <span class="small align-self-center">The old link stops working.</span>
+            <button type="button" class="btn btn-outline-danger" (click)="newInviteLink()">Make new link</button>
+            <button type="button" class="btn btn-light" (click)="confirmNewLink.set(false)">Cancel</button>
+          } @else {
+            <button type="button" class="btn btn-light" (click)="confirmNewLink.set(true)">New link…</button>
+          }
+        </div>
+        @if (inviteNote(); as note) { <p class="small text-secondary m-0" role="status">{{ note }}</p> }
+      } @else {
+        <p class="small text-secondary m-0">Loading…</p>
+      }
+    </div>
+  </div>
+
   <div class="card border-danger-subtle mt-3 mb-3">
     <div class="card-body vstack gap-2">
       <h2 class="m-0 text-danger">Delete my account</h2>

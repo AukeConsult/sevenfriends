@@ -7,6 +7,11 @@
   </div>
 
   <div class="sf-form-width mx-auto w-100">
+    @if (link(); as pending) {
+      <p class="alert alert-info text-center m-0 mb-3">
+        Sign in or create an account to send a friend request{{ pending.email || pending.phone ? ' to ' + (pending.email || pending.phone) : '' }}.
+      </p>
+    }
     <!-- the ways to sign in without a password -->
     <div class="vstack gap-2">
       <button type="button" class="btn btn-outline-secondary w-100 gap-2" (click)="google()" [disabled]="busy()">

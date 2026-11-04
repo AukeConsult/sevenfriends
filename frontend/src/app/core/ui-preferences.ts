@@ -15,9 +15,27 @@ export interface UiPreferences {
   lastPage: string | null;
   /** the microphone is opened without the filters of the browser (set once a recording came out silent) */
   micRaw: boolean;
+  /** who an opened friend link points to (see friend-link.service.ts): kept until the person has signed in and answered it; null = none */
+  pendingFriend: PendingFriend | null;
 }
 
-const DEFAULTS: UiPreferences = { chatOrder: 'oldest', lastPage: null, micRaw: false };
+/** Where a friend link points: an invite code, or an email / phone number. */
+export interface PendingFriend {
+  code: string | null;
+  email: string | null;
+  phone: string | null;
+}
+
+const DEFAULTS: UiPreferences = { chatOrder: 'oldest', lastPage: null, micRaw: false, pendingFriend: null };
+
+const text = (value: unknown): string | null => (typeof value === 'string' && value ? value : null);
+
+function pendingOf(value: unknown): PendingFriend | null {
+  if (!value || typeof value !== 'object') return null;
+  const v = value as Record<string, unknown>;
+  const pending = { code: text(v['code']), email: text(v['email']), phone: text(v['phone']) };
+  return pending.code || pending.email || pending.phone ? pending : null;
+}
 const STORAGE_KEY = 'sf-ui';
 /** The two separate keys that were used before this object existed: read once, then the object is used. */
 const OLD_CHAT_ORDER = 'sf-chat-order';
@@ -39,6 +57,7 @@ function read(): UiPreferences {
       chatOrder: saved.chatOrder === 'newest' ? 'newest' : 'oldest',
       lastPage: typeof saved.lastPage === 'string' && saved.lastPage.startsWith('/') ? saved.lastPage : null,
       micRaw: saved.micRaw === true,
+      pendingFriend: pendingOf(saved.pendingFriend),
     };
   } catch {
     return { ...DEFAULTS }; // private mode or damaged: the defaults, the choices last until the page is closed

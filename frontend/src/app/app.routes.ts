@@ -6,6 +6,7 @@ import { Chat } from './chat/chat';
 import { DeleteAccount } from './delete-account/delete-account';
 import { Friends } from './friends/friends';
 import { Sleeping } from './sleeping/sleeping';
+import { FriendJoin } from './friend-join/friend-join';
 import { InviteFriend } from './invite-friend/invite-friend';
 import { InstallApp } from './install-app/install-app';
 import { Login } from './login/login';
@@ -24,6 +25,7 @@ export const routes: Routes = [
   { path: '', component: Notifications, canActivate: [authGuard], title: 'Notifications – Seven Friends' },
   { path: 'friends', component: Friends, canActivate: [authGuard], title: 'Friends – Seven Friends' },
   { path: 'friends/sleeping', component: Sleeping, canActivate: [authGuard], title: 'Sleep list – Seven Friends' },
+  { path: 'friends/join', component: FriendJoin, canActivate: [authGuard], title: 'Friend request – Seven Friends' },
   { path: 'friends/add', component: AddFriend, canActivate: [authGuard], title: 'Add a friend – Seven Friends' },
   { path: 'friends/:id/invite', component: InviteFriend, canActivate: [authGuard], title: 'Invite a friend – Seven Friends' },
   { path: 'friends/:id/image', component: AddMedia, data: { kind: 'image' }, canActivate: [authGuard], title: 'Send an image – Seven Friends' },

@@ -3,12 +3,13 @@ import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { UiPreferencesService } from './core/ui-preferences';
 import { BottomNav } from './bottom-nav/bottom-nav';
 import { AuthService } from './core/auth.service';
+import { FriendLinkService } from './core/friend-link.service';
 import { InstallService } from './core/install.service';
 import { PresenceService } from './core/presence.service';
 import { RealtimeService } from './core/realtime.service';
 
 /** The pages that are shown again at the next start: the main pages and a conversation (not forms, pickers, sign-in). */
-const REMEMBERED_PAGE = /^\/(friends(\/sleeping|\/(?!add$)[^/]+)?|pending|profile|sound-and-notifications)?$/;
+const REMEMBERED_PAGE = /^\/(friends(\/sleeping|\/(?!add$|join$)[^/]+)?|pending|profile|sound-and-notifications)?$/;
 
 @Component({
   selector: 'app-root',
@@ -19,6 +20,7 @@ export class App {
   protected readonly auth = inject(AuthService);
   private readonly router = inject(Router);
   private readonly prefs = inject(UiPreferencesService);
+  private readonly friendLink = inject(FriendLinkService);
 
   constructor() {
     inject(RealtimeService); // starts listening for live updates (friend requests, messages) once somebody is signed in
@@ -30,6 +32,11 @@ export class App {
     this.router.events.subscribe((event) => {
       if (!(event instanceof NavigationEnd)) return;
       const url = event.urlAfterRedirects.split('?')[0].split('#')[0];
+      // somebody opened a friend link and is signed in: answer it first (signed out, the login page shows what it is about)
+      if (this.auth.user() && this.friendLink.pending() && url !== '/friends/join') {
+        void this.router.navigateByUrl('/friends/join', { replaceUrl: true });
+        return;
+      }
       if (first) {
         first = false;
         const last = this.prefs.get('lastPage');

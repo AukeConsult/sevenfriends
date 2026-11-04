@@ -372,3 +372,12 @@ files in `android/` (capacitor.settings.gradle, app/src/main/assets); the native
 ## iPhone app (`ios/`)
 Same wrapper as `android/` (`npm run ios:sync`, `ios:open` on a Mac, `ios:config` for `GoogleService-Info.plist` from the key in `.env`). Details and what
 is missing: `ios/README.md`. Generated files (`Package.swift`, `App/App/public`) are not edited; our own native code is in `ios/App/App`.
+
+## Friend links
+`/?invite=<code>` (the code is made on the server, `functions/src/invite.ts`; the profile page has Share / Copy / New link) or `/?friend=<email or phone>`.
+`FriendLinkService.capture()` runs in an app initializer (before the router can redirect), keeps the link in UiPreferences (`pendingFriend`) and removes
+it from the address bar. Signed in + a link waiting -> `app.ts` sends every navigation to `/friends/join` (`friend-join/`), which asks "Send a friend
+request to …?" (nothing is sent without the tap) and then uses the ordinary `friends.add()`. Signed out: the login page says what the link is about.
+A new code makes the old link stop working. `FieldValue.delete` is supported by the test fake (`functions/test/fake-firestore.ts`).
+A friend link whose owner has ALREADY sent me a request (`requestId` from `/invite/lookup`, or the request's `fromEmail` for plain links) shows that
+request with "Confirm request" instead of the form: no second request is made. The join page first runs `notifications.refresh()`.

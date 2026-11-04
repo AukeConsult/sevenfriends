@@ -1,0 +1,57 @@
+<header class="sf-bar">
+  <a href="/" class="sf-back" aria-label="Not now, go to the start page" (click)="$event.preventDefault(); notNow()">‹</a>
+  <h1 class="sf-bar-title">Friend request</h1>
+</header>
+
+<main class="sf-narrow">
+  @if (loading()) {
+    <p class="sf-hint-center">Loading…</p>
+  } @else if (problem(); as why) {
+    <div class="alert alert-info" role="status">{{ why }}</div>
+    <div class="sf-actions">
+      @if (existing(); as friend) {
+        <a [routerLink]="['/friends', friend.id]" class="btn btn-primary flex-fill">Open {{ friend.name }}</a>
+      }
+      <a routerLink="/" class="btn btn-light flex-fill">Close</a>
+    </div>
+  } @else if (incoming(); as request) {
+    <section class="vstack gap-3" aria-label="A request is waiting for you">
+      <p class="m-0"><strong>{{ request.fromName }}</strong> has already sent you a friend request.</p>
+      @if (request.message) {
+        <p class="alert alert-light border m-0">{{ request.message }}</p>
+      }
+      <p class="small text-secondary m-0">Confirm it, and you are friends: there is no need to send a request back.</p>
+      @if (error()) {
+        <div class="alert alert-danger" role="alert">{{ error() }}</div>
+      }
+      <div class="sf-actions">
+        <button type="button" class="btn btn-light flex-fill" (click)="notNow()">Not now</button>
+        <button type="button" class="btn btn-primary flex-fill" [disabled]="sending()" (click)="accept()">{{ sending() ? 'Confirming…' : 'Confirm request' }}</button>
+      </div>
+    </section>
+  } @else {
+    <form class="vstack gap-3" (submit)="$event.preventDefault(); send()" aria-label="Send a friend request">
+      <p class="m-0">Send a friend request to <strong>{{ label() }}</strong>?</p>
+      <p class="small text-secondary m-0">They get your request when they open the app, and become your friend when they confirm.</p>
+
+      <label class="sf-field"><span class="form-label small text-secondary m-0">Name (optional)</span>
+        <input appClear type="text" class="form-control" [value]="name()" (input)="name.set($any($event.target).value)" autocomplete="off" maxlength="100" />
+      </label>
+
+      <label class="sf-field"><span class="form-label small text-secondary m-0">Add a message (optional)</span>
+        <textarea appClear class="form-control" rows="3" maxlength="500" [value]="message()" (input)="message.set($any($event.target).value)"
+                  placeholder="Hi! I would like to have you as a close friend."></textarea>
+        <span class="small text-secondary text-end">{{ message().length }} / 500</span>
+      </label>
+
+      @if (error()) {
+        <div class="alert alert-danger" role="alert">{{ error() }}</div>
+      }
+
+      <div class="sf-actions">
+        <button type="button" class="btn btn-light flex-fill" (click)="notNow()">Not now</button>
+        <button type="submit" class="btn btn-primary flex-fill" [disabled]="sending()">{{ sending() ? 'Sending…' : 'Send friend request' }}</button>
+      </div>
+    </form>
+  }
+</main>
