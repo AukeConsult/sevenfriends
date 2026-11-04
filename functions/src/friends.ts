@@ -62,6 +62,7 @@ function toJson(doc: FirebaseFirestore.DocumentSnapshot): Friend {
     invited: Boolean(data.linkedUid), // true = the friend has a Seven Friends account and got a request
     waiting: Boolean(data.waitingForSeat), // true = their list is full: I am on their waiting list
     asleep: data.asleep === true, // true = on my sleep list (no seat)
+    sleepsMe: data.theyAsleep === true, // true = this friend has ME on their sleep list (copied here when they put me to sleep or wake me)
     incoming: Boolean(data.incomingRequestId), // true = THEY invited ME; I can confirm
     requestId: (data.incomingRequestId as string | undefined) ?? null,
     createdAt: data.createdAt instanceof Timestamp ? data.createdAt.toDate().toISOString() : null,
@@ -95,7 +96,7 @@ async function withUnverified(friend: Friend, entry: FirebaseFirestore.DocumentD
   const other = (entry.linkedUid as string | null | undefined) ?? (entry.signaledUids as string[] | undefined)?.[0];
   if (!other) return friend;
   const account = (await userDoc(other).get()).data();
-  const unverified = account ? unverifiedDetails(account) : [];
+  const unverified = account && entry.trusted !== true ? unverifiedDetails(account) : []; // "this is really them" (trusted) hides the warning
   // the mood is for confirmed friends only
   const mood =
     friend.status === "confirmed" && account
@@ -199,6 +200,26 @@ friendsRouter.post(
   }),
 );
 
+/** "This is really them": I confirm an unverified friend myself, the warning goes away (`{ trusted: true }`; `false` brings it back). */
+friendsRouter.post(
+  "/:friendId/trust",
+  asyncHandler(async (req, res) => {
+    const trusted = (req.body ?? {}).trusted;
+    if (typeof trusted !== "boolean") {
+      res.status(400).json({ error: "trusted must be true or false" });
+      return;
+    }
+    const ref = friendCol(res).doc(req.params.friendId);
+    if (!(await ref.get()).exists) {
+      res.status(404).json({ error: "Friend not found" });
+      return;
+    }
+    await ref.update({ trusted });
+    const saved = await ref.get();
+    res.json(await withUnverified(toJson(saved), saved.data(), uidOfRequest(res)));
+  }),
+);
+
 /**
  * Put a friend to sleep or wake them up: `{ asleep: true | false }`. A sleeping friend has no seat (the seat is free for somebody
  * else, also for a request that waits for one), but the connection, the conversation and its files are kept. Waking needs a free seat.
@@ -219,7 +240,14 @@ friendsRouter.post(
       if (!entry) return "missing" as const;
       if ((entry.data().asleep === true) === asleep) return "ok" as const; // nothing to change
       if (!asleep && all.docs.filter((d) => d.data().asleep !== true).length >= MAX_FRIENDS) return "full" as const;
+      // the friend's own entry (same id) is told: `theyAsleep` (their app listens to its list and shows it at once)
+      const linked = entry.data().linkedUid as string | null | undefined;
+      const theirs = linked
+        ? circleCol(linked).doc((entry.data().peerCircleId as string | undefined) ?? DEFAULT_CIRCLE_ID).collection(FRIENDS_SUBCOLLECTION).doc(ref.id)
+        : null;
+      const theirsExists = theirs ? (await tx.get(theirs)).exists : false;
       tx.update(ref, { asleep });
+      if (theirs && theirsExists) tx.update(theirs, { theyAsleep: asleep });
       return "ok" as const;
     });
     if (result === "missing") {

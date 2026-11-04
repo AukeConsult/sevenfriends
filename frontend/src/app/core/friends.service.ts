@@ -66,6 +66,13 @@ export class FriendsService {
     return sent;
   }
 
+  /** "This is really them": hides the unverified warning of a friend. */
+  async trust(id: string): Promise<Friend> {
+    const saved = await this.api.request<Friend>(`${this.friendsPath()}/${id}/trust`, { method: 'POST', body: JSON.stringify({ trusted: true }) });
+    this.friends.update((list) => list.map((f) => (f.id === id ? saved : f)));
+    return saved;
+  }
+
   /** Put a friend on the sleep list (no seat, conversation kept) or wake them up (needs a free seat). */
   async sleep(id: string, asleep: boolean): Promise<Friend> {
     const saved = await this.api.request<Friend>(`${this.friendsPath()}/${id}/sleep`, { method: 'POST', body: JSON.stringify({ asleep }) });

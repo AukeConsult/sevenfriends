@@ -531,6 +531,7 @@ router-outlet + * { display: block; min-height: 100dvh; }
   cursor: pointer;
   &:hover, &:focus-visible, &[aria-expanded='true'] { background: rgba(255, 255, 255, 0.6); }
   svg { flex: none; transition: transform 0.2s ease; }
+  > span:first-child:not(:only-child) { font-size: 1.25rem; line-height: 1.5rem; } // an emoji as the icon
 }
 .sf-mood-line {
   display: flex;
@@ -763,6 +764,14 @@ app-voice { display: contents; }
 .sf-confirm-text { margin: 0 0 0.5rem; font-size: var(--sf-fs-description); color: #7f1d1d; }
 .sf-confirm-actions { display: flex; justify-content: flex-end; gap: 0.5rem; }
 .sf-clickable { cursor: pointer; &:hover { background: var(--sf-surface); } &:focus-visible { outline: 2px solid var(--sf-primary); outline-offset: 2px; } }
+.sf-card-btn { // the two actions of a friend card (Chat, Details): a text under the icon, on a soft pill, in the brand colour
+  min-width: 3.5rem;
+  background: var(--sf-surface);
+  color: var(--sf-primary);
+  font-weight: 600;
+  padding: 0.25rem 0.5rem;
+  &:hover, &:focus-visible, &[aria-expanded='true'] { background: var(--bs-primary-bg-subtle); }
+}
 .sf-chat {
   margin-right: 0;
   color: var(--sf-primary);

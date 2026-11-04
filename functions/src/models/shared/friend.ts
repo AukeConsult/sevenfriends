@@ -16,6 +16,8 @@ export interface Friend extends Socials {
   waiting: boolean;
   /** true = on my sleep list: not in a seat any more, the conversation and its files are kept (I can wake them up again) */
   asleep: boolean;
+  /** true = this friend has put ME on THEIR sleep list (they may not see my messages soon) */
+  sleepsMe: boolean;
   /** true when THEY invited ME: this seat can be confirmed by me */
   incoming: boolean;
   requestId: string | null;

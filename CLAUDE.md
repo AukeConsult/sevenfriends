@@ -327,3 +327,11 @@ firebase deploy                # builds the frontend first (hosting predeploy), 
 - Chat header actions use `.sf-tool-btn` (icon + label). The cleanup panel puts the match count and the delete button on one `.sf-cleanup-row` (wraps only on very narrow screens).
 - Youthful touches: press feedback (scale .96), gradient own bubbles, pill nav highlight. Bottom nav and composer stay white.
 - Not done: PWA icon files in `public/icons` still use the old purple gradient.
+
+## Sleep list
+
+- A confirmed friend is no longer deleted from the card: "Add <name> to the sleep list…" puts them to sleep (`POST /circles/:id/friends/:friendId/sleep { asleep }`, field `asleep` on MY entry only). A sleeping friend has **no seat** (seat counts in `friends.ts` POST, `seats.ts` `ensureSeat` and the sleep route ignore entries with `asleep: true`), but the connection, the conversation and the files are kept. Waking needs a free seat (409 otherwise). Pending/rejected entries are still deleted as before.
+- App: `FriendsService.awake` / `.sleeping`; the seats on Friends and the seat icon in the chat use `awake`. The last row on Friends and the header button (top right) open `/friends/sleeping` (`app-sleeping`): Open, Wake up, Delete (for good, with a question). The page header has a "My friends" button top right and the back arrow.
+- Not done: messages from a sleeping friend still arrive and notify as before (no muting yet); the other person is not told. No backend tests yet for the sleep route.
+- **"This is really <name>"** (button under the "has not verified" warning on a friend card): `POST /circles/:id/friends/:friendId/trust { trusted }` sets `trusted` on MY entry; `withUnverified` then returns no `unverified` details for it. Needs a backend deploy; no backend test yet.
+- **The friend is told about the sleep list:** putting a friend to sleep (or waking them) also sets `theyAsleep` on THEIR entry of the same connection (same transaction in the sleep route); `toJson` shows it as `sleepsMe`. Their open app reloads its friend list live and shows "😴 <name> has you on their sleep list" on the friend card, in the chat header and in their own sleep list. No push notification is sent. Needs the backend deploy; no backend test yet.

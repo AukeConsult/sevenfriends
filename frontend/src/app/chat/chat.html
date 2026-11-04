@@ -11,6 +11,7 @@
   <div class="sf-bar-text">
     <strong class="sf-fs-title">{{ name() || 'Conversation' }}</strong>
     @if (friend(); as f) {
+      @if (f.sleepsMe) { <span class="sf-mood-line"><span>😴 Has you on their sleep list</span></span> }
       @if (f.mood || f.moodMessage) {
         <span class="sf-mood-line">
           @if (f.mood; as mood) {

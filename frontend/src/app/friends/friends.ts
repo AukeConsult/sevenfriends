@@ -111,6 +111,15 @@ export class Friends {
     this.deleting.set(null);
   }
 
+  /** I know it is really them: the "not verified" warning goes away. */
+  protected async trust(friend: Friend): Promise<void> {
+    try {
+      await this.friendsService.trust(friend.id);
+    } catch (err: any) {
+      this.loadError.set(err.message);
+    }
+  }
+
   /** A confirmed friend is put to sleep (the conversation is kept); anything else (pending, rejected) is deleted. */
   protected sleepable(friend: Friend): boolean {
     return friend.status === 'confirmed';

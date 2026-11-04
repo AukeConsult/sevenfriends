@@ -1,0 +1,51 @@
+<header class="sf-bar">
+  <a routerLink="/friends" class="sf-back" aria-label="Back to friends">‹</a>
+  <h1 class="sf-bar-title">Sleep list</h1>
+  <a routerLink="/friends" class="sf-tool-btn sf-bar-extra" aria-label="My friends">
+    <span aria-hidden="true">👥</span>
+    <span>My friends</span>
+  </a>
+</header>
+
+<main class="sf-page">
+  <p class="text-secondary">
+    Friends who sleep have no seat. Your conversation with them is kept. Wake a friend up to give them a seat again.
+  </p>
+
+  @if (!seatFree() && sleeping().length) {
+    <div class="alert alert-info" role="status">All {{ max }} seats are taken. Free a seat (put a friend to sleep) before you wake someone up.</div>
+  }
+
+  @if (error()) {
+    <div class="alert alert-danger" role="alert">{{ error() }}</div>
+  }
+
+  @if (!sleeping().length) {
+    <p class="text-secondary">Nobody is asleep.</p>
+  } @else {
+    <ul class="sf-list">
+      @for (friend of sleeping(); track friend.id) {
+        <li class="sf-list-item flex-wrap gap-2">
+          <app-friend-avatar [friend]="friend" [seat]="1" [size]="32" />
+          <span class="sf-list-text">
+            <strong class="sf-ellipsis">{{ friend.name }}</strong>
+            @if (friend.sleepsMe) { <small>😴 has you on their sleep list too</small> }
+          </span>
+          @if (deleting() === friend.id) {
+            <p class="sf-confirm-text w-100 m-0">Delete {{ friend.name }} for good? This removes the connection and the whole conversation, for both of you.</p>
+            <div class="sf-msg-actions w-100 justify-content-end">
+              <button type="button" class="btn btn-light btn-sm" (click)="deleting.set(null)" [disabled]="busy()">Cancel</button>
+              <button type="button" class="btn btn-danger btn-sm" (click)="remove(friend)" [disabled]="busy()">Delete</button>
+            </div>
+          } @else {
+            <div class="sf-msg-actions flex-nowrap mt-0 ms-auto">
+              <a [routerLink]="['/friends', friend.id]" class="btn btn-light btn-sm">Open</a>
+              <button type="button" class="btn btn-primary btn-sm" (click)="wake(friend)" [disabled]="busy() || !seatFree()">Wake up</button>
+              <button type="button" class="btn btn-outline-danger btn-sm" (click)="deleting.set(friend.id)" [disabled]="busy()">Delete</button>
+            </div>
+          }
+        </li>
+      }
+    </ul>
+  }
+</main>
