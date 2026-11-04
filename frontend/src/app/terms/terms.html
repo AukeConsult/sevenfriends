@@ -1,0 +1,70 @@
+<!-- signed out: no menu, so a way back to the sign-in page -->
+@if (!auth.user()) {
+  <div class="sf-back-row">
+    <a routerLink="/login" class="btn btn-light" aria-label="Back to sign in">‹ Back</a>
+  </div>
+}
+<div class="sf-page-head">
+  <h1>Terms of use</h1>
+</div>
+
+<main class="sf-narrow vstack gap-3">
+  <p class="m-0">
+    Seven Friends is a small, calm place to stay close to the people who matter most. By using it you agree to these simple terms.
+  </p>
+
+  <section class="vstack gap-2">
+    <h2 class="m-0">Your account</h2>
+    <ul class="m-0 ps-3">
+      <li>You must be old enough to use online services on your own where you live.</li>
+      <li>Use your own account and give correct information. Keep your login safe: what happens on your account is your responsibility.</li>
+      <li>You have seven seats for friends. Friends you put to sleep do not use a seat.</li>
+    </ul>
+  </section>
+
+  <section class="vstack gap-2">
+    <h2 class="m-0">How to behave</h2>
+    <p class="m-0">Be kind to your friends. Do not use Seven Friends to:</p>
+    <ul class="m-0 ps-3">
+      <li>harass, threaten or scare anyone, or send what someone has told you they do not want;</li>
+      <li>send anything illegal, or pictures, videos or messages of other people that you have no right to share;</li>
+      <li>pretend to be someone else, or send spam or advertisements;</li>
+      <li>break or overload the service, or use it with robots or scripts.</li>
+    </ul>
+  </section>
+
+  <section class="vstack gap-2">
+    <h2 class="m-0">What you write and send</h2>
+    <ul class="m-0 ps-3">
+      <li>Your messages, pictures, videos and voice messages are yours. You let the service store them and deliver them to the friends you send them to, and nothing else.</li>
+      <li>You are responsible for what you send. A friend can save or copy what you send them: only send what you are happy for them to keep.</li>
+      <li>You can delete your messages, your friends and your account at any time. See <a routerLink="/privacy">Data and privacy</a> for what is stored and how to delete it.</li>
+    </ul>
+  </section>
+
+  <section class="vstack gap-2">
+    <h2 class="m-0">If the rules are broken</h2>
+    <p class="m-0">
+      An account that breaks these terms can be limited or closed. You can leave at any time by deleting your account.
+    </p>
+  </section>
+
+  <section class="vstack gap-2">
+    <h2 class="m-0">The service</h2>
+    <ul class="m-0 ps-3">
+      <li>Seven Friends is provided as it is. It may change, have errors or be unavailable at times, and we cannot promise that every message or notification arrives.</li>
+      <li>Do not rely on it for emergencies: use the phone for those.</li>
+      <li>As far as the law allows, we are not responsible for loss caused by the service being unavailable, or by what other people send.</li>
+    </ul>
+  </section>
+
+  <section class="vstack gap-2">
+    <h2 class="m-0">Changes</h2>
+    <p class="m-0">These terms can change. When they change in an important way, you are told in the app.</p>
+  </section>
+
+  <p class="small text-secondary m-0">
+    Seven Friends is provided by Blueboot R&amp;D AS, Norway: <a href="mailto:hey@blueboot.ai">hey&#64;blueboot.ai</a>.
+    This is a short explanation, not a legal contract.
+  </p>
+</main>

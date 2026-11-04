@@ -1,0 +1,91 @@
+<!-- signed out: no menu, so a way back to the sign-in page -->
+@if (!auth.user()) {
+  <div class="sf-back-row">
+    <a routerLink="/login" class="btn btn-light" aria-label="Back to sign in">‹ Back</a>
+  </div>
+}
+<div class="sf-page-head">
+  <h1>Your data and privacy</h1>
+</div>
+
+<main class="sf-narrow vstack gap-3">
+  <p class="m-0">
+    Seven Friends is for your closest friends, so we keep as little as possible. This page explains in plain words what is
+    stored, who can see it, which rights you have under the GDPR (the European data protection law), and how to delete things.
+  </p>
+
+  <section class="vstack gap-2">
+    <h2 class="m-0">What is stored about you</h2>
+    <ul class="m-0 ps-3">
+      <li><strong>Your login:</strong> how you sign in (Google, email or phone) and the email address or phone number you signed in with.</li>
+      <li><strong>Your profile:</strong> your name, and what you choose to add: email, phone number, country, mood and mood message, social accounts, a picture or an icon.</li>
+      <li><strong>Your friends:</strong> the friend list (seven seats and a sleep list), friend requests and the message that came with them.</li>
+      <li><strong>Your conversations:</strong> messages, pictures, videos and voice messages you send and receive, and the preview of links you send.</li>
+      <li><strong>Settings and status:</strong> your sound choices, whether you are active, passive or offline, the devices that receive your notifications, and your invite link code.</li>
+    </ul>
+    <p class="small text-secondary m-0">
+      Everything is kept until you or the other person delete it, or until you delete your account. Nothing is sold, and there are no advertisements.
+    </p>
+  </section>
+
+  <section class="vstack gap-2">
+    <h2 class="m-0">Who can see it</h2>
+    <ul class="m-0 ps-3">
+      <li>Your <strong>friends</strong> see your name, picture, mood and status. A friend who has not confirmed yet only sees what is needed to answer the request.</li>
+      <li>Your friends see the contact details you put on your profile (phone, email, social accounts). Leave a field empty if you do not want to share it.</li>
+      <li>If you have not verified your email or phone, your friends are told that, because someone else could be using it.</li>
+      <li>Only you and your friend can read your conversation.</li>
+      <li>Someone who knows your email address or phone number can send you a friend request.</li>
+    </ul>
+    <p class="small text-secondary m-0">
+      The app runs on Google Firebase (login, database, file storage, hosting and notifications): your data is stored with Google on our behalf.
+    </p>
+  </section>
+
+  <section class="vstack gap-2">
+    <h2 class="m-0">Your rights under the GDPR</h2>
+    <ul class="m-0 ps-3">
+      <li><strong>To know and to see your data:</strong> your profile, friends and conversations are all visible in the app.</li>
+      <li><strong>To correct it:</strong> change your name, contact details, country, mood and picture on your <a routerLink="/profile">profile</a>; edit a message you sent.</li>
+      <li><strong>To have it erased:</strong> see "How to delete" below. You can erase a message, a friend, or everything.</li>
+      <li><strong>To take it with you:</strong> there is no export button yet. Pictures, videos and voice messages can be downloaded one by one from the conversation.</li>
+      <li><strong>To object or to restrict:</strong> you can stop any time: put a friend to sleep, turn off sounds and notifications, or delete your account.</li>
+      <li><strong>To complain:</strong> you can complain to the data protection authority of your country (in Norway: Datatilsynet).</li>
+    </ul>
+  </section>
+
+  <section class="vstack gap-2">
+    <h2 class="m-0">How to delete</h2>
+    <ul class="m-0 ps-3">
+      <li><strong>One message:</strong> delete it in the conversation. It disappears for both of you.</li>
+      <li><strong>Many messages:</strong> in the conversation, tap <em>Delete</em> at the top and choose by age, by who wrote them, or by a word. They disappear for both of you.</li>
+      <li><strong>Your picture:</strong> remove or replace it on your profile.</li>
+      <li><strong>A friend:</strong> delete the friend on the <a routerLink="/friends">friends</a> page. The friendship and the whole shared conversation, pictures and videos included, are erased on both sides.</li>
+      <li><strong>Put a friend to sleep:</strong> the friend loses the seat but the conversation is kept. Delete the friend if you want it gone.</li>
+      <li><strong>This device:</strong> logging out stops notifications on this device.</li>
+      <li><strong>Everything:</strong> delete your account.</li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <div class="card-body vstack gap-2">
+      <h2 class="m-0">What deleting your account erases</h2>
+      <p class="m-0">
+        Your login, your profile and picture, your friend list, every friend request you sent or received, and every message you sent or received,
+        including the pictures, videos and voice messages, in your friends' conversations too. It is erased for good and cannot be undone.
+        You are asked to confirm first.
+      </p>
+      <p class="small text-secondary m-0">
+        What your friends already saw cannot be taken back: a friend may have downloaded a picture or copied a message to somewhere else, outside the app.
+      </p>
+      @if (auth.user()) {
+        <a routerLink="/delete-account" class="btn btn-outline-danger btn-sm align-self-start">Delete my account…</a>
+      }
+    </div>
+  </section>
+
+  <p class="small text-secondary m-0">
+    Responsible for the service: Blueboot R&amp;D AS, Norway. Questions or requests about your data: <a href="mailto:hey@blueboot.ai">hey&#64;blueboot.ai</a>.
+    This is a short explanation, not a legal contract.
+  </p>
+</main>
