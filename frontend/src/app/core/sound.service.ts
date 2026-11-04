@@ -99,6 +99,8 @@ export class SoundService {
   /** The volume knob of the built-in sound that is playing: moving the slider changes it while it plays. */
   private master: GainNode | null = null;
   private endTimer: ReturnType<typeof setTimeout> | undefined;
+  /** the sound that is playing announces an event (not a try-out on the Settings page): any touch stops it */
+  private alerting = false;
 
   /** Which tune is playing on the Settings page right now (the key it was started with), or null. */
   readonly playingKey = signal<string | null>(null);
@@ -113,6 +115,11 @@ export class SoundService {
     // the first tap or key press makes sound allowed
     document.addEventListener('pointerdown', unlock, { once: true, capture: true });
     document.addEventListener('keydown', unlock, { once: true, capture: true });
+    // a sound that announces something (a message, a request) stops at the first touch, key press or when the app is brought to the front
+    const quiet = () => this.alerting && this.stop();
+    for (const type of ['pointerdown', 'touchstart', 'keydown', 'wheel']) document.addEventListener(type, quiet, { capture: true, passive: true });
+    document.addEventListener('visibilitychange', () => document.visibilityState === 'visible' && quiet());
+    window.addEventListener('focus', quiet);
     void this.loadJingles();
 
     // a change that is waiting to be saved is not lost when the page is hidden or closed
@@ -255,6 +262,7 @@ export class SoundService {
 
   /** Stops whatever tune is playing (a built-in sound or a jingle). */
   stop(): void {
+    this.alerting = false;
     this.stopJingle();
     clearTimeout(this.endTimer);
     for (const oscillator of this.oscillators) {
@@ -301,7 +309,7 @@ export class SoundService {
 
   /** Plays the sound chosen for this event. */
   play(event: SoundEvent): void {
-    this.start(this.choices()[event]); // does not cut off a sound that is already playing
+    if (this.start(this.choices()[event])) this.alerting = true; // does not cut off a sound that is already playing
   }
 
   /** Plays one sound to try it out on the Settings page: it replaces the one that is playing. Never throws. */
