@@ -379,6 +379,10 @@ files in `android/` (capacitor.settings.gradle, app/src/main/assets); the native
 Same wrapper as `android/` (`npm run ios:sync`, `ios:open` on a Mac, `ios:config` for `GoogleService-Info.plist` from the key in `.env`). Details and what
 is missing: `ios/README.md`. Generated files (`Package.swift`, `App/App/public`) are not edited; our own native code is in `ios/App/App`.
 
+
+## Windows app (`windows/`)
+A native .NET 8 (WPF) app with the WebView2 control that shows the live web app (`AppUrl` in `windows/MainWindow.xaml.cs`, the same address as `server.url` in `frontend/capacitor.config.json`: change both together). `npm run windows:run` to try it, `windows:publish` for the self-contained exe, `windows:installer` (Inno Setup 6) for `windows/installer/output/SevenFriendsSetup.exe` (per user, no admin). Details and what is missing (push when closed, tray icon, signing, auto-update, Google sign-in in an embedded window; not yet compiled on Windows): `windows/README.md`. The icon `app.ico` is made from `frontend/public/icons/icon-512.png`.
+
 ## Friend links
 `/?invite=<code>` (the code is made on the server, `functions/src/invite.ts`; the profile page has Share / Copy / New link) or `/?friend=<email or phone>`.
 `FriendLinkService.capture()` runs in an app initializer (before the router can redirect), keeps the link in UiPreferences (`pendingFriend`) and removes

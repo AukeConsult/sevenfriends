@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Seven Friends for Windows: a WPF window with the Microsoft Edge WebView2 control that shows the live web app. -->
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>SevenFriends</AssemblyName>
+    <RootNamespace>SevenFriends</RootNamespace>
+    <ApplicationIcon>app.ico</ApplicationIcon>
+    <Version>1.0.0</Version>
+    <Product>Seven Friends</Product>
+    <Company>Blueboot R&amp;D AS</Company>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2903.40" />
+  </ItemGroup>
+
+  <!-- the icon is also used by the installer (installer/SevenFriends.iss) -->
+  <ItemGroup>
+    <Resource Include="app.ico" />
+  </ItemGroup>
+
+</Project>
