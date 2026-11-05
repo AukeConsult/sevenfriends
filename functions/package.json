@@ -11,6 +11,8 @@
     "serve": "npm run build && firebase emulators:start --only functions",
     "deploy": "firebase deploy --only functions",
     "mail:preview": "npm run build && node scripts/mail-preview.js",
+    "sounds:check": "npm run build && node scripts/check-sounds.js",
+    "push:test": "npm run build && node scripts/push-test.js",
     "test:run": "vitest run"
   },
   "dependencies": {

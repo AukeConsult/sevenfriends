@@ -37,7 +37,9 @@
     @if (menuOpen() === 'settings') {
       <div class="sf-dropup" role="menu">
         <a class="sf-dropup-entry" role="menuitem" routerLink="/sound-and-notifications" (click)="closeMenu()">Sound and notifications</a>
-        <a class="sf-dropup-entry" role="menuitem" routerLink="/install-app" (click)="closeMenu()">Install the app</a>
+        @if (!install.native) {
+          <a class="sf-dropup-entry" role="menuitem" routerLink="/install-app" (click)="closeMenu()">Install the app</a>
+        }
         <a class="sf-dropup-entry" role="menuitem" routerLink="/privacy" (click)="closeMenu()">Data and privacy</a>
         <a class="sf-dropup-entry" role="menuitem" routerLink="/terms" (click)="closeMenu()">Terms of use</a>
         <a class="sf-dropup-entry" role="menuitem" routerLink="/about" (click)="closeMenu()">About</a>

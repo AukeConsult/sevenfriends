@@ -1,4 +1,5 @@
 import { Injectable, effect, inject, signal, untracked } from '@angular/core';
+import { Capacitor } from '@capacitor/core';
 import type { DocumentData, Query, QuerySnapshot } from 'firebase/firestore'; // types only: the SDK itself is loaded on demand below
 import { LiveMessage } from '../models';
 import { AuthService } from './auth.service';
@@ -6,6 +7,7 @@ import { DesktopNoticeService } from './desktop-notice.service';
 import { FriendsService } from './friends.service';
 import { LiveChanges } from './live-changes';
 import { NotificationsService } from './notifications.service';
+import { PushService } from './push.service';
 import { SoundService } from './sound.service';
 
 type FirestoreSdk = typeof import('firebase/firestore');
@@ -38,6 +40,7 @@ export class RealtimeService {
   private readonly friends = inject(FriendsService);
   private readonly sound = inject(SoundService);
   private readonly desktop = inject(DesktopNoticeService);
+  private readonly push = inject(PushService);
   private readonly live = inject(LiveChanges);
 
   /** The message feed that is open right now (set by the Chat page): its messages are shown there, not on Home. */
@@ -75,7 +78,7 @@ export class RealtimeService {
         // 1. pings: somebody added me
         this.watch(sdk, mine('incoming-signal'), (_added, first) => {
           const known = new Set(this.friends.requests().map((r) => r.id));
-          if (!first) this.sound.play('request'); // somebody just added me (what was there already is not announced)
+          if (!first) this.ring('request'); // somebody just added me (what was there already is not announced)
           void this.refreshEverything().then(() => {
             if (first) return;
             for (const request of this.friends.requests()) {
@@ -205,7 +208,7 @@ export class RealtimeService {
     for (const friend of now.values()) {
       const was = before.get(friend.id);
       if (was?.status !== 'pending' || friend.incoming) continue; // only answers to MY requests
-      this.sound.play('answer');
+      this.ring('answer');
       this.notify('answer', {
         title: friend.status === 'confirmed' ? `${friend.name} accepted your friend request` : `${friend.name} rejected your friend request`,
         body: '',
@@ -221,8 +224,23 @@ export class RealtimeService {
     }
   }
 
+  /**
+   * In the Android app, while the app is NOT in view and push is on, the phone's own notification (with the chosen
+   * jingle, sent by the backend) tells the person. The page must then stay quiet, or everything is announced twice.
+   * In the browser, and in the app while it is in view, the page announces as usual.
+   */
+  private pushCovers(): boolean {
+    return Capacitor.isNativePlatform() && this.push.enabled() && document.visibilityState !== 'visible';
+  }
+
+  /** Plays the sound chosen for this event, unless the phone's own notification does it. */
+  private ring(event: 'message' | 'request' | 'answer'): void {
+    if (!this.pushCovers()) this.sound.play(event);
+  }
+
   /** A desktop notice (only when the tab is not in view and the person allowed it). The system adds no sound of its own when the app plays one. */
   private notify(event: 'message' | 'request' | 'answer', notice: { title: string; body: string; id: string; go: string }): void {
+    if (this.pushCovers()) return;
     this.desktop.show({
       title: notice.title,
       body: notice.body,
@@ -241,7 +259,7 @@ export class RealtimeService {
       }
       // a sound, unless I am reading that very conversation (I see the message arrive)
       const unseen = added.filter((m) => m.data['connectionId'] !== this.openFeed());
-      if (unseen.length) this.sound.play('message');
+      if (unseen.length) this.ring('message');
       for (const m of unseen) {
         const connectionId = m.data['connectionId'] as string | undefined;
         const text = String(m.data['text'] ?? '');

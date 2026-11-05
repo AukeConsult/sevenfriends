@@ -10,8 +10,14 @@
 
   <h2 class="h5 m-0 mt-2">Sounds</h2>
   <p class="small text-secondary m-0">
-    Choose the sound for each thing that can arrive. Sounds only play while Seven Friends is open, and
-    your choices are saved on your account, so they follow you to every device.
+    Choose the sound for each thing that can arrive.
+    @if (native) {
+      You hear it while the app is open. When the app is closed or in the background, the phone plays your music jingle;
+      with any other choice the phone uses its own notification sound. Your choices are saved on your account, so they follow you to every device.
+    } @else {
+      Sounds only play while Seven Friends is open, and
+      your choices are saved on your account, so they follow you to every device.
+    }
   </p>
 
   <div class="card">
@@ -42,6 +48,7 @@
     </div>
   }
 
+  @if (!native) {
   <h2 class="h5 m-0 mt-2">Notifications</h2>
   <p class="small text-secondary m-0">
     When Seven Friends is open but you are not looking at it (another tab is selected, the window is minimized, or another window is in front), a message or friend request shows a notification on your screen. While you look at the app nothing pops up; only the sound plays.
@@ -73,11 +80,17 @@
       </div>
     </div>
   </div>
+  }
 
   <h2 class="h5 m-0 mt-2">Push notifications</h2>
   <p class="small text-secondary m-0">
-    The phone or computer wakes up for a new message or friend request, also when the app is closed or the screen is locked,
-    and plays its own notification sound.
+    @if (native) {
+      The phone shows a notification for a new message or friend request when the app is closed or in the background, also when the
+      screen is locked, and plays your chosen jingle. While the app is open you are told inside the app.
+    } @else {
+      The phone or computer wakes up for a new message or friend request, also when the app is closed or the screen is locked,
+      and plays its own notification sound.
+    }
   </p>
   <div class="card">
     <div class="card-body vstack gap-2">
@@ -99,7 +112,7 @@
     </div>
   </div>
 
-  @if (desktop.permission() === 'denied' || noticeProblem() || push.problem()) {
+  @if (!native && (desktop.permission() === 'denied' || noticeProblem() || push.problem())) {
     <details class="card" open>
       <summary class="card-body fw-semibold">How do I allow notifications?</summary>
       <div class="card-body pt-0 vstack gap-3 small">

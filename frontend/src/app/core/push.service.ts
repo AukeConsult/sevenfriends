@@ -1,4 +1,5 @@
 import { Injectable, effect, inject, signal, untracked } from '@angular/core';
+import { Capacitor } from '@capacitor/core';
 import { environment } from '../../environments/environment';
 import { ApiService } from './api.service';
 import { AuthService } from './auth.service';
@@ -23,8 +24,14 @@ export class PushService {
   private readonly auth = inject(AuthService);
   private readonly desktop = inject(DesktopNoticeService);
 
-  /** push is set up in this build (a key exists and this is not the local demo project) */
-  readonly configured = Boolean(environment.vapidKey) && !environment.useEmulators;
+  /**
+   * true inside the Android app (Capacitor): there push goes through the phone's own Firebase service
+   * (`@capacitor/push-notifications` + the native service in the android project), not through the browser
+   */
+  private readonly native = Capacitor.isNativePlatform();
+
+  /** push is set up in this build (a key exists and this is not the local demo project; the Android app needs no key) */
+  readonly configured = this.native || (Boolean(environment.vapidKey) && !environment.useEmulators);
 
   /** this browser can do push at all (iPhone: only from the Home Screen app) */
   readonly supported = signal(false);
@@ -51,6 +58,13 @@ export class PushService {
 
   private async checkSupport(): Promise<void> {
     try {
+      if (this.native) {
+        const { PushNotifications } = await import('@capacitor/push-notifications');
+        const permission = await PushNotifications.checkPermissions();
+        this.supported.set(true);
+        this.enabled.set(this.read(ENABLED_KEY) === 'on' && permission.receive === 'granted');
+        return;
+      }
       const { isSupported } = await import('firebase/messaging');
       this.supported.set(this.configured && (await isSupported()));
       this.enabled.set(this.supported() && this.read(ENABLED_KEY) === 'on' && Notification.permission === 'granted');
@@ -75,10 +89,17 @@ export class PushService {
         this.problem.set(this.configured ? 'This browser cannot receive push notifications. On iPhone, add the app to the Home Screen first.' : 'Push notifications only work on the deployed site, not in the local setup.');
         return false;
       }
-      if (Notification.permission === 'default') await Notification.requestPermission();
-      if (Notification.permission !== 'granted') {
-        this.problem.set('Notifications are blocked for this site. Allow them in the browser settings, then try again.');
-        return false;
+      if (this.native) {
+        if (!(await this.allowNative())) {
+          this.problem.set('Notifications are blocked for the app. Allow them in the phone settings (Apps, Seven Friends, Notifications), then try again.');
+          return false;
+        }
+      } else {
+        if (Notification.permission === 'default') await Notification.requestPermission();
+        if (Notification.permission !== 'granted') {
+          this.problem.set('Notifications are blocked for this site. Allow them in the browser settings, then try again.');
+          return false;
+        }
       }
       await this.refresh();
       this.write(ENABLED_KEY, 'on');
@@ -117,7 +138,40 @@ export class PushService {
     this.write(TOKEN_KEY, '');
   }
 
+  /** Android app: asks for the notification permission (Android 13 and newer show a prompt). */
+  private async allowNative(): Promise<boolean> {
+    const { PushNotifications } = await import('@capacitor/push-notifications');
+    let permission = await PushNotifications.checkPermissions();
+    if (permission.receive === 'prompt' || permission.receive === 'prompt-with-rationale') {
+      permission = await PushNotifications.requestPermissions();
+    }
+    return permission.receive === 'granted';
+  }
+
+  /** Android app: the phone's Firebase token (the same kind of token the backend already sends to). */
+  private async nativeToken(): Promise<string | null> {
+    const { PushNotifications } = await import('@capacitor/push-notifications');
+    const handles: { remove: () => Promise<void> }[] = [];
+    try {
+      return await new Promise<string | null>((resolve, reject) => {
+        const timer = setTimeout(() => reject(new Error('The phone did not give a push token. Check the internet connection and try again.')), 20000);
+        const done = (fn: () => void) => {
+          clearTimeout(timer);
+          fn();
+        };
+        void (async () => {
+          handles.push(await PushNotifications.addListener('registration', (token) => done(() => resolve(token.value))));
+          handles.push(await PushNotifications.addListener('registrationError', (e) => done(() => reject(new Error(e.error || 'The phone could not register for push.')))));
+          await PushNotifications.register();
+        })().catch((error) => done(() => reject(error)));
+      });
+    } finally {
+      for (const handle of handles) void handle.remove();
+    }
+  }
+
   private async currentToken(): Promise<string | null> {
+    if (this.native) return this.nativeToken();
     const [{ getMessaging, getToken }, { firebaseApp }] = await Promise.all([import('firebase/messaging'), import('./firebase')]);
     const registration = await this.desktop.registerWorker();
     if (!registration) return null;

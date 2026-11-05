@@ -1,4 +1,5 @@
 import { Injectable, signal } from '@angular/core';
+import { Capacitor } from '@capacitor/core';
 
 /** The browser's install offer (Chrome / Edge on Android and desktop); not in the standard TypeScript types. */
 interface InstallPrompt extends Event {
@@ -17,8 +18,10 @@ interface InstallPrompt extends Event {
 export class InstallService {
   /** the browser has an install offer ready: the button works */
   readonly canInstall = signal(false);
-  /** this window is the installed app (a browser tab is never "installed", so the install can always be done again) */
-  readonly installed = signal(this.isStandalone());
+  /** this is the Android app (Capacitor): there is nothing to install, and the browser-only parts of the pages are hidden */
+  readonly native = Capacitor.isNativePlatform();
+  /** this window is the installed app (a browser tab is never "installed", so the install can always be done again); the Android app always is */
+  readonly installed = signal(this.native || this.isStandalone());
   /** an iPhone / iPad: installing is a manual step in Safari */
   // an iPad in its default settings says it is a Mac: a Mac with a touch screen is an iPad
   readonly ios = /iphone|ipad|ipod/i.test(navigator.userAgent) || (/Macintosh/i.test(navigator.userAgent) && navigator.maxTouchPoints > 1);

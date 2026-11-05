@@ -1,4 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
+import { Capacitor } from '@capacitor/core';
 import { RouterLink } from '@angular/router';
 import { DesktopNoticeService } from '../core/desktop-notice.service';
 import { PushService } from '../core/push.service';
@@ -15,6 +16,8 @@ export class Settings {
   protected readonly desktop = inject(DesktopNoticeService);
   protected readonly push = inject(PushService);
   protected readonly noticeProblem = signal<string | null>(null);
+  /** inside the Android app: the browser-only parts of this page (pop-ups, browser help) are hidden */
+  protected readonly native = Capacitor.isNativePlatform();
 
   constructor() {
     this.sounds.markDefined(); // the person has now seen the sound settings

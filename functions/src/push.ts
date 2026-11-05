@@ -41,7 +41,7 @@ const CHANNEL_BY_JINGLE: Record<string, string> = {
 };
 
 /** The channel for the sound this person chose for this kind of push ("file:<file name>" on their account). */
-async function channelFor(uid: string, kind: PushMessage["sound"]): Promise<string> {
+export async function channelFor(uid: string, kind: PushMessage["sound"]): Promise<string> {
   if (!kind) return "default";
   const choice = ((await userDoc(uid).get()).data()?.soundPreferences as Record<string, unknown> | undefined)?.[kind];
   return typeof choice === "string" && choice.startsWith("file:") ? (CHANNEL_BY_JINGLE[choice.slice(5)] ?? "default") : "default";

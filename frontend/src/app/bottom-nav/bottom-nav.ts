@@ -1,6 +1,7 @@
 import { Component, HostListener, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../core/auth.service';
+import { InstallService } from '../core/install.service';
 import { NotificationsService } from '../core/notifications.service';
 import { PresenceService } from '../core/presence.service';
 import { PushService } from '../core/push.service';
@@ -20,6 +21,8 @@ export class BottomNav {
   private readonly notifications = inject(NotificationsService);
   private readonly push = inject(PushService);
   private readonly presence = inject(PresenceService);
+  /** `install.native`: the Android app has no "Install the app" page */
+  protected readonly install = inject(InstallService);
 
   /** Two buttons open a dropup menu: Profile (my profile, log out) and Settings (all the other pages). One at a time. */
   protected readonly menuOpen = signal<'profile' | 'settings' | null>(null);
