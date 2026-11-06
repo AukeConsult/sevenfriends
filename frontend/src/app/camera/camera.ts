@@ -40,6 +40,12 @@ export class Camera implements OnInit, OnDestroy {
   private readonly video = viewChild<ElementRef<HTMLVideoElement>>('video');
   protected readonly cameras = signal<MediaDeviceInfo[]>([]);
   protected readonly recording = signal(false);
+  /**
+   * The shutter works a moment after the camera shows, and once. A double tap on "Take a photo" would otherwise hit the shutter that
+   * appears in the same place, and the person got a blank photo and was sent on; a double tap on the shutter took two.
+   */
+  protected readonly ready = signal(false);
+  private shot = false;
   protected readonly seconds = signal(0);
   protected readonly maxSeconds = MAX_VIDEO_SECONDS;
   private readonly stream = signal<MediaStream | null>(null);
@@ -66,6 +72,7 @@ export class Camera implements OnInit, OnDestroy {
   async ngOnInit(): Promise<void> {
     try {
       await this.start(null);
+      setTimeout(() => this.ready.set(true), 800);
       // the names of the cameras are only known once the person has allowed one
       this.cameras.set((await navigator.mediaDevices.enumerateDevices()).filter((d) => d.kind === 'videoinput'));
     } catch (err) {
@@ -98,7 +105,9 @@ export class Camera implements OnInit, OnDestroy {
   /** The shutter: the picture on the screen now becomes a photo. */
   protected async takePhoto(): Promise<void> {
     const element = this.video()?.nativeElement;
-    if (!element?.videoWidth) return;
+    if (this.shot || !this.ready() || !element?.videoWidth) return;
+    this.shot = true;
+    this.ready.set(false);
     const canvas = document.createElement('canvas');
     canvas.width = element.videoWidth;
     canvas.height = element.videoHeight;
@@ -106,6 +115,7 @@ export class Camera implements OnInit, OnDestroy {
     const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.92));
     canvas.width = canvas.height = 0; // its pixels are not needed any more
     if (!blob) {
+      this.shot = false;
       this.failed.emit('The photo could not be taken. Try again.');
       return;
     }

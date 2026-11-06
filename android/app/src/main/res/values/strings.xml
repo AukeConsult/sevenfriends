@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Seven Friends</string>
-    <string name="title_activity_main">Seven Friends</string>
-    <string name="package_name">io.sevenfriends.app</string>
-    <string name="custom_url_scheme">io.sevenfriends.app</string>
+    <string name="app_name" translatable="false">Seven Friends</string>
+    <string name="title_activity_main" translatable="false">Seven Friends</string>
+    <string name="package_name" translatable="false">io.sevenfriends.app</string>
+    <string name="custom_url_scheme" translatable="false">io.sevenfriends.app</string>
 
     <!-- the Android screens (NativeCheck, Channels); translated in values-nb, values-fr, values-es -->
     <string name="check_title">Android notification check</string>

@@ -38,6 +38,13 @@
         </div>
       }
 
+      @if (androidOff(); as off) {
+        <div class="alert alert-danger d-flex flex-wrap align-items-center justify-content-between gap-2" role="alert">
+          <span>{{ off }}</span>
+          <button type="button" class="btn btn-danger btn-sm" (click)="openAndroidSettings()">Open Android settings</button>
+        </div>
+      }
+
       @if (unverified().length) {
         <div class="alert alert-warning" role="status">
           Your {{ unverified().join(' and ') }} is not verified yet: confirm it (in Settings) so friend requests can reach you.

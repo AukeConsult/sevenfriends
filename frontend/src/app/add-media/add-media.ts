@@ -1,3 +1,4 @@
+import { Capacitor } from '@capacitor/core';
 import { Component, OnDestroy, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Camera } from '../camera/camera';
@@ -22,7 +23,7 @@ const TEXT = {
 /**
  * A full page to send an image, a video or a voice message to a friend (`/friends/:id/image`, `/video` and `/audio`): take or
  * record it, or choose a file, see (or hear) it, add a text if you like, and Send. The file is made smaller in the browser
- * (an image to 1600 pixels, a video to 1280 pixels, about 1.2 Mbit/s and at most 2 minutes; a voice is recorded at 32 kbit/s,
+ * (an image to 1280 pixels and about 350 KB, a video to 1280 pixels, about 1.2 Mbit/s and at most 2 minutes; a voice is recorded at 32 kbit/s,
  * at most 2 minutes, and a chosen audio file is sent as it is, at most 2 minutes and 25 MB). It and its name go to the server,
  * which stores it in the media cache; the message then carries the reference, and the conversation reads the file back from
  * the server.
@@ -64,11 +65,17 @@ export class AddMedia implements OnDestroy {
    * ignored, so "Record a video" would only open the file chooser. Everything else shows the camera on the page.
    */
   protected readonly phoneCamera = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); // iPadOS says it is a Mac
-  protected readonly nativeCapture = this.phoneCamera && this.kind !== 'audio';
+  /**
+   * A photo in the Android app is taken with the camera ON THE PAGE, not with the phone's camera app: while that app is in front, Android
+   * may close this app's page to save memory (a selfie in high resolution), and the person lands on the start page without the photo.
+   * The page camera also gives a small picture at once, which is much faster than the full-size photo of the camera app.
+   */
+  private readonly appPhoto = Capacitor.isNativePlatform() && this.kind === 'image';
+  protected readonly nativeCapture = this.phoneCamera && this.kind !== 'audio' && !this.appPhoto;
   /** the browser can show the camera, or take the voice, on the page (needs https or localhost), and for a video or voice, record it */
   protected readonly pageCamera =
     Boolean(navigator.mediaDevices?.getUserMedia) &&
-    (this.kind === 'audio' ? audioRecorderType() !== null : !this.phoneCamera && (this.kind === 'image' || recorderType() !== null));
+    (this.kind === 'audio' ? audioRecorderType() !== null : (!this.phoneCamera || this.appPhoto) && (this.kind === 'image' || recorderType() !== null));
   protected readonly cameraOpen = signal(false);
 
   /** the upload that worked, when sending the message did not: the next try does not upload again */

@@ -6,6 +6,7 @@ import { FriendsService } from '../core/friends.service';
 import { InviteLinkService } from '../core/invite-link.service';
 import { emptySocialDraft, socialsFromDraft } from '../core/social';
 import { FriendDraft } from '../models';
+import { APP_ORIGIN } from '../core/app-origin';
 
 const emptyDraft = (): FriendDraft => ({ name: '', email: '', phone: '', message: '' });
 
@@ -28,7 +29,7 @@ export class AddFriend {
   private readonly link = computed(() => {
     const me = this.user();
     const contact = me?.email ?? me?.phoneNumber;
-    return `${location.origin}/welcome${contact ? `?friend=${encodeURIComponent(contact)}` : ''}`;
+    return `${APP_ORIGIN}/welcome${contact ? `?friend=${encodeURIComponent(contact)}` : ''}`;
   });
   /** set when the person has no account yet: who it was for, and the link to send */
   protected readonly result = signal<{ to: string; link: string } | null>(null);

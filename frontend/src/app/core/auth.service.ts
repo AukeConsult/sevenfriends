@@ -1,4 +1,5 @@
 import { Injectable, signal } from '@angular/core';
+import { Capacitor } from '@capacitor/core';
 import {
   ConfirmationResult,
   GoogleAuthProvider,
@@ -12,6 +13,7 @@ import {
   sendPasswordResetEmail,
   sendSignInLinkToEmail,
   signInWithEmailAndPassword,
+  signInWithCredential,
   signInWithEmailLink,
   signInWithPhoneNumber,
   signInWithPopup,
@@ -54,9 +56,23 @@ export class AuthService {
   });
 
   async signInWithGoogle(): Promise<void> {
+    if (Capacitor.isNativePlatform()) return this.signInWithGoogleNative();
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
     const { user } = await signInWithPopup(auth, provider);
+    await this.finishLogin(user);
+  }
+
+  /**
+   * In the Android app Google refuses a pop-up in the WebView: the phone's own Google account picker is used (the plugin), and the
+   * Google token it returns signs the web session in (capacitor.config.json: skipNativeAuth, so only the web SDK holds the login).
+   */
+  private async signInWithGoogleNative(): Promise<void> {
+    const { FirebaseAuthentication } = await import('@capacitor-firebase/authentication');
+    const result = await FirebaseAuthentication.signInWithGoogle();
+    const idToken = result.credential?.idToken;
+    if (!idToken) throw new Error('Google did not give a sign-in token.');
+    const { user } = await signInWithCredential(auth, GoogleAuthProvider.credential(idToken, result.credential?.accessToken));
     await this.finishLogin(user);
   }
 

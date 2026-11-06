@@ -3,14 +3,17 @@
 // (Android Studio uses its own Java: no JAVA_HOME needed there.)
 
 // publishApk: builds the app file and puts it where the website serves it: frontend/public/downloads/SevenFriends.apk
-// (git-ignored). It is signed with the debug key: fine to install by hand, not for Google Play (that needs a release key).
+// (git-ignored). With the release key set up (SF_KEYSTORE... in .env, see build.gradle) it builds the signed RELEASE app; without it
+// it falls back to the debug key: fine to install by hand, but a debug-signed app cannot be updated by a release-signed one.
+def signedRelease = android.signingConfigs.findByName('release') != null
 tasks.register('publishApk', Copy) {
     group = 'sevenfriends'
-    description = 'Builds the app and copies it to frontend/public/downloads/SevenFriends.apk'
-    dependsOn 'assembleDebug'
-    from layout.buildDirectory.file('outputs/apk/debug/app-debug.apk')
+    description = 'Builds the app (release-signed when the keystore is set up) and copies it to frontend/public/downloads/SevenFriends.apk'
+    dependsOn signedRelease ? 'assembleRelease' : 'assembleDebug'
+    from layout.buildDirectory.file(signedRelease ? 'outputs/apk/release/app-release.apk' : 'outputs/apk/debug/app-debug.apk')
     into rootProject.file('../frontend/public/downloads')
     rename { 'SevenFriends.apk' }
+    doLast { logger.lifecycle("SevenFriends.apk is signed with the ${signedRelease ? 'RELEASE' : 'DEBUG'} key") }
 }
 
 // deployApp: publishApk, then puts the website (with the file) online: `npm run deploy:hosting` in the project root

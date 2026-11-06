@@ -6,7 +6,7 @@ import { PushService } from './push.service';
 import { SoundService } from './sound.service';
 
 type AndroidHost = {
-  SevenFriendsAndroid?: { sync(sounds: string): void; pushed(ok: boolean, text: string): void; deviceSet(on: boolean, problem: string): void; appState(json: string): void; tested(text: string): void };
+  SevenFriendsAndroid?: { status?(): string; openNotificationSettings?(): void; sync(sounds: string): void; pushed(ok: boolean, text: string): void; deviceSet(on: boolean, problem: string): void; appState(json: string): void; tested(text: string): void };
   sfAndroid?: { fromAndroid(json: string): void; device(on: boolean): void; read(): void; hideText(on: boolean): void; test(): void };
 };
 
@@ -32,12 +32,24 @@ export class AndroidChannelsService {
   /** The phone's notification volume in percent, as the Android app last sent it (null = not sent yet). The app's own volume follows it. */
   readonly phoneVolume = signal<number | null>(null);
 
+  /**
+   * What Android has for this app, for the warning on the start page: `appOff` = switched off for the whole app, `off` = the kinds that are
+   * off. null = not known (not the Android app, or the bridge is not there yet).
+   */
+  readonly blocked = signal<{ appOff: boolean; off: string[] } | null>(null);
+
   constructor() {
     if (!Capacitor.isNativePlatform()) return;
     effect(() => this.tell(JSON.stringify(this.sounds.choices())));
     document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'visible') this.tell(JSON.stringify(this.sounds.choices()));
+      if (document.visibilityState === 'visible') {
+        this.tell(JSON.stringify(this.sounds.choices()));
+        this.readStatus();
+      }
     });
+    // the bridge is added after the page starts to load: ask now, and once more a moment later
+    this.readStatus();
+    setTimeout(() => this.readStatus(), 1500);
     this.host.sfAndroid = {
       fromAndroid: (json) => void this.store(json),
       read: () => void this.readOut(),
@@ -57,6 +69,22 @@ export class AndroidChannelsService {
           this.host.SevenFriendsAndroid?.deviceSet(this.push.enabled(), this.push.problem() ?? '');
         })(),
     };
+  }
+
+  /** Android's notification settings of this app (the person switches them on again there). */
+  openSettings(): void {
+    this.host.SevenFriendsAndroid?.openNotificationSettings?.();
+  }
+
+  private readStatus(): void {
+    try {
+      const json = this.host.SevenFriendsAndroid?.status?.();
+      if (!json) return;
+      const status = JSON.parse(json) as { appOff?: boolean; off?: string[] };
+      this.blocked.set({ appOff: status.appOff === true, off: Array.isArray(status.off) ? status.off : [] });
+    } catch {
+      /* an older app without status(): no warning */
+    }
   }
 
   private get host(): AndroidHost {

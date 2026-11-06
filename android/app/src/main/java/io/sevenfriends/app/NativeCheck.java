@@ -74,7 +74,7 @@ final class NativeCheck {
         LinearLayout kindsCard = card(activity, activity.getString(R.string.check_notifications));
         for (int i = 0; i < Channels.KINDS.length; i++) {
             NotificationChannel channel = nm != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ? Channels.currentChannel(nm, Channels.KINDS[i]) : null;
-            boolean on = allowed && (channel == null || channel.getImportance() != NotificationManager.IMPORTANCE_NONE);
+            boolean on = allowed && Channels.isOn(channel);
             String sound = channel == null ? "" : " · " + Channels.soundName(activity, channel);
             final int kind = i;
             TextView line = row(activity, kindsCard, Channels.kindName(activity, i), activity.getString(on ? R.string.state_on : R.string.state_off_loud) + sound, on ? GREEN : RED);

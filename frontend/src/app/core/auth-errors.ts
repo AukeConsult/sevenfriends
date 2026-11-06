@@ -30,7 +30,8 @@ export const authMessage = (err: unknown, fallback: string): string => MESSAGES[
 
 /** The user closed the pop-up: not an error to show. */
 export const wasCancelled = (err: unknown): boolean =>
-  ['auth/popup-closed-by-user', 'auth/cancelled-popup-request'].includes(code(err));
+  ['auth/popup-closed-by-user', 'auth/cancelled-popup-request', 'auth/cancelled', 'SIGN_IN_CANCELED'].includes(code(err)) ||
+  /cancel/i.test((err as { message?: string } | null)?.message ?? ''); // the Android Google sign-in (plugin) says it in words
 
 /** The email or the password did not fit: for somebody new, that usually means "there is no account yet". */
 export const wasRejected = (err: unknown): boolean =>

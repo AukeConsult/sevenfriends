@@ -136,13 +136,17 @@
           @if (phoneVerified()) {
             <span class="input-group-text text-success fw-semibold">Verified</span>
           } @else {
+            <!-- TODO: bring back when SMS verification is ready
             <button type="button" class="btn btn-outline-primary" [disabled]="loading() || !form().phone.trim()" (click)="verifyPhone()">Verify</button>
+            -->
           }
         </div>
         @if (phoneVerified()) {
           <span class="small text-secondary">Verified by text message, so it cannot be edited.</span>
         } @else {
+          <!-- TODO: bring back when SMS verification is ready
           <span class="small text-secondary">Friends can only find you by phone once it is verified.</span>
+          -->
           @if (phoneProblem()) {
             <span class="small text-warning-emphasis">This is not a phone number yet, so it is not saved. Use digits, and + ( ) - if you like.</span>
           } @else if (otherCode()) {

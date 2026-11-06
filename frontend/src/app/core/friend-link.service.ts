@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { PendingFriend, UiPreferencesService } from './ui-preferences';
+import { APP_ORIGIN } from './app-origin';
 
 /** A contact from a link: an email (has an @) or a phone number. null = not usable. */
 export function parseContact(value: string): { email: string | null; phone: string | null } | null {
@@ -50,7 +51,7 @@ export class FriendLinkService {
   /** The link as text again (to copy it: the welcome page does, before an app is downloaded, so it can be pasted in the app). */
   linkText(pending: PendingFriend): string {
     const query = pending.code ? `invite=${pending.code}` : `friend=${encodeURIComponent(pending.email ?? pending.phone ?? '')}`;
-    return `${location.origin}/?${query}`;
+    return `${APP_ORIGIN}/?${query}`;
   }
 
   /**

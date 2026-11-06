@@ -13,7 +13,7 @@ import org.json.JSONObject;
 /**
  * The notification channels, so Android's own settings show exactly what the app's settings show: ONE channel per kind of
  * notification (new messages, friend requests, answers, removed friendships), with the sound the person chose for it in the app.
- *
+ * <p>
  * The channel is called "<kind>_<sound>" (functions/src/push.ts, channelFor, names it in every push: the ids must match). Android
  * never changes the sound of a channel that exists, so when the sound of a kind changes, the channel of the old sound is replaced
  * by the one of the new sound (sync()). If the kind was switched off in Android's settings, the new channel is switched off too.
@@ -54,6 +54,7 @@ final class Channels {
 
     /** The name of the sound a channel plays, as the person knows it; null = the phone's own sound is not ours to name. */
     static String soundName(Context context, NotificationChannel channel) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return ""; // channels only exist from Android 8 (minSdk is 24)
         Uri sound = channel.getSound();
         if (sound == null) return context.getString(R.string.sound_none);
         String path = sound.getPath();
@@ -117,6 +118,18 @@ final class Channels {
         return context.getSharedPreferences("channels", Context.MODE_PRIVATE).getLong("lastSyncTime", 0);
     }
 
+    /** Is this channel switched on in Android's settings? (No channel = before Android 8: only the app-wide switch counts.) */
+    static boolean isOn(NotificationChannel channel) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O || channel == null) return true;
+        return channel.getImportance() != NotificationManager.IMPORTANCE_NONE;
+    }
+
+    /** The id of a channel, or null before Android 8. */
+    static String idOf(NotificationChannel channel) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O || channel == null) return null;
+        return channel.getId();
+    }
+
     /** The channel this kind has now (there is one), or null. */
     static NotificationChannel currentChannel(NotificationManager nm, String kind) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return null;
@@ -127,6 +140,7 @@ final class Channels {
     }
 
     private static void make(Context context, NotificationManager nm, int kind, String sound, boolean off) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return; // channels only exist from Android 8 (minSdk is 24)
         int importance = off ? NotificationManager.IMPORTANCE_NONE
             : SILENT.equals(sound) ? NotificationManager.IMPORTANCE_DEFAULT : NotificationManager.IMPORTANCE_HIGH;
         NotificationChannel channel = new NotificationChannel(id(KINDS[kind], sound), kindName(context, kind), importance);

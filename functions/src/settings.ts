@@ -6,7 +6,7 @@
  */
 export const DEFAULTS = {
   /** where people go to sign up (the link in the invitation) */
-  APP_URL: "https://sevenfriends.web.app/",
+  APP_URL: "https://sevenfriends.io/",
   /** the region of the mail trigger: where the Firestore database is */
   MAIL_TRIGGER_REGION: "europe-west1",
   /** the file that sets how the invitation email LOOKS (HTML), relative to the functions folder; delete the file to send text only */

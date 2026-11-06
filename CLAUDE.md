@@ -143,7 +143,7 @@ These rules are implemented in `functions/src` and covered by the tests in `func
 
 ### Settings of the system (environment)
 - `functions/src/settings.ts` holds the settings that can change **without touching the code**: environment variables of the backend. Put them in `functions/.env` (loaded by `firebase deploy` and the emulators; **copy `functions/.env.example`**, which lists every setting with its default; `.env` is not committed). **No secrets in `.env`**: SMS provider keys belong in Firebase secrets or `functions/.env.local`. Every setting has a default, so none has to be set; an empty value means the default; a literal `\n` is a new line.
-- Settings now: `APP_URL` (the sign-up link in invitations, default `https://sevenfriends.web.app/`), `INVITE_EMAIL_SUBJECT`, `INVITE_EMAIL_TEXT` (templates with `{fromName}` `{message}` `{to}` `{appUrl}`; `{message}` is the sender's message in quotes, or empty with no hole left behind). The templates are filled in by `outbox.ts` (`inviteText`, `inviteSubject`).
+- Settings now: `APP_URL` (the sign-up link in invitations, default `https://sevenfriends.io/`), `INVITE_EMAIL_SUBJECT`, `INVITE_EMAIL_TEXT` (templates with `{fromName}` `{message}` `{to}` `{appUrl}`; `{message}` is the sender's message in quotes, or empty with no hole left behind). The templates are filled in by `outbox.ts` (`inviteText`, `inviteSubject`).
 - **A new text or link that someone may want to change belongs in `settings.ts` (with a default and a line in `.env.example`), not in the code.** After changing `.env`: restart the emulators / deploy the functions.
 - Tests: `invitations.test.ts` (defaults, overriding, empty value).
 

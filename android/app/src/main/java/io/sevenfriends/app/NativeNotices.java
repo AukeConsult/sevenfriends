@@ -5,10 +5,12 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.provider.Settings;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -61,6 +63,39 @@ final class NativeNotices {
     @JavascriptInterface
     public void openCheck() {
         activity.runOnUiThread(() -> NativeCheck.show(activity, this));
+    }
+
+    /**
+     * What Android has now, for the warning on the start page: `appOff` = notifications are switched off for the whole app (or its
+     * permission is refused), `off` = the kinds whose channel is switched off. The page asks whenever the app comes to the front.
+     */
+    @JavascriptInterface
+    public String status() {
+        NotificationManager nm = activity.getSystemService(NotificationManager.class);
+        JSONObject json = new JSONObject();
+        JSONArray off = new JSONArray();
+        try {
+            json.put("appOff", nm != null && !nm.areNotificationsEnabled());
+            for (int i = 0; i < Channels.KINDS.length; i++) {
+                if (!Channels.isOn(channelOf(i))) off.put(Channels.KINDS[i]);
+            }
+            json.put("off", off);
+        } catch (JSONException e) {
+            return "{}";
+        }
+        return json.toString();
+    }
+
+    /** Android's notification settings of this app (only the person can switch notifications on again: an app cannot). */
+    @JavascriptInterface
+    public void openNotificationSettings() {
+        activity.runOnUiThread(() -> {
+            try {
+                activity.startActivity(new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).putExtra(Settings.EXTRA_APP_PACKAGE, activity.getPackageName()));
+            } catch (RuntimeException e) {
+                activity.startActivity(new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, android.net.Uri.parse("package:" + activity.getPackageName())));
+            }
+        });
     }
 
     @JavascriptInterface
@@ -138,7 +173,7 @@ final class NativeNotices {
         try {
             for (int i = 0; i < Channels.KINDS.length; i++) {
                 NotificationChannel channel = channelOf(i);
-                state.put(Channels.KINDS[i], allowed && (channel == null || channel.getImportance() != NotificationManager.IMPORTANCE_NONE));
+                state.put(Channels.KINDS[i], allowed && Channels.isOn(channel));
             }
         } catch (JSONException e) {
             return;
@@ -161,9 +196,10 @@ final class NativeNotices {
         NotificationManager nm = activity.getSystemService(NotificationManager.class);
         boolean appOff = nm != null && !nm.areNotificationsEnabled();
         NotificationChannel channel = channelOf(kind);
-        Intent intent = appOff || channel == null
+        String channelId = Channels.idOf(channel);
+        Intent intent = appOff || channelId == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.O
             ? new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
-            : new Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS).putExtra(Settings.EXTRA_CHANNEL_ID, channel.getId());
+            : new Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS).putExtra(Settings.EXTRA_CHANNEL_ID, channelId);
         activity.startActivity(intent.putExtra(Settings.EXTRA_APP_PACKAGE, activity.getPackageName()));
     }
 

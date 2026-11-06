@@ -13,6 +13,8 @@ import { InstallService } from '../core/install.service';
 import { UiPreferencesService } from '../core/ui-preferences';
 import { SeatDots } from '../seat-dots/seat-dots';
 import { Friend, FriendRequest, Message, Notice, ProfileDetails } from '../models';
+import { APP_ORIGIN } from '../core/app-origin';
+import { AndroidChannelsService } from '../core/android-channels.service';
 
 /** Without a word for this many days, a friend gets a gentle "Say hi". */
 const SAY_HI_AFTER_DAYS = 14;
@@ -45,6 +47,7 @@ export class Notifications {
   private readonly chat = inject(ChatService);
   private readonly router = inject(Router);
   protected readonly install = inject(InstallService);
+  private readonly android = inject(AndroidChannelsService);
   protected readonly invite = inject(InviteLinkService);
   private readonly prefs = inject(UiPreferencesService);
   /** the first-time setup was left for later: Home offers it again */
@@ -56,7 +59,7 @@ export class Notifications {
   protected readonly friendLink = computed(() => {
     const me = this.user();
     const contact = me?.email ?? me?.phoneNumber;
-    return contact ? `${location.origin}/welcome?friend=${encodeURIComponent(contact)}` : null;
+    return contact ? `${APP_ORIGIN}/welcome?friend=${encodeURIComponent(contact)}` : null;
   });
 
   /**
@@ -108,7 +111,20 @@ export class Notifications {
     return [...byFriend.values()].sort((a, b) => (b.last.time ?? '').localeCompare(a.last.time ?? ''));
   });
   /** anything that needs me: the first block of the page is only there then */
-  protected readonly needsYou = computed(() => this.setupLeft() || this.unverified().length > 0 || this.seated().length > 0 || this.waitingCount() > 0 || this.groups().length > 0);
+  /** the Android app only: notifications are switched off in Android's settings (for everything, or for some kinds): the text for the warning, or null */
+  protected readonly androidOff = computed(() => {
+    const blocked = this.android.blocked();
+    if (!blocked) return null;
+    if (blocked.appOff) return 'Notifications are switched off for Seven Friends in Android, so you will not hear about new messages or friend requests.';
+    const names: Record<string, string> = { message: 'new messages', request: 'friend requests', answer: 'answers to your requests', removed: 'removed friendships' };
+    const off = blocked.off.map((kind) => names[kind] ?? kind);
+    return off.length ? `In Android these notifications are switched off: ${off.join(', ')}.` : null;
+  });
+  protected openAndroidSettings(): void {
+    this.android.openSettings();
+  }
+
+  protected readonly needsYou = computed(() => this.androidOff() !== null || this.setupLeft() || this.unverified().length > 0 || this.seated().length > 0 || this.waitingCount() > 0 || this.groups().length > 0);
 
   /** the quick replies being typed, by friend */
   protected readonly replies = signal<Partial<Record<string, string>>>({});
@@ -133,7 +149,8 @@ export class Notifications {
       // one verified detail is enough to prove who I am: the warning only shows when nothing is verified
       if (!profile.emailVerified && !profile.phoneVerified) {
         if (this.user()?.email) missing.push('email');
-        if (profile.phone) missing.push('phone');
+        // TODO: bring back when SMS verification is ready (the phone cannot be verified until then)
+        // if (profile.phone) missing.push('phone');
       }
       this.unverified.set(missing);
     } catch {

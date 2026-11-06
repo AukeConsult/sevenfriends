@@ -1,5 +1,25 @@
 apply plugin: 'com.android.application'
 
+// Release signing: the keystore and its passwords are NEVER in git. They come from android/local.properties (git-ignored) or from
+// environment variables of the same name, or from the project's .env, e.g. in local.properties:
+//   SF_KEYSTORE=C:/keys/sevenfriends.jks
+//   SF_KEYSTORE_PASSWORD=...
+//   SF_KEY_ALIAS=sevenfriends
+//   SF_KEY_PASSWORD=...
+// Without them assembleRelease still works but gives an unsigned APK.
+def signingProps = new Properties()
+rootProject.file('local.properties').withInputStream { signingProps.load(it) }
+// the project's .env (git-ignored) is read too, but only for the SF_ keys
+def envFile = rootProject.file('../.env')
+if (envFile.exists()) {
+    envFile.eachLine { line ->
+        def m = line =~ /^\s*(SF_[A-Z_]+)\s*=\s*(.*?)\s*$/
+        if (m && !signingProps.getProperty(m[0][1]) && m[0][2]) signingProps.setProperty(m[0][1], m[0][2])
+    }
+}
+def signingValue = { String name -> signingProps.getProperty(name) ?: System.getenv(name) }
+def canSign = signingValue('SF_KEYSTORE') && signingValue('SF_KEYSTORE_PASSWORD') && signingValue('SF_KEY_ALIAS')
+
 android {
     namespace = "io.sevenfriends.app"
     compileSdk = rootProject.ext.compileSdkVersion
@@ -16,8 +36,21 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    signingConfigs {
+        if (canSign) {
+            release {
+                storeFile file(signingValue('SF_KEYSTORE'))
+                storePassword signingValue('SF_KEYSTORE_PASSWORD')
+                keyAlias signingValue('SF_KEY_ALIAS')
+                keyPassword signingValue('SF_KEY_PASSWORD') ?: signingValue('SF_KEYSTORE_PASSWORD')
+                enableV1Signing true
+                enableV2Signing true
+            }
+        }
+    }
     buildTypes {
         release {
+            if (canSign) signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }

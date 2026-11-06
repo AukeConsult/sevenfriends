@@ -9,6 +9,12 @@
     "url": "https://sevenfriends.web.app",
     "cleartext": false
   },
+  "plugins": {
+    "FirebaseAuthentication": {
+      "skipNativeAuth": true,
+      "providers": ["google.com"]
+    }
+  },
   "ios": {
     "path": "../ios"
   }

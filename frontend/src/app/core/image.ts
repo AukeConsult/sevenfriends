@@ -90,8 +90,12 @@ export function sizeOf(image: Decoded | HTMLVideoElement | HTMLCanvasElement): {
 }
 
 /** The longest side of a picture that is sent, and of its small preview, in pixels. */
-const FULL_SIDE = 1600;
+const FULL_SIDE = 1280;
 const THUMB_SIDE = 320;
+/** A picture that is sent is squeezed (lower JPEG quality) until it is no bigger than this, as long as the quality stays good enough. */
+const TARGET_BYTES = 350 * 1024;
+const BEST_QUALITY = 0.82;
+const WORST_QUALITY = 0.55;
 /** The backend takes at most 10 MB for an image. */
 export const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
 
@@ -105,12 +109,12 @@ export interface PreparedImage {
 }
 
 /**
- * Makes a chosen image ready to send, in the browser: it is scaled down to 1600 pixels and saved as a JPEG (a big phone
+ * Makes a chosen image ready to send, in the browser: it is scaled down to 1280 pixels and saved as a JPEG of about 350 KB at most (a big phone
  * photo is never sent, and the position and other details stored in the photo are left behind), with a 320 pixel preview.
  * A GIF is sent as it is, so it keeps moving.
  */
 export async function prepareImage(file: File): Promise<PreparedImage> {
-  const source = await decodeImage(file); // already small: see decodeImage
+  const source = await decodeImage(file, FULL_SIDE); // already small: see decodeImage
   const canvases: HTMLCanvasElement[] = [];
   try {
     if (file.type === 'image/gif') {
@@ -120,7 +124,7 @@ export async function prepareImage(file: File): Promise<PreparedImage> {
     }
     const full = drawn(source, FULL_SIDE);
     canvases.push(full);
-    const fullBlob = await jpeg(full, 0.85);
+    const fullBlob = await jpegUnder(full, TARGET_BYTES);
     const small = drawn(full, THUMB_SIDE); // the preview is made from the small picture, not from the big one again
     canvases.push(small);
     return { blob: fullBlob, thumb: await jpeg(small, 0.8), width: full.width, height: full.height, name: file.name.replace(/\.[^./\\]*$/, '') + '.jpg' };
@@ -149,6 +153,13 @@ function drawn(source: Decoded | HTMLVideoElement | HTMLCanvasElement, longestSi
 async function jpeg(canvas: HTMLCanvasElement, quality: number): Promise<Blob> {
   const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/jpeg', quality));
   if (!blob) throw new Error('This image cannot be prepared');
+  return blob;
+}
+
+/** The picture as a JPEG: the best quality that fits `maxBytes`, but never worse than WORST_QUALITY (a busy picture may stay a bit bigger). */
+async function jpegUnder(canvas: HTMLCanvasElement, maxBytes: number): Promise<Blob> {
+  let blob = await jpeg(canvas, BEST_QUALITY);
+  for (let quality = BEST_QUALITY - 0.09; blob.size > maxBytes && quality >= WORST_QUALITY; quality -= 0.09) blob = await jpeg(canvas, quality);
   return blob;
 }
 
