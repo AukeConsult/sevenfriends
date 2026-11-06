@@ -132,20 +132,6 @@
       </div>
     </div>
 
-    <div class="card">
-      <div class="card-body vstack gap-2">
-        <div>
-          <strong>Is it working?</strong>
-          <div class="small text-secondary">Sends a real notification to your devices that have it turned on.</div>
-        </div>
-        <button type="button" class="btn btn-outline-primary align-self-start" [disabled]="testing()" (click)="testPush()">
-          {{ testing() ? 'Sending…' : 'Send me a test notification' }}
-        </button>
-        @if (testResult(); as result) {
-          <div class="small" role="status">{{ result }}</div>
-        }
-      </div>
-    </div>
   }
 
   @if (!native && (desktop.permission() === 'denied' || noticeProblem() || push.problem())) {

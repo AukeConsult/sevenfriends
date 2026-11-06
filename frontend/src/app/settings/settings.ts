@@ -53,9 +53,6 @@ export class Settings {
   private readonly noticeChoices = inject(NoticesService);
   protected readonly notices = this.noticeChoices.notices;
   protected readonly noticesProblem = this.noticeChoices.problem;
-  /** what the test notification did (shown under its button) */
-  protected readonly testResult = signal<string | null>(null);
-  protected readonly testing = signal(false);
   protected readonly kinds: { key: 'message' | 'request' | 'answer' | 'removed'; label: string }[] = [
     { key: 'message', label: 'New messages' },
     { key: 'request', label: 'Friend requests' },
@@ -107,14 +104,6 @@ export class Settings {
   protected async setNotice(key: keyof NoticePreferences, on: boolean): Promise<void> {
     const before = this.notices();
     if (before) await this.noticeChoices.save({ ...before, [key]: on });
-  }
-
-  /** Sends a real push to all my devices through the server, and says how many it reached. */
-  protected async testPush(): Promise<void> {
-    this.testing.set(true);
-    this.testResult.set(null);
-    this.testResult.set(await this.noticeChoices.testPush());
-    this.testing.set(false);
   }
 
   protected async testNotice(): Promise<void> {
