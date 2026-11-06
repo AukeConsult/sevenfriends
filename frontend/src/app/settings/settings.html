@@ -99,6 +99,20 @@
             This browser cannot receive push. On iPhone, open the site in Safari, tap Share → Add to Home Screen, and open the app from there.
           </span>
         }
+        @switch (device) {
+          @case ('android') {
+            <div class="alert alert-info small m-0" role="note">
+              On Android, install the app to be notified: "Notify this device" is set up by the app, not by the browser.
+              <a routerLink="/install/android" class="alert-link">Install the Android app</a>
+            </div>
+          }
+          @case ('iphone') {
+            <div class="alert alert-info small m-0" role="note">
+              On iPhone, notifications only work from the Home Screen app: in Safari tap Share → Add to Home Screen, and open the app from its icon.
+              <a routerLink="/install/iphone" class="alert-link">Show me how</a>
+            </div>
+          }
+        }
         <span class="small text-secondary">Set per device. Turned off when you log out.</span>
       </div>
     </div>
@@ -142,23 +156,27 @@
           Your browser has been told to block notifications from this site. The switches here cannot change that:
           you allow it once in the browser, then come back and turn the switch on again.
         </p>
-        <div>
-          <strong>Chrome or Edge on a computer</strong>
-          <ol class="mb-0">
-            <li>Click the icon at the left end of the address bar (a lock or sliders).</li>
-            <li>Find <strong>Notifications</strong> and set it to <strong>Allow</strong>.</li>
-            <li>Reload this page, then turn the switch on again.</li>
-          </ol>
-          <span class="text-secondary">Or open <code>chrome://settings/content/notifications</code> (Edge: <code>edge://settings/content/notifications</code>)
-          and move this site from <em>Block</em> to <em>Allow</em>.</span>
-        </div>
+        @switch (device) {
+          @case ('android') {
         <div>
           <strong>Android</strong>
-          <ol class="mb-0">
-            <li>Tap the icon next to the address, then <strong>Permissions → Notifications → Allow</strong>.</li>
-            <li>Also check Android Settings → Apps → your browser → Notifications: it must be on.</li>
+          <p class="mb-1">On Android, notifications are set up by installing the Seven Friends app. The app asks for permission itself, and has its own sounds.</p>
+          <a routerLink="/install/android" class="btn btn-sm btn-primary">Install the Android app</a>
+          <p class="mt-3 mb-1"><strong>Or keep using the browser</strong></p>
+          <ol class="mb-1">
+            <li>Tap the icon at the left end of the address bar, then <strong>Permissions → Notifications → Allow</strong>.</li>
+            <li>Reload this page, then turn the switch on again.</li>
+            <li>Also check Android Settings → Apps → Chrome → Notifications: it must be on.</li>
           </ol>
+          <span class="text-secondary">Or copy the address, open a new tab, paste it and press Enter (some Android versions of Chrome do not open it: use the steps above).</span>
+          <div class="mt-2">
+            <button type="button" class="btn btn-sm btn-outline-primary" (click)="copyAddress(settingsAddresses[0].address)">
+              {{ copiedAddress() === settingsAddresses[0].address ? 'Copied: now paste it in a new tab' : 'Copy the Chrome address' }}
+            </button>
+          </div>
         </div>
+          }
+          @case ('iphone') {
         <div>
           <strong>iPhone</strong>
           <ol class="mb-0">
@@ -167,6 +185,24 @@
             <li>If you once tapped "Don't Allow", delete the Home Screen app, add it again and allow when asked.</li>
           </ol>
         </div>
+          }
+          @default {
+        <div>
+          <strong>Chrome or Edge</strong>
+          <ol class="mb-0">
+            <li>Click the icon at the left end of the address bar (a lock or sliders).</li>
+            <li>Find <strong>Notifications</strong> and set it to <strong>Allow</strong>.</li>
+            <li>Reload this page, then turn the switch on again.</li>
+          </ol>
+          <span class="text-secondary">Or copy the address, open a new tab, paste it and press Enter. Its page opens on this site: set <strong>Notifications</strong> to <strong>Allow</strong>.</span>
+          <div class="d-flex flex-wrap gap-2 mt-2">
+            @for (a of settingsAddresses; track a.address) {
+              <button type="button" class="btn btn-sm btn-outline-primary" (click)="copyAddress(a.address)">
+                {{ copiedAddress() === a.address ? 'Copied: now paste it in a new tab' : 'Copy the ' + a.name + ' address' }}
+              </button>
+            }
+          </div>
+        </div>
         <div>
           <strong>Windows</strong>
           <ol class="mb-0">
@@ -174,6 +210,8 @@
             <li>Turn off Do not disturb or Focus assist.</li>
           </ol>
         </div>
+          }
+        }
       </div>
     </details>
   }

@@ -64,6 +64,16 @@ export const MAX_PICTURE_BYTES = 70 * 1024;
  * (the bucket is closed to clients, see storage.rules); the app gets files from /api/sf-cache/<userid>/<objectid>.
  */
 export const CACHE_ROOT = "sf-cache";
+
+/**
+ * The safebox: files only two friends share. The files are stored in the media cache under the owner name `box-<connectionId>`
+ * (the shared id of the friendship), the list of them in `safebox/{connectionId}/items/{objectId}`. Both go when the friendship ends.
+ */
+export const SAFEBOX_COLLECTION = "safebox";
+export const SAFEBOX_ITEMS = "items";
+export const SAFEBOX_MAX_BYTES = 200 * 1024 * 1024;
+export const SAFEBOX_MAX_ITEMS = 500;
+export const boxOwner = (connectionId: string) => `box-${connectionId}`;
 /** One upload in a single request: Cloud Functions accepts at most 32 MB. Anything bigger is sent in pieces. */
 export const MAX_UPLOAD_BYTES = 30 * 1024 * 1024;
 /** The biggest piece of a chunked upload, and the most pieces (Google Storage joins at most 32 files in one go). */

@@ -69,9 +69,9 @@ export class MoodEditor {
     }
   }
 
-  /** Stick a mood on, or take it off by tapping the same one again. */
-  protected choose(id: number): void {
-    const next = this.mood() === id ? null : id;
+  /** Stick a mood on, take it off by tapping the same one again, or choose "No mood" (null). */
+  protected choose(id: number | null): void {
+    const next = id === null || this.mood() === id ? null : id;
     this.mood.set(next);
     void this.save({ mood: next });
     this.open.set(false); // chosen: the frame closes again

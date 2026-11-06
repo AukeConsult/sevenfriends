@@ -27,7 +27,7 @@ const uidOf = (res: Response) => (res.locals.token as DecodedIdToken).uid;
 const iso = (t: unknown) => (t instanceof Timestamp ? t.toDate().toISOString() : null);
 
 /** My confirmed connection for :friendId, or answers with an error and returns null. */
-async function connectionOf(req: Request, res: Response) {
+export async function connectionOf(req: Request, res: Response) {
   const entry = await (res.locals.circleRef as DocumentReference)
     .collection(FRIENDS_SUBCOLLECTION)
     .doc(req.params.friendId)

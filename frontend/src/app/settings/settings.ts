@@ -53,6 +53,20 @@ export class Settings {
   private readonly noticeChoices = inject(NoticesService);
   protected readonly notices = this.noticeChoices.notices;
   protected readonly noticesProblem = this.noticeChoices.problem;
+  /** the browser pages of THIS site, where its notifications are allowed again (a web page cannot link to them: the address is copied to paste in a new tab) */
+  protected readonly settingsAddresses = [
+    { name: 'Chrome', address: `chrome://settings/content/siteDetails?site=${encodeURIComponent(location.origin)}` },
+    { name: 'Edge', address: `edge://settings/content/siteDetails?site=${encodeURIComponent(location.origin)}` },
+  ];
+  protected readonly copiedAddress = signal<string | null>(null);
+  protected async copyAddress(address: string): Promise<void> {
+    try {
+      await navigator.clipboard.writeText(address);
+      this.copiedAddress.set(address);
+    } catch {
+      this.copiedAddress.set(null); // the browser refused: the address is not shown as copied
+    }
+  }
   protected readonly kinds: { key: 'message' | 'request' | 'answer' | 'removed'; label: string }[] = [
     { key: 'message', label: 'New messages' },
     { key: 'request', label: 'Friend requests' },
@@ -61,6 +75,8 @@ export class Settings {
   ];
   /** inside the Android app: the browser-only parts of this page (pop-ups, browser help) are hidden */
   protected readonly native = Capacitor.isNativePlatform();
+  /** the device of this browser: each one gets its own explanation of notifications (Android: install the app; iPhone: Home Screen app; else a computer) */
+  protected readonly device: 'android' | 'iphone' | 'computer' = /Android/i.test(navigator.userAgent) ? 'android' : /iPhone|iPad|iPod/i.test(navigator.userAgent) ? 'iphone' : 'computer';
 
   constructor() {
     this.sounds.markDefined(); // the person has now seen the sound settings

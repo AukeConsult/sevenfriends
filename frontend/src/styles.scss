@@ -878,6 +878,7 @@ app-voice { display: contents; }
 
 // ---- Presence dot on a seat icon: green = active, amber = away (screen hidden or off), gray = offline ----
 .sf-seat { position: relative; flex: none; display: inline-flex; }
+.sf-seat-mood { position: absolute; left: -0.375rem; top: -0.375rem; width: 1.125rem; height: 1.125rem; border-radius: 50%; background: var(--sf-card); box-shadow: 0 0 0 2px var(--sf-card); } // the friend's mood, over the top left of the picture
 .sf-dot {
   position: absolute;
   right: -0.125rem;
@@ -938,3 +939,17 @@ app-voice { display: contents; }
 // The quiet version: only a small grey line (the seat dots are right above it); the card shows when it is opened
 .sf-expand-quiet > summary { justify-content: center; gap: 0.25rem; padding: 0.25rem 0; font-size: var(--sf-fs-description, 0.875rem); font-weight: 500; color: var(--sf-muted); }
 .sf-expand-quiet > summary::after { font-size: 1rem; }
+
+// ---- Safebox: files two friends share ----
+.sf-box-usage { display: grid; gap: 0.25rem; margin-bottom: 0.75rem; .progress { height: 0.5rem; } }
+.sf-box-empty { display: grid; justify-items: center; gap: 0.5rem; padding: 2rem 1rem; svg { color: var(--sf-muted); } }
+.sf-box-list { margin-top: 0.75rem; }
+.sf-box-open { flex: none; width: 3.5rem; height: 3.5rem; padding: 0; border: 0; border-radius: var(--sf-radius); background: var(--sf-bg); overflow: hidden; cursor: pointer; display: grid; place-items: center; }
+.sf-box-thumb { display: block; width: 100%; height: 100%; img { width: 100%; height: 100%; object-fit: cover; display: block; } }
+.sf-box-wait { display: block; width: 100%; height: 100%; background: var(--sf-bg); }
+.sf-box-icon { display: grid; place-items: center; width: 100%; height: 100%; background: var(--bs-primary-bg-subtle); color: var(--sf-primary);
+  &[data-kind='video'] { background: #fdeed9; color: #b45f06; }
+  &[data-kind='audio'] { background: #e5f4e8; color: #2e7d32; } }
+.sf-box-viewer { position: fixed; inset: 0; z-index: 1080; display: grid; place-items: center; padding: 1rem; background: rgb(0 0 0 / 0.85); cursor: zoom-out;
+  img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: var(--sf-radius); } }
+.sf-box-viewer-close { position: absolute; top: 0.75rem; right: 0.75rem; width: 2.5rem; height: 2.5rem; padding: 0; border-radius: 50%; font-size: 1.5rem; line-height: 1; }

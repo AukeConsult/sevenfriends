@@ -25,6 +25,14 @@
   @if (open()) {
     <div id="mood-panel" class="card-body vstack gap-2 pt-0">
       <div class="sf-choices sf-choices-grid" role="radiogroup" aria-label="Your mood">
+        <!-- no mood at all: the empty choice -->
+        <button type="button" class="sf-choice" role="radio" [attr.aria-checked]="mood() === null" [class.sf-chosen]="mood() === null"
+                aria-label="No mood" title="No mood" (click)="choose(null)">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="9" /><path d="M5.6 5.6l12.8 12.8" />
+          </svg>
+          <span class="small">No mood</span>
+        </button>
         @for (m of moods; track m.id) {
           <button type="button" class="sf-choice" role="radio" [attr.aria-checked]="mood() === m.id" [class.sf-chosen]="mood() === m.id"
                   [attr.aria-label]="m.label" [title]="m.label" (click)="choose(m.id)">

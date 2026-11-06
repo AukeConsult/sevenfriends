@@ -265,6 +265,14 @@ Every uploaded file lives in **Google Storage** (the default bucket) as **`sf-ca
 - Tests: `functions/test/media.test.ts` (upload rules, chunked upload, preview, sending, the proxy and who may read, cleanup, the avatar).
 
 
+## Safebox (files only two friends share)
+- **What:** `/friends/:id/safebox` (`frontend/src/app/safebox/`, `core/safebox.service.ts`), opened from the "Safebox" button in the chat header. Pictures, video, sound, PDF, Office files, zip and plain text; both friends can add, open, rename and take out files.
+- **Storage:** the box has the shared id of the friendship (`connectionId`). The files are in the media cache under the owner name `box-<connectionId>` (`sf-cache/box-<id>/<itemId>`, with `.thumb` for the preview of a picture), the list in Firestore `safebox/{connectionId}/items/{itemId}` (`name, kind, mime, bytes, addedBy, hasThumb, createdAt`). The Storage and Firestore rules stay closed: everything goes through the backend.
+- **Access:** `functions/src/safebox.ts`, mounted at `/circles/:circleId/friends/:friendId/safebox`. Every call first finds MY CONFIRMED friend entry (`connectionOf`, the same check as the conversation); the id in the address alone never gives access. A stranger or a pending friend gets 404 / 403.
+- **Limits** (`constants.ts`): `SAFEBOX_MAX_BYTES` 200 MB per box, `SAFEBOX_MAX_ITEMS` 500, one file at most `MAX_UPLOAD_BYTES` (30 MB, one request). The type is found from the first bytes (`checkSafeboxFile` in `sf-cache.ts`), never from what the app says. Zip and old Office files are sent as downloads, never opened in the page.
+- **Cleanup:** `deleteBox(connectionId)` runs when a friend is deleted (`friends.ts`) and for every connection of an erased account (`erase.ts`).
+- **Not there yet:** live update of an open box when the friend adds a file (the page reloads on open), a notification for new files, files bigger than 30 MB, end-to-end encryption.
+
 ## Testing
 `functions/test` holds the tests for the connection rules above. They play the rules out in a **pool of 60 people**, with a mocked login, against the real backend routes.
 

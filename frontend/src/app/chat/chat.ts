@@ -20,6 +20,7 @@ import { EMOJIS } from '../core/emojis';
 import { FriendsService } from '../core/friends.service';
 import { initials } from '../core/initials';
 import { presenceLabel } from '../core/presence';
+import { moodIcon, moodLabel } from '../core/moods';
 import { RealtimeService } from '../core/realtime.service';
 import { ChatMessage, MessageDeleteCriteria, MessageLink } from '../models';
 
@@ -49,6 +50,8 @@ export class Chat {
   protected readonly friendId = inject(ActivatedRoute).snapshot.paramMap.get('id') ?? '';
   protected readonly name = signal('');
   protected readonly presenceLabel = presenceLabel;
+  protected readonly moodIcon = moodIcon;
+  protected readonly moodLabel = moodLabel;
   protected readonly initials = initials;
   /** this friend, from the list (for the mood) */
   protected readonly friend = computed(() => this.friendsService.friends().find((f) => f.id === this.friendId) ?? null);

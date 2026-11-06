@@ -3,6 +3,7 @@ import { DocumentReference, Transaction, getFirestore } from "firebase-admin/fir
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAIL_COLLECTION } from "./constants";
 import { circleCol, friendRequestCol, messageCol, profilePictureDoc, pushDeviceCol, signalCol, userDoc } from "./paths";
 import { MediaRef } from "./models";
+import { deleteBox } from "./safebox";
 import { deleteFolder, deleteObjects } from "./sf-cache";
 import { signalRefsOf } from "./signals";
 import { phoneKey } from "./validation";
@@ -35,13 +36,16 @@ type Peer = { uid: string | null; circleId: string | null; signaled: string[] };
  */
 export async function eraseUser(uid: string): Promise<void> {
   const files = new Map<string, MediaRef>(); // the files of the messages that go (they may be in the friends' folders)
-  await getFirestore().runTransaction((tx) => eraseInTransaction(tx, uid, files, false)); // read only: which files will go
+  const boxes = new Set<string>(); // the connections of the person: each has a safebox
+  await getFirestore().runTransaction((tx) => eraseInTransaction(tx, uid, files, false, boxes)); // read only: which files will go
   await deleteObjects([...files.values()]);
+  for (const id of boxes) await deleteBox(id);
   await deleteFolder(uid); // everything I have in the media cache: pictures, anything not sent yet
 
   const late = new Map<string, MediaRef>();
-  await getFirestore().runTransaction((tx) => eraseInTransaction(tx, uid, late, true));
+  await getFirestore().runTransaction((tx) => eraseInTransaction(tx, uid, late, true, boxes));
   await deleteObjects([...late.values()]); // messages that arrived while the first pass ran
+  for (const id of boxes) await deleteBox(id);
   await deleteFolder(uid);
 
   try {
@@ -51,7 +55,7 @@ export async function eraseUser(uid: string): Promise<void> {
   }
 }
 
-async function eraseInTransaction(tx: Transaction, uid: string, files: Map<string, MediaRef>, write: boolean): Promise<void> {
+async function eraseInTransaction(tx: Transaction, uid: string, files: Map<string, MediaRef>, write: boolean, boxes: Set<string>): Promise<void> {
   const db = getFirestore();
   const account = (await tx.get(userDoc(uid))).data() ?? {};
 
@@ -109,6 +113,7 @@ async function eraseInTransaction(tx: Transaction, uid: string, files: Map<strin
 
   // 4. everything of every connection, on the other side too
   for (const [id, peer] of peers) {
+    boxes.add(id);
     drop(signalCol(uid).doc(id));
     signalRefsOf(id, peer.signaled).forEach(drop);
     if (!peer.uid) continue;

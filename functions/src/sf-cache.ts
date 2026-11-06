@@ -39,7 +39,7 @@ const KIND_RULES: Record<CacheKind | "thumb", { family: Family; containers: Cont
 };
 
 /** What a stored object can be: the kinds above, a preview, or one piece of an upload that is not finished (`tmp/<uploadid>/<n>`). */
-type StoredKind = CacheKind | "thumb" | "chunk";
+type StoredKind = CacheKind | "thumb" | "chunk" | "document";
 
 const PNG = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
 
@@ -59,6 +59,34 @@ function sniff(b: Buffer): Container | null {
   if (head === "OggS") return "ogg";
   if (b.toString("latin1", 0, 3) === "ID3" || (b[0] === 0xff && (b[1] & 0xe0) === 0xe0)) return "mp3";
   return null;
+}
+
+/** Which kind of safebox file the container is, for the formats that are pictures, video or sound. */
+const MEDIA_OF: Partial<Record<Container, "image" | "video" | "audio">> = {
+  jpeg: "image", png: "image", gif: "image", webp: "image", mp4: "video", quicktime: "video", webm: "video", ogg: "audio", mp3: "audio", wav: "audio",
+};
+
+/** A text file has no control characters (a tab, a line break or a form feed is fine) in its first 8 KB. */
+const looksLikeText = (b: Buffer) => b.subarray(0, 8192).every((c) => c >= 32 || c === 9 || c === 10 || c === 12 || c === 13);
+
+/**
+ * What a file for the safebox is, from its first bytes (never from what the app says): a picture, a video or a sound as usual,
+ * or a document: PDF, a zip (also Word, Excel, PowerPoint), an old Office file, or plain text. Anything else is refused.
+ */
+export function checkSafeboxFile(bytes: Buffer, maxBytes: number): { kind: "image" | "video" | "audio" | "document"; mime: string } | { status: number; error: string } {
+  if (!bytes.length) return { status: 400, error: "Send the file as the request body" };
+  if (bytes.length > maxBytes) return { status: 413, error: `That file is too big (at most ${Math.round(maxBytes / MB)} MB)` };
+  const container = sniff(bytes);
+  const media = container ? MEDIA_OF[container] : undefined;
+  if (media) {
+    const checked = checkBytes(media, bytes);
+    return "mime" in checked ? { kind: media, mime: checked.mime } : checked;
+  }
+  if (bytes.toString("latin1", 0, 5) === "%PDF-") return { kind: "document", mime: "application/pdf" };
+  if (bytes.length >= 4 && bytes[0] === 0x50 && bytes[1] === 0x4b && bytes[2] === 3 && bytes[3] === 4) return { kind: "document", mime: "application/zip" };
+  if (bytes.length >= 4 && bytes[0] === 0xd0 && bytes[1] === 0xcf && bytes[2] === 0x11 && bytes[3] === 0xe0) return { kind: "document", mime: "application/octet-stream" };
+  if (looksLikeText(bytes)) return { kind: "document", mime: "text/plain; charset=utf-8" };
+  return { status: 415, error: "That kind of file is not supported (pictures, video, sound, PDF, Office files, zip and text are)" };
 }
 
 /** The content type to store for these bytes as that kind of object, or the reason (and HTTP status) it is refused. */

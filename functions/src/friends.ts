@@ -3,6 +3,7 @@ import { DecodedIdToken } from "firebase-admin/auth";
 import { DocumentReference, FieldValue, Timestamp, getFirestore } from "firebase-admin/firestore";
 import { asyncHandler } from "./auth";
 import { conversationRouter } from "./conversation";
+import { deleteBox, safeboxRouter } from "./safebox";
 import {
   DEFAULT_CIRCLE_ID,
   FRIENDS_SUBCOLLECTION,
@@ -135,6 +136,7 @@ export const friendsRouter = Router({ mergeParams: true });
 
 // The message feed of a connection: /circles/:circleId/friends/:friendId/messages
 friendsRouter.use("/:friendId/messages", conversationRouter);
+friendsRouter.use("/:friendId/safebox", safeboxRouter);
 
 /** List the friends in a circle. */
 friendsRouter.get(
@@ -390,6 +392,7 @@ friendsRouter.delete(
       files = feeds.flatMap((feed) => feed.docs.flatMap((d) => (d.data().media as MediaRef | undefined) ?? []));
     });
     await deleteObjects(files);
+    await deleteBox(id); // the files the two shared in their safebox go too
     if (endedWith) {
       const name = await nameOf(uid, res.locals.token as DecodedIdToken);
       await sendPush(endedWith, { id: `removed-${id}`, title: `${name} removed the friendship`, body: "The conversation is deleted for both of you.", url: "/friends", kind: "removed" });
