@@ -12,6 +12,7 @@ import { Privacy } from './privacy/privacy';
 import { Terms } from './terms/terms';
 import { About } from './about/about';
 import { Login } from './login/login';
+import { Welcome } from './welcome/welcome';
 import { LoginEmail } from './login-email/login-email';
 import { LoginLink } from './login-link/login-link';
 import { MediaViewer } from './media-viewer/media-viewer';
@@ -42,7 +43,8 @@ export const routes: Routes = [
   { path: 'privacy', component: Privacy, title: 'Your data and privacy – Seven Friends' },
   { path: 'terms', component: Terms, title: 'Terms of use – Seven Friends' },
   { path: 'about', component: About, title: 'About – Seven Friends' },
-  { path: 'install-app', component: InstallApp, canActivate: [authGuard], title: 'Install the app – Seven Friends' },
+  { path: 'install-app', component: InstallApp, title: 'Install the app – Seven Friends' },
+  { path: 'welcome', component: Welcome, canActivate: [guestGuard], title: 'Welcome – Seven Friends' },
   { path: 'login', component: Login, canActivate: [guestGuard], title: 'Sign in – Seven Friends' },
   { path: 'login/email', component: LoginEmail, canActivate: [guestGuard], title: 'Email link – Seven Friends' },
   { path: 'login/phone', component: PhoneAuth, canActivate: [guestGuard], data: { mode: 'login' }, title: 'Phone sign-in – Seven Friends' },

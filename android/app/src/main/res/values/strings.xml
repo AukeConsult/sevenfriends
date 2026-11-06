@@ -4,4 +4,42 @@
     <string name="title_activity_main">Seven Friends</string>
     <string name="package_name">io.sevenfriends.app</string>
     <string name="custom_url_scheme">io.sevenfriends.app</string>
+
+    <!-- the Android screens (NativeCheck, Channels); translated in values-nb, values-fr, values-es -->
+    <string name="check_title">Android notification check</string>
+    <string name="check_close">Close</string>
+    <string name="check_refresh">Refresh</string>
+    <string name="check_set_in_android">Set in Android</string>
+    <string name="check_tap_hint">Tap a kind to change it in Android. Closing this form stores what Android has in the app.</string>
+    <string name="check_notifications">Notifications</string>
+    <string name="state_on">On</string>
+    <string name="state_off_loud">OFF</string>
+    <string name="state_off">Off</string>
+    <string name="check_this_phone">This phone · Android %1$s</string>
+    <string name="check_allowed">Notifications allowed</string>
+    <string name="answer_yes">Yes</string>
+    <string name="answer_no_loud">NO</string>
+    <string name="check_volume">Notification volume</string>
+    <string name="check_notify_app">Notify this app</string>
+    <string name="check_registered_note">Only a registered app gets pushes.</string>
+    <string name="check_turn_on">Turn on</string>
+    <string name="check_turn_off">Turn off</string>
+    <string name="check_hide_text">Hide text on the lock screen</string>
+    <string name="check_app_volume">Volume of the app\'s sounds</string>
+    <string name="check_last_told">App page last told Android</string>
+    <string name="check_never">never</string>
+    <string name="check_test">Test</string>
+    <string name="check_test_button">Send me a test notification</string>
+    <string name="check_sending">Sending…</string>
+    <string name="check_no_answer">No answer from the app yet. If no notification arrives, close this form and try again.</string>
+    <string name="check_not_understood">The answer of the app could not be understood.</string>
+    <string name="kind_message">New messages</string>
+    <string name="kind_request">Friend requests</string>
+    <string name="kind_answer">Answers to my requests</string>
+    <string name="kind_removed">A friend removed the friendship</string>
+    <string name="sound_none">no sound</string>
+    <string name="sound_phone">phone sound</string>
+    <string name="push_ok">OK. %1$s</string>
+    <string name="push_failed">Not stored. %1$s</string>
+    <string name="err_no_answer">No answer from the app page.</string>
 </resources>

@@ -381,7 +381,15 @@ is missing: `ios/README.md`. Generated files (`Package.swift`, `App/App/public`)
 
 
 ## Windows app (`windows/`)
-A native .NET 8 (WPF) app with the WebView2 control that shows the live web app (`AppUrl` in `windows/MainWindow.xaml.cs`, the same address as `server.url` in `frontend/capacitor.config.json`: change both together). `npm run windows:run` to try it, `windows:publish` for the self-contained exe, `windows:installer` (Inno Setup 6) for `windows/installer/output/SevenFriendsSetup.exe` (per user, no admin). Details and what is missing (push when closed, tray icon, signing, auto-update, Google sign-in in an embedded window; not yet compiled on Windows): `windows/README.md`. The icon `app.ico` is made from `frontend/public/icons/icon-512.png`.
+A native .NET 8 (WPF) app with the WebView2 control that shows the live web app (`AppUrl` in `windows/MainWindow.xaml.cs`, the same address as `server.url` in `frontend/capacitor.config.json`: change both together). `npm run windows:run` to try it, `windows:publish` for the self-contained exe, `windows:installer` (Inno Setup 6) for `windows/installer/output/SevenFriendsSetup.exe` (per user, no admin). The window closes to a **tray icon** (the app keeps running; menu Open / Start with Windows / Quit; the installer can start it hidden with `--tray` at sign-in) and shows the web app's notifications as Windows toasts. Details and what is missing (push when the app is not running = WNS, signing, auto-update, Google sign-in in an embedded window; not yet compiled on Windows): `windows/README.md`. The icon `app.ico` is made from `frontend/public/icons/icon-512.png`.
+
+**Apps for download**: `scripts/publish-download.mjs` puts a finished file in `frontend/public/downloads/` (git-ignored; `npm run windows:release`; Android: the Gradle tasks `publishApk` / `deployApp` in `android/app/publish.gradle`); `deploy:hosting` publishes it and the Install page shows **Download for Windows** / **Download the Android app** only when the file exists (`InstallApp.exists`: a HEAD request that is not answered with html). The apk is debug-signed (not for Google Play).
+
+**Welcome page** (`/welcome`, public): the install step shown before sign-in to anyone not running the installed app (`WelcomeService.shouldShow()`, used by `authGuard`); same top (`app-hero`, four points) and ONE install action per platform (Android: the app file; iPhone: Add to Home Screen steps; Windows: the installer; other: the browser install). "Continue in the browser" remembers 30 days (`welcomeUntil`) unless a friend invitation is waiting. The sign-in page has "I have an invitation" (paste a link, code, email or phone: `FriendLinkService.use`), the welcome page copies the waiting invitation before a download, and the Android app opens links of the website (`MainActivity.pathOfWebsiteLink`). Details and the strategies: `docs/invite-install-login.md`.
+
+## Notifications
+
+See `docs/notifications.md`: per-kind switches and hide-text (`PUT /preferences/notices`), `POST /push/test`, Android channels per kind (`<kind>_<sound>`), native notification screen, app badge.
 
 ## Friend links
 `/?invite=<code>` (the code is made on the server, `functions/src/invite.ts`; the profile page has Share / Copy / New link) or `/?friend=<email or phone>`.

@@ -226,13 +226,18 @@ export class SoundService {
     }
   }
 
-  /** Reads the list of jingles (written by scripts/sounds-manifest.mjs). No list, or no network: just no jingles. */
-  private async loadJingles(): Promise<void> {
+  /**
+   * Reads the list of jingles (written by scripts/sounds-manifest.mjs). No list, or no network: just no jingles.
+   * Also called by the sound picker, so a jingle that was added after the app was opened shows up without a restart. The list is only
+   * replaced when it changed, so nothing on the page flickers.
+   */
+  async loadJingles(): Promise<void> {
     try {
       const response = await fetch(JINGLES_URL, { cache: 'no-cache' });
       if (!response.ok) return;
       const list = (await response.json()) as { jingles?: Jingle[] };
-      this.jingles.set((list.jingles ?? []).filter((j) => typeof j.file === 'string' && typeof j.label === 'string'));
+      const jingles = (list.jingles ?? []).filter((j) => typeof j.file === 'string' && typeof j.label === 'string');
+      if (JSON.stringify(jingles) !== JSON.stringify(this.jingles())) this.jingles.set(jingles);
     } catch {
       /* no jingles */
     }

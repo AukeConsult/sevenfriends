@@ -193,7 +193,7 @@ friendsRouter.post(
       // the people who already have an account hear about it at once (their devices), and find the request when they open the app
       const fromName = await nameOf((res.locals.token as DecodedIdToken).uid, res.locals.token as DecodedIdToken);
       for (const account of accounts) {
-        await sendPush(account, { id: `request-${ref.id}`, title: `${fromName} wants to be your friend`, body: data.message ?? "Open Seven Friends to answer.", url: "/", sound: "request" });
+        await sendPush(account, { id: `request-${ref.id}`, title: `${fromName} wants to be your friend`, body: data.message ?? "Open Seven Friends to answer.", url: "/", kind: "request" });
       }
     }
     const saved = await ref.get();
@@ -383,7 +383,7 @@ friendsRouter.delete(
     await deleteObjects(files);
     if (endedWith) {
       const name = await nameOf(uid, res.locals.token as DecodedIdToken);
-      await sendPush(endedWith, { id: `removed-${id}`, title: `${name} removed the friendship`, body: "The conversation is deleted for both of you.", url: "/friends" });
+      await sendPush(endedWith, { id: `removed-${id}`, title: `${name} removed the friendship`, body: "The conversation is deleted for both of you.", url: "/friends", kind: "removed" });
     }
     res.status(204).end();
   }),

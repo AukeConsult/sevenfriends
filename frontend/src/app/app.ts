@@ -2,6 +2,7 @@ import { Component, effect, inject, untracked } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { UiPreferencesService } from './core/ui-preferences';
 import { BottomNav } from './bottom-nav/bottom-nav';
+import { AndroidChannelsService } from './core/android-channels.service';
 import { AuthService } from './core/auth.service';
 import { FriendLinkService } from './core/friend-link.service';
 import { InstallService } from './core/install.service';
@@ -26,6 +27,7 @@ export class App {
     inject(RealtimeService); // starts listening for live updates (friend requests, messages) once somebody is signed in
     inject(InstallService); // catches the browser's install offer early (it can arrive soon after the page opens)
     inject(PresenceService); // tells the system when the person is active, away or offline (the dot on their friends)
+    inject(AndroidChannelsService); // Android's notification channels follow the sounds chosen here
 
     // The page that was open last is remembered (UiPreferences.lastPage) and shown again when the app is opened at its start page.
     let first = true;

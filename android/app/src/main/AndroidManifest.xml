@@ -7,6 +7,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:localeConfig="@xml/locales_config"
         android:theme="@style/AppTheme">
 
         <activity
@@ -20,6 +21,17 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!-- Links of the website (a friend invitation, the email sign-in link) open this app. With android:autoVerify Android checks
+                 https://<host>/.well-known/assetlinks.json (see docs/invite-install-login.md, strategy C): until that file is there, Android
+                 asks which app to use. -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="sevenfriends.web.app" />
+                <data android:scheme="https" android:host="sevenfriends.io" />
             </intent-filter>
 
         </activity>
@@ -47,4 +59,8 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- voice messages (the microphone) and photos / videos (the camera): a WebView can only ask the person for what is declared here -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.CAMERA" />
 </manifest>

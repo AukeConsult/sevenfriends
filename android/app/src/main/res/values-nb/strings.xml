@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="check_title">Sjekk av varsler på Android</string>
+    <string name="check_close">Lukk</string>
+    <string name="check_refresh">Oppdater</string>
+    <string name="check_set_in_android">Angi i Android</string>
+    <string name="check_tap_hint">Trykk på en type for å endre den i Android. Når du lukker dette skjemaet, lagres det Android har i appen.</string>
+    <string name="check_notifications">Varsler</string>
+    <string name="state_on">På</string>
+    <string name="state_off_loud">AV</string>
+    <string name="state_off">Av</string>
+    <string name="check_this_phone">Denne telefonen · Android %1$s</string>
+    <string name="check_allowed">Varsler tillatt</string>
+    <string name="answer_yes">Ja</string>
+    <string name="answer_no_loud">NEI</string>
+    <string name="check_volume">Varslingsvolum</string>
+    <string name="check_notify_app">Varsle denne appen</string>
+    <string name="check_registered_note">Bare en registrert app får push-varsler.</string>
+    <string name="check_turn_on">Slå på</string>
+    <string name="check_turn_off">Slå av</string>
+    <string name="check_hide_text">Skjul teksten på låseskjermen</string>
+    <string name="check_app_volume">Volum for lydene i appen</string>
+    <string name="check_last_told">Appsiden sa sist fra til Android</string>
+    <string name="check_never">aldri</string>
+    <string name="check_test">Test</string>
+    <string name="check_test_button">Send meg et testvarsel</string>
+    <string name="check_sending">Sender…</string>
+    <string name="check_no_answer">Ingen svar fra appen ennå. Hvis det ikke kommer noe varsel, lukk skjemaet og prøv igjen.</string>
+    <string name="check_not_understood">Svaret fra appen kunne ikke forstås.</string>
+    <string name="kind_message">Nye meldinger</string>
+    <string name="kind_request">Venneforespørsler</string>
+    <string name="kind_answer">Svar på forespørslene mine</string>
+    <string name="kind_removed">En venn avsluttet vennskapet</string>
+    <string name="sound_none">ingen lyd</string>
+    <string name="sound_phone">telefonens lyd</string>
+    <string name="push_ok">OK. %1$s</string>
+    <string name="push_failed">Ikke lagret. %1$s</string>
+    <string name="err_no_answer">Ingen svar fra appsiden.</string>
+</resources>

@@ -166,3 +166,90 @@ describe("deleting an account", () => {
     expect((await getFirestore().collectionGroup("push-device").get()).docs).toEqual([]);
   });
 });
+
+describe("what the receiver chose", () => {
+  const notices = (user: User, changes: object) =>
+    user.raw("put", "/preferences/notices", { message: true, request: true, answer: true, removed: true, hideText: false, ...changes }).expect(200);
+  const sounds = (user: User, changes: object) =>
+    user.raw("put", "/preferences/sounds", { message: "ding", request: "ding", answer: "ding", volume: 50, ...changes }).expect(200);
+
+  it("a kind that is switched off is not pushed, the others are", async () => {
+    const id = await connect(u(0), u(1));
+    await register(u(1), token(1));
+    await notices(u(1), { message: false });
+    sentPushes.length = 0;
+    await u(0).send(id, "hello").expect(201);
+    expect(sentPushes).toEqual([]);
+    await notices(u(1), { message: true, request: false });
+    await u(0).send(id, "hello again").expect(201);
+    expect(sentPushes).toHaveLength(1);
+  });
+
+  it("hide the text: the sender stays, the text of a message does not go out", async () => {
+    const id = await connect(u(0), u(1));
+    await register(u(1), token(1));
+    await notices(u(1), { hideText: true });
+    sentPushes.length = 0;
+    await u(0).send(id, "a secret").expect(201);
+    expect(lastPush().data.title).toBe("Person 00");
+    expect(lastPush().data.body).toBe("New message");
+    expect(JSON.stringify(lastPush())).not.toContain("a secret");
+  });
+
+  it("the channel of Android follows the chosen sound: a jingle, no sound, or the normal one", async () => {
+    const id = await connect(u(0), u(1));
+    await register(u(1), token(1));
+    const channel = () => (lastPush().android as { notification: { channelId: string } }).notification.channelId;
+
+    await sounds(u(1), { message: "file:SevenFriends_raw2_Hyper.mp3" });
+    await u(0).send(id, "one").expect(201);
+    expect(channel()).toBe("message_hyper");
+    expect(lastPush().data.silent).toBeUndefined();
+
+    await sounds(u(1), { message: "none" });
+    await u(0).send(id, "two").expect(201);
+    expect(channel()).toBe("message_silent");
+    expect(lastPush().data.silent).toBe("1"); // the browser's notification is silent too
+
+    await sounds(u(1), { message: "file:Unknown_jingle.mp3" });
+    await u(0).send(id, "three").expect(201);
+    expect(channel()).toBe("message_default");
+  });
+});
+
+describe("the test notification", () => {
+  it("reaches every device of the person and says how many", async () => {
+    await register(u(1), token(1, "phone"));
+    await register(u(1), token(1, "laptop"));
+    sentPushes.length = 0;
+    const result = (await u(1).raw("post", "/push/test").expect(200)).body;
+    expect(result).toEqual({ devices: 2, delivered: 2 });
+    expect(lastPush().data.title).toBe("Seven Friends");
+  });
+
+  it("no device registered: it says so (0 devices)", async () => {
+    expect((await u(1).raw("post", "/push/test").expect(200)).body).toEqual({ devices: 0, delivered: 0 });
+  });
+
+  it("a dead token is counted as not reached (and removed)", async () => {
+    await register(u(1), token(1, "phone"));
+    await register(u(1), token(1, "old"));
+    deadPushTokens.add(token(1, "old"));
+    expect((await u(1).raw("post", "/push/test").expect(200)).body).toEqual({ devices: 2, delivered: 1 });
+    expect(await devices("uid01")).toEqual([token(1, "phone")]);
+  });
+
+  it("is sent whatever the switches say, and with the text", async () => {
+    await register(u(1), token(1));
+    await u(1).raw("put", "/preferences/notices", { message: false, request: false, answer: false, removed: false, hideText: true }).expect(200);
+    const result = (await u(1).raw("post", "/push/test").expect(200)).body;
+    expect(result.delivered).toBe(1);
+    expect(lastPush().data.body).toBe("This is a test notification. It works!");
+  });
+
+  it("needs a login", async () => {
+    const request = (await import("supertest")).default;
+    const { app } = await import("./helpers");
+    await request(app).post("/api/push/test").expect(401);
+  });
+});

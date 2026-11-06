@@ -102,7 +102,7 @@ friendRequestsRouter.post(
     if (result === "confirmed" && requester) {
       const { uid: to, friendId } = requester as { uid: string; friendId: string };
       const name = await nameOf(uid, res.locals.token as DecodedIdToken);
-      await sendPush(to, { id: `answer-${friendId}-confirmed`, title: `${name} accepted your friend request`, body: "", url: "/friends", sound: "answer" });
+      await sendPush(to, { id: `answer-${friendId}-confirmed`, title: `${name} accepted your friend request`, body: "", url: "/friends", kind: "answer" });
     }
     res.json({ ok: true, result });
   }),
@@ -163,7 +163,7 @@ friendRequestsRouter.post(
     if (requester) {
       const { uid: to, friendId } = requester as { uid: string; friendId: string };
       const name = await nameOf(uid, res.locals.token as DecodedIdToken);
-      await sendPush(to, { id: `answer-${friendId}-rejected`, title: `${name} rejected your friend request`, body: "", url: "/friends", sound: "answer" });
+      await sendPush(to, { id: `answer-${friendId}-rejected`, title: `${name} rejected your friend request`, body: "", url: "/friends", kind: "answer" });
     }
     res.json({ ok: true });
   }),

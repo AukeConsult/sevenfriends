@@ -1,5 +1,5 @@
 import { Clearable } from '../core/clearable';
-import { SeatDots } from '../seat-dots/seat-dots';
+import { Hero } from '../hero/hero';
 import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { authMessage, wasCancelled, wasRejected } from '../core/auth-errors';
@@ -9,12 +9,33 @@ import { AuthMode } from '../models';
 
 @Component({
   selector: 'app-login',
-  imports: [RouterLink, Clearable, SeatDots],
+  imports: [RouterLink, Clearable, Hero],
   templateUrl: './login.html',
 })
 export class Login {
   /** a friend link was opened: what it is about (shown above the sign-in buttons) */
-  protected readonly link = inject(FriendLinkService).pending;
+  private readonly friendLinks = inject(FriendLinkService);
+  protected readonly link = this.friendLinks.pending;
+  /** "I have an invitation": the box to paste a link or code (for an app installed after the link was opened in the browser) */
+  protected readonly inviteOpen = signal(false);
+  protected readonly inviteProblem = signal(false);
+
+  /** Reads the clipboard (a tap is needed, and some apps refuse: then the person pastes by hand into the box). */
+  protected async pasteInvite(box: HTMLInputElement): Promise<void> {
+    try {
+      box.value = await navigator.clipboard.readText();
+    } catch {
+      box.focus();
+      return;
+    }
+    this.useInvite(box.value);
+  }
+
+  protected useInvite(text: string): void {
+    const ok = this.friendLinks.use(text);
+    this.inviteProblem.set(!ok);
+    if (ok) this.inviteOpen.set(false);
+  }
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
 

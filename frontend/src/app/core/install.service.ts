@@ -20,13 +20,20 @@ export class InstallService {
   readonly canInstall = signal(false);
   /** this is the Android app (Capacitor): there is nothing to install, and the browser-only parts of the pages are hidden */
   readonly native = Capacitor.isNativePlatform();
+  /** this window is the Windows app (it adds its name to the browser identity, see windows/MainWindow.xaml.cs) */
+  readonly windowsApp = /SevenFriendsWindows/i.test(navigator.userAgent);
   /** this window is the installed app (a browser tab is never "installed", so the install can always be done again); the Android app always is */
-  readonly installed = signal(this.native || this.isStandalone());
+  readonly installed = signal(this.native || this.windowsApp || this.isStandalone());
   /** an iPhone / iPad: installing is a manual step in Safari */
   // an iPad in its default settings says it is a Mac: a Mac with a touch screen is an iPad
   readonly ios = /iphone|ipad|ipod/i.test(navigator.userAgent) || (/Macintosh/i.test(navigator.userAgent) && navigator.maxTouchPoints > 1);
   /** a phone or tablet (Android or iOS): there is no start-at-sign-in setting there, the apps are opened from the app menu */
   readonly mobile = this.ios || /android/i.test(navigator.userAgent);
+
+  /** a Windows computer (the Windows app can be downloaded) */
+  readonly windows = /Windows NT/i.test(navigator.userAgent) && !this.mobile;
+  /** an Android phone or tablet (the Android app file can be downloaded) */
+  readonly androidDevice = /android/i.test(navigator.userAgent);
 
   private offer: InstallPrompt | null = null;
 

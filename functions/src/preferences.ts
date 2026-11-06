@@ -3,7 +3,7 @@ import { Router } from "express";
 import { DecodedIdToken } from "firebase-admin/auth";
 import { FieldValue } from "firebase-admin/firestore";
 import { asyncHandler, requireAuth } from "./auth";
-import { Preferences, SoundPreferences } from "./models";
+import { NoticePreferences, Preferences, SoundPreferences } from "./models";
 import { userDoc } from "./paths";
 
 /** The built-in sounds (the same list as the app's SoundService). */
@@ -27,6 +27,17 @@ function soundsOf(data: Record<string, any> | undefined): SoundPreferences | nul
   return { message: s.message, request: s.request, answer: s.answer, volume: s.volume };
 }
 
+const NOTICE_KEYS: (keyof NoticePreferences)[] = ["message", "request", "answer", "removed", "hideText"];
+const DEFAULT_NOTICES: NoticePreferences = { message: true, request: true, answer: true, removed: true, hideText: false };
+
+/** The notification choices of an account document: what is not saved (or damaged) has its default. */
+export function noticesOf(data: Record<string, any> | undefined): NoticePreferences {
+  const saved = data?.noticePreferences ?? {};
+  const notices = { ...DEFAULT_NOTICES };
+  for (const key of NOTICE_KEYS) if (typeof saved[key] === "boolean") notices[key] = saved[key];
+  return notices;
+}
+
 /** My settings that belong to ME (not to a device): for now the sounds. Stored on the user-account document. */
 export const preferencesRouter = Router();
 preferencesRouter.use(requireAuth);
@@ -34,7 +45,8 @@ preferencesRouter.use(requireAuth);
 preferencesRouter.get(
   "/",
   asyncHandler(async (_req, res) => {
-    const preferences: Preferences = { sounds: soundsOf((await userDoc(uidOf(res)).get()).data()) };
+    const data = (await userDoc(uidOf(res)).get()).data();
+    const preferences: Preferences = { sounds: soundsOf(data), notices: noticesOf(data) };
     res.json(preferences);
   }),
 );
@@ -56,6 +68,21 @@ preferencesRouter.put(
     // set + merge so it also works if the account document does not exist yet
     await userDoc(uidOf(res)).set({ soundPreferences: sounds, preferencesUpdatedAt: FieldValue.serverTimestamp() }, { merge: true });
     await touchSync(uidOf(res), "preferencesAt");
-    res.json({ sounds } satisfies Preferences);
+    res.json({ sounds });
+  }),
+);
+
+/** Save my notification choices: { message, request, answer, removed, hideText }, all booleans. All of it, or nothing. */
+preferencesRouter.put(
+  "/notices",
+  asyncHandler(async (req, res) => {
+    const body = req.body ?? {};
+    if (!NOTICE_KEYS.every((key) => typeof body[key] === "boolean")) {
+      res.status(400).json({ error: "Send message, request, answer, removed and hideText, each true or false" });
+      return;
+    }
+    const notices = Object.fromEntries(NOTICE_KEYS.map((key) => [key, body[key]])) as unknown as NoticePreferences;
+    await userDoc(uidOf(res)).set({ noticePreferences: notices }, { merge: true });
+    res.json({ notices });
   }),
 );

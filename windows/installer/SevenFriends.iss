@@ -23,6 +23,7 @@ WizardStyle=modern
 
 [Tasks]
 Name: "desktopicon"; Description: "Put an icon on the desktop"; GroupDescription: "Icons:"
+Name: "startup"; Description: "Start Seven Friends when I sign in to Windows (hidden, next to the clock), so new messages arrive as notifications"; GroupDescription: "Notifications:"
 
 [Files]
 Source: "..\publish\*"; DestDir: "{app}"; Flags: recursesubdirs ignoreversion
@@ -30,6 +31,9 @@ Source: "..\publish\*"; DestDir: "{app}"; Flags: recursesubdirs ignoreversion
 [Icons]
 Name: "{autoprograms}\Seven Friends"; Filename: "{app}\SevenFriends.exe"
 Name: "{autodesktop}\Seven Friends"; Filename: "{app}\SevenFriends.exe"; Tasks: desktopicon
+
+[Registry]
+Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "SevenFriends"; ValueData: """{app}\SevenFriends.exe"" --tray"; Flags: uninsdeletevalue; Tasks: startup
 
 [Run]
 Filename: "{app}\SevenFriends.exe"; Description: "Open Seven Friends"; Flags: nowait postinstall skipifsilent

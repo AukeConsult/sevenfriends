@@ -1,0 +1,25 @@
+// Our own Gradle tasks (group "sevenfriends"): hand out the Android app from the website, without an app store.
+// Run them in Android Studio (Gradle panel > Tasks > sevenfriends) or in this folder:  gradlew publishApk   /   gradlew deployApp
+// (Android Studio uses its own Java: no JAVA_HOME needed there.)
+
+// publishApk: builds the app file and puts it where the website serves it: frontend/public/downloads/SevenFriends.apk
+// (git-ignored). It is signed with the debug key: fine to install by hand, not for Google Play (that needs a release key).
+tasks.register('publishApk', Copy) {
+    group = 'sevenfriends'
+    description = 'Builds the app and copies it to frontend/public/downloads/SevenFriends.apk'
+    dependsOn 'assembleDebug'
+    from layout.buildDirectory.file('outputs/apk/debug/app-debug.apk')
+    into rootProject.file('../frontend/public/downloads')
+    rename { 'SevenFriends.apk' }
+}
+
+// deployApp: publishApk, then puts the website (with the file) online: `npm run deploy:hosting` in the project root
+// (needs Node and the Firebase login of this computer). The Install page and the sign-in page then offer the download.
+tasks.register('deployApp', Exec) {
+    group = 'sevenfriends'
+    description = 'publishApk, then deploys the website (Firebase Hosting) so the app can be downloaded'
+    dependsOn 'publishApk'
+    workingDir rootProject.file('..')
+    def windows = org.gradle.internal.os.OperatingSystem.current().isWindows()
+    commandLine(windows ? ['cmd', '/c', 'npm', 'run', 'deploy:hosting'] : ['npm', 'run', 'deploy:hosting'])
+}

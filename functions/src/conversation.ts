@@ -153,7 +153,7 @@ conversationRouter.post(
     const saved = (await mine.get()).data()!;
     const created: ChatMessage = { id: mine.id, text, media, mine: true, read: true, time: iso(saved.time), edited: false, link };
     // wake the other person's devices (before the answer: the function may stop right after it)
-    await sendPush(connection.peerUid, { id: `message-${mine.id}`, title: common.fromName, body: text || mediaLabel(media!.kind), url: `/friends/${connection.id}`, sound: "message" });
+    await sendPush(connection.peerUid, { id: `message-${mine.id}`, title: common.fromName, body: text || mediaLabel(media!.kind), url: `/friends/${connection.id}`, kind: "message" });
     res.status(201).json(created);
   }),
 );

@@ -1,3 +1,9 @@
+<!-- signed out (the link "Get the app" on the sign-in page): no menu, so a way back to the sign-in page -->
+@if (!auth.user()) {
+  <div class="sf-back-row">
+    <a routerLink="/login" class="btn btn-light" aria-label="Back to sign in">‹ Back</a>
+  </div>
+}
 <div class="sf-page-head">
   <h1>Install the app</h1>
 </div>
@@ -5,16 +11,13 @@
 <main class="sf-narrow vstack gap-3">
   @if (app.installed()) {
     <div class="alert alert-success m-0" role="status">✓ You are using the installed app. Nothing more to do.</div>
-  } @else {
+  } @else if (!app.androidDevice) {
     <h2 class="m-0">1. Allow the microphone</h2>
     @if (mic() === 'granted') {
       <div class="alert alert-success m-0" role="status">✓ The microphone is allowed.</div>
     } @else {
       <p class="m-0">So you can send voice messages. Tap the button and choose <strong>Allow</strong>.</p>
       <button type="button" class="btn btn-primary btn-lg w-100" (click)="allowMic()">Allow the microphone</button>
-      @if (app.mobile && !app.ios) {
-        <p class="small text-secondary m-0">On Android, <strong>Chrome</strong> itself must also be allowed to use the microphone: Settings, Apps, Chrome, Permissions, Microphone, Allow.</p>
-      }
       @if (mic() === 'denied') {
         <div class="alert alert-warning m-0" role="alert">The microphone is switched off. Tap the <strong>lock or sliders icon</strong> at the left of the web address, then <strong>Permissions</strong>, and allow the <strong>Microphone</strong>. No icon? Tap the three dots, then <strong>Settings</strong>, <strong>Site settings</strong>, <strong>Microphone</strong>. Then tap the button again.</div>
       }
@@ -25,6 +28,29 @@
       <div class="alert alert-warning m-0" role="alert">The microphone is not allowed yet. Do step 1 first, or tap <strong>Install the app</strong> again to install without it.</div>
     }
     <p class="small text-secondary m-0">It puts Seven Friends on your home screen like any other app. It is free, needs no app store, and you can remove it any time.</p>
+  }
+
+  @if (windowsFile() && !app.runsAsApp()) {
+    <section class="vstack gap-2">
+      <h2 class="m-0">The Windows app</h2>
+      <p class="m-0">An app for your Windows computer: it runs next to the clock, so new messages arrive as notifications even when the window is closed.</p>
+      <a class="btn btn-outline-primary btn-lg" href="/downloads/SevenFriendsSetup.exe" download>Download for Windows</a>
+      <p class="small text-secondary m-0">Open the downloaded file to install it. If Windows says it protected your PC, choose <em>More info</em>, then <em>Run anyway</em>.</p>
+    </section>
+  }
+
+  @if (app.androidDevice && !app.installed()) {
+    <!-- On Android only the Seven Friends app is offered, never the install of the web app through Chrome -->
+    <section class="vstack gap-2">
+      <h2 class="m-0">The Android app</h2>
+      @if (androidFile()) {
+        <p class="m-0">The Seven Friends app for your phone.</p>
+        <a class="btn btn-primary btn-lg" href="/downloads/SevenFriends.apk" download>Download the Android app</a>
+        <p class="small text-secondary m-0">Open the downloaded file. If Android asks, allow your browser to install apps from this source, then tap <em>Install</em>. Then open Seven Friends from its icon and tap <em>Allow</em> when it asks for notifications and the microphone.</p>
+      } @else {
+        <p class="m-0">The Android app is not ready to download yet. Please try again later.</p>
+      }
+    </section>
   }
 
   @if (!app.installed() && steps()) {
@@ -45,22 +71,6 @@
         <p class="small text-secondary m-0">
           Notifications on an iPhone need iOS 16.4 or newer (Settings → General → Software Update shows your version).
           To change them later: Settings → Notifications → Seven Friends. To remove the app: press and hold the icon and choose Remove App.
-        </p>
-      </div>
-    </details>
-
-    <details class="sf-how" [open]="app.mobile && !app.ios">
-      <summary>Android phone or tablet (Chrome)</summary>
-      <div class="vstack gap-2">
-        <ol class="m-0">
-          <li>Open <strong>Seven Friends in Chrome</strong>.</li>
-          <li>Tap the <strong>menu</strong> (three dots ⋮ in the top right corner) and choose <strong>Install app</strong>. On some phones it is called <em>Add to Home screen</em>.</li>
-          <li>Tap <strong>Install</strong> to confirm.</li>
-        </ol>
-        <p class="small text-secondary m-0">Then open the app from its new icon. When it asks to send you notifications, tap <em>Allow</em>.</p>
-        <p class="small text-secondary m-0">
-          Samsung Internet: tap the menu (three lines ≡), then <em>Add page to</em>, then <em>Home screen</em>.
-          Firefox: menu (⋮), then <em>Install</em>. To remove the app: press and hold the icon and choose Uninstall.
         </p>
       </div>
     </details>

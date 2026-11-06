@@ -1,32 +1,35 @@
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
 
 namespace SevenFriends;
 
-/// <summary>One window only: a second start brings the first one forward and ends.</summary>
+/// <summary>
+/// One copy only: a second start asks the first one to show its window and ends.
+/// Started with <c>--tray</c> (by Windows at sign-in) the window stays hidden and only the tray icon shows.
+/// </summary>
 public partial class App : Application
 {
     private static Mutex? _only;
-
-    [DllImport("user32.dll", CharSet = CharSet.Unicode)] private static extern IntPtr FindWindow(string? className, string title);
-    [DllImport("user32.dll")] private static extern bool ShowWindow(IntPtr window, int command);
-    [DllImport("user32.dll")] private static extern bool SetForegroundWindow(IntPtr window);
+    private static EventWaitHandle? _show;
 
     protected override void OnStartup(StartupEventArgs e)
     {
         _only = new Mutex(true, "io.sevenfriends.app", out var first);
+        _show = new EventWaitHandle(false, EventResetMode.AutoReset, "io.sevenfriends.app.show");
         if (!first)
         {
-            var other = FindWindow(null, SevenFriends.MainWindow.WindowTitle);
-            if (other != IntPtr.Zero)
-            {
-                ShowWindow(other, 9); // restore
-                SetForegroundWindow(other);
-            }
+            _show.Set();
             Shutdown();
             return;
         }
         base.OnStartup(e);
+
+        var window = new MainWindow(startHidden: e.Args.Contains("--tray"));
+        MainWindow = window;
+        window.Show(); // a window started hidden hides itself as soon as it is ready
+        new Thread(() =>
+        {
+            while (_show.WaitOne()) Dispatcher.Invoke(window.ShowApp);
+        }) { IsBackground = true }.Start();
     }
 }

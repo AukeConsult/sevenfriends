@@ -36,6 +36,18 @@ export class AttentionService {
       document.title = this.title();
     });
 
+    // the count on the app's icon too (installed web app on a computer or an iPhone home screen; the Android app's launcher shows its own dot
+    // for the notifications it has). A browser without the badge API does nothing.
+    effect(() => {
+      const count = this.count();
+      const badge = navigator as Navigator & { setAppBadge?: (count?: number) => Promise<void>; clearAppBadge?: () => Promise<void> };
+      try {
+        void (count ? badge.setAppBadge?.(count) : badge.clearAppBadge?.())?.catch(() => undefined);
+      } catch {
+        /* no badge */
+      }
+    });
+
     // flash while something is waiting and the tab is in the background
     effect((onCleanup) => {
       if (!this.count() || !this.hidden()) {

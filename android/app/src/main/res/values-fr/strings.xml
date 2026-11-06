@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="check_title">Vérification des notifications Android</string>
+    <string name="check_close">Fermer</string>
+    <string name="check_refresh">Actualiser</string>
+    <string name="check_set_in_android">Régler dans Android</string>
+    <string name="check_tap_hint">Touchez un type pour le modifier dans Android. À la fermeture de ce formulaire, ce qu\'Android a est enregistré dans l\'appli.</string>
+    <string name="check_notifications">Notifications</string>
+    <string name="state_on">Activé</string>
+    <string name="state_off_loud">DÉSACTIVÉ</string>
+    <string name="state_off">Désactivé</string>
+    <string name="check_this_phone">Ce téléphone · Android %1$s</string>
+    <string name="check_allowed">Notifications autorisées</string>
+    <string name="answer_yes">Oui</string>
+    <string name="answer_no_loud">NON</string>
+    <string name="check_volume">Volume des notifications</string>
+    <string name="check_notify_app">Notifier cette appli</string>
+    <string name="check_registered_note">Seule une appli enregistrée reçoit les notifications push.</string>
+    <string name="check_turn_on">Activer</string>
+    <string name="check_turn_off">Désactiver</string>
+    <string name="check_hide_text">Masquer le texte sur l\'écran de verrouillage</string>
+    <string name="check_app_volume">Volume des sons de l\'appli</string>
+    <string name="check_last_told">Dernier message de la page de l\'appli à Android</string>
+    <string name="check_never">jamais</string>
+    <string name="check_test">Test</string>
+    <string name="check_test_button">M\'envoyer une notification de test</string>
+    <string name="check_sending">Envoi…</string>
+    <string name="check_no_answer">Pas encore de réponse de l\'appli. Si aucune notification n\'arrive, fermez ce formulaire et réessayez.</string>
+    <string name="check_not_understood">La réponse de l\'appli n\'a pas été comprise.</string>
+    <string name="kind_message">Nouveaux messages</string>
+    <string name="kind_request">Demandes d\'ami</string>
+    <string name="kind_answer">Réponses à mes demandes</string>
+    <string name="kind_removed">Un ami a mis fin à l\'amitié</string>
+    <string name="sound_none">aucun son</string>
+    <string name="sound_phone">son du téléphone</string>
+    <string name="push_ok">OK. %1$s</string>
+    <string name="push_failed">Non enregistré. %1$s</string>
+    <string name="err_no_answer">Pas de réponse de la page de l\'appli.</string>
+</resources>

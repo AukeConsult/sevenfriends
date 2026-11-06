@@ -17,6 +17,8 @@ export interface UiPreferences {
   micRaw: boolean;
   /** who an opened friend link points to (see friend-link.service.ts): kept until the person has signed in and answered it; null = none */
   pendingFriend: PendingFriend | null;
+  /** "Continue in the browser" on the welcome page was chosen: it is not shown again until this time (milliseconds since 1970); null = show it */
+  welcomeUntil: number | null;
 }
 
 /** Where a friend link points: an invite code, or an email / phone number. */
@@ -26,7 +28,7 @@ export interface PendingFriend {
   phone: string | null;
 }
 
-const DEFAULTS: UiPreferences = { chatOrder: 'oldest', lastPage: null, micRaw: false, pendingFriend: null };
+const DEFAULTS: UiPreferences = { chatOrder: 'oldest', lastPage: null, micRaw: false, pendingFriend: null, welcomeUntil: null };
 
 const text = (value: unknown): string | null => (typeof value === 'string' && value ? value : null);
 
@@ -58,6 +60,7 @@ function read(): UiPreferences {
       lastPage: typeof saved.lastPage === 'string' && saved.lastPage.startsWith('/') ? saved.lastPage : null,
       micRaw: saved.micRaw === true,
       pendingFriend: pendingOf(saved.pendingFriend),
+      welcomeUntil: typeof saved.welcomeUntil === 'number' && Number.isFinite(saved.welcomeUntil) ? saved.welcomeUntil : null,
     };
   } catch {
     return { ...DEFAULTS }; // private mode or damaged: the defaults, the choices last until the page is closed

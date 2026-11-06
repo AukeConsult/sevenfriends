@@ -23,6 +23,7 @@
     "windows:run": "dotnet run --project windows/SevenFriends.csproj",
     "windows:publish": "dotnet publish windows/SevenFriends.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o windows/publish",
     "windows:installer": "iscc windows/installer/SevenFriends.iss",
+    "windows:release": "node scripts/publish-download.mjs windows/installer/output/SevenFriendsSetup.exe SevenFriendsSetup.exe",
     "sync:models": "node scripts/sync-models.mjs",
     "sync:sounds": "node scripts/sounds-manifest.mjs",
     "check:models": "node scripts/sync-models.mjs --check"

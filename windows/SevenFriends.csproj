@@ -5,6 +5,7 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms> <!-- only for the tray icon (NotifyIcon) -->
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <AssemblyName>SevenFriends</AssemblyName>
@@ -15,6 +16,12 @@
     <Company>Blueboot R&amp;D AS</Company>
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
   </PropertyGroup>
+
+  <!-- WPF and Windows Forms share names (Application, MessageBox...): only WPF is used by name, Forms is always written in full -->
+  <ItemGroup>
+    <Using Remove="System.Windows.Forms" />
+    <Using Remove="System.Drawing" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2903.40" />

@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, DestroyRef, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { SOUND_CHOICES, SOUND_EVENTS, SoundEvent, SoundId, SoundService } from '../core/sound.service';
 
@@ -19,6 +19,21 @@ export class SoundPicker {
   protected readonly item = computed(() => SOUND_EVENTS.find((e) => e.event === this.event())!);
   protected readonly choices = SOUND_CHOICES;
   protected readonly jingles = this.sounds.jingles;
+
+  constructor() {
+    // the list of sounds updates by itself: when the page opens, when the app comes back to the front, and every half minute while it is open
+    const update = () => void this.sounds.loadJingles();
+    update();
+    const timer = setInterval(update, 30_000);
+    const visible = () => {
+      if (document.visibilityState === 'visible') update();
+    };
+    document.addEventListener('visibilitychange', visible);
+    inject(DestroyRef).onDestroy(() => {
+      clearInterval(timer);
+      document.removeEventListener('visibilitychange', visible);
+    });
+  }
 
   /** Choosing a sound plays it, so you hear what you picked. */
   protected choose(sound: string): void {

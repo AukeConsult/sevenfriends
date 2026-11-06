@@ -29,6 +29,7 @@ self.addEventListener('push', (event) => {
       await self.registration.showNotification(data.title, {
         body: data.body || '',
         tag: data.id, // the event's unique id: the same event is shown once (also when the open page shows it too)
+        silent: data.silent === '1', // the person chose "No sound" for this kind of event
         data: { url: data.url || '/' },
         icon: '/icons/icon-192.png',
       });

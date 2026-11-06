@@ -1,0 +1,77 @@
+<main class="sf-landing sf-welcome">
+  <app-hero />
+
+  <ul class="sf-points">
+    <li>Only seven seats, so your closest people never get lost in a crowd.</li>
+    <li>Messages, photos, video and voice. No ads, no feeds.</li>
+    <li>See who is awake and how they feel.</li>
+    <li>Your data stays yours, and you can delete everything.</li>
+  </ul>
+
+  <div class="sf-form-width mx-auto w-100 vstack gap-3">
+    @if (invited()) {
+      <div class="alert alert-info text-center m-0" role="status">
+        <strong>You have been invited{{ invitedBy() ? ' by ' + invitedBy() : '' }}.</strong>
+        Get the app below, or sign in or create your account first: your invitation is kept and waits for you.
+      </div>
+    }
+
+    @if (copied()) {
+      <div class="alert alert-success text-center m-0" role="status">Your invitation is copied. After installing, open the app, tap <strong>I have an invitation</strong> and paste it.</div>
+    }
+
+    <!-- ONE install action, for this platform -->
+    @switch (kind) {
+      @case ('android') {
+        <section class="vstack gap-2 text-center">
+          <h2 class="m-0">Get the Android app</h2>
+          @if (fileReady()) {
+            <a class="btn btn-primary btn-lg" href="/downloads/SevenFriends.apk" download (click)="copyInvitation()">Download the Android app</a>
+            <p class="small text-secondary m-0">Open the downloaded file. If Android asks, allow your browser to install apps from this source, then tap <em>Install</em>.</p>
+          } @else if (fileReady() === false) {
+            <p class="m-0">The Android app is not ready to download yet.</p>
+          }
+        </section>
+      }
+      @case ('ios') {
+        <section class="vstack gap-2">
+          <h2 class="m-0 text-center">Put it on your home screen</h2>
+          <ol class="m-0">
+            <li>In <strong>Safari</strong>, tap the <strong>Share</strong> button (a square with an arrow pointing up).</li>
+            <li>Choose <strong>Add to Home Screen</strong>, then tap <strong>Add</strong>.</li>
+            <li>Open <strong>Seven Friends from your home screen</strong>, not from Safari.</li>
+          </ol>
+          <p class="small text-secondary m-0 text-center">Notifications need iOS 16.4 or newer, and only work from the home-screen app.</p>
+        </section>
+      }
+      @case ('windows') {
+        <section class="vstack gap-2 text-center">
+          <h2 class="m-0">Get the Windows app</h2>
+          @if (fileReady()) {
+            <a class="btn btn-primary btn-lg" href="/downloads/SevenFriendsSetup.exe" download (click)="copyInvitation()">Download for Windows</a>
+            <p class="small text-secondary m-0">Open the downloaded file to install it. If Windows says it protected your PC, choose <em>More info</em>, then <em>Run anyway</em>.</p>
+          } @else if (fileReady() === false) {
+            <p class="m-0">The Windows app is not ready to download yet.</p>
+          }
+        </section>
+      }
+      @default {
+        <section class="vstack gap-2 text-center">
+          <h2 class="m-0">Install it on your computer</h2>
+          @if (app.canInstall()) {
+            <button type="button" class="btn btn-primary btn-lg" (click)="install()">Install the app</button>
+          } @else {
+            <p class="m-0">In Chrome or Edge, click the install icon at the right end of the address bar. In Safari on a Mac, choose File, then <em>Add to Dock</em>.</p>
+          }
+        </section>
+      }
+    }
+
+    <div class="sf-divider"><span>or</span></div>
+    <button type="button" class="btn btn-outline-secondary w-100" (click)="continueInBrowser()">{{ invited() ? 'Sign in or create an account first' : 'Continue in the browser' }}</button>
+
+    <p class="small text-center text-secondary mb-0">
+      <a routerLink="/terms">Terms of use</a> · <a routerLink="/privacy">Data and privacy</a> · <a routerLink="/about">About</a>
+    </p>
+  </div>
+</main>
