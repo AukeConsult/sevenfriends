@@ -1,5 +1,6 @@
+import { Capacitor } from '@capacitor/core';
 import { DatePipe } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { ChatService } from '../core/chat.service';
 import { ApiService } from '../core/api.service';
@@ -15,6 +16,7 @@ import { SeatDots } from '../seat-dots/seat-dots';
 import { Friend, FriendRequest, Message, Notice, ProfileDetails } from '../models';
 import { APP_ORIGIN } from '../core/app-origin';
 import { AndroidChannelsService } from '../core/android-channels.service';
+import { PushService } from '../core/push.service';
 
 /** Without a word for this many days, a friend gets a gentle "Say hi". */
 const SAY_HI_AFTER_DAYS = 14;
@@ -48,6 +50,7 @@ export class Notifications {
   private readonly router = inject(Router);
   protected readonly install = inject(InstallService);
   private readonly android = inject(AndroidChannelsService);
+  private readonly push = inject(PushService);
   protected readonly invite = inject(InviteLinkService);
   private readonly prefs = inject(UiPreferencesService);
   /** the first-time setup was left for later: Home offers it again */
@@ -112,19 +115,45 @@ export class Notifications {
   });
   /** anything that needs me: the first block of the page is only there then */
   /** the Android app only: notifications are switched off in Android's settings (for everything, or for some kinds): the text for the warning, or null */
+  protected readonly androidLater = signal(false); // "Not now": the warning stays away until the app is opened again
   protected readonly androidOff = computed(() => {
     const blocked = this.android.blocked();
-    if (!blocked) return null;
+    if (!blocked || this.androidLater()) return null;
     if (blocked.appOff) return 'Notifications are switched off for Seven Friends in Android, so you will not hear about new messages or friend requests.';
     const names: Record<string, string> = { message: 'new messages', request: 'friend requests', answer: 'answers to your requests', removed: 'removed friendships' };
     const off = blocked.off.map((kind) => names[kind] ?? kind);
     return off.length ? `In Android these notifications are switched off: ${off.join(', ')}.` : null;
   });
+  /** the browser's own answer to "may this site notify?" (changes in the browser's settings, so it is read again when the page comes back) */
+  private readonly permission = signal<string>(typeof Notification === 'undefined' ? 'denied' : Notification.permission);
+  /** "Not now": the warning below stays away until the page is opened again */
+  protected readonly pushLater = signal(false);
+  protected readonly pushProblem = signal<string | null>(null);
+
+  /**
+   * In a browser (not the Android app: androidOff covers that): push notifications are the way to hear about news when the page is closed.
+   * When they are not on for this device, or the browser blocks them, a warning says so. null = nothing to warn about (or push is not possible here).
+   */
+  protected readonly pushOff = computed(() => {
+    if (Capacitor.isNativePlatform() || this.pushLater() || !this.push.checked() || !this.push.supported()) return null;
+    if (this.push.enabled() && this.permission() === 'granted') return null;
+    return this.permission() === 'denied'
+      ? { canTurnOn: false, text: 'Notifications are blocked for this site in your browser, so you will not hear about new messages when this page is closed. Allow them in the browser settings (the lock icon by the address).' }
+      : { canTurnOn: true, text: 'Notifications are off on this device, so you will not hear about new messages when this page is closed.' };
+  });
+
+  protected async turnOnPush(): Promise<void> {
+    this.pushProblem.set(null);
+    await this.push.setEnabled(true);
+    this.permission.set(typeof Notification === 'undefined' ? 'denied' : Notification.permission);
+    this.pushProblem.set(this.push.problem());
+  }
+
   protected openAndroidSettings(): void {
     this.android.openSettings();
   }
 
-  protected readonly needsYou = computed(() => this.androidOff() !== null || this.setupLeft() || this.unverified().length > 0 || this.seated().length > 0 || this.waitingCount() > 0 || this.groups().length > 0);
+  protected readonly needsYou = computed(() => this.androidOff() !== null || this.pushOff() !== null || this.setupLeft() || this.unverified().length > 0 || this.seated().length > 0 || this.waitingCount() > 0 || this.groups().length > 0);
 
   /** the quick replies being typed, by friend */
   protected readonly replies = signal<Partial<Record<string, string>>>({});
@@ -137,6 +166,10 @@ export class Notifications {
   protected readonly error = this.notifications.error;
 
   constructor() {
+    // the person may have changed the browser's permission in its settings: look again when the page comes back
+    const recheck = () => this.permission.set(typeof Notification === 'undefined' ? 'denied' : Notification.permission);
+    document.addEventListener('visibilitychange', recheck);
+    inject(DestroyRef).onDestroy(() => document.removeEventListener('visibilitychange', recheck));
     this.load();
     void this.checkOwnDetails();
     if (!this.friendsService.circle()) void this.friendsService.load().catch(() => undefined); // opened directly: the seats come from the list

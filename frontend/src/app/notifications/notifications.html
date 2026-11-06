@@ -39,9 +39,25 @@
       }
 
       @if (androidOff(); as off) {
-        <div class="alert alert-danger d-flex flex-wrap align-items-center justify-content-between gap-2" role="alert">
-          <span>{{ off }}</span>
-          <button type="button" class="btn btn-danger btn-sm" (click)="openAndroidSettings()">Open Android settings</button>
+        <div class="alert alert-warning" role="alert">
+          <div>{{ off }}</div>
+          <div class="d-flex gap-2 mt-2">
+            <button type="button" class="btn btn-warning btn-sm" (click)="openAndroidSettings()">Open Android settings</button>
+            <button type="button" class="btn btn-outline-secondary btn-sm" (click)="androidLater.set(true)">Not now</button>
+          </div>
+        </div>
+      }
+
+      @if (pushOff(); as off) {
+        <div class="alert alert-warning" role="alert">
+          <div>{{ off.text }}</div>
+          @if (pushProblem()) { <div class="small mt-1">{{ pushProblem() }}</div> }
+          <div class="d-flex gap-2 mt-2">
+            @if (off.canTurnOn) {
+              <button type="button" class="btn btn-warning btn-sm" (click)="turnOnPush()">Turn on notifications</button>
+            }
+            <button type="button" class="btn btn-outline-secondary btn-sm" (click)="pushLater.set(true)">Not now</button>
+          </div>
         </div>
       }
 
@@ -139,10 +155,12 @@
         <div class="card card-body vstack gap-2">
           <strong>Invite friends with a link</strong>
           <p class="m-0">Send this link to the friends you would like to take part. When they open it, sign in (or create an account) and confirm, a friend request is sent to you.</p>
-          <input type="text" class="form-control" [value]="url" readonly aria-label="Your friend link" (focus)="$any($event.target).select()" />
+          @if (!invite.canShare) {
+            <input type="text" class="form-control" [value]="url" readonly aria-label="Your friend link" (focus)="$any($event.target).select()" />
+          }
           <div class="d-flex flex-wrap gap-2">
             <button type="button" class="btn btn-primary btn-sm" (click)="invite.share(url)">Share link</button>
-            <button type="button" class="btn btn-light btn-sm" (click)="invite.copy(url)">Copy link</button>
+            @if (!invite.canShare) { <button type="button" class="btn btn-light btn-sm" (click)="invite.copy(url)">Copy link</button> }
           </div>
           @if (invite.note(); as note) { <span class="small text-secondary" role="status">{{ note }}</span> }
           <span class="small text-secondary">The link contains your {{ url.includes('%40') ? 'email address' : 'phone number' }}.</span>

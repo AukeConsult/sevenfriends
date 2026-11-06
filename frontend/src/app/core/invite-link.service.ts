@@ -35,10 +35,25 @@ export class InviteLinkService {
     setTimeout(() => this.note.set(null), 2500);
   }
 
+  /**
+   * There is a share dialog here (Android app: its own sheet; Windows, Mac, phones: the browser's): "Share link" opens it, and a separate
+   * "Copy link" button is not needed (the dialog has Copy). Without a dialog, "Share link" copies and the Copy button stays.
+   */
+  get canShare(): boolean {
+    const app = (window as unknown as { SevenFriendsAndroid?: { share?: unknown } }).SevenFriendsAndroid;
+    return Boolean(app?.share) || typeof navigator.share === 'function';
+  }
+
   /** Shares the link (the phone's share sheet), or copies it where there is none. */
   async share(url: string | null = this.link()): Promise<void> {
     if (!url) return;
     try {
+      // the Android app: its own share sheet (the WebView has no navigator.share; an older app without it copies, as before)
+      const app = (window as unknown as { SevenFriendsAndroid?: { share?(title: string, text: string): void } }).SevenFriendsAndroid;
+      if (app?.share) {
+        app.share('Seven Friends', `Be my friend on Seven Friends: ${url}`);
+        return;
+      }
       if (navigator.share) {
         await navigator.share({ title: 'Seven Friends', text: 'Be my friend on Seven Friends:', url });
         return;

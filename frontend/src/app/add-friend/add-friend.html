@@ -15,10 +15,12 @@
     <h2 class="sf-section">Send them this link</h2>
     <div class="card">
       <div class="card-body vstack gap-2">
-        <input type="text" class="form-control" [value]="done.link" readonly aria-label="The link to send" (focus)="$any($event.target).select()" />
+        @if (!invite.canShare) {
+          <input type="text" class="form-control" [value]="done.link" readonly aria-label="The link to send" (focus)="$any($event.target).select()" />
+        }
         <div class="d-flex flex-wrap gap-2">
           <button type="button" class="btn btn-primary" (click)="invite.share(done.link)">Share link</button>
-          <button type="button" class="btn btn-light" (click)="invite.copy(done.link)">Copy link</button>
+          @if (!invite.canShare) { <button type="button" class="btn btn-light" (click)="invite.copy(done.link)">Copy link</button> }
         </div>
         @if (invite.note(); as note) { <p class="small m-0" role="status">{{ note }}</p> }
       </div>

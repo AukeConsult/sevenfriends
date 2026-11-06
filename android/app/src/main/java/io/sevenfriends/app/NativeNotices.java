@@ -86,6 +86,21 @@ final class NativeNotices {
         return json.toString();
     }
 
+    /**
+     * Android's own share sheet ("share with: WhatsApp, Messages, Mail, …") for a text. The WebView has no navigator.share, so the page
+     * asks the app (invite-link.service.ts).
+     */
+    @JavascriptInterface
+    public void share(String title, String text) {
+        activity.runOnUiThread(() -> {
+            Intent send = new Intent(Intent.ACTION_SEND)
+                .setType("text/plain")
+                .putExtra(Intent.EXTRA_SUBJECT, title)
+                .putExtra(Intent.EXTRA_TEXT, text);
+            activity.startActivity(Intent.createChooser(send, title));
+        });
+    }
+
     /** Android's notification settings of this app (only the person can switch notifications on again: an app cannot). */
     @JavascriptInterface
     public void openNotificationSettings() {

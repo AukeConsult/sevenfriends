@@ -11,6 +11,7 @@
 <main class="sf-narrow vstack gap-3">
   @if (app.installed()) {
     <div class="alert alert-success m-0" role="status">✓ You are using the installed app. Nothing more to do.</div>
+    <a routerLink="/" class="btn btn-primary btn-lg">Continue to the home page</a>
   } @else if (!app.androidDevice) {
     <h2 class="m-0">1. Allow the microphone</h2>
     @if (mic() === 'granted') {
