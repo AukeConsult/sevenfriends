@@ -41,7 +41,7 @@ export interface PendingFriend {
 export const QUICK_MAX = 10;
 export const QUICK_LENGTH = 200;
 
-const DEFAULTS: UiPreferences = { chatOrder: 'oldest', enterSends: false, sleepList: true, quickMessages: [], feedIcons: true, setup: 'new', lastPage: null, micRaw: false, pendingFriend: null, welcomeUntil: null };
+const DEFAULTS: UiPreferences = { chatOrder: 'oldest', enterSends: true, sleepList: true, quickMessages: [], feedIcons: true, setup: 'new', lastPage: null, micRaw: false, pendingFriend: null, welcomeUntil: null };
 
 /** The ready-made messages as stored: only texts, trimmed, not empty, not too long, not too many. */
 export function quickOf(value: unknown): string[] {
@@ -76,7 +76,7 @@ function read(): UiPreferences {
     const saved = JSON.parse(raw) as Partial<Record<keyof UiPreferences, unknown>>;
     return {
       chatOrder: saved.chatOrder === 'newest' ? 'newest' : 'oldest',
-      enterSends: saved.enterSends === true,
+      enterSends: saved.enterSends !== false,
       sleepList: saved.sleepList !== false,
       quickMessages: quickOf(saved.quickMessages),
       feedIcons: saved.feedIcons !== false,

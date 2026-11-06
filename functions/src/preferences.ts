@@ -4,7 +4,7 @@ import { DecodedIdToken } from "firebase-admin/auth";
 import { FieldValue } from "firebase-admin/firestore";
 import { asyncHandler, requireAuth } from "./auth";
 import { NoticePreferences, Preferences, SoundPreferences } from "./models";
-import { userDoc } from "./paths";
+import { userDoc, userFields } from "./paths";
 
 /** The built-in sounds (the same list as the app's SoundService). */
 const BUILT_IN = new Set(["none", "ding", "chime", "bell", "pop", "marimba", "soft"]);
@@ -45,7 +45,7 @@ preferencesRouter.use(requireAuth);
 preferencesRouter.get(
   "/",
   asyncHandler(async (_req, res) => {
-    const data = (await userDoc(uidOf(res)).get()).data();
+    const data = await userFields(uidOf(res), "soundPreferences", "noticePreferences");
     const preferences: Preferences = { sounds: soundsOf(data), notices: noticesOf(data) };
     res.json(preferences);
   }),

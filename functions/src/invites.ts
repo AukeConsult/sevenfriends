@@ -3,7 +3,7 @@ import { FieldValue, QueryDocumentSnapshot, getFirestore } from "firebase-admin/
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION } from "./constants";
 import { circleCol, friendRequestCol } from "./paths";
 import { signalRefsOf } from "./signals";
-import { userDoc } from "./paths";
+import { readFields, userFields } from "./paths";
 import { phoneKey } from "./validation";
 
 /**
@@ -17,7 +17,7 @@ import { phoneKey } from "./validation";
  */
 export async function syncIncomingInvites(token: DecodedIdToken): Promise<void> {
   const uid = token.uid;
-  const account = (await userDoc(uid).get()).data() ?? {};
+  const account = (await userFields(uid, "phoneKey")) ?? {};
 
   const probes: [string, string][] = [];
   const email = token.email?.toLowerCase();
@@ -57,7 +57,7 @@ export async function syncIncomingInvites(token: DecodedIdToken): Promise<void> 
       continue;
     }
 
-    const owner = (await ownerRef.get()).data() ?? {};
+    const owner = (await readFields(ownerRef, "displayName", "email")) ?? {};
     await requestRef.set({
       fromUid: ownerRef.id,
       fromName: owner.displayName ?? owner.email ?? "Someone",
@@ -85,13 +85,14 @@ async function isDuplicateConnection(
   entryId: string,
   myUid: string,
 ): Promise<boolean> {
-  const ownerLinked = await ownerCircle.collection(FRIENDS_SUBCOLLECTION).where("linkedUid", "==", myUid).get();
+  const ownerLinked = await ownerCircle.collection(FRIENDS_SUBCOLLECTION).where("linkedUid", "==", myUid).select().get();
   if (ownerLinked.docs.some((d) => d.id !== entryId)) return true;
 
   const mineLinked = await circleCol(myUid)
     .doc(DEFAULT_CIRCLE_ID)
     .collection(FRIENDS_SUBCOLLECTION)
     .where("linkedUid", "==", ownerUid)
+    .select("status", "incomingRequestId")
     .get();
   return mineLinked.docs.some((d) => d.id !== entryId && (d.data().status === "confirmed" || d.data().incomingRequestId));
 }

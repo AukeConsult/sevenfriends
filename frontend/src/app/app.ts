@@ -52,7 +52,7 @@ export class App {
     inject(InstallService); // catches the browser's install offer early (it can arrive soon after the page opens)
     inject(PresenceService); // tells the system when the person is active, away or offline (the dot on their friends)
     inject(AndroidChannelsService); // Android's notification channels follow the sounds chosen here
-    inject(AppUpdateService); // the Android app loads a new version of the web app when it comes to the front
+    inject(AppUpdateService); // a new version of the web app is loaded when the app comes to the front, and at least once an hour
 
     // The page that was open last is remembered (UiPreferences.lastPage) and shown again when the app is opened at its start page.
     let first = true;

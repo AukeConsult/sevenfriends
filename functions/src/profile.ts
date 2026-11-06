@@ -192,7 +192,7 @@ profileRouter.put(
  * friendship makes their app (which listens to its friend list) reload at once and show the new mood.
  */
 async function touchFriends(uid: string): Promise<void> {
-  const mine = await circleCol(uid).doc(DEFAULT_CIRCLE_ID).collection(FRIENDS_SUBCOLLECTION).where("status", "==", "confirmed").get();
+  const mine = await circleCol(uid).doc(DEFAULT_CIRCLE_ID).collection(FRIENDS_SUBCOLLECTION).where("status", "==", "confirmed").select("linkedUid", "peerCircleId").get();
   for (const entry of mine.docs) {
     const data = entry.data();
     if (!data.linkedUid) continue;

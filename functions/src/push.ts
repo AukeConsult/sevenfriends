@@ -5,7 +5,7 @@ import { DocumentReference, FieldValue, getFirestore } from "firebase-admin/fire
 import { getMessaging } from "firebase-admin/messaging";
 import { asyncHandler, requireAuth } from "./auth";
 import { PUSH_DEVICE_COLLECTION } from "./constants";
-import { pushDeviceCol, userDoc } from "./paths";
+import { pushDeviceCol, userFields } from "./paths";
 import { noticesOf } from "./preferences";
 import { deleteRefs } from "./signals";
 
@@ -78,18 +78,18 @@ const cut = (text: string, max: number) => (text.length > max ? `${text.slice(0,
 
 /** The name friends know this person by. */
 export async function nameOf(uid: string, token?: DecodedIdToken): Promise<string> {
-  const data = (await userDoc(uid).get()).data();
+  const data = await userFields(uid, "displayName");
   return (data?.displayName as string | undefined) ?? token?.name ?? token?.email ?? "Someone";
 }
 
 /** Sends a push to every device of `uid`. Never throws (the answer says what happened). */
 export async function sendPush(uid: string, push: PushMessage): Promise<PushResult> {
   try {
-    const account = (await userDoc(uid).get()).data();
+    const account = await userFields(uid, "noticePreferences", "soundPreferences"); // only the switches and the sound choice
     const notices = noticesOf(account);
     if (!push.force && !notices[push.kind]) return { devices: 0, delivered: 0, off: true };
 
-    const devices = (await pushDeviceCol(uid).get()).docs
+    const devices = (await pushDeviceCol(uid).select("token").get()).docs
       .map((d) => ({ ref: d.ref, token: d.data().token as string }))
       .filter((d) => d.token);
     if (!devices.length) return { devices: 0, delivered: 0 };
@@ -156,7 +156,7 @@ pushRouter.post(
     const uid = (res.locals.token as DecodedIdToken).uid;
     const mine = pushDeviceCol(uid).doc(deviceId(token));
 
-    const others = (await getFirestore().collectionGroup(PUSH_DEVICE_COLLECTION).where("token", "==", token).get()).docs
+    const others = (await getFirestore().collectionGroup(PUSH_DEVICE_COLLECTION).where("token", "==", token).select().get()).docs
       .map((d) => d.ref)
       .filter((ref) => ref.path !== mine.path);
     await deleteRefs(others);

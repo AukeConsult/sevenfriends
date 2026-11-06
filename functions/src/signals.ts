@@ -15,7 +15,7 @@ export async function findAccounts(email: string | null, phoneKey: string | null
   const found = new Set<string>();
   for (const [field, value] of probes) {
     if (!value) continue;
-    const snap = await getFirestore().collection(USER_ACCOUNT_COLLECTION).where(field, "==", value).limit(5).get();
+    const snap = await getFirestore().collection(USER_ACCOUNT_COLLECTION).where(field, "==", value).limit(5).select().get();
     snap.docs.forEach((d) => {
       if (d.id !== excludeUid) found.add(d.id);
     });
@@ -30,7 +30,7 @@ export function writeSignal(tx: Transaction, uid: string, connectionId: string):
 
 /** The pings waiting for `uid` right now (read at the start of a check, deleted when it has finished). */
 export async function readSignals(uid: string): Promise<DocumentReference[]> {
-  return (await signalCol(uid).get()).docs.map((d) => d.ref);
+  return (await signalCol(uid).select().get()).docs.map((d) => d.ref);
 }
 
 /** The pings an entry sent (it remembers whom in `signaledUids`), so they can be removed with it. */

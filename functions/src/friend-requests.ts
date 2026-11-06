@@ -5,7 +5,7 @@ import { asyncHandler, requireAuth } from "./auth";
 import { ensureDefaultCircle } from "./circles";
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION } from "./constants";
 import { AcceptOutcome, FriendRequest } from "./models";
-import { circleCol, friendRequestCol, userDoc } from "./paths";
+import { circleCol, friendRequestCol, userDoc, userFields } from "./paths";
 import { ensureSeat } from "./seats";
 import { nameOf, sendPush } from "./push";
 import { unverifiedDetails } from "./validation";
@@ -21,7 +21,7 @@ export async function listPendingRequests(uid: string): Promise<FriendRequest[]>
   const requests = await Promise.all(
     snap.docs.map(async (d): Promise<FriendRequest> => {
       const data = d.data();
-      const sender = (await userDoc(data.fromUid as string).get()).data();
+      const sender = await userFields(data.fromUid as string, "emailLower", "emailVerified", "phoneKey", "verifiedPhone");
       return {
         id: d.id,
         fromName: data.fromName as string,

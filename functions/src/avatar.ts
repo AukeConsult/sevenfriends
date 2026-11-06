@@ -1,6 +1,6 @@
 import { FieldValue, getFirestore } from "firebase-admin/firestore";
 import { MAX_PICTURE_BYTES } from "./constants";
-import { profilePictureDoc, userDoc } from "./paths";
+import { profilePictureDoc, userDoc, userFields } from "./paths";
 import { checkBytes, deleteObject, putObject, readAll } from "./sf-cache";
 
 /**
@@ -11,7 +11,7 @@ const PICTURE_URL = /^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/]+={0,
 
 /** The picture as a data URL, or null when the person has none. */
 export async function readAvatar(uid: string): Promise<string | null> {
-  const account = (await userDoc(uid).get()).data();
+  const account = await userFields(uid, "avatarObjectId");
   const id = account?.avatarObjectId as string | undefined;
   if (id) {
     const bytes = await readAll(uid, id);

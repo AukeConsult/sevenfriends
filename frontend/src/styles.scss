@@ -498,7 +498,7 @@ router-outlet + * { display: block; min-height: 100dvh; }
 
 // ---- Choices (moods, icons): tap one, tap again to take it off ----
 .sf-choices { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; }
-.sf-choices-grid { display: grid; grid-template-columns: repeat(4, 1fr); }
+.sf-choices-grid { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); } // all the choices in ONE row, as wide as the room allows
 .sf-choice {
   display: flex;
   flex-direction: column;
@@ -539,6 +539,7 @@ router-outlet + * { display: block; min-height: 100dvh; }
   img { flex: none; width: 2.5rem; height: 2.5rem; }
   &:focus-visible { outline: 2px solid var(--sf-primary); outline-offset: 2px; }
 }
+.sf-mood-fit { width: fit-content; max-width: 100%; margin-inline: auto; } // the closed mood: only as wide as its content, centered
 .sf-summary-none {
   flex: none;
   width: 2.5rem;

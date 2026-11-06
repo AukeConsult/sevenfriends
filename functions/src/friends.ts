@@ -13,7 +13,7 @@ import {
 } from "./constants";
 import { invitesSentToday, queueInvite } from "./outbox";
 import { Friend, FriendInvite, MediaRef, FriendStatus, NewFriend, ProfilePicture, Socials } from "./models";
-import { circleCol, friendRequestCol, messageCol, userDoc } from "./paths";
+import { circleCol, friendRequestCol, messageCol, userFields } from "./paths";
 import { readAvatar } from "./avatar";
 import { deleteObjects } from "./sf-cache";
 import { tellFriendAsleep } from "./sync";
@@ -88,16 +88,18 @@ function toJson(doc: FirebaseFirestore.DocumentSnapshot): Friend {
  */
 /** For conversations from before the friendship remembered it: the time of the newest message of the feed (or null). */
 async function lastSpoken(uid: string, connectionId: string): Promise<string | null> {
-  const feed = await messageCol(uid).where("connectionId", "==", connectionId).get();
-  const times = feed.docs.map((d) => d.data().time).filter((t): t is Timestamp => t instanceof Timestamp);
-  return times.length ? new Date(Math.max(...times.map((t) => t.toMillis()))).toISOString() : null;
+  // the newest message only (index messages(connectionId, time desc)), not the whole feed
+  const newest = await messageCol(uid).where("connectionId", "==", connectionId).orderBy("time", "desc").limit(1).select("time").get();
+  const time = newest.docs[0]?.get("time");
+  return time instanceof Timestamp ? time.toDate().toISOString() : null;
 }
 
 async function withUnverified(friend: Friend, entry: FirebaseFirestore.DocumentData | undefined, uid: string): Promise<Friend> {
   if (!entry || friend.status === "rejected") return friend;
   const other = (entry.linkedUid as string | null | undefined) ?? (entry.signaledUids as string[] | undefined)?.[0];
   if (!other) return friend;
-  const account = (await userDoc(other).get()).data();
+  // only what is shown here: the verification, the mood, the presence and the picture of the other person
+  const account = await userFields(other, "emailLower", "emailVerified", "phoneKey", "verifiedPhone", "country", "mood", "moodMessage", "presence", "lastSeenAt", "profileIcon", "profilePictureAt", "avatarObjectId", "displayName");
   const unverified = account && entry.trusted !== true ? unverifiedDetails(account) : []; // "this is really them" (trusted) hides the warning
   // the mood is for confirmed friends only
   const mood =
@@ -163,7 +165,7 @@ friendsRouter.post(
     const keys = { phoneKey: phoneKey(data.phone) };
     // not myself: my own email or phone number (from the login, or on my account) cannot be added as a friend
     const token = res.locals.token as DecodedIdToken;
-    const mine = (await userDoc(token.uid).get()).data();
+    const mine = await userFields(token.uid, "emailLower", "phoneKey");
     const myEmails = [token.email, mine?.emailLower].filter(Boolean).map((e) => String(e).toLowerCase());
     const myPhones = [phoneKey(token.phone_number), mine?.phoneKey].filter(Boolean);
     if ((data.email && myEmails.includes(data.email.toLowerCase())) || (keys.phoneKey && myPhones.includes(keys.phoneKey))) {
@@ -321,7 +323,7 @@ friendsRouter.post(
       res.status(429).json({ error: "You have sent many invitations today. Try again tomorrow." });
       return;
     }
-    const fromName = ((await userDoc(token.uid).get()).data()?.displayName as string | undefined) ?? token.name ?? token.email ?? "Someone";
+    const fromName = ((await userFields(token.uid, "displayName"))?.displayName as string | undefined) ?? token.name ?? token.email ?? "Someone";
 
     const sent = await getFirestore().runTransaction(async (tx) => {
       const entry = (await tx.get(ref)).data();
@@ -359,7 +361,7 @@ friendsRouter.delete(
     const before = (await ref.get()).data();
     if (before) {
       const people = before.linkedUid ? [uid, before.linkedUid as string] : [uid];
-      const feeds = await Promise.all(people.map((p) => messageCol(p).where("connectionId", "==", id).get()));
+      const feeds = await Promise.all(people.map((p) => messageCol(p).where("connectionId", "==", id).select("media").get()));
       await deleteObjects(feeds.flatMap((feed) => feed.docs.flatMap((d) => (d.data().media as MediaRef | undefined) ?? [])));
     }
 
@@ -373,7 +375,7 @@ friendsRouter.delete(
       if (!data) return; // already gone
       if (data.status === "confirmed" && data.linkedUid) endedWith = data.linkedUid as string;
       const people = data.linkedUid ? [uid, data.linkedUid as string] : [uid];
-      const feeds = await Promise.all(people.map((p) => tx.get(messageCol(p).where("connectionId", "==", id))));
+      const feeds = await Promise.all(people.map((p) => tx.get(messageCol(p).where("connectionId", "==", id).select("media"))));
 
       // ---- writes ----
       tx.delete(ref);

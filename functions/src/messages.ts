@@ -10,7 +10,7 @@ const uidOf = (res: { locals: Record<string, unknown> }) => (res.locals.token as
 
 /** My unread incoming messages, newest first. */
 export async function listUnreadMessages(uid: string): Promise<Message[]> {
-  const snap = await messageCol(uid).where("read", "==", false).get();
+  const snap = await messageCol(uid).where("read", "==", false).select("fromName", "text", "media", "inBox", "time", "connectionId").get();
   return snap.docs
     .map((d) => {
       const data = d.data();

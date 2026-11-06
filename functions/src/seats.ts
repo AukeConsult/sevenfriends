@@ -100,7 +100,7 @@ export async function placeWaitingRequests(uid: string): Promise<void> {
   const db = getFirestore();
   const myFriends = circleCol(uid).doc(DEFAULT_CIRCLE_ID).collection(FRIENDS_SUBCOLLECTION);
 
-  const snap = await friendRequestCol(uid).where("status", "==", "pending").get();
+  const snap = await friendRequestCol(uid).where("status", "==", "pending").select("seatFriendId", "createdAt").get();
   const waiting = snap.docs
     .filter((d) => !d.data().seatFriendId)
     .sort((a, b) => millis(a.data().createdAt) - millis(b.data().createdAt));

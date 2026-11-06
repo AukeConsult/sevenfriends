@@ -61,7 +61,7 @@ inviteRouter.get(
       res.status(404).json({ error: "This invite link is not valid (any more)" });
       return;
     }
-    const snap = await getFirestore().collection(USER_ACCOUNT_COLLECTION).where("inviteCode", "==", code).limit(1).get();
+    const snap = await getFirestore().collection(USER_ACCOUNT_COLLECTION).where("inviteCode", "==", code).limit(1).select("displayName", "emailLower", "verifiedPhone", "phone").get();
     if (snap.empty) {
       res.status(404).json({ error: "This invite link is not valid (any more)" });
       return;
@@ -73,7 +73,7 @@ inviteRouter.get(
     }
     const data = owner.data();
     // has the owner already asked me to be their friend? (found by the check that runs when I open the app, see notifications.ts)
-    const asked = await friendRequestCol(uidOf(res)).where("status", "==", "pending").where("fromUid", "==", owner.id).limit(1).get();
+    const asked = await friendRequestCol(uidOf(res)).where("status", "==", "pending").where("fromUid", "==", owner.id).limit(1).select().get();
     res.json({
       self: false,
       requestId: asked.empty ? null : asked.docs[0].id,

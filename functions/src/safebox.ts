@@ -54,7 +54,7 @@ type Connection = NonNullable<Awaited<ReturnType<typeof connectionOf>>>;
  * (the box is full) and returns null.
  */
 async function storeInBox(res: Response, connection: Connection, bytes: Buffer, name: string, checked: { kind: SafeboxItem["kind"]; mime: string }, thumb: Buffer | null): Promise<SafeboxItem | null> {
-  const existing = (await safeboxItems(connection.id).get()).docs;
+  const existing = (await safeboxItems(connection.id).select("bytes").get()).docs;
   if (existing.length >= SAFEBOX_MAX_ITEMS) {
     res.status(409).json({ error: `The safebox is full (at most ${SAFEBOX_MAX_ITEMS} files). Delete some first.` });
     return null;
@@ -245,7 +245,7 @@ safeboxRouter.get("/:itemId", asyncHandler((req, res) => sendFile(req, res, fals
 /** The whole box of a friendship goes: the list and the files (when the friendship ends or an account is erased). Never raises. */
 export async function deleteBox(connectionId: string): Promise<void> {
   try {
-    const docs = await safeboxItems(connectionId).get();
+    const docs = await safeboxItems(connectionId).select().get();
     await Promise.all(docs.docs.map((d) => d.ref.delete()));
   } catch (err) {
     console.error(`Could not delete the safebox list of ${connectionId}`, err);

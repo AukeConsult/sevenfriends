@@ -6,6 +6,7 @@
  *  - transactions: all reads before any write, optimistic retry when something changed,
  *    all-or-nothing commit; `update` of a missing document fails; `create` of an existing one fails (code 6)
  *  - orderBy leaves out documents that lack the field
+ *  - select(...fields) and getAll(..., { fieldMask }) return ONLY those fields, so code that reads a field it did not ask for fails here
  *  - serverTimestamp() values are strictly increasing, so "oldest first" is deterministic
  *
  * Set FIRESTORE_EMULATOR_HOST to run the same tests against the real emulator instead (see setup.ts).
@@ -150,6 +151,12 @@ export class DocSnap {
   }
 }
 
+/** A snapshot with only the asked fields (what `select` and a field mask do). */
+const projected = (snap: DocSnap, fields: string[]) => {
+  const data = snap.data();
+  return new DocSnap(snap.ref, data === undefined ? undefined : Object.fromEntries(fields.filter((f) => f in data).map((f) => [f, data[f]])));
+};
+
 export class QuerySnap {
   constructor(readonly docs: DocSnap[]) {}
   get size() {
@@ -202,17 +209,31 @@ export class Query {
     private readonly filters: Filter[] = [],
     private readonly sort?: { field: string; dir: "asc" | "desc" },
     private readonly max?: number,
+    private readonly fields?: string[],
   ) {}
 
   where(field: string, op: string, value: any) {
-    if (op !== "==" && op !== "in") throw new Error(`fake-firestore: operator "${op}" not supported`);
-    return new Query(this.scope, [...this.filters, { field, op, value }], this.sort, this.max);
+    if (op !== "==" && op !== "in" && op !== ">=") throw new Error(`fake-firestore: operator "${op}" not supported`);
+    return new Query(this.scope, [...this.filters, { field, op, value }], this.sort, this.max, this.fields);
   }
   orderBy(field: string, dir: "asc" | "desc" = "asc") {
-    return new Query(this.scope, this.filters, { field, dir }, this.max);
+    return new Query(this.scope, this.filters, { field, dir }, this.max, this.fields);
   }
   limit(n: number) {
-    return new Query(this.scope, this.filters, this.sort, n);
+    return new Query(this.scope, this.filters, this.sort, n, this.fields);
+  }
+  /** Only these fields come back (none = only the documents' names). */
+  select(...fields: string[]) {
+    return new Query(this.scope, this.filters, this.sort, this.max, fields);
+  }
+  /** The number of documents, without reading them. */
+  count() {
+    return {
+      get: async () => {
+        const size = (await this.get()).size;
+        return { data: () => ({ count: size }) };
+      },
+    };
   }
 
   /** @internal: the key a transaction watches: the collection path, or `group:<name>` for a group query */
@@ -230,6 +251,7 @@ export class Query {
     for (const f of this.filters) {
       found = found.filter((d) => {
         const v = d.get(f.field);
+        if (f.op === ">=") return v !== undefined && order(v, f.value) >= 0;
         return f.op === "==" ? same(v, f.value) : (f.value as any[]).some((x) => same(v, x));
       });
     }
@@ -239,6 +261,7 @@ export class Query {
       found.sort((a, b) => order(a.get(field), b.get(field)) * (dir === "asc" ? 1 : -1));
     }
     if (this.max !== undefined) found = found.slice(0, this.max);
+    if (this.fields) found = found.map((d) => projected(d, this.fields!));
     return new QuerySnap(found);
   }
 }
@@ -332,6 +355,11 @@ class FakeFirestore {
   }
   batch() {
     return new Batch();
+  }
+  /** Several documents at once; the last argument may be `{ fieldMask }`. */
+  async getAll(...args: any[]) {
+    const options = args[args.length - 1] instanceof DocRef ? undefined : (args.pop() as { fieldMask?: string[] });
+    return (args as DocRef[]).map((ref) => (options?.fieldMask ? projected(snapOf(ref.path), options.fieldMask) : snapOf(ref.path)));
   }
   async runTransaction<T>(fn: (tx: Tx) => Promise<T>): Promise<T> {
     for (let attempt = 0; attempt < 25; attempt++) {

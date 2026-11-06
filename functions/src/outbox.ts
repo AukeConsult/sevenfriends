@@ -71,10 +71,8 @@ export function queueInvite(tx: Transaction, invite: InviteMail): DocumentRefere
 
 /** How many invitations this person sent during the last 24 hours. */
 export async function invitesSentToday(uid: string): Promise<number> {
-  const since = Date.now() - 24 * 60 * 60 * 1000;
-  const snap = await getFirestore().collection(MAIL_COLLECTION).where("fromUid", "==", uid).get();
-  return snap.docs.filter((d) => {
-    const at = d.data().createdAt;
-    return !(at instanceof Timestamp) || at.toMillis() >= since;
-  }).length;
+  const since = Timestamp.fromMillis(Date.now() - 24 * 60 * 60 * 1000);
+  // counted by the database (nothing is read), only the last 24 hours. Needs the index mail(fromUid, createdAt) in firestore.indexes.json
+  const count = await getFirestore().collection(MAIL_COLLECTION).where("fromUid", "==", uid).where("createdAt", ">=", since).count().get();
+  return count.data().count;
 }

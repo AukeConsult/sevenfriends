@@ -3,7 +3,7 @@ import { DecodedIdToken } from "firebase-admin/auth";
 import { asyncHandler, requireAuth } from "./auth";
 import { BOX_PREFIX, CACHE_ROOT, CHUNK_BYTES, DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAX_CHUNKS, MAX_UPLOAD_BYTES } from "./constants";
 import { MediaKind, MediaUpload } from "./models";
-import { circleCol, messageCol, userDoc } from "./paths";
+import { circleCol, messageCol, readFields, userFields } from "./paths";
 import {
   OBJECT_NAME,
   checkBytes,
@@ -153,7 +153,7 @@ cacheRouter.put(
 
 /** Is `reader` one of `owner`'s confirmed friends? */
 async function isFriendOf(reader: string, owner: string): Promise<boolean> {
-  const mine = await circleCol(reader).doc(DEFAULT_CIRCLE_ID).collection(FRIENDS_SUBCOLLECTION).where("linkedUid", "==", owner).get();
+  const mine = await circleCol(reader).doc(DEFAULT_CIRCLE_ID).collection(FRIENDS_SUBCOLLECTION).where("linkedUid", "==", owner).select("status").get();
   return mine.docs.some((d) => d.data().status === "confirmed");
 }
 
@@ -169,9 +169,9 @@ async function mayRead(reader: string, owner: string, objectId: string): Promise
     const entry = (await circleCol(reader).doc(DEFAULT_CIRCLE_ID).collection(FRIENDS_SUBCOLLECTION).doc(owner.slice(BOX_PREFIX.length)).get()).data();
     return entry?.status === "confirmed" && Boolean(entry.linkedUid);
   }
-  const message = (await messageCol(reader).doc(objectId).get()).data();
+  const message = await readFields(messageCol(reader).doc(objectId), "media", "fromUid");
   if (message?.media && message.fromUid === owner) return true;
-  const account = (await userDoc(owner).get()).data();
+  const account = await userFields(owner, "avatarObjectId");
   return account?.avatarObjectId === objectId && (await isFriendOf(reader, owner));
 }
 

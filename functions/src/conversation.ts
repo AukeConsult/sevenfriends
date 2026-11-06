@@ -4,7 +4,7 @@ import { DocumentReference, FieldValue, Timestamp, getFirestore } from "firebase
 import { asyncHandler } from "./auth";
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION } from "./constants";
 import { ChatMessage, Conversation, MediaRef, MessageDeleteCriteria, MessageLink, MessageDeleteResult, NewMedia } from "./models";
-import { circleCol, messageCol, userDoc } from "./paths";
+import { circleCol, messageCol, userFields } from "./paths";
 import { sendPush } from "./push";
 import { linkOf } from "./link-preview";
 import { touchFeed, touchFeedIfExists } from "./sync";
@@ -57,14 +57,20 @@ conversationRouter.get(
     if (!connection) return;
     const uid = uidOf(res);
 
-    const snap = await messageCol(uid).where("connectionId", "==", connection.id).get();
+    // only the latest FEED_LIMIT (newest first, then turned round below): a long conversation is not read whole every time.
+    // Needs the index messages(connectionId, time desc) in firestore.indexes.json
+    const snap = await messageCol(uid)
+      .where("connectionId", "==", connection.id)
+      .orderBy("time", "desc")
+      .limit(FEED_LIMIT)
+      .select("text", "fromUid", "read", "time", "editedAt", "hidden", "inBox", "media", "link")
+      .get();
     const messages: ChatMessage[] = snap.docs
       .map((d) => {
         const m = d.data();
         return { id: d.id, text: m.text as string, mine: m.fromUid === uid, read: Boolean(m.read), time: iso(m.time), edited: Boolean(m.editedAt), hidden: Boolean(m.hidden), inBox: Boolean(m.inBox), media: (m.media as MediaRef | undefined) ?? null, link: (m.link as MessageLink | undefined) ?? null };
       })
-      .sort((a, b) => (a.time ?? "").localeCompare(b.time ?? ""))
-      .slice(-FEED_LIMIT);
+      .sort((a, b) => (a.time ?? "").localeCompare(b.time ?? ""));
     const conversation: Conversation = { friend: { id: connection.id, name: connection.name }, messages };
     res.json(conversation);
   }),
@@ -133,7 +139,7 @@ conversationRouter.post(
     const common = {
       connectionId: connection.id,
       fromUid: token.uid,
-      fromName: ((await userDoc(token.uid).get()).data()?.displayName as string | undefined) ?? token.name ?? token.email ?? "Someone",
+      fromName: ((await userFields(token.uid, "displayName"))?.displayName as string | undefined) ?? token.name ?? token.email ?? "Someone",
       toUid: connection.peerUid,
       text,
       ...(media ? { media } : {}),
@@ -186,7 +192,7 @@ conversationRouter.post(
     const contains = typeof body.contains === "string" ? body.contains.trim().toLowerCase().slice(0, 100) : "";
     const cutoff = days === null ? null : Date.now() - days * DAY_MS;
 
-    const snap = await messageCol(uid).where("connectionId", "==", connection.id).get();
+    const snap = await messageCol(uid).where("connectionId", "==", connection.id).select("fromUid", "time", "text", "media").get();
     const matching = snap.docs.filter((d) => {
       const m = d.data();
       if (whose === "mine" && m.fromUid !== uid) return false;
@@ -321,6 +327,7 @@ conversationRouter.post(
     const unread = await messageCol(uidOf(res))
       .where("connectionId", "==", connection.id)
       .where("read", "==", false)
+      .select() // only the documents' names are needed
       .get();
     const batch = getFirestore().batch();
     unread.docs.forEach((d) => batch.update(d.ref, { read: true, readAt: FieldValue.serverTimestamp() }));

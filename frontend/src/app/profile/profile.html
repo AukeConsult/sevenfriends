@@ -17,8 +17,8 @@
 
   <div class="card sf-unframed">
     <div class="card-body text-center">
-      <!-- the picture on the left, my mood to the right of it -->
-      <div class="d-flex align-items-center gap-3 text-start">
+      <!-- the picture, and my mood under it (open, the mood needs the whole width) -->
+      <div class="d-flex flex-column align-items-center gap-3">
       <div class="flex-none text-center">
       @if (picture(); as uploaded) {
         <img class="sf-photo" [src]="uploaded" alt="" decoding="sync" />
@@ -40,7 +40,7 @@
         }
       </div>
       </div>
-      <div class="flex-grow-1 min-w-0">
+      <div class="w-100 min-w-0">
         <p class="sf-hint mb-1">Your mood (your friends see it)</p>
         <app-mood-editor class="d-block" />
       </div>

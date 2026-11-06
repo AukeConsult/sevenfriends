@@ -14,7 +14,7 @@ export type Write =
   | { op: "delete"; ref: DocRef };
 
 /** A `where` condition of a query. */
-export type Filter = { field: string; op: "==" | "in"; value: any };
+export type Filter = { field: string; op: "==" | "in" | ">="; value: any };
 
 /** Where a query looks: one collection, or every collection with this name (collection group). */
 export type Scope = { collection: string } | { group: string };
