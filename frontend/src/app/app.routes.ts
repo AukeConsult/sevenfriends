@@ -42,7 +42,8 @@ export const routes: Routes = [
   { path: 'media/:ownerId/:objectId', component: MediaViewer, canActivate: [authGuard], title: 'Image – Seven Friends' },
   { path: 'setup', component: Setup, canActivate: [authGuard], title: 'Set up – Seven Friends' },
   { path: 'pending', component: Pending, canActivate: [authGuard], title: 'Waiting – Seven Friends' },
-  { path: 'profile', component: Profile, canActivate: [authGuard], title: 'Profile – Seven Friends' },
+  // the profile is the first tab of Settings; the earlier address leads there
+  { path: 'profile', redirectTo: 'settings/profile', pathMatch: 'full' },
   { path: 'profile/picture', component: ProfilePicturePage, canActivate: [authGuard], title: 'Your picture – Seven Friends' },
   // Settings: ONE page with a tab for each part (the tab is the child route)
   {
@@ -50,7 +51,8 @@ export const routes: Routes = [
     component: SettingsShell,
     canActivate: [authGuard],
     children: [
-      { path: '', pathMatch: 'full', redirectTo: 'preferences' },
+      { path: '', pathMatch: 'full', redirectTo: 'profile' },
+      { path: 'profile', component: Profile, title: 'Profile – Seven Friends' },
       { path: 'preferences', component: Settings, data: { section: 'preferences' }, title: 'Preferences – Seven Friends' },
       { path: 'sounds', component: Settings, data: { section: 'sounds' }, title: 'Sounds – Seven Friends' },
       { path: 'sounds/:event', component: SoundPicker, title: 'Choose a sound – Seven Friends' },

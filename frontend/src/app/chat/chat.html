@@ -217,8 +217,8 @@
           </span>
         }
         <!-- my own message: tap it to edit or delete it -->
-        <div class="sf-bubble" [class.sf-bubble-media]="message.media" [class.sf-bubble-hidden]="message.media && pictureHidden().has(message.id)" [class.sf-bubble-tap]="message.mine" [attr.role]="message.mine ? 'button' : null" [attr.tabindex]="message.mine ? 0 : null"
-             [attr.aria-expanded]="message.mine ? selected() === message.id : null" (click)="select(message)" (keydown.enter)="select(message)">
+        <div class="sf-bubble" [class.sf-bubble-media]="message.media" [class.sf-bubble-hidden]="message.media && pictureHidden().has(message.id)" [class.sf-bubble-tap]="message.mine || message.inBox" [attr.role]="message.mine || message.inBox ? 'button' : null" [attr.tabindex]="message.mine || message.inBox ? 0 : null"
+             [attr.aria-expanded]="message.mine || message.inBox ? selected() === message.id : null" (click)="select(message)" (keydown.enter)="select(message)">
           @if (message.inBox) {
             <!-- the picture or video was moved to the safebox: the conversation only says so -->
             <a [routerLink]="['/friends', friendId, 'safebox']" class="sf-box-note">
@@ -294,7 +294,7 @@
           </div>
          }
         }
-        @if (message.mine && selected() === message.id) {
+        @if ((message.mine || message.inBox) && selected() === message.id) {
           <div class="sf-msg-actions">
             @if (deleting() === message.id) {
               <span class="sf-hint">Delete for both of you?</span>
@@ -307,7 +307,7 @@
                   <button type="button" class="btn btn-light btn-sm" (click)="download(media)">Download</button>
                 }
               }
-              <button type="button" class="btn btn-light btn-sm" (click)="startEdit(message)">Edit</button>
+              @if (message.mine && !message.inBox) { <button type="button" class="btn btn-light btn-sm" (click)="startEdit(message)">Edit</button> }
               <button type="button" class="btn btn-outline-danger btn-sm" (click)="deleting.set(message.id)">Delete</button>
             }
           </div>

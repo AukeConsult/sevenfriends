@@ -3,7 +3,7 @@
   <button type="button" class="sf-summary" [attr.aria-expanded]="open()" aria-controls="mood-panel" [disabled]="!loaded()"
           (click)="open.set(!open())">
     @if (mood(); as current) {
-      <img [src]="moodIcon(current)" [alt]="moodLabel(current)" width="40" height="40" />
+      <img [src]="moodIcon(current)" [alt]="moodLabel(current)" width="28" height="28" />
     } @else {
       <span class="sf-summary-none" aria-hidden="true">+</span>
     }

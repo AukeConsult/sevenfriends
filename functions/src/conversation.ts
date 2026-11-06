@@ -217,8 +217,11 @@ conversationRouter.post(
   }),
 );
 
-/** My message of this connection (both copies), or null after answering 404 / 403. */
-async function ownMessage(req: Request, res: Response) {
+/**
+ * My message of this connection (both copies), or null after answering 404 / 403. With `allowMoved`, the note of a picture or video
+ * that was moved to the safebox (`inBox`) counts as mine even when my friend sent it: it holds nothing any more, and either friend may remove it.
+ */
+async function ownMessage(req: Request, res: Response, allowMoved = false) {
   const connection = await connectionOf(req, res);
   if (!connection) return null;
   const uid = uidOf(res);
@@ -228,7 +231,7 @@ async function ownMessage(req: Request, res: Response) {
     res.status(404).json({ error: "Message not found" });
     return null;
   }
-  if (data.fromUid !== uid) {
+  if (data.fromUid !== uid && !(allowMoved && data.inBox)) {
     res.status(403).json({ error: "You can only change your own messages" });
     return null;
   }
@@ -270,11 +273,11 @@ conversationRouter.put(
   }),
 );
 
-/** Delete one of my messages: it disappears for both people, and so does its file. */
+/** Delete one of my messages (or the note of a file moved to the safebox, whoever sent it): it disappears for both people, and so does its file. The file in the safebox stays. */
 conversationRouter.delete(
   "/:messageId",
   asyncHandler(async (req, res) => {
-    const own = await ownMessage(req, res);
+    const own = await ownMessage(req, res, true);
     if (!own) return;
     if (own.media) await deleteObject(own.media.ownerId, own.media.objectId); // the file goes FIRST: if the database delete fails it is wiped anyway
     const batch = getFirestore().batch();

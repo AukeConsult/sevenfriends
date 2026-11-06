@@ -1,44 +1,13 @@
 <main class="sf-page">
-  <div class="sf-hero sf-hero-home text-center">
+  <header class="sf-hero sf-hero-home text-center">
     <div class="sf-logo sf-logo-lg" aria-hidden="true">7</div>
-    <h1 class="mt-3 mb-2">Seven Friends</h1>
-    <p class="sf-hero-tag m-0">Stay close to the friends who matter most.</p>
+    <h1>Seven Friends</h1>
     <app-seat-dots [taken]="seatsTaken()" />
-  </div>
+    <p class="sf-hint small m-0">{{ seatsTaken() }} of {{ max }} seats taken@if (sleeping() > 0) { · {{ sleeping() }} on the sleep list }</p>
+  </header>
 
-  @if (setupLeft()) {
-    <div class="alert alert-info d-flex flex-wrap align-items-center justify-content-between gap-2" role="status">
-      <span>Your sound and notifications are not set up yet.</span>
-      <a routerLink="/setup" class="btn btn-primary btn-sm">Finish setup</a>
-    </div>
-  }
-
-  @if (!install.installed() && install.mobile) {
-    <!-- the app is not installed on this phone: a small way to the page that explains it -->
-    <div class="text-center mb-3">
-      <a routerLink="/install-app" class="sf-install-chip"><span aria-hidden="true">📲</span> Install the app</a>
-    </div>
-  }
-
-  @if (friendLink(); as url) {
-    <!-- the friend link: send it to the friends who should take part -->
-    <details class="sf-expand sf-expand-quiet mb-3">
-      <summary>Invite friends with a link</summary>
-      <div class="card card-body vstack gap-2 mt-2">
-        <p class="m-0">Just send this link to the friends you would like to take part. When they open it, sign in (or create an account) and confirm, a friend request is sent to you.</p>
-        <input type="text" class="form-control" [value]="url" readonly aria-label="Your friend link" (focus)="$any($event.target).select()" />
-        <div class="d-flex flex-wrap gap-2">
-          <button type="button" class="btn btn-primary btn-sm" (click)="invite.share(url)">Share link</button>
-          <button type="button" class="btn btn-light btn-sm" (click)="invite.copy(url)">Copy link</button>
-        </div>
-        @if (invite.note(); as note) { <span class="small text-secondary" role="status">{{ note }}</span> }
-        @if (unverified().length) {
-          <span class="small text-danger">Your {{ unverified().join(' and ') }} is not verified yet: confirm it (on your profile) so the requests can reach you.</span>
-        }
-        <span class="small text-secondary">The link contains your {{ url.includes('%40') ? 'email address' : 'phone number' }}.</span>
-      </div>
-    </details>
-  }
+  <!-- my mood, small, right under the header -->
+  <app-mood-editor class="d-block mb-3" />
 
   @if (error()) {
     <div class="alert alert-danger d-flex align-items-center justify-content-between" role="alert">
@@ -46,8 +15,6 @@
       <button type="button" class="btn btn-link" (click)="load()">Retry</button>
     </div>
   }
-
-  <app-mood-editor class="d-block mb-3" />
 
   @if (notice(); as n) {
     <div class="alert" [class.alert-success]="n.kind === 'success'" [class.alert-warning]="n.kind === 'warning'" role="status">
@@ -59,65 +26,121 @@
     <p class="text-secondary">Checking for news…</p>
   }
 
-  @if (allQuiet()) {
+  <!-- 1. what needs me -->
+  @if (needsYou()) {
+    <section aria-label="Needs you">
+      <h2 class="sf-section">Needs you</h2>
+
+      @if (setupLeft()) {
+        <div class="alert alert-info d-flex flex-wrap align-items-center justify-content-between gap-2" role="status">
+          <span>Your sound and notifications are not set up yet.</span>
+          <a routerLink="/setup" class="btn btn-primary btn-sm">Finish setup</a>
+        </div>
+      }
+
+      @if (unverified().length) {
+        <div class="alert alert-warning" role="status">
+          Your {{ unverified().join(' and ') }} is not verified yet: confirm it (in Settings) so friend requests can reach you.
+        </div>
+      }
+
+      @if (seated().length) {
+        <ul class="sf-list">
+          @for (request of seated(); track request.id) {
+            <li class="sf-list-item">
+              <span class="sf-list-text">
+                <strong>{{ request.fromName }}</strong>
+                <small>wants to be your friend</small>
+                @if (request.message) { <small class="fst-italic">“{{ request.message }}”</small> }
+                @if (request.fromUnverified.length) {
+                  <small class="text-warning-emphasis">Has not verified {{ request.fromUnverified.length === 2 ? 'their email or phone' : request.fromUnverified[0] === 'email' ? 'their email' : 'their phone' }}: we cannot be sure it is really them.</small>
+                }
+              </span>
+              <button type="button" class="btn btn-primary" (click)="accept(request)">Confirm</button>
+              <button type="button" class="btn btn-outline-secondary" (click)="reject(request)">Reject</button>
+            </li>
+          }
+        </ul>
+      }
+
+      @if (waitingCount() > 0) {
+        <a routerLink="/pending" class="sf-link-row">
+          {{ waitingCount() }} {{ waitingCount() === 1 ? 'request is' : 'requests are' }} waiting for a free seat
+          <span aria-hidden="true">›</span>
+        </a>
+      }
+
+      @if (groups().length) {
+        <ul class="sf-list">
+          @for (group of groups(); track group.key) {
+            <li class="sf-message-item">
+              <div class="sf-message-head">
+                <strong class="sf-ellipsis">{{ group.name }}@if (group.count > 1) { <span class="badge text-bg-primary ms-2">{{ group.count }}</span> }</strong>
+                <span class="sf-message-actions">
+                  @if (group.connectionId) {
+                    <a [routerLink]="['/friends', group.connectionId]" class="btn btn-primary btn-sm">Open</a>
+                  }
+                  <button type="button" class="btn btn-outline-secondary btn-sm" (click)="markGroupRead(group)">Mark read</button>
+                </span>
+              </div>
+              <span class="sf-wrap">{{ group.last.text }}</span>
+              @if (group.last.time) {
+                <small class="sf-message-time">{{ group.last.time | date: 'short' }}</small>
+              }
+              @if (group.connectionId) {
+                <form class="input-group input-group-sm mt-2" (submit)="$event.preventDefault(); sendReply(group)">
+                  <input type="text" class="form-control" placeholder="Quick reply" [attr.aria-label]="'Reply to ' + group.name"
+                    [value]="replies()[group.key] ?? ''" (input)="setReply(group.key, $any($event.target).value)" />
+                  <button type="submit" class="btn btn-primary" [disabled]="replying() === group.key || !(replies()[group.key] ?? '').trim()">Send</button>
+                </form>
+              }
+            </li>
+          }
+        </ul>
+      }
+    </section>
+  } @else if (loaded() && !error() && !quiet().length) {
     <div class="sf-empty">
       <span class="sf-empty-icon" aria-hidden="true">🌙</span>
-      <p class="mb-0">All quiet. Nothing new right now.</p>
+      <p class="mb-0">All quiet. Nothing needs you right now.</p>
     </div>
   }
 
-  @if (seated().length) {
-    <section aria-label="Friend requests">
-      <h2 class="sf-section">Friend requests</h2>
+  <!-- 2. keep in touch: only friends who have gone quiet -->
+  @if (quiet().length) {
+    <section aria-label="Keep in touch">
+      <h2 class="sf-section">Keep in touch</h2>
       <ul class="sf-list">
-        @for (request of seated(); track request.id) {
+        @for (friend of quiet(); track friend.id) {
           <li class="sf-list-item">
-            <span class="sf-list-text">
-              <strong>{{ request.fromName }}</strong>
-              <small>wants to be your friend</small>
-              @if (request.message) { <small class="fst-italic">“{{ request.message }}”</small> }
-              @if (request.fromUnverified.length) {
-                <small class="text-warning-emphasis">Has not verified {{ request.fromUnverified.length === 2 ? 'their email or phone' : request.fromUnverified[0] === 'email' ? 'their email' : 'their phone' }}: we cannot be sure it is really them.</small>
-              }
-            </span>
-            <button type="button" class="btn btn-primary" (click)="accept(request)">Confirm</button>
-            <button type="button" class="btn btn-outline-secondary" (click)="reject(request)">Reject</button>
+            <span class="sf-list-text">{{ quietText(friend) }}</span>
+            <a [routerLink]="['/friends', friend.id]" class="btn btn-outline-primary btn-sm">Say hi</a>
           </li>
         }
       </ul>
     </section>
   }
 
-  @if (waitingCount() > 0) {
-    <a routerLink="/pending" class="sf-link-row">
-      {{ waitingCount() }} {{ waitingCount() === 1 ? 'request is' : 'requests are' }} waiting for a free seat
-      <span aria-hidden="true">›</span>
-    </a>
-  }
-
-  @if (messages().length) {
-    <section aria-label="Messages">
-      <h2 class="sf-section">Messages</h2>
-      <ul class="sf-list">
-        @for (message of messages(); track message.id) {
-          <li class="sf-message-item">
-            <!-- the name and the buttons on the first line, the message (and its time) on the lines below, over the whole width -->
-            <div class="sf-message-head">
-              <strong class="sf-ellipsis">{{ message.fromName }}</strong>
-              <span class="sf-message-actions">
-                @if (message.connectionId) {
-                  <a [routerLink]="['/friends', message.connectionId]" class="btn btn-primary btn-sm">Open</a>
-                }
-                <button type="button" class="btn btn-outline-secondary btn-sm" (click)="markRead(message)">Mark read</button>
-              </span>
-            </div>
-            <span class="sf-wrap">{{ message.text }}</span>
-            @if (message.time) {
-              <small class="sf-message-time">{{ message.time | date: 'short' }}</small>
-            }
-          </li>
-        }
-      </ul>
-    </section>
-  }
+  <!-- 4. more -->
+  <details class="sf-expand sf-expand-quiet mb-3">
+    <summary>More</summary>
+    <div class="vstack gap-3 mt-2">
+      @if (!install.installed() && install.mobile) {
+        <a routerLink="/install-app" class="sf-install-chip align-self-start"><span aria-hidden="true">📲</span> Install the app</a>
+      }
+      @if (friendLink(); as url) {
+        <div class="card card-body vstack gap-2">
+          <strong>Invite friends with a link</strong>
+          <p class="m-0">Send this link to the friends you would like to take part. When they open it, sign in (or create an account) and confirm, a friend request is sent to you.</p>
+          <input type="text" class="form-control" [value]="url" readonly aria-label="Your friend link" (focus)="$any($event.target).select()" />
+          <div class="d-flex flex-wrap gap-2">
+            <button type="button" class="btn btn-primary btn-sm" (click)="invite.share(url)">Share link</button>
+            <button type="button" class="btn btn-light btn-sm" (click)="invite.copy(url)">Copy link</button>
+          </div>
+          @if (invite.note(); as note) { <span class="small text-secondary" role="status">{{ note }}</span> }
+          <span class="small text-secondary">The link contains your {{ url.includes('%40') ? 'email address' : 'phone number' }}.</span>
+        </div>
+      }
+    </div>
+  </details>
 </main>

@@ -185,7 +185,7 @@ export class ProfilePicturePage {
     this.error.set(null);
     try {
       await this.api.request('/profile/picture', { method: 'PUT', body: JSON.stringify({ image: this.result() }) });
-      await this.router.navigateByUrl('/profile');
+      await this.router.navigateByUrl('/settings/profile');
     } catch (err: any) {
       this.error.set(err.message ?? 'Could not save the picture. Please try again.');
       this.busy.set(false);
@@ -198,7 +198,7 @@ export class ProfilePicturePage {
     this.error.set(null);
     try {
       await this.api.request<void>('/profile/picture', { method: 'DELETE' });
-      await this.router.navigateByUrl('/profile');
+      await this.router.navigateByUrl('/settings/profile');
     } catch (err: any) {
       this.error.set(err.message ?? 'Could not remove the picture. Please try again.');
       this.busy.set(false);

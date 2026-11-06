@@ -12,16 +12,20 @@ const PDF_MAX_PAGES = 40;
 
 /** What a sheet of a spreadsheet shows: at most this many rows and columns. */
 export const SHEET_MAX_ROWS = 200;
+/** Pages and slides are shown at a normal reading width, also on a phone: a narrower screen scrolls sideways instead of shrinking them. */
+const MIN_PAGE_WIDTH = 720;
+
 export const SHEET_MAX_COLUMNS = 30;
 
 /** The pages of a PDF as pictures in `host`. Returns how many pages the PDF has. */
 export async function renderPdf(blob: Blob, host: HTMLElement): Promise<number> {
-  const pdfjs = await import('pdfjs-dist');
+  // the "legacy" build: the new one needs very recent browser features (Promise.try) and fails to open anything in the others
+  const pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs');
   // the worker is loaded into the page itself (no separate worker file to host): pdf.js finds it as `pdfjsWorker`
   // @ts-ignore the worker file has no types
-  await import('pdfjs-dist/build/pdf.worker.mjs');
+  await import('pdfjs-dist/legacy/build/pdf.worker.mjs');
   const doc = await pdfjs.getDocument({ data: new Uint8Array(await blob.arrayBuffer()) }).promise;
-  const width = host.clientWidth || 600;
+  const width = Math.max(host.clientWidth, MIN_PAGE_WIDTH);
   const ratio = Math.min(window.devicePixelRatio || 1, 2);
   host.replaceChildren();
   for (let n = 1; n <= Math.min(doc.numPages, PDF_MAX_PAGES); n++) {
@@ -32,6 +36,7 @@ export async function renderPdf(blob: Blob, host: HTMLElement): Promise<number> 
     canvas.width = Math.floor(viewport.width);
     canvas.height = Math.floor(viewport.height);
     canvas.className = 'sf-pdf-page';
+    canvas.style.width = `${Math.floor(viewport.width / ratio)}px`;
     canvas.setAttribute('role', 'img');
     canvas.setAttribute('aria-label', `Page ${n} of ${doc.numPages}`);
     host.append(canvas);
@@ -45,16 +50,13 @@ export async function renderDocx(blob: Blob, host: HTMLElement): Promise<void> {
   const { renderAsync } = await import('docx-preview');
   host.replaceChildren();
   await renderAsync(blob, host, undefined, { className: 'sf-docx', inWrapper: true, ignoreLastRenderedPageBreak: true, useBase64URL: true });
-  // the pages have the width of a sheet of paper: on a narrower screen they are made smaller to fit, so nothing is cut off
-  const wrapper = host.querySelector<HTMLElement>('.sf-docx-wrapper');
-  const widest = Math.max(0, ...Array.from(host.querySelectorAll<HTMLElement>('section.sf-docx')).map((page) => page.offsetWidth));
-  if (wrapper && widest) wrapper.style.zoom = String(Math.min(1, host.clientWidth / (widest + 60)));
+  // the pages keep the width of a sheet of paper: a narrower screen scrolls sideways (the host scrolls)
 }
 
 /** A PowerPoint file (.pptx) as slides under each other in `host`. */
 export async function renderPptx(blob: Blob, host: HTMLElement): Promise<void> {
   const { init } = await import('pptx-preview');
-  const width = Math.max(host.clientWidth, 280);
+  const width = Math.max(host.clientWidth, MIN_PAGE_WIDTH);
   host.replaceChildren();
   const previewer = init(host, { width, height: Math.round((width * 9) / 16), mode: 'list' });
   await previewer.preview(await blob.arrayBuffer());

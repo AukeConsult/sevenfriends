@@ -27,7 +27,7 @@
     }
 
     <div class="d-flex gap-2">
-      <a routerLink="/profile" class="btn btn-light flex-fill">Cancel</a>
+      <a routerLink="/settings/profile" class="btn btn-light flex-fill">Cancel</a>
       <button type="submit" class="btn btn-danger flex-fill" [disabled]="!confirmed() || busy()">
         {{ busy() ? 'Deleting…' : 'Delete everything' }}
       </button>

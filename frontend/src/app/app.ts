@@ -10,7 +10,7 @@ import { PresenceService } from './core/presence.service';
 import { RealtimeService } from './core/realtime.service';
 
 /** The pages that are shown again at the next start: the main pages and a conversation (not forms, pickers, sign-in). */
-const REMEMBERED_PAGE = /^\/(friends(\/sleeping|\/(?!add$|join$)[^/]+)?|pending|profile|settings\/(preferences|sounds|notifications))?$/;
+const REMEMBERED_PAGE = /^\/(friends(\/sleeping|\/(?!add$|join$)[^/]+)?|pending|settings\/(profile|preferences|sounds|notifications))?$/;
 
 @Component({
   selector: 'app-root',

@@ -1,5 +1,5 @@
 <div class="sf-back-row">
-  <a routerLink="/profile" class="btn btn-light" aria-label="Back to your profile">‹ Back</a>
+  <a routerLink="/settings/profile" class="btn btn-light" aria-label="Back to your profile">‹ Back</a>
 </div>
 <div class="sf-page-head">
   <h1>Your picture</h1>
@@ -23,7 +23,7 @@
     @if (existing()) {
       <button type="button" class="btn btn-outline-danger" [disabled]="busy()" (click)="remove()">Remove my picture</button>
     }
-    <a routerLink="/profile" class="btn btn-light">Cancel</a>
+    <a routerLink="/settings/profile" class="btn btn-light">Cancel</a>
   } @else {
     <div class="sf-crop-wrap">
       <div class="sf-crop" [style.width.px]="view" [style.height.px]="view">
@@ -48,7 +48,7 @@
     }
 
     <div class="d-flex gap-2">
-      <a routerLink="/profile" class="btn btn-light flex-fill" [class.disabled]="busy()">Cancel</a>
+      <a routerLink="/settings/profile" class="btn btn-light flex-fill" [class.disabled]="busy()">Cancel</a>
       <button type="button" class="btn btn-primary flex-fill" [disabled]="busy()" (click)="save()">
         {{ busy() ? 'Saving…' : 'Use this picture' }}
       </button>

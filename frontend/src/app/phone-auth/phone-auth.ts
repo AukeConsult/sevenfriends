@@ -15,7 +15,7 @@ export class PhoneAuth {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute).snapshot;
   protected readonly linking = this.route.data['mode'] === 'link';
-  protected readonly backLink = this.linking ? '/profile' : '/login';
+  protected readonly backLink = this.linking ? '/settings/profile' : '/login';
 
   private readonly recaptcha = viewChild.required<ElementRef<HTMLElement>>('recaptcha');
 
@@ -62,7 +62,7 @@ export class PhoneAuth {
     this.error.set(null);
     try {
       await this.auth.confirmPhoneCode(code, this.linking);
-      await this.router.navigateByUrl(this.linking ? '/profile' : this.auth.landingPath());
+      await this.router.navigateByUrl(this.linking ? '/settings/profile' : this.auth.landingPath());
     } catch (err) {
       this.error.set(authMessage(err, 'That code did not work. Please try again.'));
     } finally {

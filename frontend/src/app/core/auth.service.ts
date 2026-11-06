@@ -151,7 +151,7 @@ export class AuthService {
   /** Ask for an email that confirms the address (friends only find a VERIFIED email). */
   async sendVerificationEmail(): Promise<void> {
     const user = auth.currentUser;
-    if (user) await sendEmailVerification(user, { url: `${location.origin}/profile` });
+    if (user) await sendEmailVerification(user, { url: `${location.origin}/settings/profile` });
   }
 
   /**
@@ -189,7 +189,7 @@ export class AuthService {
 
   /** Where to go after signing in: a brand-new account fills in its profile first. */
   landingPath(): string {
-    const path = this.newAccount ? '/profile' : '/';
+    const path = this.newAccount ? '/settings/profile' : '/';
     this.newAccount = false;
     return path;
   }

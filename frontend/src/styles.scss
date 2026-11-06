@@ -339,6 +339,9 @@ router-outlet + * { display: block; min-height: 100dvh; }
   h1 { font-size: 2rem; font-weight: 800; color: var(--sf-primary); }
 }
 .sf-hero-home { margin-top: -1.5rem; padding-top: calc(1.5rem + env(safe-area-inset-top)); padding-bottom: 0.75rem; margin-bottom: 0; } // the same band on the Home page (the page has 1.5rem of padding on top)
+.sf-hero-home .sf-logo-lg { width: 3.25rem; height: 3.25rem; border-radius: 1rem; font-size: 1.6rem; }
+.sf-hero-home h1 { font-size: 1.4rem; margin: 0.4rem 0 0.25rem !important; }
+.sf-hero-home .sf-hero-dots { margin-top: 0.5rem; }
 .sf-hero-tag { color: var(--sf-muted); }
 .sf-hero-dots {
   display: flex; justify-content: center; gap: 0.5rem; margin-top: 1.25rem;
@@ -960,7 +963,7 @@ app-voice { display: contents; }
 .sf-box-icon-big { width: 5rem; height: 5rem; border-radius: 50%; }
 .sf-box-host { width: 100%; max-height: 85vh; overflow: auto; border: 1px solid var(--sf-border); border-radius: var(--sf-radius); background: var(--sf-bg); }
 .sf-box-host:empty { display: none; }
-.sf-box-host-pdf { display: grid; gap: 0.5rem; padding: 0.5rem; justify-items: center; }
-.sf-pdf-page { width: 100%; height: auto; background: #fff; box-shadow: 0 1px 4px rgb(0 0 0 / 0.2); }
+.sf-box-host-pdf { display: grid; gap: 0.5rem; padding: 0.5rem; justify-items: start; }
+.sf-pdf-page { margin-inline: auto; max-width: none; height: auto; background: #fff; box-shadow: 0 1px 4px rgb(0 0 0 / 0.2); }
 .sf-sheet-wrap { width: 100%; max-height: 85vh; overflow: auto; border: 1px solid var(--sf-border); border-radius: var(--sf-radius); background: var(--sf-card); }
 .sf-sheet { border-collapse: collapse; font-size: var(--sf-fs-description); td { padding: 0.25rem 0.5rem; border: 1px solid var(--sf-border); white-space: nowrap; max-width: 16rem; overflow: hidden; text-overflow: ellipsis; } }

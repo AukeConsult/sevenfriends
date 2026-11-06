@@ -13,6 +13,7 @@ export class SettingsShell {
   protected readonly install = inject(InstallService);
 
   protected readonly tabs = [
+    { path: 'profile', label: 'Profile' },
     { path: 'preferences', label: 'Preferences' },
     { path: 'sounds', label: 'Sounds' },
     { path: 'notifications', label: 'Notifications' },

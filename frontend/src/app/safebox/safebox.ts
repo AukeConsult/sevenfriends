@@ -6,7 +6,7 @@ import { formatBytes, prepareImage } from '../core/image';
 import { SafeboxService } from '../core/safebox.service';
 import { Safebox as SafeboxData, SafeboxItem } from '../models';
 
-/** The small picture of an image in the box: its preview when there is one (a document or a video shows an icon instead). */
+/** The small preview picture of an image in the box (only the preview is read, never the file; a file without one shows an icon instead). */
 @Component({
   selector: 'app-safebox-thumb',
   template: `@if (src(); as url) { <img [src]="url" alt="" /> } @else { <span class="sf-box-wait" aria-hidden="true"></span> }`,
@@ -22,8 +22,9 @@ export class SafeboxThumb {
     effect(() => {
       const item = this.item();
       this.src.set(null);
+      if (!item.hasThumb) return; // never the whole file in the list: only the small preview
       this.box
-        .file(this.friendId(), item.id, item.hasThumb)
+        .file(this.friendId(), item.id, true)
         .then((file) => this.item() === item && this.src.set(file.url))
         .catch(() => undefined); // no picture: the empty frame stays
     });

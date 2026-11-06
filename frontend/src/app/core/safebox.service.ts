@@ -32,7 +32,8 @@ export class SafeboxService {
     const item = await this.api.request<SafeboxItem>(`${this.base(friendId)}?name=${encodeURIComponent(name)}`, {
       method: 'POST',
       body: file,
-      headers: { 'Content-Type': file.type || 'application/octet-stream' },
+      // always "unknown binary": the server finds the type from the bytes, and a .json file sent as application/json would be read as JSON by the server and arrive empty
+      headers: { 'Content-Type': 'application/octet-stream' },
     });
     if (thumb && item.kind === 'image') {
       await this.api.request<void>(`${this.base(friendId)}/${item.id}/thumb`, { method: 'PUT', body: thumb, headers: { 'Content-Type': thumb.type } });

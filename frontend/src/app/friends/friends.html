@@ -1,9 +1,9 @@
 <main class="sf-content">
   <!-- no coloured header: a plain title, the seats as dots, and how many are taken -->
   <div class="sf-page-head">
-    <h1>My close friends</h1>
+    <h1>Friends</h1>
     <app-seat-dots [taken]="filled()" />
-    <p class="sf-hint m-0">{{ filled() }} of {{ max }} seats taken</p>
+    <p class="sf-hint m-0">{{ filled() }} of {{ max }} seats taken@if (sleeping() > 0) { · {{ sleeping() }} on the sleep list }</p>
   </div>
 
   @if (loadError()) {

@@ -325,7 +325,7 @@ export class Chat {
   }
 
   protected select(message: ChatMessage): void {
-    if (!message.mine) return;
+    if (!message.mine && !message.inBox) return; // the note of a file moved to the safebox may be removed by either friend
     this.deleting.set(null);
     this.selected.update((id) => (id === message.id ? null : message.id));
   }

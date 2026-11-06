@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { ChatService } from '../core/chat.service';
 import { ApiService } from '../core/api.service';
 import { MoodEditor } from '../mood-editor/mood-editor';
 import { AuthService } from '../core/auth.service';
@@ -11,9 +12,26 @@ import { NotificationsService } from '../core/notifications.service';
 import { InstallService } from '../core/install.service';
 import { UiPreferencesService } from '../core/ui-preferences';
 import { SeatDots } from '../seat-dots/seat-dots';
-import { FriendRequest, Message, Notice, ProfileDetails } from '../models';
+import { Friend, FriendRequest, Message, Notice, ProfileDetails } from '../models';
 
-/** Home page: a quiet overview of what needs attention (friend requests, incoming messages). */
+/** Without a word for this many days, a friend gets a gentle "Say hi". */
+const SAY_HI_AFTER_DAYS = 14;
+const MAX_FRIENDS = 7;
+
+/** The unread messages of one friend, as one row on Home. */
+interface MessageGroup {
+  key: string;
+  connectionId: string | null;
+  name: string;
+  count: number;
+  last: Message;
+  friend: Friend | null;
+}
+
+/**
+ * Home: what needs me first (friend requests, unread messages grouped by friend with a quick reply, setup, unverified details),
+ * then my circle at a glance (presence, mood, when we last spoke, a gentle "Say hi"), my mood, and the invite link under "More".
+ */
 @Component({
   selector: 'app-notifications',
   imports: [DatePipe, RouterLink, MoodEditor, SeatDots],
@@ -24,6 +42,7 @@ export class Notifications {
   private readonly friendsService = inject(FriendsService);
   private readonly messagesService = inject(MessagesService);
   private readonly api = inject(ApiService);
+  private readonly chat = inject(ChatService);
   private readonly router = inject(Router);
   protected readonly install = inject(InstallService);
   protected readonly invite = inject(InviteLinkService);
@@ -57,14 +76,49 @@ export class Notifications {
   /** Requests waiting for a free seat: only listed on the Pending page. */
   protected readonly waitingCount = computed(() => this.requests().filter((r) => !r.seated).length);
 
+  private readonly now = Date.now();
+  protected readonly max = MAX_FRIENDS;
+  protected readonly sleeping = computed(() => this.friendsService.sleeping().length);
+
+  /** friends I have not talked to for a while (or ever): at most two gentle nudges, the longest silence first */
+  protected readonly quiet = computed(() =>
+    this.friendsService
+      .awake()
+      .filter((f) => f.status === 'confirmed' && this.sayHi(f))
+      .sort((a, b) => (a.lastSpokenAt ?? '').localeCompare(b.lastSpokenAt ?? ''))
+      .slice(0, 2),
+  );
+
+  /** the unread messages, one row for each friend (the latest line, how many), the friend with the newest message first */
+  protected readonly groups = computed<MessageGroup[]>(() => {
+    const byFriend = new Map<string, MessageGroup>();
+    for (const message of this.messages()) {
+      const key = message.connectionId ?? `name:${message.fromName}`;
+      const group = byFriend.get(key);
+      const newer = !group || (message.time ?? '') > (group.last.time ?? '');
+      byFriend.set(key, {
+        key,
+        connectionId: message.connectionId,
+        name: message.fromName,
+        count: (group?.count ?? 0) + 1,
+        last: newer ? message : group!.last,
+        friend: this.friendsService.friends().find((f) => f.id === message.connectionId) ?? null,
+      });
+    }
+    return [...byFriend.values()].sort((a, b) => (b.last.time ?? '').localeCompare(a.last.time ?? ''));
+  });
+  /** anything that needs me: the first block of the page is only there then */
+  protected readonly needsYou = computed(() => this.setupLeft() || this.unverified().length > 0 || this.seated().length > 0 || this.waitingCount() > 0 || this.groups().length > 0);
+
+  /** the quick replies being typed, by friend */
+  protected readonly replies = signal<Partial<Record<string, string>>>({});
+  protected readonly replying = signal<string | null>(null);
+
   /** Result of the last Confirm, shown above the lists. */
   protected readonly notice = signal<Notice | null>(null);
 
   protected readonly loaded = this.notifications.loaded;
   protected readonly error = this.notifications.error;
-  protected readonly allQuiet = computed(
-    () => this.loaded() && !this.error() && !this.requests().length && !this.messages().length,
-  );
 
   constructor() {
     this.load();
@@ -115,6 +169,50 @@ export class Notifications {
       this.notice.set({ kind: 'warning', text: `You rejected the request from ${request.fromName}. They can see that it was rejected.` });
     } catch (err: any) {
       this.error.set(err.message);
+    }
+  }
+
+  /** "You haven't talked to Anna for 3 weeks" */
+  protected quietText(friend: Friend): string {
+    if (!friend.lastSpokenAt) return `You haven't talked to ${friend.name} yet`;
+    const days = Math.floor((this.now - new Date(friend.lastSpokenAt).getTime()) / 86_400_000);
+    const span = days < 60 ? `${Math.max(2, Math.round(days / 7))} weeks` : `${Math.round(days / 30)} months`;
+    return `You haven't talked to ${friend.name} for ${span}`;
+  }
+
+  /** a friend I have not talked to for a while (or never): a gentle nudge */
+  protected sayHi(friend: Friend): boolean {
+    return !friend.lastSpokenAt || this.now - new Date(friend.lastSpokenAt).getTime() > SAY_HI_AFTER_DAYS * 86_400_000;
+  }
+
+  protected setReply(key: string, text: string): void {
+    this.replies.update((all) => ({ ...all, [key]: text }));
+  }
+
+  /** Sends the quick reply to that friend, and marks what they wrote as read. */
+  protected async sendReply(group: MessageGroup): Promise<void> {
+    const text = (this.replies()[group.key] ?? '').trim();
+    if (!text || !group.connectionId || this.replying()) return;
+    this.replying.set(group.key);
+    this.error.set(null);
+    try {
+      await this.chat.send(group.connectionId, text);
+      await this.chat.markRead(group.connectionId);
+      this.setReply(group.key, '');
+    } catch (err: any) {
+      this.error.set(err.message ?? 'Could not send the reply');
+    } finally {
+      this.replying.set(null);
+    }
+  }
+
+  /** Marks everything this friend wrote as read. */
+  protected async markGroupRead(group: MessageGroup): Promise<void> {
+    try {
+      if (group.connectionId) await this.chat.markRead(group.connectionId);
+      else await this.messagesService.markRead(group.last.id);
+    } catch (err: any) {
+      this.error.set(err.message ?? 'Could not mark the messages as read');
     }
   }
 
