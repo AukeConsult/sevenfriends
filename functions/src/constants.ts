@@ -73,7 +73,9 @@ export const SAFEBOX_COLLECTION = "safebox";
 export const SAFEBOX_ITEMS = "items";
 export const SAFEBOX_MAX_BYTES = 200 * 1024 * 1024;
 export const SAFEBOX_MAX_ITEMS = 500;
-export const boxOwner = (connectionId: string) => `box-${connectionId}`;
+/** The owner name of a safebox in the media cache: `box-<connectionId>` (the app reads its files through `/api/sf-cache/box-<id>/<itemId>` like any media file). */
+export const BOX_PREFIX = "box-";
+export const boxOwner = (connectionId: string) => `${BOX_PREFIX}${connectionId}`;
 /** One upload in a single request: Cloud Functions accepts at most 32 MB. Anything bigger is sent in pieces. */
 export const MAX_UPLOAD_BYTES = 30 * 1024 * 1024;
 /** The biggest piece of a chunked upload, and the most pieces (Google Storage joins at most 32 files in one go). */

@@ -33,6 +33,8 @@ export interface ChatMessage {
   edited: boolean;
   /** true = I hid the picture / video in my feed (my copy only: the friend's feed is not affected) */
   hidden: boolean;
+  /** true = the picture or video of this message was moved to the safebox: the message stays and says so, the file is no longer here */
+  inBox?: boolean;
   /** the first link of the text, or null */
   link: MessageLink | null;
 }

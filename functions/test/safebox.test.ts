@@ -83,6 +83,13 @@ describe("who may open the box", () => {
     await download(u(2), id, item.id).expect(404);
   });
 
+  it("the app reads a box file through the media cache too (so the picture, video and sound views work), only for the two friends", async () => {
+    const id = await connect(u(0), u(1));
+    const item = (await put(u(0), id, png(), "a.png").expect(201)).body;
+    expect((await u(1).getObject(`box-${id}`, item.id).expect(200)).body).toEqual(png());
+    await u(2).getObject(`box-${id}`, item.id).expect(404);
+  });
+
   it("a zip is sent as a download, never opened in the page", async () => {
     const id = await connect(u(0), u(1));
     const item = (await put(u(0), id, zip(), "b.docx").expect(201)).body;
@@ -138,5 +145,40 @@ describe("when the friendship ends", () => {
     await put(u(1), id, png(), "a.png").expect(201);
     await u(0).raw("delete", "/users/me", { confirm: "DELETE" }).expect(204);
     expect(stored()).toEqual([]);
+  });
+});
+
+describe("moving a picture or video from the conversation", () => {
+  const sendImage = async (user: User, id: string, thumb = false) => {
+    const up = (await user.file("post", "/sf-cache?kind=image&name=beach.png", png()).expect(201)).body;
+    if (thumb) await user.file("put", `/sf-cache/${up.objectId}/thumb`, jpeg()).expect(204);
+    await user.raw("post", `/circles/default/friends/${id}/messages`, { text: "", media: { objectId: up.objectId } }).expect(201);
+    return up.objectId as string;
+  };
+  const copy = (user: User, id: string, messageId: string) => user.raw("post", box(id, "/from-message"), { messageId });
+
+  it("moves the picture and its preview to the box, for both friends; the message stays and says so", async () => {
+    const id = await connect(u(0), u(1));
+    const messageId = await sendImage(u(0), id, true);
+    const item = (await copy(u(1), id, messageId).expect(201)).body;
+    expect(item).toMatchObject({ name: "beach.png", kind: "image", hasThumb: true, mine: true });
+    expect((await listOf(u(0), id)).items).toMatchObject([{ id: item.id, mine: false }]);
+    expect(storedData(`sf-cache/box-${id}/${item.id}`)).toEqual(png());
+    expect(storedData(`sf-cache/box-${id}/${item.id}.thumb`)).toEqual(jpeg());
+    for (const user of [u(0), u(1)]) {
+      const messages = (await user.feed(id).expect(200)).body.messages as { media: unknown; inBox: boolean }[];
+      expect(messages).toMatchObject([{ media: null, inBox: true }]);
+    }
+    expect(storedNames().filter((n) => n.startsWith("sf-cache/uid"))).toEqual([]); // the file left the conversation
+  });
+
+  it("refuses a message without a picture, an unknown message and a stranger", async () => {
+    const id = await connect(u(0), u(1));
+    const text = (await u(0).send(id, "hello").expect(201)).body.id as string;
+    await copy(u(0), id, text).expect(404);
+    await copy(u(0), id, "doesnotexist1234").expect(404);
+    const messageId = await sendImage(u(0), id);
+    await copy(u(2), id, messageId).expect(404);
+    expect((await listOf(u(0), id)).items).toEqual([]);
   });
 });

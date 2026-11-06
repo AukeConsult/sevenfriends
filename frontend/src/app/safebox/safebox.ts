@@ -3,7 +3,7 @@ import { Component, computed, effect, inject, input, signal } from '@angular/cor
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FriendsService } from '../core/friends.service';
 import { formatBytes, prepareImage } from '../core/image';
-import { BoxFile, SafeboxService } from '../core/safebox.service';
+import { SafeboxService } from '../core/safebox.service';
 import { Safebox as SafeboxData, SafeboxItem } from '../models';
 
 /** The small picture of an image in the box: its preview when there is one (a document or a video shows an icon instead). */
@@ -55,8 +55,6 @@ export class Safebox {
   /** the file whose "take it out" question is open, and the one being renamed (with the new name) */
   protected readonly deleting = signal<string | null>(null);
   protected readonly renaming = signal<{ id: string; name: string } | null>(null);
-  /** the picture shown big */
-  protected readonly viewing = signal<{ item: SafeboxItem; url: string } | null>(null);
 
   protected readonly items = computed(() => this.box()?.items ?? []);
   protected readonly used = computed(() => this.box()?.usedBytes ?? 0);
@@ -99,21 +97,6 @@ export class Safebox {
     }
     this.adding.set(null);
     await this.reload();
-  }
-
-  /** Opens a picture big; any other file is saved to the device (a PDF or text may be opened from there). */
-  protected async open(item: SafeboxItem): Promise<void> {
-    this.error.set(null);
-    this.busy.set(true);
-    try {
-      const file: BoxFile = await this.service.file(this.friendId, item.id);
-      if (item.kind === 'image') this.viewing.set({ item, url: file.url });
-      else this.save(file.url, item.name);
-    } catch (err: any) {
-      this.error.set(err.message ?? 'Could not open the file');
-    } finally {
-      this.busy.set(false);
-    }
   }
 
   /** Saves the file under its own name. */

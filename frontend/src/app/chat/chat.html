@@ -219,6 +219,13 @@
         <!-- my own message: tap it to edit or delete it -->
         <div class="sf-bubble" [class.sf-bubble-media]="message.media" [class.sf-bubble-hidden]="message.media && pictureHidden().has(message.id)" [class.sf-bubble-tap]="message.mine" [attr.role]="message.mine ? 'button' : null" [attr.tabindex]="message.mine ? 0 : null"
              [attr.aria-expanded]="message.mine ? selected() === message.id : null" (click)="select(message)" (keydown.enter)="select(message)">
+          @if (message.inBox) {
+            <!-- the picture or video was moved to the safebox: the conversation only says so -->
+            <a [routerLink]="['/friends', friendId, 'safebox']" class="sf-box-note">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="12" cy="12" r="3" /><path d="M12 15v2M7 20v1M17 20v1" /></svg>
+              In the safebox
+            </a>
+          }
           @if (message.media; as media) {
             <!-- a friend's image opens at once; on my own message the tap opens Edit / Delete (and Open) -->
             @if (media.kind === 'audio') {
@@ -260,6 +267,13 @@
             @if (media.kind !== 'audio') {
               @if (pictureHidden().has(message.id)) { @if (message.time) { <small class="sf-hint">{{ message.time | date: 'd MMM, HH:mm' }}@if (message.edited) { · edited }@if (doomed().has(message.id)) { · <strong class="text-danger">will be deleted</strong> } ·</small> } <span class="sf-hint">{{ media.kind === 'video' ? '🎞️ Video' : '🖼️ Picture' }} hidden</span> }
               <button type="button" class="btn btn-light btn-sm" (click)="togglePicture(message.id)">{{ pictureHidden().has(message.id) ? 'Show' : 'Hide' }}</button>
+              @if (moving() === message.id) {
+                <span class="sf-hint">Move it to the safebox? It leaves the conversation, for both of you.</span>
+                <button type="button" class="btn btn-light btn-sm" (click)="moving.set(null)" [disabled]="movingBusy()">Cancel</button>
+                <button type="button" class="btn btn-primary btn-sm" (click)="toBox(message)" [disabled]="movingBusy()">Move</button>
+              } @else {
+                <button type="button" class="btn btn-light btn-sm" (click)="moving.set(message.id)">To the safebox</button>
+              }
             }
             <a [routerLink]="['/media', media.ownerId, media.objectId]" class="btn btn-light btn-sm">Open</a>
             <button type="button" class="btn btn-light btn-sm" (click)="download(media)">Download</button>
@@ -269,7 +283,14 @@
          @if (media.kind !== 'audio') {
           <div class="sf-msg-actions">
             @if (pictureHidden().has(message.id)) { @if (message.time) { <small class="sf-hint">{{ message.time | date: 'd MMM, HH:mm' }}@if (message.edited) { · edited }@if (doomed().has(message.id)) { · <strong class="text-danger">will be deleted</strong> } ·</small> } <span class="sf-hint">{{ media.kind === 'video' ? '🎞️ Video' : '🖼️ Picture' }} hidden</span> }
-            <button type="button" class="btn btn-light btn-sm" (click)="togglePicture(message.id)">{{ pictureHidden().has(message.id) ? 'Show' : 'Hide' }}</button>
+            @if (moving() === message.id) {
+              <span class="sf-hint">Move it to the safebox? It leaves the conversation, for both of you.</span>
+              <button type="button" class="btn btn-light btn-sm" (click)="moving.set(null)" [disabled]="movingBusy()">Cancel</button>
+              <button type="button" class="btn btn-primary btn-sm" (click)="toBox(message)" [disabled]="movingBusy()">Move</button>
+            } @else {
+              <button type="button" class="btn btn-light btn-sm" (click)="togglePicture(message.id)">{{ pictureHidden().has(message.id) ? 'Show' : 'Hide' }}</button>
+              <button type="button" class="btn btn-light btn-sm" (click)="moving.set(message.id)">To the safebox</button>
+            }
           </div>
          }
         }

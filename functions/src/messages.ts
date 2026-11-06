@@ -17,7 +17,7 @@ export async function listUnreadMessages(uid: string): Promise<Message[]> {
       return {
         id: d.id,
         fromName: (data.fromName as string) ?? "Someone",
-        text: (data.text as string) || (data.media ? mediaLabel(data.media.kind) : ""),
+        text: (data.text as string) || (data.media ? mediaLabel(data.media.kind) : data.inBox ? "📦 In the safebox" : ""),
         time: data.time instanceof Timestamp ? data.time.toDate().toISOString() : null,
         connectionId: (data.connectionId as string | undefined) ?? null,
       };

@@ -36,6 +36,7 @@ export const routes: Routes = [
   { path: 'friends/:id/image', component: AddMedia, data: { kind: 'image' }, canActivate: [authGuard], title: 'Send an image – Seven Friends' },
   { path: 'friends/:id/audio', component: AddMedia, data: { kind: 'audio' }, canActivate: [authGuard], title: 'Send a voice message – Seven Friends' },
   { path: 'friends/:id/video', component: AddMedia, data: { kind: 'video' }, canActivate: [authGuard], title: 'Send a video – Seven Friends' },
+  { path: 'friends/:id/safebox/:itemId', loadComponent: () => import('./safebox-view/safebox-view').then((m) => m.SafeboxView), canActivate: [authGuard], title: 'Safebox – Seven Friends' },
   { path: 'friends/:id/safebox', loadComponent: () => import('./safebox/safebox').then((m) => m.Safebox), canActivate: [authGuard], title: 'Safebox – Seven Friends' },
   { path: 'friends/:id', component: Chat, canActivate: [authGuard], title: 'Conversation – Seven Friends' },
   { path: 'media/:ownerId/:objectId', component: MediaViewer, canActivate: [authGuard], title: 'Image – Seven Friends' },

@@ -6,6 +6,7 @@ import { Component, DestroyRef, ElementRef, HostListener, computed, effect, inje
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ApiError } from '../core/api.service';
+import { SafeboxService } from '../core/safebox.service';
 import { FriendAvatar } from '../friend-avatar/friend-avatar';
 import { MediaAudio } from '../media-audio/media-audio';
 import { MediaImage } from '../media-image/media-image';
@@ -35,6 +36,7 @@ const SAFETY_REFRESH_MS = 30000;
 })
 export class Chat {
   private readonly chat = inject(ChatService);
+  private readonly safebox = inject(SafeboxService);
   private readonly prefs = inject(UiPreferencesService);
   private readonly live = inject(LiveChanges);
   private readonly mediaService = inject(MediaService);
@@ -138,6 +140,9 @@ export class Chat {
   protected readonly selected = signal<string | null>(null);
   /** my message that is being deleted (the question is open) */
   protected readonly deleting = signal<string | null>(null);
+  /** the picture or video whose "move to the safebox" question is open, and whether it is being moved */
+  protected readonly moving = signal<string | null>(null);
+  protected readonly movingBusy = signal(false);
   /** my message that is being edited: the message field holds its text, and Send saves it */
   protected readonly editing = signal<string | null>(null);
   /** the height of the message field with its panel: the feed keeps this much room at the bottom, so no message hides behind it */
@@ -342,6 +347,22 @@ export class Chat {
     this.editing.set(null);
     this.text.set('');
     setTimeout(() => this.fit());
+  }
+
+  /** Moves the picture or video of a message to the safebox: the message stays in both feeds and says it is there. */
+  protected async toBox(message: ChatMessage): Promise<void> {
+    this.error.set(null);
+    this.movingBusy.set(true);
+    try {
+      await this.safebox.addFromMessage(this.friendId, message.id);
+      this.messages.update((list) => list.map((m) => (m.id === message.id ? { ...m, media: null, inBox: true } : m)));
+      this.selected.set(null);
+      this.moving.set(null);
+    } catch (err: any) {
+      this.error.set(err.message ?? 'Could not put the file in the safebox');
+    } finally {
+      this.movingBusy.set(false);
+    }
   }
 
   protected async remove(message: ChatMessage): Promise<void> {

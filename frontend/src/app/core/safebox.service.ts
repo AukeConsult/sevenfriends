@@ -41,6 +41,11 @@ export class SafeboxService {
     return item;
   }
 
+  /** Moves the picture or video of a message of this conversation into the box (the message stays and says so). */
+  addFromMessage(friendId: string, messageId: string): Promise<SafeboxItem> {
+    return this.api.request<SafeboxItem>(`${this.base(friendId)}/from-message`, { method: 'POST', body: JSON.stringify({ messageId }) });
+  }
+
   addImage(friendId: string, image: PreparedImage): Promise<SafeboxItem> {
     return this.add(friendId, image.blob, image.name, image.thumb);
   }

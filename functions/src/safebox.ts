@@ -1,12 +1,13 @@
 import express, { Request, Response, Router } from "express";
 import { DecodedIdToken } from "firebase-admin/auth";
-import { FieldValue, Timestamp } from "firebase-admin/firestore";
+import { DocumentReference, FieldValue, Timestamp, getFirestore } from "firebase-admin/firestore";
 import { asyncHandler } from "./auth";
-import { MAX_UPLOAD_BYTES, SAFEBOX_MAX_BYTES, SAFEBOX_MAX_ITEMS, boxOwner } from "./constants";
+import { FRIENDS_SUBCOLLECTION, MAX_UPLOAD_BYTES, SAFEBOX_MAX_BYTES, SAFEBOX_MAX_ITEMS, boxOwner } from "./constants";
 import { connectionOf } from "./conversation";
-import { Safebox, SafeboxItem } from "./models";
-import { safeboxItems } from "./paths";
-import { checkBytes, checkSafeboxFile, cleanFileName, deleteFolder, deleteObject, isObjectId, objectInfo, putObject, readObject } from "./sf-cache";
+import { MediaRef, Safebox, SafeboxItem } from "./models";
+import { circleCol, messageCol, safeboxItems } from "./paths";
+import { touchFeed, touchFeedIfExists } from "./sync";
+import { checkBytes, checkSafeboxFile, cleanFileName, deleteFolder, deleteObject, isObjectId, objectInfo, putObject, readAll, readObject } from "./sf-cache";
 
 const uidOf = (res: Response) => (res.locals.token as DecodedIdToken).uid;
 const iso = (t: unknown) => (t instanceof Timestamp ? t.toDate().toISOString() : null);
@@ -46,6 +47,29 @@ safeboxRouter.get(
   }),
 );
 
+type Connection = NonNullable<Awaited<ReturnType<typeof connectionOf>>>;
+
+/**
+ * Stores a checked file in the box (and its preview, when it has one) and answers with the new item, or answers with an error
+ * (the box is full) and returns null.
+ */
+async function storeInBox(res: Response, connection: Connection, bytes: Buffer, name: string, checked: { kind: SafeboxItem["kind"]; mime: string }, thumb: Buffer | null): Promise<SafeboxItem | null> {
+  const existing = (await safeboxItems(connection.id).get()).docs;
+  if (existing.length >= SAFEBOX_MAX_ITEMS) {
+    res.status(409).json({ error: `The safebox is full (at most ${SAFEBOX_MAX_ITEMS} files). Delete some first.` });
+    return null;
+  }
+  if (existing.reduce((sum, d) => sum + (d.data().bytes as number), 0) + bytes.length > SAFEBOX_MAX_BYTES) {
+    res.status(413).json({ error: `The safebox is full (at most ${Math.round(SAFEBOX_MAX_BYTES / 1024 / 1024)} MB). Delete some files first.` });
+    return null;
+  }
+  const ref = safeboxItems(connection.id).doc();
+  await putObject(boxOwner(connection.id), ref.id, bytes, checked.kind, checked.mime, name);
+  if (thumb) await putObject(boxOwner(connection.id), `${ref.id}.thumb`, thumb, "thumb", "image/jpeg");
+  await ref.set({ name, kind: checked.kind, mime: checked.mime, bytes: bytes.length, addedBy: uidOf(res), hasThumb: Boolean(thumb), createdAt: FieldValue.serverTimestamp() });
+  return toItem(ref.id, (await ref.get()).data()!, uidOf(res));
+}
+
 /** Put a file in the box: `POST .../safebox?name=<file name>`, the file as the body. Answers with the new item. */
 safeboxRouter.post(
   "/",
@@ -53,27 +77,64 @@ safeboxRouter.post(
   asyncHandler(async (req, res) => {
     const connection = await connectionOf(req, res);
     if (!connection) return;
-    const uid = uidOf(res);
     const bytes = Buffer.isBuffer(req.body) ? req.body : Buffer.alloc(0);
     const checked = checkSafeboxFile(bytes, MAX_FILE_BYTES);
     if ("error" in checked) {
       res.status(checked.status).json({ error: checked.error });
       return;
     }
-    const existing = (await safeboxItems(connection.id).get()).docs;
-    if (existing.length >= SAFEBOX_MAX_ITEMS) {
-      res.status(409).json({ error: `The safebox is full (at most ${SAFEBOX_MAX_ITEMS} files). Delete some first.` });
+    const item = await storeInBox(res, connection, bytes, cleanFileName(req.query.name) ?? "File", checked, null);
+    if (item) res.status(201).json(item);
+  }),
+);
+
+/**
+ * MOVE the picture or video of a message of this conversation into the box: `POST .../safebox/from-message` `{ messageId }`.
+ * Either friend may, whoever sent it (the box is shared: both find the file there). The message stays in both feeds with
+ * `inBox: true` and no file, so the conversation only says it is in the safebox; the file leaves the conversation.
+ * Answers with the new item.
+ */
+safeboxRouter.post(
+  "/from-message",
+  asyncHandler(async (req, res) => {
+    const connection = await connectionOf(req, res);
+    if (!connection) return;
+    const messageId = req.body?.messageId;
+    const message = isObjectId(messageId) ? (await messageCol(uidOf(res)).doc(messageId).get()).data() : undefined;
+    const media = message?.connectionId === connection.id ? (message.media as MediaRef | undefined) : undefined;
+    if (!media || (media.kind !== "image" && media.kind !== "video")) {
+      res.status(404).json({ error: "That message has no picture or video" });
       return;
     }
-    if (existing.reduce((sum, d) => sum + (d.data().bytes as number), 0) + bytes.length > SAFEBOX_MAX_BYTES) {
-      res.status(413).json({ error: `The safebox is full (at most ${Math.round(SAFEBOX_MAX_BYTES / 1024 / 1024)} MB). Delete some files first.` });
+    if (media.bytes > MAX_FILE_BYTES) {
+      res.status(413).json({ error: `That file is too big for the safebox (at most ${Math.round(MAX_FILE_BYTES / 1024 / 1024)} MB)` });
       return;
     }
-    const ref = safeboxItems(connection.id).doc();
-    const name = cleanFileName(req.query.name) ?? "File";
-    await putObject(boxOwner(connection.id), ref.id, bytes, checked.kind, checked.mime, name);
-    await ref.set({ name, kind: checked.kind, mime: checked.mime, bytes: bytes.length, addedBy: uid, hasThumb: false, createdAt: FieldValue.serverTimestamp() });
-    res.status(201).json(toItem(ref.id, (await ref.get()).data()!, uid));
+    const bytes = await readAll(media.ownerId, media.objectId);
+    if (!bytes) {
+      res.status(404).json({ error: "The file is gone" });
+      return;
+    }
+    const checked = checkSafeboxFile(bytes, MAX_FILE_BYTES);
+    if ("error" in checked) {
+      res.status(checked.status).json({ error: checked.error });
+      return;
+    }
+    const thumb = media.hasThumb ? await readAll(media.ownerId, `${media.objectId}.thumb`) : null;
+    const item = await storeInBox(res, connection, bytes, cleanFileName(media.name) ?? (media.kind === "video" ? "Video" : "Picture"), checked, thumb);
+    if (!item) return;
+    // both copies of the message lose the file and say where it went; both friends' apps reload the feed
+    const moved = { media: FieldValue.delete(), inBox: true };
+    const myEntry = (res.locals.circleRef as DocumentReference).collection(FRIENDS_SUBCOLLECTION).doc(connection.id);
+    const batch = getFirestore().batch();
+    batch.update(messageCol(uidOf(res)).doc(messageId), moved);
+    const theirs = messageCol(connection.peerUid).doc(messageId);
+    if ((await theirs.get()).exists) batch.update(theirs, moved);
+    touchFeed(batch, myEntry);
+    await touchFeedIfExists(batch, circleCol(connection.peerUid).doc(connection.peerCircleId).collection(FRIENDS_SUBCOLLECTION).doc(connection.id));
+    await batch.commit();
+    await deleteObject(media.ownerId, media.objectId); // the file (and its preview) now lives in the box only
+    res.status(201).json(item);
   }),
 );
 

@@ -51,7 +51,7 @@
         @for (item of items(); track item.id) {
           <li class="sf-list-item flex-wrap gap-2">
             <!-- a picture shows itself; anything else shows a sign for what it is -->
-            <button type="button" class="sf-box-open" [attr.aria-label]="'Open ' + item.name" (click)="open(item)" [disabled]="busy()">
+            <a class="sf-box-open" [routerLink]="['/friends', friendId, 'safebox', item.id]" [attr.aria-label]="'Open ' + item.name">
               @if (item.kind === 'image') {
                 <app-safebox-thumb [friendId]="friendId" [item]="item" />
               } @else {
@@ -63,17 +63,17 @@
                   }
                 </span>
               }
-            </button>
+            </a>
             <span class="sf-list-text">
               @if (renaming(); as edit) {
                 @if (edit.id === item.id) {
                   <input type="text" class="form-control form-control-sm" maxlength="100" [value]="edit.name" aria-label="New name"
                          (input)="renaming.set({ id: item.id, name: $any($event.target).value })" (keydown.enter)="rename()" (keydown.escape)="renaming.set(null)" />
                 } @else {
-                  <strong class="sf-ellipsis">{{ item.name }}</strong>
+                  <a class="sf-ellipsis fw-bold text-decoration-none" [routerLink]="['/friends', friendId, 'safebox', item.id]">{{ item.name }}</a>
                 }
               } @else {
-                <strong class="sf-ellipsis">{{ item.name }}</strong>
+                <a class="sf-ellipsis fw-bold text-decoration-none" [routerLink]="['/friends', friendId, 'safebox', item.id]">{{ item.name }}</a>
               }
               <small>{{ kindLabel(item) }} · {{ formatBytes(item.bytes) }} · {{ item.mine ? 'you' : friendName() }}@if (item.createdAt) { · {{ item.createdAt | date: 'd MMM yyyy' }} }</small>
             </span>
@@ -110,11 +110,3 @@
     <p class="text-secondary text-center">Opening the safebox…</p>
   }
 </main>
-
-@if (viewing(); as view) {
-  <!-- a picture shown big: tap anywhere to close -->
-  <div class="sf-box-viewer" role="dialog" aria-modal="true" [attr.aria-label]="view.item.name" tabindex="0" (click)="viewing.set(null)" (keydown.escape)="viewing.set(null)">
-    <img [src]="view.url" [alt]="view.item.name" />
-    <button type="button" class="btn btn-light sf-box-viewer-close" aria-label="Close" (click)="viewing.set(null)">×</button>
-  </div>
-}

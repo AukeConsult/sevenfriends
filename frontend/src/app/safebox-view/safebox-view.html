@@ -1,0 +1,101 @@
+<div class="sf-back-row">
+  <a [routerLink]="['/friends', friendId, 'safebox']" class="btn btn-light" aria-label="Back to the safebox">‹ Back</a>
+</div>
+
+<main class="sf-page sf-page-wide">
+  @if (loadError()) {
+    <div class="alert alert-danger" role="alert">{{ loadError() }}</div>
+  } @else if (!box()) {
+    <p class="text-secondary text-center">Opening the file…</p>
+  } @else if (!item(); as none) {
+    <p class="text-secondary text-center">This file is not in the safebox any more.</p>
+  } @else {
+    <div class="sf-page-head">
+      <h1 class="sf-ellipsis">{{ item()!.name }}</h1>
+      <p class="sf-hint m-0">{{ item()!.kind === 'document' ? docLabel() : item()!.kind === 'image' ? 'Picture' : item()!.kind === 'video' ? 'Video' : 'Sound' }} · {{ formatBytes(item()!.bytes) }}</p>
+    </div>
+
+    <!-- the file, shown by what it is -->
+    <div class="sf-box-view">
+      @switch (item()!.kind) {
+        @case ('image') {
+          @if (imageUrl(); as url) {
+            <img class="sf-box-view-image" [src]="url" [alt]="item()!.name" />
+          } @else if (!failed()) {
+            <span class="text-secondary">Loading…</span>
+          }
+        }
+        @case ('video') { @if (ref(); as media) { <app-media-video [media]="media" /> } }
+        @case ('audio') { @if (ref(); as media) { <app-media-audio [media]="media" /> } }
+        @default {
+          @switch (docType()) {
+            @case ('text') {
+              @if (text() !== null) {
+                <pre class="sf-box-view-text">{{ text() }}</pre>
+                @if (cut()) { <p class="sf-hint m-0">Only the first part of the text is shown. Download the file to read all of it.</p> }
+              } @else if (!failed()) {
+                <span class="text-secondary">Loading…</span>
+              }
+            }
+            @default {
+              @if (drawing(); as how) {
+                <!-- PDF, Word (.docx), Excel (.xlsx) and PowerPoint (.pptx): drawn here (a preview: the layout can differ a little from the real program) -->
+                @if (drawingNow()) { <span class="text-secondary">Opening the {{ docLabel().toLowerCase() }}…</span> }
+                @if (how === 'xlsx') {
+                  @if (sheets().length) {
+                    @if (sheets().length > 1) {
+                      <div class="sf-tabs w-100" role="tablist">
+                        @for (s of sheets(); track $index) {
+                          <button type="button" class="sf-tab" role="tab" [attr.aria-selected]="sheet() === $index" [class.active]="sheet() === $index" (click)="sheet.set($index)">{{ s.name }}</button>
+                        }
+                      </div>
+                    }
+                    <div class="sf-sheet-wrap">
+                      <table class="sf-sheet">
+                        <tbody>
+                          @for (row of sheets()[sheet()].rows; track $index) {
+                            <tr>@for (cell of row; track $index) { <td>{{ cell }}</td> }</tr>
+                          }
+                        </tbody>
+                      </table>
+                    </div>
+                    @if (sheets()[sheet()].cut) { <p class="sf-hint m-0">Only the first part of the sheet is shown. Download the file to see all of it.</p> }
+                  }
+                } @else {
+                  <div #host class="sf-box-host" [class.sf-box-host-pdf]="how === 'pdf'"></div>
+                }
+              } @else {
+              <!-- old Word / Excel / PowerPoint, OpenDocument, zip and big files cannot be shown here: a card to download it -->
+              <div class="sf-box-card">
+                <span class="sf-box-icon sf-box-icon-big" aria-hidden="true">
+                  @switch (docType()) {
+                    @case ('sheet') { <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" /><path d="M4 10h16M4 15h16M10 4v16" /></svg> }
+                    @case ('slides') { <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2" /><path d="M12 16v4M8 20h8" /></svg> }
+                    @case ('zip') { <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5v8l9 5 9-5z" /><path d="M3 8l9 5 9-5M12 13v8" /></svg> }
+                    @default { <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" /><path d="M14 3v5h5M9 13h6M9 17h6" /></svg> }
+                  }
+                </span>
+                <strong>{{ docLabel() }}</strong>
+                <span class="text-secondary small">This kind of file cannot be shown here. Download it to open it in another app.</span>
+              </div>
+              }
+            }
+          }
+        }
+      }
+    </div>
+
+    @if (failed()) {
+      <div class="alert alert-danger" role="alert">Could not read the file. Check the connection and try again.</div>
+    }
+
+    <div class="d-flex gap-2 justify-content-center align-items-center flex-wrap">
+      <button type="button" class="btn btn-light" [disabled]="!newer()" (click)="go(newer())" aria-label="The next file (newer)">‹</button>
+      <button type="button" class="btn btn-primary d-flex align-items-center gap-2" [disabled]="busy()" (click)="download()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 11l5 5 5-5M5 20h14" /></svg>
+        Download
+      </button>
+      <button type="button" class="btn btn-light" [disabled]="!older()" (click)="go(older())" aria-label="The previous file (older)">›</button>
+    </div>
+  }
+</main>

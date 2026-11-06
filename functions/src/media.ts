@@ -1,7 +1,7 @@
 import express, { Request, Response, Router } from "express";
 import { DecodedIdToken } from "firebase-admin/auth";
 import { asyncHandler, requireAuth } from "./auth";
-import { CACHE_ROOT, CHUNK_BYTES, DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAX_CHUNKS, MAX_UPLOAD_BYTES } from "./constants";
+import { BOX_PREFIX, CACHE_ROOT, CHUNK_BYTES, DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAX_CHUNKS, MAX_UPLOAD_BYTES } from "./constants";
 import { MediaKind, MediaUpload } from "./models";
 import { circleCol, messageCol, userDoc } from "./paths";
 import {
@@ -158,12 +158,17 @@ async function isFriendOf(reader: string, owner: string): Promise<boolean> {
 }
 
 /**
- * May `reader` open this object of `owner`? The owner always. A message file: the person it was sent to, who has the message
+ * May `reader` open this object of `owner`? The owner always. A safebox file (`box-<connectionId>`): the two friends of that confirmed friendship. A message file: the person it was sent to, who has the message
  * (the message has the id of its file, so deleting the message closes the file). A profile picture: the owner's confirmed friends.
  * Anything else, also an unknown object, is simply "not found" (so nobody can find out what exists).
  */
 async function mayRead(reader: string, owner: string, objectId: string): Promise<boolean> {
   if (reader === owner) return true;
+  // a safebox: the owner is `box-<connectionId>`, and only the two friends of that confirmed friendship may read it
+  if (owner.startsWith(BOX_PREFIX)) {
+    const entry = (await circleCol(reader).doc(DEFAULT_CIRCLE_ID).collection(FRIENDS_SUBCOLLECTION).doc(owner.slice(BOX_PREFIX.length)).get()).data();
+    return entry?.status === "confirmed" && Boolean(entry.linkedUid);
+  }
   const message = (await messageCol(reader).doc(objectId).get()).data();
   if (message?.media && message.fromUid === owner) return true;
   const account = (await userDoc(owner).get()).data();
