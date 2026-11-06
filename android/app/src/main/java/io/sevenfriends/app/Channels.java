@@ -69,12 +69,11 @@ final class Channels {
         NotificationManager nm = context.getSystemService(NotificationManager.class);
         if (nm == null) return;
 
-        // the channels and groups of earlier versions would only be clutter in Android's settings. "default" stays: it is the channel
-        // named in the manifest for a push that names none (a push for a channel the phone does not have yet).
+        // the channels and groups of earlier versions would only be clutter in Android's settings: Android's list shows one channel per kind
+        nm.deleteNotificationChannel(DEFAULT);
         nm.deleteNotificationChannel(SILENT);
         for (String jingle : JINGLES) nm.deleteNotificationChannel("sound_" + jingle);
         for (String kind : KINDS) nm.deleteNotificationChannelGroup("group_" + kind);
-        nm.createNotificationChannel(new NotificationChannel(DEFAULT, context.getString(R.string.app_name), NotificationManager.IMPORTANCE_HIGH));
 
         for (int i = 0; i < KINDS.length; i++) {
             NotificationChannel existing = currentChannel(nm, KINDS[i]);

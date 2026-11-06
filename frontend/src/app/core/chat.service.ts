@@ -29,6 +29,11 @@ export class ChatService {
     return this.api.request<ChatMessage>(`${this.base(friendId)}/${messageId}`, { method: 'PUT', body: JSON.stringify({ text }) });
   }
 
+  /** Hides / shows a picture or video in my feed (kept on my copy of the message, so every device of mine shows it the same). */
+  async setHidden(friendId: string, messageId: string, hidden: boolean): Promise<void> {
+    await this.api.request<unknown>(`${this.base(friendId)}/${messageId}/hidden`, { method: 'PUT', body: JSON.stringify({ hidden }) });
+  }
+
   /** The link of a text and whether its page can be shown in a frame (the same check the server makes when the message is sent). */
   async previewLink(text: string): Promise<MessageLink | null> {
     const { link } = await this.api.request<{ link: MessageLink | null }>('/link-preview', { method: 'POST', body: JSON.stringify({ text }) });

@@ -182,7 +182,15 @@
     </div>
   </div>
 
-  <div class="text-center mt-4 mb-3">
-    <button type="button" class="btn btn-outline-danger btn-sm" (click)="flush(); deleteAccount()">Delete my account…</button>
-  </div>
+  <section class="card mt-4 mb-3" aria-labelledby="account-title">
+    <div class="card-body vstack gap-3">
+      <h2 class="h5 m-0" id="account-title">Account</h2>
+      <button type="button" class="btn btn-light w-100 d-flex align-items-center justify-content-between" (click)="logout()">
+        <span>Log out</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" /></svg>
+      </button>
+      <hr class="m-0" />
+      <button type="button" class="btn btn-link text-danger p-0 align-self-start" (click)="flush(); deleteAccount()">Delete my account…</button>
+    </div>
+  </section>
 </main>

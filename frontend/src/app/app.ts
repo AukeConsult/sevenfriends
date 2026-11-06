@@ -10,7 +10,7 @@ import { PresenceService } from './core/presence.service';
 import { RealtimeService } from './core/realtime.service';
 
 /** The pages that are shown again at the next start: the main pages and a conversation (not forms, pickers, sign-in). */
-const REMEMBERED_PAGE = /^\/(friends(\/sleeping|\/(?!add$|join$)[^/]+)?|pending|profile|sound-and-notifications)?$/;
+const REMEMBERED_PAGE = /^\/(friends(\/sleeping|\/(?!add$|join$)[^/]+)?|pending|profile|settings\/(preferences|sounds|notifications))?$/;
 
 @Component({
   selector: 'app-root',
@@ -54,7 +54,10 @@ export class App {
     effect(() => {
       const signedIn = Boolean(this.auth.user());
       untracked(() => {
-        if (wasSignedIn && !signedIn) this.prefs.set('lastPage', null);
+        if (wasSignedIn && !signedIn) {
+          this.prefs.set('lastPage', null);
+          this.prefs.set('setup', 'new'); // the next person is offered the setup
+        }
         wasSignedIn = signedIn;
       });
     });

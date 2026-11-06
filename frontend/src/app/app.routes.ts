@@ -8,6 +8,7 @@ import { Friends } from './friends/friends';
 import { Sleeping } from './sleeping/sleeping';
 import { FriendJoin } from './friend-join/friend-join';
 import { InstallApp } from './install-app/install-app';
+import { InstallDevice } from './install-device/install-device';
 import { Privacy } from './privacy/privacy';
 import { Terms } from './terms/terms';
 import { About } from './about/about';
@@ -22,6 +23,8 @@ import { Pending } from './pending/pending';
 import { Profile } from './profile/profile';
 import { ProfilePicturePage } from './profile-picture/profile-picture';
 import { Settings } from './settings/settings';
+import { Setup } from './setup/setup';
+import { SettingsShell } from './settings-shell/settings-shell';
 import { SoundPicker } from './sound-picker/sound-picker';
 
 export const routes: Routes = [
@@ -35,14 +38,38 @@ export const routes: Routes = [
   { path: 'friends/:id/video', component: AddMedia, data: { kind: 'video' }, canActivate: [authGuard], title: 'Send a video – Seven Friends' },
   { path: 'friends/:id', component: Chat, canActivate: [authGuard], title: 'Conversation – Seven Friends' },
   { path: 'media/:ownerId/:objectId', component: MediaViewer, canActivate: [authGuard], title: 'Image – Seven Friends' },
+  { path: 'setup', component: Setup, canActivate: [authGuard], title: 'Set up – Seven Friends' },
   { path: 'pending', component: Pending, canActivate: [authGuard], title: 'Waiting – Seven Friends' },
   { path: 'profile', component: Profile, canActivate: [authGuard], title: 'Profile – Seven Friends' },
   { path: 'profile/picture', component: ProfilePicturePage, canActivate: [authGuard], title: 'Your picture – Seven Friends' },
-  { path: 'sound-and-notifications', component: Settings, canActivate: [authGuard], title: 'Sound and notifications – Seven Friends' },
-  { path: 'sound-and-notifications/:event', component: SoundPicker, canActivate: [authGuard], title: 'Choose a sound – Seven Friends' },
+  // Settings: ONE page with a tab for each part (the tab is the child route)
+  {
+    path: 'settings',
+    component: SettingsShell,
+    canActivate: [authGuard],
+    children: [
+      { path: '', pathMatch: 'full', redirectTo: 'preferences' },
+      { path: 'preferences', component: Settings, data: { section: 'preferences' }, title: 'Preferences – Seven Friends' },
+      { path: 'sounds', component: Settings, data: { section: 'sounds' }, title: 'Sounds – Seven Friends' },
+      { path: 'sounds/:event', component: SoundPicker, title: 'Choose a sound – Seven Friends' },
+      { path: 'notifications', component: Settings, data: { section: 'notifications' }, title: 'Notifications – Seven Friends' },
+      { path: 'install', component: InstallApp, title: 'Install the app – Seven Friends' },
+      // the same three pages without the tabs, for someone who is not signed in (the sign-in page links to them)
+  { path: 'privacy', component: Privacy, title: 'Your data and privacy – Seven Friends' },
+      { path: 'terms', component: Terms, title: 'Terms of use – Seven Friends' },
+      { path: 'about', component: About, title: 'About – Seven Friends' },
+    ],
+  },
+  // the earlier address of the settings page (a saved link, a notification that was shown before)
+  { path: 'sound-and-notifications', redirectTo: 'settings/sounds' },
+  { path: 'sound-and-notifications/:event', redirectTo: 'settings/sounds/:event' },
   { path: 'privacy', component: Privacy, title: 'Your data and privacy – Seven Friends' },
   { path: 'terms', component: Terms, title: 'Terms of use – Seven Friends' },
   { path: 'about', component: About, title: 'About – Seven Friends' },
+  // one install page for each kind of device (public: the welcome page links here)
+  { path: 'install/android', component: InstallDevice, data: { device: 'android' }, title: 'Get the Android app – Seven Friends' },
+  { path: 'install/iphone', component: InstallDevice, data: { device: 'iphone' }, title: 'Add to your home screen – Seven Friends' },
+  { path: 'install/windows', component: InstallDevice, data: { device: 'windows' }, title: 'Install the app – Seven Friends' },
   { path: 'install-app', component: InstallApp, title: 'Install the app – Seven Friends' },
   { path: 'welcome', component: Welcome, canActivate: [guestGuard], title: 'Welcome – Seven Friends' },
   { path: 'login', component: Login, canActivate: [guestGuard], title: 'Sign in – Seven Friends' },

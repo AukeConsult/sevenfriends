@@ -171,3 +171,25 @@ describe("delete several messages", () => {
     expect(entry?.messagesChangedAt).toBeTruthy();
   });
 });
+
+describe("hide a picture or video", () => {
+  const hiddenOf = async (user: User, id: string) => (await user.feed(id).expect(200)).body.messages[0].hidden as boolean;
+
+  it("is kept on my copy only: the friend's feed is not affected, and it can be shown again", async () => {
+    const id = await connect(u(0), u(1));
+    const m = await sendOne(u(0), id, "look");
+    expect(await hiddenOf(u(1), id)).toBe(false);
+    await u(1).call("put", `${url(id, m)}/hidden`, { hidden: true }).expect(200);
+    expect(await hiddenOf(u(1), id)).toBe(true);
+    expect(await hiddenOf(u(0), id)).toBe(false);
+    await u(1).call("put", `${url(id, m)}/hidden`, { hidden: false }).expect(200);
+    expect(await hiddenOf(u(1), id)).toBe(false);
+  });
+
+  it("needs true or false, and an existing message", async () => {
+    const id = await connect(u(0), u(1));
+    const m = await sendOne(u(0), id, "look");
+    await u(0).call("put", `${url(id, m)}/hidden`, { hidden: "yes" }).expect(400);
+    await u(0).call("put", `${url(id, "nope")}/hidden`, { hidden: true }).expect(404);
+  });
+});

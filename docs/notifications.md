@@ -36,7 +36,7 @@ Inside the Android app, Settings has "Open the notification screen" and "Android
 ### Android settings and the account
 - The account switches decide what the server sends (all devices). Android's switches (group or channel) decide what this phone shows.
 - An app cannot switch a channel back on. Under each switch the native screen shows what Android has for this phone ("on · sound: Drill" or "OFF"), and a tap opens that channel's page in Android. It refreshes when the app is resumed.
-- The old channels (`silent`, `sound_*`) are deleted by `Channels.ensure`; `default` stays as the manifest's fallback.
+- The old channels (`silent`, `sound_*`, and the former fallback `default`) are deleted by `Channels.ensure`, so Android's list shows exactly the four kinds. The manifest names no default channel: every push names its kind's channel (a push for a channel the phone does not have yet is shown by Firebase's own "Miscellaneous" channel).
 
 ### The check bar (Android)
 A dark bar at the top of the Android app ("Seven Friends · Android", button **Notifications**) opens `NativeCheck.java`: a plain report that the Java code reads from Android itself, with no web page or bridge involved: notifications allowed, per kind the channel / on or OFF / sound, all channels, and what the web page last told the app (`Channels.sync`; "never" = the bridge call from the page has not arrived). Remove the bar with `CHECK_BAR = false` in `MainActivity.java`.

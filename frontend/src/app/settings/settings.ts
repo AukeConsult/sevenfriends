@@ -1,11 +1,12 @@
 import { Component, inject, signal } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ApiService } from '../core/api.service';
 import { DesktopNoticeService } from '../core/desktop-notice.service';
 import { NoticePreferences } from '../models';
 import { NoticesService } from '../core/notices.service';
 import { PushService } from '../core/push.service';
+import { QUICK_LENGTH, QUICK_MAX, UiPreferencesService, quickOf } from '../core/ui-preferences';
 import { SOUND_CHOICES, SOUND_EVENTS, SoundEvent, SoundService } from '../core/sound.service';
 
 /** A full page for the person's own settings: for now, which sound plays for what. */
@@ -19,7 +20,34 @@ export class Settings {
   protected readonly desktop = inject(DesktopNoticeService);
   protected readonly push = inject(PushService);
   private readonly api = inject(ApiService);
+  /** which page this is (the route says): the preferences, the sounds, or the notifications */
+  protected readonly section = inject(ActivatedRoute).snapshot.data['section'] as 'preferences' | 'sounds' | 'notifications';
+  protected readonly title = { preferences: 'Preferences', sounds: 'Sounds', notifications: 'Notifications' }[this.section];
+  protected readonly prefs = inject(UiPreferencesService);
   protected readonly noticeProblem = signal<string | null>(null);
+
+  /** The ready-made messages being edited (empty rows are allowed while typing; only the filled ones are saved). */
+  protected readonly quick = signal<string[]>([...this.prefs.get('quickMessages')]);
+  protected readonly quickMax = QUICK_MAX;
+  protected readonly quickLength = QUICK_LENGTH;
+
+  protected addQuick(): void {
+    if (this.quick().length < QUICK_MAX) this.quick.update((list) => [...list, '']);
+  }
+
+  protected setQuick(index: number, value: string): void {
+    this.quick.update((list) => list.map((text, i) => (i === index ? value : text)));
+    this.saveQuick();
+  }
+
+  protected removeQuick(index: number): void {
+    this.quick.update((list) => list.filter((_, i) => i !== index));
+    this.saveQuick();
+  }
+
+  private saveQuick(): void {
+    this.prefs.set('quickMessages', quickOf(this.quick()));
+  }
 
   /** Which pushes I get and what they show: saved on the account, so it holds for every device. null = still loading. */
   private readonly noticeChoices = inject(NoticesService);
@@ -95,7 +123,7 @@ export class Settings {
       if (!this.desktop.wanted()) return; // not allowed: the reason is shown
     }
     await this.desktop.show(
-      { title: 'Seven Friends', body: 'This is how a notification looks.', id: `test-${Date.now()}`, silent: false, go: '/sound-and-notifications' },
+      { title: 'Seven Friends', body: 'This is how a notification looks.', id: `test-${Date.now()}`, silent: false, go: '/settings/notifications' },
       true,
     );
   }

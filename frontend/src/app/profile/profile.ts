@@ -8,6 +8,8 @@ import { ApiService } from '../core/api.service';
 import { authMessage } from '../core/auth-errors';
 import { AuthService } from '../core/auth.service';
 import { LiveChanges } from '../core/live-changes';
+import { PresenceService } from '../core/presence.service';
+import { PushService } from '../core/push.service';
 import { defaultLanguage, languagesFor } from '../models/shared/languages';
 import { countries, dialCode, fullNumber, isValidPhone, nationalNumber } from '../core/countries';
 import { SOCIAL_NETWORKS, draftFromSocials, emptySocialDraft, socialsFromDraft } from '../core/social';
@@ -25,6 +27,8 @@ const RETRY_MS = 5000;
 })
 export class Profile {
   private readonly api = inject(ApiService);
+  private readonly presence = inject(PresenceService);
+  private readonly push = inject(PushService);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
   private readonly live = inject(LiveChanges);
@@ -141,6 +145,15 @@ export class Profile {
     } catch {
       /* offline or signed out: the page still works with what it has */
     }
+  }
+
+  /** Log out: the profile is saved first; friends see the gray dot at once, and this device stops getting my pushes. */
+  protected async logout(): Promise<void> {
+    await this.flush();
+    await this.presence.goOffline();
+    await this.push.forgetDevice();
+    await this.auth.logout();
+    await this.router.navigateByUrl('/login');
   }
 
   protected deleteAccount(): void {

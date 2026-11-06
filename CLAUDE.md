@@ -23,14 +23,14 @@ An app for staying in contact with your 7 closest friends.
 - `/delete-account` **Delete my account**: full-screen page that erases the user and everything shared with others (see Deleting my account).
 - After **creating an account** (any login method) the app opens `/profile` so the person can fill in their details; later logins go to Home. (`AuthService.landingPath()`.)
 - `/login` **Login**: Google, phone (SMS code, `/login/phone`), email link (`/login/email`, finished at `/login/link`) and email/password (a verification email is sent at sign-up). `/verify-phone` lets a signed-in user verify a phone by SMS (Profile).
-- Bottom menu (always visible when signed in): Home, Friends, **Me** (dropup: My profile, Sound and notifications, Log out). The third item is called "Me", not "Profile".
+- Bottom menu (always visible when signed in): Home, Friends, Profile, Settings (all four are plain links; there is no drop-up). **Log out** and Delete my account are in the "Account" card at the bottom of the Profile page. **Settings is ONE page with a tab for each part** (`settings-shell/`: Preferences, Sounds, Notifications, Install (browser only), Privacy, Terms, About; each tab is a child route `/settings/<tab>` that shows the existing page; the sound picker is `/settings/sounds/:event`; `/privacy`, `/terms`, `/about` also exist without tabs for someone who is signed out, and `/sound-and-notifications` redirects to `/settings/sounds`).
 
 ## Mobile first (important)
 **The default use of this app is on a mobile phone.** All UI work must follow this:
 - **Every function is a full-screen page.** This is a mobile app, so the standard is: a function (adding a friend, a conversation, the profile, ...) gets its own page and route that fills the screen, not a pop-up.
   - **No pop-ups:** no modals, dialogs, bottom sheets, overlays or `window.confirm` / `alert` / `prompt`. A quick confirmation (like delete) is an **expandable frame inside the page**, under the thing it is about.
   - A sub-page has a **sticky top bar** with a back arrow and the title (see `chat` and `add-friend`). A form page **ends with Cancel and the main action** (for example "Send friend request"). Leave room at the bottom for the bottom menu.
-  - The only floating element is the small "Me" dropup in the bottom menu: it is navigation (My profile, Sound and notifications, Log out), not a function.
+  - There is no floating menu any more: the bottom menu has four plain links.
   - New function checklist: a component in its own folder, a route in `app.routes.ts` (put fixed paths like `friends/add` **before** parameter paths like `friends/:id`), guarded with `authGuard`, and a link or button on the page it comes from.
 - Design and build for a ~360–430px wide portrait screen first; add `min-width` media queries to adapt up to tablet/desktop, never the other way around.
 - Touch targets at least 44x44px; no hover-only interactions.
@@ -352,7 +352,7 @@ firebase deploy                # builds the frontend first (hosting predeploy), 
 
 ## UI preferences (one object in localStorage)
 
-- `core/ui-preferences.ts` (`UiPreferencesService`) holds EVERY local choice in ONE object under the key `sf-ui`: `chatOrder` (oldest/newest first), `lastPage` (shown again when the app is opened at `/`; set on every navigation to a main page or a conversation, cleared at sign-out) and `micRaw`. Read with `prefs.get('key')` / `prefs.value('key')` (a signal), write with `prefs.set('key', value)`; **never use localStorage directly for a choice**: add the field to `UiPreferences`, `DEFAULTS` and `read()`. Other windows follow through the `storage` event; the old keys `sf-chat-order` and `sf-mic-raw` are read once if the object does not exist yet.
+- `core/ui-preferences.ts` (`UiPreferencesService`) holds EVERY local choice in ONE object under the key `sf-ui`: `chatOrder` (oldest/newest first), `enterSends` (Enter sends the message, Shift+Enter is a new line; default off: Ctrl+Enter sends), `sleepList` (default on; off = the friend card offers Delete only and the sleep list row is hidden while the list is empty), `quickMessages` (up to 10 ready-made texts of at most 200 characters: listed in the + menu of a conversation, one tap sends; edited in the Preferences card of the Settings page), `setup` ('new' | 'skipped' | 'done': the first-time setup), `lastPage` (shown again when the app is opened at `/`; set on every navigation to a main page or a conversation, cleared at sign-out) and `micRaw`. Read with `prefs.get('key')` / `prefs.value('key')` (a signal), write with `prefs.set('key', value)`; **never use localStorage directly for a choice**: add the field to `UiPreferences`, `DEFAULTS` and `read()`. Other windows follow through the `storage` event; the old keys `sf-chat-order` and `sf-mic-raw` are read once if the object does not exist yet.
 - Not in it on purpose: the sounds (an account setting, `SoundService`, synced between devices), the "delete these messages" filter (always starts safe), the "setup hidden" note (per session), login/push/desktop-notice keys (device and account state).
 
 ## Links in messages (clickable, with a page preview in a frame)
@@ -391,6 +391,10 @@ A native .NET 8 (WPF) app with the WebView2 control that shows the live web app 
 
 See `docs/notifications.md`: per-kind switches and hide-text (`PUT /preferences/notices`), `POST /push/test`, Android channels per kind (`<kind>_<sound>`), native notification screen, app badge.
 
+## Conversation page
+
+The header shows only the avatar (with the presence dot) and the name; the profile of a friend is on the Friends page. A quick sideways swipe on the page (not on text, buttons, links, players or scrolling strips) opens the conversation with the next friend (swipe left) or the previous one (swipe right), in the order of `FriendsService.awake()`; there is no wrap-around. `ParamsRouteReuseStrategy` makes the page start fresh when only the friend id in the address changes.
+
 ## Friend links
 `/?invite=<code>` (the code is made on the server, `functions/src/invite.ts`; the profile page has Share / Copy / New link) or `/?friend=<email or phone>`.
 `FriendLinkService.capture()` runs in an app initializer (before the router can redirect), keeps the link in UiPreferences (`pendingFriend`) and removes
@@ -407,3 +411,7 @@ The Home page has an expandable card ("Invite people with a link") under the ban
 A phone photo can be 50 million pixels. `decodeImage` (core/image.ts) reads the size and the position note (EXIF) from the first bytes and asks the browser to make
 the picture small WHILE decoding it (never the full picture first); `prepareImage` makes the preview from the small picture and empties its canvases at once.
 Do not decode a chosen photo at full size anywhere.
+
+## First-time setup (`/setup`, `frontend/src/app/setup/`)
+- The **welcome page** (signed out, not the installed app) shows two cards: **Use the app (recommended)** with the install action for this platform, and **Use it in the browser** ("Continue in the browser").
+- The setup is **never started automatically**: it is opened by the **Run the setup** button on the Settings → Preferences tab. Three steps: **1 sound** (the message sound, with volume), **2 notifications** (Android app: opens the native notification screen + test; iPhone in Safari: "Add to Home Screen first"; browser with push: "Turn on notifications" + test; otherwise pop-ups), **3 done** (Add a friend / Go to Home). Every step has "Do it later": `setup` becomes `skipped` and Home shows a "Finish setup" bar until it is done. Signing out sets `setup` back to `new`.

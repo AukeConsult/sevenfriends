@@ -1,6 +1,5 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { fileExists } from '../core/download';
 import { FriendLinkService } from '../core/friend-link.service';
 import { InstallService } from '../core/install.service';
 import { WelcomeService } from '../core/welcome.service';
@@ -17,38 +16,19 @@ import { Hero } from '../hero/hero';
   imports: [RouterLink, Hero],
   templateUrl: './welcome.html',
 })
-export class Welcome implements OnInit {
-  protected readonly app = inject(InstallService);
+export class Welcome {
+  private readonly app = inject(InstallService);
   private readonly welcome = inject(WelcomeService);
   private readonly router = inject(Router);
   private readonly friendLinks = inject(FriendLinkService);
   private readonly friend = this.friendLinks.pending;
-  /** the waiting invitation was copied to the clipboard (when the download was tapped) */
-  protected readonly copied = signal(false);
-
   protected readonly kind: 'android' | 'ios' | 'windows' | 'other' = this.app.androidDevice ? 'android' : this.app.ios ? 'ios' : this.app.windows ? 'windows' : 'other';
-  /** is the app file on the website (Android and Windows)? null = still asking */
-  protected readonly fileReady = signal<boolean | null>(null);
+  /** the install page of this device (each device has its own: Android, iPhone, and Windows or another computer) */
+  protected readonly installPage = `/install/${this.kind === 'android' ? 'android' : this.kind === 'ios' ? 'iphone' : 'windows'}`;
 
   protected readonly invited = computed(() => this.friend() !== null);
   /** who the link points to, when it says so (an email or a phone number) */
   protected readonly invitedBy = computed(() => this.friend()?.email ?? this.friend()?.phone ?? null);
-
-  ngOnInit(): void {
-    const file = this.kind === 'android' ? '/downloads/SevenFriends.apk' : this.kind === 'windows' ? '/downloads/SevenFriendsSetup.exe' : null;
-    if (file) void fileExists(file).then((found) => this.fileReady.set(found));
-  }
-
-  /** Before an app is downloaded the invitation link goes to the clipboard: the app has its own storage and cannot see it, the person pastes it there (sign-in page, "I have an invitation"). */
-  protected copyInvitation(): void {
-    const pending = this.friend();
-    if (!pending) return;
-    navigator.clipboard?.writeText(this.friendLinks.linkText(pending)).then(() => this.copied.set(true), () => undefined);
-  }
-
-  protected install(): void {
-    void this.app.install();
-  }
 
   protected continueInBrowser(): void {
     this.welcome.continueInBrowser();

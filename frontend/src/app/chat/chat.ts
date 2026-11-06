@@ -4,7 +4,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Component, DestroyRef, ElementRef, HostListener, computed, effect, inject, signal, untracked, viewChild } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ApiError } from '../core/api.service';
 import { FriendAvatar } from '../friend-avatar/friend-avatar';
 import { MediaAudio } from '../media-audio/media-audio';
@@ -16,11 +16,9 @@ import { LiveChanges } from '../core/live-changes';
 import { UiPreferencesService } from '../core/ui-preferences';
 import { EMOJIS } from '../core/emojis';
 import { FriendsService } from '../core/friends.service';
-import { countries } from '../core/countries';
-import { moodIcon, moodLabel } from '../core/moods';
+import { initials } from '../core/initials';
 import { presenceLabel } from '../core/presence';
 import { RealtimeService } from '../core/realtime.service';
-import { SOCIAL_NETWORKS } from '../core/social';
 import { ChatMessage, MessageDeleteCriteria, MessageLink } from '../models';
 
 // New messages, edits and deletes arrive live (RealtimeService). This refresh is only a safety net.
@@ -39,6 +37,7 @@ export class Chat {
   private readonly mediaService = inject(MediaService);
   private readonly realtime = inject(RealtimeService);
   private readonly friendsService = inject(FriendsService);
+  private readonly router = inject(Router);
   private lastLive = this.realtime.latestMessage()?.seq ?? 0; // live messages before this page opened are not news
   private readonly end = viewChild<ElementRef<HTMLElement>>('end');
   private readonly field = viewChild<ElementRef<HTMLTextAreaElement>>('field');
@@ -47,9 +46,8 @@ export class Chat {
 
   protected readonly friendId = inject(ActivatedRoute).snapshot.paramMap.get('id') ?? '';
   protected readonly name = signal('');
-  protected readonly moodIcon = moodIcon;
-  protected readonly moodLabel = moodLabel;
   protected readonly presenceLabel = presenceLabel;
+  protected readonly initials = initials;
   /** this friend, from the list (for the mood) */
   protected readonly friend = computed(() => this.friendsService.friends().find((f) => f.id === this.friendId) ?? null);
   /** the seat of this friend (1-7): its icon friend{seat}.svg is shown in the header; 0 while the list is not loaded */
@@ -57,6 +55,10 @@ export class Chat {
   protected readonly messages = signal<ChatMessage[]>([]);
   /** false = oldest first (the default); true = newest first. Remembered on this device. */
   /** newest first? (a remembered choice, the same in every window; a refresh of the feed never changes it) */
+  /** the Enter key sends the message (a preference) */
+  protected readonly enterSends = this.prefs.value('enterSends');
+  /** the ready-made messages of the + menu (a preference) */
+  protected readonly quickMessages = this.prefs.value('quickMessages');
   protected readonly sortDesc = computed(() => this.prefs.value('chatOrder')() === 'newest');
   protected readonly shown = computed(() => (this.sortDesc() ? [...this.messages()].reverse() : this.messages()));
 
@@ -68,17 +70,6 @@ export class Chat {
     { label: 'All of them', days: null },
   ];
   protected readonly cleanupOpen = signal(false);
-  /** the profile of the friend, opened by tapping the name in the header */
-  protected readonly profileOpen = signal(false);
-  protected readonly networks = SOCIAL_NETWORKS;
-  private readonly countryNames = new Map(countries().map((c) => [c.code, c.name]));
-  protected toggleProfile(): void {
-    this.profileOpen.update((open) => !open);
-    if (this.profileOpen()) window.scrollTo({ top: 0, behavior: 'smooth' }); // the frame is at the top of the page: bring it into view
-  }
-  protected countryName(code: string | null): string {
-    return (code && this.countryNames.get(code)) || '';
-  }
   protected readonly cleanupWhose = signal<'mine' | 'both'>('mine');
   /** my messages, or both sides' (never the friend's alone) */
   protected readonly whoseChoices = computed<{ value: 'mine' | 'both'; label: string }[]>(() => [
@@ -117,6 +108,21 @@ export class Chat {
   protected readonly emojis = EMOJIS;
   /** the emoji panel above the message field */
   protected readonly emojiOpen = signal(false);
+  /** the menu of the + button (emoji, image, video, voice) */
+  protected readonly menuOpen = signal(false);
+  private menuPinned = false; // opened by a click or tap: it stays until the next click, instead of closing when the mouse leaves
+
+  protected toggleMenu(): void {
+    this.menuPinned = !this.menuOpen() || !this.menuPinned; // a click on a menu that only the hover has opened keeps it open
+    this.menuOpen.update((open) => !open || (open && !this.menuPinned));
+  }
+
+  /** A mouse over the button opens the menu, leaving closes it (a finger has no hover: it taps). */
+  protected hoverMenu(inside: boolean): void {
+    if (!window.matchMedia('(hover: hover)').matches) return;
+    if (inside) this.menuOpen.set(true);
+    else if (!this.menuPinned) this.menuOpen.set(false);
+  }
   /** my message whose Edit / Delete buttons are open (tap a message of mine) */
   protected readonly selected = signal<string | null>(null);
   /** my message that is being deleted (the question is open) */
@@ -180,7 +186,8 @@ export class Chat {
   private async refresh(first: boolean): Promise<void> {
     try {
       const res = await this.chat.load(this.friendId);
-      const changed = first || res.messages.length !== this.messages().length;
+      const known = new Set(this.messages().map((m) => m.id));
+      const changed = first || res.messages.some((m) => !known.has(m.id)) || res.messages.length !== known.size; // a new message (also when one was deleted at the same time)
       this.name.set(res.friend.name);
       this.messages.set(res.messages);
       this.blocked.set(null);
@@ -237,15 +244,17 @@ export class Chat {
 
   /** The messages whose link preview is open (the page is loaded only after a tap: it shows the friend's address to that site and runs its scripts). */
   protected readonly previewing = signal<ReadonlySet<string>>(new Set());
-  /** The pictures and videos the person has hidden in the feed (they are shown until hidden). */
-  protected readonly pictureHidden = signal<ReadonlySet<string>>(new Set());
+  /** The pictures and videos I have hidden in the feed (they are shown until hidden). The flag is kept on my copy of the message in the database. */
+  protected readonly pictureHidden = computed<ReadonlySet<string>>(() => new Set(this.messages().filter((m) => m.hidden).map((m) => m.id)));
 
   protected togglePicture(id: string): void {
-    this.pictureHidden.update((hidden) => {
-      const next = new Set(hidden);
-      if (!next.delete(id)) next.add(id);
-      return next;
-    });
+    const hidden = !this.pictureHidden().has(id);
+    this.setHidden(id, hidden);
+    void this.chat.setHidden(this.friendId, id, hidden).catch(() => this.setHidden(id, !hidden)); // not saved: back to how it was
+  }
+
+  private setHidden(id: string, hidden: boolean): void {
+    this.messages.update((list) => list.map((m) => (m.id === id ? { ...m, hidden } : m)));
   }
 
   private readonly sanitizer = inject(DomSanitizer);
@@ -361,6 +370,24 @@ export class Chat {
     }
   }
 
+  /** A ready-made message from the + menu: sent at once. What is typed in the field stays as it is. */
+  protected async sendQuick(text: string): Promise<void> {
+    this.menuOpen.set(false);
+    this.menuPinned = false;
+    if (this.sending() || this.editing()) return;
+    this.sending.set(true);
+    this.error.set(null);
+    try {
+      const message = await this.chat.send(this.friendId, text);
+      this.messages.update((list) => [...list, message]);
+      this.scrollDown();
+    } catch (err: any) {
+      this.error.set(err.message ?? 'Could not send the message');
+    } finally {
+      this.sending.set(false);
+    }
+  }
+
   /** The field grew or shrank with what was typed. */
   protected typed(): void {
     const input = this.field()?.nativeElement;
@@ -372,7 +399,10 @@ export class Chat {
   /** Enter is a new line (the browser does that); Ctrl+Enter or Cmd+Enter sends, like the Send button. */
   protected enterPressed(event: Event): void {
     const key = event as KeyboardEvent;
-    if (!(key.ctrlKey || key.metaKey) || key.isComposing) return;
+    if (key.isComposing) return; // a letter is still being composed (Enter confirms it)
+    // autosend: Enter sends, Shift+Enter is a new line; otherwise only Ctrl / Cmd + Enter sends
+    const sends = this.enterSends() ? !key.shiftKey : key.ctrlKey || key.metaKey;
+    if (!sends) return;
     key.preventDefault();
     void this.send();
   }
@@ -385,7 +415,11 @@ export class Chat {
     input.style.height = `${input.scrollHeight}px`;
   }
 
-  /** Puts the emoji where the cursor is in the message field (at the end when the field was not used yet). */
+  /**
+   * Puts the emoji where the cursor is in the message field (at the end when the field was not used yet). The panel stays open, so
+   * several emojis can be added one after the other: it closes when the person taps the field, types, sends, or taps the emoji button.
+   * The field is not focused here (that would close the panel, and on a phone open the keyboard over it): the cursor is only moved.
+   */
   protected addEmoji(emoji: string): void {
     const input = this.field()?.nativeElement;
     const value = this.text();
@@ -394,12 +428,10 @@ export class Chat {
     const next = value.slice(0, start) + emoji + value.slice(end);
     if (next.length > 2000) return; // the same limit as the field (the server checks it too)
     this.text.set(next);
-    this.emojiOpen.set(false); // one emoji per opening
     if (input) {
       input.value = next;
       const caret = start + emoji.length;
-      input.focus();
-      input.setSelectionRange(caret, caret); // keep typing after the emoji
+      input.setSelectionRange(caret, caret); // the next emoji (or the next letter) goes after this one
       this.fit();
     }
   }
@@ -409,10 +441,47 @@ export class Chat {
     this.scrollDown();
   }
 
+  // Swipe sideways: to the conversation with the next friend (swipe left) or the previous one (swipe right), in the order of the friend list.
+  private swipe: { x: number; y: number; time: number } | null = null;
+
+  @HostListener('document:touchstart', ['$event'])
+  protected onTouchStart(event: TouchEvent): void {
+    const touch = event.touches[0];
+    // only one finger, and not on something that uses sideways movement itself (text, sliders, players, scrolling strips)
+    this.swipe = event.touches.length === 1 && touch && !this.usesSideways(event.target as Element | null) ? { x: touch.clientX, y: touch.clientY, time: Date.now() } : null;
+  }
+
+  @HostListener('document:touchend', ['$event'])
+  protected onTouchEnd(event: TouchEvent): void {
+    const start = this.swipe;
+    this.swipe = null;
+    const touch = event.changedTouches[0];
+    if (!start || !touch || window.getSelection()?.toString()) return;
+    const dx = touch.clientX - start.x;
+    const dy = touch.clientY - start.y;
+    // a quick, mostly horizontal, long enough movement
+    if (Date.now() - start.time > 700 || Math.abs(dx) < 70 || Math.abs(dx) < Math.abs(dy) * 1.8) return;
+    const friends = this.friendsService.awake();
+    const next = friends[friends.findIndex((f) => f.id === this.friendId) + (dx < 0 ? 1 : -1)];
+    if (next) void this.router.navigate(['/friends', next.id]);
+  }
+
+  private usesSideways(element: Element | null): boolean {
+    for (let e = element; e && e !== document.body; e = e.parentElement) {
+      if (e.matches('input, textarea, select, button, a, audio, video, iframe, [contenteditable], [role="slider"]')) return true;
+      if (e.scrollWidth > e.clientWidth + 1 && /auto|scroll/.test(getComputedStyle(e).overflowX)) return true;
+    }
+    return false;
+  }
+
   /** A click somewhere else closes the open things: the delete frame (its criteria are forgotten) and the Edit / Delete buttons of a message. Escape does the same. */
   @HostListener('document:click', ['$event'])
   protected onDocumentClick(event: Event): void {
     const target = event.target as Element | null;
+    if (this.menuOpen() && !target?.closest('.sf-add')) {
+      this.menuOpen.set(false);
+      this.menuPinned = false;
+    }
     if (this.cleanupOpen() && !target?.closest('.sf-cleanup, [aria-controls="cleanup"]')) this.closeCleanup();
     const selected = this.selected();
     if (selected && (target?.closest('.sf-message') as HTMLElement | null)?.dataset['id'] !== selected) {
@@ -506,7 +575,10 @@ export class Chat {
 
   private scrollDown(): void {
     // oldest first: the newest is at the bottom; newest first: it is at the top
-    // a moment later: the feed and the message field have been drawn in their new places by then
-    setTimeout(() => (this.sortDesc() ? window.scrollTo({ top: 0 }) : this.end()?.nativeElement.scrollIntoView({ block: 'end' })), 50);
+    // a moment later: the feed and the message field have been drawn in their new places by then. Again after a while: a picture or a
+    // video preview takes its height only when it has been loaded, which would leave the new message below the screen.
+    for (const wait of [50, 400, 1200]) {
+      setTimeout(() => (this.sortDesc() ? window.scrollTo({ top: 0 }) : this.end()?.nativeElement.scrollIntoView({ block: 'end' })), wait);
+    }
   }
 }

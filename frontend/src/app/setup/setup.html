@@ -1,0 +1,92 @@
+<div class="sf-page-head">
+  <h1>Set up Seven Friends</h1>
+  <p class="sf-hint m-0">Step {{ step() }} of 3</p>
+</div>
+
+<main class="sf-narrow">
+  @switch (step()) {
+    @case (1) {
+      <h2 class="h5 m-0">Choose your message sound</h2>
+      <p class="small text-secondary m-0">Tap a sound to choose it and hear it. You can change it later, and set a sound for requests too, under Settings.</p>
+
+      @if (sounds.jingles().length) {
+        <ul class="sf-list" role="radiogroup" aria-label="Seven Friends jingles">
+          @for (jingle of sounds.jingles(); track jingle.file) {
+            <li class="sf-list-item">
+              <button type="button" class="sf-pick" role="radio" [attr.aria-checked]="current() === 'file:' + jingle.file" (click)="choose('file:' + jingle.file)">
+                <span class="sf-pick-mark" aria-hidden="true">{{ current() === 'file:' + jingle.file ? '✓' : '' }}</span>{{ jingle.label }}
+              </button>
+            </li>
+          }
+        </ul>
+      }
+      <ul class="sf-list" role="radiogroup" aria-label="Other sounds">
+        @for (option of choices; track option.id) {
+          <li class="sf-list-item">
+            <button type="button" class="sf-pick" role="radio" [attr.aria-checked]="current() === option.id" (click)="choose(option.id)">
+              <span class="sf-pick-mark" aria-hidden="true">{{ current() === option.id ? '✓' : '' }}</span>{{ option.label }}
+            </button>
+          </li>
+        }
+      </ul>
+
+      @if (!install.native) {
+        <div class="card"><div class="card-body vstack gap-1">
+          <div class="d-flex justify-content-between"><strong>Volume</strong><span class="text-secondary">{{ sounds.volume() }} %</span></div>
+          <input type="range" class="form-range" min="0" max="100" step="5" [value]="sounds.volume()" (input)="setVolume($any($event.target).value)" aria-label="Volume of the sounds" />
+        </div></div>
+      }
+
+      <div class="d-flex flex-wrap gap-2 justify-content-between">
+        <button type="button" class="btn btn-link" (click)="later()">Do it later</button>
+        <button type="button" class="btn btn-primary" (click)="next()">Next</button>
+      </div>
+    }
+
+    @case (2) {
+      <h2 class="h5 m-0">Turn on notifications</h2>
+      @switch (how()) {
+        @case ('ios-first') {
+          <div class="alert alert-info m-0" role="status">
+            On iPhone, notifications only work from the app on your home screen. In Safari, tap <strong>Share</strong>, then <strong>Add to Home Screen</strong>,
+            open <strong>Seven Friends from your home screen</strong>, and set this up there.
+          </div>
+        }
+        @case ('android') {
+          <p class="small text-secondary m-0">On this phone the notifications are set on the app's own notification screen: which kinds you get, the sounds, and a test.</p>
+          <button type="button" class="btn btn-primary align-self-start" (click)="openAndroidScreen()">Open the notification screen</button>
+          <button type="button" class="btn btn-outline-primary align-self-start" [disabled]="busy()" (click)="test()">Send me a test notification</button>
+        }
+        @default {
+          <p class="small text-secondary m-0">
+            @if (how() === 'push') { A notification reaches you also when the app is closed or the screen is locked. }
+            @else { This browser shows a pop-up when a message arrives and you are not looking at the app. }
+          </p>
+          @if (on()) {
+            <div class="alert alert-success m-0" role="status">✓ Notifications are on.</div>
+            <button type="button" class="btn btn-outline-primary align-self-start" [disabled]="busy()" (click)="test()">Send me a test notification</button>
+          } @else {
+            <button type="button" class="btn btn-primary btn-lg" [disabled]="busy()" (click)="turnOn()">Turn on notifications</button>
+          }
+          @if (problem(); as text) { <div class="alert alert-warning m-0" role="alert">{{ text }}</div> }
+        }
+      }
+      @if (testResult(); as result) { <div class="small" role="status">{{ result }}</div> }
+
+      <div class="d-flex flex-wrap gap-2 justify-content-between">
+        <button type="button" class="btn btn-link" (click)="later()">Do it later</button>
+        <button type="button" class="btn btn-primary" (click)="next()">Next</button>
+      </div>
+    }
+
+    @case (3) {
+      <div class="text-center vstack gap-3">
+        <div class="sf-logo sf-logo-lg mx-auto" aria-hidden="true">✓</div>
+        <h2 class="h5 m-0">You are all set</h2>
+        <p class="m-0">Add your first friend: there are only seven seats, so choose the people who matter most.</p>
+        <button type="button" class="btn btn-primary btn-lg" (click)="finish('/friends/add')">Add a friend</button>
+        <button type="button" class="btn btn-link" (click)="finish('/')">Go to Home</button>
+      </div>
+    }
+  }
+</main>

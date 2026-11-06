@@ -313,6 +313,20 @@ router-outlet + * { display: block; min-height: 100dvh; }
 .sf-points { list-style: none; margin: 0 auto; padding: 0 var(--sf-gutter, 0); max-width: 26rem; display: grid; gap: 0.4rem; font-size: var(--sf-fs-description); color: var(--sf-muted, #5b6270); }
 .sf-points li { position: relative; padding-left: 1.4rem; }
 .sf-points li::before { content: "✓"; position: absolute; left: 0; color: var(--sf-primary); font-weight: 700; }
+// the welcome page: a small moving picture in front of each point (the moves stop when the person asked for less motion)
+.sf-points-icons { gap: 0.6rem; max-width: 24rem; }
+.sf-points-icons li { display: flex; align-items: center; gap: 0.75rem; padding-left: 0; }
+.sf-points-icons li::before { content: none; }
+.sf-ico { flex: none; width: 2rem; height: 2rem; color: var(--sf-primary); }
+.sf-seat-dot { fill: currentColor; transform-box: fill-box; transform-origin: center; animation: sf-seat 2.1s ease-in-out infinite; animation-delay: calc(var(--i) * 0.3s); }
+.sf-ico-bounce { animation: sf-bounce 1.6s ease-in-out infinite; }
+.sf-ico-spin { animation: sf-spin 12s linear infinite; }
+.sf-ico-pulse { animation: sf-pulse 2.4s ease-in-out infinite; }
+@keyframes sf-seat { 0%, 100% { transform: scale(0.6); opacity: 0.45; } 50% { transform: scale(1.25); opacity: 1; } }
+@keyframes sf-bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+@keyframes sf-spin { to { transform: rotate(360deg); } }
+@keyframes sf-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
+@media (prefers-reduced-motion: reduce) { .sf-seat-dot, .sf-ico-bounce, .sf-ico-spin, .sf-ico-pulse { animation: none; } }
 .sf-welcome h2 { font-size: 1.15rem; }
 .sf-welcome ol { padding-left: 1.25rem; }
 @media (max-height: 780px) { .sf-points { gap: 0.25rem; font-size: 0.85rem; } }
@@ -331,6 +345,17 @@ router-outlet + * { display: block; min-height: 100dvh; }
     &.sf-taken { opacity: 1; box-shadow: none; background: var(--sf-primary); } // a seat that is taken: filled, the colours alternate
     &.sf-taken:nth-child(odd) { background: var(--sf-red); } }
 }
+// the dots of the sign-in and welcome pages: they light up one after the other, each in its own colour
+.sf-hero-dots.sf-blink i {
+  animation: sf-dot-blink 13s ease-in-out infinite; animation-delay: calc(var(--n) * 0.4s); // one pass over the seven dots (about 3 s), then 10 s of rest, then again
+  &:nth-child(1) { --c: var(--sf-red); } &:nth-child(2) { --c: #e8a33d; } &:nth-child(3) { --c: #3fa66b; } &:nth-child(4) { --c: #20a4c9; }
+  &:nth-child(5) { --c: var(--sf-primary); } &:nth-child(6) { --c: #8b5cf6; } &:nth-child(7) { --c: #ec6aa5; }
+}
+@keyframes sf-dot-blink {
+  0%, 5%, 100% { background: transparent; opacity: 0.55; transform: scale(1); }
+  1%, 3.5% { background: var(--c); box-shadow: inset 0 0 0 2px var(--c); opacity: 1; transform: scale(1.4); }
+}
+@media (prefers-reduced-motion: reduce) { .sf-hero-dots.sf-blink i { animation: none; } }
 .sf-form-width { max-width: var(--sf-form-max); margin: 0 auto; width: 100%; }
 
 // ---- Headings, texts, sections ----
@@ -618,6 +643,7 @@ router-outlet + * { display: block; min-height: 100dvh; }
 .sf-draft-link-bar { display: flex; align-items: center; gap: 0.5rem; > .sf-hint:first-child { flex: 1; min-width: 0; } }
 .sf-link-frame { width: 100%; display: flex; flex-direction: column; gap: 0.25rem; iframe { width: 100%; height: min(24rem, 60dvh); border: 1px solid var(--sf-border); border-radius: var(--sf-radius); background: #fff; } } // the page of a link, shown in the feed
 // ---- Images in messages ----
+.sf-message-wide { width: 94%; } // a message with the page of a link open takes the width of the feed: the page is shown wide, not as a narrow strip
 .sf-message-media { max-width: 94%; } // a message with an image, video or audio is as wide as its picture (see .sf-media), never wider than the feed
 // A picture, video or voice message has no box round it: only the picture is shown. Its caption is a small bubble of its own under it.
 .sf-bubble.sf-bubble-media, .sf-mine .sf-bubble.sf-bubble-media { display: flex; flex-direction: column; gap: 0.25rem; padding: 0; background: none; box-shadow: none; color: inherit; border-radius: 0; }
@@ -649,7 +675,14 @@ app-camera { display: contents; }
   background: #000;
   img { opacity: 0.9; }
   video { display: block; width: 100%; height: 100%; object-fit: contain; background: #000; }
+  // playing: the video keeps its shape and the controls sit UNDER it, not over the picture (a native bar is drawn over it, and differently by Safari, iPhone and Chrome)
+  &.sf-playing { display: flex; flex-direction: column; aspect-ratio: auto; background: var(--sf-card);
+    video { height: auto; aspect-ratio: var(--sf-ratio, 16 / 9); cursor: pointer; } }
 }
+.sf-video-bar { display: flex; align-items: center; gap: 0.5rem; padding: 0.25rem 0.5rem; background: var(--sf-card); }
+.sf-video-btn { flex: none; display: grid; place-items: center; width: 2.25rem; height: 2.25rem; padding: 0; border: 0; border-radius: 50%; background: none; color: var(--sf-primary); }
+.sf-video-seek { flex: 1; min-width: 0; }
+.sf-video-time { flex: none; font-size: var(--sf-fs-description); color: var(--sf-muted); font-variant-numeric: tabular-nums; }
 .sf-play {
   position: absolute;
   inset: 0;
@@ -691,17 +724,33 @@ app-voice { display: contents; }
 .sf-composer-field { resize: none; max-height: 8rem; overflow-y: auto; line-height: 1.4; }
 .sf-emoji-toggle { margin: 0; font-size: var(--sf-fs-title); }
 .sf-composer-row .sf-icon-btn { margin: 0; width: 2.25rem; height: 2.25rem; } // the buttons in the message row are close together and level with the middle of the field
-// the image, video and audio buttons: they slide back to the left and hide while a text is typed, and come back when it is empty
-.sf-attach {
-  display: flex;
-  gap: 0;
-  flex: none; // the field must not squeeze the buttons
-  overflow: hidden;
-  max-width: 10rem;
-  transition: max-width 0.25s ease, opacity 0.2s ease, transform 0.25s ease, margin 0.25s ease;
-  &.sf-attach-away { max-width: 0; margin-right: -0.25rem; opacity: 0; transform: translateX(-1.5rem); pointer-events: none; }
-  @media (prefers-reduced-motion: reduce) { transition: none; }
+// the + button of the message row: its menu (emoji, image, video, voice) opens above it (below it when the message field is on top)
+.sf-add { position: relative; flex: none; }
+.sf-composer-row .sf-add-btn { // a round, coloured button: the + turns into a × when the menu is open
+  display: grid; place-items: center; border-radius: 50%; color: #fff;
+  background: linear-gradient(135deg, var(--sf-primary), var(--sf-primary-2)); box-shadow: 0 0.125rem 0.5rem rgb(0 0 0 / 0.2);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  &:hover, &[aria-expanded='true'] { transform: scale(1.1); box-shadow: 0 0.25rem 0.75rem rgb(0 0 0 / 0.28); }
+  @media (prefers-reduced-motion: reduce) { transition: none; &:hover, &[aria-expanded='true'] { transform: none; } }
 }
+.sf-add-btn svg { transition: transform 0.2s ease; @media (prefers-reduced-motion: reduce) { transition: none; } }
+.sf-add-menu {
+  position: absolute; inset-inline-start: 0; bottom: 100%; z-index: 5; // no gap to the button: the hover must not break on the way to the menu
+  display: flex; flex-direction: column; min-width: 12rem; max-width: min(20rem, 80vw); max-height: 60dvh; overflow-y: auto; padding: 0.25rem;
+  background: var(--sf-card); border: 1px solid var(--sf-border); border-radius: var(--sf-radius); box-shadow: 0 0.25rem 1rem rgb(0 0 0 / 0.15);
+  transform-origin: bottom left; animation: sf-add-pop 0.14s ease-out;
+  @media (prefers-reduced-motion: reduce) { animation: none; }
+}
+@keyframes sf-add-pop { from { opacity: 0; transform: translateY(0.4rem) scale(0.95); } }
+.sf-add-item svg { color: var(--sf-primary); }
+.sf-composer-top .sf-add-menu { bottom: auto; top: 100%; transform-origin: top left; }
+.sf-add-item {
+  display: flex; align-items: center; gap: 0.75rem; padding: 0.6rem 0.75rem; border: 0; border-radius: 0.5rem; background: none;
+  color: inherit; font: inherit; text-align: start; text-decoration: none; cursor: pointer;
+  &:hover, &:focus-visible { background: var(--sf-bg); color: inherit; }
+}
+.sf-add-quick { min-width: 0; &:disabled { opacity: 0.5; } }
+.sf-add-emoji { display: inline-grid; place-items: center; width: 22px; font-size: 1.2rem; line-height: 1; }
 .sf-emoji-panel { display: grid; grid-template-columns: repeat(8, 1fr); max-height: 10rem; overflow-y: auto; padding: 0.25rem var(--sf-gutter); border-bottom: 1px solid var(--sf-border); }
 .sf-emoji { padding: 0.25rem 0; border: 0; background: none; font-size: var(--sf-fs-title); line-height: 1.5; border-radius: 0.5rem; &:hover, &:focus-visible { background: var(--sf-bg); } }
 
@@ -721,8 +770,7 @@ app-voice { display: contents; }
   border-top: 1px solid var(--sf-border);
   box-shadow: 0 -2px 12px rgba(120, 70, 20, 0.08);
 }
-.sf-menu-item, .sf-menu-wrap { flex: 1 1 0; }
-.sf-menu-wrap { position: relative; display: flex; }
+.sf-menu-item { flex: 1 1 0; }
 .sf-menu-item {
   min-height: 3.5rem;
   display: flex;
@@ -741,36 +789,15 @@ app-voice { display: contents; }
 }
 .sf-menu-icon { padding: 0.125rem 1.125rem; border-radius: 999px; font-size: var(--sf-fs-title); line-height: 1; transition: background-color 0.2s ease; }
 .sf-menu-item.active .sf-menu-icon { background: var(--bs-primary-bg-subtle); } // the open tab is marked with a soft pill
-.sf-menu-backdrop { position: fixed; inset: 0; z-index: 4; } // click-away layer behind the open menu
-.sf-dropup { // opens upwards from the Profile and Settings items
-  position: absolute;
-  right: 0.5rem;
-  bottom: calc(100% + 0.5rem);
-  min-width: 14rem;
-  padding: 0.375rem;
-  border: 1px solid var(--sf-border);
-  border-radius: var(--sf-radius);
-  background: var(--sf-card);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-  display: flex;
-  flex-direction: column;
-}
-.sf-dropup-entry {
-  min-height: var(--sf-touch);
-  display: flex;
-  align-items: center;
-  padding: 0 0.875rem;
-  border: 0;
-  border-radius: 0.625rem;
-  background: none;
-  color: var(--sf-text);
-  font: inherit;
-  font-size: var(--sf-fs-text);
-  text-align: left;
-  text-decoration: none;
-  cursor: pointer;
-  &:hover, &:active { background: var(--sf-bg); }
-  &.sf-danger { color: #b91c1c; }
+.sf-welcome-lead { max-width: 32rem; margin: 0 auto; text-align: center; font-size: var(--sf-fs-title); font-weight: 600; line-height: 1.4; }
+
+// ---- Settings: one tab for each part ----
+.sf-tabs { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.375rem; padding: 0.5rem var(--sf-gutter); border-bottom: 1px solid var(--sf-border); } // the tabs wrap onto a second row on a narrow screen: none is hidden
+.sf-tab {
+  padding: 0.4rem 0.9rem; border-radius: 999px; color: var(--sf-text); font-weight: 600; font-size: var(--sf-fs-description); text-decoration: none; white-space: nowrap;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  &:hover { background: var(--bs-primary-bg-subtle); color: var(--sf-text); }
+  &.active { background: var(--sf-primary); color: #fff; }
 }
 
 // ---- Friends: slots, card, expandable frames, profile ----
@@ -874,7 +901,6 @@ app-voice { display: contents; }
 // Newest message on top: the message field sits right under the header (sticky) and grows downwards; the emoji panel opens below the field
 .sf-composer-top { position: sticky; inset-inline: 0; bottom: auto; z-index: 2; flex-direction: column-reverse; border-top: 0; border-bottom: 1px solid var(--sf-border); }
 .sf-composer-top .sf-emoji-panel { border-bottom: 0; border-top: 1px solid var(--sf-border); }
-.sf-composer-top .sf-composer-row { align-items: flex-start; }
 .sf-feed { overflow-anchor: none; } // no jumping when the feed is turned around (sort order) or the message field changes height
 
 // Radio choices in two columns (the delete frame in the message feed)

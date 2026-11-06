@@ -1,49 +1,20 @@
-@if (menuOpen()) {
-  <div class="sf-menu-backdrop" (click)="closeMenu()"></div>
-}
-
 <nav class="sf-menu" aria-label="Main">
   <a class="sf-menu-item" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="onHome()">
     <span class="sf-menu-icon" aria-hidden="true">🏠</span>
     <span class="text">Home</span>
   </a>
-  <a class="sf-menu-item" routerLink="/friends" routerLinkActive="active" (click)="closeMenu()">
+  <a class="sf-menu-item" routerLink="/friends" routerLinkActive="active">
     <span class="sf-menu-icon" aria-hidden="true">👥</span>
     <span class="text">Friends</span>
   </a>
 
-  <div class="sf-menu-wrap">
-    <button type="button" class="sf-menu-item" [class.active]="menuOpen() === 'profile' || profileActive()"
-            aria-haspopup="menu" [attr.aria-expanded]="menuOpen() === 'profile'" (click)="toggleMenu('profile')">
-      <span class="sf-menu-icon" aria-hidden="true">👤</span>
-      <span class="text">Profile</span>
-    </button>
+  <a class="sf-menu-item" routerLink="/profile" routerLinkActive="active">
+    <span class="sf-menu-icon" aria-hidden="true">👤</span>
+    <span class="text">Profile</span>
+  </a>
 
-    @if (menuOpen() === 'profile') {
-      <div class="sf-dropup" role="menu">
-        <a class="sf-dropup-entry" role="menuitem" routerLink="/profile" (click)="closeMenu()">My profile</a>
-        <button type="button" class="sf-dropup-entry sf-danger" role="menuitem" (click)="logout()">Log out</button>
-      </div>
-    }
-  </div>
-
-  <div class="sf-menu-wrap">
-    <button type="button" class="sf-menu-item" [class.active]="menuOpen() === 'settings' || settingsActive()"
-            aria-haspopup="menu" [attr.aria-expanded]="menuOpen() === 'settings'" (click)="toggleMenu('settings')">
-      <span class="sf-menu-icon" aria-hidden="true">⚙️</span>
-      <span class="text">Settings</span>
-    </button>
-
-    @if (menuOpen() === 'settings') {
-      <div class="sf-dropup" role="menu">
-        <a class="sf-dropup-entry" role="menuitem" routerLink="/sound-and-notifications" (click)="closeMenu()">Sound and notifications</a>
-        @if (!install.native) {
-          <a class="sf-dropup-entry" role="menuitem" routerLink="/install-app" (click)="closeMenu()">Install the app</a>
-        }
-        <a class="sf-dropup-entry" role="menuitem" routerLink="/privacy" (click)="closeMenu()">Data and privacy</a>
-        <a class="sf-dropup-entry" role="menuitem" routerLink="/terms" (click)="closeMenu()">Terms of use</a>
-        <a class="sf-dropup-entry" role="menuitem" routerLink="/about" (click)="closeMenu()">About</a>
-      </div>
-    }
-  </div>
+  <a class="sf-menu-item" routerLink="/settings" routerLinkActive="active">
+    <span class="sf-menu-icon" aria-hidden="true">⚙️</span>
+    <span class="text">Settings</span>
+  </a>
 </nav>

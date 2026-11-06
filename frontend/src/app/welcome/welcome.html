@@ -1,74 +1,59 @@
 <main class="sf-landing sf-welcome">
   <app-hero />
 
-  <ul class="sf-points">
-    <li>Only seven seats, so your closest people never get lost in a crowd.</li>
-    <li>Messages, photos, video and voice. No ads, no feeds.</li>
-    <li>See who is awake and how they feel.</li>
-    <li>Your data stays yours, and you can delete everything.</li>
+  <p class="sf-welcome-lead">The app that closes down, so your attention goes to the ones who matter. Only 7 seats.</p>
+
+  <ul class="sf-points sf-points-icons">
+    <li>
+      <svg class="sf-ico" viewBox="0 0 32 32" aria-hidden="true">
+        <circle class="sf-seat-dot" style="--i:0" cx="6" cy="16" r="2.6" /><circle class="sf-seat-dot" style="--i:1" cx="11" cy="9" r="2.6" /><circle class="sf-seat-dot" style="--i:2" cx="19" cy="9" r="2.6" />
+        <circle class="sf-seat-dot" style="--i:3" cx="26" cy="16" r="2.6" /><circle class="sf-seat-dot" style="--i:4" cx="19" cy="23" r="2.6" /><circle class="sf-seat-dot" style="--i:5" cx="11" cy="23" r="2.6" />
+        <circle class="sf-seat-dot" style="--i:6" cx="16" cy="16" r="2.6" />
+      </svg>
+      <span>Only seven seats: your closest people, never lost in a crowd.</span>
+    </li>
+    <li>
+      <svg class="sf-ico sf-ico-bounce" viewBox="0 0 32 32" aria-hidden="true">
+        <path d="M5 7h22a2 2 0 012 2v12a2 2 0 01-2 2H15l-6 5v-5H5a2 2 0 01-2-2V9a2 2 0 012-2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" /><path d="M9 13h14M9 18h8" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+      </svg>
+      <span>Messages, photos, video and voice. No ads, no feeds.</span>
+    </li>
+    <li>
+      <svg class="sf-ico sf-ico-spin" viewBox="0 0 32 32" aria-hidden="true">
+        <circle cx="16" cy="16" r="5.5" fill="currentColor" /><path d="M16 3v4M16 25v4M3 16h4M25 16h4M6.8 6.8l2.8 2.8M22.4 22.4l2.8 2.8M25.2 6.8l-2.8 2.8M9.6 22.4l-2.8 2.8" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+      </svg>
+      <span>See who is awake and how they feel.</span>
+    </li>
+    <li>
+      <svg class="sf-ico sf-ico-pulse" viewBox="0 0 32 32" aria-hidden="true">
+        <path d="M16 3l11 4v8c0 7-4.5 11.5-11 14C9.5 26.5 5 22 5 15V7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" /><path d="M11 16l3.5 3.5L21 12.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      <span>Your data stays yours.</span>
+    </li>
   </ul>
 
   <div class="sf-form-width mx-auto w-100 vstack gap-3">
     @if (invited()) {
       <div class="alert alert-info text-center m-0" role="status">
         <strong>You have been invited{{ invitedBy() ? ' by ' + invitedBy() : '' }}.</strong>
-        Get the app below, or sign in or create your account first: your invitation is kept and waits for you.
+        Get the app, or sign in or create your account first: your invitation is kept and waits for you.
       </div>
     }
 
-    @if (copied()) {
-      <div class="alert alert-success text-center m-0" role="status">Your invitation is copied. After installing, open the app, tap <strong>I have an invitation</strong> and paste it.</div>
-    }
+    <!-- the two ways to use it: the app (the install action for this platform), or the browser -->
+    <section class="card sf-way">
+      <div class="card-body vstack gap-2">
+        <a class="btn btn-primary btn-lg" [routerLink]="installPage">{{ kind === 'android' ? 'Get the Android app' : kind === 'ios' ? 'Add it to your home screen' : 'Install it on your computer' }}</a>
+      </div>
+    </section>
 
-    <!-- ONE install action, for this platform -->
-    @switch (kind) {
-      @case ('android') {
-        <section class="vstack gap-2 text-center">
-          <h2 class="m-0">Get the Android app</h2>
-          @if (fileReady()) {
-            <a class="btn btn-primary btn-lg" href="/downloads/SevenFriends.apk" download (click)="copyInvitation()">Download the Android app</a>
-            <p class="small text-secondary m-0">Open the downloaded file. If Android asks, allow your browser to install apps from this source, then tap <em>Install</em>.</p>
-          } @else if (fileReady() === false) {
-            <p class="m-0">The Android app is not ready to download yet.</p>
-          }
-        </section>
-      }
-      @case ('ios') {
-        <section class="vstack gap-2">
-          <h2 class="m-0 text-center">Put it on your home screen</h2>
-          <ol class="m-0">
-            <li>In <strong>Safari</strong>, tap the <strong>Share</strong> button (a square with an arrow pointing up).</li>
-            <li>Choose <strong>Add to Home Screen</strong>, then tap <strong>Add</strong>.</li>
-            <li>Open <strong>Seven Friends from your home screen</strong>, not from Safari.</li>
-          </ol>
-          <p class="small text-secondary m-0 text-center">Notifications need iOS 16.4 or newer, and only work from the home-screen app.</p>
-        </section>
-      }
-      @case ('windows') {
-        <section class="vstack gap-2 text-center">
-          <h2 class="m-0">Get the Windows app</h2>
-          @if (fileReady()) {
-            <a class="btn btn-primary btn-lg" href="/downloads/SevenFriendsSetup.exe" download (click)="copyInvitation()">Download for Windows</a>
-            <p class="small text-secondary m-0">Open the downloaded file to install it. If Windows says it protected your PC, choose <em>More info</em>, then <em>Run anyway</em>.</p>
-          } @else if (fileReady() === false) {
-            <p class="m-0">The Windows app is not ready to download yet.</p>
-          }
-        </section>
-      }
-      @default {
-        <section class="vstack gap-2 text-center">
-          <h2 class="m-0">Install it on your computer</h2>
-          @if (app.canInstall()) {
-            <button type="button" class="btn btn-primary btn-lg" (click)="install()">Install the app</button>
-          } @else {
-            <p class="m-0">In Chrome or Edge, click the install icon at the right end of the address bar. In Safari on a Mac, choose File, then <em>Add to Dock</em>.</p>
-          }
-        </section>
-      }
-    }
-
-    <div class="sf-divider"><span>or</span></div>
-    <button type="button" class="btn btn-outline-secondary w-100" (click)="continueInBrowser()">{{ invited() ? 'Sign in or create an account first' : 'Continue in the browser' }}</button>
+    <section class="card sf-way">
+      <div class="card-body vstack gap-2">
+        <h2 class="h5 m-0">Use it in the browser</h2>
+        <p class="small text-secondary m-0">Nothing to install. You are told only while the page is open@if (kind === 'ios') { (on iPhone, notifications need the home-screen app) }.</p>
+        <button type="button" class="btn btn-outline-secondary w-100" (click)="continueInBrowser()">{{ invited() ? 'Sign in or create an account first' : 'Continue in the browser' }}</button>
+      </div>
+    </section>
 
     <p class="small text-center text-secondary mb-0">
       <a routerLink="/terms">Terms of use</a> · <a routerLink="/privacy">Data and privacy</a> · <a routerLink="/about">About</a>

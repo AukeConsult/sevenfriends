@@ -31,6 +31,8 @@ export interface ChatMessage {
   time: string | null;
   /** true = the text was changed after it was sent */
   edited: boolean;
+  /** true = I hid the picture / video in my feed (my copy only: the friend's feed is not affected) */
+  hidden: boolean;
   /** the first link of the text, or null */
   link: MessageLink | null;
 }

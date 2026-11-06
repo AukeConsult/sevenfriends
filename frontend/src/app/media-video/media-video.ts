@@ -1,4 +1,4 @@
-import { Component, effect, inject, input, signal } from '@angular/core';
+import { Component, ElementRef, effect, inject, input, signal, viewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { formatBytes } from '../core/image';
 import { MediaService } from '../core/media.service';
@@ -21,6 +21,13 @@ export class MediaVideo {
   protected readonly src = signal<string | null>(null);
   protected readonly loading = signal(false);
   protected readonly failed = signal(false);
+
+  // the controls under the video (the same in every browser)
+  private readonly video = viewChild<ElementRef<HTMLVideoElement>>('video');
+  protected readonly playing = signal(false);
+  protected readonly muted = signal(false);
+  protected readonly current = signal(0);
+  protected readonly duration = signal(0);
 
   constructor() {
     effect(() => {
@@ -59,6 +66,36 @@ export class MediaVideo {
     const { durationMs, bytes } = this.media();
     const seconds = Math.round((durationMs ?? 0) / 1000);
     return `${durationMs ? `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')} · ` : ''}${formatBytes(bytes)}`;
+  }
+
+  protected toggle(event: Event): void {
+    event.stopPropagation(); // not a tap on my message
+    const video = this.video()?.nativeElement;
+    if (!video) return;
+    if (video.paused) void video.play().catch(() => undefined);
+    else video.pause();
+  }
+
+  protected toggleMute(event: Event): void {
+    event.stopPropagation();
+    this.muted.update((muted) => !muted);
+  }
+
+  protected seek(seconds: string): void {
+    const video = this.video()?.nativeElement;
+    if (video) video.currentTime = Number(seconds);
+  }
+
+  protected tick(): void {
+    const video = this.video()?.nativeElement;
+    if (!video) return;
+    this.current.set(video.currentTime);
+    this.duration.set(Number.isFinite(video.duration) ? video.duration : 0);
+  }
+
+  protected clock(seconds: number): string {
+    const whole = Math.floor(seconds || 0);
+    return `${Math.floor(whole / 60)}:${String(whole % 60).padStart(2, '0')}`;
   }
 
   protected stop(event: Event): void {

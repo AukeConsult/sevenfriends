@@ -6,6 +6,13 @@
     <app-seat-dots [taken]="seatsTaken()" />
   </div>
 
+  @if (setupLeft()) {
+    <div class="alert alert-info d-flex flex-wrap align-items-center justify-content-between gap-2" role="status">
+      <span>Your sound and notifications are not set up yet.</span>
+      <a routerLink="/setup" class="btn btn-primary btn-sm">Finish setup</a>
+    </div>
+  }
+
   @if (!install.installed() && install.mobile) {
     <!-- the app is not installed on this phone: a small way to the page that explains it -->
     <div class="text-center mb-3">

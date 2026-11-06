@@ -1,0 +1,8 @@
+<nav class="sf-tabs" aria-label="Settings">
+  @for (tab of tabs; track tab.path) {
+    @if (!tab.browserOnly || !install.native) {
+      <a class="sf-tab" [routerLink]="['/settings', tab.path]" routerLinkActive="active" ariaCurrentWhenActive="page">{{ tab.label }}</a>
+    }
+  }
+</nav>
+<router-outlet />

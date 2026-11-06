@@ -1,77 +1,56 @@
 <div class="sf-page-head">
-  <h1>Sound and notifications</h1>
+  <h1>{{ title }}</h1>
 </div>
 
 <main class="sf-narrow">
-  <p class="m-0">
-    <strong>Seven Friends is about being there for your closest friends.</strong>
-    They can only reach you if you notice them, so set up how you want to be told when a friend writes or asks to connect.
-  </p>
-
+@if (section === 'preferences') {
+  <div class="card">
+    <div class="card-body d-flex flex-wrap align-items-center justify-content-between gap-2">
+      <span>Sound and notifications, step by step.</span>
+      <a routerLink="/setup" class="btn btn-outline-primary btn-sm">Run the setup</a>
+    </div>
+  </div>
+  <p class="small text-secondary m-0">The choices below are kept on this device.</p>
+  <div class="card">
+    <div class="card-body vstack gap-2">
+      <div class="form-check form-switch m-0">
+        <input class="form-check-input" type="checkbox" role="switch" id="pref-enter" [checked]="prefs.get('enterSends')" (change)="prefs.set('enterSends', $any($event.target).checked)" />
+        <label class="form-check-label" for="pref-enter">Enter sends the message</label>
+      </div>
+      <span class="small text-secondary">Shift + Enter makes a new line. Off: Enter makes a new line and Ctrl + Enter sends.</span>
+      <div class="form-check form-switch m-0">
+        <input class="form-check-input" type="checkbox" role="switch" id="pref-sleep" [checked]="prefs.get('sleepList')" (change)="prefs.set('sleepList', $any($event.target).checked)" />
+        <label class="form-check-label" for="pref-sleep">Use a sleep list</label>
+      </div>
+      <span class="small text-secondary">Off: a friend you remove is deleted, and the sleep list row is hidden while it is empty.</span>
+      <strong class="mt-2">Ready-made messages</strong>
+      <span class="small text-secondary">They are listed under the + in a conversation, and one tap sends it.</span>
+      @for (text of quick(); track $index) {
+        <div class="input-group">
+          <input type="text" class="form-control" [value]="text" [maxLength]="quickLength" placeholder="For example: I'm on my way"
+                 (change)="setQuick($index, $any($event.target).value)" [attr.aria-label]="'Ready-made message ' + ($index + 1)" autocomplete="off" />
+          <button type="button" class="btn btn-outline-secondary" (click)="removeQuick($index)" [attr.aria-label]="'Remove message ' + ($index + 1)">✕</button>
+        </div>
+      }
+      @if (quick().length < quickMax) {
+        <button type="button" class="btn btn-light btn-sm align-self-start" (click)="addQuick()">+ Add a message</button>
+      }
+    </div>
+  </div>
+} @else {
+@if (section === 'notifications') {
   @if (native) {
-    <h2 class="h5 m-0 mt-2">Notifications</h2>
     <div class="card">
       <div class="card-body vstack gap-2">
-        <span class="small text-secondary">
-          The notifications of this phone are set on the notification screen of the Android app: which kinds you get, "Notify this device",
-          hiding the text on the lock screen, the sounds Android plays, and a test notification. What you set there is stored in the app.
-        </span>
+        <span class="small text-secondary">The notifications of this phone are set on the notification screen of the Android app.</span>
         <button type="button" class="btn btn-primary align-self-start" (click)="openAndroidScreen()">Open the notification screen</button>
       </div>
     </div>
   }
 
-  <h2 class="h5 m-0 mt-2">Sounds</h2>
-  <p class="small text-secondary m-0">
-    @if (native) {
-      Choose the sound for each thing that can arrive.
-    } @else {
-      Choose the sound for each thing that can arrive. Sounds only play while Seven Friends is open, and
-      your choices are saved on your account, so they follow you to every device.
-    }
-  </p>
-
-  <div class="card">
-    <div class="card-body vstack gap-2">
-      <div class="d-flex justify-content-between m-0">
-        <strong>Volume</strong><span class="text-secondary">{{ sounds.volume() }} %</span>
-      </div>
-      @if (native) {
-        <div class="progress" role="progressbar" [attr.aria-valuenow]="sounds.volume()" aria-valuemin="0" aria-valuemax="100" aria-label="Volume of the sounds">
-          <div class="progress-bar" [style.width.%]="sounds.volume()"></div>
-        </div>
-        <span class="small text-secondary">Follows the notification volume of the phone.</span>
-      } @else {
-        <input type="range" class="form-range" id="volume" min="0" max="100" step="5" [value]="sounds.volume()"
-               (input)="setVolume($any($event.target).value)" aria-label="Volume of the sounds" />
-        <span class="small text-secondary">Also turn up the volume of your device. Press Play on a sound to hear the new volume.</span>
-      }
-    </div>
-  </div>
-
-  @for (item of events; track item.event) {
-    <div class="card">
-      <div class="card-body vstack gap-2">
-        <div>
-          <strong>{{ item.label }}</strong>
-          <span class="small text-secondary d-block">{{ item.hint }}</span>
-        </div>
-        <div class="input-group flex-nowrap">
-          <a class="btn btn-outline-secondary flex-grow-1 min-w-0 justify-content-between text-start" [routerLink]="['/sound-and-notifications', item.event]"
-             [attr.aria-label]="'Choose the sound for ' + item.label"><span class="sf-ellipsis">{{ soundLabel(item.event) }}</span><span class="ms-2" aria-hidden="true">›</span></a>
-          <button type="button" class="btn btn-outline-primary flex-shrink-0 text-nowrap" [disabled]="sounds.choices()[item.event] === 'none'"
-                  (click)="tryOut(item.event)" [attr.aria-label]="(sounds.playingKey() === item.event ? 'Stop the sound for ' : 'Play the sound for ') + item.label">{{ sounds.playingKey() === item.event ? '■ Stop' : '▶ Play' }}</button>
-        </div>
-      </div>
-    </div>
-  }
-
   @if (!native) {
-  <h2 class="h5 m-0 mt-2">Notifications</h2>
-  <p class="small text-secondary m-0">
-    When Seven Friends is open but you are not looking at it (another tab is selected, the window is minimized, or another window is in front), a message or friend request shows a notification on your screen. While you look at the app nothing pops up; only the sound plays.
-    Click it to come back. The tab title also shows how many things are waiting. A closed app cannot notify you.
-  </p>
+  <h2 class="h5 m-0 mt-2">While the app is open</h2>
+  <p class="small text-secondary m-0">A pop-up shows when a message or request arrives and you are not looking at the app. Click it to come back.</p>
   <div class="card">
     <div class="card-body vstack gap-2">
       <div class="form-check form-switch m-0">
@@ -84,11 +63,7 @@
       } @else if (desktop.permission() === 'denied' && desktop.supported) {
         <span class="small text-secondary">Notifications are blocked for this site in the browser settings.</span>
       }
-      <p class="small text-secondary m-0">
-        This switch and the permission belong to <strong>this browser</strong>: if you also use another browser
-        (Chrome, Edge), turn it on there too. Windows must also allow notifications for the browser
-        (Settings → System → Notifications).
-      </p>
+      <p class="small text-secondary m-0">Set per browser: turn it on in each browser you use.</p>
       <p class="small text-secondary m-0">
         Permission: <strong>{{ desktop.permission() === 'granted' ? 'allowed' : desktop.permission() === 'denied' ? 'blocked' : 'not asked yet' }}</strong>.
         Last notification: {{ desktop.lastResult() }}.
@@ -101,16 +76,8 @@
   }
 
   @if (!native) {
-    <h2 class="h5 m-0 mt-2">Push notifications</h2>
-    <p class="small text-secondary m-0">
-      @if (native) {
-        The phone shows a notification for a new message or friend request when the app is closed or in the background, also when the
-        screen is locked, and plays your chosen jingle. While the app is open you are told inside the app.
-      } @else {
-        The phone or computer wakes up for a new message or friend request, also when the app is closed or the screen is locked,
-        and plays its own notification sound.
-      }
-    </p>
+    <h2 class="h5 m-0 mt-2">When the app is closed</h2>
+    <p class="small text-secondary m-0">This device is woken for a new message or friend request, also when the screen is locked.</p>
     <div class="card">
       <div class="card-body vstack gap-2">
         <div class="form-check form-switch m-0">
@@ -127,12 +94,12 @@
             This browser cannot receive push. On iPhone, open the site in Safari, tap Share → Add to Home Screen, and open the app from there.
           </span>
         }
-        <span class="small text-secondary">This is set per device, and is turned off when you log out.</span>
+        <span class="small text-secondary">Set per device. Turned off when you log out.</span>
       </div>
     </div>
 
     <h2 class="h5 m-0 mt-2">Which notifications</h2>
-    <p class="small text-secondary m-0">For when the app is closed or in the background. This is saved on your account, so it holds on every device.</p>
+    <p class="small text-secondary m-0">Saved on your account: it holds on every device.</p>
     <div class="card">
       <div class="card-body vstack gap-2">
         @if (notices(); as n) {
@@ -164,7 +131,7 @@
       <div class="card-body vstack gap-2">
         <div>
           <strong>Is it working?</strong>
-          <div class="small text-secondary">Sends a real notification, through the server, to all your devices that have notifications turned on.</div>
+          <div class="small text-secondary">Sends a real notification to your devices that have it turned on.</div>
         </div>
         <button type="button" class="btn btn-outline-primary align-self-start" [disabled]="testing()" (click)="testPush()">
           {{ testing() ? 'Sending…' : 'Send me a test notification' }}
@@ -219,4 +186,45 @@
       </div>
     </details>
   }
+} @else {
+  <p class="small text-secondary m-0">
+    Choose a sound for each thing that can arrive.@if (!native) { Sounds play while the app is open. Saved on your account. }
+  </p>
+
+  <div class="card">
+    <div class="card-body vstack gap-2">
+      <div class="d-flex justify-content-between m-0">
+        <strong>Volume</strong><span class="text-secondary">{{ sounds.volume() }} %</span>
+      </div>
+      @if (native) {
+        <div class="progress" role="progressbar" [attr.aria-valuenow]="sounds.volume()" aria-valuemin="0" aria-valuemax="100" aria-label="Volume of the sounds">
+          <div class="progress-bar" [style.width.%]="sounds.volume()"></div>
+        </div>
+        <span class="small text-secondary">Follows the notification volume of the phone.</span>
+      } @else {
+        <input type="range" class="form-range" id="volume" min="0" max="100" step="5" [value]="sounds.volume()"
+               (input)="setVolume($any($event.target).value)" aria-label="Volume of the sounds" />
+        <span class="small text-secondary">Also turn up the volume of your device. Press Play on a sound to hear the new volume.</span>
+      }
+    </div>
+  </div>
+
+  @for (item of events; track item.event) {
+    <div class="card">
+      <div class="card-body vstack gap-2">
+        <div>
+          <strong>{{ item.label }}</strong>
+          <span class="small text-secondary d-block">{{ item.hint }}</span>
+        </div>
+        <div class="input-group flex-nowrap">
+          <a class="btn btn-outline-secondary flex-grow-1 min-w-0 justify-content-between text-start" [routerLink]="['/settings/sounds', item.event]"
+             [attr.aria-label]="'Choose the sound for ' + item.label"><span class="sf-ellipsis">{{ soundLabel(item.event) }}</span><span class="ms-2" aria-hidden="true">›</span></a>
+          <button type="button" class="btn btn-outline-primary flex-shrink-0 text-nowrap" [disabled]="sounds.choices()[item.event] === 'none'"
+                  (click)="tryOut(item.event)" [attr.aria-label]="(sounds.playingKey() === item.event ? 'Stop the sound for ' : 'Play the sound for ') + item.label">{{ sounds.playingKey() === item.event ? '■ Stop' : '▶ Play' }}</button>
+        </div>
+      </div>
+    </div>
+  }
+}
+}
 </main>

@@ -4,6 +4,7 @@ import { DatePipe } from '@angular/common';
 import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FriendsService } from '../core/friends.service';
+import { UiPreferencesService } from '../core/ui-preferences';
 import { MessagesService } from '../core/messages.service';
 import { countries } from '../core/countries';
 import { moodIcon, moodLabel } from '../core/moods';
@@ -26,6 +27,9 @@ export class Friends {
   private readonly messagesService = inject(MessagesService);
   private readonly router = inject(Router);
 
+  private readonly prefs = inject(UiPreferencesService);
+  /** the sleep list row is shown when the list is used, or when friends are still on it */
+  protected readonly showSleepList = computed(() => this.prefs.value('sleepList')() || this.sleeping() > 0);
   protected readonly circle = this.friendsService.circle;
   protected readonly max = MAX_FRIENDS;
   protected readonly networks = SOCIAL_NETWORKS;
@@ -123,7 +127,7 @@ export class Friends {
 
   /** A confirmed friend is put to sleep (the conversation is kept); anything else (pending, rejected) is deleted. */
   protected sleepable(friend: Friend): boolean {
-    return friend.status === 'confirmed';
+    return friend.status === 'confirmed' && this.prefs.get('sleepList');
   }
 
   protected deleteMessage(friend: Friend): string {

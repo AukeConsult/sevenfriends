@@ -9,6 +9,7 @@ import { InviteLinkService } from '../core/invite-link.service';
 import { MessagesService } from '../core/messages.service';
 import { NotificationsService } from '../core/notifications.service';
 import { InstallService } from '../core/install.service';
+import { UiPreferencesService } from '../core/ui-preferences';
 import { SeatDots } from '../seat-dots/seat-dots';
 import { FriendRequest, Message, Notice, ProfileDetails } from '../models';
 
@@ -26,6 +27,9 @@ export class Notifications {
   private readonly router = inject(Router);
   protected readonly install = inject(InstallService);
   protected readonly invite = inject(InviteLinkService);
+  private readonly prefs = inject(UiPreferencesService);
+  /** the first-time setup was left for later: Home offers it again */
+  protected readonly setupLeft = computed(() => this.prefs.value('setup')() === 'skipped');
 
   private readonly user = inject(AuthService).user;
 

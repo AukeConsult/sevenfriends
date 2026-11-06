@@ -11,6 +11,14 @@ import { Injectable, Signal, computed, signal } from '@angular/core';
 export interface UiPreferences {
   /** the order of a conversation: the oldest message first (default) or the newest first */
   chatOrder: 'oldest' | 'newest';
+  /** Enter sends the message (Shift+Enter is a new line); off (default) = Enter is a new line and Ctrl+Enter sends */
+  enterSends: boolean;
+  /** friends can be put on a sleep list (default) instead of being deleted; off = the card offers Delete only, and the sleep list row is hidden while the list is empty */
+  sleepList: boolean;
+  /** ready-made messages: they are listed in the + menu of a conversation and sent with one tap (at most QUICK_MAX, each at most QUICK_LENGTH characters) */
+  quickMessages: string[];
+  /** the first-time setup (/setup): 'new' = not offered yet, 'skipped' = left for later (Home offers it again), 'done' */
+  setup: 'new' | 'skipped' | 'done';
   /** the page that was open last (a path like `/friends`), shown again when the app is opened at its start page; null = none */
   lastPage: string | null;
   /** the microphone is opened without the filters of the browser (set once a recording came out silent) */
@@ -28,7 +36,16 @@ export interface PendingFriend {
   phone: string | null;
 }
 
-const DEFAULTS: UiPreferences = { chatOrder: 'oldest', lastPage: null, micRaw: false, pendingFriend: null, welcomeUntil: null };
+export const QUICK_MAX = 10;
+export const QUICK_LENGTH = 200;
+
+const DEFAULTS: UiPreferences = { chatOrder: 'oldest', enterSends: false, sleepList: true, quickMessages: [], setup: 'new', lastPage: null, micRaw: false, pendingFriend: null, welcomeUntil: null };
+
+/** The ready-made messages as stored: only texts, trimmed, not empty, not too long, not too many. */
+export function quickOf(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value.filter((v): v is string => typeof v === 'string').map((v) => v.trim().slice(0, QUICK_LENGTH)).filter(Boolean).slice(0, QUICK_MAX);
+}
 
 const text = (value: unknown): string | null => (typeof value === 'string' && value ? value : null);
 
@@ -57,6 +74,10 @@ function read(): UiPreferences {
     const saved = JSON.parse(raw) as Partial<Record<keyof UiPreferences, unknown>>;
     return {
       chatOrder: saved.chatOrder === 'newest' ? 'newest' : 'oldest',
+      enterSends: saved.enterSends === true,
+      sleepList: saved.sleepList !== false,
+      quickMessages: quickOf(saved.quickMessages),
+      setup: saved.setup === 'done' || saved.setup === 'skipped' ? saved.setup : 'new',
       lastPage: typeof saved.lastPage === 'string' && saved.lastPage.startsWith('/') ? saved.lastPage : null,
       micRaw: saved.micRaw === true,
       pendingFriend: pendingOf(saved.pendingFriend),

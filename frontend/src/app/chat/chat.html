@@ -9,21 +9,9 @@
     </span>
   }
   <div class="sf-bar-text">
-    <button type="button" class="sf-name-btn" (click)="toggleProfile()" [attr.aria-expanded]="profileOpen()" aria-controls="friend-profile"
-            [attr.aria-label]="(profileOpen() ? 'Hide the profile of ' : 'Show the profile of ') + (name() || 'your friend')">
-      <strong class="sf-fs-title">{{ name() || 'Conversation' }}</strong>
-      <span class="sf-name-arrow" aria-hidden="true">{{ profileOpen() ? '▴' : '▾' }}</span>
-    </button>
+    <strong class="sf-fs-title" [attr.title]="name()" [attr.aria-label]="name() || 'Conversation'">{{ initials(name()) || 'Conversation' }}</strong>
     @if (friend(); as f) {
       @if (f.sleepsMe) { <span class="sf-mood-line"><span>😴 Has you on their sleep list</span></span> }
-      @if (f.mood || f.moodMessage) {
-        <span class="sf-mood-line">
-          @if (f.mood; as mood) {
-            <img [src]="moodIcon(mood)" [alt]="moodLabel(mood)" [title]="moodLabel(mood)" width="16" height="16" />
-          }
-          @if (f.moodMessage) { <span>{{ f.moodMessage }}</span> }
-        </span>
-      }
     }
   </div>
   @if (!blocked()) {
@@ -46,38 +34,6 @@
     </div>
   }
 </header>
-
-<!-- Expanding frame: the profile of the friend (tap the name) -->
-<div class="sf-expand" [class.open]="profileOpen()" [attr.inert]="profileOpen() ? null : ''">
-  <div class="sf-expand-inner">
-    @if (friend(); as f) {
-      <section id="friend-profile" class="sf-profile sf-profile-bar" [attr.aria-label]="'Profile of ' + f.name">
-        @if (countryName(f.country); as country) { <p class="sf-hint m-0">{{ country }}</p> }
-        @if (f.mood; as mood) {
-          <p class="sf-profile-mood">
-            <img [src]="moodIcon(mood)" [alt]="''" width="24" height="24" />
-            <span>{{ moodLabel(mood) }}</span>
-          </p>
-        }
-        @if (f.moodMessage) { <p class="sf-hint m-0">“{{ f.moodMessage }}”</p> }
-        @if (f.unverified.length && f.status !== 'rejected') {
-          <p class="sf-hint text-warning-emphasis m-0">
-            {{ f.name }} has not verified {{ f.unverified.length === 2 ? 'their email or phone' : f.unverified[0] === 'email' ? 'their email' : 'their phone' }},
-            so we cannot be sure it is really them.
-          </p>
-        }
-        <dl class="sf-details">
-          @if (f.phone) { <dt>Phone</dt><dd>{{ f.phone }}</dd> }
-          @if (f.email) { <dt>Email</dt><dd>{{ f.email }}</dd> }
-          @for (n of networks; track n.key) {
-            @if (f[n.key]; as account) { <dt>{{ n.label }}</dt><dd>{{ account }}</dd> }
-          }
-          @if (f.createdAt) { <dt>Added</dt><dd>{{ f.createdAt | date: 'mediumDate' }}</dd> }
-        </dl>
-      </section>
-    }
-  </div>
-</div>
 
 <!-- Expanding frame: delete several of my messages at once (by age and / or text) -->
 <div class="sf-expand" [class.open]="cleanupOpen()" [attr.inert]="cleanupOpen() ? null : ''">
@@ -159,30 +115,45 @@
       </div>
     }
     <div class="sf-composer-row">
-      <button type="button" class="sf-icon-btn sf-emoji-toggle" (click)="emojiOpen.set(!emojiOpen())" [attr.aria-expanded]="emojiOpen()"
-              [attr.aria-label]="emojiOpen() ? 'Hide the emojis' : 'Show the emojis'">😊</button>
-      @if (!editing()) {
-        <!-- the attach buttons slide back and hide as soon as a text is being typed -->
-        <div class="sf-attach" [class.sf-attach-away]="text().length > 0" [attr.inert]="text().length > 0 ? '' : null" [attr.aria-hidden]="text().length > 0 ? 'true' : null">
-          <a [routerLink]="['/friends', friendId, 'image']" class="sf-icon-btn" aria-label="Send an image" title="Send an image">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="9" cy="10" r="1.5" /><path d="M21 16l-5-5-8 9" />
-            </svg>
-          </a>
-          <a [routerLink]="['/friends', friendId, 'video']" class="sf-icon-btn" aria-label="Send a video" title="Send a video">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <rect x="2" y="6" width="14" height="12" rx="2" /><path d="M16 10l6-3v10l-6-3z" />
-            </svg>
-          </a>
-          <a [routerLink]="['/friends', friendId, 'audio']" class="sf-icon-btn" aria-label="Send a voice message" title="Send a voice message">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <rect x="9" y="3" width="6" height="11" rx="3" /><path d="M5 11a7 7 0 0014 0M12 18v3" />
-            </svg>
-          </a>
-        </div>
-      }
+      <!-- ONE button for emoji, image, video and voice: it opens on hover (a mouse) or on a tap / click -->
+      <div class="sf-add" (mouseenter)="hoverMenu(true)" (mouseleave)="hoverMenu(false)" (keydown.escape)="menuOpen.set(false)">
+        <button type="button" class="sf-icon-btn sf-add-btn" (click)="toggleMenu()" [attr.aria-expanded]="menuOpen()" aria-haspopup="true" aria-label="Add emoji, image, video or voice message" title="Add">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" [style.transform]="menuOpen() ? 'rotate(45deg)' : null">
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+        </button>
+        @if (menuOpen()) {
+          <div class="sf-add-menu" role="menu">
+            <button type="button" role="menuitem" class="sf-add-item" (click)="emojiOpen.set(!emojiOpen()); menuOpen.set(false)">
+              <span class="sf-add-emoji" aria-hidden="true">😊</span><span>Emoji</span>
+            </button>
+            @if (!editing()) {
+              @for (quick of quickMessages(); track $index) {
+                <button type="button" role="menuitem" class="sf-add-item sf-add-quick" [disabled]="sending()" (click)="sendQuick(quick)" [title]="quick">
+                  <span class="sf-add-emoji" aria-hidden="true">💬</span><span class="sf-ellipsis">{{ quick }}</span>
+                </button>
+              }
+              <a role="menuitem" [routerLink]="['/friends', friendId, 'image']" class="sf-add-item">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="9" cy="10" r="1.5" /><path d="M21 16l-5-5-8 9" />
+                </svg><span>Image</span>
+              </a>
+              <a role="menuitem" [routerLink]="['/friends', friendId, 'video']" class="sf-add-item">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="2" y="6" width="14" height="12" rx="2" /><path d="M16 10l6-3v10l-6-3z" />
+                </svg><span>Video</span>
+              </a>
+              <a role="menuitem" [routerLink]="['/friends', friendId, 'audio']" class="sf-add-item">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="9" y="3" width="6" height="11" rx="3" /><path d="M5 11a7 7 0 0014 0M12 18v3" />
+                </svg><span>Voice message</span>
+              </a>
+            }
+          </div>
+        }
+      </div>
       <textarea #field class="form-control sf-composer-field" rows="1" placeholder="Message" [value]="text()"
-                (input)="typed()" (keydown.enter)="enterPressed($event)" maxlength="2000" autocomplete="off" autocorrect="off" spellcheck="true" enterkeyhint="enter"
+                (input)="typed(); emojiOpen.set(false)" (focus)="emojiOpen.set(false)" (keydown.enter)="enterPressed($event)" maxlength="2000" autocomplete="off" autocorrect="off" spellcheck="true" [attr.enterkeyhint]="enterSends() ? 'send' : 'enter'"
                 aria-label="Message"></textarea>
       <button type="submit" class="btn btn-primary sf-send" [disabled]="sending() || !text().trim()" [attr.aria-label]="editing() ? 'Save' : 'Send'" [title]="editing() ? 'Save' : 'Send'">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -209,7 +180,7 @@
     }
 
     @for (message of shown(); track message.id) {
-      <div class="sf-message" [attr.data-id]="message.id" [class.sf-mine]="message.mine" [class.sf-message-media]="message.media || (message.link && previewing().has(message.id))" [class.sf-doomed]="doomed().has(message.id)">
+      <div class="sf-message" [attr.data-id]="message.id" [class.sf-mine]="message.mine" [class.sf-message-media]="message.media || (message.link && previewing().has(message.id))" [class.sf-message-wide]="message.link && previewing().has(message.id)" [class.sf-doomed]="doomed().has(message.id)">
         <!-- my own message: tap it to edit or delete it -->
         <div class="sf-bubble" [class.sf-bubble-media]="message.media" [class.sf-bubble-hidden]="message.media && pictureHidden().has(message.id)" [class.sf-bubble-tap]="message.mine" [attr.role]="message.mine ? 'button' : null" [attr.tabindex]="message.mine ? 0 : null"
              [attr.aria-expanded]="message.mine ? selected() === message.id : null" (click)="select(message)" (keydown.enter)="select(message)">

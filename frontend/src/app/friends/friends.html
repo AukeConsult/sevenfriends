@@ -32,7 +32,7 @@
               <header class="sf-head">
                 <!-- the icon of this seat: friend1.svg ... friend7.svg (public/icons/friends) -->
                 <span class="sf-seat">
-                  <!-- the icon opens the profile; the name (and the rest of the card) opens the conversation -->
+                  <!-- the icon and the name open the profile; the rest of the card opens the conversation -->
                   <button type="button" class="sf-name-btn" (click)="toggleProfile(friend)" [attr.aria-expanded]="expanded() === friend.id"
                           [attr.aria-label]="(expanded() === friend.id ? 'Hide the profile of ' : 'Show the profile of ') + friend.name">
                     <app-friend-avatar [friend]="friend" [seat]="slot.position" [size]="32" />
@@ -42,7 +42,10 @@
                   }
                 </span>
                 <div class="sf-title">
-                  <strong class="sf-name">{{ friend.name }}</strong>
+                  <button type="button" class="sf-name-btn" (click)="toggleProfile(friend)" [attr.aria-expanded]="expanded() === friend.id"
+                          [attr.aria-label]="(expanded() === friend.id ? 'Hide the profile of ' : 'Show the profile of ') + friend.name">
+                    <strong class="sf-name">{{ friend.name }}</strong>
+                  </button>
                   @if (friend.mood; as mood) {
                     <img class="sf-mood" [src]="moodIcon(mood)" [alt]="moodLabel(mood)" [title]="moodLabel(mood)" width="20" height="20" />
                   }
@@ -156,6 +159,7 @@
       </li>
     }
     <!-- one more row like an empty seat: opens the waiting list -->
+    @if (showSleepList()) {
     <li class="col-12 col-md-6 d-flex flex-column">
       <a routerLink="/friends/sleeping" class="btn sf-slot-empty w-100 flex-grow-1 text-start d-flex align-items-center gap-3">
         <span class="sf-slot-waiting" aria-hidden="true">😴</span>
@@ -163,5 +167,6 @@
         <span class="sf-fs-heading text-primary" aria-hidden="true">›</span>
       </a>
     </li>
+    }
   </ul>
 </main>

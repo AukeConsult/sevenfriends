@@ -61,7 +61,7 @@ conversationRouter.get(
     const messages: ChatMessage[] = snap.docs
       .map((d) => {
         const m = d.data();
-        return { id: d.id, text: m.text as string, mine: m.fromUid === uid, read: Boolean(m.read), time: iso(m.time), edited: Boolean(m.editedAt), media: (m.media as MediaRef | undefined) ?? null, link: (m.link as MessageLink | undefined) ?? null };
+        return { id: d.id, text: m.text as string, mine: m.fromUid === uid, read: Boolean(m.read), time: iso(m.time), edited: Boolean(m.editedAt), hidden: Boolean(m.hidden), media: (m.media as MediaRef | undefined) ?? null, link: (m.link as MessageLink | undefined) ?? null };
       })
       .sort((a, b) => (a.time ?? "").localeCompare(b.time ?? ""))
       .slice(-FEED_LIMIT);
@@ -151,7 +151,7 @@ conversationRouter.post(
     await batch.commit();
 
     const saved = (await mine.get()).data()!;
-    const created: ChatMessage = { id: mine.id, text, media, mine: true, read: true, time: iso(saved.time), edited: false, link };
+    const created: ChatMessage = { id: mine.id, text, media, mine: true, read: true, time: iso(saved.time), edited: false, hidden: false, link };
     // wake the other person's devices (before the answer: the function may stop right after it)
     await sendPush(connection.peerUid, { id: `message-${mine.id}`, title: common.fromName, body: text || mediaLabel(media!.kind), url: `/friends/${connection.id}`, kind: "message" });
     res.status(201).json(created);
@@ -233,7 +233,7 @@ async function ownMessage(req: Request, res: Response) {
     return null;
   }
   const myEntry = (res.locals.circleRef as DocumentReference).collection(FRIENDS_SUBCOLLECTION).doc(connection.id);
-  return { mine, theirs: messageCol(connection.peerUid).doc(mine.id), peerEntry: peerEntryOf(connection), myEntry, media: (data.media as MediaRef | undefined) ?? null };
+  return { mine, theirs: messageCol(connection.peerUid).doc(mine.id), peerEntry: peerEntryOf(connection), myEntry, media: (data.media as MediaRef | undefined) ?? null, hidden: Boolean(data.hidden) };
 }
 
 /** The friend's copy of the friendship. */
@@ -265,7 +265,7 @@ conversationRouter.put(
     touchFeed(batch, own.myEntry); // my other devices reload the feed
     await batch.commit();
     const saved = (await own.mine.get()).data()!;
-    const edited: ChatMessage = { id: own.mine.id, text, media: own.media, mine: true, read: true, time: iso(saved.time), edited: true, link };
+    const edited: ChatMessage = { id: own.mine.id, text, media: own.media, mine: true, read: true, time: iso(saved.time), edited: true, hidden: own.hidden, link };
     res.json(edited);
   }),
 );
@@ -284,6 +284,27 @@ conversationRouter.delete(
     touchFeed(batch, own.myEntry); // my other devices reload the feed
     await batch.commit();
     res.status(204).end();
+  }),
+);
+
+/** Hide / show a picture or video in MY feed: { hidden }. Only my copy of the message changes (mine or the friend's). */
+conversationRouter.put(
+  "/:messageId/hidden",
+  asyncHandler(async (req, res) => {
+    const connection = await connectionOf(req, res);
+    if (!connection) return;
+    if (typeof req.body?.hidden !== "boolean") {
+      res.status(400).json({ error: "hidden must be true or false" });
+      return;
+    }
+    const ref = messageCol(uidOf(res)).doc(req.params.messageId);
+    const data = (await ref.get()).data();
+    if (!data || data.connectionId !== connection.id) {
+      res.status(404).json({ error: "Message not found" });
+      return;
+    }
+    await ref.update({ hidden: req.body.hidden });
+    res.json({ id: ref.id, hidden: req.body.hidden });
   }),
 );
 
