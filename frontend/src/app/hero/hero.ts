@@ -9,7 +9,7 @@ import { SeatDots } from '../seat-dots/seat-dots';
     <div class="sf-hero text-center">
       <div class="sf-logo sf-logo-lg">7</div>
       <h1 class="mt-3 mb-2">Seven Friends</h1>
-      <p class="sf-hero-tag m-0">Stay close to the people who matter most.</p>
+      <p class="sf-hero-tag m-0">Stay close to the friends who matter most.</p>
       <app-seat-dots [blink]="true" />
     </div>
   `,

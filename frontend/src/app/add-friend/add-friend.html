@@ -2,72 +2,63 @@
   <a routerLink="/friends" class="btn btn-light" aria-label="Go back to friends">‹ Back</a>
 </div>
 
-<form class="sf-narrow" (submit)="$event.preventDefault(); send()" aria-label="Send a friend request">
-  <h2 class="sf-section">Send a friend request in Seven Friends</h2>
-  <p class="small text-secondary m-0">
-    The request is saved here. Your friend gets it as soon as they sign in (or sign up) with this email or phone
-    number, and becomes your friend when they confirm. Add an email, a phone number, or both: only these two are used
-    to find your friend. Without a name (at the bottom), the email or number is shown until they confirm.
-  </p>
+<div class="sf-page-head">
+  <h1>Add a friend</h1>
+</div>
 
-  <label class="sf-field"><span class="form-label small text-secondary m-0">Phone</span>
-    <input appClear type="tel" class="form-control" [value]="draft().phone" (input)="setField('phone', $any($event.target).value)"
-           inputmode="tel" autocomplete="off" />
-  </label>
-  <label class="sf-field"><span class="form-label small text-secondary m-0">Email</span>
-    <input appClear type="email" class="form-control" [value]="draft().email" (input)="setField('email', $any($event.target).value)"
-           inputmode="email" autocomplete="off" />
-  </label>
-
-  <h2 class="sf-section">Message</h2>
-  <label class="sf-field"><span class="form-label small text-secondary m-0">Add a message (optional)</span>
-    <textarea appClear class="form-control" rows="3" maxlength="500" [value]="draft().message"
-              (input)="setField('message', $any($event.target).value)"
-              placeholder="Hi! I would like to have you as a close friend."></textarea>
-    <span class="small text-secondary text-end">{{ draft().message.length }} / 500</span>
-  </label>
-
-  <label class="sf-field"><span class="form-label small text-secondary m-0">Name (optional)</span>
-    <input appClear type="text" class="form-control" [value]="draft().name" (input)="setField('name', $any($event.target).value)"
-           autocomplete="off" maxlength="100" />
-  </label>
-
-  @if (error()) {
-    <div class="alert alert-danger" role="alert">{{ error() }}</div>
-  }
-
-  <!-- The end of the page -->
-  <div class="sf-actions">
-    <a routerLink="/friends" class="btn btn-light flex-fill">Cancel</a>
-    <button type="submit" class="btn btn-primary flex-fill" [disabled]="sending()">
-      {{ sending() ? 'Sending…' : 'Send friend request' }}
-    </button>
-  </div>
-</form>
-
-<!-- Last: for people who do not have the app yet. The other way round: they send ME a request. -->
-<section class="sf-narrow" aria-label="Send your link to someone who is not on Seven Friends yet">
-  <h2 class="sf-section">Not on Seven Friends yet? Send them your link</h2>
-  <div class="card">
-    <div class="card-body vstack gap-2">
-      <p class="small text-secondary m-0">
-        A request above waits inside Seven Friends until your friend signs in. Your link works the other way round:
-        you send the link yourself (in a message, an email, anywhere), your friend opens it, creates an account and
-        sends <strong>you</strong> a friend request. You confirm it on your Home page.
-      </p>
-      @if (invite.link(); as url) {
-        <input type="text" class="form-control" [value]="url" readonly aria-label="Your invite link" (focus)="$any($event.target).select()" />
+@if (result(); as done) {
+  <!-- the person has no account yet: the request is saved, and this is the link to send -->
+  <main class="sf-narrow">
+    <div class="alert alert-success m-0" role="status">
+      <strong>Saved.</strong> {{ done.to }} is not on Seven Friends yet. Your request waits for them.
+    </div>
+    <h2 class="sf-section">Send them this link</h2>
+    <div class="card">
+      <div class="card-body vstack gap-2">
+        <input type="text" class="form-control" [value]="done.link" readonly aria-label="The link to send" (focus)="$any($event.target).select()" />
         <div class="d-flex flex-wrap gap-2">
-          <button type="button" class="btn btn-light" (click)="invite.copy()">Copy link</button>
-          <button type="button" class="btn btn-light" (click)="invite.share()">Share link</button>
+          <button type="button" class="btn btn-primary" (click)="invite.share(done.link)">Share link</button>
+          <button type="button" class="btn btn-light" (click)="invite.copy(done.link)">Copy link</button>
         </div>
         @if (invite.note(); as note) { <p class="small m-0" role="status">{{ note }}</p> }
-      } @else if (invite.problem(); as why) {
-        <p class="small text-danger m-0" role="alert">{{ why }}</p>
-        <button type="button" class="btn btn-light align-self-start" (click)="invite.load()">Try again</button>
-      } @else {
-        <p class="small text-secondary m-0">Loading…</p>
-      }
+      </div>
     </div>
-  </div>
-</section>
+    <div class="sf-actions">
+      <a routerLink="/friends" class="btn btn-light flex-fill">Done</a>
+      <button type="button" class="btn btn-light flex-fill" (click)="another()">Add another</button>
+    </div>
+  </main>
+} @else {
+  <form class="sf-narrow" (submit)="$event.preventDefault(); send()" aria-label="Add a friend">
+    <p class="small text-secondary m-0">Their email or phone number is how they are found.</p>
+
+    <label class="sf-field"><span class="form-label small text-secondary m-0">Email</span>
+      <input appClear type="email" class="form-control" [value]="draft().email" (input)="setField('email', $any($event.target).value)"
+             inputmode="email" autocomplete="off" />
+    </label>
+    <label class="sf-field"><span class="form-label small text-secondary m-0">Phone</span>
+      <input appClear type="tel" class="form-control" [value]="draft().phone" (input)="setField('phone', $any($event.target).value)"
+             inputmode="tel" autocomplete="off" />
+    </label>
+    <label class="sf-field"><span class="form-label small text-secondary m-0">Name (optional)</span>
+      <input appClear type="text" class="form-control" [value]="draft().name" (input)="setField('name', $any($event.target).value)"
+             autocomplete="off" maxlength="100" />
+    </label>
+    <label class="sf-field"><span class="form-label small text-secondary m-0">Message (optional)</span>
+      <textarea appClear class="form-control" rows="2" maxlength="500" [value]="draft().message"
+                (input)="setField('message', $any($event.target).value)"
+                placeholder="Hi! I would like to have you as a close friend."></textarea>
+    </label>
+
+    @if (error()) {
+      <div class="alert alert-danger" role="alert">{{ error() }}</div>
+    }
+
+    <div class="sf-actions">
+      <a routerLink="/friends" class="btn btn-light flex-fill">Cancel</a>
+      <button type="submit" class="btn btn-primary flex-fill" [disabled]="sending()">
+        {{ sending() ? 'Sending…' : 'Add friend' }}
+      </button>
+    </div>
+  </form>
+}

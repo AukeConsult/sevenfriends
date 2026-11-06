@@ -1,5 +1,5 @@
 <div class="sf-page-head">
-  <h1>Profile</h1>
+
   <!-- Everything on this page saves itself -->
     <p class="sf-status" role="status" aria-live="polite" [class.text-danger]="state() === 'error'">
       @switch (state()) {
@@ -17,8 +17,11 @@
 
   <div class="card sf-unframed">
     <div class="card-body text-center">
+      <!-- the picture on the left, my mood to the right of it -->
+      <div class="d-flex align-items-center gap-3 text-start">
+      <div class="flex-none text-center">
       @if (picture(); as uploaded) {
-        <img class="sf-photo" [src]="uploaded" alt="" />
+        <img class="sf-photo" [src]="uploaded" alt="" decoding="sync" />
       } @else if (user()?.photoURL; as photo) {
         <img class="sf-photo" [src]="photo" alt="" referrerpolicy="no-referrer" />
       } @else if (icon(); as chosen) {
@@ -26,7 +29,7 @@
       } @else {
         <div class="sf-photo sf-photo-initial">{{ initial() }}</div>
       }
-      <div class="d-flex justify-content-center gap-3 mt-2">
+      <div class="d-flex flex-column align-items-center gap-1 mt-2 small">
         <a routerLink="/profile/picture" class="btn btn-link p-0">{{ picture() ? 'Change picture' : 'Upload a picture' }}</a>
         @if (!user()?.photoURL && !picture()) {
         <!-- the icons are only shown when the person wants to choose one -->
@@ -35,6 +38,12 @@
           {{ iconsOpen() ? 'Hide icons' : icon() ? 'Change icon' : 'Choose an icon' }}
         </button>
         }
+      </div>
+      </div>
+      <div class="flex-grow-1 min-w-0">
+        <p class="sf-hint mb-1">Your mood (your friends see it)</p>
+        <app-mood-editor class="d-block" />
+      </div>
       </div>
       @if (!user()?.photoURL && !picture()) {
         @if (iconsOpen()) {
@@ -59,9 +68,6 @@
       </label>
     </div>
   </div>
-
-  <p class="sf-hint mt-3 mb-0">Your mood (your friends see it)</p>
-  <app-mood-editor class="d-block" />
 
   <ul class="list-group mt-3 sf-fs-description">
     <li class="list-group-item d-flex justify-content-between">
@@ -146,11 +152,22 @@
           }
         }
       </div>
-      @for (n of networks; track n.key) {
-        <label class="d-grid gap-1"><span class="form-label small text-secondary m-0">{{ n.label }} ({{ n.hint }})</span>
-          <input appClear type="text" class="form-control" [value]="form()[n.key]" (input)="setField(n.key, $any($event.target).value)" (blur)="flush()"
-                 autocomplete="off" [disabled]="loading()" />
-        </label>
+      <!-- the social media links: a frame that starts closed -->
+      <button type="button" class="btn btn-outline-secondary d-flex align-items-center justify-content-between" [attr.aria-expanded]="socialOpen()"
+              aria-controls="social-links" (click)="socialOpen.set(!socialOpen())">
+        <span>Social media links</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+             aria-hidden="true" [style.transform]="socialOpen() ? 'rotate(180deg)' : null"><path d="M6 9l6 6 6-6" /></svg>
+      </button>
+      @if (socialOpen()) {
+        <div id="social-links" class="vstack gap-2">
+          @for (n of networks; track n.key) {
+            <label class="d-grid gap-1"><span class="form-label small text-secondary m-0">{{ n.label }} ({{ n.hint }})</span>
+              <input appClear type="text" class="form-control" [value]="form()[n.key]" (input)="setField(n.key, $any($event.target).value)" (blur)="flush()"
+                     autocomplete="off" [disabled]="loading()" />
+            </label>
+          }
+        </div>
       }
     </div>
   </div>

@@ -498,3 +498,13 @@ describe("one connection per pair of people", () => {
     expect((await assertConsistent()).confirmed).toBe(2);
   });
 });
+
+describe("not yourself", () => {
+  it("refuses a friend request to my own email or phone number, in any of the ways it can be written", async () => {
+    for (const via of MATCH_VIAS) {
+      const res = await u(0).addRaw(u(0).p, via).expect(400);
+      expect(res.body.error).toMatch(/that is you/i);
+    }
+    expect(await u(0).friends()).toEqual([]);
+  });
+});

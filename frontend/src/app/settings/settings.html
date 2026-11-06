@@ -23,6 +23,11 @@
         <label class="form-check-label" for="pref-sleep">Use a sleep list</label>
       </div>
       <span class="small text-secondary">Off: a friend you remove is deleted, and the sleep list row is hidden while it is empty.</span>
+      <div class="form-check form-switch m-0">
+        <input class="form-check-input" type="checkbox" role="switch" id="pref-icons" [checked]="prefs.get('feedIcons')" (change)="prefs.set('feedIcons', $any($event.target).checked)" />
+        <label class="form-check-label" for="pref-icons">Show a picture next to each message</label>
+      </div>
+      <span class="small text-secondary">Your friend's picture and yours, in a conversation.</span>
       <strong class="mt-2">Ready-made messages</strong>
       <span class="small text-secondary">They are listed under the + in a conversation, and one tap sends it.</span>
       @for (text of quick(); track $index) {

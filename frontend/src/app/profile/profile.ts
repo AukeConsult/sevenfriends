@@ -73,6 +73,7 @@ export class Profile {
   protected readonly countryName = computed(() => this.countries.find((c) => c.code === this.form().country)?.name ?? '');
   /** the row of icons is only open when the person wants to choose */
   protected readonly iconsOpen = signal(false);
+  protected readonly socialOpen = signal(false);
   /** the phone is confirmed by SMS: it can no longer be typed over */
   protected readonly phoneVerified = signal(false);
   /** from the server (the login token), so it always agrees with what friends can find */
@@ -228,10 +229,12 @@ export class Profile {
     this.loadFailed = false;
     try {
       const res = await this.api.request<ProfileDetails>('/profile');
+      // the picture is fetched before anything is shown, so the page paints once with the new picture (no icon first, then a swap)
+      const image = res.hasPicture ? (await this.api.request<ProfilePicture>('/profile/picture').catch(() => null))?.image ?? null : null;
       this.phoneVerified.set(res.phoneVerified);
       this.emailVerified.set(res.emailVerified);
       this.icon.set(res.icon);
-      this.picture.set(res.hasPicture ? (await this.api.request<ProfilePicture>('/profile/picture').catch(() => null))?.image ?? null : null);
+      this.picture.set(image);
       this.form.set({ name: res.name ?? '', phone: res.phone ?? '', country: res.country ?? '', language: res.language ?? '', ...draftFromSocials(res) });
     } catch (err: any) {
       this.loadFailed = true;

@@ -10,7 +10,9 @@ import { FriendAvatar } from '../friend-avatar/friend-avatar';
 import { MediaAudio } from '../media-audio/media-audio';
 import { MediaImage } from '../media-image/media-image';
 import { MediaVideo } from '../media-video/media-video';
+import { AuthService } from '../core/auth.service';
 import { ChatService } from '../core/chat.service';
+import { MyAvatarService } from '../core/my-avatar.service';
 import { MediaService } from '../core/media.service';
 import { LiveChanges } from '../core/live-changes';
 import { UiPreferencesService } from '../core/ui-preferences';
@@ -57,17 +59,23 @@ export class Chat {
   /** newest first? (a remembered choice, the same in every window; a refresh of the feed never changes it) */
   /** the Enter key sends the message (a preference) */
   protected readonly enterSends = this.prefs.value('enterSends');
+  /** a picture next to every message (a preference) */
+  protected readonly feedIcons = this.prefs.value('feedIcons');
+  private readonly myAvatarService = inject(MyAvatarService);
+  protected readonly myAvatar = this.myAvatarService.src;
+  private readonly me = inject(AuthService).user;
+  protected readonly myInitials = computed(() => initials(this.me()?.displayName ?? this.me()?.email ?? this.me()?.phoneNumber));
   /** the ready-made messages of the + menu (a preference) */
   protected readonly quickMessages = this.prefs.value('quickMessages');
   protected readonly sortDesc = computed(() => this.prefs.value('chatOrder')() === 'newest');
   protected readonly shown = computed(() => (this.sortDesc() ? [...this.messages()].reverse() : this.messages()));
 
   // deleting several of my messages: the expanding frame under the header
-  protected readonly ageChoices: { label: string; days: number | null }[] = [
-    { label: 'Older than a day', days: 1 },
-    { label: 'Older than a week', days: 7 },
-    { label: 'Older than a month', days: 30 },
-    { label: 'All of them', days: null },
+  protected readonly ageChoices: { label: string; days: number | null; icon: string }[] = [
+    { label: 'Older than a day', days: 1, icon: 'day' },
+    { label: 'Older than a week', days: 7, icon: 'week' },
+    { label: 'Older than a month', days: 30, icon: 'month' },
+    { label: 'All of them', days: null, icon: 'all' },
   ];
   protected readonly cleanupOpen = signal(false);
   protected readonly cleanupWhose = signal<'mine' | 'both'>('mine');
@@ -138,6 +146,7 @@ export class Chat {
     if (!this.friendsService.friends().length) void this.friendsService.load().catch(() => undefined); // opened directly (a reload): the seat comes from the list
     this.realtime.openFeed.set(this.friendId); // new messages from this friend come here, not to the Home list
     this.refresh(true);
+    if (this.prefs.get('feedIcons')) void this.myAvatarService.load();
 
     // a message from THIS friend arrived: show it at once
     effect(() => {

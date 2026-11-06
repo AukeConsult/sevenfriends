@@ -37,7 +37,7 @@ export class Notifications {
   protected readonly friendLink = computed(() => {
     const me = this.user();
     const contact = me?.email ?? me?.phoneNumber;
-    return contact ? `${location.origin}/?friend=${encodeURIComponent(contact)}` : null;
+    return contact ? `${location.origin}/welcome?friend=${encodeURIComponent(contact)}` : null;
   });
 
   /**

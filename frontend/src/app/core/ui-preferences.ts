@@ -15,6 +15,8 @@ export interface UiPreferences {
   enterSends: boolean;
   /** friends can be put on a sleep list (default) instead of being deleted; off = the card offers Delete only, and the sleep list row is hidden while the list is empty */
   sleepList: boolean;
+  /** a picture next to every message in a conversation (mine too); off = only the bubbles */
+  feedIcons: boolean;
   /** ready-made messages: they are listed in the + menu of a conversation and sent with one tap (at most QUICK_MAX, each at most QUICK_LENGTH characters) */
   quickMessages: string[];
   /** the first-time setup (/setup): 'new' = not offered yet, 'skipped' = left for later (Home offers it again), 'done' */
@@ -39,7 +41,7 @@ export interface PendingFriend {
 export const QUICK_MAX = 10;
 export const QUICK_LENGTH = 200;
 
-const DEFAULTS: UiPreferences = { chatOrder: 'oldest', enterSends: false, sleepList: true, quickMessages: [], setup: 'new', lastPage: null, micRaw: false, pendingFriend: null, welcomeUntil: null };
+const DEFAULTS: UiPreferences = { chatOrder: 'oldest', enterSends: false, sleepList: true, quickMessages: [], feedIcons: true, setup: 'new', lastPage: null, micRaw: false, pendingFriend: null, welcomeUntil: null };
 
 /** The ready-made messages as stored: only texts, trimmed, not empty, not too long, not too many. */
 export function quickOf(value: unknown): string[] {
@@ -77,6 +79,7 @@ function read(): UiPreferences {
       enterSends: saved.enterSends === true,
       sleepList: saved.sleepList !== false,
       quickMessages: quickOf(saved.quickMessages),
+      feedIcons: saved.feedIcons !== false,
       setup: saved.setup === 'done' || saved.setup === 'skipped' ? saved.setup : 'new',
       lastPage: typeof saved.lastPage === 'string' && saved.lastPage.startsWith('/') ? saved.lastPage : null,
       micRaw: saved.micRaw === true,

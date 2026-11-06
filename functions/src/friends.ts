@@ -159,6 +159,15 @@ friendsRouter.post(
     // The request stays ONLY in my list. It reaches the other person when THEY run their check
     // (Home / Friends / Pending), which matches their VERIFIED email or phone number against it.
     const keys = { phoneKey: phoneKey(data.phone) };
+    // not myself: my own email or phone number (from the login, or on my account) cannot be added as a friend
+    const token = res.locals.token as DecodedIdToken;
+    const mine = (await userDoc(token.uid).get()).data();
+    const myEmails = [token.email, mine?.emailLower].filter(Boolean).map((e) => String(e).toLowerCase());
+    const myPhones = [phoneKey(token.phone_number), mine?.phoneKey].filter(Boolean);
+    if ((data.email && myEmails.includes(data.email.toLowerCase())) || (keys.phoneKey && myPhones.includes(keys.phoneKey))) {
+      res.status(400).json({ error: "That is you. Add the email or phone number of a friend." });
+      return;
+    }
     // Does the friend already have an account? Then their frontend gets a ping (a signal) to run its search.
     const accounts = await findAccounts(data.email, keys.phoneKey, (res.locals.token as DecodedIdToken).uid);
 
