@@ -4,6 +4,8 @@ export type FriendStatus = "pending" | "confirmed" | "rejected";
 /** A friend entry (a seat in my circle). Its id is the id of the connection, the same for both people. */
 export interface Friend {
   id: string;
+  /** the circle this friend is in (my circle): the friendship, its seat, its messages and its safebox belong to it */
+  circleId: string;
   name: string;
   email: string | null;
   phone: string | null;

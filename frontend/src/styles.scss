@@ -1001,8 +1001,11 @@ app-voice { display: contents; }
 .sf-expand-quiet > summary::after { font-size: 1rem; }
 
 // ---- Safebox: files two friends share ----
+.sf-box-keystatus { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.375rem 0.75rem; margin: 0 0 0.5rem; padding: 0; font-size: var(--sf-fs-description);
+  li { padding: 0.125rem 0.625rem; border: 1px solid var(--sf-border); border-radius: 999px; background: var(--sf-card); color: var(--sf-muted); &.sf-has { color: var(--bs-success-text-emphasis, #0a3622); border-color: currentColor; } } } // who has a key: two small pills
 .sf-box-unenc { width: fit-content; max-width: min(100%, 32rem); margin: 0 auto 0.75rem; border: 1px solid var(--sf-border); border-radius: var(--sf-radius); background: var(--sf-card); font-size: var(--sf-fs-description);
   summary { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.75rem; cursor: pointer; color: var(--bs-warning-text-emphasis, #997404); font-weight: 600; list-style: none; &::-webkit-details-marker { display: none; } &::after { content: ''; margin-inline-start: auto; width: 0.5rem; height: 0.5rem; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg); transition: transform .15s; } }
+  &.sf-box-keys-ok summary { color: var(--bs-success-text-emphasis, #0a3622); }
   &[open] summary::after { transform: rotate(225deg); }
   p { padding: 0 0.75rem 0.75rem; color: var(--sf-text); } } // the "not encrypted yet" mark with its expanding explanation
 .sf-box-usage { display: grid; gap: 0.25rem; margin-bottom: 0.75rem; .progress { height: 0.5rem; } }
@@ -1160,3 +1163,6 @@ nav.sf-tabs {
   .sf-composer-row .sf-add-menu { inset-inline-start: auto; inset-inline-end: 0; transform-origin: bottom right; }
   .sf-composer-top .sf-composer-row .sf-add-menu { transform-origin: top right; }
 }
+
+.sf-recovery-words { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.375rem 1rem; margin: 0; padding: 0.75rem 0.75rem 0.75rem 2.25rem; border: 1px solid var(--sf-border); border-radius: var(--sf-radius); background: var(--sf-card); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; user-select: all; li::marker { color: var(--sf-muted); } @media (min-width: 576px) { grid-template-columns: repeat(3, 1fr); } } // the 24 recovery words, numbered
+.sf-fingerprint { padding: 0.5rem 0.75rem; border: 1px solid var(--sf-border); border-radius: var(--sf-radius); background: var(--sf-card); color: var(--sf-text); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.8125rem; white-space: pre-wrap; user-select: all; } // a key code to read out

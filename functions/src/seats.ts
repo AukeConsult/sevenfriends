@@ -99,6 +99,7 @@ export function ensureSeat(
       status: "pending",
       waitingForSeat: false,
       linkedUid: request.fromUid,
+      circleId: myFriends.parent?.id ?? DEFAULT_CIRCLE_ID, // my circle
       connectionId: requestId,
       incomingRequestId: requestId,
       peerCircleId: request.circleId,
@@ -115,6 +116,7 @@ export function ensureSeat(
 
   tx.set(myFriends.doc(requestId), {
     ...entryFromRequester(requester, request),
+    circleId: myFriends.parent?.id ?? DEFAULT_CIRCLE_ID, // my circle
     connectionId: requestId,
     peerCircleId: request.circleId,
     incomingRequestId: requestId,

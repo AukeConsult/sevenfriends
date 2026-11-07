@@ -29,8 +29,16 @@
             <span class="text-secondary">Loading…</span>
           }
         }
-        @case ('video') { @if (ref(); as media) { <app-media-video [media]="media" /> } }
-        @case ('audio') { @if (ref(); as media) { <app-media-audio [media]="media" /> } }
+        @case ('video') {
+          @if (item()!.enc) {
+            @if (mediaUrl(); as url) { <video class="sf-box-view-image" [src]="url" controls playsinline></video> } @else if (!failed()) { <span class="text-secondary">Opening…</span> }
+          } @else if (ref(); as media) { <app-media-video [media]="media" /> }
+        }
+        @case ('audio') {
+          @if (item()!.enc) {
+            @if (mediaUrl(); as url) { <audio [src]="url" controls></audio> } @else if (!failed()) { <span class="text-secondary">Opening…</span> }
+          } @else if (ref(); as media) { <app-media-audio [media]="media" /> }
+        }
         @default {
           @switch (docType()) {
             @case ('text') {

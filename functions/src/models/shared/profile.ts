@@ -1,4 +1,3 @@
-import type { AccountSettings } from "./profile-look";
 import type { ProfileColorKey } from "./profile-color";
 
 /** My profile as the profile page edits it: name and phone number. */
@@ -14,8 +13,6 @@ export type ProfileDetails = {
   icon: number | null;
   /** the colour the person chose for their profile (shown to their friends); null = none */
   color: ProfileColorKey | null;
-  /** the choices that follow the person to every device (theme, text size, order, ...); only the ones they have chosen are here */
-  settings: Partial<AccountSettings>;
   /** true = the person uploaded a picture (GET /profile/picture returns it) */
   hasPicture: boolean;
   /** the country (a two-letter ISO code such as "NO") the person lives in; null = not set */

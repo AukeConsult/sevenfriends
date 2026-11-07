@@ -153,7 +153,12 @@ export async function restoreDeviceKey(uid: string, id: string, pkcs8: Uint8Arra
   const pub = await crypto.subtle.importKey('jwk', publicKey, { name: DEVICE_KEY_ALGORITHM.name, hash: 'SHA-256' }, false, ['encrypt']);
   const probe = crypto.getRandomValues(new Uint8Array(32));
   const sealed = await crypto.subtle.encrypt({ name: 'RSA-OAEP' }, pub, probe);
-  const opened = new Uint8Array(await crypto.subtle.decrypt({ name: 'RSA-OAEP' }, privateKey, sealed));
+  let opened: Uint8Array;
+  try {
+    opened = new Uint8Array(await crypto.subtle.decrypt({ name: 'RSA-OAEP' }, privateKey, sealed));
+  } catch {
+    opened = new Uint8Array(); // the browser refuses to open it with a key that does not fit: the same answer as a wrong result
+  }
   if (opened.length !== probe.length || opened.some((b, i) => b !== probe[i])) throw new Error('That backup does not belong to this key.');
   const key: StoredDeviceKey = { id, publicKey, privateKey, createdAt: new Date().toISOString(), version: VERSION };
   await store.write(uid, key);

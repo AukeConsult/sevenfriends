@@ -26,6 +26,7 @@ import { Profile } from './profile/profile';
 import { ProfilePicturePage } from './profile-picture/profile-picture';
 import { Settings } from './settings/settings';
 import { Setup } from './setup/setup';
+import { Encryption } from './encryption/encryption';
 import { SettingsShell } from './settings-shell/settings-shell';
 import { SoundPicker } from './sound-picker/sound-picker';
 
@@ -59,6 +60,7 @@ export const routes: Routes = [
       { path: 'sounds', redirectTo: 'notifications', pathMatch: 'full' },
       { path: 'sounds/:event', component: SoundPicker, title: 'Choose a sound – Seven Friends' },
       { path: 'notifications', component: Settings, data: { section: 'notifications' }, title: 'Notifications – Seven Friends' },
+      { path: 'encryption', component: Encryption, title: 'Encryption keys – Seven Friends' },
       { path: 'install', component: InstallApp, title: 'Install the app – Seven Friends' },
       // the same three pages without the tabs, for someone who is not signed in (the sign-in page links to them)
   { path: 'privacy', component: Privacy, title: 'Your data and privacy – Seven Friends' },

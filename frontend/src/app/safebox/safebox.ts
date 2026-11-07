@@ -2,9 +2,11 @@ import { DatePipe } from '@angular/common';
 import { Component, computed, effect, inject, input, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FriendsService } from '../core/friends.service';
+import { KeysService } from '../core/keys.service';
 import { formatBytes, prepareImage } from '../core/image';
 import { SafeboxService } from '../core/safebox.service';
-import { Safebox as SafeboxData, SafeboxItem } from '../models';
+import { UiPreferencesService } from '../core/ui-preferences';
+import { BoxKeys, Safebox as SafeboxData, SafeboxItem, keyIdOf } from '../models';
 
 /** The small preview picture of an image in the box (only the preview is read, never the file; a file without one shows an icon instead). */
 @Component({
@@ -44,6 +46,8 @@ export class SafeboxThumb {
 export class Safebox {
   private readonly service = inject(SafeboxService);
   private readonly friends = inject(FriendsService);
+  private readonly keys = inject(KeysService);
+  protected readonly prefs = inject(UiPreferencesService);
 
   protected readonly friendId = inject(ActivatedRoute).snapshot.paramMap.get('id') ?? '';
   protected readonly friendName = computed(() => this.friends.friends().find((f) => f.id === this.friendId)?.name ?? 'your friend');
@@ -65,8 +69,36 @@ export class Safebox {
   });
   protected readonly formatBytes = formatBytes;
 
+  /** the keys in use of me and of my friend, as the server lists them (null until asked) */
+  private readonly boxKeys = signal<BoxKeys | null>(null);
+  /**
+   * Who has an encryption key: 'checking' (not known yet), 'both' (files can be stored encrypted), 'me' (only my friend has one),
+   * 'friend' (only I have one) or 'none'. Files are stored encrypted only on 'both'; otherwise they are stored as before.
+   */
+  protected readonly keyStatus = computed<'checking' | 'both' | 'me' | 'friend' | 'none'>(() => {
+    const box = this.boxKeys();
+    const state = this.keys.state();
+    if (!box || state === 'checking') return 'checking';
+    const mine = state === 'ready' && box.mine.some((k) => k.id === this.keys.thisKeyId());
+    const friend = box.friend.length > 0;
+    return mine && friend ? 'both' : friend ? 'me' : mine ? 'friend' : 'none';
+  });
+  /** who has a key: me (on this device) and my friend (on any device); null while it is not known */
+  protected readonly meHasKey = computed(() => (this.keyStatus() === 'checking' ? null : this.keyStatus() === 'both' || this.keyStatus() === 'friend'));
+  protected readonly friendHasKey = computed(() => (this.keyStatus() === 'checking' ? null : this.keyStatus() === 'both' || this.keyStatus() === 'me'));
+  /** files are stored encrypted (both of us have a key) */
+  protected readonly canEncrypt = computed(() => this.keyStatus() === 'both');
+  /** ticked on the page (and remembered on this device): the files added now are stored unencrypted even though both of us have a key */
+  protected readonly plain = this.prefs.value('boxPlain');
+  /** the keys to lock a new file for, or null (then it is stored as before) */
+  private encryptWith(): BoxKeys | null {
+    return this.canEncrypt() && !this.plain() ? this.boxKeys() : null;
+  }
+
   constructor() {
     if (!this.friends.friends().length) void this.friends.load().catch(() => undefined); // for the friend's name
+    void this.keys.refresh(); // is there a key for me on this device?
+    void this.service.keys(this.friendId).then((keys) => this.boxKeys.set(keys)).catch(() => undefined); // and for my friend?
     void this.reload();
   }
 
@@ -88,9 +120,9 @@ export class Safebox {
     for (const file of files) {
       this.adding.set(file.name);
       try {
-        if (file.type.startsWith('image/')) await this.service.addImage(this.friendId, await prepareImage(file as File));
+        if (file.type.startsWith('image/')) await this.service.addImage(this.friendId, await prepareImage(file as File), this.encryptWith());
         else if (max && file.size > max) throw new Error(`“${file.name}” is too big (at most ${formatBytes(max)})`);
-        else await this.service.add(this.friendId, file, file.name);
+        else await this.service.add(this.friendId, file, file.name, undefined, this.encryptWith());
       } catch (err: any) {
         this.error.set(err.message ?? `Could not add “${file.name}”`);
         break;

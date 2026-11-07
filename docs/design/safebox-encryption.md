@@ -1,6 +1,8 @@
 # Safebox encryption: design
 
-Status: proposal. Step 1 is built: the local key (`frontend/src/app/core/device-key.ts`, tests in `device-key.spec.ts`); nothing uses it yet. Date: 2026-11-07.
+Status: proposal. Steps 1 and 2 are built: the local key (`frontend/src/app/core/device-key.ts`), the fingerprint (`models/shared/keys.ts`), publishing the public key and the recovery backup (`functions/src/keys.ts`, `core/keys.service.ts`), the 24-word recovery code (`core/recovery-code.ts`) the setup step that ties them together (step 3 of `/setup`), and the Settings → Keys tab (`encryption/`): this device's key and its code, the list of devices with Remove, a new key (retires the old one and gives new words), and restoring a key from the 24 words. Both use the `key-setup` component. Step 3 is built for the safebox upload: when both friends have a key the app locks the file on the device (`core/box-crypto.ts`, `SafeboxService`), sends it in ONE request to `POST .../safebox/encrypted` (`box-encryption.ts` checks the shape and that every key of both friends has its copy of the file key), shows the real name from `enc.meta` to both friends, and opens (decrypts) the file, the preview and video/sound in the browser. Renaming locks the new name with the file key. Not built yet: pinning friends' keys, moving message pictures, "encrypt existing files", multi-device sharing.
+
+**Differences from the first sketch:** the additional data of each lock is `connectionId + part` (file, thumb, meta), not `itemId + fingerprints` (the item id does not exist before the upload, and pinning is not built); the file type ending is not kept visible; the upload is one request (4-byte header length, header JSON, locked file, locked preview). Date: 2026-11-07.
 
 ## Goals and limits
 - Files in the safebox are encrypted on the device, so the server and the storage only hold unreadable data.
@@ -21,8 +23,8 @@ For the recovery backup the private key must be extractable once, only to export
 Each safebox item already carries who saved it: `addedBy` in Firestore (sent to the app as `ownerId`) and `savedBy` on the stored file. The encryption builds on that.
 
 ## Data model (Firestore)
-- `users/{uid}/keys/{deviceId}`: `publicKey` (JWK), `createdAt`, `label`, `revoked`.
-- `users/{uid}/keyBackup`: the private key wrapped with the recovery key (AES-KW or AES-GCM), plus the algorithm version.
+- `user-account/{uid}/keys/{keyId}`: `publicKey` (only `e`, `kty`, `n`), `fingerprint`, `createdAt`, `label`, `revoked`. The document id is the key ID, worked out by the server from the key, so publishing a key twice is one key. At most 10 per person.
+- `user-account/{uid}/key-backup/current`: the private key scrambled with the recovery key (AES-256-GCM, `{ v: 1, iv, data }` in base64, the purpose is bound as additional data). The recovery key is random, so it is used as the AES key itself.
 - `safebox/{connectionId}/items/{itemId}` gains:
   - `enc: { v: 1, iv, metaIv, meta, wraps: [{ uid, keyId, wrappedKey }], fingerprints: { owner, friend } }`
     - `meta` is the encrypted record `{ name, mime }` (see "What is encrypted"), made with the file key and its own `metaIv`.
@@ -33,7 +35,7 @@ Each safebox item already carries who saved it: `addedBy` in Firestore (sent to 
 - Extra authenticated data: every AES-GCM encryption (file, preview, meta) binds `itemId + owner fingerprint + friend fingerprint` as additional data, so a server that changes any of them, or moves a file to another item, makes decryption fail.
 
 ## Flows
-1. **First use (setup):** the app generates a key pair, stores the private key, uploads the public key, and shows the 24-word recovery code. The user must confirm they saved it.
+1. **First use (setup, built):** the app generates a key pair (extractable for a moment), scrambles the private key with a new recovery key, stores that backup on the server, publishes the public key (the backup first: a key is published only when its backup is safe), and shows the 24 words once (BIP-39 list, 8 bits of check). The person must type back three asked-for words before moving on. The words are never stored; closing the page before that loses them, and the key can then not be restored (a reset is a later step).
 2. **Saving a file:**
    1. Resize the picture or read the document as today.
    2. Create a random file key and encrypt the file and its preview.

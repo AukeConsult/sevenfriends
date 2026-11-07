@@ -3,6 +3,9 @@ import {
   FRIEND_CIRCLE_COLLECTION,
   FRIEND_REQUEST_COLLECTION,
   INCOMING_SIGNAL_COLLECTION,
+  KEY_BACKUP_COLLECTION,
+  KEY_BACKUP_DOC,
+  KEY_COLLECTION,
   MESSAGE_COLLECTION,
   PROFILE_PICTURE_COLLECTION,
   PROFILE_PICTURE_DOC,
@@ -19,6 +22,10 @@ export const circleCol = (uid: string) => userDoc(uid).collection(FRIEND_CIRCLE_
 export const friendRequestCol = (uid: string) => userDoc(uid).collection(FRIEND_REQUEST_COLLECTION);
 export const messageCol = (uid: string) => userDoc(uid).collection(MESSAGE_COLLECTION);
 export const signalCol = (uid: string) => userDoc(uid).collection(INCOMING_SIGNAL_COLLECTION);
+/** the public keys of a person's devices (the document id is the key ID) */
+export const keyCol = (uid: string) => userDoc(uid).collection(KEY_COLLECTION);
+/** the scrambled backup of the private key */
+export const keyBackupDoc = (uid: string) => userDoc(uid).collection(KEY_BACKUP_COLLECTION).doc(KEY_BACKUP_DOC);
 export const pushDeviceCol = (uid: string) => userDoc(uid).collection(PUSH_DEVICE_COLLECTION);
 /**
  * ONE document, but only some of its fields (a field mask): the rest is not sent to the function. Use it whenever a whole account or

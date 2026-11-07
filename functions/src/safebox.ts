@@ -4,7 +4,9 @@ import { DocumentReference, FieldValue, Timestamp, getFirestore } from "firebase
 import { asyncHandler } from "./auth";
 import { FRIENDS_SUBCOLLECTION, MAX_UPLOAD_BYTES, SAFEBOX_MAX_BYTES, SAFEBOX_MAX_ITEMS, boxOwner } from "./constants";
 import { connectionOf } from "./conversation";
-import { MediaRef, Safebox, SafeboxItem } from "./models";
+import { BoxKeys, ENC_HEADER_MAX, MediaRef, Safebox, SafeboxItem } from "./models";
+import { parseEncryptedUpload, wrapsCover, wrapsFor } from "./box-encryption";
+import { publishedKeysOf } from "./keys";
 import { circleCol, messageCol, safeboxItems } from "./paths";
 import { nameOf, sendPush } from "./push";
 import { touchFeed, touchFeedIfExists } from "./sync";
@@ -16,6 +18,8 @@ const iso = (t: unknown) => (t instanceof Timestamp ? t.toDate().toISOString() :
 const MAX_FILE_BYTES = MAX_UPLOAD_BYTES;
 /** The file comes as the plain request body (the type is found from the first bytes, not from the header). */
 const fileBody = express.raw({ type: () => true, limit: MAX_FILE_BYTES });
+/** An encrypted file is a little bigger (the header and the 16 bytes of the lock): the same limit for the file itself. */
+const encryptedBody = express.raw({ type: () => true, limit: MAX_FILE_BYTES + ENC_HEADER_MAX + 1024 });
 
 /**
  * The safebox of one friendship: files only the two friends see. Mounted under /circles/:circleId/friends/:friendId/safebox.
@@ -34,6 +38,7 @@ const toItem = (id: string, d: FirebaseFirestore.DocumentData, uid: string): Saf
   mine: d.addedBy === uid,
   createdAt: iso(d.createdAt),
   hasThumb: Boolean(d.hasThumb),
+  ...(d.enc ? { enc: wrapsFor(d.enc, uid) } : {}), // an encrypted file: only my copies of the file key are sent
 });
 
 /** The files in the box, newest first, with how much room is left. */
@@ -49,22 +54,42 @@ safeboxRouter.get(
   }),
 );
 
+/**
+ * The keys in use of me and of my friend (a CONFIRMED friendship only, like the rest of the box): the app locks files only when both
+ * of us have a key, and otherwise keeps storing them as before.
+ */
+safeboxRouter.get(
+  "/keys",
+  asyncHandler(async (req, res) => {
+    const connection = await connectionOf(req, res);
+    if (!connection) return;
+    const [mine, friend] = await Promise.all([publishedKeysOf(uidOf(res)), publishedKeysOf(connection.peerUid)]);
+    res.json({ friendUid: connection.peerUid, mine, friend } satisfies BoxKeys);
+  }),
+);
+
 type Connection = NonNullable<Awaited<ReturnType<typeof connectionOf>>>;
 
 /**
  * Stores a checked file in the box (and its preview, when it has one) and answers with the new item, or answers with an error
  * (the box is full) and returns null.
  */
-async function storeInBox(res: Response, connection: Connection, bytes: Buffer, name: string, checked: { kind: SafeboxItem["kind"]; mime: string }, thumb: Buffer | null, originalSender: string | null = null): Promise<SafeboxItem | null> {
+/** True when the box has room for a file of this many bytes; otherwise answers with an error (the box is full) and returns false. */
+async function boxHasRoom(res: Response, connection: Connection, size: number): Promise<boolean> {
   const existing = (await safeboxItems(connection.id).select("bytes").get()).docs;
   if (existing.length >= SAFEBOX_MAX_ITEMS) {
     res.status(409).json({ error: `The safebox is full (at most ${SAFEBOX_MAX_ITEMS} files). Delete some first.` });
-    return null;
+    return false;
   }
-  if (existing.reduce((sum, d) => sum + (d.data().bytes as number), 0) + bytes.length > SAFEBOX_MAX_BYTES) {
+  if (existing.reduce((sum, d) => sum + (d.data().bytes as number), 0) + size > SAFEBOX_MAX_BYTES) {
     res.status(413).json({ error: `The safebox is full (at most ${Math.round(SAFEBOX_MAX_BYTES / 1024 / 1024)} MB). Delete some files first.` });
-    return null;
+    return false;
   }
+  return true;
+}
+
+async function storeInBox(res: Response, connection: Connection, bytes: Buffer, name: string, checked: { kind: SafeboxItem["kind"]; mime: string }, thumb: Buffer | null, originalSender: string | null = null): Promise<SafeboxItem | null> {
+  if (!(await boxHasRoom(res, connection, bytes.length))) return null;
   const ref = safeboxItems(connection.id).doc();
   // the person who saves a file owns it: `addedBy` on the item and `savedBy` on the stored file (and on its preview) say whose it is, for the encryption to come
   const owner = uidOf(res);
@@ -87,8 +112,8 @@ async function announceItem(res: Response, connection: Connection): Promise<void
     const common = { connectionId: connection.id, fromUid: uid, fromName, toUid: connection.peerUid, text: "", inBox: true, time: FieldValue.serverTimestamp() };
     const myEntry = (res.locals.circleRef as DocumentReference).collection(FRIENDS_SUBCOLLECTION).doc(connection.id);
     const batch = getFirestore().batch();
-    batch.set(mine, { ...common, read: true });
-    batch.set(theirs, { ...common, read: false });
+    batch.set(mine, { ...common, circleId: connection.circleId, read: true });
+    batch.set(theirs, { ...common, circleId: connection.peerCircleId, read: false });
     touchFeed(batch, myEntry);
     await touchFeedIfExists(batch, circleCol(connection.peerUid).doc(connection.peerCircleId).collection(FRIENDS_SUBCOLLECTION).doc(connection.id));
     await batch.commit();
@@ -116,6 +141,39 @@ safeboxRouter.post(
       await announceItem(res, connection);
       res.status(201).json(item);
     }
+  }),
+);
+
+/**
+ * Put an ENCRYPTED file in the box: `POST .../safebox/encrypted`, the body is the header, the encrypted file and its preview (see EncryptedUploadHeader).
+ * The server cannot look inside: it checks the shape, the size, and that the file key is locked for every key in use of both friends. It stores
+ * the ciphertext as it is, and no file name (the name is inside `enc.meta`). Answers with the new item.
+ */
+safeboxRouter.post(
+  "/encrypted",
+  encryptedBody,
+  asyncHandler(async (req, res) => {
+    const connection = await connectionOf(req, res);
+    if (!connection) return;
+    const upload = parseEncryptedUpload(Buffer.isBuffer(req.body) ? req.body : Buffer.alloc(0), MAX_FILE_BYTES);
+    if ("error" in upload) {
+      res.status(upload.status).json({ error: upload.error });
+      return;
+    }
+    const owner = uidOf(res);
+    const [mine, friend] = await Promise.all([publishedKeysOf(owner), publishedKeysOf(connection.peerUid)]);
+    if (!wrapsCover(upload.header.enc, [{ uid: owner, keys: mine }, { uid: connection.peerUid, keys: friend }])) {
+      res.status(409).json({ error: "The encryption keys changed while the file was sent. Try again." });
+      return;
+    }
+    if (!(await boxHasRoom(res, connection, upload.file.length))) return;
+    const ref = safeboxItems(connection.id).doc();
+    const { kind, enc } = upload.header;
+    await putObject(boxOwner(connection.id), ref.id, upload.file, kind, "application/octet-stream", null, owner);
+    if (upload.thumb) await putObject(boxOwner(connection.id), `${ref.id}.thumb`, upload.thumb, "thumb", "application/octet-stream", null, owner);
+    await ref.set({ name: "Encrypted file", kind, mime: "application/octet-stream", bytes: upload.file.length, addedBy: owner, hasThumb: Boolean(upload.thumb), enc, createdAt: FieldValue.serverTimestamp() });
+    await announceItem(res, connection);
+    res.status(201).json(toItem(ref.id, (await ref.get()).data()!, owner));
   }),
 );
 
@@ -194,6 +252,10 @@ safeboxRouter.put(
       res.status(400).json({ error: "A preview is for an image or a video" });
       return;
     }
+    if (item.data.enc) {
+      res.status(400).json({ error: "The preview of an encrypted file is sent with the file" });
+      return;
+    }
     const bytes = Buffer.isBuffer(req.body) ? req.body : Buffer.alloc(0);
     const checked = checkBytes("thumb", bytes);
     if ("error" in checked) {
@@ -214,6 +276,19 @@ safeboxRouter.put(
     if (!connection) return;
     const item = await itemOf(req, res, connection.id);
     if (!item) return;
+    if (item.data.enc) {
+      // an encrypted file is renamed on the device: the new name comes locked with the file key of the file (`{ metaIv, meta }`)
+      const { metaIv, meta } = (req.body ?? {}) as { metaIv?: unknown; meta?: unknown };
+      const base64 = /^[A-Za-z0-9+/]+={0,2}$/;
+      if (typeof metaIv !== "string" || metaIv.length !== 16 || !base64.test(metaIv) || typeof meta !== "string" || meta.length > 1500 || !base64.test(meta)) {
+        res.status(400).json({ error: "Those names are not valid" });
+        return;
+      }
+      const enc = { ...item.data.enc, metaIv, meta };
+      await item.ref.update({ enc });
+      res.json(toItem(item.id, { ...item.data, enc }, uidOf(res)));
+      return;
+    }
     const name = cleanFileName(req.body?.name);
     if (!name) {
       res.status(400).json({ error: "Give the file a name" });
@@ -250,8 +325,8 @@ async function sendFile(req: Request, res: Response, thumb: boolean): Promise<vo
     res.status(404).json({ error: "Not found" });
     return;
   }
-  const attachment = !thumb && item.data.kind === "document" && item.data.mime !== "application/pdf" && !String(item.data.mime).startsWith("text/");
-  const fileName = thumb ? objectName : (item.data.name as string);
+  const attachment = Boolean(item.data.enc) || (!thumb && item.data.kind === "document" && item.data.mime !== "application/pdf" && !String(item.data.mime).startsWith("text/"));
+  const fileName = thumb || item.data.enc ? objectName : (item.data.name as string); // an encrypted file has no readable name on the server
   const etag = `"${objectName}-${info.bytes}"`; // a file never changes under its id
   res.set({
     "Content-Type": info.mime,

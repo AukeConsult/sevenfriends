@@ -37,6 +37,8 @@ export interface UiPreferences {
   pendingFriend: PendingFriend | null;
   /** "Continue in the browser" on the welcome page was chosen: it is not shown again until this time (milliseconds since 1970); null = show it */
   welcomeUntil: number | null;
+  /** the safebox: files added are NOT encrypted even when both friends have a key (ticked on the safebox page); off (default) = they are encrypted */
+  boxPlain: boolean;
 }
 
 /** Where a friend link points: an invite code, or an email / phone number. */
@@ -57,7 +59,7 @@ export const THEMES = [
 export type ThemeKey = (typeof THEMES)[number]['key'];
 
 /** The tabs of Settings (the path of each, see settings-shell.ts). */
-export const SETTINGS_TABS = ['profile', 'preferences', 'notifications', 'install', 'about'] as const;
+export const SETTINGS_TABS = ['profile', 'preferences', 'notifications', 'encryption', 'install', 'about'] as const;
 export type SettingsTab = (typeof SETTINGS_TABS)[number];
 
 export const QUICK_MAX = 10;
@@ -68,7 +70,7 @@ export const TEXT_SCALES: Record<UiPreferences['textSize'], number> = { tiny: 0.
 /** The same on a phone (a screen up to 575 px wide): one step up, so Small is what Normal was, Normal is what Big was, and Big is 15% more. */
 export const PHONE_TEXT_SCALES: Record<UiPreferences['textSize'], number> = { tiny: 0.9, small: 1, normal: 1.15, big: 1.3225, huge: 1.55 };
 
-export const DEFAULTS: UiPreferences = { theme: 'light', textSize: 'normal', settingsTab: 'profile', emojiTab: 'People', chatOrder: 'oldest', enterSends: true, sleepList: true, quickMessages: [], feedIcons: true, setup: 'new', lastPage: null, micRaw: false, pendingFriend: null, welcomeUntil: null };
+export const DEFAULTS: UiPreferences = { theme: 'light', textSize: 'normal', settingsTab: 'profile', emojiTab: 'People', chatOrder: 'oldest', enterSends: true, sleepList: true, quickMessages: [], feedIcons: true, setup: 'new', lastPage: null, micRaw: false, pendingFriend: null, welcomeUntil: null, boxPlain: false };
 
 /** The ready-made messages as stored: only texts, trimmed, not empty, not too long, not too many. */
 export function quickOf(value: unknown): string[] {
@@ -116,6 +118,7 @@ function read(): UiPreferences {
       micRaw: saved.micRaw === true,
       pendingFriend: pendingOf(saved.pendingFriend),
       welcomeUntil: typeof saved.welcomeUntil === 'number' && Number.isFinite(saved.welcomeUntil) ? saved.welcomeUntil : null,
+      boxPlain: saved.boxPlain === true,
     };
   } catch {
     return { ...DEFAULTS }; // private mode or damaged: the defaults, the choices last until the page is closed

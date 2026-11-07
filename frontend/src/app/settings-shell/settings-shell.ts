@@ -35,6 +35,7 @@ export class SettingsShell {
     { path: 'profile', label: 'Profile' },
     { path: 'preferences', label: 'Preferences' },
     { path: 'notifications', label: 'Notifications' },
+    { path: 'encryption', label: 'Keys' },
     { path: 'install', label: 'Install', browserOnly: true },
     { path: 'about', label: 'Info', also: ['terms', 'privacy'] },
   ];

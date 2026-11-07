@@ -3,6 +3,7 @@ import { DecodedIdToken } from "firebase-admin/auth";
 import { FieldValue, Timestamp } from "firebase-admin/firestore";
 import { asyncHandler, requireAuth } from "./auth";
 import { Message } from "./models";
+import { circleIdOf } from "./constants";
 import { messageCol } from "./paths";
 import { mediaLabel } from "./sf-cache";
 
@@ -20,6 +21,7 @@ export async function listUnreadMessages(uid: string): Promise<Message[]> {
         text: (data.text as string) || (data.media ? mediaLabel(data.media.kind) : data.inBox ? "📦 In the safebox" : ""),
         time: data.time instanceof Timestamp ? data.time.toDate().toISOString() : null,
         connectionId: (data.connectionId as string | undefined) ?? null,
+        circleId: circleIdOf(data),
       };
     })
     .sort((a, b) => (b.time ?? "").localeCompare(a.time ?? ""));

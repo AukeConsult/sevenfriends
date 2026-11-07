@@ -1,6 +1,6 @@
 <div class="sf-page-head">
   <h1>Set up Seven Friends</h1>
-  <p class="sf-hint m-0">Step {{ step() }} of 3</p>
+  <p class="sf-hint m-0">Step {{ step() }} of 4</p>
 </div>
 
 <main class="sf-narrow">
@@ -80,6 +80,17 @@
     }
 
     @case (3) {
+      <h2 class="h5 m-0">Lock your files with a key</h2>
+      <app-key-setup (finished)="next()" />
+      @if (!showingWords()) {
+        <div class="d-flex flex-wrap gap-2 justify-content-between">
+          <button type="button" class="btn btn-link" (click)="later()">Do it later</button>
+          <button type="button" class="btn btn-primary" (click)="next()">Next</button>
+        </div>
+      }
+    }
+
+    @case (4) {
       <div class="text-center vstack gap-3">
         <div class="sf-logo sf-logo-lg mx-auto" aria-hidden="true">✓</div>
         <h2 class="h5 m-0">You are all set</h2>

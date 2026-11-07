@@ -12,6 +12,8 @@ export const PRESENCE_STALE_MS = 150_000;
 
 export const DEFAULT_CIRCLE_TYPE: CircleType = "friends";
 export const DEFAULT_CIRCLE_ID = "default";
+/** The circle a stored entry or message belongs to: the one it names, and `default` for what was stored before circles were written down. */
+export const circleIdOf = (data: { circleId?: unknown } | undefined | null): string => (typeof data?.circleId === "string" && data.circleId ? data.circleId : DEFAULT_CIRCLE_ID);
 export const DEFAULT_CIRCLE_NAME = "My friends";
 
 /** user-account/{uid}/friend-request/{friendId} – incoming requests for that user */
@@ -69,6 +71,10 @@ export const CACHE_ROOT = "sf-cache";
  * The safebox: files only two friends share. The files are stored in the media cache under the owner name `box-<connectionId>`
  * (the shared id of the friendship), the list of them in `safebox/{connectionId}/items/{objectId}`. Both go when the friendship ends.
  */
+/** users/{uid}/keys/{keyId}: the public keys of a person's devices; users/{uid}/key-backup/current: the scrambled backup of the private key (docs/design/safebox-encryption.md) */
+export const KEY_COLLECTION = "keys";
+export const KEY_BACKUP_COLLECTION = "key-backup";
+export const KEY_BACKUP_DOC = "current";
 export const SAFEBOX_COLLECTION = "safebox";
 export const SAFEBOX_ITEMS = "items";
 export const SAFEBOX_MAX_BYTES = 200 * 1024 * 1024;

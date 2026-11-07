@@ -10,6 +10,7 @@ import {
   MAX_FRIENDS,
   MAX_INVITES_PER_DAY,
   MAX_REQUEST_MESSAGE,
+  circleIdOf,
 } from "./constants";
 import { invitesSentToday, queueInvite } from "./outbox";
 import { Friend, FriendInvite, MediaRef, FriendStatus, NewFriend, ProfilePicture, profileColorKey } from "./models";
@@ -53,6 +54,7 @@ function toJson(doc: FirebaseFirestore.DocumentSnapshot): Friend {
   const data = doc.data() ?? {};
   return {
     id: doc.id,
+    circleId: circleIdOf(data),
     name: data.name,
     email: data.email ?? null,
     phone: data.phone ?? null,
@@ -193,6 +195,7 @@ friendsRouter.post(
       tx.set(ref, {
         ...data,
         ...keys,
+        circleId: (res.locals.circleRef as DocumentReference).id, // my circle
         connectionId: ref.id, // one id for the whole connection: both lists and the request use it
         peerCircleId: DEFAULT_CIRCLE_ID, // where the other person's entry will live
         nameGiven, // false = the name shown is the email / phone I typed

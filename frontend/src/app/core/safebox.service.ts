@@ -1,6 +1,9 @@
 import { Injectable, inject } from '@angular/core';
-import { Safebox, SafeboxItem } from '../models';
+import { BoxKeys, Safebox, SafeboxItem, fingerprintOf, keyIdOf } from '../models';
 import { ApiService } from './api.service';
+import { AuthService } from './auth.service';
+import { classify, openFileKey, openMeta, openPart, sealFile, sealMeta } from './box-crypto';
+import { getDeviceKey } from './device-key';
 import { FriendsService } from './friends.service';
 import { PreparedImage } from './image';
 
@@ -16,6 +19,10 @@ export interface BoxFile {
 export class SafeboxService {
   private readonly api = inject(ApiService);
   private readonly friends = inject(FriendsService);
+  private readonly auth = inject(AuthService);
+  /** the items as the server sent them (an encrypted one still has its `enc`), and the opened file keys of the encrypted ones */
+  private readonly raw = new Map<string, SafeboxItem>();
+  private readonly fileKeys = new Map<string, Promise<CryptoKey>>();
   /** the previews that were read (a file never changes under its id): kept while the app is open */
   private readonly previews = new Map<string, Promise<BoxFile>>();
 
@@ -23,12 +30,58 @@ export class SafeboxService {
     return `/circles/${this.friends.circle()?.id ?? 'default'}/friends/${friendId}/safebox`;
   }
 
-  load(friendId: string): Promise<Safebox> {
-    return this.api.request<Safebox>(this.base(friendId));
+  /** The keys in use of me and of this friend: files can be locked only when both of us have one. */
+  keys(friendId: string): Promise<BoxKeys> {
+    return this.api.request<BoxKeys>(`${this.base(friendId)}/keys`);
   }
 
-  /** Puts a file in the box. A picture comes with its small preview (made in the browser); anything else goes as it is. */
-  async add(friendId: string, file: Blob, name: string, thumb?: Blob): Promise<SafeboxItem> {
+  async load(friendId: string): Promise<Safebox> {
+    const box = await this.api.request<Safebox>(this.base(friendId));
+    return { ...box, items: await Promise.all(box.items.map((item) => this.reveal(friendId, item))) };
+  }
+
+  /** The file key of an encrypted file, opened with the key of this device (kept while the app is open). */
+  private fileKey(friendId: string, item: SafeboxItem): Promise<CryptoKey> {
+    const id = `${friendId}/${item.id}`;
+    let key = this.fileKeys.get(id);
+    if (!key) {
+      key = (async () => {
+        const uid = this.auth.user()?.uid;
+        const device = uid ? await getDeviceKey(uid) : null;
+        const fingerprint = device ? await fingerprintOf(device.publicKey) : null;
+        if (!device || !fingerprint) throw new Error('There is no encryption key on this device. Set one up (or restore it) in Settings → Keys.');
+        return openFileKey(item.enc!, keyIdOf(fingerprint), device.privateKey);
+      })();
+      this.fileKeys.set(id, key);
+      key.catch(() => this.fileKeys.delete(id));
+    }
+    return key;
+  }
+
+  /** An item as the app shows it: an encrypted file gets its real name and type from inside (or the name "Locked file" when this device cannot open it). */
+  private async reveal(friendId: string, item: SafeboxItem): Promise<SafeboxItem> {
+    this.raw.set(`${friendId}/${item.id}`, item);
+    if (!item.enc) return item;
+    try {
+      const meta = await openMeta(friendId, item.enc, await this.fileKey(friendId, item));
+      return { ...item, name: meta.name, mime: meta.mime };
+    } catch {
+      return { ...item, name: 'Locked file' };
+    }
+  }
+
+  /** The item as the server sent it (loads the box when it was not read yet). */
+  private async rawItem(friendId: string, itemId: string): Promise<SafeboxItem | undefined> {
+    if (!this.raw.has(`${friendId}/${itemId}`)) await this.load(friendId);
+    return this.raw.get(`${friendId}/${itemId}`);
+  }
+
+  /**
+   * Puts a file in the box. A picture comes with its small preview (made in the browser); anything else goes as it is.
+   * With `keys` (both of us have a key) the file is locked on this device first, and only the locked file leaves it.
+   */
+  async add(friendId: string, file: Blob, name: string, thumb?: Blob, keys?: BoxKeys | null): Promise<SafeboxItem> {
+    if (keys) return this.addEncrypted(friendId, file, name, thumb ?? null, keys);
     const item = await this.api.request<SafeboxItem>(`${this.base(friendId)}?name=${encodeURIComponent(name)}`, {
       method: 'POST',
       body: file,
@@ -42,16 +95,41 @@ export class SafeboxService {
     return item;
   }
 
+  private async addEncrypted(friendId: string, file: Blob, name: string, thumb: Blob | null, keys: BoxKeys): Promise<SafeboxItem> {
+    const me = this.auth.user()?.uid;
+    if (!me) throw new Error('Not signed in');
+    const { kind, mime } = await classify(file, name);
+    const body = await sealFile({
+      connectionId: friendId,
+      file,
+      name,
+      kind,
+      mime,
+      thumb: kind === 'image' ? thumb : null,
+      recipients: [{ uid: me, keys: keys.mine }, { uid: keys.friendUid, keys: keys.friend }],
+    });
+    const item = await this.api.request<SafeboxItem>(`${this.base(friendId)}/encrypted`, { method: 'POST', body, headers: { 'Content-Type': 'application/octet-stream' } });
+    return this.reveal(friendId, item);
+  }
+
   /** Moves the picture or video of a message of this conversation into the box (the message stays and says so). */
   addFromMessage(friendId: string, messageId: string): Promise<SafeboxItem> {
     return this.api.request<SafeboxItem>(`${this.base(friendId)}/from-message`, { method: 'POST', body: JSON.stringify({ messageId }) });
   }
 
-  addImage(friendId: string, image: PreparedImage): Promise<SafeboxItem> {
-    return this.add(friendId, image.blob, image.name, image.thumb);
+  addImage(friendId: string, image: PreparedImage, keys?: BoxKeys | null): Promise<SafeboxItem> {
+    return this.add(friendId, image.blob, image.name, image.thumb, keys);
   }
 
-  rename(friendId: string, itemId: string, name: string): Promise<SafeboxItem> {
+  async rename(friendId: string, itemId: string, name: string): Promise<SafeboxItem> {
+    const raw = await this.rawItem(friendId, itemId);
+    if (raw?.enc) {
+      // the new name is locked here with the file key of the file: the server never sees it
+      const key = await this.fileKey(friendId, raw);
+      const meta = await openMeta(friendId, raw.enc, key);
+      const sealed = await sealMeta(friendId, key, { name, mime: meta.mime });
+      return this.reveal(friendId, await this.api.request<SafeboxItem>(`${this.base(friendId)}/${itemId}`, { method: 'PUT', body: JSON.stringify(sealed) }));
+    }
     return this.api.request<SafeboxItem>(`${this.base(friendId)}/${itemId}`, { method: 'PUT', body: JSON.stringify({ name }) });
   }
 
@@ -61,8 +139,18 @@ export class SafeboxService {
 
   /** The file (`thumb`: its small preview) as an object URL. Previews are kept; a whole file is read again each time it is opened. */
   async file(friendId: string, itemId: string, thumb = false): Promise<BoxFile> {
-    const read = () =>
-      this.api.file(`${this.base(friendId)}/${itemId}${thumb ? '/thumb' : ''}`).then(({ blob, name }) => ({ url: URL.createObjectURL(blob), name, type: blob.type }));
+    const read = async (): Promise<BoxFile> => {
+      const enc = (await this.rawItem(friendId, itemId))?.enc;
+      const { blob, name } = await this.api.file(`${this.base(friendId)}/${itemId}${thumb ? '/thumb' : ''}`);
+      if (!enc) return { url: URL.createObjectURL(blob), name, type: blob.type };
+      // an encrypted file: opened here, in memory
+      const raw = (await this.rawItem(friendId, itemId))!;
+      const key = await this.fileKey(friendId, raw);
+      const meta = await openMeta(friendId, enc, key);
+      const type = thumb ? 'image/jpeg' : meta.mime;
+      const plain = await openPart(friendId, enc, key, thumb ? 'thumb' : 'file', await blob.arrayBuffer());
+      return { url: URL.createObjectURL(new Blob([plain], { type })), name: meta.name, type };
+    };
     if (!thumb) return read();
     const key = `${friendId}/${itemId}`;
     let preview = this.previews.get(key);
@@ -77,5 +165,7 @@ export class SafeboxService {
   /** Forget the kept preview of a file that was taken out. */
   forget(friendId: string, itemId: string): void {
     this.previews.delete(`${friendId}/${itemId}`);
+    this.raw.delete(`${friendId}/${itemId}`);
+    this.fileKeys.delete(`${friendId}/${itemId}`);
   }
 }

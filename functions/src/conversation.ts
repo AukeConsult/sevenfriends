@@ -43,6 +43,7 @@ export async function connectionOf(req: Request, res: Response) {
   }
   return {
     id: entry.id,
+    circleId: (res.locals.circleRef as DocumentReference).id, // the circle of MY entry
     name: data.name as string,
     peerUid: data.linkedUid as string,
     peerCircleId: (data.peerCircleId as string | undefined) ?? DEFAULT_CIRCLE_ID,
@@ -151,8 +152,9 @@ conversationRouter.post(
       time: FieldValue.serverTimestamp(),
     };
     const batch = getFirestore().batch();
-    batch.set(mine, { ...common, read: true }); // my own message needs no reading
-    batch.set(theirs, { ...common, read: false });
+    // each copy says which circle it belongs to FOR ITS OWNER: mine in my circle, the friend's in theirs
+    batch.set(mine, { ...common, circleId: connection.circleId, read: true }); // my own message needs no reading
+    batch.set(theirs, { ...common, circleId: connection.peerCircleId, read: false });
     // "last spoken to": both sides of the friendship remember when the last message was written
     const myEntry = (res.locals.circleRef as DocumentReference).collection(FRIENDS_SUBCOLLECTION).doc(connection.id);
     batch.update(myEntry, { lastMessageAt: FieldValue.serverTimestamp() });

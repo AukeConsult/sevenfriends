@@ -93,10 +93,10 @@ describe("how the other person finds the request (the check)", () => {
     await assertConsistent();
   });
 
-  it("ignores my own entries", async () => {
-    await u(0).add(u(0).p);
+  it("never makes an entry or a request for myself (adding my own contact is refused)", async () => {
+    await u(0).addRaw(u(0).p).expect(400);
     expect((await u(0).check()).requests).toEqual([]);
-    expect(await u(0).friends()).toHaveLength(1);
+    expect(await u(0).friends()).toHaveLength(0);
     await assertConsistent();
   });
 

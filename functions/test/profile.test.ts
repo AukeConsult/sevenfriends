@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { MAX_NAME_LENGTH } from "../src/constants";
-import { User, assertConsistent, connect, seedPool } from "./helpers";
+import { User, assertConsistent, connect, person, seedPool } from "./helpers";
 
 /** The profile page: name and phone. The page autosaves, so PUT gets the whole form again and again. */
 let pool: User[];
@@ -106,10 +106,13 @@ describe("autosave: the whole form is sent again and again", () => {
   });
 
   it("a cleared phone number is removed, and saved again when it is typed again", async () => {
-    await u(0).raw("put", "/profile", form(u(0), { phone: "" })).expect(200);
-    expect((await profile(u(0))).phone).toBeNull();
-    await u(0).raw("put", "/profile", form(u(0))).expect(200);
-    expect((await profile(u(0))).phone).toBe(u(0).p.phone);
+    // a typed number that was never confirmed by SMS (a confirmed one is the contact number and cannot be cleared)
+    const me = await new User(person(92), { emailVerified: true, phoneVerified: false }).signUp();
+    await me.raw("put", "/profile", form(me)).expect(200);
+    await me.raw("put", "/profile", form(me, { phone: "" })).expect(200);
+    expect((await profile(me)).phone).toBeNull();
+    await me.raw("put", "/profile", form(me)).expect(200);
+    expect((await profile(me)).phone).toBe(me.p.phone);
     await assertConsistent();
   });
 
@@ -235,37 +238,5 @@ describe("the profile colour", () => {
     expect((await u(0).raw("put", "/profile", { color: "#ff0000" })).status).toBe(400);
     expect((await u(0).raw("put", "/profile", { color: "javascript:alert(1)" })).status).toBe(400);
     expect((await profile(u(0))).color).toBe("blue");
-  });
-});
-
-describe("the settings that follow the person (theme, text size, order, ...)", () => {
-  const settings = async (user: User) => (await profile(user)).settings;
-
-  it("start as none chosen, and are kept on the account", async () => {
-    expect(await settings(u(0))).toEqual({});
-    await u(0).raw("put", "/profile", { settings: { theme: "ocean", textSize: "big", quickMessages: ["  On my way  ", "", "Call me"] } }).expect(200);
-    expect(await settings(u(0))).toEqual({ theme: "ocean", textSize: "big", quickMessages: ["On my way", "Call me"] });
-    expect(await settings(u(1))).toEqual({}); // only mine
-  });
-
-  it("change only what the request carries, and a save without settings leaves them", async () => {
-    await u(0).raw("put", "/profile", { settings: { theme: "dark", sleepList: false } }).expect(200);
-    await u(0).raw("put", "/profile", { settings: { chatOrder: "newest" } }).expect(200);
-    await u(0).raw("put", "/profile", { name: "Alice" }).expect(200);
-    expect(await settings(u(0))).toEqual({ theme: "dark", sleepList: false, chatOrder: "newest" });
-  });
-
-  it.each([
-    ["an unknown theme", { theme: "neon" }],
-    ["an unknown text size", { textSize: "gigantic" }],
-    ["a wrong order", { chatOrder: "random" }],
-    ["a switch that is not true or false", { enterSends: "yes" }],
-    ["an unknown setting", { favouriteFood: "pizza" }],
-    ["more than 10 quick messages", { quickMessages: Array.from({ length: 11 }, (_, i) => `m${i}`) }],
-    ["a quick message longer than 200 characters", { quickMessages: ["x".repeat(201)] }],
-  ])("refuse %s, and keep what was there", async (_label, bad) => {
-    await u(0).raw("put", "/profile", { settings: { theme: "forest" } }).expect(200);
-    expect((await u(0).raw("put", "/profile", { settings: { textSize: "small", ...bad } })).status).toBe(400);
-    expect(await settings(u(0))).toEqual({ theme: "forest" }); // nothing of the refused request was saved
   });
 });

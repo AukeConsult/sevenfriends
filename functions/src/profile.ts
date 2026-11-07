@@ -5,7 +5,7 @@ import { asyncHandler, requireAuth } from "./auth";
 import { touchSync } from "./sync";
 import { parsePicture, readAvatar, removeAvatar, saveAvatar } from "./avatar";
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAX_FRIENDS, MAX_MOOD_MESSAGE, MAX_NAME_LENGTH, MOOD_COUNT } from "./constants";
-import { ProfileDetails, ProfilePicture, parseSettings, profileColorKey, settingsOf } from "./models";
+import { ProfileDetails, ProfilePicture, profileColorKey } from "./models";
 import { circleCol, userDoc } from "./paths";
 import { isLanguage } from "./models/shared/languages";
 import { PHONE_RE, isCountry, phoneKey, presenceOf, text } from "./validation";
@@ -24,7 +24,6 @@ function detailsOf(data: Record<string, unknown>): ProfileDetails {
     emailVerified: data.emailVerified === true,
     icon: Number.isInteger(data.profileIcon) ? (data.profileIcon as number) : null,
     color: profileColorKey(data.profileColor),
-    settings: settingsOf(data.settings),
     hasPicture: Boolean(data.profilePictureAt),
     country: (data.country as string | null | undefined) ?? null,
     language: (data.language as string | null | undefined) ?? null,
@@ -71,13 +70,6 @@ profileRouter.put(
       res.status(400).json({ error: "That is not one of the colours" });
       return;
     }
-    // the choices that follow the person to every device: only the ones in the request change, a wrong one refuses the whole request
-    const settingsGiven = "settings" in body;
-    const settings = settingsGiven ? parseSettings(body.settings) : null;
-    if (settingsGiven && !settings) {
-      res.status(400).json({ error: "Those settings are not valid" });
-      return;
-    }
     const iconGiven = "icon" in body;
     if (iconGiven && body.icon !== null && !(Number.isInteger(body.icon) && body.icon >= 1 && body.icon <= MAX_FRIENDS)) {
       res.status(400).json({ error: `The icon is a number from 1 to ${MAX_FRIENDS}` });
@@ -119,7 +111,6 @@ profileRouter.put(
         ...(nameGiven ? { displayName: name } : {}),
         ...(iconGiven ? { profileIcon: body.icon } : {}),
         ...(colorGiven ? { profileColor: body.color } : {}),
-        ...(settings ? { settings: { ...settingsOf(before?.settings), ...settings } } : {}),
         ...(countryGiven ? { country } : {}),
         ...(languageGiven ? { language } : {}),
         // only what the request carries is changed: a save that leaves the phone out keeps it

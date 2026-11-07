@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal, viewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { DesktopNoticeService } from '../core/desktop-notice.service';
 import { InstallService } from '../core/install.service';
@@ -6,13 +6,15 @@ import { NoticesService } from '../core/notices.service';
 import { PushService } from '../core/push.service';
 import { SOUND_CHOICES, SoundId, SoundService } from '../core/sound.service';
 import { UiPreferencesService } from '../core/ui-preferences';
+import { KeySetup } from '../key-setup/key-setup';
 
 /**
- * The first-time setup, in three short steps: a sound, notifications, done. Home sends a new account here once (and offers it
+ * The first-time setup, in four short steps: a sound, notifications, the encryption key for the safebox, done. Home sends a new account here once (and offers it
  * again while it is "skipped"). It only uses what the Settings pages use; every step can be left for later.
  */
 @Component({
   selector: 'app-setup',
+  imports: [KeySetup],
   templateUrl: './setup.html',
 })
 export class Setup {
@@ -24,7 +26,7 @@ export class Setup {
   private readonly prefs = inject(UiPreferencesService);
   private readonly router = inject(Router);
 
-  protected readonly step = signal<1 | 2 | 3>(1);
+  protected readonly step = signal<1 | 2 | 3 | 4>(1);
   protected readonly choices = SOUND_CHOICES;
   protected readonly current = computed(() => this.sounds.choices().message);
 
@@ -51,7 +53,7 @@ export class Setup {
 
   protected next(): void {
     this.sounds.stop();
-    this.step.update((step) => (step === 1 ? 2 : 3));
+    this.step.update((step) => (step === 1 ? 2 : step === 2 ? 3 : 4));
   }
 
   protected async turnOn(): Promise<void> {
@@ -89,6 +91,10 @@ export class Setup {
       this.busy.set(false);
     }
   }
+
+  /** the encryption key step: while the recovery words are on the screen there is no way to leave it */
+  private readonly keySetup = viewChild(KeySetup);
+  protected readonly showingWords = computed(() => this.keySetup()?.showingWords() ?? false);
 
   /** "Do it later": Home offers the setup again. */
   protected later(): void {

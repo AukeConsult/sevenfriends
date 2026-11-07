@@ -9,6 +9,8 @@ export interface Message {
   time: string | null;
   /** the connection it belongs to: /friends/:connectionId is its feed */
   connectionId: string | null;
+  /** the circle this conversation belongs to (for the circle of the person who reads it) */
+  circleId: string;
 }
 
 /** The first web address of a message, and (when the site allows it) the address of its page to show in a frame. */

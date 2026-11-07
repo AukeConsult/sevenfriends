@@ -86,6 +86,8 @@ export class SafeboxView {
   protected readonly sheets = signal<SheetView[]>([]);
   protected readonly sheet = signal(0);
   protected readonly imageUrl = signal<string | null>(null);
+  /** an encrypted video or sound, opened here (the media players read the server's file, which is locked) */
+  protected readonly mediaUrl = signal<string | null>(null);
   protected readonly text = signal<string | null>(null);
   protected readonly cut = signal(false);
   protected readonly formatBytes = formatBytes;
@@ -106,17 +108,19 @@ export class SafeboxView {
     effect(() => {
       const item = this.item();
       this.imageUrl.set(null);
+      this.mediaUrl.set(null);
       this.text.set(null);
       this.cut.set(false);
       this.failed.set(false);
       if (!item) return;
-      const shows = item.kind === 'image' || (item.kind === 'document' && this.docType() === 'text');
+      const shows = item.kind === 'image' || (item.enc && (item.kind === 'video' || item.kind === 'audio')) || (item.kind === 'document' && this.docType() === 'text');
       if (!shows) return;
       this.service
         .file(this.friendId, item.id)
         .then(async (file) => {
           if (this.item() !== item) return;
           if (item.kind === 'image') this.imageUrl.set(file.url);
+          else if (item.kind === 'video' || item.kind === 'audio') this.mediaUrl.set(file.url);
           else {
             const all = await (await fetch(file.url)).text();
             if (this.item() !== item) return;

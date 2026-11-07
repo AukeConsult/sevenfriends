@@ -48,8 +48,8 @@ describe("a ping when somebody is added", () => {
     expect((await assertConsistent()).signals).toBe(0);
   });
 
-  it("is never sent to yourself", async () => {
-    await u(0).add(u(0).p);
+  it("is never sent to yourself (adding my own contact is refused)", async () => {
+    await u(0).addRaw(u(0).p).expect(400);
     expect((await assertConsistent()).signals).toBe(0);
   });
 
