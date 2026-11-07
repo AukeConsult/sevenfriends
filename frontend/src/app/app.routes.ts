@@ -54,7 +54,7 @@ export const routes: Routes = [
       { path: '', pathMatch: 'full', redirectTo: 'profile' },
       { path: 'profile', component: Profile, title: 'Profile – Seven Friends' },
       { path: 'preferences', component: Settings, data: { section: 'preferences' }, title: 'Preferences – Seven Friends' },
-      { path: 'sounds', component: Settings, data: { section: 'sounds' }, title: 'Sounds – Seven Friends' },
+      { path: 'sounds', redirectTo: 'notifications', pathMatch: 'full' },
       { path: 'sounds/:event', component: SoundPicker, title: 'Choose a sound – Seven Friends' },
       { path: 'notifications', component: Settings, data: { section: 'notifications' }, title: 'Notifications – Seven Friends' },
       { path: 'install', component: InstallApp, title: 'Install the app – Seven Friends' },

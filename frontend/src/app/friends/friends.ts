@@ -31,7 +31,6 @@ export class Friends {
   /** the sleep list row is shown when the list is used, or when friends are still on it */
   protected readonly showSleepList = computed(() => this.prefs.value('sleepList')() || this.sleeping() > 0);
   protected readonly circle = this.friendsService.circle;
-  protected readonly max = MAX_FRIENDS;
   protected readonly networks = SOCIAL_NETWORKS;
   /** incoming requests that wait for a free seat (shown on the Pending page) */
   protected readonly waiting = computed(() => this.friendsService.requests().filter((r) => !r.seated).length);

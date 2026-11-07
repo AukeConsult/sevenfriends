@@ -21,8 +21,8 @@ export class Settings {
   protected readonly push = inject(PushService);
   private readonly api = inject(ApiService);
   /** which page this is (the route says): the preferences, the sounds, or the notifications */
-  protected readonly section = inject(ActivatedRoute).snapshot.data['section'] as 'preferences' | 'sounds' | 'notifications';
-  protected readonly title = { preferences: 'Preferences', sounds: 'Sounds', notifications: 'Notifications' }[this.section];
+  protected readonly section = inject(ActivatedRoute).snapshot.data['section'] as 'preferences' | 'notifications';
+  protected readonly title = { preferences: 'Preferences', notifications: 'Notifications' }[this.section];
   protected readonly prefs = inject(UiPreferencesService);
   protected readonly noticeProblem = signal<string | null>(null);
 

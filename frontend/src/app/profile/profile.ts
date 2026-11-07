@@ -2,7 +2,6 @@ import { Clearable } from '../core/clearable';
 import { Component, DestroyRef, computed, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
-import { MoodEditor } from '../mood-editor/mood-editor';
 import { InviteLinkService } from '../core/invite-link.service';
 import { ApiService } from '../core/api.service';
 import { authMessage } from '../core/auth-errors';
@@ -22,7 +21,7 @@ const RETRY_MS = 5000;
 
 @Component({
   selector: 'app-profile',
-  imports: [RouterLink, MoodEditor, Clearable],
+  imports: [RouterLink, Clearable],
   templateUrl: './profile.html',
 })
 export class Profile {

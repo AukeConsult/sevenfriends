@@ -20,7 +20,6 @@
         <div class="alert alert-danger" role="alert">{{ error() }}</div>
       }
       <div class="d-flex gap-2">
-        <a [routerLink]="backLink" class="btn btn-light flex-fill">Cancel</a>
         <button type="submit" class="btn btn-primary flex-fill" [disabled]="busy()">{{ busy() ? 'Sending…' : 'Send code' }}</button>
       </div>
     </form>

@@ -43,7 +43,6 @@
     </div>
   </div>
 } @else {
-@if (section === 'notifications') {
   @if (native) {
     <div class="card">
       <div class="card-body vstack gap-2">
@@ -215,7 +214,7 @@
       </div>
     </details>
   }
-} @else {
+<h2 class="h5 m-0 mt-2">Sounds</h2>
   <p class="small text-secondary m-0">
     Choose a sound for each thing that can arrive.@if (!native) { Sounds play while the app is open. Saved on your account. }
   </p>
@@ -254,6 +253,5 @@
       </div>
     </div>
   }
-}
 }
 </main>

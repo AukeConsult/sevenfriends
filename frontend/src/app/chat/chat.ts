@@ -123,6 +123,8 @@ export class Chat {
   protected readonly emojiOpen = signal(false);
   /** the menu of the + button (emoji, image, video, voice) */
   protected readonly menuOpen = signal(false);
+  /** the menu of the three dots in the header (sort order, clean up) */
+  protected readonly moreOpen = signal(false);
   private menuPinned = false; // opened by a click or tap: it stays until the next click, instead of closing when the mouse leaves
 
   protected toggleMenu(): void {
@@ -324,6 +326,12 @@ export class Chat {
     }
   }
 
+  /** The three dots under a picture, video or voice message: its buttons open under it (any message, also my friend's). */
+  protected more(message: ChatMessage): void {
+    this.deleting.set(null);
+    this.selected.update((id) => (id === message.id ? null : message.id));
+  }
+
   protected select(message: ChatMessage): void {
     if (!message.mine && !message.inBox) return; // the note of a file moved to the safebox may be removed by either friend
     this.deleting.set(null);
@@ -515,6 +523,7 @@ export class Chat {
       this.menuOpen.set(false);
       this.menuPinned = false;
     }
+    if (this.moreOpen() && !target?.closest('.sf-more')) this.moreOpen.set(false);
     if (this.cleanupOpen() && !target?.closest('.sf-cleanup, [aria-controls="cleanup"]')) this.closeCleanup();
     const selected = this.selected();
     if (selected && (target?.closest('.sf-message') as HTMLElement | null)?.dataset['id'] !== selected) {

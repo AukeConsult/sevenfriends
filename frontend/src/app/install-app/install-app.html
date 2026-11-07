@@ -32,12 +32,14 @@
   }
 
   @if (windowsFile() && !app.runsAsApp()) {
-    <section class="vstack gap-2">
-      <h2 class="m-0">The Windows app</h2>
+    <details class="sf-how" [open]="!app.mobile">
+      <summary>The Windows app</summary>
+      <div class="vstack gap-2">
       <p class="m-0">An app for your Windows computer: it runs next to the clock, so new messages arrive as notifications even when the window is closed.</p>
       <a class="btn btn-outline-primary btn-lg" href="/downloads/SevenFriendsSetup.exe" download>Download for Windows</a>
       <p class="small text-secondary m-0">Open the downloaded file to install it. If Windows says it protected your PC, choose <em>More info</em>, then <em>Run anyway</em>.</p>
-    </section>
+      </div>
+    </details>
   }
 
   @if (app.androidDevice && !app.installed()) {
@@ -90,13 +92,15 @@
   }
 
   @if (!app.mobile) {
-    <section class="vstack gap-2">
-      <h2 class="m-0">Start it when you sign in to your computer</h2>
+    <details class="sf-how">
+      <summary>Start it when you sign in to your computer</summary>
+      <div class="vstack gap-2">
       <p class="m-0">After installing, you can let the app start by itself so that notifications arrive without opening the browser.</p>
       <ul class="m-0 ps-3">
         <li><strong>Edge:</strong> open <code>edge://apps</code>, press ⋯ on Seven Friends and choose <em>Auto-start on device login</em>.</li>
         <li><strong>Chrome:</strong> open <code>chrome://apps</code>, right-click Seven Friends and choose <em>Start app when you sign in</em>.</li>
       </ul>
-    </section>
+      </div>
+    </details>
   }
 </main>

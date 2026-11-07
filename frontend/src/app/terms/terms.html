@@ -9,6 +9,9 @@
 </div>
 
 <main class="sf-narrow vstack gap-3">
+  @if (auth.user()) {
+    <app-info-nav />
+  }
   <p class="m-0">
     Seven Friends is a small, calm place to stay close to the friends who matter most. By using it you agree to these simple terms.
   </p>

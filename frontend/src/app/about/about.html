@@ -9,6 +9,9 @@
 </div>
 
 <main class="sf-narrow vstack gap-3">
+  @if (auth.user()) {
+    <app-info-nav />
+  }
   <section class="vstack gap-2">
     <h2 class="m-0">A place for your closest friends</h2>
     <p class="m-0">
