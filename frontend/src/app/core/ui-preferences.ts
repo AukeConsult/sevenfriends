@@ -11,8 +11,12 @@ import { Injectable, Signal, computed, signal } from '@angular/core';
 export interface UiPreferences {
   /** the colours of the app (see THEMES); light is the default */
   theme: ThemeKey;
-  /** the size of the text in the whole app: normal (default), small or big */
-  textSize: 'normal' | 'small' | 'big';
+  /** the size of the text in the whole app: normal (default), tiny, small, big or huge (on a phone every step is a bigger text than on a computer, see PHONE_SCALES) */
+  textSize: 'normal' | 'tiny' | 'small' | 'big' | 'huge';
+  /** the tab of Settings that was open last (the path of the tab): Settings opens on it again */
+  settingsTab: SettingsTab;
+  /** the group of the emoji picker that was open last (its name, see emojis.ts): the picker opens on it again */
+  emojiTab: string;
   /** the order of a conversation: the oldest message first (default) or the newest first */
   chatOrder: 'oldest' | 'newest';
   /** Enter sends the message (Shift+Enter is a new line); off (default) = Enter is a new line and Ctrl+Enter sends */
@@ -52,13 +56,19 @@ export const THEMES = [
 ] as const;
 export type ThemeKey = (typeof THEMES)[number]['key'];
 
+/** The tabs of Settings (the path of each, see settings-shell.ts). */
+export const SETTINGS_TABS = ['profile', 'preferences', 'notifications', 'install', 'about'] as const;
+export type SettingsTab = (typeof SETTINGS_TABS)[number];
+
 export const QUICK_MAX = 10;
 export const QUICK_LENGTH = 200;
 
 /** How much the text grows or shrinks (the root font size is multiplied by it: everything in rem follows). */
-export const TEXT_SCALES: Record<UiPreferences['textSize'], number> = { small: 0.9, normal: 1, big: 1.15 };
+export const TEXT_SCALES: Record<UiPreferences['textSize'], number> = { tiny: 0.8, small: 0.9, normal: 1, big: 1.15, huge: 1.35 };
+/** The same on a phone (a screen up to 575 px wide): one step up, so Small is what Normal was, Normal is what Big was, and Big is 15% more. */
+export const PHONE_TEXT_SCALES: Record<UiPreferences['textSize'], number> = { tiny: 0.9, small: 1, normal: 1.15, big: 1.3225, huge: 1.55 };
 
-const DEFAULTS: UiPreferences = { theme: 'light', textSize: 'normal', chatOrder: 'oldest', enterSends: true, sleepList: true, quickMessages: [], feedIcons: true, setup: 'new', lastPage: null, micRaw: false, pendingFriend: null, welcomeUntil: null };
+const DEFAULTS: UiPreferences = { theme: 'light', textSize: 'normal', settingsTab: 'profile', emojiTab: 'People', chatOrder: 'oldest', enterSends: true, sleepList: true, quickMessages: [], feedIcons: true, setup: 'new', lastPage: null, micRaw: false, pendingFriend: null, welcomeUntil: null };
 
 /** The ready-made messages as stored: only texts, trimmed, not empty, not too long, not too many. */
 export function quickOf(value: unknown): string[] {
@@ -93,7 +103,9 @@ function read(): UiPreferences {
     const saved = JSON.parse(raw) as Partial<Record<keyof UiPreferences, unknown>>;
     return {
       theme: THEMES.find((t) => t.key === saved.theme)?.key ?? 'light',
-      textSize: saved.textSize === 'small' || saved.textSize === 'big' ? saved.textSize : 'normal',
+      textSize: saved.textSize === 'tiny' || saved.textSize === 'small' || saved.textSize === 'big' || saved.textSize === 'huge' ? saved.textSize : 'normal',
+      settingsTab: SETTINGS_TABS.find((t) => t === saved.settingsTab) ?? 'profile',
+      emojiTab: typeof saved.emojiTab === 'string' && saved.emojiTab ? saved.emojiTab.slice(0, 40) : 'People',
       chatOrder: saved.chatOrder === 'newest' ? 'newest' : 'oldest',
       enterSends: saved.enterSends !== false,
       sleepList: saved.sleepList !== false,
@@ -119,14 +131,22 @@ export class UiPreferencesService {
     // another window or tab of this app changed a choice: follow it
     window.addEventListener('storage', (event) => {
       if (event.key === STORAGE_KEY || event.key === null) {
-        this.state.set(read());
-        this.applyLook();
+        this.reload();
       }
     });
+    // the app comes back to the front (or a page is restored from the back/forward cache): read the stored choices again and show them
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) this.reload(); });
+    window.addEventListener('pageshow', () => this.reload());
+  }
+
+  /** Reads the stored choices again and shows them on every page (colours and text size are page-wide, so all pages follow at once). */
+  private reload(): void {
+    this.state.set(read());
+    this.applyLook();
   }
 
   /**
-   * The text size is a number on the page (`--sf-text-scale`), which the root font size in styles.scss multiplies; the theme is
+   * The text size is a number on the page (`--sf-text-scale`, and `--sf-text-scale-phone` for a phone), which the root font size in styles.scss multiplies; the theme is
    * `data-theme` (our colours) and `data-bs-theme` (Bootstrap's) on the page, and the colour of the browser's address bar follows it.
    * (index.html does the same before the app starts, so the page does not flash light first.)
    */
@@ -134,6 +154,7 @@ export class UiPreferencesService {
     const root = document.documentElement;
     const { textSize, theme } = this.state();
     root.style.setProperty('--sf-text-scale', String(TEXT_SCALES[textSize]));
+    root.style.setProperty('--sf-text-scale-phone', String(PHONE_TEXT_SCALES[textSize]));
     const chosen = THEMES.find((t) => t.key === theme) ?? THEMES[0];
     root.setAttribute('data-theme', chosen.key);
     root.setAttribute('data-bs-theme', chosen.dark ? 'dark' : 'light');

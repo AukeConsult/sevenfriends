@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
-import { Router, RouterLink, RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { InstallService } from '../core/install.service';
+import { SettingsTab, UiPreferencesService } from '../core/ui-preferences';
 
 /** The Settings page: one tab for each part (the part itself is the page shown under the tabs). */
 @Component({
@@ -12,6 +13,16 @@ export class SettingsShell {
   /** `install.native`: the Android app has no "Install the app" page */
   protected readonly install = inject(InstallService);
   private readonly router = inject(Router);
+  private readonly prefs = inject(UiPreferencesService);
+
+  constructor() {
+    // the tab that is open is remembered: Settings opens on it the next time (app.routes.ts)
+    this.router.events.subscribe((event) => {
+      if (!(event instanceof NavigationEnd)) return;
+      const open = this.tabs.find((tab) => this.on(tab));
+      if (open && !(open.browserOnly && this.install.native)) this.prefs.set('settingsTab', open.path as SettingsTab);
+    });
+  }
 
   /** the tab is lit on its own page, and the Info tab also on the terms and the privacy page */
   protected on(tab: { path: string; also?: string[] }): boolean {

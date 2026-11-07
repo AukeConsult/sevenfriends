@@ -21,9 +21,11 @@
       </label>
       <label class="d-grid gap-1" for="pref-text-size"><span>Text size</span>
         <select id="pref-text-size" class="form-select" [value]="prefs.get('textSize')" (change)="prefs.set('textSize', $any($event.target).value)">
-          <option value="normal">Normal</option>
+          <option value="tiny">Tiny</option>
           <option value="small">Small</option>
+          <option value="normal">Normal</option>
           <option value="big">Big</option>
+          <option value="huge">Huge</option>
         </select>
       </label>
     </div>

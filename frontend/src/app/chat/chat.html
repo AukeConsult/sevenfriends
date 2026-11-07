@@ -26,7 +26,7 @@
         <span>Safebox</span>
       </a>
       <div class="sf-add sf-more">
-        <button type="button" class="sf-tool-btn" (click)="moreOpen.set(!moreOpen())" [attr.aria-expanded]="moreOpen()" aria-haspopup="true" aria-label="Sort order and clean up" title="Sort order and clean up">
+        <button type="button" class="sf-tool-btn" (click)="toggleMore()" [attr.aria-expanded]="moreOpen()" aria-haspopup="true" aria-label="Sort order and clean up" title="Sort order and clean up">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="5" r="1.8" /><circle cx="12" cy="12" r="1.8" /><circle cx="12" cy="19" r="1.8" /></svg>
         </button>
         @if (moreOpen()) {
@@ -117,7 +117,7 @@
         <div class="sf-emoji-tabs" role="tablist" aria-label="Emoji groups">
           @for (group of emojiGroups; track group.name) {
             <button type="button" role="tab" class="sf-emoji-tab" [class.sf-on]="emojiGroup() === group.name" [attr.aria-selected]="emojiGroup() === group.name"
-                    [attr.aria-label]="group.name" [title]="group.name" (mouseenter)="emojiGroup.set(group.name)" (click)="emojiGroup.set(group.name)">{{ group.icon }}</button>
+                    [attr.aria-label]="group.name" [title]="group.name" (mouseenter)="chooseEmojiGroup(group.name)" (click)="chooseEmojiGroup(group.name)">{{ group.icon }}</button>
           }
         </div>
         <div class="sf-emoji-panel" role="tabpanel" [attr.aria-label]="emojiGroup()">
@@ -216,7 +216,7 @@
   <ng-container [ngTemplateOutlet]="composerTpl" />
 }
 
-<main class="sf-feed" [style.padding-bottom]="sortDesc() ? null : 'calc(' + composerHeight() + 'px + 3.5rem + 1rem + env(safe-area-inset-bottom))'">
+<main class="sf-feed" [style.padding-bottom]="sortDesc() ? null : 'calc(' + composerHeight() + 'px + 3.5rem + 1rem + var(--sf-float-gap) + env(safe-area-inset-bottom))'">
   @if (blocked()) {
     <div class="alert alert-warning" role="alert">{{ blocked() }}</div>
     <a routerLink="/friends" class="btn btn-primary">Back to friends</a>

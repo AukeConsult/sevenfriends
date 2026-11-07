@@ -32,8 +32,18 @@ public class MainActivity extends BridgeActivity {
 
     private NativeNotices nativeNotices;
 
+    /** The height of the status bar over the web page, in dp (0 when the page starts below it): the page reads it as SfInsets.topDp() and pads its header. */
+    private volatile int topInsetDp = 0;
+
+    private final class Insets_ {
+        @android.webkit.JavascriptInterface
+        public int topDp() {
+            return topInsetDp;
+        }
+    }
+
     /** The bar at the top of the app with the button that opens NativeCheck. For checking the notifications: set to false to remove it. */
-    private static final boolean CHECK_BAR = true;
+    private static final boolean CHECK_BAR = false;
 
     @Override
     public void onResume() {
@@ -51,8 +61,15 @@ public class MainActivity extends BridgeActivity {
         if (getBridge() != null && getBridge().getWebView() != null) {
             getBridge().getWebView().addJavascriptInterface(nativeNotices = new NativeNotices(this, getBridge().getWebView()), NativeNotices.NAME);
         }
+        if (getBridge() != null && getBridge().getWebView() != null) {
+            getBridge().getWebView().addJavascriptInterface(new Insets_(), "SfInsets");
+        }
+        if (getBridge() != null && getBridge().getWebView() != null && android.os.Build.VERSION.SDK_INT >= 29) {
+            // the page has its own themes (light, dark, ...): a phone in dark mode must not darken it again (that turns the colours and the text colours wrong)
+            getBridge().getWebView().getSettings().setForceDark(WebSettings.FORCE_DARK_OFF);
+        }
         if ((getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0) loadFresh();
-        if (CHECK_BAR) addCheckBar();
+        if (CHECK_BAR) addCheckBar(); else trackStatusBar();
         openPageFromIntent(getIntent(), 2500); // cold start: wait for the page to load
     }
 
@@ -68,6 +85,21 @@ public class MainActivity extends BridgeActivity {
         web.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         ServiceWorkerController.getInstance().getServiceWorkerWebSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         web.reload(); // the first load may already have started with the old cache
+    }
+
+    /** No bar of ours: the page draws under the status bar, so it is told how high the status bar is (it pads its header by that). */
+    private void trackStatusBar() {
+        ViewGroup content = findViewById(android.R.id.content);
+        if (content == null) return;
+        final float density = getResources().getDisplayMetrics().density;
+        ViewCompat.setOnApplyWindowInsetsListener(content, (view, windowInsets) -> {
+            Insets top = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars() | WindowInsetsCompat.Type.displayCutout());
+            topInsetDp = Math.round(top.top / density);
+            final WebView web = getBridge() != null ? getBridge().getWebView() : null;
+            if (web != null) web.evaluateJavascript("document.documentElement.style.setProperty('--sf-native-top','" + topInsetDp + "px')", null);
+            return windowInsets;
+        });
+        ViewCompat.requestApplyInsets(content);
     }
 
     /** A thin bar above the whole app (the web page is below it) with a button for NativeCheck: what Android has, read by the Java code. */
@@ -106,12 +138,19 @@ public class MainActivity extends BridgeActivity {
         column.addView(app, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1));
         content.addView(column, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
-        // the app draws under the status bar: the bar keeps clear of it
-        ViewCompat.setOnApplyWindowInsetsListener(bar, (view, windowInsets) -> {
-            Insets top = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars());
-            view.setPadding(pad * 2, top.top + pad / 2, pad, pad / 2);
-            return windowInsets;
+        // the app draws under the status bar: the bar keeps clear of it, and the web page below the bar is told there is nothing
+        // above it any more (otherwise its own safe-area padding adds a second status-bar-high gap under the bar)
+        ViewCompat.setOnApplyWindowInsetsListener(column, (view, windowInsets) -> {
+            Insets top = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars() | WindowInsetsCompat.Type.displayCutout());
+            bar.setPadding(pad * 2, top.top + pad / 2, pad, pad / 2);
+            Insets status = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars());
+            Insets cutout = windowInsets.getInsets(WindowInsetsCompat.Type.displayCutout());
+            return new WindowInsetsCompat.Builder(windowInsets)
+                    .setInsets(WindowInsetsCompat.Type.statusBars(), Insets.of(status.left, 0, status.right, status.bottom))
+                    .setInsets(WindowInsetsCompat.Type.displayCutout(), Insets.of(cutout.left, 0, cutout.right, cutout.bottom))
+                    .build();
         });
+        ViewCompat.requestApplyInsets(column);
     }
 
     @Override

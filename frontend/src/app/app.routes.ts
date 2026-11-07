@@ -1,4 +1,6 @@
+import { inject } from '@angular/core';
 import { Routes } from '@angular/router';
+import { UiPreferencesService } from './core/ui-preferences';
 import { authGuard, guestGuard } from './core/auth.guard';
 import { AddFriend } from './add-friend/add-friend';
 import { AddMedia } from './add-media/add-media';
@@ -51,7 +53,7 @@ export const routes: Routes = [
     component: SettingsShell,
     canActivate: [authGuard],
     children: [
-      { path: '', pathMatch: 'full', redirectTo: 'profile' },
+      { path: '', pathMatch: 'full', redirectTo: () => inject(UiPreferencesService).get('settingsTab') }, // the tab that was open last
       { path: 'profile', component: Profile, title: 'Profile – Seven Friends' },
       { path: 'preferences', component: Settings, data: { section: 'preferences' }, title: 'Preferences – Seven Friends' },
       { path: 'sounds', redirectTo: 'notifications', pathMatch: 'full' },

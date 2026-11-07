@@ -137,7 +137,12 @@ export class Chat {
   protected readonly sending = signal(false);
   protected readonly emojiGroups = EMOJI_GROUPS;
   /** the tab of the emoji picker that is open (People first) */
-  protected readonly emojiGroup = signal('People');
+  /** the group open in the emoji picker: the one used last (remembered on this device), People when there is none */
+  protected readonly emojiGroup = signal(EMOJI_GROUPS.some((g) => g.name === this.prefs.get('emojiTab')) ? this.prefs.get('emojiTab') : 'People');
+  protected chooseEmojiGroup(name: string): void {
+    this.emojiGroup.set(name);
+    this.prefs.set('emojiTab', name);
+  }
   protected readonly emojisOfGroup = computed(() => EMOJI_GROUPS.find((g) => g.name === this.emojiGroup())?.emojis ?? []);
   /** the emoji panel above the message field */
   protected readonly emojiOpen = signal(false);
@@ -153,6 +158,7 @@ export class Chat {
   protected toggleMenu(kind: 'emoji' | 'attach'): void {
     if (kind === 'emoji' && !this.quickMessages().length) { // no ready-made messages: the smiley opens the emojis at once, no menu
       this.menuOpen.set(false);
+      this.moreOpen.set(false);
       this.emojiOpen.set(!this.emojiOpen());
       return;
     }
@@ -161,9 +167,21 @@ export class Chat {
       this.menuPinned = false;
       return;
     }
+    this.emojiOpen.set(false); // only one thing is open at a time: the picker and the header menu close
+    this.moreOpen.set(false);
     this.menuKind.set(kind);
     this.menuPinned = true; // opened by a click or tap: it stays until the next click
     this.menuOpen.set(true);
+  }
+
+  /** The three dots of the header: opening its menu closes the emoji picker and the smiley / paperclip menu (only one is open at a time). */
+  protected toggleMore(): void {
+    const open = !this.moreOpen();
+    this.moreOpen.set(open);
+    if (open) {
+      this.menuOpen.set(false);
+      this.emojiOpen.set(false);
+    }
   }
 
   /** A mouse over a button opens its menu (or the emoji picker) and closes the other one; leaving closes the menu (a finger has no hover: it taps). */
@@ -174,6 +192,7 @@ export class Chat {
       return;
     }
     if (!kind) return;
+    this.moreOpen.set(false);
     if (kind === 'attach') {
       this.emojiOpen.set(false); // the emoji picker closes when the paperclip opens
       if (this.menuKind() !== 'attach') this.menuPinned = false;
@@ -184,6 +203,7 @@ export class Chat {
       this.menuPinned = false;
       this.emojiOpen.set(true);
     } else {
+      this.emojiOpen.set(false);
       if (this.menuKind() !== 'emoji') this.menuPinned = false;
       this.menuKind.set('emoji');
       this.menuOpen.set(true);

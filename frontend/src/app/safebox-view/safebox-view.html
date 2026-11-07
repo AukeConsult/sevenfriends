@@ -10,9 +10,11 @@
     <p class="text-secondary text-center">This file is not in the safebox any more.</p>
   } @else {
     <div class="sf-page-head">
-      <h1 class="d-flex align-items-center justify-content-center gap-1 mw-100">
-        <a [routerLink]="['/friends', friendId, 'safebox']" class="sf-back-inline" aria-label="Back to the safebox"></a>
-        <span class="sf-ellipsis">{{ item()!.name }}</span>
+      <h1 class="m-0 mw-100">
+        <a [routerLink]="['/friends', friendId, 'safebox']" class="sf-title-link" aria-label="Back to the safebox">
+          <span class="sf-back-inline" aria-hidden="true"></span>
+          <span class="sf-ellipsis">{{ item()!.name }}</span>
+        </a>
       </h1>
       <p class="sf-hint m-0">{{ item()!.kind === 'document' ? docLabel() : item()!.kind === 'image' ? 'Picture' : item()!.kind === 'video' ? 'Video' : 'Sound' }} · {{ formatBytes(item()!.bytes) }}</p>
     </div>

@@ -13,20 +13,38 @@
     // The browser's install offer can arrive before the app has started: keep it here, the install page picks it up (core/install.service.ts)
     window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); window.__sfInstallOffer = e; });
   </script>
+  <meta name="theme-color" content="#fde6c6">
+  <script>
+    // The Android app tells the page how high its status bar is (SfInsets, MainActivity.java), because the web view does not report it itself
+    (function () {
+      function native() {
+        try {
+          if (window.SfInsets) document.documentElement.style.setProperty('--sf-native-top', window.SfInsets.topDp() + 'px');
+        } catch (e) { /* not the Android app */ }
+      }
+      native();
+      window.addEventListener('resize', native);
+      window.addEventListener('pageshow', native);
+      setTimeout(native, 300); setTimeout(native, 1500);
+    })();
+  </script>
   <script>
     // The colours the person chose (Preferences): set before the first paint, so the page does not flash the light colours (core/ui-preferences.ts keeps it up to date)
     try {
       var sf = JSON.parse(localStorage.getItem('sf-ui') || '{}');
-      if (['dark', 'ocean', 'forest', 'rose'].indexOf(sf.theme) >= 0) {
-        document.documentElement.setAttribute('data-theme', sf.theme);
-        document.documentElement.setAttribute('data-bs-theme', sf.theme === 'dark' ? 'dark' : 'light');
-      }
+      var themes = { light: '#fde6c6', dark: '#1f2430', ocean: '#d6eaf7', forest: '#dcefd3', rose: '#fbdde3' };
+      var theme = themes[sf.theme] ? sf.theme : 'light';
+      document.documentElement.setAttribute('data-theme', theme);
+      document.documentElement.setAttribute('data-bs-theme', theme === 'dark' ? 'dark' : 'light');
+      var tc = document.querySelector('meta[name="theme-color"]');
+      if (tc) tc.setAttribute('content', themes[theme]);
+      document.documentElement.style.setProperty('--sf-text-scale', String({ tiny: 0.8, small: 0.9, big: 1.15, huge: 1.35 }[sf.textSize] || 1));
+      document.documentElement.style.setProperty('--sf-text-scale-phone', String({ tiny: 0.9, small: 1, big: 1.3225, huge: 1.55 }[sf.textSize] || 1.15));
     } catch (e) { /* the light colours */ }
   </script>
   <title>Seven Friends</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#fde6c6">
   <!-- the Seven Friends icon: the SVG for modern browsers, favicon.ico for the others (public/icons/sevenfriends.svg) -->
   <link rel="icon" type="image/svg+xml" href="icons/sevenfriends.svg">
   <link rel="icon" type="image/x-icon" href="favicon.ico" sizes="16x16 32x32 48x48">

@@ -1,11 +1,14 @@
 <main class="sf-page">
   <div class="sf-page-head">
-    <h1 class="d-flex align-items-center justify-content-center gap-2">
-      <a [routerLink]="['/friends', friendId]" class="sf-back-inline" aria-label="Back to the conversation"></a>
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="12" cy="12" r="3" /><path d="M12 15v2M7 20v1M17 20v1" />
-      </svg>
-      Safebox
+    <h1 class="m-0">
+      <!-- the arrow, the icon and the title all go back to the conversation -->
+      <a [routerLink]="['/friends', friendId]" class="sf-title-link" aria-label="Back to the conversation">
+        <span class="sf-back-inline" aria-hidden="true"></span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="12" cy="12" r="3" /><path d="M12 15v2M7 20v1M17 20v1" />
+        </svg>
+        Safebox
+      </a>
     </h1>
     <p class="sf-hint m-0">Only you and {{ friendName() }} can see these files.</p>
   </div>
