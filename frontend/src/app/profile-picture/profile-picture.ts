@@ -1,4 +1,4 @@
-import { Component, ElementRef, afterNextRender, inject, signal, viewChild } from '@angular/core';
+import { Component, ElementRef, Injector, afterNextRender, inject, signal, viewChild } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { ApiService } from '../core/api.service';
 import { AuthService } from '../core/auth.service';
@@ -27,6 +27,7 @@ const MAX_FILE_BYTES = 20 * 1024 * 1024;
 export class ProfilePicturePage {
   private readonly api = inject(ApiService);
   private readonly router = inject(Router);
+  private readonly injector = inject(Injector);
   private readonly auth = inject(AuthService);
   private readonly canvas = viewChild<ElementRef<HTMLCanvasElement>>('canvas');
 
@@ -79,7 +80,7 @@ export class ProfilePicturePage {
     this.offsetX = 0;
     this.offsetY = 0;
     this.hasImage.set(true);
-    queueMicrotask(() => this.draw());
+    afterNextRender(() => this.draw(), { injector: this.injector }); // the canvas only exists once the page has shown it
   }
 
   // ------------------------------------------------------------------ moving and zooming
