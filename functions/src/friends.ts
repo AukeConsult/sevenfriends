@@ -12,7 +12,7 @@ import {
   MAX_REQUEST_MESSAGE,
 } from "./constants";
 import { invitesSentToday, queueInvite } from "./outbox";
-import { Friend, FriendInvite, MediaRef, FriendStatus, NewFriend, ProfilePicture, Socials } from "./models";
+import { Friend, FriendInvite, MediaRef, FriendStatus, NewFriend, ProfilePicture } from "./models";
 import { circleCol, friendRequestCol, messageCol, missingIndex, userFields } from "./paths";
 import { readAvatar } from "./avatar";
 import { deleteObjects } from "./sf-cache";
@@ -22,9 +22,7 @@ import { findAccounts, signalRefsOf, writeSignal } from "./signals";
 import {
   EMAIL_RE,
   PHONE_RE,
-  SOCIAL_NETWORKS,
   unverifiedDetails,
-  parseSocials,
   phoneKey,
   presenceOf,
   text,
@@ -34,7 +32,6 @@ function parseFriend(body: Record<string, unknown>): { data?: NewFriend; nameGiv
   const givenName = text(body.name, 100);
   const email = text(body.email, 200)?.toLowerCase() ?? null;
   const phone = text(body.phone, 25);
-  const socials = parseSocials(body);
   const message = text(body.message, MAX_REQUEST_MESSAGE + 1);
 
   if (message && message.length > MAX_REQUEST_MESSAGE) {
@@ -42,14 +39,13 @@ function parseFriend(body: Record<string, unknown>): { data?: NewFriend; nameGiv
   }
   if (email && !EMAIL_RE.test(email)) return { error: "Email is not valid" };
   if (phone && !PHONE_RE.test(phone)) return { error: "Phone number is not valid" };
-  // Only an email or a phone number can find your friend (social accounts are extra contact info),
-  // so one of them is needed for the request to ever arrive.
+  // Only an email or a phone number can find your friend, so one of them is needed for the request to ever arrive.
   if (!email && !phone) {
     return { error: "Add an email or a phone number, so your friend can be found" };
   }
   // the name is optional: without it the email or phone number is shown, until the friend confirms (then their own name is shown)
   const name = givenName ?? email ?? phone!;
-  return { data: { name, email, phone, message, ...socials }, nameGiven: Boolean(givenName) };
+  return { data: { name, email, phone, message }, nameGiven: Boolean(givenName) };
 }
 
 function toJson(doc: FirebaseFirestore.DocumentSnapshot): Friend {
@@ -59,7 +55,6 @@ function toJson(doc: FirebaseFirestore.DocumentSnapshot): Friend {
     name: data.name,
     email: data.email ?? null,
     phone: data.phone ?? null,
-    ...(Object.fromEntries(SOCIAL_NETWORKS.map((n) => [n, data[n] ?? null])) as Socials),
     status: (["confirmed", "rejected"].includes(data.status) ? data.status : "pending") as FriendStatus,
     invited: Boolean(data.linkedUid), // true = the friend has a Seven Friends account and got a request
     waiting: Boolean(data.waitingForSeat), // true = their list is full: I am on their waiting list

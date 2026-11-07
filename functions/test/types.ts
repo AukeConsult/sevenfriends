@@ -8,9 +8,6 @@ export interface Person {
   name: string;
   email: string;
   phone: string; // "+47900000NN" (international format): the last 8 digits are unique
-  instagram: string;
-  tiktok: string;
-  linkedin: string;
 }
 
 /** How I identify the person I add. */
@@ -19,12 +16,7 @@ export type Via =
   | "emailUpper"
   | "phone"
   | "phoneSpaced"
-  | "phoneNoPrefix"
-  | "instagram"
-  | "instagramAt"
-  | "instagramLink"
-  | "linkedinLink"
-  | "tiktok";
+  | "phoneNoPrefix";
 
 /** A friend entry as the API returns it. */
 export interface Friend {

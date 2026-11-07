@@ -13,6 +13,16 @@
     // The browser's install offer can arrive before the app has started: keep it here, the install page picks it up (core/install.service.ts)
     window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); window.__sfInstallOffer = e; });
   </script>
+  <script>
+    // The colours the person chose (Preferences): set before the first paint, so the page does not flash the light colours (core/ui-preferences.ts keeps it up to date)
+    try {
+      var sf = JSON.parse(localStorage.getItem('sf-ui') || '{}');
+      if (['dark', 'ocean', 'forest', 'rose'].indexOf(sf.theme) >= 0) {
+        document.documentElement.setAttribute('data-theme', sf.theme);
+        document.documentElement.setAttribute('data-bs-theme', sf.theme === 'dark' ? 'dark' : 'light');
+      }
+    } catch (e) { /* the light colours */ }
+  </script>
   <title>Seven Friends</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">

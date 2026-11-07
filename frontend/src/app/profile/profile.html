@@ -145,23 +145,6 @@
           }
         }
       </div>
-      <!-- the social media links: a frame that starts closed -->
-      <button type="button" class="btn btn-outline-secondary d-flex align-items-center justify-content-between" [attr.aria-expanded]="socialOpen()"
-              aria-controls="social-links" (click)="socialOpen.set(!socialOpen())">
-        <span>Social media links</span>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-             aria-hidden="true" [style.transform]="socialOpen() ? 'rotate(180deg)' : null"><path d="M6 9l6 6 6-6" /></svg>
-      </button>
-      @if (socialOpen()) {
-        <div id="social-links" class="vstack gap-2">
-          @for (n of networks; track n.key) {
-            <label class="d-grid gap-1"><span class="form-label small text-secondary m-0">{{ n.label }} ({{ n.hint }})</span>
-              <input appClear type="text" class="form-control" [value]="form()[n.key]" (input)="setField(n.key, $any($event.target).value)" (blur)="flush()"
-                     autocomplete="off" [disabled]="loading()" />
-            </label>
-          }
-        </div>
-      }
     </div>
   </div>
 

@@ -1,5 +1,4 @@
 import { Friend } from './shared';
-import { SocialDraft } from './social';
 
 // Small types that belong to one page / form.
 
@@ -12,8 +11,8 @@ export interface FriendSlot {
 /** The "add a friend" form. */
 export type FriendDraft = { name: string; email: string; phone: string; message: string };
 
-/** The profile form: name, phone and social accounts (autosaved). */
-export type ProfileDraft = { name: string; phone: string; country: string; language: string } & SocialDraft;
+/** The profile form: name, phone, country and language (autosaved). */
+export type ProfileDraft = { name: string; phone: string; country: string; language: string };
 
 /** Where the autosave of the profile page is: nothing yet / changed / being saved / saved / failed. */
 export type SaveState = 'idle' | 'dirty' | 'saving' | 'saved' | 'error';

@@ -12,7 +12,6 @@ import { MessagesService } from '../core/messages.service';
 import { NotificationsService } from '../core/notifications.service';
 import { InstallService } from '../core/install.service';
 import { UiPreferencesService } from '../core/ui-preferences';
-import { SeatDots } from '../seat-dots/seat-dots';
 import { Friend, FriendRequest, Message, Notice, ProfileDetails } from '../models';
 import { APP_ORIGIN } from '../core/app-origin';
 import { AndroidChannelsService } from '../core/android-channels.service';
@@ -20,7 +19,6 @@ import { PushService } from '../core/push.service';
 
 /** Without a word for this many days, a friend gets a gentle "Say hi". */
 const SAY_HI_AFTER_DAYS = 14;
-const MAX_FRIENDS = 7;
 
 /** The unread messages of one friend, as one row on Home. */
 interface MessageGroup {
@@ -38,8 +36,9 @@ interface MessageGroup {
  */
 @Component({
   selector: 'app-notifications',
-  imports: [DatePipe, RouterLink, MoodEditor, SeatDots],
+  imports: [DatePipe, RouterLink, MoodEditor],
   templateUrl: './notifications.html',
+  host: { '(click)': 'emptySpaceClicked($event)' },
 })
 export class Notifications {
   private readonly notifications = inject(NotificationsService);
@@ -48,6 +47,14 @@ export class Notifications {
   private readonly api = inject(ApiService);
   private readonly chat = inject(ChatService);
   private readonly router = inject(Router);
+
+  /** A click on an empty part of the home page (nothing that reacts to a click) opens the friend list. */
+  protected emptySpaceClicked(event: Event): void {
+    const target = event.target as HTMLElement | null;
+    if (!target || target.closest('a, button, input, textarea, select, summary, label, details, app-mood-editor, [role="button"], [tabindex], [contenteditable]')) return;
+    if (window.getSelection()?.toString()) return; // the person was selecting text
+    void this.router.navigateByUrl('/friends');
+  }
   protected readonly install = inject(InstallService);
   private readonly android = inject(AndroidChannelsService);
   private readonly push = inject(PushService);
@@ -71,8 +78,6 @@ export class Notifications {
    */
   protected readonly unverified = signal<('email' | 'phone')[]>([]);
 
-  /** the seats taken: my friends who are not on the sleep list (the same count the Friends page uses) */
-  protected readonly seatsTaken = computed(() => Math.min(7, this.friendsService.awake().length));
 
   protected readonly requests = this.friendsService.requests;
   protected readonly messages = this.messagesService.messages;
@@ -83,8 +88,6 @@ export class Notifications {
   protected readonly waitingCount = computed(() => this.requests().filter((r) => !r.seated).length);
 
   private readonly now = Date.now();
-  protected readonly max = MAX_FRIENDS;
-  protected readonly sleeping = computed(() => this.friendsService.sleeping().length);
 
   /** friends I have not talked to for a while (or ever): at most two gentle nudges, the longest silence first */
   protected readonly quiet = computed(() =>

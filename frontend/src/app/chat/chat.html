@@ -12,7 +12,7 @@
     </span>
   }
   <div class="sf-bar-text">
-    <strong class="sf-fs-title" [attr.title]="name()" [attr.aria-label]="name() || 'Conversation'">{{ initials(name()) || 'Conversation' }}</strong>
+    <span class="sf-fs-description sf-bar-name" [attr.title]="name()" [attr.aria-label]="name() || 'Conversation'">{{ initials(name()) || 'Conversation' }}</span>
     @if (friend(); as f) {
       @if (f.sleepsMe) { <span class="sf-mood-line"><span>😴 Has you on their sleep list</span></span> }
     }
@@ -113,10 +113,18 @@
 <ng-template #composerTpl>
   <form #composer class="sf-composer" [class.sf-composer-top]="sortDesc()" [style.top.px]="sortDesc() ? barHeight() : null" (submit)="$event.preventDefault(); send()" aria-label="Write a message">
     @if (emojiOpen()) {
-      <div class="sf-emoji-panel" role="group" aria-label="Emojis">
-        @for (emoji of emojis; track emoji) {
-          <button type="button" class="sf-emoji" (click)="addEmoji(emoji)" [attr.aria-label]="'Add ' + emoji">{{ emoji }}</button>
-        }
+      <div class="sf-emoji-wrap">
+        <div class="sf-emoji-tabs" role="tablist" aria-label="Emoji groups">
+          @for (group of emojiGroups; track group.name) {
+            <button type="button" role="tab" class="sf-emoji-tab" [class.sf-on]="emojiGroup() === group.name" [attr.aria-selected]="emojiGroup() === group.name"
+                    [attr.aria-label]="group.name" [title]="group.name" (mouseenter)="emojiGroup.set(group.name)" (click)="emojiGroup.set(group.name)">{{ group.icon }}</button>
+          }
+        </div>
+        <div class="sf-emoji-panel" role="tabpanel" [attr.aria-label]="emojiGroup()">
+          @for (emoji of emojisOfGroup(); track $index) {
+            <button type="button" class="sf-emoji" (click)="addEmoji(emoji)" [attr.aria-label]="'Add ' + emoji">{{ emoji }}</button>
+          }
+        </div>
       </div>
     }
     @if (editing()) {
@@ -276,6 +284,8 @@
         @if (message.time && !(message.media && pictureHidden().has(message.id))) {
           <small class="sf-hint sf-tap" (click)="more(message)">{{ message.time | date: 'd MMM, HH:mm' }}@if (message.edited) { · edited }@if (doomed().has(message.id)) { · <strong class="text-danger">will be deleted</strong> }· <button type="button" class="btn btn-link btn-sm p-0 align-baseline" [attr.aria-expanded]="selected() === message.id" [attr.aria-label]="message.inBox ? 'Delete' : message.media ? 'Open, download, hide, move to the safebox' : message.mine ? 'Copy, edit, delete' : 'Copy'" [attr.title]="message.inBox ? 'Delete' : message.media ? 'Open, download, hide, move to the safebox' : message.mine ? 'Copy, edit, delete' : 'Copy'">⋯</button></small>
         }
+        <!-- all the buttons of a message in ONE row (they wrap only when the screen is too narrow) -->
+        <div class="sf-msg-actions-row">
         @if (!message.mine && message.media; as media) {
           <!-- the friend's image, video or voice message: open and download it (shown after the three dots, or while it is hidden) -->
           @if (selected() === message.id || moving() === message.id || pictureHidden().has(message.id)) {
@@ -335,6 +345,7 @@
             }
           </div>
         }
+        </div>
       </div>
     }
 

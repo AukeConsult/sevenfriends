@@ -46,9 +46,9 @@ describe("my mood", () => {
 
 describe("the mood does not touch the rest of the profile (the Home page saves it alone)", () => {
   it("phone, name, country and icon stay as they are", async () => {
-    await u(0).raw("put", "/profile", { name: "Kept Name", phone: u(0).p.phone, country: "NO", icon: 4, instagram: "kept_insta" }).expect(200);
+    await u(0).raw("put", "/profile", { name: "Kept Name", phone: u(0).p.phone, country: "NO", icon: 4 }).expect(200);
     await put(u(0), { mood: 1, moodMessage: "Hello" }).expect(200);
-    expect(await profile(u(0))).toMatchObject({ name: "Kept Name", phone: u(0).p.phone, country: "NO", icon: 4, instagram: "kept_insta", mood: 1 });
+    expect(await profile(u(0))).toMatchObject({ name: "Kept Name", phone: u(0).p.phone, country: "NO", icon: 4, mood: 1 });
   });
 
   it("saving the rest of the profile does not touch the mood", async () => {

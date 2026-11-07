@@ -5,7 +5,6 @@ import { ApiService } from '../core/api.service';
 import { AuthService } from '../core/auth.service';
 import { FriendLinkService } from '../core/friend-link.service';
 import { FriendsService } from '../core/friends.service';
-import { emptySocialDraft, socialsFromDraft } from '../core/social';
 import { NotificationsService } from '../core/notifications.service';
 import { Friend, FriendRequest } from '../models';
 
@@ -131,7 +130,6 @@ export class FriendJoin {
         email: target.email,
         phone: target.email ? null : target.phone, // the email finds them best; the phone number only when there is no email
         message: this.message().trim() || null,
-        ...socialsFromDraft(emptySocialDraft()),
       });
       this.link.clear();
       await this.router.navigateByUrl('/friends', { replaceUrl: true });

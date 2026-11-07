@@ -19,7 +19,6 @@ beforeEach(async () => {
 });
 
 const MATCH_VIAS: Via[] = ["email", "emailUpper", "phone", "phoneSpaced", "phoneNoPrefix"]; // the ways that can find a person
-const SOCIAL_HANDLES = ["instagram", "tiktok", "twitter", "linkedin", "snapchat", "telegram", "facebook"] as const;
 
 describe("the pool", () => {
   it("has at least 50 people, all signed up and with an empty circle", async () => {
@@ -43,37 +42,12 @@ describe("adding a friend", () => {
 
   it.each([
     ["no contact at all", { name: "Nobody" }],
-    ["only a social account (it cannot find anybody)", { name: "X", instagram: "x.person" }],
     ["a bad email", { name: "X", email: "not-an-email" }],
     ["a bad phone number", { name: "X", phone: "abc" }],
   ])("refuses %s", async (_label, body) => {
     const res = await u(0).raw("post", "/circles/default/friends", body);
     expect(res.status).toBe(400);
     expect(await u(0).friends()).toEqual([]);
-  });
-
-  it("stores every social media account", async () => {
-    const res = await u(0).raw("post", "/circles/default/friends", {
-      name: "Social",
-      email: "social.person@nowhere.test",
-      facebook: "fb.person",
-      instagram: "@insta.person",
-      tiktok: "tt.person",
-      snapchat: "snap.person",
-      twitter: "@x.person",
-      linkedin: "https://linkedin.com/in/lin-person",
-      telegram: "tg.person",
-    });
-    expect(res.status).toBe(201);
-    expect(res.body).toMatchObject({
-      facebook: "fb.person",
-      instagram: "insta.person", // a leading @ is dropped
-      tiktok: "tt.person",
-      snapchat: "snap.person",
-      twitter: "x.person",
-      linkedin: "https://linkedin.com/in/lin-person",
-      telegram: "tg.person",
-    });
   });
 
   it("refuses the 8th friend (7 seats)", async () => {
@@ -391,22 +365,10 @@ describe("both people added each other", () => {
 });
 
 describe("profile matching details", () => {
-  it.each(SOCIAL_HANDLES)("a %s account never finds anybody: it is contact info only", async (network) => {
-    // person 1 has this account on their profile, but nothing is ever matched on it
-    await u(1).raw("put", "/profile", { [network]: `handle_${network}` }).expect(200);
-    const res = await u(0).raw("post", "/circles/default/friends", { name: "By handle", email: "nobody@nowhere.test", [network]: `handle_${network}` });
-    expect(res.status).toBe(201);
-
-    expect((await u(1).check()).requests).toEqual([]);
-    const summary = await assertConsistent();
-    expect(summary.signals).toBe(0);
-    expect((await u(0).friends())[0]).toMatchObject({ [network]: `handle_${network}`, invited: false }); // shown, never linked
-  });
-
   it("rejects an invalid phone on the profile and returns what was saved", async () => {
     expect((await u(0).raw("put", "/profile", { phone: "abc" })).status).toBe(400);
     const saved = await u(0).raw("get", "/profile").expect(200);
-    expect(saved.body).toMatchObject({ phone: u(0).p.phone, instagram: u(0).p.instagram, linkedin: u(0).p.linkedin, snapchat: null });
+    expect(saved.body).toMatchObject({ phone: u(0).p.phone });
   });
 });
 

@@ -43,12 +43,6 @@ describe("a ping when somebody is added", () => {
     await assertConsistent();
   });
 
-  it("is not sent for a social account: that is contact info, it cannot find anybody", async () => {
-    const res = await u(0).raw("post", "/circles/default/friends", { name: "By handle", email: "nobody@nowhere.test", instagram: u(1).p.instagram });
-    expect(res.status).toBe(201);
-    expect((await assertConsistent()).signals).toBe(0);
-  });
-
   it("is not sent when nobody has that account", async () => {
     await u(0).raw("post", "/circles/default/friends", { name: "Stranger", email: "stranger@nowhere.test", phone: "+47 5555 5555" });
     expect((await assertConsistent()).signals).toBe(0);

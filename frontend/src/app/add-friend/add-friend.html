@@ -1,9 +1,5 @@
-<div class="sf-back-row">
-  <a routerLink="/friends" class="btn btn-light" aria-label="Go back to friends">‹ Back</a>
-</div>
-
 <div class="sf-page-head">
-  <h1>Add a friend</h1>
+  <h1><span class="sf-title-dot" aria-hidden="true"></span>Add a friend</h1>
 </div>
 
 @if (result(); as done) {
@@ -57,6 +53,7 @@
     }
 
     <div class="sf-actions">
+      <a routerLink="/friends" class="btn btn-light flex-fill" [class.disabled]="sending()">Cancel</a>
       <button type="submit" class="btn btn-primary flex-fill" [disabled]="sending()">
         {{ sending() ? 'Sending…' : 'Add friend' }}
       </button>

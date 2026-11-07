@@ -4,7 +4,6 @@ import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAX_FRIENDS } from "./constan
 import { EnsureSeatArgs } from "./models";
 import { circleCol, friendRequestCol, userDoc } from "./paths";
 import { signalRefsOf } from "./signals";
-import { SOCIAL_NETWORKS } from "./validation";
 
 /** Friend entry data built from the requester's profile (name + contact details). */
 export function entryFromRequester(requester: DocumentData, request: DocumentData) {
@@ -14,8 +13,6 @@ export function entryFromRequester(requester: DocumentData, request: DocumentDat
     email,
     phone: requester.phone ?? null,
     phoneKey: requester.phoneKey ?? null,
-    // social accounts are contact info only
-    ...Object.fromEntries(SOCIAL_NETWORKS.map((n) => [n, requester[n] ?? null])),
     linkedUid: request.fromUid as string,
   };
 }

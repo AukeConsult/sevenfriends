@@ -5,7 +5,7 @@ import { User, assertConsistent, person, seedPool, signalsOf } from "./helpers";
 /**
  * Everybody is reachable by their email or phone number, verified or not. But whoever is connected to a person who
  * has verified nothing (no verified email, no SMS-confirmed phone) is TOLD: the friend entry carries `unverified`, and
- * a request shows `fromUnverified`. Social accounts are contact info and never find anybody.
+ * a request shows `fromUnverified`.
  * (The test token carries `email_verified` and `phone_number`, like the real one.)
  */
 let pool: User[];
@@ -134,28 +134,6 @@ describe("a phone number confirmed with an SMS code", () => {
   it("a login with a verified number fills in the contact number", async () => {
     const fresh = await loginAs(42, { phoneVerified: true });
     expect((await fresh.raw("get", "/profile").expect(200)).body).toMatchObject({ phone: person(42).phone, phoneVerified: true });
-  });
-});
-
-describe("social accounts are contact info only", () => {
-  it("claiming somebody's handle on your profile gives you none of their requests", async () => {
-    const victim = u(50);
-    await u(51).raw("put", "/profile", { instagram: victim.p.instagram }).expect(200); // claims the victim's handle
-
-    const res = await u(0).raw("post", "/circles/default/friends", { name: "Victim", email: victim.p.email, instagram: victim.p.instagram });
-    expect(res.status).toBe(201);
-
-    expect((await u(51).check()).requests).toEqual([]); // the claimant gets nothing
-    expect((await victim.check()).requests.map((r) => r.id)).toEqual([res.body.id]); // the owner does, by verified email
-    await assertConsistent();
-  });
-
-  it("no friend entry or account ever stores a key for a social account", async () => {
-    await u(0).raw("put", "/profile", { instagram: "someone", tiktok: "someone" }).expect(200);
-    await u(0).raw("post", "/circles/default/friends", { name: "A", email: "a@nowhere.test", instagram: "a.person" }).expect(201);
-    const doc = await account("uid00");
-    expect(Object.keys(doc).filter((k) => /(facebook|instagram|tiktok|snapchat|twitter|linkedin|telegram)Key$/.test(k))).toEqual([]);
-    await assertConsistent(); // checks every entry too
   });
 });
 

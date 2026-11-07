@@ -9,6 +9,10 @@ import { Injectable, Signal, computed, signal } from '@angular/core';
  * Deliberately NOT remembered: the filter of "delete these messages" (it always starts with the safe defaults).
  */
 export interface UiPreferences {
+  /** the colours of the app (see THEMES); light is the default */
+  theme: ThemeKey;
+  /** the size of the text in the whole app: normal (default), small or big */
+  textSize: 'normal' | 'small' | 'big';
   /** the order of a conversation: the oldest message first (default) or the newest first */
   chatOrder: 'oldest' | 'newest';
   /** Enter sends the message (Shift+Enter is a new line); off (default) = Enter is a new line and Ctrl+Enter sends */
@@ -38,10 +42,23 @@ export interface PendingFriend {
   phone: string | null;
 }
 
+/** The colour themes: `header` is the colour of the browser's address bar (the header colour of the theme in styles.scss); `dark` themes switch Bootstrap's dark mode on too. */
+export const THEMES = [
+  { key: 'light', label: 'Light', header: '#fde6c6', dark: false },
+  { key: 'dark', label: 'Dark', header: '#1f2430', dark: true },
+  { key: 'ocean', label: 'Ocean', header: '#d6eaf7', dark: false },
+  { key: 'forest', label: 'Forest', header: '#dcefd3', dark: false },
+  { key: 'rose', label: 'Rose', header: '#fbdde3', dark: false },
+] as const;
+export type ThemeKey = (typeof THEMES)[number]['key'];
+
 export const QUICK_MAX = 10;
 export const QUICK_LENGTH = 200;
 
-const DEFAULTS: UiPreferences = { chatOrder: 'oldest', enterSends: true, sleepList: true, quickMessages: [], feedIcons: true, setup: 'new', lastPage: null, micRaw: false, pendingFriend: null, welcomeUntil: null };
+/** How much the text grows or shrinks (the root font size is multiplied by it: everything in rem follows). */
+export const TEXT_SCALES: Record<UiPreferences['textSize'], number> = { small: 0.9, normal: 1, big: 1.15 };
+
+const DEFAULTS: UiPreferences = { theme: 'light', textSize: 'normal', chatOrder: 'oldest', enterSends: true, sleepList: true, quickMessages: [], feedIcons: true, setup: 'new', lastPage: null, micRaw: false, pendingFriend: null, welcomeUntil: null };
 
 /** The ready-made messages as stored: only texts, trimmed, not empty, not too long, not too many. */
 export function quickOf(value: unknown): string[] {
@@ -75,6 +92,8 @@ function read(): UiPreferences {
     }
     const saved = JSON.parse(raw) as Partial<Record<keyof UiPreferences, unknown>>;
     return {
+      theme: THEMES.find((t) => t.key === saved.theme)?.key ?? 'light',
+      textSize: saved.textSize === 'small' || saved.textSize === 'big' ? saved.textSize : 'normal',
       chatOrder: saved.chatOrder === 'newest' ? 'newest' : 'oldest',
       enterSends: saved.enterSends !== false,
       sleepList: saved.sleepList !== false,
@@ -96,10 +115,29 @@ export class UiPreferencesService {
   private readonly state = signal<UiPreferences>(read());
 
   constructor() {
+    this.applyLook();
     // another window or tab of this app changed a choice: follow it
     window.addEventListener('storage', (event) => {
-      if (event.key === STORAGE_KEY || event.key === null) this.state.set(read());
+      if (event.key === STORAGE_KEY || event.key === null) {
+        this.state.set(read());
+        this.applyLook();
+      }
     });
+  }
+
+  /**
+   * The text size is a number on the page (`--sf-text-scale`), which the root font size in styles.scss multiplies; the theme is
+   * `data-theme` (our colours) and `data-bs-theme` (Bootstrap's) on the page, and the colour of the browser's address bar follows it.
+   * (index.html does the same before the app starts, so the page does not flash light first.)
+   */
+  private applyLook(): void {
+    const root = document.documentElement;
+    const { textSize, theme } = this.state();
+    root.style.setProperty('--sf-text-scale', String(TEXT_SCALES[textSize]));
+    const chosen = THEMES.find((t) => t.key === theme) ?? THEMES[0];
+    root.setAttribute('data-theme', chosen.key);
+    root.setAttribute('data-bs-theme', chosen.dark ? 'dark' : 'light');
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', chosen.header);
   }
 
   /** One choice as a signal (for templates and computed values). */
@@ -115,6 +153,7 @@ export class UiPreferencesService {
   set<K extends keyof UiPreferences>(key: K, value: UiPreferences[K]): void {
     const next = { ...read(), [key]: value };
     this.state.set(next);
+    this.applyLook();
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
     } catch {

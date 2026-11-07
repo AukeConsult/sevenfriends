@@ -6,7 +6,7 @@ import { DesktopNoticeService } from '../core/desktop-notice.service';
 import { NoticePreferences } from '../models';
 import { NoticesService } from '../core/notices.service';
 import { PushService } from '../core/push.service';
-import { QUICK_LENGTH, QUICK_MAX, UiPreferencesService, quickOf } from '../core/ui-preferences';
+import { QUICK_LENGTH, QUICK_MAX, THEMES, UiPreferencesService, quickOf } from '../core/ui-preferences';
 import { SOUND_CHOICES, SOUND_EVENTS, SoundEvent, SoundService } from '../core/sound.service';
 
 /** A full page for the person's own settings: for now, which sound plays for what. */
@@ -29,6 +29,7 @@ export class Settings {
   /** The ready-made messages being edited (empty rows are allowed while typing; only the filled ones are saved). */
   protected readonly quick = signal<string[]>([...this.prefs.get('quickMessages')]);
   protected readonly quickMax = QUICK_MAX;
+  protected readonly themes = THEMES;
   protected readonly quickLength = QUICK_LENGTH;
 
   protected addQuick(): void {

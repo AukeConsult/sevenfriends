@@ -15,6 +15,11 @@
   --sf-primary: #2f4b7c; // a soft Norwegian navy (the flag's blue, calmer): buttons, links, my bubbles (white text on it 8.7:1)
   --sf-red: #ba0c2f; // the red of the Norwegian flag: only small accents (new-message badges, danger), never the main buttons
   --sf-primary-2: #4a76c4; // the lighter end of the logo gradient and of my message bubbles
+  // the rest of the brand colour family: a theme (Preferences) changes all of these together
+  --sf-primary-rgb: 47, 75, 124; // the same colour as --sf-primary, as numbers (for transparent shades)
+  --sf-primary-hover: #223a63; // buttons while the pointer is over them
+  --sf-primary-active: #1a2d4d; // buttons while pressed
+  --sf-primary-subtle: #dbe4f3; // a light tint (chosen items, the editing bar)
   // The colours of the page: a slightly yellow background, headers a tint more red (orange) of the same yellow.
   // Cards, fields and the message field stay white, so they stand out from the yellow.
   --sf-bg: #fffbe9; // the page: slightly yellow
@@ -47,12 +52,12 @@
 
   // ---- Bootstrap theme ----
   --bs-primary: var(--sf-primary);
-  --bs-primary-rgb: 47, 75, 124;
+  --bs-primary-rgb: var(--sf-primary-rgb);
   --bs-danger: #ba0c2f;
   --bs-danger-rgb: 186, 12, 47;
-  --bs-primary-bg-subtle: #dbe4f3; // a light tint of the brand colour (chosen items, the editing bar)
+  --bs-primary-bg-subtle: var(--sf-primary-subtle); // a light tint of the brand colour (chosen items, the editing bar)
   --bs-link-color: var(--sf-primary);
-  --bs-link-hover-color: #223a63;
+  --bs-link-hover-color: var(--sf-primary-hover);
   --bs-body-bg: var(--sf-bg);
   --bs-body-color: var(--sf-text);
   --bs-body-font-size: var(--sf-fs-text);
@@ -60,18 +65,18 @@
   --bs-border-radius-lg: var(--sf-radius);
   --bs-secondary-color: var(--sf-muted);
   --bs-border-color: var(--sf-border);
-  --bs-focus-ring-color: rgba(47, 75, 124, 0.25);
+  --bs-focus-ring-color: rgba(var(--sf-primary-rgb), 0.25);
 }
 
 // Root font size: every rem (Bootstrap + our own) scales with the view size.
-html { font-size: 16px; }
+html { font-size: calc(16px * var(--sf-text-scale, 1)); } // the person's text size (Preferences) multiplies it
 
 @media (min-width: 576px) {
   :root { --sf-gutter: 1.25rem; --sf-avatar: 2.75rem; }
 }
 
 @media (min-width: 768px) {
-  html { font-size: 17px; }
+  html { font-size: calc(17px * var(--sf-text-scale, 1)); }
   :root {
     --sf-gutter: 1.5rem;
     --sf-gap: 1rem;
@@ -81,7 +86,7 @@ html { font-size: 16px; }
 }
 
 @media (min-width: 1000px) {
-  html { font-size: 18px; }
+  html { font-size: calc(18px * var(--sf-text-scale, 1)); }
   :root {
     --sf-gutter: 2rem;
     --sf-avatar: 3.25rem;
@@ -178,8 +183,8 @@ textarea.form-control { min-height: var(--sf-control); }
   --bs-btn-hover-bg: var(--sf-primary);
   --bs-btn-hover-border-color: var(--sf-primary);
   --bs-btn-hover-color: #fff;
-  --bs-btn-active-bg: #223a63;
-  --bs-btn-active-border-color: #223a63;
+  --bs-btn-active-bg: var(--sf-primary-hover);
+  --bs-btn-active-border-color: var(--sf-primary-hover);
   --bs-btn-active-color: #fff;
   --bs-btn-disabled-color: var(--sf-primary);
   --bs-btn-disabled-border-color: var(--sf-primary);
@@ -190,7 +195,7 @@ textarea.form-control { min-height: var(--sf-control); }
 .form-check-input:focus { border-color: var(--sf-primary); }
 .form-range::-webkit-slider-thumb { background-color: var(--sf-primary); }
 .form-range::-moz-range-thumb { background-color: var(--sf-primary); }
-.form-range::-webkit-slider-thumb:active { background-color: #223a63; }
+.form-range::-webkit-slider-thumb:active { background-color: var(--sf-primary-hover); }
 .form-control:disabled, .form-control[readonly], .form-select:disabled { background-color: var(--sf-surface); color: var(--sf-text); opacity: 1; } // a field that cannot be changed: a quiet yellow, still readable
 // the other Bootstrap pieces take the same lines, corners and spacing
 .alert { --bs-alert-padding-y: 0.625rem; --bs-alert-padding-x: 0.875rem; --bs-alert-margin-bottom: 0; --bs-alert-border-radius: 0.75rem; }
@@ -209,10 +214,10 @@ textarea.form-control { min-height: var(--sf-control); }
 .btn-primary {
   --bs-btn-bg: var(--sf-primary);
   --bs-btn-border-color: var(--sf-primary);
-  --bs-btn-hover-bg: #223a63;
-  --bs-btn-hover-border-color: #223a63;
-  --bs-btn-active-bg: #1a2d4d;
-  --bs-btn-active-border-color: #1a2d4d;
+  --bs-btn-hover-bg: var(--sf-primary-hover);
+  --bs-btn-hover-border-color: var(--sf-primary-hover);
+  --bs-btn-active-bg: var(--sf-primary-active);
+  --bs-btn-active-border-color: var(--sf-primary-active);
   --bs-btn-disabled-bg: var(--sf-primary);
   --bs-btn-disabled-border-color: var(--sf-primary);
 }
@@ -577,10 +582,12 @@ router-outlet + * { display: block; min-height: 100dvh; }
 .sf-bar-text { display: flex; flex-direction: column; min-width: 0; }
 // A plain page title instead of the coloured bar: centred, with the seat dots under it
 .sf-page-head { display: flex; flex-direction: column; align-items: center; gap: 0.35rem; padding: 0.5rem 0 1rem; text-align: center;
-  h1 { margin: 0; font-size: var(--sf-fs-title, 1.5rem); font-weight: 700; }
+  h1 { margin: 0; font-size: var(--sf-fs-text); font-weight: 700; } // the page title: the normal text size, bold
   .sf-hero-dots { margin-top: 0.4rem; } }
 // A page without a coloured header: just a Back button, centred at the top
 // the page content under a plain title needs no extra top space of its own
+.sf-title-dot { display: inline-block; width: 0.75rem; height: 0.75rem; margin-inline-end: 0.5rem; border-radius: 50%; background: var(--sf-red); vertical-align: middle; } // a seat dot to the left of a title
+.sf-page-head-slim { padding: 0.75rem 0 0.5rem; gap: 0; .sf-hero-dots { margin-top: 0; } } // only the seat dots, no title
 .sf-page-head + main, .sf-page-head + form { padding-top: 0; }
 // The save status of the Profile sits at the right of the title and takes no room of its own
 .sf-page-head { position: relative; }
@@ -595,7 +602,7 @@ router-outlet + * { display: block; min-height: 100dvh; }
 .sf-name-btn { display: inline-flex; align-items: center; gap: 0.35rem; min-width: 0; padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: start; cursor: pointer; }
 .sf-name-arrow { flex: none; font-size: 0.8em; opacity: 0.6; }
 .sf-profile.sf-profile-bar { margin: 0; padding: 0.75rem var(--sf-gutter); border: 0; border-bottom: 1px solid var(--sf-border); border-radius: 0; }
-.sf-bar-text strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sf-bar-text strong, .sf-bar-text .sf-bar-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sf-tool-btn { // an action in the header with a text under its icon, so it is clear what it does
   flex: none;
   min-width: 3rem;
@@ -736,6 +743,12 @@ app-voice { display: contents; }
   img { display: block; max-width: 100%; max-height: calc(100dvh - 12rem); margin: 0 auto; object-fit: contain; }
 }
 .sf-bubble-tap:focus-visible { outline: 2px solid var(--sf-primary); outline-offset: 2px; }
+.sf-msg-actions-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.375rem; margin: 0.375rem 0 0.75rem; // one row for all the buttons of a message, with room under it so a tap hits the right one
+  &:empty { display: none; }
+  .sf-msg-actions { display: contents; } // the groups dissolve: their buttons share the row
+  .sf-msg-actions .btn { min-height: 2rem; }
+}
+.sf-mine .sf-msg-actions-row { justify-content: flex-end; }
 .sf-msg-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 0.375rem; margin-top: 0.25rem;
   .btn { min-height: 1.75rem; padding: 0 0.75rem; font-size: var(--sf-fs-description); } // small, quiet buttons under a message
 }
@@ -772,8 +785,11 @@ app-voice { display: contents; }
 .sf-more-menu { inset-inline-start: auto; inset-inline-end: 0; bottom: auto; top: 100%; transform-origin: top right; white-space: nowrap; } // the header menu opens below the three dots, at the right edge
 .sf-add-quick { min-width: 0; &:disabled { opacity: 0.5; } }
 .sf-add-emoji { display: inline-grid; place-items: center; width: 22px; font-size: 1.2rem; line-height: 1; }
-.sf-emoji-panel { display: grid; grid-template-columns: repeat(8, 1fr); max-height: 10rem; overflow-y: auto; padding: 0.25rem var(--sf-gutter); border-bottom: 1px solid var(--sf-border); }
-.sf-emoji { padding: 0.25rem 0; border: 0; background: none; font-size: var(--sf-fs-title); line-height: 1.5; border-radius: 0.5rem; &:hover, &:focus-visible { background: var(--sf-bg); } }
+.sf-emoji-panel { display: grid; grid-template-columns: repeat(auto-fill, 1.5rem); justify-content: space-between; column-gap: 0.25rem; padding: 0.125rem var(--sf-gutter); border-bottom: 1px solid var(--sf-border); } // compact: small emojis, as many in a row as fit
+.sf-emoji-wrap { border-bottom: 1px solid var(--sf-border); .sf-emoji-panel { border-bottom: 0; } }
+.sf-emoji-tabs { display: flex; padding: 0 var(--sf-gutter); border-bottom: 1px solid var(--sf-border); }
+.sf-emoji-tab { flex: 1; padding: 0.25rem 0; border: 0; border-bottom: 2px solid transparent; background: none; font-size: var(--sf-fs-text); line-height: 1.75rem; &.sf-on { border-bottom-color: var(--sf-primary); background: var(--sf-surface); } } // one tab per group of emojis
+.sf-emoji { padding: 0; border: 0; background: none; font-size: var(--sf-fs-text); line-height: 1.75rem; width: 1.5rem; text-align: center; border-radius: 0.5rem; &:hover, &:focus-visible { background: var(--sf-bg); } }
 
 // ---- Bottom menu (plain flexbox: stays a row even without Bootstrap) ----
 .sf-menu {
@@ -834,6 +850,7 @@ app-voice { display: contents; }
 }
 .sf-card { padding: 0.5rem 0.75rem; .sf-avatar { width: 2rem; height: 2rem; font-size: var(--sf-fs-description); } }
 .sf-head { display: flex; align-items: center; gap: 0.5rem; }
+.sf-friend-name { font-size: var(--sf-fs-description); font-weight: 400; } // the name on a friend card: small and not bold (the colour keeps it apart from the line under it)
 .sf-title { flex: 1; min-width: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 0 0.5rem; }
 .sf-icon-btn { // quiet icon button, pinned to the right of a header
   flex: none;
@@ -922,7 +939,7 @@ app-voice { display: contents; }
 
 // Newest message on top: the message field sits right under the header (sticky) and grows downwards; the emoji panel opens below the field
 .sf-composer-top { position: sticky; inset-inline: 0; bottom: auto; z-index: 2; flex-direction: column-reverse; border-top: 0; border-bottom: 1px solid var(--sf-border); }
-.sf-composer-top .sf-emoji-panel { border-bottom: 0; border-top: 1px solid var(--sf-border); }
+.sf-composer-top .sf-emoji-wrap { border-bottom: 0; border-top: 1px solid var(--sf-border); }
 .sf-feed { overflow-anchor: none; } // no jumping when the feed is turned around (sort order) or the message field changes height
 
 // Radio choices in two columns (the delete frame in the message feed)
@@ -979,3 +996,60 @@ app-voice { display: contents; }
 .sf-pdf-page { margin-inline: auto; max-width: none; height: auto; background: #fff; box-shadow: 0 1px 4px rgb(0 0 0 / 0.2); }
 .sf-sheet-wrap { width: 100%; max-height: 85vh; overflow: auto; border: 1px solid var(--sf-border); border-radius: var(--sf-radius); background: var(--sf-card); }
 .sf-sheet { border-collapse: collapse; font-size: var(--sf-fs-description); td { padding: 0.25rem 0.5rem; border: 1px solid var(--sf-border); white-space: nowrap; max-width: 16rem; overflow: hidden; text-overflow: ellipsis; } }
+
+// ---- The dark theme (Preferences > Display): the same variables with dark values, and the few light-only colours below ----
+html[data-theme='dark'] {
+  color-scheme: dark;
+  --sf-primary: #4a76c4;
+  --sf-primary-2: #5a86d2;
+  --sf-bg: #14161c;
+  --sf-header: #1f2430;
+  --sf-header-border: #2f3647;
+  --sf-card: #1c2029;
+  --sf-text: #e6e8ee;
+  --sf-muted: #a4abba;
+  --sf-border: #2b3140;
+  --sf-surface: #232836;
+  --bs-body-bg: var(--sf-bg);
+  --bs-body-color: var(--sf-text);
+  --bs-secondary-color: var(--sf-muted);
+  --bs-border-color: var(--sf-border);
+  --sf-primary-rgb: 74, 118, 196;
+  --sf-primary-hover: #3a63ad;
+  --sf-primary-active: #2f5393;
+  --sf-primary-subtle: #26324d;
+  --bs-link-color: #8fb0f0;
+  --bs-link-hover-color: #b6cdf7;
+  .alert-info { --bs-alert-bg: #2a2d38; --bs-alert-border-color: #3a3f4e; --bs-alert-color: #d9dce6; --bs-alert-link-color: #d9dce6; }
+  .alert-warning { --bs-alert-bg: #3d3317; --bs-alert-border-color: #6b5a1f; --bs-alert-color: #f0d98a; --bs-alert-link-color: #f0d98a; }
+  .alert-success { --bs-alert-bg: #1c3324; --bs-alert-border-color: #2f5a3b; --bs-alert-color: #a8e0b7; }
+  .alert-danger { --bs-alert-bg: #3a1d22; --bs-alert-border-color: #6b2d36; --bs-alert-color: #f3b4bc; }
+  .form-check-input:not(:checked) { border-color: #8b93a5; background-color: #2a2f3c; }
+  .sf-crop, .sf-voice { background: var(--sf-card); }
+  .sf-confirm { border-color: #6b2d36; background: #3a1d22; }
+  .sf-confirm-text { color: #f3b4bc; }
+  .sf-slot-empty { border-color: #3a4152; }
+  .sf-audio-open { background: rgba(255, 255, 255, 0.15); }
+  .sf-voice-meter { background: rgba(255, 255, 255, 0.12); }
+  .text-secondary { color: var(--sf-muted) !important; }
+}
+@media (min-width: 1000px) { html[data-theme='dark'], html[data-theme='dark'] body { background: #0c0d11; } }
+
+// ---- More themes (Preferences > Display): each one changes the whole look: the brand colour (buttons, links, my messages, the logo), the headers, the page and the lines ----
+html[data-theme='ocean'] {
+  --sf-primary: #0e6a8a; --sf-primary-2: #2a9ac0; --sf-primary-rgb: 14, 106, 138; --sf-primary-hover: #0a526b; --sf-primary-active: #073f52; --sf-primary-subtle: #d3eaf3;
+  --sf-bg: #eef6fb; --sf-header: #d6eaf7; --sf-header-border: #b9d6ea; --sf-border: #cfe0ec; --sf-surface: #e3f0f9;
+}
+html[data-theme='forest'] {
+  --sf-primary: #2f6b4a; --sf-primary-2: #4c9a6a; --sf-primary-rgb: 47, 107, 74; --sf-primary-hover: #24543a; --sf-primary-active: #1b402c; --sf-primary-subtle: #d9ece0;
+  --sf-bg: #f1f8ee; --sf-header: #dcefd3; --sf-header-border: #bfdcb2; --sf-border: #d3e5cb; --sf-surface: #e6f2e0;
+}
+html[data-theme='rose'] {
+  --sf-primary: #a3305a; --sf-primary-2: #d4608a; --sf-primary-rgb: 163, 48, 90; --sf-primary-hover: #85264a; --sf-primary-active: #681d3a; --sf-primary-subtle: #f6d9e3;
+  --sf-bg: #fff3f5; --sf-header: #fbdde3; --sf-header-border: #f1bfca; --sf-border: #f0d6dc; --sf-surface: #ffe8ec;
+}
+@media (min-width: 1000px) {
+  html[data-theme='ocean'], html[data-theme='ocean'] body { background: #dbe9f2; }
+  html[data-theme='forest'], html[data-theme='forest'] body { background: #dfebd9; }
+  html[data-theme='rose'], html[data-theme='rose'] body { background: #f3dde2; }
+}

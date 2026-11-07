@@ -4,7 +4,6 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../core/auth.service';
 import { FriendsService } from '../core/friends.service';
 import { InviteLinkService } from '../core/invite-link.service';
-import { emptySocialDraft, socialsFromDraft } from '../core/social';
 import { FriendDraft } from '../models';
 import { APP_ORIGIN } from '../core/app-origin';
 
@@ -81,7 +80,6 @@ export class AddFriend {
         email: d.email || null,
         phone: d.phone || null,
         message: d.message.trim() || null,
-        ...socialsFromDraft(emptySocialDraft()), // no social accounts are asked for here
       });
       if (created.invited) {
         await this.router.navigateByUrl('/friends'); // has an account: the request is with them already

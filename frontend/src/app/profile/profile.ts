@@ -11,7 +11,6 @@ import { PresenceService } from '../core/presence.service';
 import { PushService } from '../core/push.service';
 import { defaultLanguage, languagesFor } from '../models/shared/languages';
 import { countries, dialCode, fullNumber, isValidPhone, nationalNumber } from '../core/countries';
-import { SOCIAL_NETWORKS, draftFromSocials, emptySocialDraft, socialsFromDraft } from '../core/social';
 import { ProfileDetails, ProfileDraft, ProfilePicture, SaveState } from '../models';
 
 /** Changes are saved by themselves: a moment after you stop typing, and when you leave a field or the page. */
@@ -37,9 +36,8 @@ export class Profile {
   protected readonly invite = inject(InviteLinkService);
   /** "New link…" asks first: the old link stops working */
   protected readonly confirmNewLink = signal(false);
-  protected readonly networks = SOCIAL_NETWORKS;
 
-  protected readonly form = signal<ProfileDraft>({ name: '', phone: '', country: '', language: '', ...emptySocialDraft() });
+  protected readonly form = signal<ProfileDraft>({ name: '', phone: '', country: '', language: '' });
   protected readonly loading = signal(true);
   /** the seat icon (1-7) chosen as my own picture, when I have no photo; null = none */
   protected readonly icon = signal<number | null>(null);
@@ -72,7 +70,6 @@ export class Profile {
   protected readonly countryName = computed(() => this.countries.find((c) => c.code === this.form().country)?.name ?? '');
   /** the row of icons is only open when the person wants to choose */
   protected readonly iconsOpen = signal(false);
-  protected readonly socialOpen = signal(false);
   /** the phone is confirmed by SMS: it can no longer be typed over */
   protected readonly phoneVerified = signal(false);
   /** from the server (the login token), so it always agrees with what friends can find */
@@ -234,7 +231,7 @@ export class Profile {
       this.emailVerified.set(res.emailVerified);
       this.icon.set(res.icon);
       this.picture.set(image);
-      this.form.set({ name: res.name ?? '', phone: res.phone ?? '', country: res.country ?? '', language: res.language ?? '', ...draftFromSocials(res) });
+      this.form.set({ name: res.name ?? '', phone: res.phone ?? '', country: res.country ?? '', language: res.language ?? '' });
     } catch (err: any) {
       this.loadFailed = true;
       this.state.set('error');
@@ -294,13 +291,12 @@ export class Profile {
             icon: this.icon(),
             country: sent.country || null,
             language: sent.language || null,
-            ...socialsFromDraft(sent),
           }),
         });
         // show the cleaned-up values (for example a leading @ removed), unless the user typed on meanwhile
         if (!this.dirty && this.form() === sent) {
           // (a phone number that was not valid is kept in the field as typed, and the message says it is not saved)
-          this.form.update((f) => ({ ...f, phone: this.phoneProblem() ? f.phone : (res.phone ?? ''), ...draftFromSocials(res) }));
+          this.form.update((f) => ({ ...f, phone: this.phoneProblem() ? f.phone : (res.phone ?? '') }));
         }
       }
       this.state.set('saved');

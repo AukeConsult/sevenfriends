@@ -11,7 +11,6 @@ import { moodIcon, moodLabel } from '../core/moods';
 import { presenceLabel } from '../core/presence';
 import { timeAgo } from '../core/time-ago';
 import { NotificationsService } from '../core/notifications.service';
-import { SOCIAL_NETWORKS } from '../core/social';
 import { Friend, FriendSlot } from '../models';
 
 const MAX_FRIENDS = 7;
@@ -31,7 +30,6 @@ export class Friends {
   /** the sleep list row is shown when the list is used, or when friends are still on it */
   protected readonly showSleepList = computed(() => this.prefs.value('sleepList')() || this.sleeping() > 0);
   protected readonly circle = this.friendsService.circle;
-  protected readonly networks = SOCIAL_NETWORKS;
   /** incoming requests that wait for a free seat (shown on the Pending page) */
   protected readonly waiting = computed(() => this.friendsService.requests().filter((r) => !r.seated).length);
   protected readonly filled = computed(() => this.friendsService.awake().length);

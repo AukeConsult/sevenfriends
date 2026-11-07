@@ -2,8 +2,6 @@
   <header class="sf-hero sf-hero-home text-center">
     <div class="sf-logo sf-logo-lg" aria-hidden="true">7</div>
     <h1>Seven Friends</h1>
-    <app-seat-dots [taken]="seatsTaken()" />
-    <p class="sf-hint small m-0">{{ seatsTaken() }} of {{ max }} seats taken@if (sleeping() > 0) { · {{ sleeping() }} on the sleep list }</p>
   </header>
 
   <!-- my mood, small, right under the header -->
@@ -145,7 +143,7 @@
   }
 
   <!-- 4. more -->
-  <details class="sf-expand sf-expand-quiet mb-3">
+  <details class="sf-expand sf-expand-quiet mt-4 mb-3">
     <summary>More</summary>
     <div class="vstack gap-3 mt-2">
       @if (!install.installed() && install.mobile) {

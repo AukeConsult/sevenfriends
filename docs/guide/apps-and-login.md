@@ -1,0 +1,33 @@
+# Android / iPhone / Windows apps, login methods, first-time setup
+
+Part of the project guide (moved out of `CLAUDE.md`; text unchanged). Read this before changing this area.
+
+## Login methods and console setup
+- Phone sign-in (per the Firebase guide): `localhost` is **not allowed** for real SMS (use the emulator, whose log prints the code with the reCAPTCHA check switched off, or up to 10 **fictional test numbers** with fixed codes under Authentication → Sign-in method → Phone → "Phone numbers for testing"). The deployed domain must be under Authorized domains. Phone alone is less secure than the other methods (a number can change hands), so it is offered next to Google / email; the phone page tells people that a text is sent and message rates may apply.
+- Google, email/password, email link, phone SMS. People are reachable by their email or phone even when unverified; their friends are told (see People who have not verified).
+- **Nobody has to be verified to add a friend or to be added.** Verification only decides what the other side is told (see People who have not verified). A phone login has no email and is confirmed by the SMS code; Google and email-link logins arrive with a verified email. The account document keeps `emailVerified` and `verifiedPhone`, written from the login token at every login, and `GET /profile` returns `emailVerified` / `phoneVerified`. The Verify buttons only appear for what is not verified yet.
+- Firebase console: Authentication → enable **Google**, **Email/Password** (with **Email link** switched on) and **Phone**; add your domain under Authorized domains. Phone sign-in needs the **Blaze plan**, costs per SMS, and SMS region policy should allow your countries.
+- Emulator: reCAPTCHA is disabled and SMS codes are printed in the auth emulator log; email links are printed there too.
+- After backend changes: `npm --prefix functions install`, restart emulators, `firebase deploy --only firestore` (rules and indexes), then deploy functions.
+- Known gap: email-link, SMS and rules tests are not automated in the cloud (needs the emulator); they are build-verified only.
+- **Never write `firestore.rules` in place while the emulator runs** (a truncating write can be read as an empty file; the emulator then fails every database request with "Rules content empty"). Save the file in one step; if it happens, save the file again and look for "Rules updated" in the emulator log.
+
+## Android app (`android/`)
+A Capacitor wrapper that loads the live web app (`frontend/capacitor.config.json`, `server.url`). `npm run android:sync` after changing the
+config or plugins; `npm run android:open` for Android Studio. Details and what is still missing: `android/README.md`. Never edit the generated
+files in `android/` (capacitor.settings.gradle, app/src/main/assets); the native code of our own goes in `android/app/src/main/java/io/sevenfriends/app`.
+
+## iPhone app (`ios/`)
+Same wrapper as `android/` (`npm run ios:sync`, `ios:open` on a Mac, `ios:config` for `GoogleService-Info.plist` from the key in `.env`). Details and what
+is missing: `ios/README.md`. Generated files (`Package.swift`, `App/App/public`) are not edited; our own native code is in `ios/App/App`.
+
+## Windows app (`windows/`)
+A native .NET 8 (WPF) app with the WebView2 control that shows the live web app (`AppUrl` in `windows/MainWindow.xaml.cs`, the same address as `server.url` in `frontend/capacitor.config.json`: change both together). `npm run windows:run` to try it, `windows:publish` for the self-contained exe, `windows:installer` (Inno Setup 6) for `windows/installer/output/SevenFriendsSetup.exe` (per user, no admin). The window closes to a **tray icon** (the app keeps running; menu Open / Start with Windows / Quit; the installer can start it hidden with `--tray` at sign-in) and shows the web app's notifications as Windows toasts. Details and what is missing (push when the app is not running = WNS, signing, auto-update, Google sign-in in an embedded window; not yet compiled on Windows): `windows/README.md`. The icon `app.ico` is made from `frontend/public/icons/icon-512.png`.
+
+**Apps for download**: `scripts/publish-download.mjs` puts a finished file in `frontend/public/downloads/` (git-ignored; `npm run windows:release`; Android: the Gradle tasks `publishApk` / `deployApp` in `android/app/publish.gradle`); `deploy:hosting` publishes it and the Install page shows **Download for Windows** / **Download the Android app** only when the file exists (`InstallApp.exists`: a HEAD request that is not answered with html). The apk is debug-signed (not for Google Play).
+
+**Welcome page** (`/welcome`, public): the install step shown before sign-in to anyone not running the installed app (`WelcomeService.shouldShow()`, used by `authGuard`); same top (`app-hero`, four points) and ONE install action per platform (Android: the app file; iPhone: Add to Home Screen steps; Windows: the installer; other: the browser install). "Continue in the browser" remembers 30 days (`welcomeUntil`) unless a friend invitation is waiting. The sign-in page has "I have an invitation" (paste a link, code, email or phone: `FriendLinkService.use`), the welcome page copies the waiting invitation before a download, and the Android app opens links of the website (`MainActivity.pathOfWebsiteLink`). Details and the strategies: `docs/invite-install-login.md`.
+
+## First-time setup (`/setup`, `frontend/src/app/setup/`)
+- The **welcome page** (signed out, not the installed app) shows two cards: **Use the app (recommended)** with the install action for this platform, and **Use it in the browser** ("Continue in the browser").
+- The setup is **never started automatically**: it is opened by the **Run the setup** button on the Settings → Preferences tab. Three steps: **1 sound** (the message sound, with volume), **2 notifications** (Android app: opens the native notification screen + test; iPhone in Safari: "Add to Home Screen first"; browser with push: "Turn on notifications" + test; otherwise pop-ups), **3 done** (Add a friend / Go to Home). Every step has "Do it later": `setup` becomes `skipped` and Home shows a "Finish setup" bar until it is done. Signing out sets `setup` back to `new`.

@@ -17,7 +17,7 @@ import { MyAvatarService } from '../core/my-avatar.service';
 import { MediaService } from '../core/media.service';
 import { LiveChanges } from '../core/live-changes';
 import { UiPreferencesService } from '../core/ui-preferences';
-import { EMOJIS } from '../core/emojis';
+import { EMOJI_GROUPS } from '../core/emojis';
 import { FriendsService } from '../core/friends.service';
 import { initials } from '../core/initials';
 import { presenceLabel } from '../core/presence';
@@ -118,7 +118,10 @@ export class Chat {
   protected readonly blocked = signal<string | null>(null);
   protected readonly text = signal('');
   protected readonly sending = signal(false);
-  protected readonly emojis = EMOJIS;
+  protected readonly emojiGroups = EMOJI_GROUPS;
+  /** the tab of the emoji picker that is open (People first) */
+  protected readonly emojiGroup = signal('People');
+  protected readonly emojisOfGroup = computed(() => EMOJI_GROUPS.find((g) => g.name === this.emojiGroup())?.emojis ?? []);
   /** the emoji panel above the message field */
   protected readonly emojiOpen = signal(false);
   /** the menu of the smiley and the paperclip button */
@@ -146,14 +149,28 @@ export class Chat {
     this.menuOpen.set(true);
   }
 
-  /** A mouse over a button opens its menu, leaving closes it (a finger has no hover: it taps). */
+  /** A mouse over a button opens its menu (or the emoji picker) and closes the other one; leaving closes the menu (a finger has no hover: it taps). */
   protected hoverMenu(inside: boolean, kind?: 'emoji' | 'attach'): void {
-    if (!window.matchMedia('(hover: hover)').matches) return;
-    if (inside && kind === 'emoji' && !this.quickMessages().length) return; // nothing to show in a menu
-    if (inside) {
-      if (kind && !this.menuPinned) this.menuKind.set(kind);
-      if (!this.menuPinned || !this.menuOpen()) this.menuOpen.set(true);
-    } else if (!this.menuPinned) this.menuOpen.set(false);
+    if (!window.matchMedia('(any-hover: hover)').matches) return;
+    if (!inside) {
+      if (!this.menuPinned) this.menuOpen.set(false);
+      return;
+    }
+    if (!kind) return;
+    if (kind === 'attach') {
+      this.emojiOpen.set(false); // the emoji picker closes when the paperclip opens
+      if (this.menuKind() !== 'attach') this.menuPinned = false;
+      this.menuKind.set('attach');
+      this.menuOpen.set(true);
+    } else if (!this.quickMessages().length) { // no menu to show: the emoji picker opens (and stays until the next click or typing)
+      this.menuOpen.set(false);
+      this.menuPinned = false;
+      this.emojiOpen.set(true);
+    } else {
+      if (this.menuKind() !== 'emoji') this.menuPinned = false;
+      this.menuKind.set('emoji');
+      this.menuOpen.set(true);
+    }
   }
   /** my message whose Edit / Delete buttons are open (tap a message of mine) */
   protected readonly selected = signal<string | null>(null);

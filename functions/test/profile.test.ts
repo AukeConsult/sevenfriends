@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { MAX_NAME_LENGTH } from "../src/constants";
 import { User, assertConsistent, connect, seedPool } from "./helpers";
 
-/** The profile page: name, phone and social accounts. The page autosaves, so PUT gets the whole form again and again. */
+/** The profile page: name and phone. The page autosaves, so PUT gets the whole form again and again. */
 let pool: User[];
 let u: (n: number) => User;
 
@@ -79,17 +79,14 @@ describe("autosave: the whole form is sent again and again", () => {
   const form = (user: User, extra: Record<string, unknown> = {}) => ({
     name: user.p.name,
     phone: user.p.phone,
-    instagram: user.p.instagram,
-    tiktok: user.p.tiktok,
-    linkedin: user.p.linkedin,
     ...extra,
   });
 
   it("saving the same form twice changes nothing", async () => {
-    const first = (await u(0).raw("put", "/profile", form(u(0), { telegram: "tg_zero" }))).body;
-    const second = (await u(0).raw("put", "/profile", form(u(0), { telegram: "tg_zero" }))).body;
+    const first = (await u(0).raw("put", "/profile", form(u(0)))).body;
+    const second = (await u(0).raw("put", "/profile", form(u(0)))).body;
     expect(second).toEqual(first);
-    expect(second).toMatchObject({ name: "Person 00", phone: u(0).p.phone, telegram: "tg_zero", facebook: null });
+    expect(second).toMatchObject({ name: "Person 00", phone: u(0).p.phone });
   });
 
   it("every field can be saved one after the other while typing", async () => {
@@ -108,11 +105,11 @@ describe("autosave: the whole form is sent again and again", () => {
     expect(saved).toMatchObject({ name: "Alice", phone: u(0).p.phone }); // nothing half-saved
   });
 
-  it("a cleared field is removed (and a social account was never used to find people anyway)", async () => {
-    await u(0).raw("put", "/profile", form(u(0), { instagram: "" })).expect(200);
-    expect((await profile(u(0))).instagram).toBeNull();
-    await u(0).raw("put", "/profile", form(u(0), { instagram: u(0).p.instagram })).expect(200);
-    expect((await profile(u(0))).instagram).toBe(u(0).p.instagram);
+  it("a cleared phone number is removed, and saved again when it is typed again", async () => {
+    await u(0).raw("put", "/profile", form(u(0), { phone: "" })).expect(200);
+    expect((await profile(u(0))).phone).toBeNull();
+    await u(0).raw("put", "/profile", form(u(0))).expect(200);
+    expect((await profile(u(0))).phone).toBe(u(0).p.phone);
     await assertConsistent();
   });
 
@@ -179,24 +176,24 @@ describe("my country", () => {
 });
 
 describe("a save only changes what it carries", () => {
-  it("leaving the phone, the accounts, the country and the icon out keeps them", async () => {
+  it("leaving the phone, the country and the icon out keeps them", async () => {
     const { User, person, seedPool } = await import("./helpers");
     await seedPool();
     const me = await new User(person(90), { emailVerified: true, phoneVerified: false }).signUp(); // typed phone, not confirmed
-    await me.raw("put", "/profile", { phone: "+4790000090", instagram: "my_insta", linkedin: "my-lin", country: "NO", icon: 5 }).expect(200);
+    await me.raw("put", "/profile", { phone: "+4790000090", country: "NO", icon: 5 }).expect(200);
 
     const saved = (await me.raw("put", "/profile", { name: "Only the name" }).expect(200)).body;
-    expect(saved).toMatchObject({ name: "Only the name", phone: "+4790000090", instagram: "my_insta", linkedin: "my-lin", country: "NO", icon: 5 });
+    expect(saved).toMatchObject({ name: "Only the name", phone: "+4790000090", country: "NO", icon: 5 });
   });
 
   it("a value sent as null or empty is removed, and only that one", async () => {
     const { User, person, seedPool } = await import("./helpers");
     await seedPool();
     const me = await new User(person(91), { emailVerified: true, phoneVerified: false }).signUp();
-    await me.raw("put", "/profile", { phone: "+4790000091", instagram: "a", tiktok: "b" }).expect(200);
-    const saved = (await me.raw("put", "/profile", { instagram: null }).expect(200)).body;
-    expect(saved).toMatchObject({ phone: "+4790000091", instagram: null, tiktok: "b" });
-    expect((await me.raw("put", "/profile", { phone: null }).expect(200)).body).toMatchObject({ phone: null, tiktok: "b" });
+    await me.raw("put", "/profile", { phone: "+4790000091", country: "NO" }).expect(200);
+    const saved = (await me.raw("put", "/profile", { country: null }).expect(200)).body;
+    expect(saved).toMatchObject({ phone: "+4790000091", country: null });
+    expect((await me.raw("put", "/profile", { phone: null }).expect(200)).body).toMatchObject({ phone: null, country: null });
   });
 });
 

@@ -1,0 +1,57 @@
+# Messages, profile, links, sleep list, UI preferences
+
+Part of the project guide (moved out of `CLAUDE.md`; text unchanged). Read this before changing this area.
+
+### Messages (the feed of a connection)
+- Only **confirmed** connections can exchange messages (pending, waiting, rejected or unknown friends: 403/404). The feed of a connection is identified by the connection id (the shared id of the two entries).
+- A message has `time`, `fromUid`/`fromName`, `toUid`, `text` (1 to 2000 characters, trimmed) and is stored **twice**, once in each person's `messages` collection, with the same message id. The sender's copy is `read`, the receiver's copy is unread until they open the feed.
+- Unread messages show up in the Home check (with their `connectionId`, so Home can open the feed). Opening the feed marks the other person's messages as read; only that connection is affected.
+- The feed shows the latest 200 messages, oldest first. It is private: only the two people of the connection can read or write it.
+- Deleting a connection deletes its feed on both sides.
+
+### Profile (name, phone, social accounts)
+- **Nothing on the profile may be lost** (everything autosaves): the Profile form saves about 0.8 s after the last change, when a field loses focus, **when the page is hidden or closed** (`visibilitychange` / `pagehide` / leaving the page: the request is sent with `keepalive`, so it finishes after the page is gone), and **a failed save tries again by itself every 5 seconds** and when the connection is back (`online`), besides "Try again". The same goes for the mood message and the sound choices. A save **only changes what it carries** (the backend leaves out what the request leaves out: a phone number or an account that is not in the request is kept, `null` or empty removes it), so one page can save its own part without touching the rest. A phone number that is not a valid number yet is **not sent** (the rest still saves) and the field says "This is not a phone number yet, so it is not saved". The picture, the icon, the mood and the sounds are saved by their own controls (see above); a refused value never half-saves anything.
+- The **name** is editable. It can never be empty (400) and is at most 100 characters. The name from the login is only the starting point: a name the user chose **stays** at the next login.
+- It is the name others see in **new** requests, pending seats and messages. Copies made earlier (a friend's list entry, old messages) keep the old name.
+- **Autosave**: the page has no Save button. It saves about 0.8 s after typing stops, when a field loses focus, and when the page is left. Every save sends the whole form (`PUT /api/profile`), so saving twice changes nothing. A status line says "Changes not saved yet", "Saving", "All changes saved" or the error with "Try again" (a failed save is retried on the next change or blur).
+- An empty name is not sent (the old name stays) while phone and accounts still save. An invalid value (a bad phone number) is refused and nothing is half-saved. An emptied phone or social account is removed.
+
+## Sleep list
+
+- A confirmed friend is no longer deleted from the card: "Add <name> to the sleep list…" puts them to sleep (`POST /circles/:id/friends/:friendId/sleep { asleep }`, field `asleep` on MY entry only). A sleeping friend has **no seat** (seat counts in `friends.ts` POST, `seats.ts` `ensureSeat` and the sleep route ignore entries with `asleep: true`), but the connection, the conversation and the files are kept. Waking needs a free seat (409 otherwise). Pending/rejected entries are still deleted as before.
+- App: `FriendsService.awake` / `.sleeping`; the seats on Friends and the seat icon in the chat use `awake`. The last row on Friends and the header button (top right) open `/friends/sleeping` (`app-sleeping`): Open, Wake up, Delete (for good, with a question). The page header has a "My friends" button top right and the back arrow.
+- Not done: messages from a sleeping friend still arrive and notify as before (no muting yet); the other person is not told. No backend tests yet for the sleep route.
+- **"This is really <name>"** (button under the "has not verified" warning on a friend card): `POST /circles/:id/friends/:friendId/trust { trusted }` sets `trusted` on MY entry; `withUnverified` then returns no `unverified` details for it. Needs a backend deploy; no backend test yet.
+- **The friend is told about the sleep list:** putting a friend to sleep (or waking them) also sets `theyAsleep` on THEIR entry of the same connection (same transaction in the sleep route); `toJson` shows it as `sleepsMe`. Their open app reloads its friend list live and shows "😴 <name> has you on their sleep list" on the friend card, in the chat header and in their own sleep list. No push notification is sent. Needs the backend deploy; no backend test yet.
+
+## UI preferences (one object in localStorage)
+
+- `core/ui-preferences.ts` (`UiPreferencesService`) holds EVERY local choice in ONE object under the key `sf-ui`: `chatOrder` (oldest/newest first), `enterSends` (Enter sends the message, Shift+Enter is a new line; default on; off: Ctrl+Enter sends), `sleepList` (default on; off = the friend card offers Delete only and the sleep list row is hidden while the list is empty), `quickMessages` (up to 10 ready-made texts of at most 200 characters: listed in the + menu of a conversation, one tap sends; edited in the Preferences card of the Settings page), `setup` ('new' | 'skipped' | 'done': the first-time setup), `lastPage` (shown again when the app is opened at `/`; set on every navigation to a main page or a conversation, cleared at sign-out) and `micRaw`. Read with `prefs.get('key')` / `prefs.value('key')` (a signal), write with `prefs.set('key', value)`; **never use localStorage directly for a choice**: add the field to `UiPreferences`, `DEFAULTS` and `read()`. Other windows follow through the `storage` event; the old keys `sf-chat-order` and `sf-mic-raw` are read once if the object does not exist yet.
+- Not in it on purpose: the sounds (an account setting, `SoundService`, synced between devices), the "delete these messages" filter (always starts safe), the "setup hidden" note (per session), login/push/desktop-notice keys (device and account state).
+
+## Links in messages (clickable, with a page preview in a frame)
+
+- A web address in a message text is a link (`parts()` in the Chat page: opens in a new tab with `rel="noopener noreferrer nofollow"`; only http/https).
+- **Preview = the real page in a frame, not a picture.** When a message is sent or edited, `linkOf()` (`functions/src/link-preview.ts`) takes the FIRST address and stores `link: { url, embedUrl }` on both copies of the message (`MessageLink` in the shared models; `FieldValue.delete()` when an edit removes the link). `embedUrl` is the official player for YouTube / Vimeo / Spotify links (`playerUrl`), otherwise the page itself IF the site allows framing: the server asks the site once (GET, headers only, 3 s) and refuses when `X-Frame-Options` is set or `Content-Security-Policy: frame-ancestors` does not contain `*` / `https:` (`framingAllowed`); other content types (pictures, files) and any error give `embedUrl: null` (just a link). It never fails the message.
+- **The feed shows "Show preview" and loads the page only after a tap** (it exposes the reader's address to that site and runs its scripts). The `iframe` is sandboxed (`allow-scripts allow-same-origin allow-forms allow-presentation`, no pop-ups, no top navigation), `referrerpolicy="no-referrer"`, with "Open in a new tab" and "Hide preview". Sites that forbid framing (Google, Facebook, X, most news sites, banks) only show the link.
+- **SSRF protection** (the server fetches a typed address): http(s) only, ports 80/443, no password in the address, the connection uses our own DNS lookup that refuses private / loopback / link-local / metadata addresses at connect time (also after redirects, max 3), the body is never read. Tests: `functions/test/link-preview.test.ts` (pure parts, verified; the live fetch is not tested).
+- Not done: a JavaScript "frame buster" on a page cannot be detected; a page that allows framing but shows a blank frame stays blank (use "Open in a new tab"); no check of the site's own CSP `frame-src` for our hosting (none is set).
+- Needs the backend deploy (functions) and hosting.
+- **Preview while writing:** the message field looks for a link a moment (700 ms) after the last key press and asks `POST /api/link-preview { text }` (`linkPreviewRouter` in `link-preview.ts`, login needed, 20 asks per person per minute, then 429) which answers `{ link }` with the same check as at send time. A bar above the field shows the address and "Show preview" (the page is loaded only after a tap) or "No preview: the site does not allow it", with ✕ to close it (the same link does not come back while it stays in the text). It is only a convenience: the server checks again when the message is sent. Needs the backend deploy.
+- `npm run deploy` deploys everything (functions, Firestore + Storage rules, hosting); `deploy:hosting`, `deploy:functions`, `deploy:rules` deploy one part.
+
+## Conversation page
+
+The header shows only the avatar (with the presence dot) and the name; the profile of a friend is on the Friends page. A quick sideways swipe on the page (not on text, buttons, links, players or scrolling strips) opens the conversation with the next friend (swipe left) or the previous one (swipe right), in the order of `FriendsService.awake()`; there is no wrap-around. `ParamsRouteReuseStrategy` makes the page start fresh when only the friend id in the address changes.
+
+## Friend links
+`/?invite=<code>` (the code is made on the server, `functions/src/invite.ts`; the profile page has Share / Copy / New link) or `/?friend=<email or phone>`.
+`FriendLinkService.capture()` runs in an app initializer (before the router can redirect), keeps the link in UiPreferences (`pendingFriend`) and removes
+it from the address bar. Signed in + a link waiting -> `app.ts` sends every navigation to `/friends/join` (`friend-join/`), which asks "Send a friend
+request to …?" (nothing is sent without the tap) and then uses the ordinary `friends.add()`. Signed out: the login page says what the link is about.
+A new code makes the old link stop working. `FieldValue.delete` is supported by the test fake (`functions/test/fake-firestore.ts`).
+A friend link whose owner has ALREADY sent me a request (`requestId` from `/invite/lookup`, or the request's `fromEmail` for plain links) shows that
+request with "Confirm request" instead of the form: no second request is made. The join page first runs `notifications.refresh()`.
+`InviteLinkService` (core/invite-link.service.ts) holds my link and the Share / Copy / New link buttons: used by the profile page and by Add a friend
+(there the link card appears as soon as an email or phone number is typed; "Send the link to them" is disabled on purpose: not built yet).
+The Home page has an expandable card ("Invite people with a link") under the band: the plain friend link `/?friend=<my email or phone>` with Share / Copy and a short explanation.

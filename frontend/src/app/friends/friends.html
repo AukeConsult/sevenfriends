@@ -1,7 +1,7 @@
 <main class="sf-content">
-  <!-- no coloured header: a plain title, the seats as dots, and how many are taken -->
-  <div class="sf-page-head">
-    <h1>Friends</h1>
+  <!-- no title text: only a slim row with the seats as dots (the page name stays for screen readers) -->
+  <div class="sf-page-head sf-page-head-slim">
+    <h1 class="visually-hidden">Friends</h1>
     <app-seat-dots [taken]="filled()" />
   </div>
 
@@ -31,8 +31,8 @@
               <header class="sf-head">
                 <!-- the icon of this seat: friend1.svg ... friend7.svg (public/icons/friends) -->
                 <span class="sf-seat">
-                  <!-- the icon and the name open the profile; the rest of the card opens the conversation -->
-                  <button type="button" class="sf-name-btn" tabindex="-1" aria-hidden="true" (click)="toggleProfile(friend)" [attr.aria-expanded]="expanded() === friend.id"
+                  <!-- only the icon opens the profile; the rest of the card (the name too) opens the conversation -->
+                  <button type="button" class="sf-name-btn" (click)="toggleProfile(friend)" [attr.aria-expanded]="expanded() === friend.id"
                           [attr.aria-label]="(expanded() === friend.id ? 'Hide the profile of ' : 'Show the profile of ') + friend.name">
                     <app-friend-avatar [friend]="friend" [seat]="slot.position" [size]="32" />
                   </button>
@@ -41,10 +41,7 @@
                   }
                 </span>
                 <div class="sf-title">
-                  <button type="button" class="sf-name-btn" (click)="toggleProfile(friend)" [attr.aria-expanded]="expanded() === friend.id"
-                          [attr.aria-label]="(expanded() === friend.id ? 'Hide the profile of ' : 'Show the profile of ') + friend.name">
-                    <strong class="sf-name">{{ friend.name }}</strong>
-                  </button>
+                  <span class="sf-name sf-friend-name">{{ friend.name }}</span>
                   @if (friend.mood; as mood) {
                     <img class="sf-mood" [src]="moodIcon(mood)" [alt]="moodLabel(mood)" [title]="moodLabel(mood)" width="20" height="20" />
                   }
@@ -115,9 +112,6 @@
                 <dl class="sf-details">
                   @if (friend.phone) { <dt>Phone</dt><dd>{{ friend.phone }}</dd> }
                   @if (friend.email) { <dt>Email</dt><dd>{{ friend.email }}</dd> }
-                  @for (n of networks; track n.key) {
-                    @if (friend[n.key]; as account) { <dt>{{ n.label }}</dt><dd>{{ account }}</dd> }
-                  }
                   @if (friend.createdAt) { <dt>Added</dt><dd>{{ friend.createdAt | date: 'mediumDate' }}</dd> }
                 </dl>
 

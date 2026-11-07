@@ -5,17 +5,17 @@ import { asyncHandler, requireAuth } from "./auth";
 import { touchSync } from "./sync";
 import { parsePicture, readAvatar, removeAvatar, saveAvatar } from "./avatar";
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAX_FRIENDS, MAX_MOOD_MESSAGE, MAX_NAME_LENGTH, MOOD_COUNT } from "./constants";
-import { ProfileDetails, ProfilePicture, Socials } from "./models";
+import { ProfileDetails, ProfilePicture } from "./models";
 import { circleCol, userDoc } from "./paths";
 import { isLanguage } from "./models/shared/languages";
-import { PHONE_RE, isCountry, SOCIAL_NETWORKS, parseSocials, phoneKey, presenceOf, text } from "./validation";
+import { PHONE_RE, isCountry, phoneKey, presenceOf, text } from "./validation";
 
 const uidOf = (res: { locals: Record<string, unknown> }) => (res.locals.token as DecodedIdToken).uid;
 
 export const profileRouter = Router();
 profileRouter.use(requireAuth);
 
-/** My profile (name, phone number, social accounts), stored on the user-account document. */
+/** My profile (name, phone number), stored on the user-account document. */
 function detailsOf(data: Record<string, unknown>): ProfileDetails {
   return {
     name: (data.displayName as string | null | undefined) ?? null,
@@ -28,7 +28,6 @@ function detailsOf(data: Record<string, unknown>): ProfileDetails {
     language: (data.language as string | null | undefined) ?? null,
     mood: Number.isInteger(data.mood) ? (data.mood as number) : null,
     moodMessage: (data.moodMessage as string | null | undefined) ?? null,
-    ...(Object.fromEntries(SOCIAL_NETWORKS.map((n) => [n, data[n] ?? null])) as Socials),
   };
 }
 
@@ -41,7 +40,7 @@ profileRouter.get(
 
 /**
  * Save my profile (the page autosaves, so this is called often with the whole form).
- * An empty phone / social value removes it. `name` is optional (left out = unchanged) but can never be empty.
+ * An empty phone value removes it. `name` is optional (left out = unchanged) but can never be empty.
  */
 profileRouter.put(
   "/",
@@ -49,7 +48,6 @@ profileRouter.put(
     const body = req.body ?? {};
     const phoneGiven = "phone" in body;
     const phone = text(body.phone, 25);
-    const socials = parseSocials(body);
 
     const nameGiven = "name" in body;
     const name = text(body.name, MAX_NAME_LENGTH);
@@ -99,7 +97,7 @@ profileRouter.put(
     const ref = userDoc(uidOf(res));
     const before = (await ref.get()).data();
     const verifiedPhone = (before?.verifiedPhone as string | null | undefined) ?? null;
-    // Phone and social accounts are CONTACT INFO for friends: nothing typed here is ever used to find people.
+    // The phone number is CONTACT INFO for friends: nothing typed here is ever used to find people.
     // (A verified phone number is the contact number and cannot be changed here.)
     // set+merge so it also works if the account document does not exist yet
     await ref.set(
@@ -108,11 +106,10 @@ profileRouter.put(
         ...(iconGiven ? { profileIcon: body.icon } : {}),
         ...(countryGiven ? { country } : {}),
         ...(languageGiven ? { language } : {}),
-        // only what the request carries is changed: a save that leaves the phone or an account out keeps it
+        // only what the request carries is changed: a save that leaves the phone out keeps it
         ...(phoneGiven || verifiedPhone
           ? { phone: verifiedPhone ?? phone, phoneKey: phoneKey(verifiedPhone ?? phone) } // reachable by this number, verified or not
           : {}),
-        ...Object.fromEntries(Object.entries(socials).filter(([network]) => network in body)),
         profileUpdatedAt: FieldValue.serverTimestamp(),
       },
       { merge: true },

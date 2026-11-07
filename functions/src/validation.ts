@@ -1,6 +1,6 @@
 import { Timestamp } from "firebase-admin/firestore";
 import { PRESENCE_STALE_MS } from "./constants";
-import { Presence, SocialKey, Socials } from "./models";
+import { Presence } from "./models";
 
 export const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export const PHONE_RE = /^[+0-9()\-\s.]{5,25}$/;
@@ -16,27 +16,6 @@ export function text(value: unknown, max: number): string | null {
 export function phoneKey(value: string | null | undefined): string | null {
   const digits = (value ?? "").replace(/\D/g, "");
   return digits.length >= 8 ? digits.slice(-8) : null;
-}
-
-/** Social media networks a person can add (one shared list: friends, profile). */
-export const SOCIAL_NETWORKS: readonly SocialKey[] = [
-  "facebook",
-  "instagram",
-  "tiktok",
-  "snapchat",
-  "twitter", // X
-  "linkedin",
-  "telegram",
-];
-
-/** Reads every social media field from a request body. Handles lose a leading "@". */
-export function parseSocials(body: Record<string, unknown>): Socials {
-  const out = {} as Socials;
-  for (const n of SOCIAL_NETWORKS) {
-    const v = text(body[n], 100);
-    out[n] = v && n !== "facebook" && n !== "linkedin" ? v.replace(/^@/, "") || null : v;
-  }
-  return out;
 }
 
 /**

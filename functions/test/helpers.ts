@@ -21,9 +21,6 @@ export function person(n: number): Person {
     name: `Person ${id}`,
     email: `person${id}@test.dev`,
     phone: `+47900000${id}`,
-    instagram: `insta_${id}`,
-    tiktok: `tt_${id}`,
-    linkedin: `lin-${id}`,
   };
 }
 
@@ -37,11 +34,6 @@ export function contactOf(target: Person, via: Via): Record<string, string> {
     case "phone": return { ...base, phone: target.phone };
     case "phoneSpaced": return { ...base, phone: target.phone.replace(/^\+47(\d{3})(\d{3})(\d{2})$/, "+47 $1 $2 $3") };
     case "phoneNoPrefix": return { ...base, phone: target.phone.replace("+47", "") };
-    case "instagram": return { ...base, instagram: target.instagram };
-    case "instagramAt": return { ...base, instagram: `@${target.instagram.toUpperCase()}` };
-    case "instagramLink": return { ...base, instagram: `https://www.instagram.com/${target.instagram}/?hl=en` };
-    case "linkedinLink": return { ...base, linkedin: `https://www.linkedin.com/in/${target.linkedin}/` };
-    case "tiktok": return { ...base, tiktok: `https://www.tiktok.com/@${target.tiktok}` };
   }
 }
 
@@ -81,14 +73,11 @@ export class User {
     });
   }
 
-  /** Sign up like the real app: login sync, then phone + social accounts on the profile. */
+  /** Sign up like the real app: login sync, then the phone number on the profile. */
   async signUp() {
     await this.call("post", "/users/sync").expect(200);
     await this.call("put", "/profile", {
       phone: this.p.phone,
-      instagram: this.p.instagram,
-      tiktok: this.p.tiktok,
-      linkedin: this.p.linkedin,
     }).expect(200);
     return this;
   }
@@ -331,15 +320,11 @@ export async function assertConsistent() {
   }
 
   // 9. people are reachable by their email / phone whether or not it is verified, but a confirmed phone must be
-  //    the account's key, and friend entries carry no keys for social accounts (those are contact info only)
+  //    the account's key
   const accounts = (await db.collection("user-account").get()).docs.map((d) => ({ id: d.id, data: d.data() }));
   for (const account of accounts) {
     const { phoneKey, verifiedPhone } = account.data;
     if (verifiedPhone && !String(verifiedPhone).replace(/\D/g, "").endsWith(String(phoneKey))) fail(`account ${account.id}: phoneKey does not belong to the verified number`);
-  }
-  for (const e of entries) {
-    const socialKey = Object.keys(e.data).find((k) => /^(facebook|instagram|tiktok|snapchat|twitter|linkedin|telegram)Key$/.test(k));
-    if (socialKey) fail(`entry ${e.uid}/${e.id} has ${socialKey}: social accounts must not be used to find people`);
   }
 
   if (problems.length) throw new Error(`Connection rules broken:\n- ${problems.slice(0, 15).join("\n- ")}${problems.length > 15 ? `\n... and ${problems.length - 15} more` : ""}`);

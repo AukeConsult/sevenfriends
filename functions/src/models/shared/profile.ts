@@ -1,6 +1,4 @@
-import { Socials } from "./social";
-
-/** My profile as the profile page edits it: name, phone number and social accounts. */
+/** My profile as the profile page edits it: name and phone number. */
 export type ProfileDetails = {
   name: string | null;
   /** the verified number when there is one (then it cannot be edited), otherwise the contact number typed in */
@@ -21,7 +19,7 @@ export type ProfileDetails = {
   mood: number | null;
   /** a short mood message (at most 60 characters), which confirmed friends see; null = none */
   moodMessage: string | null;
-} & Socials;
+};
 
 /** What GET /profile/picture returns: the uploaded picture as a data URL (a small JPEG / PNG / WebP), or null. */
 export interface ProfilePicture {

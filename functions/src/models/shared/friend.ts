@@ -1,10 +1,8 @@
-import { Socials } from "./social";
-
 /** pending until the other person confirms; rejected when they rejected the request. */
 export type FriendStatus = "pending" | "confirmed" | "rejected";
 
 /** A friend entry (a seat in my circle). Its id is the id of the connection, the same for both people. */
-export interface Friend extends Socials {
+export interface Friend {
   id: string;
   name: string;
   email: string | null;
@@ -58,7 +56,7 @@ export interface FriendInvite {
 }
 
 /** What is sent when adding a friend. */
-export type NewFriend = Pick<Friend, "name" | "email" | "phone"> & Socials & { message?: string | null };
+export type NewFriend = Pick<Friend, "name" | "email" | "phone"> & { message?: string | null };
 
 /** A request from someone who added me. */
 export interface FriendRequest {
