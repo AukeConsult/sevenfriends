@@ -4,7 +4,7 @@ import { DocumentReference, FieldValue, Timestamp, getFirestore } from "firebase
 import { asyncHandler } from "./auth";
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION } from "./constants";
 import { ChatMessage, Conversation, MediaRef, MessageDeleteCriteria, MessageLink, MessageDeleteResult, NewMedia } from "./models";
-import { circleCol, messageCol, userFields } from "./paths";
+import { circleCol, messageCol, missingIndex, userFields } from "./paths";
 import { sendPush } from "./push";
 import { linkOf } from "./link-preview";
 import { touchFeed, touchFeedIfExists } from "./sync";
@@ -59,18 +59,22 @@ conversationRouter.get(
 
     // only the latest FEED_LIMIT (newest first, then turned round below): a long conversation is not read whole every time.
     // Needs the index messages(connectionId, time desc) in firestore.indexes.json
-    const snap = await messageCol(uid)
-      .where("connectionId", "==", connection.id)
-      .orderBy("time", "desc")
-      .limit(FEED_LIMIT)
-      .select("text", "fromUid", "read", "time", "editedAt", "hidden", "inBox", "media", "link")
-      .get();
-    const messages: ChatMessage[] = snap.docs
+    const feed = messageCol(uid).where("connectionId", "==", connection.id);
+    let docs: FirebaseFirestore.QueryDocumentSnapshot[];
+    try {
+      docs = (await feed.orderBy("time", "desc").limit(FEED_LIMIT).select("text", "fromUid", "read", "time", "editedAt", "hidden", "inBox", "media", "link").get()).docs;
+    } catch (err) {
+      if (!missingIndex(err)) throw err;
+      console.warn("The index messages(connectionId, time) is not there yet: reading the whole feed", err); // works, only slower, until the index is built
+      docs = (await feed.get()).docs;
+    }
+    const messages: ChatMessage[] = docs
       .map((d) => {
         const m = d.data();
         return { id: d.id, text: m.text as string, mine: m.fromUid === uid, read: Boolean(m.read), time: iso(m.time), edited: Boolean(m.editedAt), hidden: Boolean(m.hidden), inBox: Boolean(m.inBox), media: (m.media as MediaRef | undefined) ?? null, link: (m.link as MessageLink | undefined) ?? null };
       })
-      .sort((a, b) => (a.time ?? "").localeCompare(b.time ?? ""));
+      .sort((a, b) => (a.time ?? "").localeCompare(b.time ?? ""))
+      .slice(-FEED_LIMIT);
     const conversation: Conversation = { friend: { id: connection.id, name: connection.name }, messages };
     res.json(conversation);
   }),

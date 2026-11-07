@@ -13,7 +13,7 @@ import {
 } from "./constants";
 import { invitesSentToday, queueInvite } from "./outbox";
 import { Friend, FriendInvite, MediaRef, FriendStatus, NewFriend, ProfilePicture, Socials } from "./models";
-import { circleCol, friendRequestCol, messageCol, userFields } from "./paths";
+import { circleCol, friendRequestCol, messageCol, missingIndex, userFields } from "./paths";
 import { readAvatar } from "./avatar";
 import { deleteObjects } from "./sf-cache";
 import { tellFriendAsleep } from "./sync";
@@ -89,9 +89,15 @@ function toJson(doc: FirebaseFirestore.DocumentSnapshot): Friend {
 /** For conversations from before the friendship remembered it: the time of the newest message of the feed (or null). */
 async function lastSpoken(uid: string, connectionId: string): Promise<string | null> {
   // the newest message only (index messages(connectionId, time desc)), not the whole feed
-  const newest = await messageCol(uid).where("connectionId", "==", connectionId).orderBy("time", "desc").limit(1).select("time").get();
-  const time = newest.docs[0]?.get("time");
-  return time instanceof Timestamp ? time.toDate().toISOString() : null;
+  const feed = messageCol(uid).where("connectionId", "==", connectionId);
+  try {
+    const time = (await feed.orderBy("time", "desc").limit(1).select("time").get()).docs[0]?.get("time");
+    return time instanceof Timestamp ? time.toDate().toISOString() : null;
+  } catch (err) {
+    if (!missingIndex(err)) throw err; // the index is not built yet: the old way (slower, the same answer)
+    const times = (await feed.select("time").get()).docs.map((d) => d.get("time")).filter((t): t is Timestamp => t instanceof Timestamp);
+    return times.length ? new Date(Math.max(...times.map((t) => t.toMillis()))).toISOString() : null;
+  }
 }
 
 async function withUnverified(friend: Friend, entry: FirebaseFirestore.DocumentData | undefined, uid: string): Promise<Friend> {

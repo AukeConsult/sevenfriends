@@ -45,23 +45,34 @@ describe.skipIf(!USING_EMULATOR)("firestore security rules: every user controls 
   const stranger = () => env.authenticatedContext("uid02").firestore();
   const anonymous = () => env.unauthenticatedContext().firestore();
 
-  describe("the live data under my own account may be read by me", () => {
+  describe("the live data under my own account may be listened to by me (queries only)", () => {
     it("my pings", async () => {
       await assertSucceeds(me().collection("user-account/uid01/incoming-signal").get());
-      await assertSucceeds(me().doc("user-account/uid01/incoming-signal/s1").get());
     });
 
-    it("my messages, also the query the app listens to (unread ones)", async () => {
-      await assertSucceeds(me().collection("user-account/uid01/messages").get());
+    it("my unread messages: the one query the app listens to", async () => {
       await assertSucceeds(me().collection("user-account/uid01/messages").where("read", "==", false).get());
-      await assertSucceeds(me().doc("user-account/uid01/messages/m1").get());
+    });
+
+    it("the times of my profile and sounds changes", async () => {
+      await assertSucceeds(me().collection("user-account/uid01/sync").get());
+    });
+
+    it("my friend list", async () => {
+      await assertSucceeds(me().collection("user-account/uid01/friend-circle/default/friends").get());
     });
   });
 
-  describe("my own friend list may be read by me (the app listens to it)", () => {
-    it("the list and one entry", async () => {
-      await assertSucceeds(me().collection("user-account/uid01/friend-circle/default/friends").get());
-      await assertSucceeds(me().doc("user-account/uid01/friend-circle/default/friends/f1").get());
+  describe("even my own data is closed beyond what the app needs", () => {
+    it.each([
+      ["a single ping by its path", () => me().doc("user-account/uid01/incoming-signal/s1").get()],
+      ["a single message by its path", () => me().doc("user-account/uid01/messages/m1").get()],
+      ["a single friend by its path", () => me().doc("user-account/uid01/friend-circle/default/friends/f1").get()],
+      ["all my messages (not only the unread ones)", () => me().collection("user-account/uid01/messages").get()],
+      ["my read messages", () => me().collection("user-account/uid01/messages").where("read", "==", true).get()],
+      ["the friends of another circle", () => me().collection("user-account/uid01/friend-circle/other/friends").get()],
+    ])("cannot read %s", async (_label, read) => {
+      await assertFails(read());
     });
   });
 
@@ -71,6 +82,7 @@ describe.skipIf(!USING_EMULATOR)("firestore security rules: every user controls 
       ["a signed-in stranger: ping", () => stranger().doc("user-account/uid01/incoming-signal/s1").get()],
       ["a signed-in stranger: messages", () => stranger().collection("user-account/uid01/messages").get()],
       ["a signed-in stranger: unread messages query", () => stranger().collection("user-account/uid01/messages").where("read", "==", false).get()],
+      ["a signed-in stranger: the sync times", () => stranger().collection("user-account/uid01/sync").get()],
       ["a signed-in stranger: one message", () => stranger().doc("user-account/uid01/messages/m1").get()],
       ["a signed-in stranger: my friend list", () => stranger().collection("user-account/uid01/friend-circle/default/friends").get()],
       ["a signed-in stranger: one friend", () => stranger().doc("user-account/uid01/friend-circle/default/friends/f1").get()],

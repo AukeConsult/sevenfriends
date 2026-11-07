@@ -141,7 +141,7 @@ describe("the invitation text comes from the settings (environment)", () => {
     await invite(u(0), entry.id).expect(200);
     const [mail] = await docs("mail");
     expect(mail.message.text).toBe(
-      `Person 00 wants you as one of their 7 closest friends on Seven Friends.\n\nSign up with this email address (${stranger.email}) to see the request: https://sevenfriends.web.app/`,
+      `Person 00 wants you as one of their 7 closest friends on Seven Friends.\n\nSign up with this email address (${stranger.email}) to see the request: https://sevenfriends.io/`,
     );
     expect(mail.message.subject).toBe("Person 00 invited you to Seven Friends");
   });
@@ -162,6 +162,6 @@ describe("the invitation text comes from the settings (environment)", () => {
     process.env.APP_URL = "  ";
     const entry = await u(0).add(stranger);
     await invite(u(0), entry.id).expect(200);
-    expect((await docs("mail"))[0].message.text).toContain("https://sevenfriends.web.app/");
+    expect((await docs("mail"))[0].message.text).toContain("https://sevenfriends.io/");
   });
 });

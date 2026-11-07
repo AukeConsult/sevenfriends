@@ -15,25 +15,30 @@ service cloud.firestore {
     //   friends          my own friend list (the app listens, so an answer to my request shows at once)
     //   sync             times of my last profile / sounds change, so my other devices follow
     // Nobody writes from the client, and nobody can read somebody else's data.
+    //
+    // The app only LISTENS to these collections (a query, `list`), it never reads a single document by its path: `get` stays closed.
+    // The messages can only be listed as "the unread ones" (where read == false), which is the one query the app makes:
+    // a query without that condition is refused, so the client cannot pull the whole history.
     match /user-account/{uid}/incoming-signal/{signalId} {
-      allow read: if isOwner(uid);
-      allow write: if false;
+      allow list: if isOwner(uid);
+      allow get, write: if false;
     }
 
     match /user-account/{uid}/messages/{messageId} {
-      allow read: if isOwner(uid);
-      allow write: if false;
+      allow list: if isOwner(uid) && resource.data.read == false;
+      allow get, write: if false;
     }
 
-    // sync/state: only times ("my profile / sounds changed"), so my other devices reload them
+    // sync: only times ("my profile / sounds changed"), so my other devices reload them
     match /user-account/{uid}/sync/{docId} {
-      allow read: if isOwner(uid);
-      allow write: if false;
+      allow list: if isOwner(uid);
+      allow get, write: if false;
     }
 
-    match /user-account/{uid}/friend-circle/{circleId}/friends/{friendId} {
-      allow read: if isOwner(uid);
-      allow write: if false;
+    // only the default circle: it is the one the app lists
+    match /user-account/{uid}/friend-circle/default/friends/{friendId} {
+      allow list: if isOwner(uid);
+      allow get, write: if false;
     }
 
     // everything else (profiles, circles, friends, requests, ...) is closed to the client

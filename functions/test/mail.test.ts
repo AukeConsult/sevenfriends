@@ -147,7 +147,7 @@ describe("with the invitation emails of the app", () => {
     expect(await deliverMail(doc.id, transportFor)).toBe("sent");
     expect(sent[0].to).toEqual([stranger.email]);
     expect(sent[0].subject).toBe("Person 00 invited you to Seven Friends");
-    expect(sent[0].text).toContain("https://sevenfriends.web.app/");
+    expect(sent[0].text).toContain("https://sevenfriends.io/");
   });
 });
 
@@ -160,7 +160,7 @@ describe("how the invitation email looks (assets/mail/invite.html)", () => {
     expect(html).toContain("Leif Auke wants you as a close friend");
     expect(html).toContain("friend@example.com");
     expect(html).toContain("&quot;Hi! Be my friend.&quot;");
-    expect(html).toContain('href="https://sevenfriends.web.app/"');
+    expect(html).toContain('href="https://sevenfriends.io/"');
     expect(html).not.toMatch(/\{\w+\}/); // nothing left unfilled
     expect(html).not.toContain("HOW THE INVITATION EMAIL LOOKS"); // the note at the top is not sent
     expect(html.trimStart().startsWith("<!DOCTYPE html>")).toBe(true);

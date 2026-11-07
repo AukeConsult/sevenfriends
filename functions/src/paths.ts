@@ -28,6 +28,11 @@ export async function readFields(ref: DocumentReference, ...fields: string[]): P
   const [snap] = await getFirestore().getAll(ref, { fieldMask: fields });
   return snap.data();
 }
+/** Firestore says a query needs an index that does not exist (yet): it is created by `firebase deploy --only firestore:indexes` and takes a few minutes to build. */
+export const missingIndex = (err: unknown): boolean => {
+  const e = err as { code?: unknown; message?: unknown } | null;
+  return e?.code === 9 || /FAILED_PRECONDITION|requires an index/i.test(String(e?.message ?? ""));
+};
 /** Some fields of a user-account document. */
 export const userFields = (uid: string, ...fields: string[]) => readFields(userDoc(uid), ...fields);
 export const profilePictureDoc = (uid: string) => userDoc(uid).collection(PROFILE_PICTURE_COLLECTION).doc(PROFILE_PICTURE_DOC);
