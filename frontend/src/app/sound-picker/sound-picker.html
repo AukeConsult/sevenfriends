@@ -1,5 +1,5 @@
 <div class="sf-back-row">
-  <a routerLink="/settings/notifications" class="btn btn-light" (click)="sounds.stop()" aria-label="Back to sounds">‹ Back</a>
+  <a [routerLink]="fromSetup ? '/setup' : '/settings/notifications'" [queryParams]="fromSetup ? { step: 'sounds' } : null" class="btn btn-light" (click)="sounds.stop()" aria-label="Back to sounds">‹ Back</a>
 </div>
 <div class="sf-page-head">
   <h1>{{ item().label }}</h1>
@@ -44,5 +44,5 @@
     }
   </ul>
 
-  <a routerLink="/settings/notifications" class="btn btn-primary" (click)="sounds.stop()">Done</a>
+  <a [routerLink]="fromSetup ? '/setup' : '/settings/notifications'" [queryParams]="fromSetup ? { step: 'sounds' } : null" class="btn btn-primary" (click)="sounds.stop()">Done</a>
 </main>

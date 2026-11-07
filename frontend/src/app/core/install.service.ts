@@ -66,6 +66,14 @@ export class InstallService {
     await offer.userChoice.catch(() => undefined);
   }
 
+  /**
+   * This window is an app with a storage of its own, apart from the browser the person signed up in: the Android app, the Windows app, and a phone's
+   * home-screen app. A key, a notification permission or a microphone permission made in the browser is NOT here, so this device has to be set up again.
+   */
+  get separateApp(): boolean {
+    return this.native || this.windowsApp || (this.mobile && this.installed());
+  }
+
   /** this window IS the installed app (not a browser tab) */
   runsAsApp(): boolean {
     return this.isStandalone();

@@ -22,7 +22,7 @@
       </div>
     </div>
     <div class="sf-actions">
-      <a routerLink="/friends" class="btn btn-light flex-fill">Done</a>
+      <a [routerLink]="backTo" [queryParams]="backParams" class="btn btn-light flex-fill">Done</a>
       <button type="button" class="btn btn-light flex-fill" (click)="another()">Add another</button>
     </div>
   </main>
@@ -53,7 +53,7 @@
     }
 
     <div class="sf-actions">
-      <a routerLink="/friends" class="btn btn-light flex-fill" [class.disabled]="sending()">Cancel</a>
+      <a [routerLink]="backTo" [queryParams]="backParams" class="btn btn-light flex-fill" [class.disabled]="sending()">Cancel</a>
       <button type="submit" class="btn btn-primary flex-fill" [disabled]="sending()">
         {{ sending() ? 'Sending…' : 'Add friend' }}
       </button>

@@ -1,0 +1,226 @@
+@if (part() !== 'sounds') {
+  @if (native) {
+    <div class="card">
+      <div class="card-body vstack gap-2">
+        <span class="small text-secondary">The notifications of this phone are set on the notification screen of the Android app.</span>
+        <button type="button" class="btn btn-primary align-self-start" (click)="openAndroidScreen()">Open the notification screen</button>
+      </div>
+    </div>
+  }
+
+  @if (!native) {
+  <h2 class="sf-section-title m-0 mt-2">While the app is open</h2>
+  <p class="small text-secondary m-0">A pop-up shows when a message or request arrives and you are not looking at the app. Click it to come back.</p>
+  <div class="card">
+    <div class="card-body vstack gap-2">
+      <div class="form-check form-switch m-0">
+        <input class="form-check-input" type="checkbox" role="switch" id="desktop-switch" [checked]="desktop.wanted()"
+               [disabled]="!desktop.supported" (change)="setDesktop($any($event.target).checked)" />
+        <label class="form-check-label" for="desktop-switch">Show a pop-up when the app is in the background</label>
+      </div>
+      @if (noticeProblem()) {
+        <div class="alert alert-warning" role="alert">{{ noticeProblem() }}</div>
+      } @else if (desktop.permission() === 'denied' && desktop.supported) {
+        <span class="small text-secondary">Notifications are blocked for this site in the browser settings.</span>
+      }
+      <p class="small text-secondary m-0">Set per browser: turn it on in each browser you use.</p>
+      <p class="small text-secondary m-0">
+        Permission: <strong>{{ desktop.permission() === 'granted' ? 'allowed' : desktop.permission() === 'denied' ? 'blocked' : 'not asked yet' }}</strong>.
+        Last notification: {{ desktop.lastResult() }}.
+      </p>
+      <div>
+        <button type="button" class="btn btn-sm btn-outline-secondary" [disabled]="!desktop.supported" (click)="testNotice()">Show a test pop-up</button>
+      </div>
+    </div>
+  </div>
+  }
+
+  @if (!native) {
+    <h2 class="sf-section-title m-0 mt-2">When the app is closed</h2>
+    <p class="small text-secondary m-0">This device is woken for a new message or friend request, also when the screen is locked.</p>
+    <div class="card">
+      <div class="card-body vstack gap-2">
+        <div class="form-check form-switch m-0">
+          <input #pushSwitch class="form-check-input" type="checkbox" role="switch" id="push-switch" [checked]="push.enabled()"
+                 [disabled]="!push.supported()" (change)="setPush(pushSwitch.checked, pushSwitch)" />
+          <label class="form-check-label" for="push-switch">Notify this device, also when the app is closed</label>
+        </div>
+        @if (push.problem()) {
+          <div class="alert alert-warning" role="alert">{{ push.problem() }}</div>
+        } @else if (!push.configured) {
+          <span class="small text-secondary">Push only works on the deployed site, not in the local setup.</span>
+        } @else if (!push.supported()) {
+          <span class="small text-secondary">
+            This browser cannot receive push. On iPhone, open the site in Safari, tap Share → Add to Home Screen, and open the app from there.
+          </span>
+        }
+        @switch (device) {
+          @case ('android') {
+            <div class="alert alert-info small m-0" role="note">
+              On Android, install the app to be notified: "Notify this device" is set up by the app, not by the browser.
+              <a routerLink="/install/android" class="alert-link">Install the Android app</a>
+            </div>
+          }
+          @case ('iphone') {
+            <div class="alert alert-info small m-0" role="note">
+              On iPhone, notifications only work from the Home Screen app: in Safari tap Share → Add to Home Screen, and open the app from its icon.
+              <a routerLink="/install/iphone" class="alert-link">Show me how</a>
+            </div>
+          }
+        }
+        <span class="small text-secondary">Set per device. Turned off when you log out.</span>
+      </div>
+    </div>
+
+    <h2 class="sf-section-title m-0 mt-2">Which notifications</h2>
+    <p class="small text-secondary m-0">Saved on your account: it holds on every device.</p>
+    <div class="card">
+      <div class="card-body vstack gap-2">
+        @if (notices(); as n) {
+          @for (kind of kinds; track kind.key) {
+            <div class="form-check form-switch m-0">
+              <input class="form-check-input" type="checkbox" role="switch" [id]="'notice-' + kind.key" [checked]="n[kind.key]"
+                     (change)="setNotice(kind.key, $any($event.target).checked)" />
+              <label class="form-check-label" [for]="'notice-' + kind.key">{{ kind.label }}</label>
+            </div>
+          }
+          <div class="form-check form-switch m-0">
+            <input class="form-check-input" type="checkbox" role="switch" id="notice-hideText" [checked]="n.hideText"
+                   (change)="setNotice('hideText', $any($event.target).checked)" />
+            <label class="form-check-label" for="notice-hideText">Hide the text of a message on the lock screen</label>
+          </div>
+          <span class="small text-secondary">With this on, a notification shows who wrote, and "New message", but not what.</span>
+        } @else if (noticesProblem()) {
+          <div class="alert alert-warning m-0" role="alert">{{ noticesProblem() }}</div>
+        } @else {
+          <span class="small text-secondary">Loading…</span>
+        }
+        @if (notices() && noticesProblem()) {
+          <div class="alert alert-warning m-0" role="alert">{{ noticesProblem() }}</div>
+        }
+      </div>
+    </div>
+
+  }
+
+  @if (!native && (desktop.permission() === 'denied' || noticeProblem() || push.problem())) {
+    <details class="card" open>
+      <summary class="card-body fw-semibold">How do I allow notifications?</summary>
+      <div class="card-body pt-0 vstack gap-3 small">
+        <p class="m-0">
+          Your browser has been told to block notifications from this site. The switches here cannot change that:
+          you allow it once in the browser, then come back and turn the switch on again.
+        </p>
+        @switch (device) {
+          @case ('android') {
+        <div>
+          <strong>Android</strong>
+          <p class="mb-1">On Android, notifications are set up by installing the Seven Friends app. The app asks for permission itself, and has its own sounds.</p>
+          <a routerLink="/install/android" class="btn btn-sm btn-primary">Install the Android app</a>
+          <p class="mt-3 mb-1"><strong>Or keep using the browser</strong></p>
+          <ol class="mb-1">
+            <li>Tap the icon at the left end of the address bar, then <strong>Permissions → Notifications → Allow</strong>.</li>
+            <li>Reload this page, then turn the switch on again.</li>
+            <li>Also check Android Settings → Apps → Chrome → Notifications: it must be on.</li>
+          </ol>
+          <span class="text-secondary">Or copy the address, open a new tab, paste it and press Enter (some Android versions of Chrome do not open it: use the steps above).</span>
+          <div class="mt-2">
+            <button type="button" class="btn btn-sm btn-outline-primary" (click)="copyAddress(settingsAddresses[0].address)">
+              {{ copiedAddress() === settingsAddresses[0].address ? 'Copied: now paste it in a new tab' : 'Copy the Chrome address' }}
+            </button>
+          </div>
+        </div>
+          }
+          @case ('iphone') {
+        <div>
+          <strong>iPhone</strong>
+          <ol class="mb-0">
+            <li>Notifications only work from the Home Screen app: in Safari tap Share → <strong>Add to Home Screen</strong>, and open the app from its icon.</li>
+            <li>Check iPhone Settings → Notifications → Seven Friends → <strong>Allow Notifications</strong>.</li>
+            <li>If you once tapped "Don't Allow", delete the Home Screen app, add it again and allow when asked.</li>
+          </ol>
+        </div>
+          }
+          @case ('safari') {
+        <div>
+          <strong>Safari on a Mac</strong>
+          <ol class="mb-0">
+            <li>In the menu bar choose <strong>Safari → Settings → Websites → Notifications</strong>.</li>
+            <li>Find this site in the list and set it to <strong>Allow</strong>.</li>
+            <li>Reload this page, then turn the switch on again.</li>
+          </ol>
+          <span class="text-secondary">Also check the Mac's System Settings → Notifications → Safari: it must be on, and Focus must not be switched on.</span>
+        </div>
+          }
+          @default {
+        <div>
+          <strong>Chrome or Edge</strong>
+          <ol class="mb-0">
+            <li>Click the icon at the left end of the address bar (a lock or sliders).</li>
+            <li>Find <strong>Notifications</strong> and set it to <strong>Allow</strong>.</li>
+            <li>Reload this page, then turn the switch on again.</li>
+          </ol>
+          <span class="text-secondary">Or copy the address, open a new tab, paste it and press Enter. Its page opens on this site: set <strong>Notifications</strong> to <strong>Allow</strong>.</span>
+          <div class="d-flex flex-wrap gap-2 mt-2">
+            @for (a of settingsAddresses; track a.address) {
+              <button type="button" class="btn btn-sm btn-outline-primary" (click)="copyAddress(a.address)">
+                {{ copiedAddress() === a.address ? 'Copied: now paste it in a new tab' : 'Copy the ' + a.name + ' address' }}
+              </button>
+            }
+          </div>
+        </div>
+        <div>
+          <strong>Windows</strong>
+          <ol class="mb-0">
+            <li>Settings → System → Notifications: turn notifications on, and turn on your browser in the list.</li>
+            <li>Turn off Do not disturb or Focus assist.</li>
+          </ol>
+        </div>
+          }
+        }
+      </div>
+    </details>
+  }
+}
+
+@if (part() !== 'notifications') {
+@if (part() === 'all') { <h2 class="sf-section-title m-0 mt-2">Sounds</h2> }
+  <p class="small text-secondary m-0">
+    @if (part() === 'all') { Choose a sound for each thing that can arrive. }@if (!native) { Sounds play while the app is open. Saved on your account. }
+  </p>
+
+  <div class="card">
+    <div class="card-body vstack gap-2">
+      <div class="d-flex justify-content-between m-0">
+        <strong>Volume</strong><span class="text-secondary">{{ sounds.volume() }} %</span>
+      </div>
+      @if (native) {
+        <div class="progress" role="progressbar" [attr.aria-valuenow]="sounds.volume()" aria-valuemin="0" aria-valuemax="100" aria-label="Volume of the sounds">
+          <div class="progress-bar" [style.width.%]="sounds.volume()"></div>
+        </div>
+        <span class="small text-secondary">Follows the notification volume of the phone.</span>
+      } @else {
+        <input type="range" class="form-range" id="volume" min="0" max="100" step="5" [value]="sounds.volume()"
+               (input)="setVolume($any($event.target).value)" aria-label="Volume of the sounds" />
+        <span class="small text-secondary">Also turn up the volume of your device. Press Play on a sound to hear the new volume.</span>
+      }
+    </div>
+  </div>
+
+  @for (item of events; track item.event) {
+    <div class="card">
+      <div class="card-body vstack gap-2">
+        <div>
+          <strong>{{ item.label }}</strong>
+          <span class="small text-secondary d-block">{{ item.hint }}</span>
+        </div>
+        <div class="input-group flex-nowrap">
+          <a class="btn btn-outline-secondary flex-grow-1 min-w-0 justify-content-between text-start" [routerLink]="['/settings/sounds', item.event]" [queryParams]="setup() ? { setup: 1 } : null"
+             [attr.aria-label]="'Choose the sound for ' + item.label"><span class="sf-ellipsis">{{ soundLabel(item.event) }}</span><span class="ms-2" aria-hidden="true">›</span></a>
+          <button type="button" class="btn btn-outline-primary flex-shrink-0 text-nowrap" [disabled]="sounds.choices()[item.event] === 'none'"
+                  (click)="tryOut(item.event)" [attr.aria-label]="(sounds.playingKey() === item.event ? 'Stop the sound for ' : 'Play the sound for ') + item.label">{{ sounds.playingKey() === item.event ? '■ Stop' : '▶ Play' }}</button>
+        </div>
+      </div>
+    </div>
+  }
+}

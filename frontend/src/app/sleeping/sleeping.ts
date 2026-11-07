@@ -1,8 +1,13 @@
+import { DatePipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FriendAvatar } from '../friend-avatar/friend-avatar';
 import { FriendsService } from '../core/friends.service';
-import { Friend } from '../models';
+import { countries } from '../core/countries';
+import { moodIcon, moodLabel } from '../core/moods';
+import { MessagesService } from '../core/messages.service';
+import { timeAgo } from '../core/time-ago';
+import { Friend, profileColorHex, profileColorInk } from '../models';
 
 const MAX_FRIENDS = 7; // seats (the same number as on the Friends page)
 
@@ -12,11 +17,21 @@ const MAX_FRIENDS = 7; // seats (the same number as on the Friends page)
  */
 @Component({
   selector: 'app-sleeping',
-  imports: [RouterLink, FriendAvatar],
+  imports: [DatePipe, RouterLink, FriendAvatar],
   templateUrl: './sleeping.html',
 })
 export class Sleeping {
   private readonly friendsService = inject(FriendsService);
+  private readonly messagesService = inject(MessagesService);
+
+  /** unread messages per friend (by connection id), as on the friends page: a sleeping friend can still have written */
+  protected readonly unread = computed(() => {
+    const counts = new Map<string, number>();
+    for (const m of this.messagesService.messages()) {
+      if (m.connectionId) counts.set(m.connectionId, (counts.get(m.connectionId) ?? 0) + 1);
+    }
+    return counts;
+  });
 
   protected readonly sleeping = this.friendsService.sleeping;
   /** waking up needs a free seat: fewer than 7 friends in a seat */
@@ -27,8 +42,35 @@ export class Sleeping {
   /** the friend whose "delete for good" question is open */
   protected readonly deleting = signal<string | null>(null);
 
+  /** the friend whose profile is open under the card */
+  protected readonly expanded = signal<string | null>(null);
+  private readonly countryNames = new Map(countries().map((c) => [c.code, c.name]));
+  protected readonly moodIcon = moodIcon;
+  protected readonly moodLabel = moodLabel;
+
+  protected toggleProfile(friend: Friend): void {
+    this.expanded.update((id) => (id === friend.id ? null : friend.id));
+  }
+
+  protected countryName(code: string | null): string {
+    return (code && this.countryNames.get(code)) || '';
+  }
+
   constructor() {
     if (!this.friendsService.friends().length) void this.friendsService.load().catch((err: any) => this.error.set(err.message));
+  }
+
+  /** The colour of a friend's colour key (as on the friends page), and the text colour that reads on it. */
+  protected colorOf(key: string | null): string | null {
+    return profileColorHex(key);
+  }
+
+  protected inkOf(key: string | null): string | null {
+    return profileColorInk(key);
+  }
+
+  protected lastSpoken(friend: Friend): string {
+    return friend.lastSpokenAt ? `Last spoken to ${timeAgo(friend.lastSpokenAt)}` : '';
   }
 
   protected async wake(friend: Friend): Promise<void> {

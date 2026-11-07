@@ -4,74 +4,78 @@
 
 <main class="sf-narrow">
   <p class="small text-secondary m-0">
-    Your key stays on this device. Files in the safebox will be locked with it, so that only you and your friend can read them. Encryption of the safebox will be added soon; the key is made ready now.
+    Your key stays on this device. Files in the safebox are locked with it, so that only you and your friend can read them. Not even we can.
   </p>
 
   <app-key-setup (finished)="keys.refresh()" />
 
-  @if (keys.diagnosis(); as d) {
-    <!-- why a key is, or is not, found: nothing secret, only what was looked up -->
-    <details class="sf-hint">
-      <summary>Why is my key (not) found?</summary>
-      <ul class="m-0 ps-3">
-        <li>Account: …{{ d.account.slice(-6) }}</li>
-        <li>Key in this browser for this account: {{ d.localKeyId ? 'yes (' + d.localKeyId.slice(0, 8) + ')' : 'no' }}</li>
-        @if (d.localKeyId) {
-          <li>That key is published: {{ { yes: 'yes', removed: 'no, it was removed', no: 'no, it was never published' }[d.localPublished ?? 'no'] }}</li>
-        }
-        <li>Keys published for this account: {{ d.active }} in use, {{ d.removed }} removed</li>
-        <li>Accounts with a key in this browser: {{ d.accountsInBrowser }}</li>
-        @if (d.failed) { <li>The server could not be asked just now. Reload the page to try again.</li> }
-      </ul>
-    </details>
-  }
-
   @if (!showingWords()) {
     @if (keys.state() === 'ready') {
-      <h2 class="h5 m-0 mt-2">Your devices</h2>
-      <ul class="sf-list">
-        @for (key of devices(); track key.id) {
-          <li class="sf-list-item flex-wrap gap-2">
-            <span class="sf-list-text">
-              <span class="sf-fs-text">{{ key.label || 'A device' }}
-                @if (key.id === keys.thisKeyId()) { <span class="badge rounded-pill text-bg-success">This device</span> }
-                @if (key.revoked) { <span class="badge rounded-pill text-bg-secondary">Removed</span> }
+      <div class="d-flex justify-content-center">
+        <button type="button" class="btn btn-light btn-sm" [attr.aria-expanded]="advanced()" (click)="advanced.set(!advanced())">{{ advanced() ? 'Hide advanced' : 'Advanced' }}</button>
+      </div>
+      @if (advanced()) {
+        <h2 class="sf-section-title m-0 mt-2">Your devices</h2>
+        <ul class="sf-list">
+          @for (key of devices(); track key.id) {
+            <li class="sf-list-item flex-wrap gap-2">
+              <span class="sf-list-text">
+                <span class="sf-fs-text">{{ key.label || 'A device' }}
+                  @if (key.id === keys.thisKeyId()) { <span class="badge rounded-pill text-bg-success">This device</span> }
+                  @if (key.revoked) { <span class="badge rounded-pill text-bg-secondary">Removed</span> }
+                </span>
+                <small>{{ key.createdAt | date: 'd MMM yyyy' }} · {{ short(key) }}</small>
               </span>
-              <small>{{ key.createdAt | date: 'd MMM yyyy' }} · {{ short(key) }}</small>
-            </span>
-            @if (!key.revoked && key.id !== keys.thisKeyId()) {
-              @if (removing() === key.id) {
-                <div class="sf-msg-actions w-100 justify-content-end">
-                  <button type="button" class="btn btn-light btn-sm" (click)="removing.set(null)" [disabled]="busy()">Cancel</button>
-                  <button type="button" class="btn btn-danger btn-sm" (click)="remove(key)" [disabled]="busy()">Remove it</button>
-                </div>
-              } @else {
-                <button type="button" class="btn btn-light btn-sm" (click)="removing.set(key.id)">Remove</button>
+              @if (!key.revoked && key.id !== keys.thisKeyId()) {
+                @if (removing() === key.id) {
+                  <div class="sf-msg-actions w-100 justify-content-end">
+                    <button type="button" class="btn btn-light btn-sm" (click)="removing.set(null)" [disabled]="busy()">Cancel</button>
+                    <button type="button" class="btn btn-danger btn-sm" (click)="remove(key)" [disabled]="busy()">Remove it</button>
+                  </div>
+                } @else {
+                  <button type="button" class="btn btn-light btn-sm" (click)="removing.set(key.id)">Remove</button>
+                }
               }
-            }
-          </li>
-        }
-      </ul>
-      @if (removing()) { <p class="small text-secondary m-0">A removed key is not used for new files. Files already locked for it can then no longer be opened on that device.</p> }
-
-      <details class="sf-expand sf-expand-quiet mt-2">
-        <summary>Make a new key</summary>
-        <div class="vstack gap-2 mt-2">
-          <p class="small text-secondary m-0">
-            Use this if you lost your recovery words. This device gets a new key and new recovery words, and the key it has now is removed.
-            Files that are already locked for the old key can no longer be opened.
-          </p>
-          @if (resetting()) {
-            <div class="sf-msg-actions justify-content-end">
-              <button type="button" class="btn btn-light btn-sm" (click)="resetting.set(false)">Cancel</button>
-              <button type="button" class="btn btn-danger btn-sm" (click)="newKey()">Make a new key</button>
-            </div>
-          } @else {
-            <button type="button" class="btn btn-outline-danger align-self-start btn-sm" (click)="resetting.set(true)">Make a new key…</button>
+            </li>
           }
-        </div>
+        </ul>
+        @if (removing()) { <p class="small text-secondary m-0">A removed key is not used for new files. Files already locked for it can then no longer be opened on that device.</p> }
+
+        <details class="sf-expand sf-expand-quiet mt-2">
+          <summary>Make a new key</summary>
+          <div class="vstack gap-2 mt-2">
+            <p class="small text-secondary m-0">
+              Use this if you lost your recovery words. This device gets a new key and new recovery words, and the key it has now is removed.
+              Files that are already locked for the old key can no longer be opened.
+            </p>
+            @if (resetting()) {
+              <div class="sf-msg-actions justify-content-end">
+                <button type="button" class="btn btn-light btn-sm" (click)="resetting.set(false)">Cancel</button>
+                <button type="button" class="btn btn-danger btn-sm" (click)="newKey()">Make a new key</button>
+              </div>
+            } @else {
+              <button type="button" class="btn btn-outline-danger align-self-start btn-sm" (click)="resetting.set(true)">Make a new key…</button>
+            }
+          </div>
+        </details>
+        @if (problem(); as text) { <div class="alert alert-warning m-0" role="alert">{{ text }}</div> }
+    @if (keys.diagnosis(); as d) {
+      <!-- why a key is, or is not, found: nothing secret, only what was looked up -->
+      <details class="sf-hint">
+        <summary>Why is my key (not) found?</summary>
+        <ul class="m-0 ps-3">
+          <li>Account: …{{ d.account.slice(-6) }}</li>
+          <li>Key in this browser for this account: {{ d.localKeyId ? 'yes (' + d.localKeyId.slice(0, 8) + ')' : 'no' }}</li>
+          @if (d.localKeyId) {
+            <li>That key is published: {{ { yes: 'yes', removed: 'no, it was removed', no: 'no, it was never published' }[d.localPublished ?? 'no'] }}</li>
+          }
+          <li>Keys published for this account: {{ d.active }} in use, {{ d.removed }} removed</li>
+          <li>Accounts with a key in this browser: {{ d.accountsInBrowser }}</li>
+          @if (d.failed) { <li>The server could not be asked just now. Reload the page to try again.</li> }
+        </ul>
       </details>
-      @if (problem(); as text) { <div class="alert alert-warning m-0" role="alert">{{ text }}</div> }
+    }
+      }
     } @else if (keys.state() === 'none') {
       <details class="sf-expand sf-expand-quiet mt-2">
         <summary>I already have a key (restore it)</summary>

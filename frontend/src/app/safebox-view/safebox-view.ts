@@ -2,6 +2,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { Component, ElementRef, computed, effect, inject, signal, untracked, viewChild } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { map } from 'rxjs';
+import { FriendsService } from '../core/friends.service';
 import { formatBytes } from '../core/image';
 import { PREVIEW_LIMIT_BYTES, SheetView, readSheets, renderDocx, renderPdf, renderPptx } from '../core/office-preview';
 import { SafeboxService } from '../core/safebox.service';
@@ -39,6 +40,8 @@ export class SafeboxView {
   private readonly route = inject(ActivatedRoute);
 
   protected readonly friendId = this.route.snapshot.paramMap.get('id') ?? '';
+  private readonly friends = inject(FriendsService);
+  protected readonly friendName = computed(() => this.friends.friends().find((f) => f.id === this.friendId)?.name ?? 'Your friend');
   private readonly itemId = toSignal(this.route.paramMap.pipe(map((p) => p.get('itemId') ?? '')), { initialValue: this.route.snapshot.paramMap.get('itemId') ?? '' });
 
   protected readonly box = signal<Safebox | null>(null);
@@ -47,6 +50,8 @@ export class SafeboxView {
   protected readonly failed = signal(false);
   /** why a locked file could not be opened (null = the file could not be read: connection) */
   protected readonly failReason = signal<string | null>(null);
+  /** the keys a locked file was locked for, and the key of this device (to explain why it does not open) */
+  protected readonly failDetails = signal<string | null>(null);
   protected readonly busy = signal(false);
 
   protected readonly index = computed(() => (this.box()?.items ?? []).findIndex((i) => i.id === this.itemId()));
@@ -115,6 +120,7 @@ export class SafeboxView {
       this.cut.set(false);
       this.failed.set(false);
       this.failReason.set(null);
+      this.failDetails.set(null);
       if (!item) return;
       const shows = item.kind === 'image' || (item.enc && (item.kind === 'video' || item.kind === 'audio')) || (item.kind === 'document' && this.docType() === 'text');
       if (!shows) return;
@@ -190,5 +196,11 @@ export class SafeboxView {
   private fail(item: SafeboxItem, err: unknown): void {
     this.failReason.set(item.enc ? (err instanceof Error ? err.message : 'This file is locked and could not be opened.') : null);
     this.failed.set(true);
+    this.failDetails.set(null);
+    if (item.enc) {
+      void this.service.explain(this.friendId, item.id).then((d) => {
+        if (this.item() === item) this.failDetails.set(`Locked for keys: ${d.lockedFor.join(', ') || 'none for you'} · key on this device: ${d.thisDevice ?? 'none'}`);
+      });
+    }
   }
 }

@@ -1,9 +1,9 @@
 <header #bar class="sf-bar" [class.sf-has-color]="!!friendColor()" [style.--sf-friend]="friendColor()" [style.--sf-friend-ink]="friendInk()">
   <a routerLink="/friends" class="sf-back" aria-label="Back to friends">‹</a>
-  @if (seat() > 0) {
+  @if (seat() > 0 || friend()?.asleep) {
     <span class="sf-seat">
       @if (friend(); as f) {
-        <app-friend-avatar [friend]="f" [seat]="seat()" [small]="true" [size]="36" />
+        <app-friend-avatar [friend]="f" [seat]="seat() || 1" [small]="true" [size]="36" />
         <span class="sf-dot" [class]="'sf-dot-' + f.presence" [title]="presenceLabel(f.presence)" role="img" [attr.aria-label]="presenceLabel(f.presence)"></span>
         @if (f.mood; as mood) {
           <img class="sf-seat-mood" [src]="moodIcon(mood)" [alt]="moodLabel(mood)" [title]="moodLabel(mood)" width="18" height="18" />
@@ -233,7 +233,7 @@
           <!-- the picture of who wrote it: the friend's, or mine -->
           <span class="sf-feed-avatar" aria-hidden="true">
             @if (!message.mine && friend(); as f) {
-              <app-friend-avatar [friend]="f" [seat]="seat()" [small]="true" [size]="28" />
+              <app-friend-avatar [friend]="f" [seat]="seat() || 1" [small]="true" [size]="28" />
             } @else if (message.mine) {
               @if (myAvatar(); as mine) { <img [src]="mine" alt="" width="28" height="28" /> } @else { <span class="sf-feed-initials">{{ myInitials() }}</span> }
             }

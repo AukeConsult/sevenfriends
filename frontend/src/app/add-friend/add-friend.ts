@@ -1,6 +1,6 @@
 import { Clearable } from '../core/clearable';
 import { Component, computed, inject, signal } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../core/auth.service';
 import { FriendsService } from '../core/friends.service';
 import { InviteLinkService } from '../core/invite-link.service';
@@ -21,6 +21,10 @@ const emptyDraft = (): FriendDraft => ({ name: '', email: '', phone: '', message
 export class AddFriend {
   private readonly friends = inject(FriendsService);
   private readonly router = inject(Router);
+  /** opened from the setup wizard: Done, Cancel and a friend with an account go on to the wizard's last step instead of the friends page */
+  private readonly fromSetup = inject(ActivatedRoute).snapshot.queryParamMap.has('setup');
+  protected readonly backTo = this.fromSetup ? '/setup' : '/friends';
+  protected readonly backParams = this.fromSetup ? { step: 'install' } : null;
   protected readonly invite = inject(InviteLinkService);
   private readonly user = inject(AuthService).user;
 
@@ -82,7 +86,7 @@ export class AddFriend {
         message: d.message.trim() || null,
       });
       if (created.invited) {
-        await this.router.navigateByUrl('/friends'); // has an account: the request is with them already
+        await this.router.navigate([this.backTo], { queryParams: this.backParams }); // has an account: the request is with them already
       } else {
         this.result.set({ to: created.name || created.email || created.phone || 'This person', link: this.link() });
       }

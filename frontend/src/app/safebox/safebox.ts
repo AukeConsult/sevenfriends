@@ -7,7 +7,7 @@ import { formatBytes, prepareImage } from '../core/image';
 import { SafeboxService } from '../core/safebox.service';
 import { UiPreferencesService } from '../core/ui-preferences';
 import { ApiError } from '../core/api.service';
-import { BoxKeys, Safebox as SafeboxData, SafeboxItem, keyIdOf } from '../models';
+import { BoxKeys, Safebox as SafeboxData, SafeboxItem, keyIdOf, readableFingerprint } from '../models';
 
 /** The small preview picture of an image in the box (only the preview is read, never the file; a file without one shows an icon instead). */
 @Component({
@@ -84,9 +84,27 @@ export class Safebox {
     const friend = box.friend.length > 0;
     return mine && friend ? 'both' : friend ? 'me' : mine ? 'friend' : 'none';
   });
+  /** the key frame shows only the status; the codes, the choice for new files and the details are behind the Advanced button */
+  protected readonly advanced = signal(false);
+  /** the Add files frame is open (it is always open while the box is empty) */
+  protected readonly addOpen = signal(false);
+  /** the keys in use of my friend (their codes are shown under Advanced, to compare with what they read from their own device) */
+  protected readonly friendKeys = computed(() => this.boxKeys()?.friend ?? []);
+  protected readonly readable = readableFingerprint;
+  /** how many keys in use the server lists for me and for my friend (for the details line of the key frame) */
+  protected readonly serverKeys = computed(() => ({ mine: this.boxKeys()?.mine.length ?? 0, friend: this.boxKeys()?.friend.length ?? 0 }));
   /** who has a key: me (on this device) and my friend (on any device); null while it is not known */
   protected readonly meHasKey = computed(() => (this.keyStatus() === 'checking' ? null : this.keyStatus() === 'both' || this.keyStatus() === 'friend'));
   protected readonly friendHasKey = computed(() => (this.keyStatus() === 'checking' ? null : this.keyStatus() === 'both' || this.keyStatus() === 'me'));
+  /** new files are locked: both of us have a key and locking is not switched off */
+  protected readonly locked = computed(() => this.canEncrypt() && !this.plain());
+  /** what the padlock says (for a screen reader and the tooltip) */
+  protected readonly lockText = computed(() => {
+    const open = this.plainItems().length;
+    const rest = open ? `, ${open === 1 ? '1 file is' : open + ' files are'} not locked yet` : '';
+    if (this.locked()) return `New files are locked${rest}`;
+    return (this.canEncrypt() ? 'Locking is switched off for new files' : 'Files are not locked yet') + rest;
+  });
   /** files are stored encrypted (both of us have a key) */
   protected readonly canEncrypt = computed(() => this.keyStatus() === 'both');
   /** ticked on the page (and remembered on this device): the files added now are stored unencrypted even though both of us have a key */

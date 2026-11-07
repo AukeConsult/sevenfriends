@@ -12,6 +12,8 @@ import { PublishedKey } from '../models';
   templateUrl: './encryption.html',
 })
 export class Encryption {
+  /** the page shows the key status and the way to make or restore a key; the devices, the details and a new key are behind the Advanced button */
+  protected readonly advanced = signal(false);
   protected readonly keys = inject(KeysService);
   private readonly keySetup = viewChild.required(KeySetup);
 

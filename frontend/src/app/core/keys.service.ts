@@ -2,7 +2,7 @@ import { Injectable, effect, inject, signal, untracked } from '@angular/core';
 import { KeyBackup, MyKeys, PublishedKey, canonicalPublicKey, fingerprintOf, keyIdOf } from '../models';
 import { ApiService } from './api.service';
 import { AuthService } from './auth.service';
-import { createDeviceKey, deleteDeviceKey, deviceKeySupported, getDeviceKey, keepDeviceKey, restoreDeviceKey, storedKeyOwners } from './device-key';
+import { StoredDeviceKey, deleteDeviceKey, deviceKeySupported, deviceKeyWorks, generateDeviceKey, getDeviceKey, keepDeviceKey, restoreDeviceKey, saveDeviceKey, storedKeyOwners } from './device-key';
 import { lockBackup, unlockBackup } from './key-backup';
 import { keyOf, newRecoveryKey, wordsOf } from './recovery-code';
 
@@ -118,33 +118,70 @@ export class KeysService {
     }
   }
 
+  /** A key that has been made and shown with its recovery words but is not saved yet: it only exists here, in memory. */
+  private pending: { uid: string; key: StoredDeviceKey; publicKey: NonNullable<ReturnType<typeof canonicalPublicKey>>; backup: KeyBackup; replaces: string | null } | null = null;
+
   /**
-   * Makes the key, publishes it and stores the backup. Returns the 24 recovery words (the only place they ever exist besides the
-   * person's own copy). If anything fails the new key is removed again, so nothing is half set up.
+   * Step 1 of making a key: makes it in memory and returns the 24 recovery words (the only place they ever exist besides the person's own
+   * copy). NOTHING is saved on this device or on the server yet: that happens in `commit`, when the person has written the words down and pressed Save.
+   * `replace`: the key this device has now is retired when the new one is saved.
    */
-  async setup(): Promise<string[]> {
+  async prepare(replace = false): Promise<string[]> {
     const uid = this.uid;
-    const created = await createDeviceKey(uid, { forBackup: true });
+    this.discard();
+    const created = await generateDeviceKey();
+    const recoveryKey = newRecoveryKey();
     try {
       const publicKey = canonicalPublicKey(created.key.publicKey);
       if (!publicKey || !created.backup) throw new Error('The key could not be made.');
-      const recoveryKey = newRecoveryKey();
       const backup = await lockBackup(created.backup, recoveryKey);
       const words = await wordsOf(recoveryKey);
-      // the key and its backup are stored in ONE step on the server: a key is never published without its backup (nor a backup without its key)
-      await this.api.request('/keys', { method: 'POST', body: JSON.stringify({ publicKey, label: this.label(), backup }) });
-      // and it is read back: the key counts as made only when the server lists it as in use
-      await this.refresh();
-      if (this.thisKeyId() !== keyIdOf((await fingerprintOf(publicKey))!)) throw new Error('The key could not be saved on the server. Try again.');
-      recoveryKey.fill(0);
-      created.backup.fill(0);
-      void keepDeviceKey(); // ask the browser not to clear the key when it is short of room
+      this.pending = { uid, key: created.key, publicKey, backup, replaces: replace ? this.thisKeyId() : null };
       return words;
-    } catch (err) {
+    } finally {
+      recoveryKey.fill(0);
       created.backup?.fill(0);
-      await deleteDeviceKey(uid);
+    }
+  }
+
+  /** Lets go of a key that was made but not saved (the person left before pressing Save). */
+  discard(): void {
+    this.pending = null;
+  }
+
+  /**
+   * Step 2: saves the key made by `prepare` on this device, publishes it with its backup in ONE step on the server, and checks all of it: the server
+   * lists the key as in use, and the key on this device is the same key and works. If anything fails, this device is put back as it was (the old key, or none).
+   */
+  async commit(): Promise<void> {
+    const pending = this.pending;
+    if (!pending) throw new Error('There is no new key to save. Start again.');
+    const uid = this.uid;
+    if (pending.uid !== uid) {
+      this.pending = null;
+      throw new Error('You signed in as someone else. Start again.');
+    }
+    const before = await getDeviceKey(uid); // what this device had, to put it back if saving fails
+    try {
+      await saveDeviceKey(uid, pending.key);
+      // the key and its backup are stored in ONE step on the server: a key is never published without its backup (nor a backup without its key)
+      await this.api.request('/keys', { method: 'POST', body: JSON.stringify({ publicKey: pending.publicKey, label: this.label(), backup: pending.backup }) });
+      // and it is read back: the key counts as made only when the server lists it as in use ...
+      await this.refresh();
+      const id = keyIdOf((await fingerprintOf(pending.publicKey))!);
+      if (this.thisKeyId() !== id) throw new Error('The key could not be saved on the server. Try again.');
+      // ... and the key on this device is the same one and works
+      if (!(await deviceKeyWorks(uid, pending.key.publicKey))) throw new Error('The key on this device could not be checked. Try again.');
+    } catch (err) {
+      if (before) await saveDeviceKey(uid, before);
+      else await deleteDeviceKey(uid);
+      await this.refresh();
       throw err;
     }
+    this.pending = null;
+    void keepDeviceKey(); // ask the browser not to clear the key when it is short of room
+    // a key this one replaces is retired only now that the new one is safe
+    if (pending.replaces && pending.replaces !== this.thisKeyId()) await this.revoke(pending.replaces);
   }
 
   /** A name for this device in the list of keys. */
@@ -157,13 +194,6 @@ export class KeysService {
   async revoke(id: string): Promise<void> {
     await this.api.request(`/keys/${id}/revoke`, { method: 'POST' });
     await this.refresh();
-  }
-
-  /** A new key for this device with new recovery words: the key it had is retired first (files locked for it can no longer be opened). Returns the words. */
-  async reset(): Promise<string[]> {
-    const old = this.thisKeyId();
-    if (old) await this.revoke(old);
-    return this.setup();
   }
 
   /**

@@ -127,13 +127,9 @@ export async function getDeviceKey(uid: string, store: KeyStore = indexedDbKeySt
   return store.read(uid);
 }
 
-/**
- * Makes a new key pair for this person on this device and saves it (an earlier key of this person is replaced: keep it, or its files are lost).
- * The private key is made readable for a moment only to be sealed (and, with `forBackup`, handed over as bytes): the saved one cannot be read.
- */
-export async function createDeviceKey(uid: string, options: { forBackup?: boolean; store?: KeyStore } = {}): Promise<CreatedDeviceKey> {
+/** Makes a key pair in memory: the private key sealed (it cannot be read), and its bytes for the backup. Nothing is saved. */
+async function generate(): Promise<{ key: StoredDeviceKey; pkcs8: ArrayBuffer }> {
   if (!deviceKeySupported()) throw new Error('This browser cannot keep an encryption key (it needs a secure page).');
-  const store = options.store ?? indexedDbKeyStore;
   const pair = await crypto.subtle.generateKey(DEVICE_KEY_ALGORITHM, true, ['encrypt', 'decrypt', 'wrapKey', 'unwrapKey']);
   const pkcs8 = await crypto.subtle.exportKey('pkcs8', pair.privateKey);
   const key: StoredDeviceKey = {
@@ -143,6 +139,48 @@ export async function createDeviceKey(uid: string, options: { forBackup?: boolea
     createdAt: new Date().toISOString(),
     version: VERSION,
   };
+  return { key, pkcs8 };
+}
+
+/**
+ * Makes a new key pair and does NOT save it: it only exists in memory until `saveDeviceKey` puts it on this device (the setup saves it when the
+ * person has written down the recovery words and pressed Save). `backup` is the private key as PKCS#8 bytes: scramble it with the recovery code and let go of it.
+ */
+export async function generateDeviceKey(): Promise<CreatedDeviceKey> {
+  const { key, pkcs8 } = await generate();
+  return { key, backup: new Uint8Array(pkcs8) };
+}
+
+/** Puts a key on this device (it replaces the key this person had here). */
+export async function saveDeviceKey(uid: string, key: StoredDeviceKey, store: KeyStore = indexedDbKeyStore): Promise<void> {
+  await store.write(uid, key);
+}
+
+/**
+ * Checks the key that is saved on this device: it is read back and must be the same key, and what its public part locks its private part must open.
+ * (This is what "the key was made properly" means.)
+ */
+export async function deviceKeyWorks(uid: string, expected: JsonWebKey, store: KeyStore = indexedDbKeyStore): Promise<boolean> {
+  try {
+    const saved = await store.read(uid);
+    if (!saved || JSON.stringify(saved.publicKey) !== JSON.stringify(expected)) return false;
+    const pub = await crypto.subtle.importKey('jwk', saved.publicKey, { name: DEVICE_KEY_ALGORITHM.name, hash: 'SHA-256' }, false, ['encrypt']);
+    const probe = crypto.getRandomValues(new Uint8Array(32));
+    const sealed = await crypto.subtle.encrypt({ name: 'RSA-OAEP' }, pub, probe);
+    const opened = new Uint8Array(await crypto.subtle.decrypt({ name: 'RSA-OAEP' }, saved.privateKey, sealed));
+    return opened.length === probe.length && opened.every((byte, i) => byte === probe[i]);
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Makes a new key pair for this person on this device and saves it (an earlier key of this person is replaced: keep it, or its files are lost).
+ * The private key is made readable for a moment only to be sealed (and, with `forBackup`, handed over as bytes): the saved one cannot be read.
+ */
+export async function createDeviceKey(uid: string, options: { forBackup?: boolean; store?: KeyStore } = {}): Promise<CreatedDeviceKey> {
+  const store = options.store ?? indexedDbKeyStore;
+  const { key, pkcs8 } = await generate();
   await store.write(uid, key);
   if (!options.forBackup) {
     new Uint8Array(pkcs8).fill(0); // not needed any more

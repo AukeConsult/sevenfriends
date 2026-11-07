@@ -106,7 +106,7 @@ export async function sealFile(input: { connectionId: string; file: Blob; name: 
 /** The file key of an encrypted file, opened with the private key of this device; throws when none of the copies was locked for this key. */
 export async function openFileKey(enc: SafeboxEnc, myKeyId: string, privateKey: CryptoKey): Promise<CryptoKey> {
   const wrap = enc.wraps.find((w) => w.keyId === myKeyId);
-  if (!wrap) throw new Error('This file was locked for another device. Ask someone with access to share it again.');
+  if (!wrap) throw new Error('This file was locked for another device.');
   try {
     return await crypto.subtle.unwrapKey('raw', fromBase64(wrap.wrappedKey), privateKey, { name: 'RSA-OAEP' }, { name: 'AES-GCM', length: 256 }, false, FILE_KEY_USAGES);
   } catch {

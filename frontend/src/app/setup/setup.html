@@ -1,102 +1,210 @@
 <div class="sf-page-head">
-  <h1>Set up Seven Friends</h1>
-  <p class="sf-hint m-0">Step {{ step() }} of 4</p>
+  <!-- one line, so the header is the same 44px band as on every other page -->
+  <h1>Setup wizard@if (step()) { <span class="sf-hint fw-normal"> · Step {{ stepNumber() }} of {{ stepCount() }}</span> }</h1>
 </div>
-
 <main class="sf-narrow">
   @switch (step()) {
-    @case (1) {
-      <h2 class="h5 m-0">Choose your message sound</h2>
-      <p class="small text-secondary m-0">Tap a sound to choose it and hear it. You can change it later, and set a sound for requests too, under Settings.</p>
-
-      @if (sounds.jingles().length) {
-        <ul class="sf-list" role="radiogroup" aria-label="Seven Friends jingles">
-          @for (jingle of sounds.jingles(); track jingle.file) {
-            <li class="sf-list-item">
-              <button type="button" class="sf-pick" role="radio" [attr.aria-checked]="current() === 'file:' + jingle.file" (click)="choose('file:' + jingle.file)">
-                <span class="sf-pick-mark" aria-hidden="true">{{ current() === 'file:' + jingle.file ? '✓' : '' }}</span>{{ jingle.label }}
+    @case (null) { <p class="sf-hint m-0" role="status">Getting ready…</p> }
+    @case ('profile') {
+      <h2 class="sf-section-title m-0">Who are you to your friends?</h2>
+      <p class="small text-secondary m-0">This is what your friends see. You can change it later under Settings → Profile.</p>
+      <label class="d-grid gap-1"><span class="form-label small text-secondary m-0">Your name</span>
+        <input type="text" class="form-control" [value]="name()" (input)="name.set($any($event.target).value)" maxlength="100" autocomplete="name" />
+      </label>
+      <!-- how my picture looks to my friends, with the ring in the chosen colour -->
+      <div class="text-center">
+        @if (hasPhoto() && photo(); as shown) {
+          <img class="sf-photo" [class.sf-ringed]="!!color()" [style.--sf-friend]="colorHex()" [src]="shown" alt="Your picture" referrerpolicy="no-referrer" />
+        } @else if (icon(); as chosen) {
+          <img class="sf-photo" [class.sf-ringed]="!!color()" [style.--sf-friend]="colorHex()" [src]="'icons/friends/friend' + chosen + '.svg'" alt="Your icon" />
+        } @else {
+          <div class="sf-photo sf-photo-initial" [class.sf-ringed]="!!color()" [style.--sf-friend]="colorHex()" aria-hidden="true">{{ initial() }}</div>
+        }
+      </div>
+      @if (!hasPhoto()) {
+        <!-- no picture yet: upload one (small button), or choose an icon; all centred under the preview -->
+        <div class="vstack gap-1 align-items-center text-center">
+          <button type="button" class="btn btn-outline-primary btn-sm" [disabled]="busy()" (click)="pickPicture()">Upload a picture</button>
+          <span class="small text-secondary">or choose an icon</span>
+          <div class="sf-choices sf-choices-compact" role="radiogroup" aria-label="Choose your icon">
+            @for (n of icons; track n) {
+              <button type="button" class="sf-choice sf-choice-round" role="radio" [attr.aria-checked]="icon() === n" [class.sf-chosen]="icon() === n" [attr.aria-label]="'Icon ' + n" (click)="icon.set(n)">
+                <img [src]="'icons/friends/friend' + n + '.svg'" alt="" width="44" height="44" />
               </button>
-            </li>
-          }
-        </ul>
-      }
-      <ul class="sf-list" role="radiogroup" aria-label="Other sounds">
-        @for (option of choices; track option.id) {
-          <li class="sf-list-item">
-            <button type="button" class="sf-pick" role="radio" [attr.aria-checked]="current() === option.id" (click)="choose(option.id)">
-              <span class="sf-pick-mark" aria-hidden="true">{{ current() === option.id ? '✓' : '' }}</span>{{ option.label }}
-            </button>
-          </li>
-        }
-      </ul>
-
-      @if (!install.native) {
-        <div class="card"><div class="card-body vstack gap-1">
-          <div class="d-flex justify-content-between"><strong>Volume</strong><span class="text-secondary">{{ sounds.volume() }} %</span></div>
-          <input type="range" class="form-range" min="0" max="100" step="5" [value]="sounds.volume()" (input)="setVolume($any($event.target).value)" aria-label="Volume of the sounds" />
-        </div></div>
-      }
-
-      <div class="d-flex flex-wrap gap-2 justify-content-between">
-        <button type="button" class="btn btn-link" (click)="later()">Do it later</button>
-        <button type="button" class="btn btn-primary" (click)="next()">Next</button>
-      </div>
-    }
-
-    @case (2) {
-      <h2 class="h5 m-0">Turn on notifications</h2>
-      @switch (how()) {
-        @case ('ios-first') {
-          <div class="alert alert-info m-0" role="status">
-            On iPhone, notifications only work from the app on your home screen. In Safari, tap <strong>Share</strong>, then <strong>Add to Home Screen</strong>,
-            open <strong>Seven Friends from your home screen</strong>, and set this up there.
+            }
           </div>
-        }
-        @case ('android') {
-          <p class="small text-secondary m-0">On this phone the notifications are set on the app's own notification screen: which kinds you get, the sounds, and a test.</p>
-          <button type="button" class="btn btn-primary align-self-start" (click)="openAndroidScreen()">Open the notification screen</button>
-          <button type="button" class="btn btn-outline-primary align-self-start" [disabled]="busy()" (click)="test()">Send me a test notification</button>
-        }
-        @default {
-          <p class="small text-secondary m-0">
-            @if (how() === 'push') { A notification reaches you also when the app is closed or the screen is locked. }
-            @else { This browser shows a pop-up when a message arrives and you are not looking at the app. }
-          </p>
-          @if (on()) {
-            <div class="alert alert-success m-0" role="status">✓ Notifications are on.</div>
-            <button type="button" class="btn btn-outline-primary align-self-start" [disabled]="busy()" (click)="test()">Send me a test notification</button>
-          } @else {
-            <button type="button" class="btn btn-primary btn-lg" [disabled]="busy()" (click)="turnOn()">Turn on notifications</button>
-          }
-          @if (problem(); as text) { <div class="alert alert-warning m-0" role="alert">{{ text }}</div> }
-        }
+        </div>
       }
-      @if (testResult(); as result) { <div class="small" role="status">{{ result }}</div> }
-
-      <div class="d-flex flex-wrap gap-2 justify-content-between">
+      <div class="text-center">
+        <span class="form-label small text-secondary m-0">Your colour <span class="text-secondary">(your friends see it)</span></span>
+        <div class="sf-colors justify-content-center mt-1" role="radiogroup" aria-label="Your colour">
+          <button type="button" class="sf-color sf-color-none" role="radio" [attr.aria-checked]="!color()" [class.sf-chosen]="!color()" aria-label="No colour" title="No colour" (click)="color.set(null)"></button>
+          @for (c of colors; track c.key) {
+            <button type="button" class="sf-color" role="radio" [attr.aria-checked]="color() === c.key" [class.sf-chosen]="color() === c.key" [style.background]="c.hex" [attr.aria-label]="c.label" [title]="c.label" (click)="color.set(c.key)"></button>
+          }
+        </div>
+      </div>
+      <label class="d-grid gap-1"><span class="form-label small text-secondary m-0">Country</span>
+        <select class="form-select" [value]="country()" (change)="setCountry($any($event.target).value)" autocomplete="country">
+          <option value="" [selected]="!country()">Not set</option>
+          @for (c of countryList; track c.code) { <option [value]="c.code" [selected]="c.code === country()">{{ c.name }}</option> }
+        </select>
+      </label>
+      @if (country()) {
+        <label class="d-grid gap-1"><span class="form-label small text-secondary m-0">Language</span>
+          <select class="form-select" [value]="languageShown()" (change)="setLanguage($any($event.target).value)">
+            @for (l of languageChoices(); track l.code) { <option [value]="l.code" [selected]="l.code === languageShown()">{{ l.name }}</option> }
+          </select>
+        </label>
+      }
+      @if (saveProblem(); as text) { <div class="alert alert-warning m-0" role="alert">{{ text }}</div> }
+      <div class="d-flex flex-wrap gap-3 justify-content-center">
+        <button type="button" class="btn btn-link" (click)="later()">Do it later</button>
+        <button type="button" class="btn btn-primary" [disabled]="busy()" (click)="saveProfile()">Next</button>
+      </div>
+    }
+    @case ('email') {
+      <h2 class="sf-section-title m-0">Verify your email</h2>
+      <p class="small text-secondary m-0">Your friends see a warning until your email is verified, and they can only find you by email once it is. We send a link to <strong>{{ email() }}</strong>.</p>
+      @if (emailVerified()) {
+        <div class="alert alert-success m-0" role="status">✓ Your email is verified.</div>
+      } @else if (emailSent()) {
+        <div class="alert alert-info m-0" role="status">Email sent. Open the link in it, then come back here and press the button below.</div>
+        <button type="button" class="btn btn-sm btn-primary align-self-center" (click)="checkEmail()">I have opened the link</button>
+      } @else {
+        <button type="button" class="btn btn-sm btn-primary align-self-center" (click)="sendEmail()">Send the verification email</button>
+      }
+      @if (emailProblem(); as text) { <div class="alert alert-warning m-0" role="alert">{{ text }}</div> }
+      <div class="d-flex flex-wrap gap-3 justify-content-center">
         <button type="button" class="btn btn-link" (click)="later()">Do it later</button>
         <button type="button" class="btn btn-primary" (click)="next()">Next</button>
       </div>
     }
-
-    @case (3) {
-      <h2 class="h5 m-0">Lock your files with a key</h2>
-      <app-key-setup (finished)="next()" />
+    @case ('install') {
+      <h2 class="sf-section-title m-0">Put the app on this device</h2>
+      <p class="small text-secondary m-0">The app opens like any other app, and notifications are most reliable from it.</p>
+      @if (install.installed()) {
+        <div class="alert alert-success m-0" role="status">✓ The app is installed on this device.</div>
+      } @else if (install.canInstall()) {
+        <button type="button" class="btn btn-sm btn-primary align-self-center" (click)="installApp()">Install the app</button>
+      } @else if (install.ios) {
+        <div class="alert alert-info m-0" role="status">In Safari, tap <strong>Share</strong>, then <strong>Add to Home Screen</strong>. Then open Seven Friends from your home screen.</div>
+      } @else {
+        <div class="alert alert-info m-0" role="status">Your browser has no install button here. Look for <strong>Install app</strong> in its menu, or see Settings → Install the app.</div>
+      }
+      @if (install.mobile) {
+        <div class="alert alert-secondary m-0" role="note">
+          <strong>Then open the app and sign in with the same account.</strong> The setup continues there with notifications, microphone and camera, text size and your key.
+        </div>
+      }
+      <div class="vstack gap-2 align-items-center">
+        @if (install.mobile) {
+          <button type="button" class="btn btn-primary" (click)="finish('/')">Finish, I will continue in the app</button>
+          <button type="button" class="btn btn-outline-secondary btn-sm" (click)="continueInBrowser()">No app: continue in the browser</button>
+        } @else {
+          <button type="button" class="btn btn-primary" (click)="finish('/')">Finish</button>
+        }
+      </div>
+    }
+    @case ('devices') {
+      <h2 class="sf-section-title m-0">Voice messages and pictures</h2>
+      <p class="small text-secondary m-0">To record a voice message or take a picture, the app needs your microphone and camera. Allow them now, so the first message is not interrupted. Nothing is recorded.</p>
+      <div class="card"><div class="card-body d-flex align-items-center justify-content-between gap-2">
+        <strong>Microphone</strong>
+        @if (mic() === 'granted') { <span class="text-success fw-semibold">✓ Allowed</span> }
+        @else if (mic() === 'denied') { <span class="small text-warning-emphasis">Blocked. Allow it in the browser settings (the lock icon at the left of the address).</span> }
+        @else { <button type="button" class="btn btn-sm btn-outline-primary" (click)="allow('mic')">Allow the microphone</button> }
+      </div></div>
+      <div class="card"><div class="card-body d-flex align-items-center justify-content-between gap-2">
+        <strong>Camera</strong>
+        @if (cam() === 'granted') { <span class="text-success fw-semibold">✓ Allowed</span> }
+        @else if (cam() === 'denied') { <span class="small text-warning-emphasis">Blocked. Allow it in the browser settings (the lock icon at the left of the address).</span> }
+        @else { <button type="button" class="btn btn-sm btn-outline-primary" (click)="allow('cam')">Allow the camera</button> }
+      </div></div>
+      <div class="d-flex flex-wrap gap-3 justify-content-center">
+        <button type="button" class="btn btn-link" (click)="later()">Do it later</button>
+        <button type="button" class="btn btn-primary" (click)="next()">Next</button>
+      </div>
+    }
+    @case ('look') {
+      <h2 class="sf-section-title m-0">Text size and colours</h2>
+      <p class="small text-secondary m-0">Make the app easy to read. This is saved on this device, and you can change it under Settings.</p>
+      <div class="row g-2">
+        <label class="col-6 d-grid gap-1 align-content-start" for="setup-theme"><span>Theme</span>
+          <select id="setup-theme" class="form-select" [value]="prefs.get('theme')" (change)="prefs.set('theme', $any($event.target).value)">
+            @for (t of themes; track t.key) { <option [value]="t.key" [selected]="t.key === prefs.get('theme')">{{ t.label }}</option> }
+          </select>
+        </label>
+        <label class="col-6 d-grid gap-1 align-content-start" for="setup-text-size"><span>Text size</span>
+          <select id="setup-text-size" class="form-select" [value]="prefs.get('textSize')" (change)="prefs.set('textSize', $any($event.target).value)">
+            <option value="tiny" [selected]="prefs.get('textSize') === 'tiny'">Tiny</option>
+            <option value="small" [selected]="prefs.get('textSize') === 'small'">Small</option>
+            <option value="normal" [selected]="prefs.get('textSize') === 'normal'">Normal</option>
+            <option value="big" [selected]="prefs.get('textSize') === 'big'">Big</option>
+            <option value="huge" [selected]="prefs.get('textSize') === 'huge'">Huge</option>
+          </select>
+        </label>
+      </div>
+      <div class="d-flex flex-wrap gap-3 justify-content-center">
+        <button type="button" class="btn btn-link" (click)="later()">Do it later</button>
+        <button type="button" class="btn btn-primary" (click)="next()">Next</button>
+      </div>
+    }
+    @case ('notify') {
+      <h2 class="sf-section-title m-0">Notifications</h2>
+      <p class="small text-secondary m-0">The same choices as under Settings → Notifications, for the kind of device you use. Turn them on so you do not miss a message.</p>
+      <app-notice-controls [setup]="true" part="notifications" />
+      <div class="d-flex flex-wrap gap-3 justify-content-center">
+        <button type="button" class="btn btn-link" (click)="later()">Do it later</button>
+        <button type="button" class="btn btn-primary" (click)="next()">Next</button>
+      </div>
+    }
+    @case ('sounds') {
+      <h2 class="sf-section-title m-0">Sounds</h2>
+      <p class="small text-secondary m-0">Choose a sound for each thing that can arrive. You can change them any time under Settings → Notifications.</p>
+      <app-notice-controls [setup]="true" part="sounds" />
+      <div class="d-flex flex-wrap gap-3 justify-content-center">
+        <button type="button" class="btn btn-link" (click)="later()">Do it later</button>
+        <button type="button" class="btn btn-primary" (click)="next()">Next</button>
+      </div>
+    }
+    @case ('key') {
+      <h2 class="sf-section-title m-0">Lock your files with a key</h2>
+      <p class="small text-secondary m-0">The key keeps the files in your safebox private, even from us. Make it now, and write down the 24 words you are shown.</p>
+      <app-key-setup (finished)="next()" (cancelled)="next()" />
       @if (!showingWords()) {
-        <div class="d-flex flex-wrap gap-2 justify-content-between">
+        <div class="d-flex flex-wrap gap-3 justify-content-center">
           <button type="button" class="btn btn-link" (click)="later()">Do it later</button>
           <button type="button" class="btn btn-primary" (click)="next()">Next</button>
         </div>
       }
     }
-
-    @case (4) {
-      <div class="text-center vstack gap-3">
+    @case ('friend') {
+      <div class="text-center vstack gap-3 align-items-center">
         <div class="sf-logo sf-logo-lg mx-auto" aria-hidden="true">✓</div>
-        <h2 class="h5 m-0">You are all set</h2>
-        <p class="m-0">Add your first friend: there are only seven seats, so choose the friends who matter most.</p>
-        <button type="button" class="btn btn-primary btn-lg" (click)="finish('/friends/add')">Add a friend</button>
-        <button type="button" class="btn btn-link" (click)="finish('/')">Go to Home</button>
+        <h2 class="sf-section-title m-0">{{ installLast() ? 'Your friends' : 'You are all set' }}</h2>
+        @if (hasFriends()) {
+          <div class="alert alert-success m-0 w-100" role="status">✓ You already have friends. Everything is ready.</div>
+          <button type="button" class="btn btn-primary" (click)="afterFriend()">{{ installLast() ? 'Next' : 'Finish' }}</button>
+          <button type="button" class="btn btn-outline-primary btn-sm" (click)="addFriend()">Add another friend</button>
+        } @else {
+          <p class="m-0">Add your first friend: there are only seven seats, so choose the friends who matter most.</p>
+          <button type="button" class="btn btn-primary" (click)="addFriend()">Add a friend</button>
+        }
+        @if (invite.link()) {
+          <p class="small text-secondary m-0">Or send your invite link. When they open it and sign in, you get their friend request.</p>
+          <button type="button" class="btn btn-outline-primary btn-sm" (click)="invite.share()">{{ invite.canShare ? 'Share my invite link' : 'Copy my invite link' }}</button>
+          @if (invite.note(); as note) { <p class="small text-secondary m-0" role="status">{{ note }}</p> }
+        }
+        @if (!hasFriends()) { <button type="button" class="btn btn-link btn-sm" (click)="afterFriend()">{{ installLast() ? 'Skip this step' : 'Go to Home' }}</button> }
+      </div>
+    }
+    @case ('done') {
+      <div class="text-center vstack gap-3 align-items-center">
+        <div class="sf-logo sf-logo-lg mx-auto" aria-hidden="true">✓</div>
+        <h2 class="sf-section-title m-0">You are all set</h2>
+        <p class="m-0">Everything is set up in this browser.</p>
+        <button type="button" class="btn btn-primary" (click)="finish('/')">Finish</button>
       </div>
     }
   }

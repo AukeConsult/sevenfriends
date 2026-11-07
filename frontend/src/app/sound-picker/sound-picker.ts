@@ -19,6 +19,8 @@ export class SoundPicker {
   protected readonly item = computed(() => SOUND_EVENTS.find((e) => e.event === this.event())!);
   protected readonly choices = SOUND_CHOICES;
   protected readonly jingles = this.sounds.jingles;
+  /** opened from the setup wizard: Back and Done return to the wizard (its sound step) instead of Settings */
+  protected readonly fromSetup = this.route.snapshot.queryParamMap.has('setup');
 
   constructor() {
     // the list of sounds updates by itself: when the page opens, when the app comes back to the front, and every half minute while it is open

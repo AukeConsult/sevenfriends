@@ -1,5 +1,5 @@
 import { Component, ElementRef, Injector, afterNextRender, inject, signal, viewChild } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ApiService } from '../core/api.service';
 import { AuthService } from '../core/auth.service';
 import { Decoded, decodeImage, sizeOf } from '../core/image';
@@ -27,6 +27,13 @@ const MAX_FILE_BYTES = 20 * 1024 * 1024;
 export class ProfilePicturePage {
   private readonly api = inject(ApiService);
   private readonly router = inject(Router);
+  /** opened from the setup wizard: leaving returns to the wizard (its first step) instead of the Profile page */
+  protected readonly fromSetup = inject(ActivatedRoute).snapshot.queryParamMap.has('setup');
+  protected readonly backTo = this.fromSetup ? '/setup' : '/settings/profile';
+  protected readonly backParams = this.fromSetup ? { step: 'profile' } : null;
+  private leave(): Promise<boolean> {
+    return this.router.navigate([this.backTo], { queryParams: this.backParams });
+  }
   private readonly injector = inject(Injector);
   private readonly auth = inject(AuthService);
   private readonly canvas = viewChild<ElementRef<HTMLCanvasElement>>('canvas');
@@ -188,7 +195,7 @@ export class ProfilePicturePage {
     this.error.set(null);
     try {
       await this.api.request('/profile/picture', { method: 'PUT', body: JSON.stringify({ image: this.result() }) });
-      await this.router.navigateByUrl('/settings/profile');
+      await this.leave();
     } catch (err: any) {
       this.error.set(err.message ?? 'Could not save the picture. Please try again.');
       this.busy.set(false);
@@ -202,7 +209,7 @@ export class ProfilePicturePage {
     try {
       await this.api.request<void>('/profile/picture', { method: 'DELETE' });
       await this.auth.clearPhoto().catch(() => undefined); // the photo of the sign-in goes too
-      await this.router.navigateByUrl('/settings/profile');
+      await this.leave();
     } catch (err: any) {
       this.error.set(err.message ?? 'Could not remove the picture. Please try again.');
       this.busy.set(false);

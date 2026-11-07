@@ -1,24 +1,32 @@
 @if (words(); as list) {
   <div class="alert alert-warning m-0" role="alert">
-    <strong>Write these 24 words down</strong> and keep them somewhere safe (on paper, or in a password manager). They are the only way to get your files back if you lose this phone or computer.
-    They are shown only now, and nobody can look them up for you, not even us.
+    <strong>Save these 24 words now.</strong> They are the only way to open your locked files if you lose this device. They are shown once, and nobody can find them for you, not even us.
   </div>
   <ol class="sf-recovery-words" aria-label="Your 24 recovery words">
     @for (word of list; track $index) { <li>{{ word }}</li> }
   </ol>
-  <button type="button" class="btn btn-outline-primary align-self-start btn-sm" (click)="copyWords()">{{ copied() ? 'Copied' : 'Copy the words' }}</button>
+  <div class="vstack gap-2 align-items-center text-center">
+    <button type="button" class="btn btn-outline-primary btn-sm" (click)="copyWords()">{{ copied() ? 'Copied' : 'Copy the words' }}</button>
+    <span class="small text-secondary">{{ copied() ? 'Now paste them into a file and keep it somewhere safe.' : 'Copy them and store them in a file on your computer, somewhere safe.' }}</span>
+  </div>
   <div class="card"><div class="card-body vstack gap-2">
-    <strong>Check that you wrote them down</strong>
-    <span class="small text-secondary">Type these words from your copy:</span>
+    <strong>Check that you saved them</strong>
+    <span class="small text-secondary">Type these words from your copy, to show they are saved:</span>
     @for (position of quiz(); track position; let i = $index) {
       <label class="d-grid gap-1"><span>Word {{ position }}</span>
         <input type="text" class="form-control" autocomplete="off" autocapitalize="none" spellcheck="false" [value]="answers()[i]" (input)="setAnswer(i, $any($event.target).value)" />
       </label>
     }
   </div></div>
-  <div class="d-flex justify-content-end">
-    <button type="button" class="btn btn-primary" [disabled]="!proved()" (click)="done()">I have saved the words</button>
+  <div class="vstack gap-2 align-items-center text-center">
+    <span class="small text-secondary">Your key is saved on this device and checked when you press Save.</span>
+    <div class="d-flex flex-wrap gap-3 justify-content-center">
+      <button type="button" class="btn btn-light" [disabled]="busy()" (click)="cancel()">Cancel</button>
+      <button type="button" class="btn btn-primary" [disabled]="!proved() || busy()" (click)="done()">{{ busy() ? 'Saving and checking…' : 'Save my key' }}</button>
+    </div>
+    <span class="small text-secondary">Cancel makes no key. You can make one later under Settings → Encryption.</span>
   </div>
+  @if (problem(); as text) { <div class="alert alert-warning m-0" role="alert">{{ text }}</div> }
 } @else {
   @switch (keys.state()) {
     @case ('unsupported') {
@@ -28,7 +36,7 @@
       <div class="alert alert-success m-0" role="status">✓ Your key is ready on this device.</div>
       <details class="sf-expand sf-expand-quiet">
         <summary>Your key code</summary>
-        <p class="small text-secondary mt-2">Your friends can compare this code with the one they see for you (in person or by phone) to be sure it is really your key.</p>
+        <p class="small text-secondary mt-2">Your friends see this code in your shared safebox, under Advanced. They can compare it with this one, in person or by phone, to be sure it is really your key.</p>
         <pre class="sf-fingerprint m-0">{{ fingerprintText() }}</pre>
       </details>
     }
@@ -38,7 +46,7 @@
         Files in your safebox will be locked with a key that stays on your device, so that only you and your friend can read them, not even the service.
         This makes the key and gives you 24 recovery words to keep.
       </p>
-      <button type="button" class="btn btn-primary btn-lg" [disabled]="busy()" (click)="makeKey()">{{ busy() ? 'Making your key…' : 'Make my key' }}</button>
+      <div class="d-flex justify-content-center"><button type="button" class="btn btn-primary" [disabled]="busy()" (click)="makeKey()">{{ busy() ? 'Making your key…' : 'Make my key' }}</button></div>
     }
   }
   @if (problem(); as text) { <div class="alert alert-warning m-0" role="alert">{{ text }}</div> }

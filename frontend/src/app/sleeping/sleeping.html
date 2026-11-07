@@ -20,27 +20,74 @@
   @if (!sleeping().length) {
     <p class="text-secondary">Nobody is asleep.</p>
   } @else {
-    <ul class="sf-list">
+    <!-- the same cards as on the friends page (colour, icon, name), without a seat -->
+    <ul class="list-unstyled row g-1 m-0">
       @for (friend of sleeping(); track friend.id) {
-        <li class="sf-list-item flex-wrap gap-2">
-          <app-friend-avatar [friend]="friend" [seat]="1" [size]="32" />
-          <span class="sf-list-text">
-            <strong class="sf-ellipsis">{{ friend.name }}</strong>
-            @if (friend.sleepsMe) { <small>😴 has you on their sleep list too</small> }
-          </span>
-          @if (deleting() === friend.id) {
-            <p class="sf-confirm-text w-100 m-0">Delete {{ friend.name }} for good? This removes the connection and the whole conversation, for both of you.</p>
-            <div class="sf-msg-actions w-100 justify-content-end">
-              <button type="button" class="btn btn-light btn-sm" (click)="deleting.set(null)" [disabled]="busy()">Cancel</button>
-              <button type="button" class="btn btn-danger btn-sm" (click)="remove(friend)" [disabled]="busy()">Delete</button>
+        <li class="col-12 col-md-6 d-flex flex-column">
+          <article class="card sf-slot flex-grow-1" [class.sf-has-color]="!!colorOf(friend.color)" [style.--sf-friend]="colorOf(friend.color)" [style.--sf-friend-ink]="inkOf(friend.color)">
+            <div class="card-body sf-card">
+              <header class="sf-head">
+                <span class="sf-seat">
+                  <!-- the icon opens the profile, as on the friends page -->
+                  <button type="button" class="sf-name-btn" (click)="toggleProfile(friend)" [attr.aria-expanded]="expanded() === friend.id"
+                          [attr.aria-label]="(expanded() === friend.id ? 'Hide the profile of ' : 'Show the profile of ') + friend.name">
+                    <app-friend-avatar [friend]="friend" [seat]="1" [size]="32" />
+                  </button>
+                </span>
+                <div class="sf-title">
+                  <a [routerLink]="['/friends', friend.id]" class="sf-name sf-friend-name text-decoration-none">{{ friend.name }}</a>
+                  <span class="badge rounded-pill text-bg-secondary">😴 Asleep</span>
+                  @if (unread().get(friend.id); as count) {
+                    <span class="badge rounded-pill text-bg-danger">{{ count === 1 ? 'New message' : count + ' new messages' }}</span>
+                  }
+                </div>
+              </header>
+              <div class="sf-body">
+                @if (lastSpoken(friend); as spoken) { <p class="sf-hint sf-spoken">{{ spoken }}</p> }
+                @if (friend.sleepsMe) { <p class="sf-hint sf-spoken">😴 {{ friend.name }} has you on their sleep list too</p> }
+              </div>
+              <!-- the buttons use the whole width of the card (not only the part under the name) and stay on one line -->
+              @if (deleting() === friend.id) {
+                <p class="sf-confirm-text m-0 mt-2">Delete {{ friend.name }} for good? This removes the connection and the whole conversation, for both of you.</p>
+                <div class="sf-actions sf-compact">
+                  <button type="button" class="btn btn-light btn-sm flex-fill text-nowrap" (click)="deleting.set(null)" [disabled]="busy()">Cancel</button>
+                  <button type="button" class="btn btn-danger btn-sm flex-fill text-nowrap" (click)="remove(friend)" [disabled]="busy()">Delete</button>
+                </div>
+              } @else {
+                <div class="sf-actions sf-compact">
+                  <a [routerLink]="['/friends', friend.id]" class="btn btn-light btn-sm flex-fill text-nowrap">Open</a>
+                  <button type="button" class="btn btn-primary btn-sm flex-fill text-nowrap" (click)="wake(friend)" [disabled]="busy() || !seatFree()">Wake up</button>
+                  <button type="button" class="btn btn-outline-danger btn-sm flex-fill text-nowrap" (click)="deleting.set(friend.id)" [disabled]="busy()">Delete</button>
+                </div>
+              }
             </div>
-          } @else {
-            <div class="sf-msg-actions flex-nowrap mt-0 ms-auto">
-              <a [routerLink]="['/friends', friend.id]" class="btn btn-light btn-sm">Open</a>
-              <button type="button" class="btn btn-primary btn-sm" (click)="wake(friend)" [disabled]="busy() || !seatFree()">Wake up</button>
-              <button type="button" class="btn btn-outline-danger btn-sm" (click)="deleting.set(friend.id)" [disabled]="busy()">Delete</button>
+          </article>
+
+          <!-- the profile of the friend: opens under the card (tap the icon) -->
+          <div class="sf-expand" [class.open]="expanded() === friend.id" [attr.inert]="expanded() === friend.id ? null : ''">
+            <div class="sf-expand-inner">
+              <section class="sf-profile" [attr.aria-label]="'Profile of ' + friend.name">
+                @if (countryName(friend.country); as country) { <p class="sf-hint m-0">{{ country }}</p> }
+                @if (friend.mood; as mood) {
+                  <p class="sf-profile-mood">
+                    <img [src]="moodIcon(mood)" [alt]="''" width="24" height="24" />
+                    <span>{{ moodLabel(mood) }}</span>
+                  </p>
+                }
+                @if (friend.unverified.length) {
+                  <p class="sf-hint text-warning-emphasis">
+                    {{ friend.name }} has not verified {{ friend.unverified.length === 2 ? 'their email or phone' : friend.unverified[0] === 'email' ? 'their email' : 'their phone' }},
+                    so we cannot be sure it is really them.
+                  </p>
+                }
+                <dl class="sf-details">
+                  @if (friend.phone) { <dt>Phone</dt><dd>{{ friend.phone }}</dd> }
+                  @if (friend.email) { <dt>Email</dt><dd>{{ friend.email }}</dd> }
+                  @if (friend.createdAt) { <dt>Added</dt><dd>{{ friend.createdAt | date: 'mediumDate' }}</dd> }
+                </dl>
+              </section>
             </div>
-          }
+          </div>
         </li>
       }
     </ul>

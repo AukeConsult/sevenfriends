@@ -15,65 +15,42 @@
 
   <!-- everything about encryption in one frame, in plain words: closed, it says whether files are locked; open, it explains and holds the choices -->
   @if (keyStatus() !== 'checking') {
-    <details class="sf-box-security" [class.sf-on]="canEncrypt()">
-      <summary>
-        @if (canEncrypt()) {
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>
-          <span class="sf-box-security-title">
-            {{ plain() ? 'Locking is switched off for new files' : 'New files are locked' }}
-            @if (plainItems().length) { <small>{{ plainItems().length === 1 ? '1 file is' : plainItems().length + ' files are' }} not locked yet</small> }
-          </span>
+    <!-- only a padlock while closed: shut and green when new files are locked, open and amber when they are not; tap it for the explanation and the choices -->
+    <details class="sf-box-security sf-box-lock" [class.sf-on]="locked()">
+      <summary [attr.aria-label]="lockText()" [attr.title]="lockText()">
+        @if (locked()) {
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>
         } @else {
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 7.5-2M4 4l16 16" /></svg>
-          <span class="sf-box-security-title">Files are not locked yet <small>Open to see why</small></span>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 7.75-1.4" /></svg>
         }
+        @if (plainItems().length) { <span class="badge rounded-pill text-bg-warning" aria-hidden="true">{{ plainItems().length }}</span> }
       </summary>
 
       <div class="sf-box-security-body">
         <section>
-          <h2>What is this?</h2>
-          <p>
-            Your files are always kept private: only you and {{ friendName() }} can open them. <strong>Locking</strong> (encryption) goes one step further.
-            The file is scrambled on your own device before it is sent, so nobody else can read it, not even the people who run the servers.
-            Only you two can unscramble it.
+          <p class="m-0">
+            @switch (keyStatus()) {
+              @case ('both') { Your files are locked: only you and {{ friendName() }} can open them. }
+              @case ('me') { {{ friendName() }} has a key, but you have none on this device, so files are not locked yet. }
+              @case ('friend') { You have a key, but {{ friendName() }} has not made one yet, so files are not locked yet. }
+              @default { Neither of you has a key yet, so files are not locked yet. }
+            }
           </p>
-        </section>
-
-        <section>
-          <h2>Who can lock files?</h2>
-          <p>Locking needs a small secret <strong>key</strong> on each side. A key is made once, on the device you use, and it never leaves it.</p>
           <ul class="sf-box-keystatus list-unstyled" aria-label="Who has an encryption key">
             <li [class.sf-has]="meHasKey()"><span aria-hidden="true">{{ meHasKey() ? '✓' : '✗' }}</span> You: {{ meHasKey() ? 'has a key' : 'no key yet' }}</li>
             <li [class.sf-has]="friendHasKey()"><span aria-hidden="true">{{ friendHasKey() ? '✓' : '✗' }}</span> {{ friendName() }}: {{ friendHasKey() ? 'has a key' : 'no key yet' }}</li>
           </ul>
-          <p>
-            @switch (keyStatus()) {
-              @case ('both') { You both have a key, so new files are locked automatically. }
-              @case ('me') { {{ friendName() }} has a key, but you have none on this device. Until you do, files are saved without locking. }
-              @case ('friend') { You have a key, but {{ friendName() }} has not made one yet. Until then, files are saved without locking. }
-              @default { Neither of you has a key yet. Until you both do, files are saved without locking. }
-            }
-          </p>
           @if (meHasKey() === false) {
-            @if (keys.elsewhere()) {
-              <p class="sf-hint">You made a key before, but it is not on this device (it is on another device, or this browser cleared it). Bring it back with the 24 words you wrote down.</p>
-              <a class="btn btn-primary btn-sm" routerLink="/settings/encryption">Restore my key</a>
-            } @else {
-              <a class="btn btn-primary btn-sm" routerLink="/settings/encryption">Make my key</a>
-            }
+            <p class="sf-hint">
+              @if (keys.elsewhere()) {
+                You made a key before, but it is not on this device (it is on another device, or this browser cleared it). You can bring it back with your 24 words in Settings → Encryption.
+              } @else {
+                You can make your key in Settings → Encryption.
+              }
+            </p>
           }
         </section>
-
         @if (canEncrypt()) {
-          <section>
-            <h2>Your choice for new files</h2>
-            <div class="form-check">
-              <input type="checkbox" class="form-check-input" id="box-plain" [checked]="plain()" (change)="prefs.set('boxPlain', $any($event.target).checked)" />
-              <label class="form-check-label" for="box-plain">Do not lock the files I add</label>
-            </div>
-            <p class="sf-hint">Leave this empty and every file you add is locked. Tick it only if you want to add files without locking them. The choice is remembered on this device.</p>
-          </section>
-
           <section>
             <h2>Files you added earlier</h2>
             @if (plainItems().length) {
@@ -84,6 +61,59 @@
             } @else {
               <p>All the files in this safebox are locked.</p>
             }
+          </section>
+        }
+
+        <!-- simple by default: the status above is all most people need; the rest is behind one button -->
+        <div class="d-flex justify-content-center">
+          <button type="button" class="btn btn-light btn-sm" [attr.aria-expanded]="advanced()" (click)="advanced.set(!advanced())">{{ advanced() ? 'Hide advanced' : 'Advanced' }}</button>
+        </div>
+
+        @if (advanced()) {
+          <section>
+            <h2>How does locking work?</h2>
+            <p>Each of you has a small secret <strong>key</strong>, made once on the device you use. It never leaves that device. Files are locked only when you both have a key.</p>
+          </section>
+
+          @if (canEncrypt()) {
+          <section>
+            <h2>Your choice for new files</h2>
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="box-plain" [checked]="plain()" (change)="prefs.set('boxPlain', $any($event.target).checked)" />
+              <label class="form-check-label" for="box-plain">Do not lock the files I add</label>
+            </div>
+            <p class="sf-hint">Leave this empty and every file you add is locked. Tick it only if you want to add files without locking them. The choice is remembered on this device.</p>
+          </section>
+          }
+
+          <section>
+            <h2>Is it really {{ friendName() }}'s key?</h2>
+            <p>
+              Each key has a code. To be sure {{ friendName() }}'s key is really theirs, ask them to read you the code under Settings → Encryption on their device, or compare it in person.
+              If it is the same as the code below, the key is theirs.
+            </p>
+            @for (key of friendKeys(); track key.id) {
+              <p class="sf-hint m-0">{{ friendName() }}: {{ key.label || 'a device' }}</p>
+              <pre class="sf-fingerprint">{{ readable(key.fingerprint) }}</pre>
+            } @empty {
+              <p class="sf-hint">{{ friendName() }} has no key yet.</p>
+            }
+            @if (keys.fingerprint(); as mine) {
+              <p class="sf-hint m-0">Your code, for {{ friendName() }} to compare:</p>
+              <pre class="sf-fingerprint">{{ readable(mine) }}</pre>
+            }
+          </section>
+
+          <section>
+            <h2>Your keys</h2>
+            <p>To see your devices, make a new key, or restore your key with your 24 words, open <a routerLink="/settings/encryption">Settings → Encryption</a>.</p>
+          @if (keys.diagnosis(); as d) {
+            <p class="sf-hint">
+              Details for this browser: account …{{ d.account.slice(-6) }} ·
+              key in this browser: {{ d.localKeyId ? 'yes (' + d.localKeyId.slice(0, 8) + ')' : 'no' }}{{ d.localKeyId ? ', ' + (d.localPublished === 'yes' ? 'published' : d.localPublished === 'removed' ? 'removed' : 'not published') : '' }} ·
+              keys in use on the server: you {{ serverKeys().mine }}, {{ friendName() }} {{ serverKeys().friend }}
+            </p>
+          }
           </section>
         }
       </div>
@@ -113,18 +143,29 @@
            accept="image/*,video/*,audio/*,.pdf,.txt,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.odt,.ods,.odp,.zip,.csv"
            (change)="chosen(picker)" />
 
-    <div class="sf-box-dropzone" [class.sf-over]="over()" [class.sf-busy]="adding() !== null" role="button" tabindex="0"
-         aria-label="Add files: choose them, or drop them here"
-         (click)="adding() === null && picker.click()" (keydown.enter)="adding() === null && picker.click()" (keydown.space)="$event.preventDefault(); adding() === null && picker.click()"
-         (dragover)="dragOver($event)" (dragleave)="over.set(false)" (drop)="dropped($event)">
-      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5M4 20h16" /></svg>
-      @if (adding() !== null) {
-        <strong>Adding {{ adding() }}…</strong>
-      } @else {
-        <strong>Add files</strong>
-        <span class="sf-hint">Drop files here, or tap to choose them</span>
-      }
-    </div>
+    <!-- the same kind of frame as the key one: closed it is one line, open it holds the drop zone (always open while the box is empty); files can be dropped on the frame even when it is closed -->
+    <details class="sf-box-security sf-box-add" [class.sf-over]="over()" [open]="addOpen() || !items().length" (toggle)="addOpen.set($any($event.target).open)"
+             (dragover)="dragOver($event)" (dragleave)="over.set(false)" (drop)="dropped($event)">
+      <summary>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5M4 20h16" /></svg>
+        <span class="sf-box-security-title">
+          @if (adding() !== null) { Adding {{ adding() }}… } @else { Add files <small>Tap to open, or drop files on this frame</small> }
+        </span>
+      </summary>
+      <div class="sf-box-security-body">
+        <div class="sf-box-dropzone" [class.sf-busy]="adding() !== null" role="button" tabindex="0"
+             aria-label="Add files: choose them, or drop them here"
+             (click)="adding() === null && picker.click()" (keydown.enter)="adding() === null && picker.click()" (keydown.space)="$event.preventDefault(); adding() === null && picker.click()">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5M4 20h16" /></svg>
+          @if (adding() !== null) {
+            <strong>Adding {{ adding() }}…</strong>
+          } @else {
+            <strong>Add files</strong>
+            <span class="sf-hint">Drop files here, or tap to choose them</span>
+          }
+        </div>
+      </div>
+    </details>
 
     @if (!items().length) {
       <p class="sf-box-empty text-secondary text-center">

@@ -20,7 +20,7 @@
     @if (existing()) {
       <button type="button" class="btn btn-outline-danger" [disabled]="busy()" (click)="remove()">Remove my picture</button>
     }
-    <a routerLink="/settings/profile" class="btn btn-light">Cancel</a>
+    <a [routerLink]="backTo" [queryParams]="backParams" class="btn btn-light">Cancel</a>
   } @else {
     <div class="sf-crop-wrap">
       <div class="sf-crop" [style.width.px]="view" [style.height.px]="view">
@@ -45,7 +45,7 @@
     }
 
     <div class="d-flex gap-2">
-      <a routerLink="/settings/profile" class="btn btn-light flex-fill" [class.disabled]="busy()">Cancel</a>
+      <a [routerLink]="backTo" [queryParams]="backParams" class="btn btn-light flex-fill" [class.disabled]="busy()">Cancel</a>
       <button type="button" class="btn btn-primary flex-fill" [disabled]="busy()" (click)="save()">
         {{ busy() ? 'Saving…' : 'Use this picture' }}
       </button>

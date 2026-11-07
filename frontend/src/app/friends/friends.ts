@@ -91,9 +91,13 @@ export class Friends {
 
   // ---- moving a friend to another seat: drag the grip of a card onto another seat (mouse or finger), or use the arrow keys on the grip ----
   /** the seat that is being dragged (a friend's card or an empty seat), how far it has moved down (px), and the seat it is over */
-  protected readonly dragging = signal<{ from: number; startY: number } | null>(null);
+  protected readonly dragging = signal<{ from: number; startX: number; startY: number } | null>(null);
+  /** how far the dragged card has moved sideways and down (px): it follows the pointer into the other column too */
+  protected readonly dragDx = signal(0);
   protected readonly dragDy = signal(0);
   protected readonly dropSeat = signal<number | null>(null);
+  /** the card is over the sleep list row: letting go puts that friend to sleep */
+  protected readonly overSleep = signal(false);
 
   /** The friend in a seat (null = the seat is empty). */
   private friendIn(seat: number): Friend | null {
@@ -104,7 +108,8 @@ export class Friends {
     event.preventDefault();
     event.stopPropagation();
     (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
-    this.dragging.set({ from: seat, startY: event.clientY });
+    this.dragging.set({ from: seat, startX: event.clientX, startY: event.clientY });
+    this.dragDx.set(0);
     this.dragDy.set(0);
     this.dropSeat.set(seat);
   }
@@ -112,9 +117,14 @@ export class Friends {
   protected dragMove(event: PointerEvent): void {
     const drag = this.dragging();
     if (!drag) return;
+    this.dragDx.set(event.clientX - drag.startX);
     this.dragDy.set(event.clientY - drag.startY);
-    const seat = document.elementFromPoint(event.clientX, event.clientY)?.closest('[data-seat]')?.getAttribute('data-seat');
-    if (seat) this.dropSeat.set(Number(seat));
+    const under = document.elementFromPoint(event.clientX, event.clientY);
+    const sleep = !!under?.closest('[data-sleep]') && !!this.friendIn(drag.from) && this.sleepable(this.friendIn(drag.from)!);
+    this.overSleep.set(sleep);
+    const seat = under?.closest('[data-seat]')?.getAttribute('data-seat');
+    if (sleep) this.dropSeat.set(drag.from);
+    else if (seat) this.dropSeat.set(Number(seat));
   }
 
   protected async dragEnd(event: PointerEvent, cancelled = false): Promise<void> {
@@ -122,10 +132,26 @@ export class Friends {
     if (!drag) return;
     (event.currentTarget as HTMLElement).releasePointerCapture?.(event.pointerId);
     const to = this.dropSeat();
+    const toSleep = this.overSleep();
+    this.overSleep.set(false);
     this.dragging.set(null);
+    this.dragDx.set(0);
     this.dragDy.set(0);
     this.dropSeat.set(null);
-    if (!cancelled && to && to !== drag.from) await this.swapSeats(drag.from, to);
+    if (cancelled) return;
+    const mover = this.friendIn(drag.from);
+    if (toSleep && mover) await this.putToSleep(mover);
+    else if (to && to !== drag.from) await this.swapSeats(drag.from, to);
+  }
+
+  /** A friend dropped on the sleep list row goes to sleep (the conversation is kept; the seat is free again). */
+  private async putToSleep(friend: Friend): Promise<void> {
+    try {
+      await this.friendsService.sleep(friend.id, true);
+      await this.reload();
+    } catch (err: any) {
+      this.loadError.set(err.message);
+    }
   }
 
   /** The arrow keys on a grip: one seat up or down. */

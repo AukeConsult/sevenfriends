@@ -49,7 +49,7 @@ export class SafeboxService {
         const uid = this.auth.user()?.uid;
         const device = uid ? await getDeviceKey(uid) : null;
         const fingerprint = device ? await fingerprintOf(device.publicKey) : null;
-        if (!device || !fingerprint) throw new Error('There is no encryption key on this device. Set one up (or restore it) in Settings → Keys.');
+        if (!device || !fingerprint) throw new Error('There is no encryption key on this device. Set one up (or restore it) in Settings → Encryption.');
         return openFileKey(item.enc!, keyIdOf(fingerprint), device.privateKey);
       })();
       this.fileKeys.set(id, key);
@@ -68,6 +68,15 @@ export class SafeboxService {
     } catch {
       return { ...item, name: 'Locked file' };
     }
+  }
+
+  /** For a locked file that does not open: which keys it was locked for (mine), and the key of this device: shown on the file page so a failure can be explained. */
+  async explain(friendId: string, itemId: string): Promise<{ lockedFor: string[]; thisDevice: string | null }> {
+    const enc = (await this.rawItem(friendId, itemId))?.enc;
+    const uid = this.auth.user()?.uid;
+    const device = uid ? await getDeviceKey(uid) : null;
+    const fingerprint = device ? await fingerprintOf(device.publicKey) : null;
+    return { lockedFor: (enc?.wraps ?? []).map((w) => w.keyId.slice(0, 8)), thisDevice: fingerprint ? keyIdOf(fingerprint).slice(0, 8) : null };
   }
 
   /** The item as the server sent it (loads the box when it was not read yet). */

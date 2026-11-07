@@ -15,6 +15,7 @@ import { UiPreferencesService } from '../core/ui-preferences';
 import { Friend, FriendRequest, Message, Notice, ProfileDetails } from '../models';
 import { APP_ORIGIN } from '../core/app-origin';
 import { AndroidChannelsService } from '../core/android-channels.service';
+import { KeysService } from '../core/keys.service';
 import { PushService } from '../core/push.service';
 
 /** Without a word for this many days, a friend gets a gentle "Say hi". */
@@ -60,6 +61,7 @@ export class Notifications {
   private readonly push = inject(PushService);
   protected readonly invite = inject(InviteLinkService);
   private readonly prefs = inject(UiPreferencesService);
+  private readonly keys = inject(KeysService);
   /** the first-time setup was left for later: Home offers it again */
   protected readonly setupLeft = computed(() => this.prefs.value('setup')() === 'skipped');
 
@@ -169,6 +171,12 @@ export class Notifications {
   protected readonly error = this.notifications.error;
 
   constructor() {
+    // a freshly installed app has nothing of what was set up in the browser (key, notifications, microphone): the setup wizard continues here, once
+    if (this.install.separateApp && this.prefs.get('setup') === 'new') {
+      void this.keys.refresh().then(() => {
+        if (this.keys.state() === 'none' && this.prefs.get('setup') === 'new') void this.router.navigateByUrl('/setup');
+      });
+    }
     // the person may have changed the browser's permission in its settings: look again when the page comes back
     const recheck = () => this.permission.set(typeof Notification === 'undefined' ? 'denied' : Notification.permission);
     document.addEventListener('visibilitychange', recheck);

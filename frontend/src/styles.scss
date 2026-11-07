@@ -111,6 +111,7 @@ h2, .h2 { font-size: var(--sf-fs-title); }
 h3, .h3 { font-size: var(--sf-fs-heading); }
 small, .small { font-size: var(--sf-fs-description); }
 h4, .h4, h5, .h5, h6, .h6 { font-size: var(--sf-fs-title); }
+.sf-section-title { font-size: var(--sf-fs-text); font-weight: 700; } // the heading of a section inside a page (Display, Conversation, Account ...): as big as the page title, never bigger; use it on every such heading
 
 // The 4 standard sizes as classes, for text that is not a heading
 .sf-fs-description { font-size: var(--sf-fs-description); }
@@ -414,6 +415,7 @@ router-outlet + * { display: block; min-height: 100dvh; }
 // ---- Forms ----
 .sf-field { display: grid; gap: 0.25rem; }
 .sf-actions { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
+.sf-actions.sf-compact { gap: 0.375rem; .btn { padding: 0.25rem 0.375rem; font-size: var(--sf-fs-description); white-space: nowrap; } } // small buttons that fit three in a narrow card
 .sf-divider {
   display: flex;
   align-items: center;
@@ -591,6 +593,7 @@ router-outlet + * { display: block; min-height: 100dvh; }
 
 // ---- Bar extras (message feed header) ----
 .sf-bar-text { display: flex; flex-direction: column; min-width: 0; }
+.sf-bar .sf-seat + .sf-bar-text { margin-inline-start: 0.75rem; } // room between the picture and the name in a conversation header
 // A plain page title instead of the coloured bar: centred, with the seat dots under it
 .sf-page-head { display: flex; flex-direction: column; align-items: center; gap: 0.35rem; padding: 0.5rem 0 1rem; text-align: center;
   h1 { margin: 0; font-size: var(--sf-fs-text); font-weight: 700; } // the page title: the normal text size, bold
@@ -1014,6 +1017,8 @@ app-voice { display: contents; }
   h2 { margin: 0; font-size: var(--sf-fs-text); font-weight: 700; }
   p { margin: 0; }
   .sf-box-keystatus { justify-content: flex-start; margin: 0; } } // all about locking (encryption) in one frame: closed it says whether files are locked, open it explains and holds the choices
+.sf-box-add summary { color: var(--sf-primary); } .sf-box-add.sf-over { border-color: var(--sf-primary); background: color-mix(in srgb, var(--sf-primary) 10%, var(--sf-card)); } // the Add files frame: in the brand colour, lit while files are dragged over it
+.sf-box-lock { width: fit-content; margin-inline: auto; &:not([open]) { border-radius: 999px; } &[open] { width: auto; margin-inline: 0; } summary { gap: 0.375rem; padding: 0.5rem 0.75rem; &::after { display: none; } } } // the lock frame, closed: only a padlock (round); open: the whole frame
 .sf-box-usage { display: grid; gap: 0.25rem; margin-bottom: 0.75rem; .progress { height: 0.5rem; } }
 .sf-box-empty { display: grid; justify-items: center; gap: 0.5rem; padding: 2rem 1rem; svg { color: var(--sf-muted); } }
 .sf-box-dropzone { display: grid; justify-items: center; gap: 0.25rem; padding: 1.25rem 1rem; border: 2px dashed var(--sf-primary); border-radius: var(--sf-radius); color: var(--sf-primary); text-align: center; cursor: pointer; // where files are chosen or dropped
@@ -1021,7 +1026,7 @@ app-voice { display: contents; }
   &.sf-over { border-style: solid; }
   &.sf-busy { cursor: progress; opacity: 0.7; } }
 .sf-box-list { margin-top: 0.75rem; }
-.sf-box-list .sf-list-text small { font-size: var(--sf-fs-text); font-weight: 400; } // the line under a file name (kind, size, who, date): the normal text size too
+.sf-box-list .sf-list-text small { font-size: var(--sf-fs-description); font-weight: 400; } // the line under a file name (kind, size, who, date): the smallest text size
 .sf-box-name { color: var(--sf-text); font-weight: 400; text-decoration: none; } // a file name: normal text size and colour, not a blue bold link
 .sf-back-inline { display: inline-grid; place-items: center; width: 1.75rem; height: 1.75rem; margin-inline-end: 0.25rem; color: var(--sf-primary); text-decoration: none; // a small arrow to the left of the title icon
   &::before { content: ''; width: 0.5rem; height: 0.5rem; margin-inline-start: 0.2rem; border-left: 2.5px solid currentColor; border-bottom: 2.5px solid currentColor; border-radius: 1px; transform: rotate(45deg); }
@@ -1158,21 +1163,23 @@ nav.sf-tabs {
   .sf-choice-round img { --sf-pick: calc((100vw - 2 * var(--sf-gutter) - 1rem) / 2 - 0.75rem); width: var(--sf-pick); height: var(--sf-pick); max-width: 10rem; max-height: 10rem; } // the icons of the profile on a phone: two in a row, as big as the width allows (at most 10rem)
   .sf-choices:has(.sf-choice-round) { gap: 0.75rem 1rem; }
 }
+.sf-choices-compact:has(.sf-choice-round) { gap: 0.25rem; }
+.sf-choices-compact .sf-choice-round img { width: clamp(2.75rem, calc((100vw - 2 * var(--sf-gutter)) / 4 - 1.25rem), 4rem); height: clamp(2.75rem, calc((100vw - 2 * var(--sf-gutter)) / 4 - 1.25rem), 4rem); } // the icon choices of the setup wizard: smaller, about four in a row, growing a little with the width of the view (the Profile page keeps the big ones)
 
 // ---- Phone: the smiley and the paperclip float over the right edge of the feed (a see-through yellow capsule just above the message field), so the field has the whole width ----
 :root { --sf-float-gap: 0px; }
 @media (max-width: 575.98px) {
   :root { --sf-float-gap: 3rem; } // extra room under the last message, so it can be scrolled clear of the capsule
   .sf-composer-row { padding-inline: 0.5rem; } // the field runs almost edge to edge
-  .sf-composer-row .sf-add { position: absolute; inset-inline-end: 0.5rem; bottom: calc(100% + 0.5rem); z-index: 3; }
-  .sf-composer-top .sf-composer-row .sf-add { bottom: auto; top: calc(100% + 0.5rem); }
-  .sf-composer-row .sf-add .d-flex { gap: 0 !important; padding: 0.125rem; border-radius: 1.5rem; background: color-mix(in srgb, #fbbf24 45%, transparent); backdrop-filter: blur(2px); }
-  .sf-composer-row .sf-add .sf-add-btn { width: 2.25rem; height: 2.25rem; min-height: 0; margin: 0; background: none; box-shadow: none; color: var(--sf-primary);
+  .sf-composer-row .sf-add { position: absolute; inset-inline-start: 0.5rem; bottom: calc(100% - 0.125rem); z-index: 3; } // on the left: my own messages are on the right, so the capsule does not cover them
+  .sf-composer-top .sf-composer-row .sf-add { bottom: auto; top: calc(100% - 0.125rem); }
+  .sf-composer-row .sf-add .d-flex { gap: 0 !important; padding: 0; border-radius: 1.5rem; background: color-mix(in srgb, #fbbf24 45%, transparent); backdrop-filter: blur(2px); }
+  .sf-composer-row .sf-add .sf-add-btn { width: 1.875rem; height: 1.875rem; min-height: 0; margin: 0; padding: 0; background: none; box-shadow: none; color: var(--sf-primary);
     &:hover, &[aria-expanded='true'] { transform: none; box-shadow: none; background: #fbbf24; } // solid yellow when pressed
-    svg { width: 1.5rem; height: 1.5rem; } }
-  .sf-composer-row .sf-add-menu { inset-inline-start: auto; inset-inline-end: 0; transform-origin: bottom right; }
-  .sf-composer-top .sf-composer-row .sf-add-menu { transform-origin: top right; }
+    svg { width: 1.25rem; height: 1.25rem; } }
+  .sf-composer-row .sf-add-menu { inset-inline-start: 0; inset-inline-end: auto; transform-origin: bottom left; }
+  .sf-composer-top .sf-composer-row .sf-add-menu { transform-origin: top left; }
 }
 
-.sf-recovery-words { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.375rem 1rem; margin: 0; padding: 0.75rem 0.75rem 0.75rem 2.25rem; border: 1px solid var(--sf-border); border-radius: var(--sf-radius); background: var(--sf-card); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; user-select: all; li::marker { color: var(--sf-muted); } @media (min-width: 576px) { grid-template-columns: repeat(3, 1fr); } } // the 24 recovery words, numbered
+.sf-recovery-words { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem 1.5rem; margin: 0; padding: 1rem 1rem 1rem 3rem; font-size: var(--sf-fs-description); border: 1px solid var(--sf-border); border-radius: var(--sf-radius); background: var(--sf-card); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; user-select: all; li::marker { color: var(--sf-muted); } @media (min-width: 576px) { grid-template-columns: repeat(3, 1fr); } } // the 24 recovery words, numbered
 .sf-fingerprint { padding: 0.5rem 0.75rem; border: 1px solid var(--sf-border); border-radius: var(--sf-radius); background: var(--sf-card); color: var(--sf-text); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.8125rem; white-space: pre-wrap; user-select: all; } // a key code to read out

@@ -34,31 +34,36 @@
       <input appClear #name type="text" name="name" class="form-control" placeholder="Your name (optional)"
              autocomplete="name" [hidden]="mode() === 'signin'" />
       <input #email type="email" name="email" class="form-control" placeholder="Email"
-             autocomplete="email" inputmode="email" required />
+             autocomplete="email" inputmode="email" required (input)="rejected.set(false)" />
       <input #password type="password" name="password" class="form-control" placeholder="Password"
-             required minlength="6" [attr.autocomplete]="mode() === 'signin' ? 'current-password' : 'new-password'" />
+             required minlength="6" [attr.autocomplete]="mode() === 'signin' ? 'current-password' : 'new-password'" (input)="rejected.set(false)" />
       <!-- creating an account: the password is typed twice, so a typing mistake does not lock the person out -->
       <input #again type="password" name="password-again" class="form-control" placeholder="Repeat the password"
              [hidden]="mode() === 'signin'" [required]="mode() === 'signup'" minlength="6" autocomplete="new-password" />
 
-      <button type="submit" class="btn btn-primary" [disabled]="busy()">
-        {{ busy() ? 'Please wait…' : mode() === 'signin' ? 'Sign in' : 'Create account' }}
-      </button>
+      @if (!rejected()) {
+        <button type="submit" class="btn btn-primary" [disabled]="busy()">
+          {{ busy() ? 'Please wait…' : mode() === 'signin' ? 'Sign in' : 'Create account' }}
+        </button>
+      }
 
-      @if (error()) {
+      @if (error() && !rejected()) {
         <div class="alert alert-danger mt-2 mb-0 text-center" role="alert">{{ error() }}</div>
       }
       @if (rejected()) {
-        <!-- turned down: maybe there is no account yet. Say so, and make creating one the obvious next step -->
-        <div class="card mt-2" role="region" aria-label="Create an account">
+        <!-- turned down: no red error, but the two ways on: there may be no account yet, or the password is forgotten -->
+        <div class="card mt-2" role="region" aria-label="Create an account or reset the password">
           <div class="card-body vstack gap-2 text-center">
-            <p class="m-0"><strong>New to Seven Friends?</strong><br />Then you have no account yet. It takes a few seconds to create one.</p>
-            <button type="button" class="btn btn-primary" (click)="toggleMode()">Create an account</button>
+            <p class="m-0">We could not sign you in with this email and password.</p>
+            <div class="d-flex gap-2 justify-content-center">
+              <button type="button" class="btn btn-primary btn-sm" (click)="toggleMode()">Create an account</button>
+              <button type="button" class="btn btn-outline-secondary btn-sm" (click)="forgot(email.value)">Forgot password?</button>
+            </div>
           </div>
         </div>
       }
 
-      @if (mode() === 'signin') {
+      @if (mode() === 'signin' && !rejected()) {
         <button type="button" class="btn btn-link" (click)="forgot(email.value)">Forgot password?</button>
       }
     </form>

@@ -1,4 +1,4 @@
-import { StoredDeviceKey, createDeviceKey, deleteDeviceKey, deviceKeySupported, getDeviceKey, keepDeviceKey, restoreDeviceKey } from './device-key';
+import { StoredDeviceKey, createDeviceKey, deleteDeviceKey, deviceKeySupported, deviceKeyWorks, generateDeviceKey, getDeviceKey, keepDeviceKey, restoreDeviceKey, saveDeviceKey } from './device-key';
 
 /** These run in Chrome (karma), with the real Web Crypto and the real IndexedDB; every test uses its own person, which is removed again. */
 describe('device key', () => {
@@ -86,6 +86,25 @@ describe('device key', () => {
     const secret = crypto.getRandomValues(new Uint8Array(32));
     const opened = new Uint8Array(await crypto.subtle.decrypt({ name: 'RSA-OAEP' }, restored.privateKey, await encrypt(key.publicKey, secret)));
     expect(Array.from(opened)).toEqual(Array.from(secret));
+  });
+
+  it('makes a key in memory without saving it, and saves it only when asked', async () => {
+    const uid = person();
+    const { key, backup } = await generateDeviceKey();
+    expect(backup).toBeDefined();
+    expect(await getDeviceKey(uid)).toBeNull(); // nothing is on the device yet
+    expect(await deviceKeyWorks(uid, key.publicKey)).toBeFalse();
+    await saveDeviceKey(uid, key);
+    expect((await getDeviceKey(uid))?.id).toBe(key.id);
+    expect(await deviceKeyWorks(uid, key.publicKey)).toBeTrue(); // read back, same key, and what it locks it opens
+  });
+
+  it('does not accept a key on the device that is not the expected one', async () => {
+    const uid = person();
+    const saved = (await createDeviceKey(uid)).key;
+    const other = (await generateDeviceKey()).key;
+    expect(await deviceKeyWorks(uid, saved.publicKey)).toBeTrue();
+    expect(await deviceKeyWorks(uid, other.publicKey)).toBeFalse();
   });
 
   it('refuses a backup that belongs to another key', async () => {

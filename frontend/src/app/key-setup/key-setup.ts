@@ -1,20 +1,24 @@
-import { Component, computed, inject, output, signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, output, signal } from '@angular/core';
 import { KeysService } from '../core/keys.service';
 import { readableFingerprint } from '../models';
 
 /**
- * Making the encryption key, in one piece used by the setup (step 3) and by Settings → Keys: shows whether this device has a key, makes one
- * (`makeKey`, also with `reset` for a new key), shows the 24 recovery words once, and asks for three of them back before it lets go.
- * `finished` is sent when the person has proved the words are written down.
+ * Making the encryption key, in one piece used by the setup wizard and by Settings → Keys: shows whether this device has a key, makes one
+ * (`makeKey`, also with `reset` for a new key) in memory, shows the 24 recovery words once, and asks for three of them back. Only when the person
+ * presses Save is the key put on this device and on the server (and checked): leaving before that throws the new key away.
+ * `finished` is sent when the key is saved and checked.
  */
 @Component({
   selector: 'app-key-setup',
+  host: { class: 'd-flex flex-column gap-3' }, // the parts (words, copy button, check, buttons) have room between them
   templateUrl: './key-setup.html',
 })
 export class KeySetup {
   protected readonly keys = inject(KeysService);
 
   readonly finished = output<void>();
+  /** the person cancelled before saving: no key was made (the setup wizard goes on to its next step) */
+  readonly cancelled = output<void>();
 
   /** the 24 recovery words, shown after the key is made (null before, and again after the person has proved they saved them) */
   protected readonly words = signal<string[] | null>(null);
@@ -35,6 +39,7 @@ export class KeySetup {
 
   constructor() {
     void this.keys.refresh();
+    inject(DestroyRef).onDestroy(() => this.keys.discard()); // left before Save: the key that was not saved is thrown away
   }
 
   /** Makes the key (`reset`: a new one in place of the one this device has) and shows the words. */
@@ -42,7 +47,7 @@ export class KeySetup {
     this.busy.set(true);
     this.problem.set(null);
     try {
-      const words = await (reset ? this.keys.reset() : this.keys.setup());
+      const words = await this.keys.prepare(reset);
       const positions = new Set<number>(); // three different positions, in order
       while (positions.size < 3) positions.add(1 + (crypto.getRandomValues(new Uint32Array(1))[0] % words.length));
       this.quiz.set([...positions].sort((a, b) => a - b));
@@ -69,8 +74,26 @@ export class KeySetup {
     }
   }
 
-  /** The words were proved saved: they leave the screen (and the app) for good. */
-  protected done(): void {
+  /** Cancel: the key that was made in memory is thrown away, the words leave the screen, and nothing was saved anywhere. */
+  protected cancel(): void {
+    this.keys.discard();
+    this.words.set(null);
+    this.problem.set(null);
+    this.cancelled.emit();
+  }
+
+  /** Save: the key goes on this device and the server, and is checked. Then the words leave the screen (and the app) for good. */
+  protected async done(): Promise<void> {
+    this.busy.set(true);
+    this.problem.set(null);
+    try {
+      await this.keys.commit();
+    } catch (err: any) {
+      this.problem.set(err?.message || 'The key could not be saved. Try again.');
+      return; // the words stay on the screen: Save can be pressed again
+    } finally {
+      this.busy.set(false);
+    }
     this.words.set(null);
     this.finished.emit();
   }

@@ -98,12 +98,14 @@
     </div>
 
     @if (failed()) {
-      <div class="alert alert-danger" role="alert">
+      <div class="alert alert-danger vstack gap-2 mb-3" role="alert">
         @if (failReason(); as why) {
-          This file is locked, and it cannot be opened here. {{ why }}
-          @if (item()?.enc) { <a routerLink="/settings/encryption">Check your key</a> }
+          <span>This file is locked, and it cannot be opened here. {{ why }}</span>
+          <span>{{ friendName() }} can unlock it for you.</span>
+          @if (item()?.enc) { <a routerLink="/settings/encryption" class="align-self-start">Check your key</a> }
+          @if (failDetails(); as details) { <small>{{ details }}</small> }
         } @else {
-          Could not read the file. Check the connection and try again.
+          <span>Could not read the file. Check the connection and try again.</span>
         }
       </div>
     }

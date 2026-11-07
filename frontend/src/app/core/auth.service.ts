@@ -212,9 +212,9 @@ export class AuthService {
 
   private newAccount = false;
 
-  /** Where to go after signing in: a brand-new account fills in its profile first. */
+  /** Where to go after signing in: a brand-new account starts with the setup wizard (profile, notifications, key, first friend). */
   landingPath(): string {
-    const path = this.newAccount ? '/settings/profile' : '/';
+    const path = this.newAccount ? '/setup' : '/';
     this.newAccount = false;
     return path;
   }

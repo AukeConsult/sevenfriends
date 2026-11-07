@@ -21,7 +21,7 @@
   <ul class="list-unstyled row g-1 m-0">
     @for (slot of slots(); track slot.position) {
       <li class="col-12 col-md-6 d-flex flex-column" [attr.data-seat]="slot.position" [class.sf-drop]="!!dragging() && dropSeat() === slot.position && dragging()?.from !== slot.position"
-          [class.sf-dragging]="dragging()?.from === slot.position" [style.transform]="dragging()?.from === slot.position ? 'translateY(' + dragDy() + 'px)' : null">
+          [class.sf-dragging]="dragging()?.from === slot.position" [style.transform]="dragging()?.from === slot.position ? 'translate(' + dragDx() + 'px, ' + dragDy() + 'px)' : null">
         @if (slot.friend; as friend) {
           <article class="card sf-slot flex-grow-1" [class.sf-clickable]="friend.status === 'confirmed'" [class.sf-has-color]="!!colorOf(friend.color)" [style.--sf-friend]="colorOf(friend.color)" [style.--sf-friend-ink]="inkOf(friend.color)"
                    [attr.tabindex]="friend.status === 'confirmed' ? 0 : null" [attr.role]="friend.status === 'confirmed' ? 'link' : null"
@@ -161,7 +161,7 @@
     }
     <!-- one more row like an empty seat: opens the waiting list -->
     @if (showSleepList()) {
-    <li class="col-12 col-md-6 d-flex flex-column">
+    <li class="col-12 col-md-6 d-flex flex-column" data-sleep="true" [class.sf-drop]="overSleep()">
       <a routerLink="/friends/sleeping" class="btn sf-slot-empty w-100 flex-grow-1 text-start d-flex align-items-center gap-3">
         <span class="sf-slot-waiting" aria-hidden="true">😴</span>
         <span class="flex-grow-1">Sleep list@if (sleeping() > 0) { ({{ sleeping() }}) }</span>
