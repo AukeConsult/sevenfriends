@@ -90,12 +90,12 @@ export function sizeOf(image: Decoded | HTMLVideoElement | HTMLCanvasElement): {
 }
 
 /** The longest side of a picture that is sent, and of its small preview, in pixels. */
-const FULL_SIDE = 1280;
+const FULL_SIDE = 1024;
 const THUMB_SIDE = 320;
 /** A picture that is sent is squeezed (lower JPEG quality) until it is no bigger than this, as long as the quality stays good enough. */
-const TARGET_BYTES = 350 * 1024;
-const BEST_QUALITY = 0.82;
-const WORST_QUALITY = 0.55;
+const TARGET_BYTES = 200 * 1024;
+const BEST_QUALITY = 0.8;
+const WORST_QUALITY = 0.5;
 /** The backend takes at most 10 MB for an image. */
 export const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
 
@@ -109,7 +109,7 @@ export interface PreparedImage {
 }
 
 /**
- * Makes a chosen image ready to send, in the browser: it is scaled down to 1280 pixels and saved as a JPEG of about 350 KB at most (a big phone
+ * Makes a chosen image ready to send, in the browser: it is scaled down to 1024 pixels and saved as a JPEG of about 200 KB at most (a big phone
  * photo is never sent, and the position and other details stored in the photo are left behind), with a 320 pixel preview.
  * A GIF is sent as it is, so it keeps moving.
  */
@@ -167,6 +167,43 @@ async function jpegUnder(canvas: HTMLCanvasElement, maxBytes: number): Promise<B
 function release(canvas: HTMLCanvasElement): void {
   canvas.width = 0;
   canvas.height = 0;
+}
+
+/**
+ * The prepared image turned a quarter turn (clockwise or not), with its preview made again from the turned picture. A GIF is returned as it is
+ * (it would stop moving). Each turn is made from the picture that is shown, so turning twice is a half turn.
+ */
+export async function rotateImage(image: PreparedImage, clockwise: boolean): Promise<PreparedImage> {
+  if (image.blob.type === 'image/gif') return image;
+  const source = await decodeImage(image.blob, FULL_SIDE);
+  const canvases: HTMLCanvasElement[] = [];
+  try {
+    const { width, height } = sizeOf(source);
+    const turned = document.createElement('canvas');
+    canvases.push(turned);
+    turned.width = height;
+    turned.height = width;
+    const context = turned.getContext('2d');
+    if (!context) throw new Error('This browser cannot turn images');
+    context.fillStyle = '#ffffff';
+    context.fillRect(0, 0, turned.width, turned.height);
+    context.imageSmoothingQuality = 'high';
+    if (clockwise) {
+      context.translate(height, 0);
+      context.rotate(Math.PI / 2);
+    } else {
+      context.translate(0, width);
+      context.rotate(-Math.PI / 2);
+    }
+    context.drawImage(source, 0, 0);
+    const blob = await jpegUnder(turned, TARGET_BYTES);
+    const small = drawn(turned, THUMB_SIDE);
+    canvases.push(small);
+    return { blob, thumb: await jpeg(small, 0.8), width: height, height: width, name: image.name };
+  } finally {
+    if (!(source instanceof HTMLImageElement)) source.close();
+    canvases.forEach(release);
+  }
 }
 
 /** The picture (or the frame of a video on the screen) scaled down to `longestSide` pixels, as a JPEG. */

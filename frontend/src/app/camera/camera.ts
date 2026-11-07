@@ -1,5 +1,9 @@
 import { Component, ElementRef, OnDestroy, OnInit, effect, input, output, signal, viewChild } from '@angular/core';
+import { scaled } from '../core/image';
 import { MAX_VIDEO_SECONDS, recorderOptions, recorderType } from '../core/video';
+
+/** The longest side of a photo taken on the page, in pixels (it is made smaller still when it is prepared to be sent). */
+const PHOTO_SIDE = 1280;
 
 /** What went wrong with the camera, in words for the person. */
 export function cameraProblem(err: unknown): string {
@@ -19,7 +23,7 @@ export function cameraProblem(err: unknown): string {
 
 /**
  * The camera of a computer, on the page (`getUserMedia`; a phone uses the camera app instead, see the add-media page).
- * In `photo` mode there is a shutter; in `video` mode the film is recorded straight into a small file (at most 2 minutes,
+ * In `photo` mode there is a shutter; in `video` mode the film is recorded straight into a small file (at most 1 minute,
  * it stops by itself). The camera is stopped (its light goes out) when this is removed from the page.
  */
 @Component({
@@ -84,7 +88,10 @@ export class Camera implements OnInit, OnDestroy {
     this.stopStream();
     this.stream.set(
       await navigator.mediaDevices.getUserMedia({
-        video: deviceId ? { deviceId: { exact: deviceId } } : { width: { ideal: 1280 }, height: { ideal: 720 } },
+        // a film is recorded smaller (960 x 540, 24 pictures a second) than a photo is taken: less to hold in memory on a phone
+        video: this.mode() === 'video'
+          ? { ...(deviceId ? { deviceId: { exact: deviceId } } : {}), width: { ideal: 960 }, height: { ideal: 540 }, frameRate: { ideal: 24, max: 30 } }
+          : deviceId ? { deviceId: { exact: deviceId } } : { width: { ideal: 1280, max: 1920 }, height: { ideal: 720, max: 1080 } },
         audio: this.mode() === 'video',
       }),
     );
@@ -108,12 +115,13 @@ export class Camera implements OnInit, OnDestroy {
     if (this.shot || !this.ready() || !element?.videoWidth) return;
     this.shot = true;
     this.ready.set(false);
-    const canvas = document.createElement('canvas');
-    canvas.width = element.videoWidth;
-    canvas.height = element.videoHeight;
-    canvas.getContext('2d')?.drawImage(element, 0, 0); // the photo itself is not mirrored, only the view of it is
-    const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.92));
-    canvas.width = canvas.height = 0; // its pixels are not needed any more
+    // the frame is scaled down straight from the camera picture (never a full-size canvas: a phone camera can give a very big frame)
+    let blob: Blob | null = null;
+    try {
+      blob = (await scaled(element, PHOTO_SIDE, 0.85)).blob; // the photo itself is not mirrored, only the view of it is
+    } catch {
+      blob = null;
+    }
     if (!blob) {
       this.shot = false;
       this.failed.emit('The photo could not be taken. Try again.');

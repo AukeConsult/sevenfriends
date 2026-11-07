@@ -1,10 +1,10 @@
 import { PreparedImage, scaled } from './image';
 
 /** A video can be this long. */
-export const MAX_VIDEO_SECONDS = 120;
+export const MAX_VIDEO_SECONDS = 60;
 /** The backend takes at most 100 MB for a video. */
 const MAX_VIDEO_BYTES = 100 * 1024 * 1024;
-/** What a video is made into: at most 1280 pixels on the long side, about 1.2 Mbit/s (a 2 minute video is about 19 MB, the server accepts up to 30 MB). */
+/** What a video is made into: at most 1280 pixels on the long side, about 1.2 Mbit/s (a 1 minute video is about 9 MB, the server accepts up to 30 MB). */
 const VIDEO_SIDE = 1280;
 const VIDEO_BPS = 1_200_000;
 const AUDIO_BPS = 96_000;

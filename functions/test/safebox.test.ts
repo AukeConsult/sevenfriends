@@ -37,6 +37,10 @@ describe("putting files in the box", () => {
     expect(stored()).toEqual([`sf-cache/box-${id}/${item.id}`]);
     expect((await listOf(u(0), id)).items).toMatchObject([{ id: item.id, mine: true }]);
     expect((await listOf(u(1), id)).items).toMatchObject([{ id: item.id, mine: false }]);
+    // the file says who saved it (its owner), the same for both friends
+    const ownerSeen = (await listOf(u(1), id)).items[0] as { ownerId?: string };
+    expect(typeof ownerSeen.ownerId).toBe('string');
+    expect((await listOf(u(0), id)).items[0] as { ownerId?: string }).toMatchObject({ ownerId: ownerSeen.ownerId });
     expect((await listOf(u(1), id)).usedBytes).toBe(png().length);
   });
 

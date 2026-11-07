@@ -51,6 +51,19 @@
         <audio class="sf-attach-audio" [src]="src" controls aria-label="The voice message you are about to send"></audio>
       }
     }
+    @if (canRotate()) {
+      <!-- a photo that came out sideways is turned here, before it is sent -->
+      <div class="d-flex justify-content-center gap-2">
+        <button type="button" class="btn btn-light" [disabled]="!!working()" (click)="rotate(false)" aria-label="Turn left" title="Turn left">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4L5 8l4 4" /><path d="M5 8h9a5 5 0 015 5v1a5 5 0 01-5 5H9" /></svg>
+          Turn left
+        </button>
+        <button type="button" class="btn btn-light" [disabled]="!!working()" (click)="rotate(true)" aria-label="Turn right" title="Turn right">
+          Turn right
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 4l4 4-4 4" /><path d="M19 8h-9a5 5 0 00-5 5v1a5 5 0 005 5h5" /></svg>
+        </button>
+      </div>
+    }
     @if (file(); as shown) {
       <p class="sf-hint text-center m-0">{{ details(shown) }}</p>
     }

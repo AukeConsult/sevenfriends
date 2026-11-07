@@ -9,6 +9,8 @@ export interface SafeboxItem {
   kind: SafeboxKind;
   mime: string;
   bytes: number;
+  /** who saved the file in the box (the user id of its owner; the encryption will use this person's key) */
+  ownerId: string;
   /** true = I put it in the box */
   mine: boolean;
   createdAt: string | null;

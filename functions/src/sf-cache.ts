@@ -118,13 +118,13 @@ export const isObjectId = (v: unknown): v is string => typeof v === "string" && 
 export const mediaLabel = (kind: MediaKind) => ({ image: "📷 Photo", video: "🎞 Video", audio: "🎤 Audio" })[kind];
 
 /** Store a file (replaces one with the same name). A file never changes once stored, so the browser may keep it for ever. */
-export async function putObject(owner: string, name: string, data: Buffer, kind: StoredKind, mime: string, fileName: string | null = null): Promise<void> {
+export async function putObject(owner: string, name: string, data: Buffer, kind: StoredKind, mime: string, fileName: string | null = null, savedBy: string | null = null): Promise<void> {
   await bucket()
     .file(path(owner, name))
     .save(data, {
       contentType: mime,
       resumable: false,
-      metadata: { cacheControl: "private, max-age=31536000, immutable", metadata: { kind, ...(fileName ? { fileName } : {}) } },
+      metadata: { cacheControl: "private, max-age=31536000, immutable", metadata: { kind, ...(fileName ? { fileName } : {}), ...(savedBy ? { savedBy } : {}) } }, // savedBy: who saved the file (its owner in a safebox, whose key will encrypt it)
     });
 }
 

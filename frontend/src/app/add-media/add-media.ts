@@ -5,7 +5,7 @@ import { Camera } from '../camera/camera';
 import { MAX_AUDIO_SECONDS, PreparedAudio, audioRecorderType, prepareAudioFile, prepareRecordedAudio } from '../core/audio';
 import { ChatService } from '../core/chat.service';
 import { Clearable } from '../core/clearable';
-import { MAX_IMAGE_BYTES, PreparedImage, formatBytes, prepareImage } from '../core/image';
+import { MAX_IMAGE_BYTES, PreparedImage, formatBytes, prepareImage, rotateImage } from '../core/image';
 import { MediaService } from '../core/media.service';
 import { MAX_VIDEO_SECONDS, PreparedVideo, prepareRecorded, prepareVideo, recorderType } from '../core/video';
 import { MediaUpload } from '../models';
@@ -23,7 +23,7 @@ const TEXT = {
 /**
  * A full page to send an image, a video or a voice message to a friend (`/friends/:id/image`, `/video` and `/audio`): take or
  * record it, or choose a file, see (or hear) it, add a text if you like, and Send. The file is made smaller in the browser
- * (an image to 1280 pixels and about 350 KB, a video to 1280 pixels, about 1.2 Mbit/s and at most 2 minutes; a voice is recorded at 32 kbit/s,
+ * (an image to 1024 pixels and about 200 KB, a video to 1280 pixels, about 1.2 Mbit/s and at most 1 minute; a voice is recorded at 32 kbit/s,
  * at most 2 minutes, and a chosen audio file is sent as it is, at most 2 minutes and 25 MB). It and its name go to the server,
  * which stores it in the media cache; the message then carries the reference, and the conversation reads the file back from
  * the server.
@@ -71,11 +71,17 @@ export class AddMedia implements OnDestroy {
    * The page camera also gives a small picture at once, which is much faster than the full-size photo of the camera app.
    */
   private readonly appPhoto = Capacitor.isNativePlatform() && this.kind === 'image';
-  protected readonly nativeCapture = this.phoneCamera && this.kind !== 'audio' && !this.appPhoto;
+  /**
+   * A video in the Android app is filmed on the page too, small (960 x 540, at most one minute): the camera app of the phone films in full
+   * quality (1080p or 4K, a huge file) while this page waits in the background, where Android may close it, and the big file would then
+   * have to be made smaller in the page, which needs a lot of memory.
+   */
+  private readonly appVideo = Capacitor.isNativePlatform() && this.kind === 'video';
+  protected readonly nativeCapture = this.phoneCamera && this.kind !== 'audio' && !this.appPhoto && !this.appVideo;
   /** the browser can show the camera, or take the voice, on the page (needs https or localhost), and for a video or voice, record it */
   protected readonly pageCamera =
     Boolean(navigator.mediaDevices?.getUserMedia) &&
-    (this.kind === 'audio' ? audioRecorderType() !== null : (!this.phoneCamera || this.appPhoto) && (this.kind === 'image' || recorderType() !== null));
+    (this.kind === 'audio' ? audioRecorderType() !== null : (!this.phoneCamera || this.appPhoto || this.appVideo) && (this.kind === 'image' || recorderType() !== null));
   protected readonly cameraOpen = signal(false);
 
   /** the upload that worked, when sending the message did not: the next try does not upload again */
@@ -163,6 +169,23 @@ export class AddMedia implements OnDestroy {
   }
 
   // ------------------------------------------------------------------ sending
+
+  /** A picture can be turned a quarter turn before it is sent (not a GIF: it would stop moving). */
+  protected readonly canRotate = computed(() => this.kind === 'image' && !!this.file() && (this.file() as PreparedImage).blob.type !== 'image/gif');
+
+  protected async rotate(clockwise: boolean): Promise<void> {
+    const file = this.file();
+    if (!file || this.working() || this.kind !== 'image') return;
+    this.working.set('Turning…');
+    this.error.set(null);
+    try {
+      this.show(await rotateImage(file as PreparedImage, clockwise));
+    } catch (err: any) {
+      this.error.set(err.message ?? 'The image could not be turned');
+    } finally {
+      this.working.set(null);
+    }
+  }
 
   /** Back to the start: take or choose another. */
   protected startAgain(): void {

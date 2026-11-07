@@ -30,6 +30,7 @@ const toItem = (id: string, d: FirebaseFirestore.DocumentData, uid: string): Saf
   kind: d.kind,
   mime: d.mime as string,
   bytes: d.bytes as number,
+  ownerId: d.addedBy as string,
   mine: d.addedBy === uid,
   createdAt: iso(d.createdAt),
   hasThumb: Boolean(d.hasThumb),
@@ -54,7 +55,7 @@ type Connection = NonNullable<Awaited<ReturnType<typeof connectionOf>>>;
  * Stores a checked file in the box (and its preview, when it has one) and answers with the new item, or answers with an error
  * (the box is full) and returns null.
  */
-async function storeInBox(res: Response, connection: Connection, bytes: Buffer, name: string, checked: { kind: SafeboxItem["kind"]; mime: string }, thumb: Buffer | null): Promise<SafeboxItem | null> {
+async function storeInBox(res: Response, connection: Connection, bytes: Buffer, name: string, checked: { kind: SafeboxItem["kind"]; mime: string }, thumb: Buffer | null, originalSender: string | null = null): Promise<SafeboxItem | null> {
   const existing = (await safeboxItems(connection.id).select("bytes").get()).docs;
   if (existing.length >= SAFEBOX_MAX_ITEMS) {
     res.status(409).json({ error: `The safebox is full (at most ${SAFEBOX_MAX_ITEMS} files). Delete some first.` });
@@ -65,9 +66,11 @@ async function storeInBox(res: Response, connection: Connection, bytes: Buffer, 
     return null;
   }
   const ref = safeboxItems(connection.id).doc();
-  await putObject(boxOwner(connection.id), ref.id, bytes, checked.kind, checked.mime, name);
-  if (thumb) await putObject(boxOwner(connection.id), `${ref.id}.thumb`, thumb, "thumb", "image/jpeg");
-  await ref.set({ name, kind: checked.kind, mime: checked.mime, bytes: bytes.length, addedBy: uidOf(res), hasThumb: Boolean(thumb), createdAt: FieldValue.serverTimestamp() });
+  // the person who saves a file owns it: `addedBy` on the item and `savedBy` on the stored file (and on its preview) say whose it is, for the encryption to come
+  const owner = uidOf(res);
+  await putObject(boxOwner(connection.id), ref.id, bytes, checked.kind, checked.mime, name, owner);
+  if (thumb) await putObject(boxOwner(connection.id), `${ref.id}.thumb`, thumb, "thumb", "image/jpeg", null, owner);
+  await ref.set({ name, kind: checked.kind, mime: checked.mime, bytes: bytes.length, addedBy: owner, ...(originalSender ? { originalSender } : {}), hasThumb: Boolean(thumb), createdAt: FieldValue.serverTimestamp() });
   return toItem(ref.id, (await ref.get()).data()!, uidOf(res));
 }
 
@@ -149,7 +152,7 @@ safeboxRouter.post(
       return;
     }
     const thumb = media.hasThumb ? await readAll(media.ownerId, `${media.objectId}.thumb`) : null;
-    const item = await storeInBox(res, connection, bytes, cleanFileName(media.name) ?? (media.kind === "video" ? "Video" : "Picture"), checked, thumb);
+    const item = await storeInBox(res, connection, bytes, cleanFileName(media.name) ?? (media.kind === "video" ? "Video" : "Picture"), checked, thumb, media.ownerId); // moved from a message: whoever moves it owns it in the box; who sent it is kept as `originalSender`
     if (!item) return;
     // both copies of the message lose the file and say where it went; both friends' apps reload the feed
     const moved = { media: FieldValue.delete(), inBox: true };
@@ -197,7 +200,7 @@ safeboxRouter.put(
       res.status(checked.status).json({ error: checked.error });
       return;
     }
-    await putObject(boxOwner(connection.id), `${item.id}.thumb`, bytes, "thumb", checked.mime);
+    await putObject(boxOwner(connection.id), `${item.id}.thumb`, bytes, "thumb", checked.mime, null, item.data.addedBy as string); // the preview belongs to whoever owns the file
     await item.ref.update({ hasThumb: true });
     res.status(204).end();
   }),
