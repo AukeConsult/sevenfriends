@@ -8,6 +8,7 @@ The long parts of this guide live in `docs/guide/`. Read only the file for the a
 - `docs/guide/live-and-notifications.md`: pings, live updates, sound, push, email, several devices, system settings.
 - `docs/guide/messages-and-profile.md`: the message feed, profile, links in messages, friend links, sleep list, UI preferences.
 - `docs/guide/media-and-safebox.md`: the media cache, the safebox, pictures and memory.
+- `docs/design/safebox-encryption.md`: the proposed end-to-end encryption of the safebox (keys, data model, flows, rollout). Step 1 (the local device key, `core/device-key.ts`) is built; nothing uses it yet.
 - `docs/guide/apps-and-login.md`: Android / iPhone / Windows apps, login methods, first-time setup.
 - `docs/guide/testing.md`: the backend tests (`npm test`, the 60-person pool, the emulator). A UI-only change needs no backend test run.
 
