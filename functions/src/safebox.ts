@@ -6,6 +6,7 @@ import { FRIENDS_SUBCOLLECTION, MAX_UPLOAD_BYTES, SAFEBOX_MAX_BYTES, SAFEBOX_MAX
 import { connectionOf } from "./conversation";
 import { MediaRef, Safebox, SafeboxItem } from "./models";
 import { circleCol, messageCol, safeboxItems } from "./paths";
+import { nameOf, sendPush } from "./push";
 import { touchFeed, touchFeedIfExists } from "./sync";
 import { checkBytes, checkSafeboxFile, cleanFileName, deleteFolder, deleteObject, isObjectId, objectInfo, putObject, readAll, readObject } from "./sf-cache";
 
@@ -70,6 +71,30 @@ async function storeInBox(res: Response, connection: Connection, bytes: Buffer, 
   return toItem(ref.id, (await ref.get()).data()!, uidOf(res));
 }
 
+/**
+ * Tell my friend that something was added to the box: an unread note "In the safebox" in both feeds (it shows on their home page
+ * like a message does, and the conversation says it too), and a push that opens the box. Best effort: the file is in the box anyway.
+ */
+async function announceItem(res: Response, connection: Connection): Promise<void> {
+  try {
+    const uid = uidOf(res);
+    const fromName = await nameOf(uid);
+    const mine = messageCol(uid).doc();
+    const theirs = messageCol(connection.peerUid).doc(mine.id);
+    const common = { connectionId: connection.id, fromUid: uid, fromName, toUid: connection.peerUid, text: "", inBox: true, time: FieldValue.serverTimestamp() };
+    const myEntry = (res.locals.circleRef as DocumentReference).collection(FRIENDS_SUBCOLLECTION).doc(connection.id);
+    const batch = getFirestore().batch();
+    batch.set(mine, { ...common, read: true });
+    batch.set(theirs, { ...common, read: false });
+    touchFeed(batch, myEntry);
+    await touchFeedIfExists(batch, circleCol(connection.peerUid).doc(connection.peerCircleId).collection(FRIENDS_SUBCOLLECTION).doc(connection.id));
+    await batch.commit();
+    await sendPush(connection.peerUid, { id: `message-${mine.id}`, title: fromName, body: "📦 Added to the safebox", url: `/friends/${connection.id}/safebox`, kind: "message" });
+  } catch (err) {
+    console.error("Could not announce the safebox item", err);
+  }
+}
+
 /** Put a file in the box: `POST .../safebox?name=<file name>`, the file as the body. Answers with the new item. */
 safeboxRouter.post(
   "/",
@@ -84,7 +109,10 @@ safeboxRouter.post(
       return;
     }
     const item = await storeInBox(res, connection, bytes, cleanFileName(req.query.name) ?? "File", checked, null);
-    if (item) res.status(201).json(item);
+    if (item) {
+      await announceItem(res, connection);
+      res.status(201).json(item);
+    }
   }),
 );
 
@@ -127,13 +155,15 @@ safeboxRouter.post(
     const moved = { media: FieldValue.delete(), inBox: true };
     const myEntry = (res.locals.circleRef as DocumentReference).collection(FRIENDS_SUBCOLLECTION).doc(connection.id);
     const batch = getFirestore().batch();
+    const fromName = await nameOf(uidOf(res));
     batch.update(messageCol(uidOf(res)).doc(messageId), moved);
     const theirs = messageCol(connection.peerUid).doc(messageId);
-    if ((await theirs.get()).exists) batch.update(theirs, moved);
+    if ((await theirs.get()).exists) batch.update(theirs, { ...moved, read: false, fromName }); // my friend is told: unread again, on the home page too
     touchFeed(batch, myEntry);
     await touchFeedIfExists(batch, circleCol(connection.peerUid).doc(connection.peerCircleId).collection(FRIENDS_SUBCOLLECTION).doc(connection.id));
     await batch.commit();
     await deleteObject(media.ownerId, media.objectId); // the file (and its preview) now lives in the box only
+    await sendPush(connection.peerUid, { id: `message-${messageId}-box`, title: fromName, body: "📦 Moved to the safebox", url: `/friends/${connection.id}/safebox`, kind: "message" });
     res.status(201).json(item);
   }),
 );

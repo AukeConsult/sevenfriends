@@ -121,22 +121,33 @@ export class Chat {
   protected readonly emojis = EMOJIS;
   /** the emoji panel above the message field */
   protected readonly emojiOpen = signal(false);
-  /** the menu of the + button (emoji, image, video, voice) */
+  /** the menu of the smiley and the paperclip button */
   protected readonly menuOpen = signal(false);
   /** the menu of the three dots in the header (sort order, clean up) */
   protected readonly moreOpen = signal(false);
   private menuPinned = false; // opened by a click or tap: it stays until the next click, instead of closing when the mouse leaves
 
-  protected toggleMenu(): void {
-    this.menuPinned = !this.menuOpen() || !this.menuPinned; // a click on a menu that only the hover has opened keeps it open
-    this.menuOpen.update((open) => !open || (open && !this.menuPinned));
+  /** which menu is open: the smiley (emoji, quick messages) or the paperclip (image, video, voice) */
+  protected readonly menuKind = signal<'emoji' | 'attach'>('emoji');
+
+  protected toggleMenu(kind: 'emoji' | 'attach'): void {
+    if (this.menuOpen() && this.menuKind() === kind && this.menuPinned) {
+      this.menuOpen.set(false);
+      this.menuPinned = false;
+      return;
+    }
+    this.menuKind.set(kind);
+    this.menuPinned = true; // opened by a click or tap: it stays until the next click
+    this.menuOpen.set(true);
   }
 
-  /** A mouse over the button opens the menu, leaving closes it (a finger has no hover: it taps). */
-  protected hoverMenu(inside: boolean): void {
+  /** A mouse over a button opens its menu, leaving closes it (a finger has no hover: it taps). */
+  protected hoverMenu(inside: boolean, kind?: 'emoji' | 'attach'): void {
     if (!window.matchMedia('(hover: hover)').matches) return;
-    if (inside) this.menuOpen.set(true);
-    else if (!this.menuPinned) this.menuOpen.set(false);
+    if (inside) {
+      if (kind && !this.menuPinned) this.menuKind.set(kind);
+      if (!this.menuPinned || !this.menuOpen()) this.menuOpen.set(true);
+    } else if (!this.menuPinned) this.menuOpen.set(false);
   }
   /** my message whose Edit / Delete buttons are open (tap a message of mine) */
   protected readonly selected = signal<string | null>(null);

@@ -745,9 +745,9 @@ app-voice { display: contents; }
 .sf-composer-row .sf-icon-btn { margin: 0; width: 2.25rem; height: 2.25rem; } // the buttons in the message row are close together and level with the middle of the field
 // the + button of the message row: its menu (emoji, image, video, voice) opens above it (below it when the message field is on top)
 .sf-add { position: relative; flex: none; }
-.sf-composer-row .sf-add-btn { // a round, coloured button: the + turns into a × when the menu is open
-  display: grid; place-items: center; border-radius: 50%; color: #fff;
-  background: linear-gradient(135deg, var(--sf-primary), var(--sf-primary-2)); box-shadow: 0 0.125rem 0.5rem rgb(0 0 0 / 0.2);
+.sf-composer-row .sf-add-btn { // a round, yellow button (smiley / paperclip)
+  display: grid; place-items: center; border-radius: 50%; color: var(--sf-primary); // yellow, with a dark blue icon (white would not read on yellow)
+  background: linear-gradient(135deg, #ffe27a, #fbbf24); box-shadow: 0 0.125rem 0.5rem rgb(0 0 0 / 0.2);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
   &:hover, &[aria-expanded='true'] { transform: scale(1.1); box-shadow: 0 0.25rem 0.75rem rgb(0 0 0 / 0.28); }
   @media (prefers-reduced-motion: reduce) { transition: none; &:hover, &[aria-expanded='true'] { transform: none; } }
