@@ -22,7 +22,7 @@
     @for (slot of slots(); track slot.position) {
       <li class="col-12 col-md-6 d-flex flex-column">
         @if (slot.friend; as friend) {
-          <article class="card sf-slot flex-grow-1" [class.sf-clickable]="friend.status === 'confirmed'"
+          <article class="card sf-slot flex-grow-1" [class.sf-clickable]="friend.status === 'confirmed'" [class.sf-has-color]="!!colorOf(friend.color)" [style.--sf-friend]="colorOf(friend.color)" [style.--sf-friend-ink]="inkOf(friend.color)"
                    [attr.tabindex]="friend.status === 'confirmed' ? 0 : null" [attr.role]="friend.status === 'confirmed' ? 'link' : null"
                    [attr.aria-label]="friend.status === 'confirmed' ? 'Open conversation with ' + friend.name : null"
                    (click)="open(friend, $event)" (keydown.enter)="open(friend, $event)">

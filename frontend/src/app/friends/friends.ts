@@ -11,7 +11,7 @@ import { moodIcon, moodLabel } from '../core/moods';
 import { presenceLabel } from '../core/presence';
 import { timeAgo } from '../core/time-ago';
 import { NotificationsService } from '../core/notifications.service';
-import { Friend, FriendSlot } from '../models';
+import { Friend, FriendSlot, profileColorHex, profileColorInk } from '../models';
 
 const MAX_FRIENDS = 7;
 
@@ -58,6 +58,16 @@ export class Friends {
   private readonly countryNames = new Map(countries().map((c) => [c.code, c.name]));
 
   protected readonly presenceLabel = presenceLabel;
+
+  /** The colour (#rrggbb) of a friend's colour key, or null. */
+  protected colorOf(key: string | null): string | null {
+    return profileColorHex(key);
+  }
+
+  /** The text colour that reads on a friend's colour. */
+  protected inkOf(key: string | null): string | null {
+    return profileColorInk(key);
+  }
 
   protected toggleProfile(friend: Friend): void {
     this.expanded.update((id) => (id === friend.id ? null : friend.id));

@@ -23,7 +23,7 @@ import { initials } from '../core/initials';
 import { presenceLabel } from '../core/presence';
 import { moodIcon, moodLabel } from '../core/moods';
 import { RealtimeService } from '../core/realtime.service';
-import { ChatMessage, MessageDeleteCriteria, MessageLink } from '../models';
+import { ChatMessage, MessageDeleteCriteria, MessageLink, profileColorHex, profileColorInk, profileColorSoft } from '../models';
 
 // New messages, edits and deletes arrive live (RealtimeService). This refresh is only a safety net.
 const SAFETY_REFRESH_MS = 30000;
@@ -33,6 +33,15 @@ const SAFETY_REFRESH_MS = 30000;
   selector: 'app-chat',
   imports: [DatePipe, FriendAvatar, MediaAudio, MediaImage, MediaVideo, NgTemplateOutlet, RouterLink, Clearable],
   templateUrl: './chat.html',
+  // the page takes a light colour that goes with my friend's colour (the header has the friend's own colour)
+  host: {
+    '[class.sf-feed-tinted]': '!!feedBackground()',
+    '[style.--sf-feed-bg]': 'feedBackground()',
+    '[style.--sf-friend]': 'friendColor()',
+    '[style.--sf-friend-ink]': 'friendInk()',
+    '[style.--sf-my]': 'myColor()',
+    '[style.--sf-my-ink]': 'myInk()',
+  },
 })
 export class Chat {
   private readonly chat = inject(ChatService);
@@ -56,6 +65,14 @@ export class Chat {
   protected readonly moodLabel = moodLabel;
   protected readonly initials = initials;
   /** this friend, from the list (for the mood) */
+  /** the colour my friend chose for their profile (#rrggbb), or null */
+  protected readonly friendColor = computed(() => profileColorHex(this.friend()?.color));
+  protected readonly friendInk = computed(() => profileColorInk(this.friend()?.color));
+  /** a very light tint of my friend's colour: the background of the conversation */
+  protected readonly feedBackground = computed(() => profileColorSoft(this.friend()?.color));
+  /** my own colour for my bubbles, and the text colour on it */
+  protected readonly myColor = computed(() => profileColorHex(this.myAvatarService.color()));
+  protected readonly myInk = computed(() => profileColorInk(this.myAvatarService.color()));
   protected readonly friend = computed(() => this.friendsService.friends().find((f) => f.id === this.friendId) ?? null);
   /** the seat of this friend (1-7): its icon friend{seat}.svg is shown in the header; 0 while the list is not loaded */
   protected readonly seat = computed(() => this.friendsService.awake().findIndex((f) => f.id === this.friendId) + 1);

@@ -30,6 +30,9 @@
   --sf-muted: #5b6270; // readable on the yellow background and on the header
   --sf-border: #eadfc4; // lines and frames: a warm grey instead of a cold one
   --sf-surface: #fff6d8; // hover and quiet areas
+  // the notice boxes (a note and a warning): a theme gives them its own colours
+  --sf-info-bg: #f4eedc; --sf-info-border: #e0d4b2; --sf-info-text: #4a3f22;
+  --sf-warn-bg: #ffefbf; --sf-warn-border: #ecc866; --sf-warn-text: #664700;
 
   // ---- The 4 standard font sizes (relative to the root font size below). NO other font size is used in the app:
   //      pick one of these four (or the matching utility class .sf-fs-description / -text / -title / -heading).
@@ -200,8 +203,10 @@ textarea.form-control { min-height: var(--sf-control); }
 // the other Bootstrap pieces take the same lines, corners and spacing
 .alert { --bs-alert-padding-y: 0.625rem; --bs-alert-padding-x: 0.875rem; --bs-alert-margin-bottom: 0; --bs-alert-border-radius: 0.75rem; }
 // alert colours that sit well on the yellow background (info = a quiet sand, warning = amber with a clear line)
-.alert-info { --bs-alert-bg: #f4eedc; --bs-alert-border-color: #e0d4b2; --bs-alert-color: #4a3f22; --bs-alert-link-color: #4a3f22; }
-.alert-warning { --bs-alert-bg: #ffefbf; --bs-alert-border-color: #ecc866; --bs-alert-color: #664700; --bs-alert-link-color: #664700; }
+.alert-info { --bs-alert-bg: var(--sf-info-bg); --bs-alert-border-color: var(--sf-info-border); --bs-alert-color: var(--sf-info-text); --bs-alert-link-color: var(--sf-info-text); }
+.alert-warning { --bs-alert-bg: var(--sf-warn-bg); --bs-alert-border-color: var(--sf-warn-border); --bs-alert-color: var(--sf-warn-text); --bs-alert-link-color: var(--sf-warn-text); }
+.text-warning-emphasis { color: var(--sf-warn-text) !important; }
+.text-bg-warning { color: var(--sf-warn-text) !important; background-color: var(--sf-warn-bg) !important; border: 1px solid var(--sf-warn-border); } // the "waiting" badge, in the colours of the theme
 .alert-success { --bs-alert-bg: #e3f6e5; --bs-alert-border-color: #b5e0ba; --bs-alert-color: #1b5e2b; }
 .alert-danger { --bs-alert-bg: #fde4e4; --bs-alert-border-color: #f3b7b7; --bs-alert-color: #7f1d1d; }
 .card { --bs-card-border-color: var(--sf-border); --bs-card-bg: var(--sf-card); --bs-card-border-radius: var(--sf-radius); box-shadow: 0 2px 10px rgba(var(--bs-primary-rgb), 0.07); } // a soft lift, in the colour of the brand
@@ -597,8 +602,14 @@ router-outlet + * { display: block; min-height: 100dvh; }
 .card.sf-unframed > .card-body { padding-inline: 0; padding-top: 0; }
 .sf-back-row { display: flex; justify-content: center; padding: 1rem var(--sf-gutter) 0; }
 .sf-back-row:has(+ .sf-page-head), .sf-back-row:has(+ main > .sf-page-head:first-child) { position: relative; height: 0; padding: 0; } // Back on the line of the title, not a row of its own
-.sf-back-row:has(+ .sf-page-head) .btn, .sf-back-row:has(+ main > .sf-page-head:first-child) .btn { position: absolute; inset-inline-start: var(--sf-gutter); top: 0.75rem; z-index: 2; }
-.sf-back-row:has(+ .sf-page-head) + .sf-page-head, .sf-back-row:has(+ main > .sf-page-head:first-child) + main > .sf-page-head { padding: 1.1rem 4.5rem 1rem; } // room for the Back button on both sides
+.sf-back-row:has(+ .sf-page-head) .btn, .sf-back-row:has(+ main > .sf-page-head:first-child) .btn { // a small round arrow level with the title (the word Back stays for screen readers)
+  position: absolute; inset-inline-start: var(--sf-gutter); top: 0.5rem; z-index: 2;
+  display: grid; place-items: center; width: 2.5rem; min-height: 2.5rem; height: 2.5rem; padding: 0; border-radius: 50%;
+  font-size: 0; color: var(--sf-primary); background: var(--sf-card); border: 1px solid var(--sf-border); box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  &::before { content: ''; width: 0.6rem; height: 0.6rem; margin-inline-start: 0.2rem; border-left: 2.5px solid currentColor; border-bottom: 2.5px solid currentColor; border-radius: 1px; transform: rotate(45deg); } // the arrow, drawn with two lines
+  &:hover, &:focus-visible { background: var(--sf-surface); }
+}
+.sf-back-row:has(+ .sf-page-head) + .sf-page-head, .sf-back-row:has(+ main > .sf-page-head:first-child) + main > .sf-page-head { padding: 1.1rem 4rem 1rem; } // room for the Back button on both sides
 .sf-name-btn { display: inline-flex; align-items: center; gap: 0.35rem; min-width: 0; padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: start; cursor: pointer; }
 .sf-name-arrow { flex: none; font-size: 0.8em; opacity: 0.6; }
 .sf-profile.sf-profile-bar { margin: 0; padding: 0.75rem var(--sf-gutter); border: 0; border-bottom: 1px solid var(--sf-border); border-radius: 0; }
@@ -644,11 +655,12 @@ router-outlet + * { display: block; min-height: 100dvh; }
 .sf-bubble {
   padding: 0.5rem 0.75rem;
   border-radius: 1.25rem 1.25rem 1.25rem 0.25rem;
-  background: var(--sf-card);
+  background: var(--sf-friend, var(--sf-card));
+  color: var(--sf-friend-ink, inherit);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
   white-space: pre-wrap;
   overflow-wrap: anywhere;
-  .sf-mine & { border-radius: 1.25rem 1.25rem 0.25rem 1.25rem; background: linear-gradient(135deg, var(--sf-primary), var(--sf-primary-2)); color: #fff; }
+  .sf-mine & { border-radius: 1.25rem 1.25rem 0.25rem 1.25rem; background: var(--sf-my, linear-gradient(135deg, var(--sf-primary), var(--sf-primary-2))); color: var(--sf-my-ink, #fff); }
 }
 .sf-composer {
   position: fixed;
@@ -658,7 +670,7 @@ router-outlet + * { display: block; min-height: 100dvh; }
   z-index: 4;
   display: flex;
   flex-direction: column;
-  background: var(--sf-card);
+  background: var(--sf-bg); // the same as the page (a friend's colour overrides it, see sf-feed-tinted)
   border-top: 1px solid var(--sf-border);
 }
 .sf-composer-row { display: flex; align-items: center; gap: 0.25rem; padding: 0.5rem var(--sf-gutter); }
@@ -673,9 +685,9 @@ router-outlet + * { display: block; min-height: 100dvh; }
 .sf-message-media { max-width: 94%; } // a message with an image, video or audio is as wide as its picture (see .sf-media), never wider than the feed
 // A picture, video or voice message has no box round it: only the picture is shown. Its caption is a small bubble of its own under it.
 .sf-bubble.sf-bubble-media, .sf-mine .sf-bubble.sf-bubble-media { display: flex; flex-direction: column; gap: 0.25rem; padding: 0; background: none; box-shadow: none; color: inherit; border-radius: 0; }
-.sf-bubble-media .sf-caption { align-self: flex-start; width: 0; min-width: 100%; /* the caption is as wide as the picture, it does not widen the message */ padding: 0.5rem 0.75rem; border-radius: 1.25rem 1.25rem 1.25rem 0.25rem; background: var(--sf-card); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08); }
+.sf-bubble-media .sf-caption { align-self: flex-start; width: 0; min-width: 100%; /* the caption is as wide as the picture, it does not widen the message */ padding: 0.5rem 0.75rem; border-radius: 1.25rem 1.25rem 1.25rem 0.25rem; background: var(--sf-friend, var(--sf-card)); color: var(--sf-friend-ink, inherit); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08); }
 .sf-bubble-hidden .sf-caption { width: auto; min-width: 0; } // nothing to be as wide as: the caption takes the room it needs
-.sf-mine .sf-bubble-media .sf-caption { align-self: flex-end; border-radius: 1.25rem 1.25rem 0.25rem 1.25rem; background: linear-gradient(135deg, var(--sf-primary), var(--sf-primary-2)); color: #fff; }
+.sf-mine .sf-bubble-media .sf-caption { align-self: flex-end; border-radius: 1.25rem 1.25rem 0.25rem 1.25rem; background: var(--sf-my, linear-gradient(135deg, var(--sf-primary), var(--sf-primary-2))); color: var(--sf-my-ink, #fff); }
 // An image or video is shown whole, never cropped: it keeps its own shape and is made to fit the width of the feed (and at most 32 rem / 70% of the screen high).
 .sf-media {
   --sf-media-height: min(32rem, 70dvh);
@@ -977,6 +989,11 @@ app-voice { display: contents; }
 .sf-box-usage { display: grid; gap: 0.25rem; margin-bottom: 0.75rem; .progress { height: 0.5rem; } }
 .sf-box-empty { display: grid; justify-items: center; gap: 0.5rem; padding: 2rem 1rem; svg { color: var(--sf-muted); } }
 .sf-box-list { margin-top: 0.75rem; }
+.sf-box-list .sf-list-text small { font-size: var(--sf-fs-text); font-weight: 400; } // the line under a file name (kind, size, who, date): the normal text size too
+.sf-box-name { color: var(--sf-text); font-weight: 400; text-decoration: none; } // a file name: normal text size and colour, not a blue bold link
+.sf-back-inline { display: inline-grid; place-items: center; width: 1.75rem; height: 1.75rem; margin-inline-end: 0.25rem; color: var(--sf-primary); text-decoration: none; // a small arrow to the left of the title icon
+  &::before { content: ''; width: 0.5rem; height: 0.5rem; margin-inline-start: 0.2rem; border-left: 2.5px solid currentColor; border-bottom: 2.5px solid currentColor; border-radius: 1px; transform: rotate(45deg); }
+  &:hover, &:focus-visible { color: var(--sf-primary-hover); } }
 .sf-box-open { flex: none; width: 3.5rem; height: 3.5rem; padding: 0; border: 0; border-radius: var(--sf-radius); background: var(--sf-bg); overflow: hidden; cursor: pointer; display: grid; place-items: center; }
 .sf-box-thumb { display: block; width: 100%; height: 100%; img { width: 100%; height: 100%; object-fit: cover; display: block; } }
 .sf-box-wait { display: block; width: 100%; height: 100%; background: var(--sf-bg); }
@@ -1039,17 +1056,37 @@ html[data-theme='dark'] {
 html[data-theme='ocean'] {
   --sf-primary: #0e6a8a; --sf-primary-2: #2a9ac0; --sf-primary-rgb: 14, 106, 138; --sf-primary-hover: #0a526b; --sf-primary-active: #073f52; --sf-primary-subtle: #d3eaf3;
   --sf-bg: #eef6fb; --sf-header: #d6eaf7; --sf-header-border: #b9d6ea; --sf-border: #cfe0ec; --sf-surface: #e3f0f9;
+  --sf-info-bg: #e3f0f9; --sf-info-border: #cfe0ec; --sf-info-text: #1f3a4a;
+  --sf-warn-bg: #cfe8f6; --sf-warn-border: #8fc3e0; --sf-warn-text: #073f52;
 }
 html[data-theme='forest'] {
   --sf-primary: #2f6b4a; --sf-primary-2: #4c9a6a; --sf-primary-rgb: 47, 107, 74; --sf-primary-hover: #24543a; --sf-primary-active: #1b402c; --sf-primary-subtle: #d9ece0;
   --sf-bg: #f1f8ee; --sf-header: #dcefd3; --sf-header-border: #bfdcb2; --sf-border: #d3e5cb; --sf-surface: #e6f2e0;
+  --sf-info-bg: #e6f2e0; --sf-info-border: #d3e5cb; --sf-info-text: #25402f;
+  --sf-warn-bg: #d4ebc8; --sf-warn-border: #9ccb86; --sf-warn-text: #1b402c;
 }
 html[data-theme='rose'] {
   --sf-primary: #a3305a; --sf-primary-2: #d4608a; --sf-primary-rgb: 163, 48, 90; --sf-primary-hover: #85264a; --sf-primary-active: #681d3a; --sf-primary-subtle: #f6d9e3;
   --sf-bg: #fff3f5; --sf-header: #fbdde3; --sf-header-border: #f1bfca; --sf-border: #f0d6dc; --sf-surface: #ffe8ec;
+  --sf-info-bg: #ffe8ec; --sf-info-border: #f0d6dc; --sf-info-text: #4a2230;
+  --sf-warn-bg: #f9d3dc; --sf-warn-border: #e79bb0; --sf-warn-text: #681d3a;
 }
 @media (min-width: 1000px) {
   html[data-theme='ocean'], html[data-theme='ocean'] body { background: #dbe9f2; }
   html[data-theme='forest'], html[data-theme='forest'] body { background: #dfebd9; }
   html[data-theme='rose'], html[data-theme='rose'] body { background: #f3dde2; }
 }
+
+// ---- The profile colour (chosen on the Profile page, shown to the friends) ----
+.sf-colors { display: flex; flex-wrap: wrap; gap: 0.375rem; }
+.sf-color { width: 1.5rem; height: 1.5rem; padding: 0; border: 2px solid transparent; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12); &.sf-chosen { border-color: var(--sf-text); outline: 2px solid var(--sf-card); outline-offset: -4px; } }
+.sf-color-none { background: var(--sf-card); position: relative; &::after { content: ''; position: absolute; inset: 50% 20% auto; border-top: 2px solid var(--sf-muted); transform: rotate(-45deg); } } // "no colour": an empty circle with a slash
+.sf-slot.sf-has-color { --bs-card-bg: var(--sf-friend); --bs-body-color: var(--sf-friend-ink); background-color: var(--sf-friend); color: var(--sf-friend-ink); // the card has the friend's own colour as its background, with text that reads on it
+  .sf-hint, .text-secondary, small, .sf-name-btn { color: inherit !important; opacity: 0.9; } }
+.sf-bar.sf-has-color { background: var(--sf-friend); border-bottom-color: var(--sf-friend); color: var(--sf-friend-ink); --sf-primary: var(--sf-friend-ink); // the header of the conversation: the friend's colour, and the icons and text follow the text colour
+  .sf-hint, .sf-mood-line, .text-secondary, small { color: inherit; opacity: 0.9; } }
+.sf-photo.sf-ringed { box-shadow: 0 0 0 4px var(--sf-friend); } // the circle of my colour round my picture / icon: how my friends see it
+.sf-feed-tinted { background: var(--sf-feed-bg); } // the conversation page: a light tint of the friend's colour
+html[data-theme='dark'] .sf-feed-tinted { background: color-mix(in srgb, var(--sf-feed-bg) 12%, var(--sf-bg)); } // in the dark theme only a hint of it
+.sf-feed-tinted .sf-composer { background: var(--sf-feed-bg); } // the message band has the same background as the page
+html[data-theme='dark'] .sf-feed-tinted .sf-composer { background: color-mix(in srgb, var(--sf-feed-bg) 12%, var(--sf-bg)); }

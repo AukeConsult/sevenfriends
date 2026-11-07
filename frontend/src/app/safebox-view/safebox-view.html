@@ -1,17 +1,19 @@
-<div class="sf-back-row">
-  <a [routerLink]="['/friends', friendId, 'safebox']" class="btn btn-light" aria-label="Back to the safebox">‹ Back</a>
-</div>
-
 <main class="sf-page sf-page-wide">
   @if (loadError()) {
+    <a [routerLink]="['/friends', friendId, 'safebox']" class="sf-back-inline" aria-label="Back to the safebox"></a>
     <div class="alert alert-danger" role="alert">{{ loadError() }}</div>
   } @else if (!box()) {
+    <a [routerLink]="['/friends', friendId, 'safebox']" class="sf-back-inline" aria-label="Back to the safebox"></a>
     <p class="text-secondary text-center">Opening the file…</p>
   } @else if (!item(); as none) {
+    <a [routerLink]="['/friends', friendId, 'safebox']" class="sf-back-inline" aria-label="Back to the safebox"></a>
     <p class="text-secondary text-center">This file is not in the safebox any more.</p>
   } @else {
     <div class="sf-page-head">
-      <h1 class="sf-ellipsis">{{ item()!.name }}</h1>
+      <h1 class="d-flex align-items-center justify-content-center gap-1 mw-100">
+        <a [routerLink]="['/friends', friendId, 'safebox']" class="sf-back-inline" aria-label="Back to the safebox"></a>
+        <span class="sf-ellipsis">{{ item()!.name }}</span>
+      </h1>
       <p class="sf-hint m-0">{{ item()!.kind === 'document' ? docLabel() : item()!.kind === 'image' ? 'Picture' : item()!.kind === 'video' ? 'Video' : 'Sound' }} · {{ formatBytes(item()!.bytes) }}</p>
     </div>
 

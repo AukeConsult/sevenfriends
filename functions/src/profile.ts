@@ -5,7 +5,7 @@ import { asyncHandler, requireAuth } from "./auth";
 import { touchSync } from "./sync";
 import { parsePicture, readAvatar, removeAvatar, saveAvatar } from "./avatar";
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAX_FRIENDS, MAX_MOOD_MESSAGE, MAX_NAME_LENGTH, MOOD_COUNT } from "./constants";
-import { ProfileDetails, ProfilePicture } from "./models";
+import { ProfileDetails, ProfilePicture, profileColorKey } from "./models";
 import { circleCol, userDoc } from "./paths";
 import { isLanguage } from "./models/shared/languages";
 import { PHONE_RE, isCountry, phoneKey, presenceOf, text } from "./validation";
@@ -23,6 +23,7 @@ function detailsOf(data: Record<string, unknown>): ProfileDetails {
     phoneVerified: Boolean(data.verifiedPhone),
     emailVerified: data.emailVerified === true,
     icon: Number.isInteger(data.profileIcon) ? (data.profileIcon as number) : null,
+    color: profileColorKey(data.profileColor),
     hasPicture: Boolean(data.profilePictureAt),
     country: (data.country as string | null | undefined) ?? null,
     language: (data.language as string | null | undefined) ?? null,
@@ -64,6 +65,11 @@ profileRouter.put(
       return;
     }
     // the icon (one of the seven seat icons, friend1.svg ... friend7.svg): left out = unchanged, null = none
+    const colorGiven = "color" in body;
+    if (colorGiven && body.color !== null && !profileColorKey(body.color)) {
+      res.status(400).json({ error: "That is not one of the colours" });
+      return;
+    }
     const iconGiven = "icon" in body;
     if (iconGiven && body.icon !== null && !(Number.isInteger(body.icon) && body.icon >= 1 && body.icon <= MAX_FRIENDS)) {
       res.status(400).json({ error: `The icon is a number from 1 to ${MAX_FRIENDS}` });
@@ -104,6 +110,7 @@ profileRouter.put(
       {
         ...(nameGiven ? { displayName: name } : {}),
         ...(iconGiven ? { profileIcon: body.icon } : {}),
+        ...(colorGiven ? { profileColor: body.color } : {}),
         ...(countryGiven ? { country } : {}),
         ...(languageGiven ? { language } : {}),
         // only what the request carries is changed: a save that leaves the phone out keeps it
@@ -115,7 +122,7 @@ profileRouter.put(
       { merge: true },
     );
     // confirmed friends see my icon: tell their apps
-    if (iconGiven && (body.icon ?? null) !== (before?.profileIcon ?? null)) await touchFriends(uidOf(res));
+    if ((iconGiven && (body.icon ?? null) !== (before?.profileIcon ?? null)) || (colorGiven && (body.color ?? null) !== (before?.profileColor ?? null))) await touchFriends(uidOf(res));
     await touchSync(uidOf(res), "profileAt");
     res.json(detailsOf((await ref.get()).data() ?? {}));
   }),

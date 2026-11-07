@@ -21,13 +21,13 @@
       <div class="d-flex flex-column align-items-center gap-3">
       <div class="flex-none text-center">
       @if (picture(); as uploaded) {
-        <img class="sf-photo" [src]="uploaded" alt="" decoding="sync" />
+        <img class="sf-photo" [class.sf-ringed]="!!color()" [style.--sf-friend]="colorHex()" [src]="uploaded" alt="" decoding="sync" />
       } @else if (user()?.photoURL; as photo) {
-        <img class="sf-photo" [src]="photo" alt="" referrerpolicy="no-referrer" />
+        <img class="sf-photo" [class.sf-ringed]="!!color()" [style.--sf-friend]="colorHex()" [src]="photo" alt="" referrerpolicy="no-referrer" />
       } @else if (icon(); as chosen) {
-        <img class="sf-photo" [src]="'icons/friends/friend' + chosen + '.svg'" alt="" />
+        <img class="sf-photo" [class.sf-ringed]="!!color()" [style.--sf-friend]="colorHex()" [src]="'icons/friends/friend' + chosen + '.svg'" alt="" />
       } @else {
-        <div class="sf-photo sf-photo-initial">{{ initial() }}</div>
+        <div class="sf-photo sf-photo-initial" [class.sf-ringed]="!!color()" [style.--sf-friend]="colorHex()">{{ initial() }}</div>
       }
       <div class="d-flex flex-column align-items-center gap-1 mt-1 small">
         <a routerLink="/profile/picture" class="btn btn-link p-0">{{ picture() ? 'Change picture' : 'Upload a picture' }}</a>
@@ -53,6 +53,17 @@
           </div>
         }
       }
+      <!-- my colour: my friends see it on their friend list and in the header of our conversation -->
+      <div class="mt-3 text-start">
+        <span class="form-label small text-secondary m-0">Your colour <span class="text-secondary">(your friends see it)</span></span>
+        <div class="sf-colors mt-1" role="radiogroup" aria-label="Your colour">
+          <button type="button" class="sf-color sf-color-none" role="radio" [attr.aria-checked]="!color()" [class.sf-chosen]="!color()" aria-label="No colour" title="No colour" [disabled]="loading()" (click)="chooseColor(null)"></button>
+          @for (c of colors; track c.key) {
+            <button type="button" class="sf-color" role="radio" [attr.aria-checked]="color() === c.key" [class.sf-chosen]="color() === c.key" [style.background]="c.hex"
+                    [attr.aria-label]="c.label" [title]="c.label" [disabled]="loading()" (click)="chooseColor(c.key)"></button>
+          }
+        </div>
+      </div>
       <label class="d-grid gap-1 mt-2 text-start">
         <span class="form-label small text-secondary m-0">Name</span>
         <input type="text" class="form-control" [class.is-invalid]="nameMissing() && !loading()" [value]="form().name"

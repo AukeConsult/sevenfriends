@@ -35,14 +35,10 @@
              autocomplete="name" [hidden]="mode() === 'signin'" />
       <input #email type="email" name="email" class="form-control" placeholder="Email"
              autocomplete="email" inputmode="email" required />
-      <div class="input-group">
-        <input #password [type]="showPassword() ? 'text' : 'password'" name="password" class="form-control" placeholder="Password"
-               required minlength="6" [attr.autocomplete]="mode() === 'signin' ? 'current-password' : 'new-password'" />
-        <button type="button" class="btn btn-light" (click)="showPassword.set(!showPassword())" [attr.aria-pressed]="showPassword()"
-                [attr.aria-label]="showPassword() ? 'Hide the password' : 'Show the password'">{{ showPassword() ? 'Hide' : 'Show' }}</button>
-      </div>
+      <input #password type="password" name="password" class="form-control" placeholder="Password"
+             required minlength="6" [attr.autocomplete]="mode() === 'signin' ? 'current-password' : 'new-password'" />
       <!-- creating an account: the password is typed twice, so a typing mistake does not lock the person out -->
-      <input #again [type]="showPassword() ? 'text' : 'password'" name="password-again" class="form-control" placeholder="Repeat the password"
+      <input #again type="password" name="password-again" class="form-control" placeholder="Repeat the password"
              [hidden]="mode() === 'signin'" [required]="mode() === 'signup'" minlength="6" autocomplete="new-password" />
 
       <button type="submit" class="btn btn-primary" [disabled]="busy()">

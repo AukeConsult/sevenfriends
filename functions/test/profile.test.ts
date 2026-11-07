@@ -218,3 +218,22 @@ describe("my language", () => {
     expect((await me.raw("get", "/profile")).body.language).toBe("de");
   });
 });
+
+describe("the profile colour", () => {
+  it("is saved, read back, kept by a save that leaves it out, and removed with null", async () => {
+    expect((await profile(u(0))).color).toBeNull();
+    await u(0).raw("put", "/profile", { color: "teal" }).expect(200);
+    expect((await profile(u(0))).color).toBe("teal");
+    await u(0).raw("put", "/profile", { name: "Still teal" }).expect(200); // a save without a colour keeps it
+    expect((await profile(u(0))).color).toBe("teal");
+    await u(0).raw("put", "/profile", { color: null }).expect(200);
+    expect((await profile(u(0))).color).toBeNull();
+  });
+
+  it("refuses anything that is not one of the colours, and saves nothing", async () => {
+    await u(0).raw("put", "/profile", { color: "blue" }).expect(200);
+    expect((await u(0).raw("put", "/profile", { color: "#ff0000" })).status).toBe(400);
+    expect((await u(0).raw("put", "/profile", { color: "javascript:alert(1)" })).status).toBe(400);
+    expect((await profile(u(0))).color).toBe("blue");
+  });
+});

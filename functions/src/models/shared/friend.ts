@@ -30,6 +30,8 @@ export interface Friend {
   moodMessage: string | null;
   /** the icon (1-7) the friend chose for themselves; null = none (then the seat icon is shown). Confirmed friends only. */
   icon: number | null;
+  /** the colour the friend chose for their profile (a key of PROFILE_COLORS); null = none. Confirmed friends only. */
+  color: string | null;
   /** when the friend last changed their uploaded picture; null = no picture. It tells the app when to fetch it again (`GET .../friends/:id/picture`). Confirmed friends only. */
   pictureAt: string | null;
   /** the object id of that picture in the media cache (`/api/sf-cache/<friend's user id>/<pictureId>`), null = no picture. Confirmed friends only. */

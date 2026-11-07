@@ -8,11 +8,14 @@ export class MyAvatarService {
   private readonly api = inject(ApiService);
 
   readonly src = signal<string | null>(null);
+  /** The colour key I chose for my profile (null = none): my messages in the feed use it. */
+  readonly color = signal<string | null>(null);
 
   /** Reads it again from my profile (called when a feed is opened, so a change on the profile page shows). */
   async load(): Promise<void> {
     try {
       const profile = await this.api.request<ProfileDetails>('/profile');
+      this.color.set(profile.color ?? null);
       if (profile.hasPicture) {
         this.src.set((await this.api.request<ProfilePicture>('/profile/picture').catch(() => null))?.image ?? null);
       } else {

@@ -1,3 +1,5 @@
+import type { ProfileColorKey } from "./profile-color";
+
 /** My profile as the profile page edits it: name and phone number. */
 export type ProfileDetails = {
   name: string | null;
@@ -9,6 +11,8 @@ export type ProfileDetails = {
   emailVerified: boolean;
   /** the icon (1-7, the same seven as the seats) the person chose as their own picture; null = none chosen */
   icon: number | null;
+  /** the colour the person chose for their profile (shown to their friends); null = none */
+  color: ProfileColorKey | null;
   /** true = the person uploaded a picture (GET /profile/picture returns it) */
   hasPicture: boolean;
   /** the country (a two-letter ISO code such as "NO") the person lives in; null = not set */

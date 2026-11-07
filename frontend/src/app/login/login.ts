@@ -48,8 +48,6 @@ export class Login {
   protected readonly info = signal<string | null>(null);
   /** a sign-in with email and password was turned down: the person may not have an account yet, so creating one is offered clearly */
   protected readonly rejected = signal(false);
-  /** the password is shown as text (the Show / Hide button) */
-  protected readonly showPassword = signal(false);
 
   protected toggleMode(): void {
     this.mode.update((m) => (m === 'signin' ? 'signup' : 'signin'));

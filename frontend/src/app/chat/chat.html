@@ -1,4 +1,4 @@
-<header #bar class="sf-bar">
+<header #bar class="sf-bar" [class.sf-has-color]="!!friendColor()" [style.--sf-friend]="friendColor()" [style.--sf-friend-ink]="friendInk()">
   <a routerLink="/friends" class="sf-back" aria-label="Back to friends">‹</a>
   @if (seat() > 0) {
     <span class="sf-seat">

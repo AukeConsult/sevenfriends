@@ -11,7 +11,7 @@ import { PresenceService } from '../core/presence.service';
 import { PushService } from '../core/push.service';
 import { defaultLanguage, languagesFor } from '../models/shared/languages';
 import { countries, dialCode, fullNumber, isValidPhone, nationalNumber } from '../core/countries';
-import { ProfileDetails, ProfileDraft, ProfilePicture, SaveState } from '../models';
+import { PROFILE_COLORS, ProfileDetails, ProfileDraft, ProfilePicture, SaveState, profileColorHex } from '../models';
 
 /** Changes are saved by themselves: a moment after you stop typing, and when you leave a field or the page. */
 const AUTOSAVE_MS = 800;
@@ -41,6 +41,10 @@ export class Profile {
   protected readonly loading = signal(true);
   /** the seat icon (1-7) chosen as my own picture, when I have no photo; null = none */
   protected readonly icon = signal<number | null>(null);
+  /** the colour I chose for my profile (a key of PROFILE_COLORS), shown to my friends; null = none */
+  protected readonly color = signal<string | null>(null);
+  protected readonly colors = PROFILE_COLORS;
+  protected readonly colorHex = computed(() => profileColorHex(this.color()));
   /** the picture I uploaded (a data URL), when I have one */
   protected readonly picture = signal<string | null>(null);
   protected readonly icons = [1, 2, 3, 4, 5, 6, 7];
@@ -214,6 +218,7 @@ export class Profile {
       this.phoneVerified.set(res.phoneVerified);
       this.emailVerified.set(res.emailVerified);
       this.icon.set(res.icon);
+      this.color.set(res.color);
       this.picture.set(res.hasPicture ? (await this.api.request<ProfilePicture>('/profile/picture').catch(() => null))?.image ?? null : null);
     } catch {
       /* the next change tries again */
@@ -230,6 +235,7 @@ export class Profile {
       this.phoneVerified.set(res.phoneVerified);
       this.emailVerified.set(res.emailVerified);
       this.icon.set(res.icon);
+      this.color.set(res.color);
       this.picture.set(image);
       this.form.set({ name: res.name ?? '', phone: res.phone ?? '', country: res.country ?? '', language: res.language ?? '' });
     } catch (err: any) {
@@ -244,6 +250,13 @@ export class Profile {
   /** Choose one of the seven icons as my own picture (saved by itself, like everything on this page). */
   protected toggleIcons(): void {
     this.iconsOpen.update((open) => !open);
+  }
+
+  protected chooseColor(key: string | null): void {
+    this.color.set(key);
+    this.dirty = true;
+    this.state.set('dirty');
+    void this.flush();
   }
 
   protected chooseIcon(n: number): void {
@@ -289,6 +302,7 @@ export class Profile {
             ...(name ? { name } : {}),
             ...(!sent.phone.trim() || isValidPhone(sent.phone) ? { phone: sent.phone.trim() || null } : {}),
             icon: this.icon(),
+            color: this.color(),
             country: sent.country || null,
             language: sent.language || null,
           }),
