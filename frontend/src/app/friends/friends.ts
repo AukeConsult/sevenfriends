@@ -36,9 +36,10 @@ export class Friends {
   /** friends on the sleep list (the last row opens it) */
   protected readonly sleeping = computed(() => this.friendsService.sleeping().length);
   protected readonly slots = computed<FriendSlot[]>(() =>
+    // a friend sits in the seat number the server gave (it stays when other seats are free: seat 2 empty is still shown as number 2)
     Array.from({ length: MAX_FRIENDS }, (_, i) => ({
       position: i + 1,
-      friend: this.friendsService.awake()[i] ?? null,
+      friend: this.friendsService.awake().find((f) => f.seat === i + 1) ?? null,
     })),
   );
 
@@ -87,6 +88,72 @@ export class Friends {
   protected readonly moodLabel = moodLabel;
 
   protected readonly loadError = signal<string | null>(null);
+
+  // ---- moving a friend to another seat: drag the grip of a card onto another seat (mouse or finger), or use the arrow keys on the grip ----
+  /** the seat that is being dragged (a friend's card or an empty seat), how far it has moved down (px), and the seat it is over */
+  protected readonly dragging = signal<{ from: number; startY: number } | null>(null);
+  protected readonly dragDy = signal(0);
+  protected readonly dropSeat = signal<number | null>(null);
+
+  /** The friend in a seat (null = the seat is empty). */
+  private friendIn(seat: number): Friend | null {
+    return this.slots().find((s) => s.position === seat)?.friend ?? null;
+  }
+
+  protected dragStart(event: PointerEvent, seat: number): void {
+    event.preventDefault();
+    event.stopPropagation();
+    (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
+    this.dragging.set({ from: seat, startY: event.clientY });
+    this.dragDy.set(0);
+    this.dropSeat.set(seat);
+  }
+
+  protected dragMove(event: PointerEvent): void {
+    const drag = this.dragging();
+    if (!drag) return;
+    this.dragDy.set(event.clientY - drag.startY);
+    const seat = document.elementFromPoint(event.clientX, event.clientY)?.closest('[data-seat]')?.getAttribute('data-seat');
+    if (seat) this.dropSeat.set(Number(seat));
+  }
+
+  protected async dragEnd(event: PointerEvent, cancelled = false): Promise<void> {
+    const drag = this.dragging();
+    if (!drag) return;
+    (event.currentTarget as HTMLElement).releasePointerCapture?.(event.pointerId);
+    const to = this.dropSeat();
+    this.dragging.set(null);
+    this.dragDy.set(0);
+    this.dropSeat.set(null);
+    if (!cancelled && to && to !== drag.from) await this.swapSeats(drag.from, to);
+  }
+
+  /** The arrow keys on a grip: one seat up or down. */
+  protected async gripKey(event: KeyboardEvent, seat: number): Promise<void> {
+    const to = event.key === 'ArrowUp' ? seat - 1 : event.key === 'ArrowDown' ? seat + 1 : 0;
+    if (to < 1 || to > MAX_FRIENDS) return;
+    event.preventDefault();
+    event.stopPropagation();
+    await this.swapSeats(seat, to);
+  }
+
+  /** Two seats change places: a friend moves to a free or taken seat (that friend takes the seat), an empty seat dragged onto a friend moves that friend into it; two empty seats change nothing. */
+  private async swapSeats(from: number, to: number): Promise<void> {
+    const mover = this.friendIn(from);
+    if (mover) await this.moveTo(mover.id, to);
+    else {
+      const other = this.friendIn(to);
+      if (other) await this.moveTo(other.id, from);
+    }
+  }
+
+  private async moveTo(id: string, seat: number): Promise<void> {
+    try {
+      await this.friendsService.moveToSeat(id, seat);
+    } catch (err: any) {
+      this.loadError.set(err.message);
+    }
+  }
 
   constructor() {
     const tick = setInterval(() => this.now.set(Date.now()), 60000);

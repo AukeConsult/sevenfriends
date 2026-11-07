@@ -16,16 +16,16 @@
     <div class="card-body row g-2">
       <label class="col-6 d-grid gap-1 align-content-start" for="pref-theme"><span>Theme</span>
         <select id="pref-theme" class="form-select" [value]="prefs.get('theme')" (change)="prefs.set('theme', $any($event.target).value)">
-          @for (t of themes; track t.key) { <option [value]="t.key">{{ t.label }}</option> }
+          @for (t of themes; track t.key) { <option [value]="t.key" [selected]="t.key === prefs.get('theme')">{{ t.label }}</option> }
         </select>
       </label>
       <label class="col-6 d-grid gap-1 align-content-start" for="pref-text-size"><span>Text size</span>
         <select id="pref-text-size" class="form-select" [value]="prefs.get('textSize')" (change)="prefs.set('textSize', $any($event.target).value)">
-          <option value="tiny">Tiny</option>
-          <option value="small">Small</option>
-          <option value="normal">Normal</option>
-          <option value="big">Big</option>
-          <option value="huge">Huge</option>
+          <option value="tiny" [selected]="prefs.get('textSize') === 'tiny'">Tiny</option>
+          <option value="small" [selected]="prefs.get('textSize') === 'small'">Small</option>
+          <option value="normal" [selected]="prefs.get('textSize') === 'normal'">Normal</option>
+          <option value="big" [selected]="prefs.get('textSize') === 'big'">Big</option>
+          <option value="huge" [selected]="prefs.get('textSize') === 'huge'">Huge</option>
         </select>
       </label>
     </div>

@@ -6,7 +6,7 @@ import { ensureDefaultCircle } from "./circles";
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION } from "./constants";
 import { AcceptOutcome, FriendRequest } from "./models";
 import { circleCol, friendRequestCol, userDoc, userFields } from "./paths";
-import { ensureSeat } from "./seats";
+import { assignMissingSeats, ensureSeat } from "./seats";
 import { nameOf, sendPush } from "./push";
 import { unverifiedDetails } from "./validation";
 
@@ -51,6 +51,7 @@ friendRequestsRouter.post(
 
     const requestRef = friendRequestCol(uid).doc(req.params.id);
     const myFriends = circleCol(uid).doc(DEFAULT_CIRCLE_ID).collection(FRIENDS_SUBCOLLECTION);
+    await assignMissingSeats(myFriends); // friends from before the seat numbers get theirs first
 
     let requester: { uid: string; friendId: string } | null = null; // who is told about the answer
     const result = await getFirestore().runTransaction<AcceptOutcome>(async (tx) => {

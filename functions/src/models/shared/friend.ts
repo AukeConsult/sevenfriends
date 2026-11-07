@@ -14,6 +14,8 @@ export interface Friend {
   waiting: boolean;
   /** true = on my sleep list: not in a seat any more, the conversation and its files are kept (I can wake them up again) */
   asleep: boolean;
+  /** the number (1-7) of the seat this friend sits in; it stays when other seats become free or are taken. null = on the sleep list (no seat) */
+  seat: number | null;
   /** true = this friend has put ME on THEIR sleep list (they may not see my messages soon) */
   sleepsMe: boolean;
   /** true when THEY invited ME: this seat can be confirmed by me */

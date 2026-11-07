@@ -66,6 +66,21 @@ export class FriendsService {
     return saved;
   }
 
+  /** Move a friend to another seat: a free seat is taken, a seat that is taken is swapped (shown at once; put back if the server refuses). */
+  async moveToSeat(id: string, seat: number): Promise<void> {
+    const before = this.friends();
+    const moving = before.find((f) => f.id === id);
+    if (!moving || moving.asleep || moving.seat === seat) return;
+    const from = moving.seat;
+    this.friends.set(before.map((f) => (f.id === id ? { ...f, seat } : !f.asleep && f.seat === seat ? { ...f, seat: from } : f)));
+    try {
+      await this.api.request(`${this.friendsPath()}/${id}/seat`, { method: 'POST', body: JSON.stringify({ seat }) });
+    } catch (err) {
+      this.friends.set(before);
+      throw err;
+    }
+  }
+
   /** Put a friend on the sleep list (no seat, conversation kept) or wake them up (needs a free seat). */
   async sleep(id: string, asleep: boolean): Promise<Friend> {
     const saved = await this.api.request<Friend>(`${this.friendsPath()}/${id}/sleep`, { method: 'POST', body: JSON.stringify({ asleep }) });

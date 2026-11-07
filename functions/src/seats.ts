@@ -1,4 +1,4 @@
-import { DocumentData, FieldValue, Timestamp, Transaction, getFirestore } from "firebase-admin/firestore";
+import { CollectionReference, DocumentData, FieldValue, Timestamp, Transaction, getFirestore } from "firebase-admin/firestore";
 import { ensureDefaultCircle } from "./circles";
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAX_FRIENDS } from "./constants";
 import { EnsureSeatArgs } from "./models";
@@ -26,6 +26,46 @@ function pointsAt(entry: DocumentData, requester: DocumentData): boolean {
   if (email && entry.email === email) return true;
   if (requester.phoneKey && entry.phoneKey === requester.phoneKey) return true;
   return false;
+}
+
+/** The seat number (1..MAX_FRIENDS) of an entry, or null when it has none (asleep, or not given yet). */
+export const seatOf = (data: DocumentData): number | null =>
+  data.asleep !== true && Number.isInteger(data.seat) && data.seat >= 1 && data.seat <= MAX_FRIENDS ? (data.seat as number) : null;
+
+/** The lowest seat number that none of these entries holds (entries on the sleep list hold none). */
+export function freeSeat(entries: { data(): DocumentData }[]): number | null {
+  const taken = new Set(entries.map((e) => seatOf(e.data())));
+  for (let n = 1; n <= MAX_FRIENDS; n++) if (!taken.has(n)) return n;
+  return null;
+}
+
+/**
+ * Gives every friend in a seat a seat number. Entries from before the numbers existed (and a number held twice) get the lowest free one,
+ * oldest first, and it is stored: from then on the friend keeps it. Called before anything that adds, wakes or moves a friend, and by the list.
+ * Returns the seat of every friend in a seat (entry id -> number).
+ */
+export async function assignMissingSeats(friends: CollectionReference): Promise<Map<string, number>> {
+  const snap = await friends.orderBy("createdAt", "asc").get();
+  const seats = new Map<string, number>();
+  const held = new Set<number>();
+  for (const d of snap.docs) {
+    const n = seatOf(d.data());
+    if (n && !held.has(n)) { held.add(n); seats.set(d.id, n); }
+  }
+  const batch = getFirestore().batch();
+  let changed = false;
+  for (const d of snap.docs) {
+    if (d.data().asleep === true || seats.has(d.id)) continue;
+    let n = 1;
+    while (held.has(n)) n++;
+    if (n > MAX_FRIENDS) continue; // more friends than seats cannot happen; such an entry stays without a number
+    held.add(n);
+    seats.set(d.id, n);
+    batch.update(d.ref, { seat: n });
+    changed = true;
+  }
+  if (changed) await batch.commit();
+  return seats;
 }
 
 const millis = (v: unknown) => (v instanceof Timestamp ? v.toMillis() : 0);
@@ -62,6 +102,7 @@ export function ensureSeat(
       connectionId: requestId,
       incomingRequestId: requestId,
       peerCircleId: request.circleId,
+      seat: seatOf(mine.data()) ?? freeSeat(mySnap.docs.filter((d) => d.id !== mine.id)),
       ...confirmedFields,
     });
     tx.delete(mine.ref);
@@ -78,6 +119,7 @@ export function ensureSeat(
     peerCircleId: request.circleId,
     incomingRequestId: requestId,
     status: "pending",
+    seat: freeSeat(mySnap.docs),
     ...confirmedFields,
     createdAt: FieldValue.serverTimestamp(),
   });
@@ -97,6 +139,7 @@ export async function placeWaitingRequests(uid: string): Promise<void> {
   const db = getFirestore();
   const myFriends = circleCol(uid).doc(DEFAULT_CIRCLE_ID).collection(FRIENDS_SUBCOLLECTION);
 
+  await assignMissingSeats(myFriends); // friends from before the seat numbers get theirs first
   const snap = await friendRequestCol(uid).where("status", "==", "pending").select("seatFriendId", "createdAt").get();
   const waiting = snap.docs
     .filter((d) => !d.data().seatFriendId)

@@ -32,7 +32,7 @@ interface MessageGroup {
 
 /**
  * Home: what needs me first (friend requests, unread messages grouped by friend with a quick reply, setup, unverified details),
- * then my circle at a glance (presence, mood, when we last spoke, a gentle "Say hi"), my mood, and the invite link under "More".
+ * then my circle at a glance (presence, mood, when we last spoke, a gentle "Say hi"), my mood, and the invite link under "Share".
  */
 @Component({
   selector: 'app-notifications',

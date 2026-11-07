@@ -19,6 +19,7 @@ import { deleteObjects } from "./sf-cache";
 import { tellFriendAsleep } from "./sync";
 import { nameOf, sendPush } from "./push";
 import { findAccounts, signalRefsOf, writeSignal } from "./signals";
+import { assignMissingSeats, freeSeat, seatOf } from "./seats";
 import {
   EMAIL_RE,
   PHONE_RE,
@@ -59,6 +60,7 @@ function toJson(doc: FirebaseFirestore.DocumentSnapshot): Friend {
     invited: Boolean(data.linkedUid), // true = the friend has a Seven Friends account and got a request
     waiting: Boolean(data.waitingForSeat), // true = their list is full: I am on their waiting list
     asleep: data.asleep === true, // true = on my sleep list (no seat)
+    seat: seatOf(data),
     sleepsMe: data.theyAsleep === true, // true = this friend has ME on their sleep list (copied here when they put me to sleep or wake me)
     incoming: Boolean(data.incomingRequestId), // true = THEY invited ME; I can confirm
     requestId: (data.incomingRequestId as string | undefined) ?? null,
@@ -148,7 +150,11 @@ friendsRouter.get(
   "/",
   asyncHandler(async (_req, res) => {
     const snap = await friendCol(res).orderBy("createdAt", "asc").get();
-    const friends = await Promise.all(snap.docs.map((d) => withUnverified(toJson(d), d.data(), uidOfRequest(res))));
+    // every friend in a seat has a seat number: older entries get theirs now (and keep it)
+    const seats = await assignMissingSeats(friendCol(res));
+    const friends = await Promise.all(
+      snap.docs.map((d) => withUnverified({ ...toJson(d), seat: seats.get(d.id) ?? null }, d.data(), uidOfRequest(res))),
+    );
     res.json({ friends, max: MAX_FRIENDS });
   }),
 );
@@ -180,6 +186,7 @@ friendsRouter.post(
 
     const col = friendCol(res);
     const ref = col.doc();
+    await assignMissingSeats(col); // friends from before the seat numbers get theirs first, so the new friend takes a really free seat
     const added = await getFirestore().runTransaction(async (tx) => {
       const existing = await tx.get(col);
       if (existing.docs.filter((d) => d.data().asleep !== true).length >= MAX_FRIENDS) return false; // friends on the sleep list have no seat
@@ -190,6 +197,7 @@ friendsRouter.post(
         peerCircleId: DEFAULT_CIRCLE_ID, // where the other person's entry will live
         nameGiven, // false = the name shown is the email / phone I typed
         status: "pending" as FriendStatus,
+        seat: freeSeat(existing.docs),
         linkedUid: null, // set when the other person's check finds this entry
         signaledUids: accounts, // who got a ping for this entry (removed again if the entry is deleted)
         // nobody has an account for this email / phone yet: a friend added by EMAIL can be invited by email, once I confirm
@@ -251,6 +259,7 @@ friendsRouter.post(
     }
     const col = friendCol(res);
     const ref = col.doc(req.params.friendId);
+    await assignMissingSeats(col);
     const result = await getFirestore().runTransaction(async (tx) => {
       const all = await tx.get(col);
       const entry = all.docs.find((d) => d.id === ref.id);
@@ -263,7 +272,8 @@ friendsRouter.post(
         ? circleCol(linked).doc((entry.data().peerCircleId as string | undefined) ?? DEFAULT_CIRCLE_ID).collection(FRIENDS_SUBCOLLECTION).doc(ref.id)
         : null;
       const theirsExists = theirs ? (await tx.get(theirs)).exists : false;
-      tx.update(ref, { asleep });
+      // asleep: the seat is free for somebody else; awake again: the lowest free seat
+      tx.update(ref, { asleep, seat: asleep ? null : freeSeat(all.docs.filter((d) => d.id !== ref.id)) });
       if (theirs && theirsExists) tellFriendAsleep(tx, theirs, asleep);
       return "ok" as const;
     });
@@ -277,6 +287,44 @@ friendsRouter.post(
     }
     const saved = await ref.get();
     res.json(await withUnverified(toJson(saved), saved.data(), uidOfRequest(res)));
+  }),
+);
+
+/**
+ * Move a friend to another seat: `{ seat: 1-7 }`. A free seat is simply taken; a seat that another friend sits in is swapped
+ * (that friend gets the seat this one had). Only friends in a seat (not the sleep list) can be moved.
+ */
+friendsRouter.post(
+  "/:friendId/seat",
+  asyncHandler(async (req, res) => {
+    const seat = (req.body ?? {}).seat;
+    if (!Number.isInteger(seat) || seat < 1 || seat > MAX_FRIENDS) {
+      res.status(400).json({ error: `The seat is a number from 1 to ${MAX_FRIENDS}` });
+      return;
+    }
+    const col = friendCol(res);
+    await assignMissingSeats(col);
+    const result = await getFirestore().runTransaction(async (tx) => {
+      const all = await tx.get(col);
+      const entry = all.docs.find((d) => d.id === req.params.friendId);
+      if (!entry) return "missing" as const;
+      if (entry.data().asleep === true) return "asleep" as const;
+      const other = all.docs.find((d) => d.id !== entry.id && seatOf(d.data()) === seat);
+      const mine = seatOf(entry.data());
+      if (mine === seat) return "ok" as const;
+      tx.update(entry.ref, { seat });
+      if (other) tx.update(other.ref, { seat: mine ?? freeSeat(all.docs.filter((d) => d.id !== other.id && d.id !== entry.id)) });
+      return "ok" as const;
+    });
+    if (result === "missing") {
+      res.status(404).json({ error: "Friend not found" });
+      return;
+    }
+    if (result === "asleep") {
+      res.status(409).json({ error: "A friend on the sleep list has no seat. Wake them up first." });
+      return;
+    }
+    res.json({ seat });
   }),
 );
 
