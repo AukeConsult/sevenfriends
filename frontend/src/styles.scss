@@ -1003,13 +1003,23 @@ app-voice { display: contents; }
 // ---- Safebox: files two friends share ----
 .sf-box-keystatus { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.375rem 0.75rem; margin: 0 0 0.5rem; padding: 0; font-size: var(--sf-fs-description);
   li { padding: 0.125rem 0.625rem; border: 1px solid var(--sf-border); border-radius: 999px; background: var(--sf-card); color: var(--sf-muted); &.sf-has { color: var(--bs-success-text-emphasis, #0a3622); border-color: currentColor; } } } // who has a key: two small pills
-.sf-box-unenc { width: fit-content; max-width: min(100%, 32rem); margin: 0 auto 0.75rem; border: 1px solid var(--sf-border); border-radius: var(--sf-radius); background: var(--sf-card); font-size: var(--sf-fs-description);
-  summary { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.75rem; cursor: pointer; color: var(--bs-warning-text-emphasis, #997404); font-weight: 600; list-style: none; &::-webkit-details-marker { display: none; } &::after { content: ''; margin-inline-start: auto; width: 0.5rem; height: 0.5rem; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg); transition: transform .15s; } }
-  &.sf-box-keys-ok summary { color: var(--bs-success-text-emphasis, #0a3622); }
+.sf-box-security { margin: 0 0 0.75rem; border: 1px solid var(--sf-border); border-radius: var(--sf-radius); background: var(--sf-card); font-size: var(--sf-fs-description);
+  summary { display: flex; align-items: center; gap: 0.625rem; padding: 0.625rem 0.875rem; cursor: pointer; color: var(--bs-warning-text-emphasis, #997404); font-weight: 600; list-style: none; &::-webkit-details-marker { display: none; }
+    &::after { content: ''; margin-inline-start: auto; flex: none; width: 0.5rem; height: 0.5rem; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg); transition: transform .15s; } }
+  &.sf-on summary { color: var(--bs-success-text-emphasis, #0a3622); }
   &[open] summary::after { transform: rotate(225deg); }
-  p { padding: 0 0.75rem 0.75rem; color: var(--sf-text); } } // the "not encrypted yet" mark with its expanding explanation
+  .sf-box-security-title { display: grid; small { font-weight: 400; color: var(--sf-muted); } }
+  .sf-box-security-body { display: grid; gap: 1rem; padding: 0.25rem 0.875rem 0.875rem; color: var(--sf-text); }
+  section { display: grid; gap: 0.5rem; justify-items: start; }
+  h2 { margin: 0; font-size: var(--sf-fs-text); font-weight: 700; }
+  p { margin: 0; }
+  .sf-box-keystatus { justify-content: flex-start; margin: 0; } } // all about locking (encryption) in one frame: closed it says whether files are locked, open it explains and holds the choices
 .sf-box-usage { display: grid; gap: 0.25rem; margin-bottom: 0.75rem; .progress { height: 0.5rem; } }
 .sf-box-empty { display: grid; justify-items: center; gap: 0.5rem; padding: 2rem 1rem; svg { color: var(--sf-muted); } }
+.sf-box-dropzone { display: grid; justify-items: center; gap: 0.25rem; padding: 1.25rem 1rem; border: 2px dashed var(--sf-primary); border-radius: var(--sf-radius); color: var(--sf-primary); text-align: center; cursor: pointer; // where files are chosen or dropped
+  &:hover, &:focus-visible, &.sf-over { background: color-mix(in srgb, var(--sf-primary) 10%, transparent); }
+  &.sf-over { border-style: solid; }
+  &.sf-busy { cursor: progress; opacity: 0.7; } }
 .sf-box-list { margin-top: 0.75rem; }
 .sf-box-list .sf-list-text small { font-size: var(--sf-fs-text); font-weight: 400; } // the line under a file name (kind, size, who, date): the normal text size too
 .sf-box-name { color: var(--sf-text); font-weight: 400; text-decoration: none; } // a file name: normal text size and colour, not a blue bold link

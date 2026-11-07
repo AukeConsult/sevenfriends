@@ -173,3 +173,76 @@ describe("an encrypted file", () => {
     expect(storedNames().filter((n) => n.includes(`/${item.id}`) && !n.endsWith(".thumb"))).toEqual([]);
   });
 });
+
+describe("locking a file that is already in the box", () => {
+  const png = () => Buffer.concat([Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]), Buffer.alloc(2000, 7)]);
+  const plain = async (user: User, id: string, name = "old.png") => (await user.file("post", box(id, `?name=${name}`), png()).expect(201)).body as { id: string };
+  const replace = (user: User, id: string, itemId: string, body: Buffer) => user.file("post", box(id, `/encrypted?replaces=${itemId}`), body);
+  const items = async (user: User, id: string) => (await user.raw("get", box(id)).expect(200)).body.items as { id: string; mine: boolean; createdAt: string; enc?: unknown; hasThumb: boolean }[];
+
+  it("takes the place of the plain file, which goes with its preview; the owner and the date stay", async () => {
+    const { id, wraps } = await twoWithKeys();
+    const old = await plain(pool[0], id);
+    await pool[0].file("put", box(id, `/${old.id}/thumb`), Buffer.concat([Buffer.from([0xff, 0xd8, 0xff, 0xe0]), Buffer.alloc(100, 1)])).expect(204);
+    const before = (await items(pool[0], id))[0];
+    const locked = (await replace(pool[1], id, old.id, upload(wraps, { file: 700, thumb: 60, kind: "image" })).expect(201)).body; // my friend locks it
+    expect(locked.id).not.toBe(old.id);
+    expect(locked).toMatchObject({ mine: false, bytes: 700, hasThumb: true, createdAt: before.createdAt }); // still the file of the first person
+    const list = await items(pool[0], id);
+    expect(list).toHaveLength(1);
+    expect(list[0]).toMatchObject({ id: locked.id, mine: true, createdAt: before.createdAt });
+    expect(list[0].enc).toBeTruthy();
+    const names = storedNames().filter((n) => n.startsWith("sf-cache/box-"));
+    expect(names).toEqual([`sf-cache/box-${id}/${locked.id}`, `sf-cache/box-${id}/${locked.id}.thumb`]);
+  });
+
+  it("is not announced to the friend (nothing new was added)", async () => {
+    const { id, wraps } = await twoWithKeys();
+    const old = await plain(pool[0], id);
+    const count = async () => (await getFirestore().collection("user-account").doc(pool[1].p.uid).collection("messages").get()).size;
+    const before = await count();
+    await replace(pool[0], id, old.id, upload(wraps)).expect(201);
+    expect(await count()).toBe(before);
+  });
+
+  it("works in a box that has no room for both files", async () => {
+    const { id, wraps } = await twoWithKeys();
+    const old = await plain(pool[0], id);
+    await getFirestore().collection("safebox").doc(id).collection("items").doc(old.id).update({ bytes: 200 * 1024 * 1024 - 100 });
+    await replace(pool[0], id, old.id, upload(wraps, { file: 90 })).expect(201);
+    const full = await plain(pool[0], id, "other.png");
+    await getFirestore().collection("safebox").doc(id).collection("items").doc(full.id).update({ bytes: 200 * 1024 * 1024 - 100 });
+    await send(pool[0], id, upload(wraps, { file: 500 })).expect(413); // a new file still needs room
+  });
+
+  it("is refused for a file that is already encrypted, one that is not there, and one of another box", async () => {
+    const { id, wraps } = await twoWithKeys();
+    const locked = (await send(pool[0], id, upload(wraps)).expect(201)).body;
+    expect((await replace(pool[0], id, locked.id, upload(wraps)).expect(409)).body.error).toMatch(/already encrypted/);
+    await replace(pool[0], id, "does-not-exist-1", upload(wraps)).expect(404);
+    const other = await connect(pool[0], pool[2]);
+    const foreign = await plain(pool[0], other);
+    await replace(pool[0], id, foreign.id, upload(wraps)).expect(404);
+    expect(await items(pool[0], other)).toHaveLength(1); // the other box is untouched
+  });
+
+  it("leaves the plain file alone when the upload is refused", async () => {
+    const { id, wraps } = await twoWithKeys();
+    const old = await plain(pool[0], id);
+    await replace(pool[0], id, old.id, upload(wraps.slice(1))).expect(409); // a copy is missing
+    expect(await items(pool[0], id)).toMatchObject([{ id: old.id }]);
+    expect(storedNames().filter((n) => n.startsWith("sf-cache/box-"))).toEqual([`sf-cache/box-${id}/${old.id}`]);
+  });
+
+  it("is one step: when two friends lock the same file at once only one locked file is left, and the loser leaves nothing behind", async () => {
+    const { id, wraps } = await twoWithKeys();
+    const old = await plain(pool[0], id);
+    const results = await Promise.all([replace(pool[0], id, old.id, upload(wraps)), replace(pool[1], id, old.id, upload(wraps))]);
+    expect(results.filter((r) => r.status === 201)).toHaveLength(1);
+    expect(results.find((r) => r.status !== 201)!.status).toBeGreaterThanOrEqual(404);
+    const list = await items(pool[0], id);
+    expect(list).toHaveLength(1);
+    expect(list[0].enc).toBeTruthy();
+    expect(storedNames().filter((n) => n.startsWith("sf-cache/box-"))).toEqual([`sf-cache/box-${id}/${list[0].id}`]);
+  });
+});

@@ -117,6 +117,31 @@ describe("the backup of the private key", () => {
   });
 });
 
+describe("publishing a key together with its backup", () => {
+  const backup = { v: 1, iv: Buffer.alloc(12, 1).toString("base64"), data: Buffer.alloc(100, 2).toString("base64") };
+
+  it("stores both in one step and answers with what is stored", async () => {
+    const res = await pool[0].raw("post", "/keys", { publicKey: jwk, label: "Laptop", backup }).expect(201);
+    expect(res.body).toMatchObject({ label: "Laptop", revoked: false });
+    expect(res.body.createdAt).toBeTruthy();
+    const mine = (await pool[0].raw("get", "/keys")).body;
+    expect(mine.hasBackup).toBe(true);
+    expect((await pool[0].raw("get", "/keys/backup").expect(200)).body).toMatchObject(backup);
+  });
+
+  it("stores neither when the backup is not valid", async () => {
+    await pool[0].raw("post", "/keys", { publicKey: jwk, backup: { v: 1, iv: "x", data: "y" } }).expect(400);
+    const mine = (await pool[0].raw("get", "/keys")).body;
+    expect(mine.keys).toEqual([]);
+    expect(mine.hasBackup).toBe(false);
+  });
+
+  it("stores neither when the key is not valid", async () => {
+    await pool[0].raw("post", "/keys", { publicKey: { kty: "RSA", n: "abc", e: "AQAB" }, backup }).expect(400);
+    expect((await pool[0].raw("get", "/keys")).body.hasBackup).toBe(false);
+  });
+});
+
 describe("the keys of a safebox", () => {
   const keysOf = (user: User, id: string) => user.raw("get", `/circles/default/friends/${id}/safebox/keys`);
 

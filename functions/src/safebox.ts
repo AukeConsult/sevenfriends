@@ -75,8 +75,8 @@ type Connection = NonNullable<Awaited<ReturnType<typeof connectionOf>>>;
  * (the box is full) and returns null.
  */
 /** True when the box has room for a file of this many bytes; otherwise answers with an error (the box is full) and returns false. */
-async function boxHasRoom(res: Response, connection: Connection, size: number): Promise<boolean> {
-  const existing = (await safeboxItems(connection.id).select("bytes").get()).docs;
+async function boxHasRoom(res: Response, connection: Connection, size: number, replacing: string | null = null): Promise<boolean> {
+  const existing = (await safeboxItems(connection.id).select("bytes").get()).docs.filter((d) => d.id !== replacing); // a file that is being replaced does not count
   if (existing.length >= SAFEBOX_MAX_ITEMS) {
     res.status(409).json({ error: `The safebox is full (at most ${SAFEBOX_MAX_ITEMS} files). Delete some first.` });
     return false;
@@ -160,20 +160,56 @@ safeboxRouter.post(
       res.status(upload.status).json({ error: upload.error });
       return;
     }
-    const owner = uidOf(res);
-    const [mine, friend] = await Promise.all([publishedKeysOf(owner), publishedKeysOf(connection.peerUid)]);
-    if (!wrapsCover(upload.header.enc, [{ uid: owner, keys: mine }, { uid: connection.peerUid, keys: friend }])) {
+    const me = uidOf(res);
+    const [mine, friend] = await Promise.all([publishedKeysOf(me), publishedKeysOf(connection.peerUid)]);
+    if (!wrapsCover(upload.header.enc, [{ uid: me, keys: mine }, { uid: connection.peerUid, keys: friend }])) {
       res.status(409).json({ error: "The encryption keys changed while the file was sent. Try again." });
       return;
     }
-    if (!(await boxHasRoom(res, connection, upload.file.length))) return;
+    // `?replaces=<item id>`: this locked file takes the place of a plain file of the box (the app locks the files that were put in before the keys)
+    let old: { ref: DocumentReference; id: string; data: FirebaseFirestore.DocumentData } | null = null;
+    if (req.query.replaces !== undefined) {
+      old = await itemById(res, connection.id, req.query.replaces);
+      if (!old) return;
+      if (old.data.enc) {
+        res.status(409).json({ error: "That file is already encrypted" });
+        return;
+      }
+    }
+    if (!(await boxHasRoom(res, connection, upload.file.length, old?.id ?? null))) return;
     const ref = safeboxItems(connection.id).doc();
     const { kind, enc } = upload.header;
-    await putObject(boxOwner(connection.id), ref.id, upload.file, kind, "application/octet-stream", null, owner);
-    if (upload.thumb) await putObject(boxOwner(connection.id), `${ref.id}.thumb`, upload.thumb, "thumb", "application/octet-stream", null, owner);
-    await ref.set({ name: "Encrypted file", kind, mime: "application/octet-stream", bytes: upload.file.length, addedBy: owner, hasThumb: Boolean(upload.thumb), enc, createdAt: FieldValue.serverTimestamp() });
-    await announceItem(res, connection);
-    res.status(201).json(toItem(ref.id, (await ref.get()).data()!, owner));
+    const replaced = old ? { createdAt: old.data.createdAt ?? FieldValue.serverTimestamp(), ...(old.data.originalSender ? { originalSender: old.data.originalSender } : {}) } : null; // it keeps the owner, the date and who first sent it
+    const owner = (old?.data.addedBy as string | undefined) ?? me;
+    const name = boxOwner(connection.id);
+    await putObject(name, ref.id, upload.file, kind, "application/octet-stream", null, owner);
+    if (upload.thumb) await putObject(name, `${ref.id}.thumb`, upload.thumb, "thumb", "application/octet-stream", null, owner);
+    const fields = { name: "Encrypted file", kind, mime: "application/octet-stream", bytes: upload.file.length, addedBy: owner, hasThumb: Boolean(upload.thumb), enc, ...(replaced ?? { createdAt: FieldValue.serverTimestamp() }) };
+    if (old) {
+      // ONE atomic step: the locked item appears and the plain item goes in the same transaction (it still must be there and still plain), so the
+      // list never shows both or neither. If it fails, the locked file just stored is taken away again and the plain file stays.
+      const oldRef = old.ref;
+      try {
+        await getFirestore().runTransaction(async (tx) => {
+          const current = await tx.get(oldRef);
+          if (!current.exists || current.data()?.enc) throw new Error("replaced");
+          tx.set(ref, fields);
+          tx.delete(oldRef);
+        });
+      } catch (err) {
+        await deleteObject(name, ref.id);
+        if (err instanceof Error && err.message === "replaced") {
+          res.status(409).json({ error: "That file was changed meanwhile" });
+          return;
+        }
+        throw err;
+      }
+      await deleteObject(name, old.id).catch((err) => console.error(`Could not delete the plain file ${connection.id}/${old.id}`, err)); // the list no longer has it; only the stored bytes are left to clean up
+    } else {
+      await ref.set(fields);
+      await announceItem(res, connection);
+    }
+    res.status(201).json(toItem(ref.id, (await ref.get()).data()!, me));
   }),
 );
 
@@ -231,7 +267,11 @@ safeboxRouter.post(
 
 /** The item `:itemId` of this box, or answers "not found" and returns null (also for an id that is not valid). */
 async function itemOf(req: Request, res: Response, connectionId: string) {
-  const snap = isObjectId(req.params.itemId) ? await safeboxItems(connectionId).doc(req.params.itemId).get() : null;
+  return itemById(res, connectionId, req.params.itemId);
+}
+
+async function itemById(res: Response, connectionId: string, itemId: unknown) {
+  const snap = isObjectId(itemId) ? await safeboxItems(connectionId).doc(itemId).get() : null;
   if (!snap?.exists) {
     res.status(404).json({ error: "Not found" });
     return null;

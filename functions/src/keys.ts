@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { DecodedIdToken } from "firebase-admin/auth";
-import { FieldValue, Timestamp } from "firebase-admin/firestore";
+import { FieldValue, Timestamp, getFirestore } from "firebase-admin/firestore";
 import { asyncHandler, requireAuth } from "./auth";
 import { MyKeys, KeyBackup, MAX_KEYS_PER_PERSON, MAX_KEY_LABEL, PublicKeyJwk, PublishedKey, canonicalPublicKey, fingerprintOf, keyIdOf } from "./models";
 import { keyBackupDoc, keyCol } from "./paths";
@@ -48,6 +48,14 @@ keysRouter.get(
  * Publish the public key of this device: `{ publicKey: JWK, label?: text }`. The server works out the fingerprint itself; the key ID is
  * made from it, so the same key always has the same ID and publishing it again changes nothing (apart from the label).
  */
+/** A backup as the app sends it, or null when it is not one. */
+function backupOf(body: unknown): KeyBackup | null {
+  const { v, iv, data } = (body ?? {}) as Record<string, unknown>;
+  const ivOk = typeof iv === "string" && B64.test(iv) && Buffer.from(iv, "base64").length === 12;
+  const dataOk = typeof data === "string" && data.length >= 64 && data.length <= 8000 && B64.test(data);
+  return v === 1 && ivOk && dataOk ? { v: 1, iv: iv as string, data: data as string } : null;
+}
+
 keysRouter.post(
   "/",
   asyncHandler(async (req, res) => {
@@ -60,19 +68,26 @@ keysRouter.post(
     }
     const id = keyIdOf(fingerprint);
     const label = text((req.body ?? {}).label, MAX_KEY_LABEL) ?? "";
+    // a new key may come WITH its recovery backup: both are then stored in one atomic step (a key is never published without its backup, nor a backup without its key)
+    const withBackup = (req.body ?? {}).backup !== undefined;
+    const backup = withBackup ? backupOf((req.body ?? {}).backup) : null;
+    if (withBackup && !backup) {
+      res.status(400).json({ error: "That is not a key backup" });
+      return;
+    }
     const existing = await keyCol(uid).get();
     const already = existing.docs.find((d) => d.id === id);
     if (!already && existing.docs.filter((d) => d.data().revoked !== true).length >= MAX_KEYS_PER_PERSON) {
       res.status(409).json({ error: `At most ${MAX_KEYS_PER_PERSON} devices can have a key` });
       return;
     }
-    await keyCol(uid).doc(id).set(
-      already
-        ? { label }
-        : { publicKey: key, fingerprint, label, revoked: false, createdAt: FieldValue.serverTimestamp() },
-      { merge: true },
-    );
-    res.status(already ? 200 : 201).json(publishedOf(id, { ...(already?.data() ?? {}), publicKey: key, fingerprint, label, createdAt: already?.data().createdAt ?? Timestamp.now() }));
+    const ref = keyCol(uid).doc(id);
+    const batch = getFirestore().batch();
+    batch.set(ref, already ? { label } : { publicKey: key, fingerprint, label, revoked: false, createdAt: FieldValue.serverTimestamp() }, { merge: true });
+    if (backup) batch.set(keyBackupDoc(uid), { ...backup, savedAt: FieldValue.serverTimestamp() });
+    await batch.commit();
+    // the answer is what is stored (read back), not what was sent
+    res.status(already ? 200 : 201).json(publishedOf(id, (await ref.get()).data() ?? {}));
   }),
 );
 
@@ -96,14 +111,12 @@ const B64 = /^[A-Za-z0-9+/]+={0,2}$/;
 keysRouter.put(
   "/backup",
   asyncHandler(async (req, res) => {
-    const { v, iv, data } = req.body ?? {};
-    const ivOk = typeof iv === "string" && B64.test(iv) && Buffer.from(iv, "base64").length === 12;
-    const dataOk = typeof data === "string" && data.length >= 64 && data.length <= 8000 && B64.test(data);
-    if (v !== 1 || !ivOk || !dataOk) {
+    const backup = backupOf(req.body);
+    if (!backup) {
       res.status(400).json({ error: "That is not a key backup" });
       return;
     }
-    await keyBackupDoc(uidOf(res)).set({ v: 1, iv, data, savedAt: FieldValue.serverTimestamp() } satisfies Record<string, unknown>);
+    await keyBackupDoc(uidOf(res)).set({ ...backup, savedAt: FieldValue.serverTimestamp() } satisfies Record<string, unknown>);
     res.json({ ok: true });
   }),
 );

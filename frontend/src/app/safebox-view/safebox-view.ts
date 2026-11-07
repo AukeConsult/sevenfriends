@@ -45,6 +45,8 @@ export class SafeboxView {
   protected readonly loadError = signal<string | null>(null);
   /** the file could not be read */
   protected readonly failed = signal(false);
+  /** why a locked file could not be opened (null = the file could not be read: connection) */
+  protected readonly failReason = signal<string | null>(null);
   protected readonly busy = signal(false);
 
   protected readonly index = computed(() => (this.box()?.items ?? []).findIndex((i) => i.id === this.itemId()));
@@ -112,6 +114,7 @@ export class SafeboxView {
       this.text.set(null);
       this.cut.set(false);
       this.failed.set(false);
+      this.failReason.set(null);
       if (!item) return;
       const shows = item.kind === 'image' || (item.enc && (item.kind === 'video' || item.kind === 'audio')) || (item.kind === 'document' && this.docType() === 'text');
       if (!shows) return;
@@ -128,7 +131,7 @@ export class SafeboxView {
             this.text.set(all.slice(0, TEXT_LIMIT));
           }
         })
-        .catch(() => this.item() === item && this.failed.set(true));
+        .catch((err) => this.item() === item && this.fail(item, err));
     });
   }
 
@@ -146,8 +149,8 @@ export class SafeboxView {
       } else if (kind === 'pdf') await renderPdf(blob, host!);
       else if (kind === 'docx') await renderDocx(blob, host!);
       else await renderPptx(blob, host!);
-    } catch {
-      if (this.item() === item) this.failed.set(true);
+    } catch (err) {
+      if (this.item() === item) this.fail(item, err);
     } finally {
       if (this.item() === item) this.drawingNow.set(false);
     }
@@ -176,10 +179,16 @@ export class SafeboxView {
       link.href = (await this.service.file(this.friendId, item.id)).url;
       link.download = item.name;
       link.click();
-    } catch {
-      this.failed.set(true);
+    } catch (err) {
+      this.fail(item, err);
     } finally {
       this.busy.set(false);
     }
+  }
+
+  /** The file could not be read. A locked file says why (no key on this device, locked for another device, or changed); anything else is the connection. */
+  private fail(item: SafeboxItem, err: unknown): void {
+    this.failReason.set(item.enc ? (err instanceof Error ? err.message : 'This file is locked and could not be opened.') : null);
+    this.failed.set(true);
   }
 }

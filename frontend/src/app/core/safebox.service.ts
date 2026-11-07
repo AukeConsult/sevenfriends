@@ -112,6 +112,23 @@ export class SafeboxService {
     return this.reveal(friendId, item);
   }
 
+  /**
+   * Locks a file that was put in the box unencrypted: reads it (and its preview), locks it on this device and sends it to take the place of the plain one
+   * (the server keeps the owner and the date, and deletes the plain file only after the locked one is stored).
+   */
+  async encryptExisting(friendId: string, item: SafeboxItem, keys: BoxKeys): Promise<SafeboxItem> {
+    const me = this.auth.user()?.uid;
+    if (!me) throw new Error('Not signed in');
+    if (item.enc) return item;
+    const file = (await this.api.file(`${this.base(friendId)}/${item.id}`)).blob;
+    const thumb = item.hasThumb ? (await this.api.file(`${this.base(friendId)}/${item.id}/thumb`)).blob : null;
+    const { kind, mime } = await classify(file, item.name);
+    const body = await sealFile({ connectionId: friendId, file, name: item.name, kind, mime, thumb, recipients: [{ uid: me, keys: keys.mine }, { uid: keys.friendUid, keys: keys.friend }] });
+    const locked = await this.api.request<SafeboxItem>(`${this.base(friendId)}/encrypted?replaces=${encodeURIComponent(item.id)}`, { method: 'POST', body, headers: { 'Content-Type': 'application/octet-stream' } });
+    this.forget(friendId, item.id);
+    return this.reveal(friendId, locked);
+  }
+
   /** Moves the picture or video of a message of this conversation into the box (the message stays and says so). */
   addFromMessage(friendId: string, messageId: string): Promise<SafeboxItem> {
     return this.api.request<SafeboxItem>(`${this.base(friendId)}/from-message`, { method: 'POST', body: JSON.stringify({ messageId }) });

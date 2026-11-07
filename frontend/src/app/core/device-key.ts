@@ -111,6 +111,16 @@ function seal(pkcs8: ArrayBuffer): Promise<CryptoKey> {
   return crypto.subtle.importKey('pkcs8', pkcs8, { name: DEVICE_KEY_ALGORITHM.name, hash: 'SHA-256' }, false, ['decrypt', 'unwrapKey']);
 }
 
+/** The accounts that have a key in this browser (only their ids): for the page that explains why a key is, or is not, found. */
+export async function storedKeyOwners(): Promise<string[]> {
+  if (!deviceKeySupported()) return [];
+  try {
+    return (await run('readonly', (store) => store.getAllKeys())).map(String);
+  } catch {
+    return [];
+  }
+}
+
 /** The key of this person on this device, or null when there is none (never made, or the app's data was cleared). */
 export async function getDeviceKey(uid: string, store: KeyStore = indexedDbKeyStore): Promise<StoredDeviceKey | null> {
   if (!deviceKeySupported()) return null;

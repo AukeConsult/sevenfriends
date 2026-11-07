@@ -1,13 +1,30 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, effect, inject, signal, untracked } from '@angular/core';
 import { KeyBackup, MyKeys, PublishedKey, canonicalPublicKey, fingerprintOf, keyIdOf } from '../models';
 import { ApiService } from './api.service';
 import { AuthService } from './auth.service';
-import { createDeviceKey, deleteDeviceKey, deviceKeySupported, getDeviceKey, keepDeviceKey, restoreDeviceKey } from './device-key';
+import { createDeviceKey, deleteDeviceKey, deviceKeySupported, getDeviceKey, keepDeviceKey, restoreDeviceKey, storedKeyOwners } from './device-key';
 import { lockBackup, unlockBackup } from './key-backup';
 import { keyOf, newRecoveryKey, wordsOf } from './recovery-code';
 
 /** How a restore from the recovery words ended. */
 export type RestoreResult = 'ok' | 'bad-words' | 'no-backup' | 'wrong-code' | 'no-key';
+
+/** What the last look at the key found (shown on Settings → Keys, so a missing key can be explained). */
+export interface KeyDiagnosis {
+  /** the account (user id) this was looked up for */
+  account: string;
+  /** the key ID of the key found in this browser for this account, or null */
+  localKeyId: string | null;
+  /** is that key one of my published keys: 'yes', 'removed' (retired), 'no' (not published), or null when there is no local key */
+  localPublished: 'yes' | 'removed' | 'no' | null;
+  /** my published keys in use / retired */
+  active: number;
+  removed: number;
+  /** how many accounts have a key in this browser, and whether this one is among them */
+  accountsInBrowser: number;
+  /** the server or the key store could not be asked */
+  failed: boolean;
+}
 
 /**
  * 'checking' = not known yet; 'unsupported' = this browser cannot keep a key; 'none' = no key for this person on this device (or it was never
@@ -33,6 +50,32 @@ export class KeysService {
   /** the key ID of the key on THIS device, once it is ready */
   readonly thisKeyId = signal<string | null>(null);
 
+  readonly diagnosis = signal<KeyDiagnosis | null>(null);
+
+  /** true = no usable key is on THIS device, but keys of mine are published (made on another device, or the key of this browser was cleared): restoring it with the 24 words brings it back */
+  readonly elsewhere = signal(false);
+
+  constructor() {
+    // another person signs in (or the person signs out) in this open app: what was known about the key of the one before is dropped
+    let lastUid: string | null | undefined;
+    effect(() => {
+      const uid = this.auth.user()?.uid ?? null;
+      if (lastUid === uid) return;
+      const first = lastUid === undefined;
+      lastUid = uid;
+      if (first) return;
+      untracked(() => {
+        this.state.set('checking');
+        this.fingerprint.set(null);
+        this.thisKeyId.set(null);
+        this.published.set([]);
+        this.elsewhere.set(false);
+        this.diagnosis.set(null);
+        if (uid) void this.refresh();
+      });
+    });
+  }
+
   private get uid(): string {
     const uid = this.auth.user()?.uid;
     if (!uid) throw new Error('Not signed in');
@@ -51,12 +94,27 @@ export class KeysService {
       const mine = await this.api.request<MyKeys>('/keys');
       this.published.set(mine.keys);
       const id = fingerprint ? keyIdOf(fingerprint) : null;
+      const found = id ? mine.keys.find((k) => k.id === id) : undefined;
+      this.diagnosis.set({
+        account: this.uid,
+        localKeyId: id,
+        localPublished: !id ? null : !found ? 'no' : found.revoked ? 'removed' : 'yes',
+        active: mine.keys.filter((k) => !k.revoked).length,
+        removed: mine.keys.filter((k) => k.revoked).length,
+        accountsInBrowser: (await storedKeyOwners()).length,
+        failed: false,
+      });
       const ready = !!id && mine.keys.some((k) => k.id === id && !k.revoked);
       this.fingerprint.set(ready ? fingerprint : null);
       this.thisKeyId.set(ready ? id : null);
+      this.elsewhere.set(!ready && mine.keys.some((k) => !k.revoked));
       this.state.set(ready ? 'ready' : 'none');
+      if (ready) void keepDeviceKey(); // ask again on every visit: the browser may grant it later, and then it does not clear the key
     } catch {
-      this.state.set('none'); // the server could not be asked: the person can still try to set up
+      // the server (or the key store) could not be asked: a key that was known to be ready stays; otherwise the person can still try to set up
+      if (this.state() !== 'ready') this.state.set('none');
+      const before = this.diagnosis();
+      this.diagnosis.set({ account: this.auth.user()?.uid ?? '', localKeyId: before?.localKeyId ?? null, localPublished: before?.localPublished ?? null, active: before?.active ?? 0, removed: before?.removed ?? 0, accountsInBrowser: (await storedKeyOwners()).length, failed: true });
     }
   }
 
@@ -73,13 +131,14 @@ export class KeysService {
       const recoveryKey = newRecoveryKey();
       const backup = await lockBackup(created.backup, recoveryKey);
       const words = await wordsOf(recoveryKey);
-      // the backup first: a key is published only when its backup is safe
-      await this.api.request('/keys/backup', { method: 'PUT', body: JSON.stringify(backup) });
-      await this.api.request('/keys', { method: 'POST', body: JSON.stringify({ publicKey, label: this.label() }) });
+      // the key and its backup are stored in ONE step on the server: a key is never published without its backup (nor a backup without its key)
+      await this.api.request('/keys', { method: 'POST', body: JSON.stringify({ publicKey, label: this.label(), backup }) });
+      // and it is read back: the key counts as made only when the server lists it as in use
+      await this.refresh();
+      if (this.thisKeyId() !== keyIdOf((await fingerprintOf(publicKey))!)) throw new Error('The key could not be saved on the server. Try again.');
       recoveryKey.fill(0);
       created.backup.fill(0);
       void keepDeviceKey(); // ask the browser not to clear the key when it is short of room
-      await this.refresh();
       return words;
     } catch (err) {
       created.backup?.fill(0);

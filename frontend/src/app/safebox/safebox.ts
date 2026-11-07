@@ -6,6 +6,7 @@ import { KeysService } from '../core/keys.service';
 import { formatBytes, prepareImage } from '../core/image';
 import { SafeboxService } from '../core/safebox.service';
 import { UiPreferencesService } from '../core/ui-preferences';
+import { ApiError } from '../core/api.service';
 import { BoxKeys, Safebox as SafeboxData, SafeboxItem, keyIdOf } from '../models';
 
 /** The small preview picture of an image in the box (only the preview is read, never the file; a file without one shows an icon instead). */
@@ -46,7 +47,7 @@ export class SafeboxThumb {
 export class Safebox {
   private readonly service = inject(SafeboxService);
   private readonly friends = inject(FriendsService);
-  private readonly keys = inject(KeysService);
+  protected readonly keys = inject(KeysService);
   protected readonly prefs = inject(UiPreferencesService);
 
   protected readonly friendId = inject(ActivatedRoute).snapshot.paramMap.get('id') ?? '';
@@ -115,6 +116,27 @@ export class Safebox {
   protected async chosen(input: HTMLInputElement): Promise<void> {
     const files = Array.from(input.files ?? []);
     input.value = ''; // the same file can be chosen again
+    await this.addAll(files);
+  }
+
+  /** a file is being dragged over the frame */
+  protected readonly over = signal(false);
+
+  protected dragOver(event: DragEvent): void {
+    if (!event.dataTransfer?.types.includes('Files')) return;
+    event.preventDefault(); // allows the drop
+    this.over.set(true);
+  }
+
+  protected async dropped(event: DragEvent): Promise<void> {
+    event.preventDefault();
+    this.over.set(false);
+    if (this.adding() !== null) return;
+    await this.addAll(Array.from(event.dataTransfer?.files ?? []));
+  }
+
+  /** Adds the files (chosen or dropped) one by one: pictures are made smaller here (with a preview), everything else goes as it is. */
+  private async addAll(files: File[]): Promise<void> {
     this.error.set(null);
     const max = this.box()?.maxFileBytes ?? 0;
     for (const file of files) {
@@ -130,6 +152,57 @@ export class Safebox {
     }
     this.adding.set(null);
     await this.reload();
+  }
+
+  /** the files that are stored unencrypted */
+  protected readonly plainItems = computed(() => this.items().filter((item) => !item.enc));
+  /** the files being locked: how many are done, of how many (null = not running) */
+  protected readonly encrypting = signal<{ done: number; total: number } | null>(null);
+
+  /** Locks every unencrypted file of the box (one by one; it stops at the first one that fails and says which). */
+  protected async encryptAll(): Promise<void> {
+    await this.encryptFiles(this.plainItems());
+  }
+
+  protected async encryptOne(item: SafeboxItem): Promise<void> {
+    await this.encryptFiles([item]);
+  }
+
+  private async encryptFiles(files: SafeboxItem[]): Promise<void> {
+    if (!this.canEncrypt() || this.encrypting()) return;
+    this.error.set(null);
+    this.busy.set(true);
+    this.encrypting.set({ done: 0, total: files.length });
+    try {
+      for (const item of files) {
+        try {
+          await this.lockOne(item);
+        } catch (err: any) {
+          this.error.set(`“${item.name}” could not be encrypted: ${err.message ?? 'something went wrong'}`);
+          break;
+        }
+        this.encrypting.update((p) => p && { ...p, done: p.done + 1 });
+      }
+    } finally {
+      this.encrypting.set(null);
+      this.busy.set(false);
+      await this.reload();
+    }
+  }
+
+  /** One file; when the keys changed while it was sent (409) the keys are read again and it is tried once more. */
+  private async lockOne(item: SafeboxItem): Promise<void> {
+    for (let attempt = 0; ; attempt++) {
+      const keys = this.boxKeys();
+      if (!keys) throw new Error('The keys are not known yet');
+      try {
+        await this.service.encryptExisting(this.friendId, item, keys);
+        return;
+      } catch (err) {
+        if (attempt > 0 || !(err instanceof ApiError) || err.status !== 409) throw err;
+        this.boxKeys.set(await this.service.keys(this.friendId));
+      }
+    }
   }
 
   /** Saves the file under its own name. */
