@@ -54,9 +54,9 @@
         }
       }
       <!-- my colour: my friends see it on their friend list and in the header of our conversation -->
-      <div class="mt-3 text-start">
+      <div class="mt-3 text-center">
         <span class="form-label small text-secondary m-0">Your colour <span class="text-secondary">(your friends see it)</span></span>
-        <div class="sf-colors mt-1" role="radiogroup" aria-label="Your colour">
+        <div class="sf-colors justify-content-center mt-1" role="radiogroup" aria-label="Your colour">
           <button type="button" class="sf-color sf-color-none" role="radio" [attr.aria-checked]="!color()" [class.sf-chosen]="!color()" aria-label="No colour" title="No colour" [disabled]="loading()" (click)="chooseColor(null)"></button>
           @for (c of colors; track c.key) {
             <button type="button" class="sf-color" role="radio" [attr.aria-checked]="color() === c.key" [class.sf-chosen]="color() === c.key" [style.background]="c.hex"

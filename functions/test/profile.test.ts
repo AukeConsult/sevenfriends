@@ -237,3 +237,35 @@ describe("the profile colour", () => {
     expect((await profile(u(0))).color).toBe("blue");
   });
 });
+
+describe("the settings that follow the person (theme, text size, order, ...)", () => {
+  const settings = async (user: User) => (await profile(user)).settings;
+
+  it("start as none chosen, and are kept on the account", async () => {
+    expect(await settings(u(0))).toEqual({});
+    await u(0).raw("put", "/profile", { settings: { theme: "ocean", textSize: "big", quickMessages: ["  On my way  ", "", "Call me"] } }).expect(200);
+    expect(await settings(u(0))).toEqual({ theme: "ocean", textSize: "big", quickMessages: ["On my way", "Call me"] });
+    expect(await settings(u(1))).toEqual({}); // only mine
+  });
+
+  it("change only what the request carries, and a save without settings leaves them", async () => {
+    await u(0).raw("put", "/profile", { settings: { theme: "dark", sleepList: false } }).expect(200);
+    await u(0).raw("put", "/profile", { settings: { chatOrder: "newest" } }).expect(200);
+    await u(0).raw("put", "/profile", { name: "Alice" }).expect(200);
+    expect(await settings(u(0))).toEqual({ theme: "dark", sleepList: false, chatOrder: "newest" });
+  });
+
+  it.each([
+    ["an unknown theme", { theme: "neon" }],
+    ["an unknown text size", { textSize: "gigantic" }],
+    ["a wrong order", { chatOrder: "random" }],
+    ["a switch that is not true or false", { enterSends: "yes" }],
+    ["an unknown setting", { favouriteFood: "pizza" }],
+    ["more than 10 quick messages", { quickMessages: Array.from({ length: 11 }, (_, i) => `m${i}`) }],
+    ["a quick message longer than 200 characters", { quickMessages: ["x".repeat(201)] }],
+  ])("refuse %s, and keep what was there", async (_label, bad) => {
+    await u(0).raw("put", "/profile", { settings: { theme: "forest" } }).expect(200);
+    expect((await u(0).raw("put", "/profile", { settings: { textSize: "small", ...bad } })).status).toBe(400);
+    expect(await settings(u(0))).toEqual({ theme: "forest" }); // nothing of the refused request was saved
+  });
+});

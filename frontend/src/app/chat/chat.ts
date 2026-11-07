@@ -60,6 +60,14 @@ export class Chat {
 
   protected readonly friendId = inject(ActivatedRoute).snapshot.paramMap.get('id') ?? '';
   protected readonly name = signal('');
+  /** the name for the header: the one of this conversation once it is loaded, until then the one of the friend list (which is usually already there), else nothing */
+  protected readonly headerName = computed(() => this.name() || this.friend()?.name || '');
+  /** the header shows the full name when it is at most this many characters, else the initials */
+  private static readonly HEADER_NAME_MAX = 15;
+  protected readonly headerText = computed(() => {
+    const full = this.headerName().trim();
+    return full.length <= Chat.HEADER_NAME_MAX ? full : initials(full);
+  });
   protected readonly presenceLabel = presenceLabel;
   protected readonly moodIcon = moodIcon;
   protected readonly moodLabel = moodLabel;
@@ -563,7 +571,7 @@ export class Chat {
     this.scrollDown();
   }
 
-  // Swipe sideways: to the conversation with the next friend (swipe left) or the previous one (swipe right), in the order of the friend list.
+  // Swipe sideways: to the conversation with the next friend (swipe left) or the previous one (swipe right), in the order of the friend list, round robin (the last is followed by the first).
   private swipe: { x: number; y: number; time: number } | null = null;
 
   @HostListener('document:touchstart', ['$event'])
@@ -584,8 +592,11 @@ export class Chat {
     // a quick, mostly horizontal, long enough movement
     if (Date.now() - start.time > 700 || Math.abs(dx) < 70 || Math.abs(dx) < Math.abs(dy) * 1.8) return;
     const friends = this.friendsService.awake();
-    const next = friends[friends.findIndex((f) => f.id === this.friendId) + (dx < 0 ? 1 : -1)];
-    if (next) void this.router.navigate(['/friends', next.id]);
+    const at = friends.findIndex((f) => f.id === this.friendId);
+    if (at < 0 || friends.length < 2) return;
+    // round robin: after the last friend comes the first, and before the first comes the last
+    const next = friends[(at + (dx < 0 ? 1 : -1) + friends.length) % friends.length];
+    void this.router.navigate(['/friends', next.id]);
   }
 
   private usesSideways(element: Element | null): boolean {

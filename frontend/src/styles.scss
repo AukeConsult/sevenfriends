@@ -304,6 +304,7 @@ router-outlet + * { display: block; min-height: 100dvh; }
   padding: 1.5rem var(--sf-gutter) calc(4.5rem + env(safe-area-inset-bottom));
 }
 .sf-page { max-width: 40rem; margin: 0 auto; }
+.sf-page.sf-page-wide { max-width: 64rem; } // lists with long file names use more of a wide screen
 .sf-page.sf-page-wide { max-width: none; padding-inline: 0.75rem; } // a file view uses the whole width of the screen
 .sf-content { padding-top: 0.75rem; }
 .sf-feed { display: flex; flex-direction: column; gap: 0.5rem; padding-top: 0.75rem; padding-bottom: calc(3.5rem + 4rem + env(safe-area-inset-bottom)); } // + the composer
@@ -607,12 +608,12 @@ router-outlet + * { display: block; min-height: 100dvh; }
 .card.sf-unframed > .card-body { padding-inline: 0; padding-top: 0; }
 .sf-back-row { display: flex; justify-content: center; padding: 1rem var(--sf-gutter) 0; }
 .sf-back-row:has(+ .sf-page-head), .sf-back-row:has(+ main > .sf-page-head:first-child) { position: relative; height: 0; padding: 0; } // Back on the line of the title, not a row of its own
-.sf-back-row:has(+ .sf-page-head) .btn, .sf-back-row:has(+ main > .sf-page-head:first-child) .btn { // a small round arrow level with the title (the word Back stays for screen readers)
-  position: absolute; inset-inline-start: var(--sf-gutter); top: 0.5rem; z-index: 2;
-  display: grid; place-items: center; width: 2.5rem; min-height: 2.5rem; height: 2.5rem; padding: 0; border-radius: 50%;
-  font-size: 0; color: var(--sf-primary); background: var(--sf-card); border: 1px solid var(--sf-border); box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-  &::before { content: ''; width: 0.6rem; height: 0.6rem; margin-inline-start: 0.2rem; border-left: 2.5px solid currentColor; border-bottom: 2.5px solid currentColor; border-radius: 1px; transform: rotate(45deg); } // the arrow, drawn with two lines
-  &:hover, &:focus-visible { background: var(--sf-surface); }
+.sf-back-row:has(+ .sf-page-head) .btn, .sf-back-row:has(+ main > .sf-page-head:first-child) .btn { // a small plain arrow level with the title, like the one on the safebox (the word Back stays for screen readers)
+  position: absolute; inset-inline-start: calc(var(--sf-gutter) - 0.5rem); top: 0.5rem; z-index: 2;
+  display: grid; place-items: center; width: 2.75rem; min-height: 2.75rem; height: 2.75rem; padding: 0; border: 0; border-radius: 50%; // a big tap target, nothing drawn around it
+  font-size: 0; color: var(--sf-primary); background: none; box-shadow: none;
+  &::before { content: ''; width: 0.5rem; height: 0.5rem; margin-inline-start: 0.2rem; border-left: 2.5px solid currentColor; border-bottom: 2.5px solid currentColor; border-radius: 1px; transform: rotate(45deg); } // the arrow, drawn with two lines
+  &:hover, &:focus-visible { background: none; color: var(--sf-primary-hover); }
 }
 .sf-back-row:has(+ .sf-page-head) + .sf-page-head, .sf-back-row:has(+ main > .sf-page-head:first-child) + main > .sf-page-head { padding: 1.1rem 4rem 1rem; } // room for the Back button on both sides
 .sf-name-btn { display: inline-flex; align-items: center; gap: 0.35rem; min-width: 0; padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: start; cursor: pointer; }
@@ -996,6 +997,10 @@ app-voice { display: contents; }
 .sf-expand-quiet > summary::after { font-size: 1rem; }
 
 // ---- Safebox: files two friends share ----
+.sf-box-unenc { width: fit-content; max-width: min(100%, 32rem); margin: 0 auto 0.75rem; border: 1px solid var(--sf-border); border-radius: var(--sf-radius); background: var(--sf-card); font-size: var(--sf-fs-description);
+  summary { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.75rem; cursor: pointer; color: var(--bs-warning-text-emphasis, #997404); font-weight: 600; list-style: none; &::-webkit-details-marker { display: none; } &::after { content: ''; margin-inline-start: auto; width: 0.5rem; height: 0.5rem; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg); transition: transform .15s; } }
+  &[open] summary::after { transform: rotate(225deg); }
+  p { padding: 0 0.75rem 0.75rem; color: var(--sf-text); } } // the "not encrypted yet" mark with its expanding explanation
 .sf-box-usage { display: grid; gap: 0.25rem; margin-bottom: 0.75rem; .progress { height: 0.5rem; } }
 .sf-box-empty { display: grid; justify-items: center; gap: 0.5rem; padding: 2rem 1rem; svg { color: var(--sf-muted); } }
 .sf-box-list { margin-top: 0.75rem; }
@@ -1110,7 +1115,7 @@ html[data-theme='dark'] .sf-feed-tinted .sf-composer { background: color-mix(in 
   }
   .sf-back-row:has(+ .sf-page-head) + .sf-page-head, .sf-back-row:has(+ main > .sf-page-head:first-child) + main > .sf-page-head { padding-inline: 4rem; }
   .sf-page:has(> .sf-page-head:first-child), .sf-content:has(> .sf-page-head:first-child) { padding-top: 0; } // the header carries the top space itself
-  .sf-back-row:has(+ .sf-page-head) .btn, .sf-back-row:has(+ main > .sf-page-head:first-child) .btn { top: calc(0.125rem + var(--sf-safe-top)); }
+  .sf-back-row:has(+ .sf-page-head) .btn, .sf-back-row:has(+ main > .sf-page-head:first-child) .btn { top: var(--sf-safe-top); }
 }
 // ---- Phone: the space above the first text of a page is at least 44px (a header, or this padding) ----
 @media (max-width: 575.98px) {

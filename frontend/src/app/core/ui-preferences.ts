@@ -68,7 +68,7 @@ export const TEXT_SCALES: Record<UiPreferences['textSize'], number> = { tiny: 0.
 /** The same on a phone (a screen up to 575 px wide): one step up, so Small is what Normal was, Normal is what Big was, and Big is 15% more. */
 export const PHONE_TEXT_SCALES: Record<UiPreferences['textSize'], number> = { tiny: 0.9, small: 1, normal: 1.15, big: 1.3225, huge: 1.55 };
 
-const DEFAULTS: UiPreferences = { theme: 'light', textSize: 'normal', settingsTab: 'profile', emojiTab: 'People', chatOrder: 'oldest', enterSends: true, sleepList: true, quickMessages: [], feedIcons: true, setup: 'new', lastPage: null, micRaw: false, pendingFriend: null, welcomeUntil: null };
+export const DEFAULTS: UiPreferences = { theme: 'light', textSize: 'normal', settingsTab: 'profile', emojiTab: 'People', chatOrder: 'oldest', enterSends: true, sleepList: true, quickMessages: [], feedIcons: true, setup: 'new', lastPage: null, micRaw: false, pendingFriend: null, welcomeUntil: null };
 
 /** The ready-made messages as stored: only texts, trimmed, not empty, not too long, not too many. */
 export function quickOf(value: unknown): string[] {

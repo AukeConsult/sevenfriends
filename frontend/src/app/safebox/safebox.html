@@ -1,4 +1,4 @@
-<main class="sf-page">
+<main class="sf-page sf-page-wide">
   <div class="sf-page-head">
     <h1 class="m-0">
       <!-- the arrow, the icon and the title all go back to the conversation -->
@@ -13,6 +13,15 @@
     <p class="sf-hint m-0">Only you and {{ friendName() }} can see these files.</p>
   </div>
 
+  <!-- a mark that the content is not encrypted yet; opens to explain -->
+  <details class="sf-box-unenc">
+    <summary>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 7.5-2M4 4l16 16" /></svg>
+      <span>Not encrypted yet</span>
+    </summary>
+    <p class="m-0">The files are stored safely: only you and {{ friendName() }} can open them, and they are kept on protected servers. They are not encrypted yet, which means the files are readable by the service itself. Encryption will be added, so that only you and {{ friendName() }} can ever read them.</p>
+  </details>
+
   @if (loadError()) {
     <div class="alert alert-danger d-flex align-items-center justify-content-between" role="alert">
       <span>{{ loadError() }}</span>
@@ -26,10 +35,12 @@
 
   @if (box(); as data) {
     <!-- how full the box is -->
-    <div class="sf-box-usage" role="img" [attr.aria-label]="percent() + ' percent full'">
-      <div class="progress" aria-hidden="true"><div class="progress-bar" [style.width.%]="percent()"></div></div>
-      <span class="sf-hint">{{ formatBytes(used()) }} of {{ formatBytes(data.maxBytes) }}</span>
-    </div>
+    @if (percent() >= 80) { <!-- only shown when the box is nearly full -->
+      <div class="sf-box-usage" role="img" [attr.aria-label]="percent() + ' percent full'">
+        <div class="progress" aria-hidden="true"><div class="progress-bar" [class.bg-danger]="percent() >= 95" [class.bg-warning]="percent() < 95" [style.width.%]="percent()"></div></div>
+        <span class="sf-hint">{{ formatBytes(used()) }} of {{ formatBytes(data.maxBytes) }}</span>
+      </div>
+    }
 
     <input #picker type="file" class="visually-hidden" multiple tabindex="-1" aria-hidden="true"
            accept="image/*,video/*,audio/*,.pdf,.txt,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.odt,.ods,.odp,.zip,.csv"
@@ -92,7 +103,7 @@
                 <button type="button" class="btn btn-primary btn-sm" (click)="rename()" [disabled]="busy() || !renaming()?.name?.trim()">Save name</button>
               </div>
             } @else {
-              <div class="sf-msg-actions flex-nowrap mt-0 ms-auto">
+              <div class="sf-msg-actions flex-nowrap mt-0 w-100 justify-content-end">
                 <button type="button" class="btn btn-light btn-sm" (click)="download(item)" [disabled]="busy()" [attr.aria-label]="'Download ' + item.name" title="Download">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 11l5 5 5-5M5 20h14" /></svg>
                 </button>

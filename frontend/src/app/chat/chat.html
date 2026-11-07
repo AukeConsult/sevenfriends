@@ -12,7 +12,7 @@
     </span>
   }
   <div class="sf-bar-text">
-    <span class="sf-fs-description sf-bar-name" [attr.title]="name()" [attr.aria-label]="name() || 'Conversation'">{{ initials(name()) || 'Conversation' }}</span>
+    <span class="sf-fs-description sf-bar-name" [attr.title]="headerName()" [attr.aria-label]="headerName() || 'Conversation'">{{ headerText() }}</span>
     @if (friend(); as f) {
       @if (f.sleepsMe) { <span class="sf-mood-line"><span>😴 Has you on their sleep list</span></span> }
     }

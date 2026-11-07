@@ -10,16 +10,16 @@
       <a routerLink="/setup" class="btn btn-outline-primary btn-sm">Run the setup</a>
     </div>
   </div>
-  <p class="small text-secondary m-0">The choices below are kept on this device.</p>
+  <p class="small text-secondary m-0">These choices are kept on your account, so every device you sign in on shows the same.</p>
   <h2 class="h5 m-0 mt-2">Display</h2>
   <div class="card">
-    <div class="card-body vstack gap-2">
-      <label class="d-grid gap-1" for="pref-theme"><span>Theme</span>
+    <div class="card-body row g-2">
+      <label class="col-6 d-grid gap-1 align-content-start" for="pref-theme"><span>Theme</span>
         <select id="pref-theme" class="form-select" [value]="prefs.get('theme')" (change)="prefs.set('theme', $any($event.target).value)">
           @for (t of themes; track t.key) { <option [value]="t.key">{{ t.label }}</option> }
         </select>
       </label>
-      <label class="d-grid gap-1" for="pref-text-size"><span>Text size</span>
+      <label class="col-6 d-grid gap-1 align-content-start" for="pref-text-size"><span>Text size</span>
         <select id="pref-text-size" class="form-select" [value]="prefs.get('textSize')" (change)="prefs.set('textSize', $any($event.target).value)">
           <option value="tiny">Tiny</option>
           <option value="small">Small</option>

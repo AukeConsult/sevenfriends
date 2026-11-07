@@ -7,6 +7,7 @@ export * from "./media";
 export * from "./message";
 export * from "./notifications";
 export * from "./profile-color";
+export * from "./profile-look";
 export * from "./preferences";
 export * from "./profile";
 export * from "./safebox";

@@ -7,6 +7,7 @@ import { AppUpdateService } from './core/app-update.service';
 import { AuthService } from './core/auth.service';
 import { FriendLinkService } from './core/friend-link.service';
 import { InstallService } from './core/install.service';
+import { LookSyncService } from './core/look-sync.service';
 import { PresenceService } from './core/presence.service';
 import { RealtimeService } from './core/realtime.service';
 
@@ -49,6 +50,7 @@ export class App {
 
   constructor() {
     inject(RealtimeService); // starts listening for live updates (friend requests, messages) once somebody is signed in
+    inject(LookSyncService); // the theme and the text size are kept on the account, so every device shows them
     inject(InstallService); // catches the browser's install offer early (it can arrive soon after the page opens)
     inject(PresenceService); // tells the system when the person is active, away or offline (the dot on their friends)
     inject(AndroidChannelsService); // Android's notification channels follow the sounds chosen here
