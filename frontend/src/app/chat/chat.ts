@@ -332,6 +332,16 @@ export class Chat {
     this.selected.update((id) => (id === message.id ? null : message.id));
   }
 
+  /** Copy the text of a message to the clipboard, and close its buttons. */
+  protected async copy(message: ChatMessage): Promise<void> {
+    try {
+      await navigator.clipboard.writeText(message.text);
+    } catch {
+      this.error.set('Could not copy the text');
+    }
+    this.selected.set(null);
+  }
+
   protected select(message: ChatMessage): void {
     if (!message.mine && !message.inBox) return; // the note of a file moved to the safebox may be removed by either friend
     this.deleting.set(null);

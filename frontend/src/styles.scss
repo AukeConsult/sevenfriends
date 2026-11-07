@@ -247,6 +247,12 @@ app-root {
   box-shadow: 0 3px 12px rgba(120, 70, 20, 0.1);
   > :first-child:not(.sf-back) { margin-left: calc(var(--sf-gutter) - 0.25rem); } // a page without a back arrow: the title starts at the page margin
 }
+// on a phone the bar is only as high as its text (and the back arrow): no spare room above and below
+@media (max-width: 575.98px) {
+  .sf-bar { min-height: 0; gap: 0; padding-top: calc(0.125rem + env(safe-area-inset-top)); padding-bottom: 0.125rem; }
+  .sf-bar .sf-back { height: 2.25rem; width: 2.5rem; font-size: 1.75rem; }
+  .sf-bar h1, .sf-bar .h1, .sf-bar .h5, .sf-bar-text > * { line-height: 1.2; }
+}
 .sf-bar-extra { margin-left: auto; } // something on the right of the title (a count, a button)
 
 .sf-back {

@@ -1,6 +1,7 @@
 import { Component, ElementRef, afterNextRender, inject, signal, viewChild } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { ApiService } from '../core/api.service';
+import { AuthService } from '../core/auth.service';
 import { Decoded, decodeImage, sizeOf } from '../core/image';
 import { ProfileDetails } from '../models';
 
@@ -26,6 +27,7 @@ const MAX_FILE_BYTES = 20 * 1024 * 1024;
 export class ProfilePicturePage {
   private readonly api = inject(ApiService);
   private readonly router = inject(Router);
+  private readonly auth = inject(AuthService);
   private readonly canvas = viewChild<ElementRef<HTMLCanvasElement>>('canvas');
 
   protected readonly view = VIEW;
@@ -198,6 +200,7 @@ export class ProfilePicturePage {
     this.error.set(null);
     try {
       await this.api.request<void>('/profile/picture', { method: 'DELETE' });
+      await this.auth.clearPhoto().catch(() => undefined); // the photo of the sign-in goes too
       await this.router.navigateByUrl('/settings/profile');
     } catch (err: any) {
       this.error.set(err.message ?? 'Could not remove the picture. Please try again.');

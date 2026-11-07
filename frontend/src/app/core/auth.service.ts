@@ -81,6 +81,15 @@ export class AuthService {
     await this.finishLogin(user);
   }
 
+  /** Remove the photo of the sign-in (e.g. the Google photo) from my account, so it no longer shows when I remove my picture. */
+  async clearPhoto(): Promise<void> {
+    const user = auth.currentUser;
+    if (!user?.photoURL) return;
+    await updateProfile(user, { photoURL: null });
+    this.user.set(null); // a new object, so the pages that show the photo update
+    this.user.set(auth.currentUser);
+  }
+
   async registerWithEmail(email: string, password: string, name?: string): Promise<void> {
     const { user } = await createUserWithEmailAndPassword(auth, email, password);
     await sendEmailVerification(user).catch(() => undefined); // friends only find a VERIFIED email: ask to confirm it

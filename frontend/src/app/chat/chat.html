@@ -262,7 +262,7 @@
           }
         }
         @if (message.time && !(message.media && pictureHidden().has(message.id))) {
-          <small class="sf-hint" [class.sf-tap]="message.media || message.inBox" (click)="(message.media || message.inBox) && more(message)">{{ message.time | date: 'd MMM, HH:mm' }}@if (message.edited) { · edited }@if (doomed().has(message.id)) { · <strong class="text-danger">will be deleted</strong> }@if (message.media || message.inBox) { · <button type="button" class="btn btn-link btn-sm p-0 align-baseline" [attr.aria-expanded]="selected() === message.id" [attr.aria-label]="message.inBox ? 'Delete' : 'Open, download, hide, move to the safebox'" [attr.title]="message.inBox ? 'Delete' : 'Open, download, hide, move to the safebox'">⋯</button> }</small>
+          <small class="sf-hint sf-tap" (click)="more(message)">{{ message.time | date: 'd MMM, HH:mm' }}@if (message.edited) { · edited }@if (doomed().has(message.id)) { · <strong class="text-danger">will be deleted</strong> }· <button type="button" class="btn btn-link btn-sm p-0 align-baseline" [attr.aria-expanded]="selected() === message.id" [attr.aria-label]="message.inBox ? 'Delete' : message.media ? 'Open, download, hide, move to the safebox' : message.mine ? 'Copy, edit, delete' : 'Copy'" [attr.title]="message.inBox ? 'Delete' : message.media ? 'Open, download, hide, move to the safebox' : message.mine ? 'Copy, edit, delete' : 'Copy'">⋯</button></small>
         }
         @if (!message.mine && message.media; as media) {
           <!-- the friend's image, video or voice message: open and download it (shown after the three dots, or while it is hidden) -->
@@ -299,6 +299,11 @@
           </div>
          }
         }
+        @if (!message.mine && !message.media && !message.inBox && message.text && selected() === message.id) {
+          <div class="sf-msg-actions">
+            <button type="button" class="btn btn-light btn-sm" (click)="copy(message)">Copy</button>
+          </div>
+        }
         @if ((message.mine || message.inBox) && selected() === message.id) {
           <div class="sf-msg-actions">
             @if (deleting() === message.id) {
@@ -312,6 +317,7 @@
                   <button type="button" class="btn btn-light btn-sm" (click)="download(media)">Download</button>
                 }
               }
+              @if (message.text) { <button type="button" class="btn btn-light btn-sm" (click)="copy(message)">Copy</button> }
               @if (message.mine && !message.inBox) { <button type="button" class="btn btn-light btn-sm" (click)="startEdit(message)">Edit</button> }
               <button type="button" class="btn btn-outline-danger btn-sm" (click)="deleting.set(message.id)">Delete</button>
             }

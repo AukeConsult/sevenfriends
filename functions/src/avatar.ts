@@ -51,7 +51,7 @@ export async function saveAvatar(uid: string, bytes: Buffer, changed = true): Pr
 export async function removeAvatar(uid: string): Promise<void> {
   const ref = userDoc(uid);
   const before = (await ref.get()).data()?.avatarObjectId as string | undefined;
-  await ref.set({ avatarObjectId: null, profilePictureAt: null }, { merge: true });
+  await ref.set({ avatarObjectId: null, profilePictureAt: null, photoURL: null }, { merge: true });
   await profilePictureDoc(uid).delete();
   if (before) await deleteObject(uid, before);
 }
