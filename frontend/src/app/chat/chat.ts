@@ -131,6 +131,11 @@ export class Chat {
   protected readonly menuKind = signal<'emoji' | 'attach'>('emoji');
 
   protected toggleMenu(kind: 'emoji' | 'attach'): void {
+    if (kind === 'emoji' && !this.quickMessages().length) { // no ready-made messages: the smiley opens the emojis at once, no menu
+      this.menuOpen.set(false);
+      this.emojiOpen.set(!this.emojiOpen());
+      return;
+    }
     if (this.menuOpen() && this.menuKind() === kind && this.menuPinned) {
       this.menuOpen.set(false);
       this.menuPinned = false;
@@ -144,6 +149,7 @@ export class Chat {
   /** A mouse over a button opens its menu, leaving closes it (a finger has no hover: it taps). */
   protected hoverMenu(inside: boolean, kind?: 'emoji' | 'attach'): void {
     if (!window.matchMedia('(hover: hover)').matches) return;
+    if (inside && kind === 'emoji' && !this.quickMessages().length) return; // nothing to show in a menu
     if (inside) {
       if (kind && !this.menuPinned) this.menuKind.set(kind);
       if (!this.menuPinned || !this.menuOpen()) this.menuOpen.set(true);
