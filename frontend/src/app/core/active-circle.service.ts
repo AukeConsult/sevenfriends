@@ -23,13 +23,15 @@ export interface CircleWords {
   Many: string;
   /** the first line suggested in a request */
   hello: string;
+  /** the line under the name on the first pages */
+  slogan: string;
 }
 
 const BASE: Record<string, Omit<CircleWords, 'One' | 'Many'>> = {
-  default: { app: 'Seven Friends', one: 'friend', many: 'friends', hello: 'Hi! I would like to have you as a close friend.' },
-  buddies: { app: 'Seven Buddies', one: 'buddy', many: 'buddies', hello: 'Hey! Want to be my buddy?' },
-  work: { app: 'Seven Work', one: 'contact', many: 'contacts', hello: 'Hi! I would like to have you as a contact.' },
-  family: { app: 'Seven Family', one: 'member', many: 'members', hello: 'Hi! I would like you in my family circle.' },
+  default: { app: 'Seven Friends', one: 'friend', many: 'friends', hello: 'Hi! I would like to have you as a close friend.', slogan: 'Stay close to the friends who matter most.' },
+  buddies: { app: 'Seven Buddies', one: 'buddy', many: 'buddies', hello: 'Hey! Want to be my buddy?', slogan: 'Stay close to your buddies.' },
+  work: { app: 'Seven Work', one: 'contact', many: 'contacts', hello: 'Hi! I would like to have you as a contact.', slogan: 'Keep the contacts that matter close.' },
+  family: { app: 'Seven Family', one: 'member', many: 'members', hello: 'Hi! I would like you in my family circle.', slogan: 'Keep your family close.' },
 };
 
 const cap = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);

@@ -8,7 +8,7 @@
 <main class="sf-narrow">
   @if (step() === 'number') {
     <p class="text-secondary m-0">
-      We send a code by text message. {{ linking ? 'Once verified, friends who add your number can find you.' : 'No password needed.' }}
+      We send a code by text message. {{ linking ? 'Once verified, {{ w.many }} who add your number can find you.' : 'No password needed.' }}
       Standard message rates from your phone company may apply.
     </p>
     <form class="vstack gap-2" (submit)="$event.preventDefault(); sendCode()">

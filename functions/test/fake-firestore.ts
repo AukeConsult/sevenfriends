@@ -118,8 +118,21 @@ function applyWrites(writes: Write[]) {
         break;
       case "update":
         if (!existing) throw fail(5, `NOT_FOUND: no document to update: ${path}`);
-        for (const k of Object.keys(w.data)) if (k.includes(".")) throw new Error(`fake-firestore: dotted field "${k}" not supported`);
-        overlay.set(path, withoutDeleted({ ...existing, ...resolve(w.data, existing) }));
+        {
+          // "a.b": value changes only b inside the map a (one level, as the real Firestore does)
+          const plain: Data = {};
+          const nested: Data = {};
+          for (const [k, v] of Object.entries(w.data)) {
+            const dot = k.indexOf(".");
+            if (dot < 0) plain[k] = v;
+            else {
+              const head = k.slice(0, dot);
+              if (k.includes(".", dot + 1)) throw new Error(`fake-firestore: field "${k}" is nested deeper than one level`);
+              nested[head] = { ...(nested[head] ?? existing[head] ?? {}), [k.slice(dot + 1)]: v };
+            }
+          }
+          overlay.set(path, withoutDeleted({ ...existing, ...resolve(plain, existing), ...nested }));
+        }
         break;
       case "delete":
         overlay.set(path, null);

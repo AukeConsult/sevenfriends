@@ -1,3 +1,4 @@
+import { circleLink } from '../core/friend-link.service';
 import { Clearable } from '../core/clearable';
 import { ActiveCircleService } from '../core/active-circle.service';
 import { Component, computed, inject, input, output, signal } from '@angular/core';
@@ -6,7 +7,6 @@ import { AuthService } from '../core/auth.service';
 import { FriendsService } from '../core/friends.service';
 import { InviteLinkService } from '../core/invite-link.service';
 import { FriendDraft } from '../models';
-import { APP_ORIGIN } from '../core/app-origin';
 
 const emptyDraft = (): FriendDraft => ({ name: '', email: '', phone: '', message: '' });
 
@@ -40,7 +40,7 @@ export class AddFriend {
     const me = this.user();
     const contact = me?.email ?? me?.phoneNumber;
     // the link says which circle it invites into: the welcome page of that circle is shown, and the request goes to it
-    return `${APP_ORIGIN}/welcome?${contact ? `friend=${encodeURIComponent(contact)}&` : ''}circle=${this.circleType}`;
+    return circleLink(this.circleType, contact ? `from=${encodeURIComponent(contact)}` : '');
   });
   /** set when the person has no account yet: who it was for, and the link to send */
   protected readonly result = signal<{ to: string; link: string } | null>(null);

@@ -5,13 +5,7 @@ import { FriendLinkService } from '../core/friend-link.service';
 import { InstallService } from '../core/install.service';
 import { WelcomeService } from '../core/welcome.service';
 import { SeatDots } from '../seat-dots/seat-dots';
-
-/** The welcome pages of each circle (the first circle has this page itself) */
-const CIRCLE_PAGES: Record<string, string[]> = {
-  buddies: ['/buddy1', '/buddy2', '/buddy3'],
-  work: ['/work1', '/work2', '/work3'],
-  family: ['/family1', '/family2', '/family3'],
-};
+import { CIRCLE_PAGES } from '../circle-entry/circle-entry';
 
 /**
  * The first page for someone who has not installed the app on this device (public, shown before sign-in): the same top for
@@ -43,7 +37,7 @@ export class Welcome {
   constructor() {
     // a link that invites into another circle shows the welcome page of that circle (one of its pages, picked by chance)
     const circle = this.friend()?.circle;
-    const pages = circle ? CIRCLE_PAGES[circle] : undefined;
+    const pages = circle && circle !== 'friends' ? CIRCLE_PAGES[circle] : undefined;
     if (pages && !this.auth.user()) void this.router.navigateByUrl(pages[Math.floor(Math.random() * pages.length)], { replaceUrl: true });
   }
 

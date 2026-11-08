@@ -27,7 +27,7 @@ describe("a ping when somebody is added", () => {
     const pings = await signalsOf("uid01");
     expect(pings).toHaveLength(1);
     expect(pings[0].id).toBe(entry.id);
-    expect(Object.keys(pings[0]).sort()).toEqual(["connectionId", "id", "time"]); // no names, no details
+    expect(Object.keys(pings[0]).sort()).toEqual(["circleId", "connectionId", "id", "time"]); // no names, no details
     expect(pings[0].connectionId).toBe(entry.id);
     expect(pings[0].time).toBeInstanceOf(Timestamp);
 
@@ -91,10 +91,10 @@ describe("the check handles the pings", () => {
     await assertConsistent();
   });
 
-  it("deletes pings even when they lead to nothing (a duplicate entry is dropped)", async () => {
+  it("a refused duplicate leaves no ping behind", async () => {
     const first = await connect(u(0), u(1));
-    await u(0).add(u(1).p, "phone"); // the same person again
-    expect(await signalsOf("uid01")).toHaveLength(1);
+    await u(0).addRaw(u(1).p, "phone").expect(409); // the same person again: refused, so no new ping
+    expect(await signalsOf("uid01")).toHaveLength(0);
 
     expect((await u(1).check()).requests).toEqual([]);
     expect(await signalsOf("uid01")).toEqual([]);
@@ -104,7 +104,7 @@ describe("the check handles the pings", () => {
 
   it("only deletes the pings it has seen: one that arrives later stays for the next check", async () => {
     await u(0).add(u(1).p);
-    const seen = await readSignals("uid01"); // what a check reads at its start
+    const seen = await readSignals("uid01", "default"); // what a check reads at its start
     const later = await u(2).add(u(1).p); // arrives while that check is running
     await deleteRefs(seen); // the check ends
 

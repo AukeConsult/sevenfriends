@@ -2,7 +2,7 @@ import { Timestamp, getFirestore } from "firebase-admin/firestore";
 import request from "supertest";
 import { beforeEach, describe, expect, it } from "vitest";
 import { MAX_FRIENDS } from "../src/constants";
-import { POOL_SIZE, User, app, assertConsistent, fillCircle, seedPool, sleep } from "./helpers";
+import { POOL_SIZE, User, assertConsistent, fillCircle, seedPool, sleep, server } from "./helpers";
 import type { Via } from "./types";
 
 /**
@@ -59,8 +59,8 @@ describe("adding a friend", () => {
   });
 
   it("asks for a login and a real circle", async () => {
-    expect((await request(app).post("/api/notifications/check")).status).toBe(401);
-    expect((await request(app).post("/api/notifications/check").set("Authorization", "Bearer garbage")).status).toBe(401);
+    expect((await request(server()).post("/api/notifications/check")).status).toBe(401);
+    expect((await request(server()).post("/api/notifications/check").set("Authorization", "Bearer garbage")).status).toBe(401);
     expect((await u(0).raw("post", "/circles/nope/friends", { name: "X", email: "x@y.test" })).status).toBe(404);
   });
 });
@@ -400,7 +400,7 @@ describe("one connection per pair of people", () => {
     await u(1).check();
     await u(1).confirm(first.id);
 
-    await u(0).add(u(1).p, "phone"); // the same person again
+    await u(0).addRaw(u(1).p, "phone").expect(409); // the same person again: refused, and it says so
     expect((await u(1).check()).requests).toEqual([]);
     expect((await u(0).friends()).map((f) => f.id)).toEqual([first.id]); // the duplicate was dropped
     expect((await u(1).friends()).map((f) => f.id)).toEqual([first.id]);
@@ -423,7 +423,7 @@ describe("one connection per pair of people", () => {
     await u(1).check();
     await u(1).confirm(first.id);
 
-    await u(1).add(u(0).p);
+    await u(1).addRaw(u(0).p).expect(409); // already friends: refused, no new request
     expect((await u(0).check()).requests).toEqual([]);
     expect((await u(1).friends()).map((f) => f.id)).toEqual([first.id]);
     await assertConsistent();

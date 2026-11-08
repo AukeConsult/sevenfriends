@@ -1,10 +1,10 @@
+import { circleLink } from './friend-link.service';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { ActiveCircleService } from './active-circle.service';
 import { ApiService } from './api.service';
-import { APP_ORIGIN } from './app-origin';
 
 /**
- * My invite link (`/welcome?invite=<code>&circle=<kind>`): whoever opens it, signs in and confirms sends me a request in that circle (the link decides which).
+ * My invite link (`/welcome/<circle>?invite=<code>`): whoever opens it, signs in and confirms sends me a request in that circle (the link decides which).
  * The code is made on the server the first time it is asked for. Shown on the profile page and on Add a friend.
  */
 @Injectable({ providedIn: 'root' })
@@ -16,7 +16,7 @@ export class InviteLinkService {
 
   private readonly code = signal<string | null>(null);
   /** the link to give away; null until the code is loaded */
-  readonly link = computed(() => (this.code() ? `${APP_ORIGIN}/welcome?invite=${this.code()}&circle=${this.circle}` : null));
+  readonly link = computed(() => (this.code() ? circleLink(this.circle, `invite=${this.code()}`) : null));
   /** why the link could not be loaded (null = no problem); shown instead of the link, with a way to try again */
   readonly problem = signal<string | null>(null);
   /** what a button just did ("Link copied"), shown for a moment */

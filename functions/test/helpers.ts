@@ -1,11 +1,23 @@
 import { getFirestore } from "firebase-admin/firestore";
 import request from "supertest";
+import { createServer, type Server } from "node:http";
 import { createApp } from "../src/app";
 import { MAX_FRIENDS } from "../src/constants";
 import { resetFakeFirestore } from "./fake-firestore";
 import { resetFakeStorage } from "./fake-storage";
 import { PROJECT, USING_EMULATOR } from "./setup";
 import type { Claims, Entry, Friend, Incoming, Person, Req, Via } from "./types";
+
+/** One server for every request of a test file: supertest(app) would open (and close) a new port for each call, and Windows runs out of ports. */
+let shared: Server | undefined;
+export const server = (): Server => {
+  if (!shared) {
+    shared = createServer(app).listen(0, "127.0.0.1");
+    shared.unref();
+    shared.setMaxListeners(0); // supertest adds a few listeners for every request it sends
+  }
+  return shared;
+};
 
 export const app = createApp();
 export const POOL_SIZE = 60; // everything below runs in a pool of at least 50 people
@@ -55,18 +67,18 @@ export class User {
   }
 
   private call(method: "get" | "post" | "put" | "delete", path: string, body?: object) {
-    const req = request(app)[method](`/api${path}`).set("Authorization", `Bearer ${this.token()}`);
+    const req = request(server())[method](`/api${path}`).set("Authorization", `Bearer ${this.token()}`);
     return body ? req.send(body) : req;
   }
 
   /** A request whose body is a file (any content type but JSON; the server finds the type from the bytes). */
   file(method: "post" | "put", path: string, bytes: Buffer, type = "application/x-test") {
-    return request(app)[method](`/api${path}`).set("Authorization", `Bearer ${this.token()}`).set("Content-Type", type).send(bytes);
+    return request(server())[method](`/api${path}`).set("Authorization", `Bearer ${this.token()}`).set("Content-Type", type).send(bytes);
   }
 
   /** `getObject(userid/objectid)`: the bytes come back as a Buffer. */
   getObject(ownerId: string, name: string, headers: Record<string, string> = {}) {
-    return request(app).get(`/api/sf-cache/${ownerId}/${name}`).set("Authorization", `Bearer ${this.token()}`).set(headers).buffer(true).parse((res, done) => {
+    return request(server()).get(`/api/sf-cache/${ownerId}/${name}`).set("Authorization", `Bearer ${this.token()}`).set(headers).buffer(true).parse((res, done) => {
       const parts: Buffer[] = [];
       res.on("data", (c: Buffer) => parts.push(c));
       res.on("end", () => done(null, Buffer.concat(parts)));
@@ -313,7 +325,7 @@ export async function assertConsistent() {
   for (const signal of signals) {
     const where = `signal ${signal.uid}/${signal.id}`;
     if (signal.data.connectionId !== signal.id) fail(`${where}: connectionId does not match its id`);
-    if (Object.keys(signal.data).sort().join() !== "connectionId,time") fail(`${where}: holds more than a ping`);
+    if (Object.keys(signal.data).sort().join() !== "circleId,connectionId,time") fail(`${where}: holds more than a ping (the connection, the circle it is for, and when)`);
     const sender = entries.find((e) => e.id === signal.id && e.uid !== signal.uid);
     if (!sender) fail(`${where}: the entry that sent it no longer exists`);
     else if (!(sender.data.signaledUids ?? []).includes(signal.uid)) fail(`${where}: not recorded on its entry`);

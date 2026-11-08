@@ -19,6 +19,7 @@ import { About } from './about/about';
 import { Login } from './login/login';
 import { Welcome } from './welcome/welcome';
 import { Buddy } from './buddy/buddy';
+import { CircleEntry } from './circle-entry/circle-entry';
 import { Work } from './work/work';
 import { Family } from './family/family';
 import { ViewWelcome } from './view-welcome/view-welcome';
@@ -38,7 +39,7 @@ import { SoundPicker } from './sound-picker/sound-picker';
 
 export const routes: Routes = [
   { path: '', component: Notifications, canActivate: [authGuard], title: 'Notifications – Seven Friends' },
-  { path: 'friends', pathMatch: 'full', redirectTo: '' }, // the old list: old links and notifications land on Home
+  { path: 'friends', pathMatch: 'full', component: CircleEntry, data: { circle: 'friends' }, title: 'Seven Friends' }, // into the Friends circle (Home when signed in); the old list address, so old links and notifications land on Home
   { path: 'share', component: Share, canActivate: [authGuard], title: 'Share – Seven Friends' },
   { path: 'friends/sleeping', component: Sleeping, canActivate: [authGuard], title: 'Sleep list – Seven Friends' },
   { path: 'friends/join', component: FriendJoin, canActivate: [authGuard], title: 'Friend request – Seven Friends' },
@@ -113,6 +114,13 @@ export const routes: Routes = [
   { path: 'buddy1', component: Buddy, data: { variant: 1 }, title: 'Seven Buddies' },
   { path: 'buddy2', component: Buddy, data: { variant: 2 }, title: 'Seven Buddies' },
   { path: 'buddy3', component: Buddy, data: { variant: 3 }, title: 'Seven Buddies' },
+  { path: 'buddy', component: CircleEntry, data: { circle: 'buddies' }, title: 'Seven Buddies' },
+  { path: 'work', component: CircleEntry, data: { circle: 'work' }, title: 'Seven Work' },
+  { path: 'family', component: CircleEntry, data: { circle: 'family' }, title: 'Seven Family' },
+  { path: 'welcome/friends', component: CircleEntry, data: { circle: 'friends', welcome: true }, title: 'Welcome – Seven Friends' },
+  { path: 'welcome/buddy', component: CircleEntry, data: { circle: 'buddies', welcome: true }, title: 'Seven Buddies' },
+  { path: 'welcome/work', component: CircleEntry, data: { circle: 'work', welcome: true }, title: 'Seven Work' },
+  { path: 'welcome/family', component: CircleEntry, data: { circle: 'family', welcome: true }, title: 'Seven Family' },
   { path: 'welcome', component: Welcome, title: 'Welcome – Seven Friends' },
   { path: 'login', component: Login, canActivate: [guestGuard], title: 'Sign in – Seven Friends' },
   { path: 'login/email', component: LoginEmail, canActivate: [guestGuard], title: 'Email link – Seven Friends' },

@@ -1,3 +1,4 @@
+import { ActiveCircleService } from '../core/active-circle.service';
 import { Clearable } from '../core/clearable';
 import { Hero } from '../hero/hero';
 import { Component, inject, signal } from '@angular/core';
@@ -13,6 +14,7 @@ import { AuthMode } from '../models';
   templateUrl: './login.html',
 })
 export class Login {
+  protected readonly w = inject(ActiveCircleService).words;
   /** a friend link was opened: what it is about (shown above the sign-in buttons) */
   private readonly friendLinks = inject(FriendLinkService);
   protected readonly link = this.friendLinks.pending;

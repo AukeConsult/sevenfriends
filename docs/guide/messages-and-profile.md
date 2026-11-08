@@ -47,7 +47,7 @@ Part of the project guide (moved out of `CLAUDE.md`; text unchanged). Read this 
 The header shows only the avatar (with the presence dot) and the name; the profile of a friend is on the Friends page. A quick sideways swipe on the page (not on text, buttons, links, players or scrolling strips) opens the conversation with the next friend (swipe left) or the previous one (swipe right), in the order of `FriendsService.awake()`, round robin (the last friend is followed by the first, and the first by the last; with only one friend nothing happens). `ParamsRouteReuseStrategy` makes the page start fresh when only the friend id in the address changes.
 
 ## Friend links
-`/?invite=<code>` (the code is made on the server, `functions/src/invite.ts`; the profile page has Share / Copy / New link) or `/?friend=<email or phone>`.
+`/welcome/<circle>?invite=<code>` (the code is made on the server, `functions/src/invite.ts`; the profile page has Share / Copy / New link) or `/welcome/<circle>?from=<email or phone>`.
 `FriendLinkService.capture()` runs in an app initializer (before the router can redirect), keeps the link in UiPreferences (`pendingFriend`) and removes
 it from the address bar. Signed in + a link waiting -> `app.ts` sends every navigation to `/friends/join` (`friend-join/`), which asks "Send a friend
 request to …?" (nothing is sent without the tap) and then uses the ordinary `friends.add()`. Signed out: the login page says what the link is about.
@@ -56,4 +56,4 @@ A friend link whose owner has ALREADY sent me a request (`requestId` from `/invi
 request with "Confirm request" instead of the form: no second request is made. The join page first runs `notifications.refresh()`.
 `InviteLinkService` (core/invite-link.service.ts) holds my link and the Share / Copy / New link buttons: used by the profile page and by Add a friend
 (there the link card appears as soon as an email or phone number is typed; "Send the link to them" is disabled on purpose: not built yet).
-The Home page has an expandable card ("Invite people with a link") under the band: the plain friend link `/?friend=<my email or phone>` with Share / Copy and a short explanation.
+The Home page has an expandable card ("Invite people with a link") under the band: the plain friend link `/welcome/<circle>?from=<my email or phone>` with Share / Copy and a short explanation.

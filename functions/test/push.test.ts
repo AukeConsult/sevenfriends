@@ -1,6 +1,6 @@
 import { getFirestore } from "firebase-admin/firestore";
 import { beforeEach, describe, expect, it } from "vitest";
-import { User, assertConsistent, connect, person, seedPool } from "./helpers";
+import { User, assertConsistent, connect, person, seedPool, server } from "./helpers";
 import { deadPushTokens, pushBreaks, sentPushes } from "./setup";
 
 /** Push: devices register, and a message / request / answer / removal reaches the other person's devices. */
@@ -52,8 +52,7 @@ describe("devices", () => {
 
   it("needs a login", async () => {
     const request = (await import("supertest")).default;
-    const { app } = await import("./helpers");
-    await request(app).post("/api/push/devices").send({ token: token(1) }).expect(401);
+    await request(server()).post("/api/push/devices").send({ token: token(1) }).expect(401);
   });
 });
 
@@ -249,7 +248,6 @@ describe("the test notification", () => {
 
   it("needs a login", async () => {
     const request = (await import("supertest")).default;
-    const { app } = await import("./helpers");
-    await request(app).post("/api/push/test").expect(401);
+    await request(server()).post("/api/push/test").expect(401);
   });
 });

@@ -1,6 +1,6 @@
 import { getFirestore } from "firebase-admin/firestore";
 import { beforeEach, describe, expect, it } from "vitest";
-import { User, person, seedPool } from "./helpers";
+import { User, person, seedPool, server } from "./helpers";
 
 /** Sounds are kept on the account, so they follow the person to every device. */
 let pool: User[];
@@ -54,9 +54,8 @@ describe("sound preferences on the account", () => {
 
   it("needs a login", async () => {
     const request = (await import("supertest")).default;
-    const { app } = await import("./helpers");
-    await request(app).get("/api/preferences").expect(401);
-    await request(app).put("/api/preferences/sounds").send(mine).expect(401);
+    await request(server()).get("/api/preferences").expect(401);
+    await request(server()).put("/api/preferences/sounds").send(mine).expect(401);
   });
 
   it("is gone with the account", async () => {

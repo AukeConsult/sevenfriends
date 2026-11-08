@@ -1,6 +1,6 @@
 import { getFirestore } from "firebase-admin/firestore";
 import { beforeEach, describe, expect, it } from "vitest";
-import { User, connect, seedPool } from "./helpers";
+import { User, connect, seedPool, server } from "./helpers";
 import { sentPushes } from "./setup";
 import { storedData, storedNames } from "./fake-storage";
 
@@ -73,8 +73,7 @@ describe("upload", () => {
 
   it("needs a login", async () => {
     const { default: request } = await import("supertest");
-    const { app } = await import("./helpers");
-    await request(app).post("/api/sf-cache?kind=image").set("Content-Type", "image/png").send(png()).expect(401);
+    await request(server()).post("/api/sf-cache?kind=image").set("Content-Type", "image/png").send(png()).expect(401);
   });
 
   it("the file name is cleaned: no folders, not too long", async () => {
@@ -227,8 +226,7 @@ describe("getObject(userid/objectid): the proxy", () => {
   it("needs a login", async () => {
     const { file } = await sendFile(u(0), u(1));
     const { default: request } = await import("supertest");
-    const { app } = await import("./helpers");
-    await request(app).get(`/api/sf-cache/uid00/${file.objectId}`).expect(401);
+    await request(server()).get(`/api/sf-cache/uid00/${file.objectId}`).expect(401);
   });
 });
 
@@ -325,10 +323,9 @@ describe("a big file in pieces (chunked upload)", () => {
 
   it("needs a login", async () => {
     const { default: request } = await import("supertest");
-    const { app } = await import("./helpers");
-    await request(app).post("/api/sf-cache/uploads").expect(401);
-    await request(app).put("/api/sf-cache/uploads/abcdefgh12345678/0").send(Buffer.from("x")).expect(401);
-    await request(app).post("/api/sf-cache/uploads/abcdefgh12345678/finish?kind=video&parts=1").expect(401);
+    await request(server()).post("/api/sf-cache/uploads").expect(401);
+    await request(server()).put("/api/sf-cache/uploads/abcdefgh12345678/0").send(Buffer.from("x")).expect(401);
+    await request(server()).post("/api/sf-cache/uploads/abcdefgh12345678/finish?kind=video&parts=1").expect(401);
   });
 });
 

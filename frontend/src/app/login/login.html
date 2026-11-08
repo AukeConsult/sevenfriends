@@ -4,7 +4,7 @@
   <div class="sf-form-width mx-auto w-100">
     @if (link(); as pending) {
       <p class="alert alert-info text-center m-0 mb-3">
-        Sign in or create an account to send a friend request{{ pending.email || pending.phone ? ' to ' + (pending.email || pending.phone) : '' }}.
+        Sign in or create an account to send a {{ w.one }} request{{ pending.email || pending.phone ? ' to ' + (pending.email || pending.phone) : '' }}.
       </p>
     }
     @if (mode() === 'signin') {

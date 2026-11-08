@@ -1,7 +1,7 @@
 import { getFirestore } from "firebase-admin/firestore";
 import { beforeEach, describe, expect, it } from "vitest";
 import request from "supertest";
-import { User, app, seedPool } from "./helpers";
+import { User, seedPool, server } from "./helpers";
 
 /** The picture a person uploads for their profile: a small image, kept in its own document. */
 let pool: User[];
@@ -89,9 +89,9 @@ describe("what is refused", () => {
   });
 
   it("needs a login", async () => {
-    await request(app).get("/api/profile/picture").expect(401);
-    await request(app).put("/api/profile/picture").send({ image: ok }).expect(401);
-    await request(app).delete("/api/profile/picture").expect(401);
+    await request(server()).get("/api/profile/picture").expect(401);
+    await request(server()).put("/api/profile/picture").send({ image: ok }).expect(401);
+    await request(server()).delete("/api/profile/picture").expect(401);
   });
 });
 

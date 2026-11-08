@@ -17,7 +17,7 @@
   } @else {
     <p class="text-secondary m-0">
       No password needed. We email you a link, and opening it signs you in. It also proves that the address is yours,
-      so friends who add you by email can find you.
+      so {{ w.many }} who add you by email can find you.
     </p>
 
     <form class="vstack gap-2" (submit)="$event.preventDefault(); send()">

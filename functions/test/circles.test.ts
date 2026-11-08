@@ -162,7 +162,7 @@ describe("more circles: one of each type, each with my own name, colour and mood
     await pool[0].raw("post", "/circles", { type: "family" }).expect(201);
     await pool[0].raw("put", "/circles/family/profile", { name: "Dad", color: "orange", mood: 2, moodMessage: "At home" }).expect(200);
     const all = await circles(pool[0]);
-    expect(all.find((c) => c.id === "family")!.profile).toEqual({ name: "Dad", color: "orange", mood: 2, moodMessage: "At home" });
+    expect(all.find((c) => c.id === "family")!.profile).toEqual({ name: "Dad", color: "orange", mood: 2, moodMessage: "At home", icon: null });
     expect(all.find((c) => c.id === "default")!.profile).toMatchObject({ name: "Leif", mood: null }); // the friends circle is not touched
   });
 

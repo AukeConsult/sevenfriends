@@ -1,3 +1,4 @@
+import { ActiveCircleService } from '../core/active-circle.service';
 import { Component, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { authMessage } from '../core/auth-errors';
@@ -11,6 +12,7 @@ import { PhoneStep } from '../models/view';
   templateUrl: './phone-auth.html',
 })
 export class PhoneAuth {
+  protected readonly w = inject(ActiveCircleService).words;
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute).snapshot;

@@ -1,3 +1,4 @@
+import { ActiveCircleService } from '../core/active-circle.service';
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { authMessage } from '../core/auth-errors';
@@ -10,6 +11,7 @@ import { AuthService } from '../core/auth.service';
   templateUrl: './login-email.html',
 })
 export class LoginEmail {
+  protected readonly w = inject(ActiveCircleService).words;
   private readonly auth = inject(AuthService);
 
   protected readonly email = signal('');
