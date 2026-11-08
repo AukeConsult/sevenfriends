@@ -78,12 +78,13 @@ const millis = (v: unknown) => (v instanceof Timestamp ? v.toMillis() : 0);
  *  - my entry with that id already exists  -> keep it
  *  - I had added them myself (other id)     -> merge into one connection with the shared id
  *  - otherwise a new entry, if there is room
- * `confirmed` = also mark the entry as confirmed. Writes nothing when it returns "full".
+ * `confirmed` = also mark the entry as confirmed. When every seat is taken, a confirmed friend is still added, on the sleep list (no seat): "asleep".
+ * Without `confirmed`, nothing is written when it returns "full".
  */
 export function ensureSeat(
   tx: Transaction,
   o: EnsureSeatArgs,
-): "ok" | "full" {
+): "ok" | "full" | "asleep" {
   const { myFriends, requestId, request, mySnap, requester, confirmed } = o;
   const confirmedFields = confirmed ? { status: "confirmed", confirmedAt: FieldValue.serverTimestamp() } : {};
 
@@ -95,6 +96,8 @@ export function ensureSeat(
 
   const mine = mySnap.docs.find((d) => pointsAt(d.data(), { ...requester, uid: request.fromUid }));
   if (mine) {
+    const mineSeat = seatOf(mine.data()) ?? freeSeat(mySnap.docs.filter((d) => d.id !== mine.id));
+    const sleeps = Boolean(confirmed) && mineSeat === null; // no seat left for a friend who is confirmed now: the sleep list
     tx.set(myFriends.doc(requestId), {
       ...mine.data(),
       // a new request replaces an old rejection / waiting flag: the merged connection starts as pending
@@ -105,16 +108,18 @@ export function ensureSeat(
       connectionId: requestId,
       incomingRequestId: requestId,
       peerCircleId: request.circleId,
-      seat: seatOf(mine.data()) ?? freeSeat(mySnap.docs.filter((d) => d.id !== mine.id)),
+      seat: mineSeat,
+      ...(sleeps ? { asleep: true } : {}),
       ...confirmedFields,
     });
     tx.delete(mine.ref);
     tx.delete(friendRequestCol(request.fromUid).doc(mine.id)); // my own request to them is merged into theirs
     signalRefsOf(mine.id, mine.data().signaledUids).forEach((ref) => tx.delete(ref)); // and so are its pings
-    return "ok";
+    return sleeps ? "asleep" : "ok";
   }
 
-  if (mySnap.docs.filter((d) => d.data().asleep !== true).length >= MAX_FRIENDS) return "full"; // friends on the sleep list have no seat
+  const full = mySnap.docs.filter((d) => d.data().asleep !== true).length >= MAX_FRIENDS; // friends on the sleep list have no seat
+  if (full && !confirmed) return "full";
 
   tx.set(myFriends.doc(requestId), {
     ...entryFromRequester(requester, request),
@@ -123,11 +128,12 @@ export function ensureSeat(
     peerCircleId: request.circleId,
     incomingRequestId: requestId,
     status: "pending",
-    seat: freeSeat(mySnap.docs),
+    seat: full ? null : freeSeat(mySnap.docs),
+    ...(full ? { asleep: true } : {}),
     ...confirmedFields,
     createdAt: FieldValue.serverTimestamp(),
   });
-  return "ok";
+  return full ? "asleep" : "ok";
 }
 
 /**

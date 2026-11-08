@@ -75,4 +75,16 @@ describe("the seat numbers", () => {
     const stored = (await getFirestore().collectionGroup("friends").get()).docs.filter((d) => [a.id, b.id, c.id].includes(d.id) && d.ref.path.includes(pool[0].p.uid));
     expect(stored.map((d) => d.data().seat).sort()).toEqual([1, 2, 3]);
   });
+
+  it("a friend confirmed when every seat is taken goes on the sleep list, and the other side is told", async () => {
+    const { fillCircle } = await import("./helpers");
+    const entry = await pool[0].add(pool[1].p);
+    await fillCircle(pool[1]);
+    await pool[1].check();
+    await pool[1].confirm(entry.id).expect(200);
+    const mine = (await pool[1].friends()).find((f) => f.id === entry.id);
+    expect(mine).toMatchObject({ status: "confirmed", asleep: true, seat: null });
+    expect((await pool[1].friends()).filter((f) => !f.asleep)).toHaveLength(7); // the seven seats are unchanged
+    expect((await pool[0].friends()).find((f) => f.id === entry.id)).toMatchObject({ status: "confirmed", theyAsleep: true });
+  });
 });

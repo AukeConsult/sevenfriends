@@ -155,7 +155,7 @@ describe("what is pushed", () => {
     expect(lastPush().data).toMatchObject({ id: `answer-${b.id}-rejected`, title: "Person 02 rejected your friend request" });
   });
 
-  it("confirming with no free seat pushes nothing (nothing changed)", async () => {
+  it("confirming with no free seat adds the friend on the sleep list, and the answer is pushed", async () => {
     await register(u(0), token(0));
     const entry = await u(0).add(u(1).p);
     const { fillCircle } = await import("./helpers");
@@ -163,8 +163,10 @@ describe("what is pushed", () => {
     await u(1).check();
     sentPushes.length = 0;
     const res = await u(1).confirm(entry.id);
-    expect(res.body.result).toBe("no-seats");
-    expect(sentPushes).toEqual([]);
+    expect(res.body.result).toBe("confirmed");
+    expect(lastPush().data).toMatchObject({ id: `answer-${entry.id}-confirmed` });
+    const mine = (await u(1).friends()).find((f) => f.id === entry.id);
+    expect(mine).toMatchObject({ status: "confirmed", asleep: true, seat: null });
   });
 
   it("ending a confirmed friendship is pushed to the other person; a pending one is not", async () => {

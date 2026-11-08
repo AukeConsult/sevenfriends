@@ -95,9 +95,10 @@ friendRequestsRouter.post(
         requester: requesterSnap.data() ?? {},
         confirmed: true,
       });
-      if (seat === "full") return "no-seats";
+      if (seat === "full") return "no-seats"; // not reached when confirming: a full circle puts the friend on the sleep list
 
       tx.update(requesterFriendRef, {
+        ...(seat === "asleep" ? { theyAsleep: true } : {}), // the requester's app shows that the friend is asleep
         status: "confirmed",
         waitingForSeat: false,
         confirmedAt: FieldValue.serverTimestamp(),
