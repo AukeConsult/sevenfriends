@@ -1016,6 +1016,7 @@ app-voice { display: contents; }
 }
 .sf-cleanup-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem 0.75rem; } // the count on the left, the button on the right, on one line
 .sf-cleanup { display: flex; flex-direction: column; gap: 0.5rem; padding: 0.75rem var(--sf-gutter); background: var(--sf-card); border-bottom: 1px solid var(--sf-border); }
+.sf-pending .sf-bubble { opacity: 0.6; pointer-events: none; } // on its way: not sent yet
 .sf-doomed .sf-bubble { outline: 2px dashed #dc2626; outline-offset: 2px; opacity: 0.7; } // marked by the delete frame: will be deleted
 
 // Newest message on top: the message field sits right under the header (sticky) and grows downwards; the emoji panel opens below the field

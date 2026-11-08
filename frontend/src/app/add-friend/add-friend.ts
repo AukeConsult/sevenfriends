@@ -103,7 +103,7 @@ export class AddFriend {
         phone: d.phone || null,
         message: d.message.trim() || null,
       });
-      if (created.invited) {
+      if (created.invited || created.onApp) {
         if (this.embedded()) this.closed.emit(); // has an account: the request is with them already
         else await this.router.navigate([this.backTo], { queryParams: this.backParams });
       } else {

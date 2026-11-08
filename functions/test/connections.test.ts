@@ -2,7 +2,7 @@ import { Timestamp, getFirestore } from "firebase-admin/firestore";
 import request from "supertest";
 import { beforeEach, describe, expect, it } from "vitest";
 import { MAX_FRIENDS } from "../src/constants";
-import { POOL_SIZE, User, assertConsistent, fillCircle, seedPool, sleep, server } from "./helpers";
+import { POOL_SIZE, User, assertConsistent, fillCircle, seedPool, sleep, server, person } from "./helpers";
 import type { Via } from "./types";
 
 /**
@@ -391,6 +391,17 @@ describe("messages", () => {
     expect((await u(0).raw("post", "/messages/new/read")).status).toBe(200);
     expect((await u(0).check()).messages.map((m) => m.id)).toEqual(["old"]);
     expect((await u(0).raw("post", "/messages/nope/read")).status).toBe(404);
+  });
+});
+
+describe("what adding a friend answers", () => {
+  it("says the person is on the app when they have an account (the request is with them), and not when they have none", async () => {
+    const known = (await u(0).addRaw(u(1).p).expect(201)).body;
+    expect(known.onApp).toBe(true);
+    expect(known.invited).toBe(false); // linked only when they open the app
+
+    const stranger = (await u(0).addRaw(person(POOL_SIZE + 5)).expect(201)).body;
+    expect(stranger.onApp).toBe(false);
   });
 });
 

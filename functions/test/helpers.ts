@@ -125,9 +125,9 @@ export class User {
   reject = (id: string) => this.call("post", `/friend-requests/${id}/reject`);
   remove = (id: string) => this.call("delete", `/circles/default/friends/${id}`);
 
-  /** Friend entry of mine that points at `other` (by name used in contactOf). */
+  /** Friend entry of mine that points at `other` (by the email used in contactOf). */
   async entryFor(other: Person): Promise<Friend | undefined> {
-    return (await this.friends()).find((f) => f.name === `Friend ${other.n}`);
+    return (await this.friends()).find((f) => f.email === other.email.toLowerCase());
   }
 }
 

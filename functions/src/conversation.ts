@@ -6,7 +6,7 @@ import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION } from "./constants";
 import { ChatMessage, Conversation, MediaRef, MessageDeleteCriteria, MessageEnc, MessageEncMedia, MessageLink, MessageDeleteResult, NewMedia } from "./models";
 import { circleCol, messageCol, missingIndex, userFields } from "./paths";
 import { nameOf, sendPush } from "./push";
-import { findPeerEntry } from "./circle-profile";
+import { findPeerEntry, shownNameOf } from "./circle-profile";
 import { linkOf } from "./link-preview";
 import { Refused, parseMessageEnc, parseRelock, wrapsCover, wrapsFor } from "./box-encryption";
 import { publishedKeysOf } from "./keys";
@@ -47,7 +47,7 @@ export async function connectionOf(req: Request, res: Response) {
   return {
     id: entry.id,
     circleId: (res.locals.circleRef as DocumentReference).id, // the circle of MY entry
-    name: data.name as string,
+    name: await shownNameOf(data), // the real name of the friend, as in the list
     peerUid: data.linkedUid as string,
     peerCircleId: (data.peerCircleId as string | undefined) ?? DEFAULT_CIRCLE_ID,
   };
@@ -186,8 +186,12 @@ conversationRouter.post(
     const media = req.body?.media ? await attachedMedia(token.uid, req.body.media, res, locked?.enc.media ?? null) : null;
     if (req.body?.media && !media) return;
 
-    // the other side of the connection must still be there and confirmed
-    const peerEntry = await findPeerEntry(token.uid, connection.circleId, connection.id, { linkedUid: connection.peerUid, peerCircleId: connection.peerCircleId });
+    // the other side of the connection must still be there and confirmed (the page of a link and my name are looked up at the same time: nothing waits for the others)
+    const [peerEntry, link, fromName] = await Promise.all([
+      findPeerEntry(token.uid, connection.circleId, connection.id, { linkedUid: connection.peerUid, peerCircleId: connection.peerCircleId }),
+      locked ? null : linkOf(text), // the page of the link may be shown in a frame (checked once, here); a locked text cannot be read, so it has none
+      nameOf(token.uid, token, connection.circleId), // the name I have in this circle
+    ]);
     if (peerEntry) connection.peerCircleId = peerEntry.ref.parent.parent?.id ?? connection.peerCircleId; // where their side really is
     if (peerEntry?.data()?.status !== "confirmed") {
       res.status(409).json({ error: "This connection is not confirmed on both sides" });
@@ -196,18 +200,18 @@ conversationRouter.post(
 
     const poke = req.body?.poke === true; // "poke anyway": the friend is told with a sound even when they have me on their sleep list
     const muted = peerEntry?.data()?.asleep === true && !poke;
-    const link = locked ? null : await linkOf(text); // the page of the link may be shown in a frame (checked once, here); a locked text cannot be read, so it has none
     const mine = media ? messageCol(token.uid).doc(media.objectId) : messageCol(token.uid).doc(); // a message with a file has the id of the file: that is how the receiver is let in
     const theirs = messageCol(connection.peerUid).doc(mine.id); // same message id on both sides
+    const sentAt = Timestamp.now(); // known here, so the answer needs no second read of the message
     const common = {
       connectionId: connection.id,
       fromUid: token.uid,
-      fromName: await nameOf(token.uid, token, connection.circleId), // the name I have in this circle
+      fromName,
       toUid: connection.peerUid,
       text,
       ...(media ? { media } : {}),
       ...(link ? { link } : {}),
-      time: FieldValue.serverTimestamp(),
+      time: sentAt,
     };
     const batch = getFirestore().batch();
     // each copy says which circle it belongs to FOR ITS OWNER: mine in my circle, the friend's in theirs
@@ -221,10 +225,9 @@ conversationRouter.post(
     batch.update(circleCol(connection.peerUid).doc(connection.peerCircleId).collection(FRIENDS_SUBCOLLECTION).doc(connection.id), { lastMessageAt: FieldValue.serverTimestamp() });
     await batch.commit();
 
-    const saved = (await mine.get()).data()!;
-    const created: ChatMessage = { id: mine.id, text, media, mine: true, read: true, time: iso(saved.time), edited: false, hidden: false, link, ...(locked ? { enc: wrapsFor(locked.enc, token.uid) } : {}) };
+    const created: ChatMessage = { id: mine.id, text, media, mine: true, read: true, time: iso(sentAt), edited: false, hidden: false, link, ...(locked ? { enc: wrapsFor(locked.enc, token.uid) } : {}) };
     // wake the other person's devices (before the answer: the function may stop right after it)
-    if (!muted) await sendPush(connection.peerUid, { circleId: connection.peerCircleId, id: `message-${mine.id}`, title: common.fromName, body: locked ? "🔒 New message" : text || mediaLabel(media!.kind), url: `/friends/${connection.id}`, kind: "message" });
+    if (!muted) await sendPush(connection.peerUid, { circleId: connection.peerCircleId, id: `message-${mine.id}`, title: fromName, body: locked ? "🔒 New message" : text || mediaLabel(media!.kind), url: `/friends/${connection.id}`, kind: "message" });
     res.status(201).json(created);
   }),
 );

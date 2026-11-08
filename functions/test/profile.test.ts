@@ -66,10 +66,10 @@ describe("the name", () => {
     await assertConsistent();
   });
 
-  it("changing it later does not rewrite what others already have (their copy keeps the old name)", async () => {
+  it("changing it later shows at once in what others have: a friend always sees the real name", async () => {
     const id = await connect(u(0), u(1));
     await u(0).raw("put", "/profile", { name: "Alice" });
-    expect((await u(1).friends()).find((f) => f.id === id)?.name).toBe("Person 00");
+    expect((await u(1).friends()).find((f) => f.id === id)?.name).toBe("Alice");
     await u(0).send(id, "new name, new messages");
     expect((await u(1).check()).messages[0].fromName).toBe("Alice"); // from now on
   });

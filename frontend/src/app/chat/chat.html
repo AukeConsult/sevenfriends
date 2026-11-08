@@ -186,7 +186,7 @@
     }
 
     @for (message of shown(); track message.id) {
-      <div class="sf-message" [attr.data-id]="message.id" [class.sf-mine]="message.mine" [class.sf-has-avatar]="feedIcons()" [class.sf-message-media]="message.media || (message.link && previewing().has(message.id))" [class.sf-message-wide]="message.link && previewing().has(message.id)" [class.sf-doomed]="doomed().has(message.id)">
+      <div class="sf-message" [attr.data-id]="message.id" [class.sf-mine]="message.mine" [class.sf-has-avatar]="feedIcons()" [class.sf-message-media]="message.media || (message.link && previewing().has(message.id))" [class.sf-message-wide]="message.link && previewing().has(message.id)" [class.sf-doomed]="doomed().has(message.id)" [class.sf-pending]="message.id.startsWith('pending-')">
         @if (feedIcons()) {
           <!-- the picture of who wrote it: the friend's, or mine -->
           <span class="sf-feed-avatar" [attr.aria-hidden]="message.mine ? 'true' : null">

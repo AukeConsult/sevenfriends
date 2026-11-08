@@ -11,10 +11,11 @@ import {
   MAX_INVITES_PER_DAY,
   MAX_REQUEST_MESSAGE,
   circleIdOf,
+  circleTypeOf,
 } from "./constants";
 import { invitesSentToday, queueInvite } from "./outbox";
 import { Friend, FriendInvite, MediaRef, FriendStatus, NewFriend, ProfilePicture, profileColorKey, pronounKey } from "./models";
-import { circleProfileOf } from "./circle-profile";
+import { circleProfileOf, friendNameOf } from "./circle-profile";
 import { circleCol, friendRequestCol, messageCol, missingIndex, userFields } from "./paths";
 import { avatarOf, readAvatar } from "./avatar";
 import { deleteObjects } from "./sf-cache";
@@ -129,7 +130,8 @@ async function withUnverified(friend: Friend, entry: FirebaseFirestore.DocumentD
         }
       : { country: null, mood: null, moodMessage: null, pronoun: null, presence: "offline" as const, icon: null, color: null, pictureAt: null, pictureId: null };
   // I did not give a name: a confirmed friend is shown by the name of their account
-  const name = entry.nameGiven === false && friend.status === "confirmed" ? (profile.name || (account?.displayName as string | undefined) || friend.name) : friend.name;
+  // the real name of the other person, always once they are connected (see `friendNameOf`)
+  const name = friendNameOf(entry, friend.status, profile.name, account?.displayName as string | undefined, friend.name);
   const lastSpokenAt = friend.lastSpokenAt ?? (friend.status === "confirmed" ? await lastSpoken(uid, friend.id) : null);
   return { ...friend, name, ...mood, lastSpokenAt, ...(unverified.length ? { unverified } : {}) };
 }
@@ -248,7 +250,7 @@ friendsRouter.post(
       }
     }
     const saved = await ref.get();
-    res.status(201).json(await withUnverified(toJson(saved), saved.data(), (res.locals.token as DecodedIdToken).uid));
+    res.status(201).json({ ...(await withUnverified(toJson(saved), saved.data(), (res.locals.token as DecodedIdToken).uid)), onApp: accounts.length > 0 });
   }),
 );
 
@@ -409,6 +411,7 @@ friendsRouter.post(
       queueInvite(tx, {
         fromUid: token.uid,
         fromName,
+        circle: circleTypeOf((res.locals.circleRef as DocumentReference).id),
         to: entry.invite.to,
         message: (entry.message as string | null | undefined) ?? null,
       });

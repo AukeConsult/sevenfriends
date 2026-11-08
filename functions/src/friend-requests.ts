@@ -4,9 +4,9 @@ import { FieldValue, Timestamp, getFirestore } from "firebase-admin/firestore";
 import { asyncHandler, requireAuth } from "./auth";
 import { ensureCircle } from "./circles";
 import { circleIdOf, FRIENDS_SUBCOLLECTION } from "./constants";
-import { activeCircleOf } from "./circle-profile";
+import { activeCircleOf, circleProfileOf } from "./circle-profile";
 import { AcceptOutcome, FriendRequest } from "./models";
-import { circleCol, friendRequestCol, userDoc, userFields } from "./paths";
+import { circleCol, friendRequestCol, readFields, userDoc, userFields } from "./paths";
 import { assignMissingSeats, ensureSeat } from "./seats";
 import { nameOf, sendPush } from "./push";
 import { unverifiedDetails } from "./validation";
@@ -24,10 +24,13 @@ export async function listPendingRequests(uid: string, circleId: string): Promis
       .filter((d) => circleIdOf(d.data()) === circleId)
       .map(async (d): Promise<FriendRequest> => {
       const data = d.data();
-      const sender = await userFields(data.fromUid as string, "emailLower", "emailVerified", "phoneKey", "verifiedPhone");
+      const sender = await userFields(data.fromUid as string, "emailLower", "emailVerified", "phoneKey", "verifiedPhone", "displayName");
+      // the name the sender has NOW in that circle (the one stored with the request is only the name at the time it was sent)
+      const theirCircle = sender ? await readFields(circleCol(data.fromUid as string).doc(circleId), "profile") : undefined;
+      const liveName = sender ? circleProfileOf(circleId, theirCircle, sender).name : null;
       return {
         id: d.id,
-        fromName: data.fromName as string,
+        fromName: liveName ?? (data.fromName as string),
         fromEmail: (data.fromEmail as string | null) ?? null,
         message: (data.message as string | null) ?? null,
         createdAt: data.createdAt instanceof Timestamp ? data.createdAt.toDate().toISOString() : null,

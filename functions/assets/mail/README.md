@@ -19,6 +19,8 @@ Written as `{name}`. Every value is made safe for HTML for you (a message can ne
 | `{to}`      | the email address that is invited                            |
 | `{message}` | their message, in quotes                                     |
 | `{appUrl}`  | the link to Seven Friends (`APP_URL` in the settings)        |
+| `{appName}` | the name of the app of the circle: Seven Friends, Buddies, Work or Family |
+| `{inviteUrl}` | the link to the welcome page of that circle, with the address invited |
 | `{subject}` | the subject line (`INVITE_EMAIL_SUBJECT`)                    |
 
 **Only with a message:** put the part that should disappear when the sender wrote no message between an HTML comment

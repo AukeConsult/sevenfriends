@@ -104,10 +104,12 @@ describe("adding a friend without a name", () => {
     expect((await friendOf(u(0), entry.id)).name).toBe(u(1).p.name);
   });
 
-  it("a name that was typed is kept", async () => {
+  it("a name that was typed is shown until they confirm, then their own name is always shown", async () => {
     const entry = (await u(0).call("post", "/circles/default/friends", { name: "My pal", email: u(1).p.email }).expect(201)).body;
     await u(1).check();
-    await u(1).confirm(entry.id).expect(200);
     expect((await friendOf(u(0), entry.id)).name).toBe("My pal");
+    await u(1).confirm(entry.id).expect(200);
+    expect((await friendOf(u(0), entry.id)).name).toBe(u(1).p.name);
+    expect((await u(0).feed(entry.id)).body.friend.name).toBe(u(1).p.name); // and in the conversation
   });
 });

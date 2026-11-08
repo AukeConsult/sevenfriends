@@ -14,6 +14,8 @@ export interface Friend {
   status: FriendStatus;
   /** true when the friend has an account and has been sent a request */
   invited: boolean;
+  /** only in the answer to adding a friend: the person already has an account, so the request is with them (the link is not needed). `invited` follows when they open the app. */
+  onApp?: boolean;
   /** true when their list is full and I am on their waiting list */
   waiting: boolean;
   /** true = on my sleep list: not in a seat any more, the conversation and its files are kept (I can wake them up again) */

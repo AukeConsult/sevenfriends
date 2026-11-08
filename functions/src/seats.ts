@@ -9,7 +9,9 @@ import { signalRefsOf } from "./signals";
 export function entryFromRequester(requester: DocumentData, request: DocumentData) {
   const email = (requester.emailLower ?? requester.email?.toLowerCase?.() ?? null) as string | null;
   return {
-    name: (requester.displayName ?? request.fromName ?? email ?? "Friend") as string,
+    // the name the sender has in that circle (the request carries it); the name of their account only when the request has none
+    name: (request.fromName ?? requester.displayName ?? email ?? "Friend") as string,
+    nameGiven: false, // not typed by me: the list shows the name they have now (see `withUnverified`)
     email,
     phone: requester.phone ?? null,
     phoneKey: requester.phoneKey ?? null,

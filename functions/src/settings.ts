@@ -12,10 +12,10 @@ export const DEFAULTS = {
   /** the file that sets how the invitation email LOOKS (HTML), relative to the functions folder; delete the file to send text only */
   INVITE_EMAIL_TEMPLATE: "assets/mail/invite.html",
   /** the subject of the invitation email */
-  INVITE_EMAIL_SUBJECT: "{fromName} invited you to Seven Friends",
+  INVITE_EMAIL_SUBJECT: "{fromName} invited you to {appName}",
   /** the text of the invitation email */
   INVITE_EMAIL_TEXT:
-    "{fromName} wants you as one of their 7 closest friends on Seven Friends.\\n\\n{message}\\n\\nSign up with this email address ({to}) to see the request: {appUrl}",
+    "{fromName} wants you as one of their 7 closest friends on {appName}.\\n\\n{message}\\n\\nSign up with this email address ({to}) to see the request: {inviteUrl}",
 } as const;
 
 export type SettingName = keyof typeof DEFAULTS;

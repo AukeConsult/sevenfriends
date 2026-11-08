@@ -1,7 +1,7 @@
 import { DocumentData, DocumentSnapshot, FieldValue } from "firebase-admin/firestore";
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAX_FRIENDS, MAX_MOOD_MESSAGE, MAX_NAME_LENGTH, MOOD_COUNT } from "./constants";
 import { CircleProfile, profileColorKey } from "./models";
-import { circleCol, userDoc } from "./paths";
+import { circleCol, readFields, userDoc, userFields } from "./paths";
 import { text } from "./validation";
 
 /**
@@ -132,4 +132,22 @@ export async function touchFriends(uid: string, circleId?: string): Promise<void
       if (theirs) await theirs.ref.update({ moodChangedAt: FieldValue.serverTimestamp() });
     }
   }
+}
+
+/**
+ * The name to show for a friend: the real name of the person on the other side (the name they have in the circle my entry points at, else the name of their account),
+ * always, once they are connected (confirmed, or they asked me). What was typed when adding them is only shown until then (and when nothing better is known).
+ */
+export const friendNameOf = (entry: DocumentData, status: string, theirCircleName: string | null | undefined, theirAccountName: string | null | undefined, typed: string): string =>
+  (status === "confirmed" || entry.incomingRequestId) && entry.linkedUid ? theirCircleName || theirAccountName || typed : typed;
+
+/** The same for a stored entry of mine: looks the other person up. */
+export async function shownNameOf(entry: DocumentData): Promise<string> {
+  const typed = entry.name as string;
+  const peer = entry.linkedUid as string | undefined;
+  if (!peer) return typed;
+  const peerCircle = (entry.peerCircleId as string | undefined) ?? DEFAULT_CIRCLE_ID;
+  const account = (await userFields(peer, "displayName")) ?? {};
+  const profile = profileOfCircle(peerCircle === DEFAULT_CIRCLE_ID ? undefined : await readFields(circleCol(peer).doc(peerCircle), "profile"), account);
+  return friendNameOf(entry, (entry.status as string) ?? "pending", profile.name, account.displayName as string | undefined, typed);
 }

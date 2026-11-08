@@ -6,7 +6,7 @@ import { getMessaging } from "firebase-admin/messaging";
 import { asyncHandler, requireAuth } from "./auth";
 import { DEFAULT_CIRCLE_ID, PUSH_DEVICE_COLLECTION, circleTypeOf } from "./constants";
 import { CIRCLE_TYPES } from "./models";
-import { circleCol, pushDeviceCol, userFields } from "./paths";
+import { circleCol, pushDeviceCol, readFields, userFields } from "./paths";
 import { noticesOf } from "./preferences";
 import { deleteRefs } from "./signals";
 import { circleProfileOf, activeCircleOf } from "./circle-profile";
@@ -87,19 +87,18 @@ const cut = (text: string, max: number) => (text.length > max ? `${text.slice(0,
 /** The name friends know this person by; with a circle: the name they have in that circle. */
 export async function nameOf(uid: string, token?: DecodedIdToken, circleId: string = DEFAULT_CIRCLE_ID): Promise<string> {
   const data = await userFields(uid, "displayName");
-  const shown = circleId === DEFAULT_CIRCLE_ID ? null : circleProfileOf(circleId, (await circleCol(uid).doc(circleId).get()).data(), data ?? {}).name;
+  const shown = circleId === DEFAULT_CIRCLE_ID ? null : circleProfileOf(circleId, await readFields(circleCol(uid).doc(circleId), "profile"), data ?? {}).name;
   return shown ?? (data?.displayName as string | undefined) ?? token?.name ?? token?.email ?? "Someone";
 }
 
 /** Sends a push to every device of `uid`. Never throws (the answer says what happened). */
 export async function sendPush(uid: string, push: PushMessage): Promise<PushResult> {
   try {
-    const account = await userFields(uid, "noticePreferences", "soundPreferences"); // only the switches and the sound choice
+    const circleId = push.circleId ?? DEFAULT_CIRCLE_ID;
+    // the switches and the devices are read at the same time (one wait, not two)
+    const [account, devices] = await Promise.all([userFields(uid, "noticePreferences", "soundPreferences"), devicesFor(uid, circleTypeOf(circleId))]);
     const notices = noticesOf(account);
     if (!push.force && !notices[push.kind]) return { devices: 0, delivered: 0, off: true };
-
-    const circleId = push.circleId ?? DEFAULT_CIRCLE_ID;
-    const devices = await devicesFor(uid, circleTypeOf(circleId));
     if (!devices.length) return { devices: 0, delivered: 0 };
 
     const choice = soundChoice(account, push.kind);

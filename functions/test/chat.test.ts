@@ -65,7 +65,7 @@ describe("the feed", () => {
 
     const a = (await u(0).feed(id)).body;
     const b = (await u(1).feed(id)).body;
-    expect(a.friend).toEqual({ id, name: "Friend 1" });
+    expect(a.friend).toEqual({ id, name: u(1).p.name }); // their own name, not the one typed when adding them
     expect(a.messages.map((m: { text: string }) => m.text)).toEqual(["one", "two", "three", "four"]);
     expect(b.messages.map((m: { text: string }) => m.text)).toEqual(["one", "two", "three", "four"]);
     expect(a.messages.map((m: { mine: boolean }) => m.mine)).toEqual([true, false, true, false]);

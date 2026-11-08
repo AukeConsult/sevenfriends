@@ -4,6 +4,7 @@ import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } fro
 import { filter, map } from 'rxjs';
 import { moodIcon, moodLabel } from '../core/moods';
 import { MyAvatarService } from '../core/my-avatar.service';
+import { ApiService } from '../core/api.service';
 import { UiPreferencesService } from '../core/ui-preferences';
 import { profileColorHex, profileColorInk, profileColorSoft } from '../models';
 import { presenceLabel } from '../core/presence';
@@ -59,6 +60,7 @@ export class FriendPage {
   protected readonly onLock = computed(() => this.url().startsWith(`/friends/${this.ctx.friendId}/lock`));
 
   constructor() {
+    void inject(ApiService).request('/health').catch(() => undefined); // wakes the server when a friend is opened: the first message is not slow
     // new messages from this friend come to this page (the feed, or the dot while the safebox is open), not to the Home list
     this.realtime.openFeed.set(this.ctx.friendId);
     if (this.prefs.get('feedIcons')) void this.myAvatar.load(); // my colour, for what is mine on every page under the header

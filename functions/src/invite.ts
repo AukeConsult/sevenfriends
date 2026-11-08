@@ -4,7 +4,8 @@ import { DecodedIdToken } from "firebase-admin/auth";
 import { getFirestore } from "firebase-admin/firestore";
 import { asyncHandler, requireAuth } from "./auth";
 import { USER_ACCOUNT_COLLECTION } from "./constants";
-import { friendRequestCol, userDoc } from "./paths";
+import { circleProfileOf, activeCircleOf } from "./circle-profile";
+import { circleCol, friendRequestCol, readFields, userDoc } from "./paths";
 
 /**
  * The invite link: `https://<the app>/?invite=<code>`. Whoever opens it, signs in and confirms sends me a friend request.
@@ -74,10 +75,13 @@ inviteRouter.get(
     const data = owner.data();
     // has the owner already asked me to be their friend? (found by the check that runs when I open the app, see notifications.ts)
     const asked = await friendRequestCol(uidOf(res)).where("status", "==", "pending").where("fromUid", "==", owner.id).limit(1).select().get();
+    // the name the owner has in the circle I open the link in (their circle profile, else their account name)
+    const circleId = activeCircleOf(req);
+    const name = circleProfileOf(circleId, await readFields(circleCol(owner.id).doc(circleId), "profile"), data).name ?? (data.displayName as string | null | undefined) ?? null;
     res.json({
       self: false,
       requestId: asked.empty ? null : asked.docs[0].id,
-      name: (data.displayName as string | null | undefined) ?? null,
+      name,
       email: (data.emailLower as string | null | undefined) ?? null,
       phone: (data.verifiedPhone as string | null | undefined) ?? (data.phone as string | null | undefined) ?? null,
     });

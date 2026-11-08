@@ -30,10 +30,11 @@ export async function syncIncomingInvites(token: DecodedIdToken): Promise<void> 
   if (!probes.length) return;
 
   const found = new Map<string, QueryDocumentSnapshot>();
-  for (const [field, value] of probes) {
-    const snap = await getFirestore().collectionGroup(FRIENDS_SUBCOLLECTION).where(field, "==", value).get();
-    snap.docs.forEach((d) => found.set(d.ref.path, d));
-  }
+  // all probes at the same time, and only the fields this check reads (it runs every time the app is opened)
+  const snaps = await Promise.all(
+    probes.map(([field, value]) => getFirestore().collectionGroup(FRIENDS_SUBCOLLECTION).where(field, "==", value).select("status", "incomingRequestId", "linkedUid", "message", "signaledUids").get()),
+  );
+  snaps.forEach((snap) => snap.docs.forEach((d) => found.set(d.ref.path, d)));
 
   for (const doc of found.values()) {
     const data = doc.data();

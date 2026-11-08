@@ -36,11 +36,31 @@ describe("the code", () => {
   });
 });
 
+describe("a request I receive", () => {
+  it("shows the name the sender has now in that circle, not the one at the time it was sent", async () => {
+    await u(0).add(u(1).p); // 0 asks 1 in friends
+    expect((await u(1).waitingList()).concat(await u(1).seated())[0].fromName).toBe("Person 00");
+    await u(0).raw("put", "/profile", { name: "Zero Renamed" }).expect(200);
+    const after = (await u(1).waitingList()).concat(await u(1).seated());
+    expect(after[0].fromName).toBe("Zero Renamed");
+  });
+});
+
 describe("looking a code up", () => {
   it("gives the name and the contact details of the owner", async () => {
     const code = await codeOf(u(0));
     const res = await u(1).raw("get", `/invite/lookup/${code}`).expect(200);
     expect(res.body).toMatchObject({ self: false, name: "Person 00", email: "person00@test.dev" });
+  });
+
+  it("gives the name the owner has in the circle the link is opened in", async () => {
+    const code = await codeOf(u(0));
+    await u(0).raw("post", "/circles", { type: "buddies" }).expect(201);
+    await u(0).raw("put", "/circles/buddies/profile", { name: "Buddy Zero" }).expect(200);
+    const inBuddies = await u(1).raw("get", `/invite/lookup/${code}`).set("X-Circle", "buddies").expect(200);
+    expect(inBuddies.body.name).toBe("Buddy Zero");
+    const inFriends = await u(1).raw("get", `/invite/lookup/${code}`).expect(200);
+    expect(inFriends.body.name).toBe("Person 00"); // the account name in friends
   });
 
   it("says when the owner has already sent ME a request, until I have answered it", async () => {

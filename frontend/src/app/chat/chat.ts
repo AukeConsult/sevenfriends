@@ -261,10 +261,14 @@ export class Chat {
   private async refresh(first: boolean): Promise<void> {
     try {
       const res = await this.chat.load(this.friendId);
-      const known = new Set(this.messages().map((m) => m.id));
+      const pending = this.messages().filter((m) => m.id.startsWith('pending-')); // being sent: the server does not have them yet
+      const known = new Set(this.messages().filter((m) => !m.id.startsWith('pending-')).map((m) => m.id));
       const changed = first || res.messages.some((m) => !known.has(m.id)) || res.messages.length !== known.size; // a new message (also when one was deleted at the same time)
+      // a message of mine that arrived before the answer of its send: its temporary copy goes
+      const arrived = res.messages.filter((m) => m.mine && !known.has(m.id)).map((m) => m.text);
+      const waiting = pending.filter((p) => { const i = arrived.indexOf(p.text); if (i < 0) return true; arrived.splice(i, 1); return false; });
       this.name.set(res.friend.name);
-      this.messages.set(res.messages);
+      this.messages.set([...res.messages, ...waiting]);
       this.blocked.set(null);
       if (first) this.error.set(null);
 
@@ -464,10 +468,50 @@ export class Chat {
     }
   }
 
+  /** Puts a message of mine at the end, unless the feed already has it (a refresh can bring it in before the answer of the send arrives). */
+  private addOnce(message: ChatItem): void {
+    this.messages.update((list) => (list.some((m) => m.id === message.id) ? list.map((m) => (m.id === message.id ? message : m)) : [...list, message]));
+  }
+
+  private pendingSeq = 0;
+
+  /**
+   * A new message: it is in the feed the moment it is sent (a little faded, with a temporary id) and is replaced by the real one when the server has it.
+   * If the server refuses it, it goes again and the text comes back into the field.
+   */
+  private async sendNew(text: string, fromField: boolean): Promise<void> {
+    const poke = this.ctx.pokes();
+    const temp: ChatItem = { id: `pending-${++this.pendingSeq}`, text, media: null, mine: true, read: true, time: new Date().toISOString(), edited: false, hidden: false, link: null };
+    this.messages.update((list) => [...list, temp]);
+    this.ctx.poke.set(false);
+    this.error.set(null);
+    if (fromField) {
+      this.text.set('');
+      this.emojiOpen.set(false);
+      setTimeout(() => this.fit());
+    }
+    this.scrollDown();
+    try {
+      const message = await this.chat.send(this.friendId, text, poke);
+      this.messages.update((list) => {
+        const rest = list.filter((m) => m.id !== temp.id);
+        return rest.some((m) => m.id === message.id) ? rest.map((m) => (m.id === message.id ? message : m)) : [...rest, message];
+      });
+    } catch (err: any) {
+      this.messages.update((list) => list.filter((m) => m.id !== temp.id));
+      if (fromField && !this.text()) this.text.set(text);
+      this.error.set(err.message ?? 'Could not send the message');
+    }
+  }
+
   protected async send(): Promise<void> {
     const text = this.text().trim();
     if (!text || this.sending()) return;
     const editingId = this.editing();
+    if (!editingId) {
+      void this.sendNew(text, true); // shown at once, confirmed when the server answers
+      return;
+    }
     this.sending.set(true);
     this.error.set(null);
     try {
@@ -475,10 +519,6 @@ export class Chat {
         const changed = await this.chat.edit(this.friendId, editingId, text, this.messages().find((m) => m.id === editingId)); // a locked message stays locked, with the same key
         this.messages.update((list) => list.map((m) => (m.id === editingId ? changed : m)));
         this.editing.set(null);
-      } else {
-        const message = await this.chat.send(this.friendId, text, this.ctx.pokes());
-        this.ctx.poke.set(false);
-        this.messages.update((list) => [...list, message]);
       }
       this.text.set('');
       this.emojiOpen.set(false);
@@ -500,7 +540,7 @@ export class Chat {
 
   /** The panel sent a file: the message is in the feed, the panel closes. */
   protected attached(message: ChatItem): void {
-    this.messages.update((list) => [...list, message]);
+    this.addOnce(message);
     this.attachKind.set(null);
     this.scrollDown();
   }
@@ -509,19 +549,8 @@ export class Chat {
   protected async sendQuick(text: string): Promise<void> {
     this.menuOpen.set(false);
     this.menuPinned = false;
-    if (this.sending() || this.editing()) return;
-    this.sending.set(true);
-    this.error.set(null);
-    try {
-      const message = await this.chat.send(this.friendId, text, this.ctx.pokes());
-      this.ctx.poke.set(false);
-      this.messages.update((list) => [...list, message]);
-      this.scrollDown();
-    } catch (err: any) {
-      this.error.set(err.message ?? 'Could not send the message');
-    } finally {
-      this.sending.set(false);
-    }
+    if (this.editing()) return;
+    void this.sendNew(text, false);
   }
 
   /** The field grew or shrank with what was typed. */

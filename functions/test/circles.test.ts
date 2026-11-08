@@ -1,6 +1,6 @@
 import { FieldValue, getFirestore } from "firebase-admin/firestore";
 import { beforeEach, describe, expect, it } from "vitest";
-import { User, connect, seedPool } from "./helpers";
+import { User, connect, contactOf, seedPool } from "./helpers";
 
 /**
  * Everything happens in the default circle for now, but the stored data already says which circle each thing belongs to, so more circles
@@ -211,6 +211,22 @@ describe("a friend sees how I show in the circle we share", () => {
     await theirs.update({ moodChangedAt: FieldValue.delete() });
     await pool[0].raw("put", "/circles/default/profile", { mood: 2 }).expect(200);
     expect((await theirs.get()).data()?.moodChangedAt).toBeDefined();
+  });
+});
+
+describe("the name of a friend who asked me", () => {
+  it("is the name they have in that circle (not the one of their account), and follows when they change it", async () => {
+    await pool[0].raw("put", "/profile", { name: "Alex" }).expect(200);
+    await pool[0].raw("post", "/circles", { type: "work" }).expect(201);
+    await pool[0].raw("put", "/circles/work/profile", { name: "Alex Berg" }).expect(200);
+    await pool[0].raw("post", "/circles/work/friends", contactOf(pool[1].p, "email")).expect(201);
+    await pool[1].raw("post", "/notifications/check").set("X-Circle", "work").expect(200);
+
+    const list = async () => (await pool[1].raw("get", "/circles/work/friends").expect(200)).body.friends as { name: string }[];
+    expect((await list()).map((f) => f.name)).toEqual(["Alex Berg"]);
+
+    await pool[0].raw("put", "/circles/work/profile", { name: "Alex B" }).expect(200);
+    expect((await list()).map((f) => f.name)).toEqual(["Alex B"]);
   });
 });
 
