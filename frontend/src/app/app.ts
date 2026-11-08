@@ -3,6 +3,7 @@ import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { UiPreferencesService } from './core/ui-preferences';
 import { BottomNav } from './bottom-nav/bottom-nav';
 import { CircleSwitch } from './circle-switch/circle-switch';
+import { OwnKeyPrompt } from './own-key-prompt/own-key-prompt';
 import { AndroidChannelsService } from './core/android-channels.service';
 import { AppUpdateService } from './core/app-update.service';
 import { AuthService } from './core/auth.service';
@@ -40,7 +41,7 @@ function mediaReturn(url: string | null): string | null {
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, BottomNav, CircleSwitch],
+  imports: [RouterOutlet, BottomNav, CircleSwitch, OwnKeyPrompt],
   templateUrl: './app.html'
 })
 export class App {

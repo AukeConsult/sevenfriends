@@ -15,7 +15,7 @@ const uidOf = (res: { locals: Record<string, unknown> }) => (res.locals.token as
 export const keysRouter = Router();
 keysRouter.use(requireAuth);
 
-const publishedOf = (id: string, data: FirebaseFirestore.DocumentData): PublishedKey => ({
+export const publishedOf = (id: string, data: FirebaseFirestore.DocumentData): PublishedKey => ({
   id,
   fingerprint: data.fingerprint as string,
   label: (data.label as string | undefined) ?? "",
@@ -83,7 +83,9 @@ keysRouter.post(
     }
     const ref = keyCol(uid).doc(id);
     const batch = getFirestore().batch();
-    batch.set(ref, already ? { label } : { publicKey: key, fingerprint, label, revoked: false, createdAt: FieldValue.serverTimestamp() }, { merge: true });
+    // `ownShared`: a key that is the first of the person has everything it needs; a key added next to another one waits until a device of the same person allows it (own-recovery.ts)
+    const first = !existing.docs.some((d) => d.data().revoked !== true);
+    batch.set(ref, already ? { label } : { publicKey: key, fingerprint, label, revoked: false, ownShared: first, createdAt: FieldValue.serverTimestamp() }, { merge: true });
     if (backup) batch.set(keyBackupDoc(uid), { ...backup, savedAt: FieldValue.serverTimestamp() });
     await batch.commit();
     // the answer is what is stored (read back), not what was sent

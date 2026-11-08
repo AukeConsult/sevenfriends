@@ -75,7 +75,7 @@ describe("recovery of the old messages", () => {
     await pool[0].raw("post", recovery(s.id)).expect(201);
     await pool[1].raw("post", recovery(s.id, "/approve")).expect(200);
     const todo = (await pool[1].raw("get", recovery(s.id, "/todo?part=box")).expect(200)).body;
-    expect(todo.items).toEqual([{ id: "file1", wraps: [expect.objectContaining({ uid: s.u1, keyId: s.key1 })] }]);
+    expect(todo.items).toEqual([{ id: "file1", wraps: [expect.objectContaining({ uid: s.u1, keyId: s.key1 })], missing: [s.newKey] }]);
     await pool[1].raw("post", recovery(s.id, "/wraps"), { part: "box", items: [{ id: "file1", wraps: [wrap(s.u0, s.newKey)] }] }).expect(200);
     const item = (await getFirestore().collection("safebox").doc(s.id).collection("items").doc("file1").get()).data();
     expect(item?.enc.wraps).toHaveLength(3);
