@@ -35,13 +35,8 @@ export class AddFriend {
   protected readonly invite = inject(InviteLinkService);
   private readonly user = inject(AuthService).user;
 
-  /** the link to send: the welcome page, which says who invited (my email or phone number, as in every friend link) */
-  private readonly link = computed(() => {
-    const me = this.user();
-    const contact = me?.email ?? me?.phoneNumber;
-    // the link says which circle it invites into: the welcome page of that circle is shown, and the request goes to it
-    return circleLink(this.circleType, contact ? `from=${encodeURIComponent(contact)}` : '');
-  });
+  /** the link to send: the welcome page of the circle with my invite code (never my email address or phone number) */
+  private readonly link = computed(() => this.invite.link() ?? circleLink(this.circleType, ''));
   /** set when the person has no account yet: who it was for, and the link to send */
   protected readonly result = signal<{ to: string; link: string } | null>(null);
 
@@ -107,6 +102,7 @@ export class AddFriend {
         if (this.embedded()) this.closed.emit(); // has an account: the request is with them already
         else await this.router.navigate([this.backTo], { queryParams: this.backParams });
       } else {
+        await this.invite.load();
         this.result.set({ to: created.name || created.email || created.phone || 'This person', link: this.link() });
       }
     } catch (err: any) {

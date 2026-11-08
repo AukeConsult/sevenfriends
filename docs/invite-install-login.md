@@ -48,7 +48,7 @@ Without code signing: Windows SmartScreen warns on the first start; the Android 
 ## 4. Invitations today (built)
 Two kinds of link, both opened as the front page of the website:
 - `/welcome/<circle>?invite=<code>`: the person's own code (made on the server the first time: `GET /invite/code`; shown on the profile page and on Add a friend).
-- `/welcome/<circle>?from=<email or phone number>`: a link to a known contact (the Home page card "Invite people with a link").
+- `/welcome/<circle>?from=<email or phone number>`: the older form, which is still read when opened but is no longer made anywhere (the Home page card, Add a friend and the invitation email all use `?invite=<code>`).
 
 What happens (`core/friend-link.service.ts`):
 1. At the start of the app the link is read from the address and **removed from the address bar** (`capture()`), and kept in the preferences as `pendingFriend`

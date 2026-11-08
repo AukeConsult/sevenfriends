@@ -1,8 +1,6 @@
-import { circleLink } from '../core/friend-link.service';
 import { Component, computed, inject } from '@angular/core';
 import { ActiveCircleService } from '../core/active-circle.service';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../core/auth.service';
 import { FriendsService } from '../core/friends.service';
 import { InstallService } from '../core/install.service';
 import { InviteLinkService } from '../core/invite-link.service';
@@ -17,10 +15,8 @@ import { HomeTop } from '../home-top/home-top';
 export class Share {
   private readonly circle = inject(ActiveCircleService);
   protected readonly w = this.circle.words;
-  private readonly circleType = this.circle.type;
   protected readonly install = inject(InstallService);
   protected readonly invite = inject(InviteLinkService);
-  private readonly user = inject(AuthService).user;
   private readonly friends = inject(FriendsService);
   private readonly router = inject(Router);
 
@@ -35,10 +31,10 @@ export class Share {
   /** seats still free (the invitation is most useful then) */
   protected readonly freeSeats = computed(() => 7 - this.friends.awake().length);
 
-  /** the link to hand out: whoever opens it, signs in and confirms sends ME a friend request (my email, or my phone number without an email) */
-  protected readonly friendLink = computed(() => {
-    const me = this.user();
-    const contact = me?.email ?? me?.phoneNumber;
-    return contact ? circleLink(this.circleType, `from=${encodeURIComponent(contact)}`) : null;
-  });
+  /** the link to hand out: whoever opens it, signs in and confirms sends ME a friend request (my invite code, never my email address or phone number) */
+  protected readonly friendLink = this.invite.link;
+
+  constructor() {
+    void this.invite.load();
+  }
 }
