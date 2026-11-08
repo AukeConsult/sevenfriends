@@ -46,6 +46,31 @@ export class Encryption {
     void this.own.check();
   }
 
+  protected readonly severalKeys = computed(() => this.keys.published().filter((k) => !k.revoked).length > 1);
+
+  /** how many messages and files are still locked for the key of this device (null = not checked) */
+  protected readonly locked = signal<{ messages: number; files: number } | null>(null);
+
+  protected async checkLocked(): Promise<void> {
+    const id = this.keys.thisKeyId();
+    if (!id) return;
+    this.locked.set(null);
+    try {
+      this.locked.set(await this.own.status(id));
+    } catch (err: any) {
+      this.allowNote.set(err?.message || 'That did not work. Try again.');
+    }
+  }
+
+  protected async trustThis(): Promise<void> {
+    this.allowNote.set(null);
+    try {
+      await this.own.trustThisDevice();
+    } catch (err: any) {
+      this.allowNote.set(err?.message || 'That did not work. Try again.');
+    }
+  }
+
   protected isWaiting(key: PublishedKey): boolean {
     return this.own.waiting().some((k) => k.id === key.id);
   }

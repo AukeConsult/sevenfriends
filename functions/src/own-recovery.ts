@@ -146,6 +146,29 @@ ownRecoveryRouter.post(
   }),
 );
 
+/** How many of my messages and files have no copy for a key. */
+async function countLacking(uid: string, keyId: string): Promise<{ messages: number; files: number }> {
+  const lacking = (docs: FirebaseFirestore.QueryDocumentSnapshot[]) => docs.filter((d) => d.data().enc && !hasCopyFor(d.data().enc, keyId)).length;
+  const messages = lacking((await messageCol(uid).select("enc").get()).docs);
+  let files = 0;
+  for (const connectionId of await myConnections(uid)) files += lacking((await safeboxItems(connectionId).select("enc").get()).docs);
+  return { messages, files };
+}
+
+/** `?key=<one of my keys in use>`: how many messages and files are still locked for it (no copy of their key for it). */
+ownRecoveryRouter.get(
+  "/status",
+  asyncHandler(async (req, res) => {
+    const me = uidOf(res);
+    const key = (await myKeys(me)).find((k) => k.key.id === req.query.key);
+    if (!key) {
+      res.status(409).json({ error: "That key is not in use" });
+      return;
+    }
+    res.json(await countLacking(me, key.key.id));
+  }),
+);
+
 /** `{ key }`: this device has been through everything. The key is marked allowed only when nothing of mine lacks a copy for it any more. */
 ownRecoveryRouter.post(
   "/done",
@@ -156,14 +179,34 @@ ownRecoveryRouter.post(
       res.status(409).json({ error: "That key is not waiting for access" });
       return;
     }
-    const lacking = async (docs: FirebaseFirestore.QueryDocumentSnapshot[]) => docs.filter((d) => d.data().enc && !hasCopyFor(d.data().enc, target.id)).length;
-    let missing = await lacking((await messageCol(me).select("enc").get()).docs);
-    for (const connectionId of await myConnections(me)) missing += await lacking((await safeboxItems(connectionId).select("enc").get()).docs);
+    const { messages, files } = await countLacking(me, target.id);
+    const missing = messages + files;
     if (missing) {
       res.status(409).json({ error: `${missing} messages or files still have no copy for that key.`, missing });
       return;
     }
     await keyCol(me).doc(target.id).update({ ownShared: true, ownSharedAt: FieldValue.serverTimestamp() });
+    res.json({ ok: true });
+  }),
+);
+
+/**
+ * `{ key }`: the person says this device's key opens their old messages and files (the automatic "oldest key" guess was wrong, for instance because that device was
+ * reinstalled). This key becomes the shared one and every other key in use waits. Nothing is lost: a device that cannot open an item skips it, and a key is only
+ * marked allowed when nothing lacks a copy.
+ */
+ownRecoveryRouter.post(
+  "/trust",
+  asyncHandler(async (req, res) => {
+    const me = uidOf(res);
+    const keys = await myKeys(me);
+    if (!keys.some((k) => k.key.id === req.body?.key)) {
+      res.status(409).json({ error: "That key is not in use" });
+      return;
+    }
+    const batch = getFirestore().batch();
+    for (const k of keys) batch.update(keyCol(me).doc(k.key.id), { ownShared: k.key.id === req.body.key });
+    await batch.commit();
     res.json({ ok: true });
   }),
 );

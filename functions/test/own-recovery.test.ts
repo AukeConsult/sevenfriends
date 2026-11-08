@@ -77,4 +77,19 @@ describe("a key of mine is allowed by another device of mine", () => {
     await pool[0].raw("post", own("/wraps"), { key: s.phone, part: "box", items: [{ id: "x", connectionId: "somebody-elses", wrap: wrap(s.u0, s.phone) }] }).expect(400);
     await pool[2].raw("get", own(`/todo?key=${s.phone}&part=messages`)).expect(409); // another person has no such key
   });
+
+  it("a person can say which device works: that key helps, the others wait", async () => {
+    const s = await story();
+    await pool[0].raw("post", own("/trust"), { key: "nope" }).expect(409);
+    await pool[0].raw("post", own("/trust"), { key: s.phone }).expect(200);
+    expect((await pool[0].raw("get", own(`/pending?me=${s.phone}`)).expect(200)).body).toMatchObject({ eligible: true, keys: [expect.objectContaining({ id: s.browser })] });
+    expect((await pool[0].raw("get", own(`/pending?me=${s.browser}`)).expect(200)).body).toEqual({ eligible: false, keys: [] });
+  });
+
+  it("tells how many messages and files are still locked for a key", async () => {
+    const s = await story();
+    expect((await pool[0].raw("get", own(`/status?key=${s.phone}`)).expect(200)).body).toEqual({ messages: 1, files: 0 });
+    expect((await pool[0].raw("get", own(`/status?key=${s.browser}`)).expect(200)).body).toEqual({ messages: 0, files: 0 });
+    await pool[0].raw("get", own("/status?key=nope")).expect(409);
+  });
 });

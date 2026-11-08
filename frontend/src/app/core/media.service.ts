@@ -113,7 +113,9 @@ export class MediaService {
   /** The conversation tells which files are locked (the locked message, with my copies of its key): they are opened here when they are read. */
   registerLocked(friendId: string, ownerId: string, objectId: string, enc: MessageEnc): void {
     const known = this.lockedFiles();
-    if (known.has(`${ownerId}/${objectId}`)) return;
+    const before = known.get(`${ownerId}/${objectId}`);
+    // a newer copy of the message with more key copies (after a recovery) replaces the old one, so the file opens with it
+    if (before && before.enc.wraps.length >= enc.wraps.length) return;
     known.set(`${ownerId}/${objectId}`, { friendId, enc });
     if (!this.storing) {
       this.storing = true;

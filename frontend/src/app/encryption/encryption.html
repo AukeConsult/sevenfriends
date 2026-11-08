@@ -16,9 +16,27 @@
       </div>
       @if (advanced()) {
         <h2 class="sf-section-title m-0 mt-2">Your devices</h2>
+        <div class="d-flex flex-wrap align-items-center gap-2">
+          <button type="button" class="btn btn-light btn-sm" (click)="checkLocked()">Check what is still locked here</button>
+          @if (locked(); as l) {
+            <span class="small">
+              @if (!l.messages && !l.files) { Everything can be opened on this device. }
+              @else { {{ l.messages }} messages and {{ l.files }} files are still locked for this device. Tap Allow on a device that opens them, or ask your friend to help from the Recovery page. }
+            </span>
+          }
+        </div>
         @if (allowNote()) { <p class="small m-0">{{ allowNote() }}</p> }
         @if (waitingHere()) {
           <p class="small text-secondary m-0">This device cannot open your old messages yet. Open Seven Friends on your first device (the one with your oldest key) and tap Allow here under Advanced, or ask your friend to help from the Recovery page.</p>
+        }
+        @if (severalKeys() && own.waiting().length === 0) {
+          <details class="sf-expand sf-expand-quiet">
+            <summary>This device opens my old messages</summary>
+            <div class="vstack gap-2 mt-2">
+              <p class="small text-secondary m-0">Use this when this device can read your old messages, but no Allow button shows. It then gives your other devices access.</p>
+              <button type="button" class="btn btn-outline-primary btn-sm align-self-start" (click)="trustThis()">Use this device to give the others access</button>
+            </div>
+          </details>
         }
         <ul class="sf-list">
           @for (key of devices(); track key.id) {
@@ -28,7 +46,7 @@
                   @if (key.id === keys.thisKeyId()) { <span class="badge rounded-pill text-bg-success">This device</span> }
                   @if (key.revoked) { <span class="badge rounded-pill text-bg-secondary">Removed</span> }
                 </span>
-                <small>{{ key.createdAt | date: 'd MMM yyyy' }} · {{ short(key) }}</small>
+                <small>{{ key.createdAt | date: 'd MMM yyyy HH:mm:ss' }} · {{ short(key) }}</small>
               </span>
               @if (isWaiting(key)) {
                 <span class="small text-secondary w-100">Waiting for access to your old messages and files.</span>

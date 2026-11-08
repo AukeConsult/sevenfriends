@@ -30,6 +30,19 @@ export class OwnRecoveryService {
     }
   }
 
+  /** How many messages and files are still locked for a key of mine. */
+  status(keyId: string): Promise<{ messages: number; files: number }> {
+    return this.api.request(`/own-recovery/status?key=${keyId}`);
+  }
+
+  /** The person says this device's key opens their old messages and files: it becomes the one that gives the others access. */
+  async trustThisDevice(): Promise<void> {
+    const mine = await myDeviceKey(this.auth.user()?.uid);
+    if (!mine) throw new Error('This device has no key.');
+    await this.api.request<unknown>('/own-recovery/trust', { method: 'POST', body: JSON.stringify({ key: mine.keyId }) });
+    await this.check();
+  }
+
   /** Gives `target` its copies of every message and file key of mine (100 at a time). Returns how many were done and how many this device could not open. */
   async allow(target: PublishedKey, progress: (done: number) => void): Promise<{ done: number; skipped: number }> {
     const mine = await myDeviceKey(this.auth.user()?.uid);
