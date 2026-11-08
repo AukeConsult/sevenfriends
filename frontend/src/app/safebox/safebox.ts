@@ -1,6 +1,8 @@
 import { DatePipe } from '@angular/common';
 import { Component, DestroyRef, computed, effect, inject, input, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { KeysService } from '../core/keys.service';
+import { RecoveryHint } from '../recovery-hint/recovery-hint';
 import { FriendsService } from '../core/friends.service';
 import { formatBytes, prepareImage } from '../core/image';
 import { SafeboxService } from '../core/safebox.service';
@@ -40,7 +42,7 @@ export class SafeboxThumb {
  */
 @Component({
   selector: 'app-safebox',
-  imports: [DatePipe, RouterLink, SafeboxThumb],
+  imports: [DatePipe, RouterLink, SafeboxThumb, RecoveryHint],
   templateUrl: './safebox.html',
 })
 export class Safebox {
@@ -142,6 +144,12 @@ export class Safebox {
   }
 
   /** the files that are stored unencrypted */
+  private readonly deviceKeys = inject(KeysService);
+  /** true when a locked file has no copy for the key of this device */
+  protected readonly shutItems = computed(() => {
+    const mine = this.deviceKeys.thisKeyId();
+    return !!mine && this.items().some((item) => item.enc && !item.enc.wraps.some((w) => w.keyId === mine));
+  });
   protected readonly plainItems = computed(() => this.items().filter((item) => !item.enc));
   /** the files being locked: how many are done, of how many (null = not running) */
   protected readonly encrypting = signal<{ done: number; total: number } | null>(null);

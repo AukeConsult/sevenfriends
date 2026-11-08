@@ -16,6 +16,10 @@
       </div>
       @if (advanced()) {
         <h2 class="sf-section-title m-0 mt-2">Your devices</h2>
+        @if (allowNote()) { <p class="small m-0">{{ allowNote() }}</p> }
+        @if (waitingHere()) {
+          <p class="small text-secondary m-0">This device cannot open your old messages yet. Open Seven Friends on your first device (the one with your oldest key) and tap Allow here under Advanced, or ask your friend to help from the Recovery page.</p>
+        }
         <ul class="sf-list">
           @for (key of devices(); track key.id) {
             <li class="sf-list-item flex-wrap gap-2">
@@ -26,6 +30,10 @@
                 </span>
                 <small>{{ key.createdAt | date: 'd MMM yyyy' }} · {{ short(key) }}</small>
               </span>
+              @if (isWaiting(key)) {
+                <span class="small text-secondary w-100">Waiting for access to your old messages and files.</span>
+                <button type="button" class="btn btn-primary btn-sm" (click)="allow(key)" [disabled]="allowing() !== null">{{ allowing() === key.id ? 'Giving access… ' + allowed() : 'Allow' }}</button>
+              }
               @if (!key.revoked && key.id !== keys.thisKeyId()) {
                 @if (removing() === key.id) {
                   <div class="sf-msg-actions w-100 justify-content-end">

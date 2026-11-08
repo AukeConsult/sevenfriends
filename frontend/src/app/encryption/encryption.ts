@@ -1,5 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, computed, inject, signal, viewChild } from '@angular/core';
+import { OwnRecoveryService } from '../core/own-recovery.service';
 import { KeySetup } from '../key-setup/key-setup';
 import { KeysService, RestoreResult } from '../core/keys.service';
 import { wordsFromText } from '../core/recovery-code';
@@ -16,6 +17,16 @@ export class Encryption {
   protected readonly advanced = signal(false);
   protected readonly keys = inject(KeysService);
   private readonly keySetup = viewChild.required(KeySetup);
+  protected readonly own = inject(OwnRecoveryService);
+  /** the key being given its copies now, and how far it got */
+  protected readonly allowing = signal<string | null>(null);
+  protected readonly allowed = signal(0);
+  protected readonly allowNote = signal<string | null>(null);
+  /** true when one of my keys in use is waiting for access and this device is not the one that can give it */
+  protected readonly waitingHere = computed(() => {
+    const inUse = this.keys.published().filter((k) => !k.revoked).sort((x, y) => (x.createdAt ?? '').localeCompare(y.createdAt ?? ''));
+    return inUse.length > 1 && inUse[0].id !== this.keys.thisKeyId() && this.own.waiting().length === 0;
+  });
 
   /** the recovery words are on the screen: nothing else on the page is offered meanwhile */
   protected readonly showingWords = computed(() => this.keySetup().showingWords());
@@ -30,6 +41,28 @@ export class Encryption {
 
   protected readonly typed = signal('');
   protected readonly restoreText = signal<string | null>(null);
+
+  constructor() {
+    void this.own.check();
+  }
+
+  protected isWaiting(key: PublishedKey): boolean {
+    return this.own.waiting().some((k) => k.id === key.id);
+  }
+
+  protected async allow(key: PublishedKey): Promise<void> {
+    this.allowing.set(key.id);
+    this.allowed.set(0);
+    this.allowNote.set(null);
+    try {
+      const result = await this.own.allow(key, (n) => this.allowed.set(n));
+      this.allowNote.set(result.skipped ? `${result.skipped} could not be opened on this device. Try again on the device where that key lives.` : 'Done. The other device can now open your old messages and files.');
+    } catch (err: any) {
+      this.allowNote.set(err?.message || 'That did not work. Try again.');
+    } finally {
+      this.allowing.set(null);
+    }
+  }
 
   protected short(key: PublishedKey): string {
     return key.fingerprint.slice(0, 16).replace(/(.{4})/g, '$1 ').trim();

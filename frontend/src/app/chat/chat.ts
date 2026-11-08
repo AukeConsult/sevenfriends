@@ -9,6 +9,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Component, DestroyRef, ElementRef, HostListener, computed, effect, inject, signal, untracked, viewChild } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Router, RouterLink } from '@angular/router';
+import { RecoveryHint } from '../recovery-hint/recovery-hint';
 import { ApiError } from '../core/api.service';
 import { localLink } from '../core/link-embed';
 import { ChatItem } from '../core/message-lock.service';
@@ -35,7 +36,7 @@ const SAFETY_REFRESH_MS = 30000;
 /** The message feed with one friend: /friends/:id (the id of the connection). */
 @Component({
   selector: 'app-chat',
-  imports: [AddMedia, PokeToggle, DatePipe, FriendAvatar, MediaAudio, MediaImage, MediaVideo, NgTemplateOutlet, RouterLink, Clearable],
+  imports: [AddMedia, PokeToggle, DatePipe, FriendAvatar, MediaAudio, MediaImage, MediaVideo, NgTemplateOutlet, RouterLink, Clearable, RecoveryHint],
   templateUrl: './chat.html',
 })
 export class Chat {
@@ -71,6 +72,7 @@ export class Chat {
   }
   protected readonly initials = initials;
   protected readonly messages = signal<ChatItem[]>([]);
+  protected readonly hasShut = computed(() => this.messages().some((m) => m.locked === 'shut'));
   /** false = oldest first (the default); true = newest first. Remembered on this device. */
   /** newest first? (a remembered choice, the same in every window; a refresh of the feed never changes it) */
   /** the Enter key sends the message (a preference) */
