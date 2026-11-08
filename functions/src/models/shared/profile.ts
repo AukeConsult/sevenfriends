@@ -1,5 +1,17 @@
 import type { ProfileColorKey } from "./profile-color";
 
+/**
+ * How friends refer to a person in a sentence about them ("Has you on his sleep list"): chosen on the profile, shown to confirmed friends.
+ * Not chosen (null) is the neutral "their".
+ */
+export const PRONOUNS = ["he", "she"] as const;
+export type Pronoun = (typeof PRONOUNS)[number];
+
+/** The stored value when it is one of PRONOUNS, otherwise null (not chosen). */
+export function pronounKey(value: unknown): Pronoun | null {
+  return PRONOUNS.find((p) => p === value) ?? null;
+}
+
 /** My profile as the profile page edits it: name and phone number. */
 export type ProfileDetails = {
   name: string | null;
@@ -23,6 +35,8 @@ export type ProfileDetails = {
   mood: number | null;
   /** a short mood message (at most 60 characters), which confirmed friends see; null = none */
   moodMessage: string | null;
+  /** he or she, which confirmed friends see in sentences about this person; null = not chosen (they say "their") */
+  pronoun: Pronoun | null;
 };
 
 /** What GET /profile/picture returns: the uploaded picture as a data URL (a small JPEG / PNG / WebP), or null. */

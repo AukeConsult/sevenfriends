@@ -5,6 +5,7 @@ import { FriendAvatar } from '../friend-avatar/friend-avatar';
 import { FriendsService } from '../core/friends.service';
 import { countries } from '../core/countries';
 import { moodIcon, moodLabel } from '../core/moods';
+import { possessive } from '../core/pronoun';
 import { MessagesService } from '../core/messages.service';
 import { timeAgo } from '../core/time-ago';
 import { Friend, profileColorHex, profileColorInk } from '../models';
@@ -47,6 +48,7 @@ export class Sleeping {
   protected readonly expanded = signal<string | null>(null);
   private readonly countryNames = new Map(countries().map((c) => [c.code, c.name]));
   protected readonly moodIcon = moodIcon;
+  protected readonly possessive = possessive;
   protected readonly moodLabel = moodLabel;
 
   protected toggleProfile(friend: Friend): void {

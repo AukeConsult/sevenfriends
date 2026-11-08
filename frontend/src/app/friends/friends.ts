@@ -9,6 +9,7 @@ import { MessagesService } from '../core/messages.service';
 import { countries } from '../core/countries';
 import { moodIcon, moodLabel } from '../core/moods';
 import { presenceLabel } from '../core/presence';
+import { possessive } from '../core/pronoun';
 import { timeAgo } from '../core/time-ago';
 import { NotificationsService } from '../core/notifications.service';
 import { Friend, FriendSlot, profileColorHex, profileColorInk } from '../models';
@@ -85,6 +86,7 @@ export class Friends {
   }
 
   protected readonly moodIcon = moodIcon;
+  protected readonly possessive = possessive;
   protected readonly moodLabel = moodLabel;
 
   protected readonly loadError = signal<string | null>(null);

@@ -68,6 +68,21 @@ describe("the friend's country", () => {
   });
 });
 
+describe("the friend's pronoun", () => {
+  it("a confirmed friend shows it, a waiting one does not", async () => {
+    const id = await connect(u(0), u(1));
+    expect(await friendOf(u(0), id)).toMatchObject({ pronoun: null });
+    await u(1).raw("put", "/profile", { pronoun: "he" }).expect(200);
+    expect(await friendOf(u(0), id)).toMatchObject({ pronoun: "he" });
+    await u(1).raw("put", "/profile", { pronoun: null }).expect(200);
+    expect(await friendOf(u(0), id)).toMatchObject({ pronoun: null });
+
+    const pending = await u(0).add(u(2).p);
+    await u(2).raw("put", "/profile", { pronoun: "she" }).expect(200);
+    expect(await friendOf(u(0), pending.id)).toMatchObject({ pronoun: null });
+  });
+});
+
 describe("adding a friend without a name", () => {
   it("is fine with an email or a phone number: that is shown instead", async () => {
     const byEmail = await u(0).call("post", "/circles/default/friends", { email: "nobody@nowhere.test" }).expect(201);

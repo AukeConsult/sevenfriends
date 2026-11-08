@@ -7,6 +7,7 @@ import { MyAvatarService } from '../core/my-avatar.service';
 import { UiPreferencesService } from '../core/ui-preferences';
 import { profileColorHex, profileColorInk, profileColorSoft } from '../models';
 import { presenceLabel } from '../core/presence';
+import { possessive } from '../core/pronoun';
 import { RealtimeService } from '../core/realtime.service';
 import { FriendAvatar } from '../friend-avatar/friend-avatar';
 import { FriendContext } from './friend-context';
@@ -45,6 +46,7 @@ export class FriendPage {
 
   protected readonly presenceLabel = presenceLabel;
   protected readonly moodIcon = moodIcon;
+  protected readonly possessive = possessive;
   protected readonly moodLabel = moodLabel;
 
   /** the address now: the feed is `/friends/<id>`, anything longer (the safebox) is another page */

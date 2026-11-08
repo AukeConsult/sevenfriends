@@ -37,7 +37,7 @@ export class Profile {
   /** "New link…" asks first: the old link stops working */
   protected readonly confirmNewLink = signal(false);
 
-  protected readonly form = signal<ProfileDraft>({ name: '', phone: '', country: '', language: '' });
+  protected readonly form = signal<ProfileDraft>({ name: '', phone: '', country: '', language: '', pronoun: '' });
   protected readonly loading = signal(true);
   /** the seat icon (1-7) chosen as my own picture, when I have no photo; null = none */
   protected readonly icon = signal<number | null>(null);
@@ -237,7 +237,7 @@ export class Profile {
       this.icon.set(res.icon);
       this.color.set(res.color);
       this.picture.set(image);
-      this.form.set({ name: res.name ?? '', phone: res.phone ?? '', country: res.country ?? '', language: res.language ?? '' });
+      this.form.set({ name: res.name ?? '', phone: res.phone ?? '', country: res.country ?? '', language: res.language ?? '', pronoun: res.pronoun ?? '' });
     } catch (err: any) {
       this.loadFailed = true;
       this.state.set('error');
@@ -305,6 +305,7 @@ export class Profile {
             color: this.color(),
             country: sent.country || null,
             language: sent.language || null,
+            pronoun: sent.pronoun || null,
           }),
         });
         // show the cleaned-up values (for example a leading @ removed), unless the user typed on meanwhile

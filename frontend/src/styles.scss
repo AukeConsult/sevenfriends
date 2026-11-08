@@ -544,13 +544,13 @@ router-outlet + * { display: block; min-height: 100dvh; }
   &.sf-chosen { border-color: var(--sf-primary); background: var(--bs-primary-bg-subtle); }
   &:focus-visible { outline: 2px solid var(--sf-primary); outline-offset: 2px; }
 }
-.sf-choices:has(.sf-choice-round) { gap: 0.75rem; } // more room between the big icons
+.sf-choices:has(.sf-choice-round) { gap: 0.25rem; } // more room between the big icons
 .sf-choice-round {
   padding: 0.25rem; // a round picture to tap (the icons of the profile): big, so a finger hits the right one
   border-color: transparent;
   border-radius: 50%;
   line-height: 0;
-  img { width: 3.75rem; height: 3.75rem; border-radius: 50%; }
+  img { width: clamp(2.5rem, 14vw, 3.25rem); height: clamp(2.5rem, 14vw, 3.25rem); border-radius: 50%; }
   &.sf-chosen { background: none; }
 }
 
@@ -999,7 +999,18 @@ app-voice { display: contents; }
 // ---- Message feed: header buttons and the delete-several frame ----
 .sf-bar-actions { display: flex; margin-left: auto; }
 .sf-bar-actions .sf-icon-btn { margin: 0; }
-@media (max-width: 575.98px) { .sf-bar-actions .sf-tool-btn { min-width: 2.375rem; padding-inline: 0.0625rem; svg { width: 20px; height: 20px; } } .sf-bar-actions .sf-more { margin-inline-end: -1rem; } } // the three dots reach further to the right, nearer the edge. The buttons in a header are a little narrower and smaller on a phone, so the name has more room
+@media (max-width: 575.98px) { .sf-bar-actions .sf-tool-btn { min-width: 2.375rem; padding-inline: 0.0625rem; svg { width: 20px; height: 20px; } } } // The buttons in a header are a little narrower and smaller on a phone, so the name has more room
+// the friend header on a phone has two rows: the picture, the name with its status and the three dots on top; the four pages as tabs with a word under each icon below
+.sf-tool-label, .sf-bar-status { display: none; }
+@media (max-width: 575.98px) {
+  .sf-bar:has(.sf-bar-actions) { flex-wrap: wrap; padding-bottom: 0.25rem; }
+  .sf-bar:has(.sf-bar-actions) .sf-bar-text { flex: 1 1 0; }
+  .sf-bar-status { display: block; font-size: var(--sf-fs-description); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .sf-bar > .sf-more { order: 1; margin-inline-start: auto; margin-inline-end: -1rem; }
+  .sf-bar .sf-bar-actions { order: 2; flex: 0 0 100%; margin-inline-start: 0; padding-inline-start: 0.5rem; justify-content: space-around; }
+  .sf-bar .sf-bar-actions .sf-tool-btn { min-width: 4rem; padding-inline: 0.5rem; }
+  .sf-bar .sf-bar-actions .sf-tool-label { display: block; font-size: 0.7rem; line-height: 1.2; white-space: nowrap; }
+}
 .sf-cleanup-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem 0.75rem; } // the count on the left, the button on the right, on one line
 .sf-cleanup { display: flex; flex-direction: column; gap: 0.5rem; padding: 0.75rem var(--sf-gutter); background: var(--sf-card); border-bottom: 1px solid var(--sf-border); }
 .sf-doomed .sf-bubble { outline: 2px dashed #dc2626; outline-offset: 2px; opacity: 0.7; } // marked by the delete frame: will be deleted
@@ -1222,7 +1233,7 @@ nav.sf-tabs {
   .sf-choices:has(.sf-choice-round) { gap: 0.75rem 1rem; }
 }
 .sf-choices-compact:has(.sf-choice-round) { gap: 0.25rem; }
-.sf-choices-compact .sf-choice-round img { width: clamp(2.75rem, calc((100vw - 2 * var(--sf-gutter)) / 4 - 1.25rem), 4rem); height: clamp(2.75rem, calc((100vw - 2 * var(--sf-gutter)) / 4 - 1.25rem), 4rem); } // the icon choices of the setup wizard: smaller, about four in a row, growing a little with the width of the view (the Profile page keeps the big ones)
+.sf-choices-compact .sf-choice-round img { width: clamp(2.75rem, calc((100vw - 2 * var(--sf-gutter)) / 4 - 1.25rem), 4rem); height: clamp(2.75rem, calc((100vw - 2 * var(--sf-gutter)) / 4 - 1.25rem), 4rem); } // the icon choices of the setup wizard and the Profile page: smaller, about four in a row, growing a little with the width of the view (the Profile page keeps the big ones)
 
 // ---- Phone: the smiley and the paperclip float over the right edge of the feed (a see-through yellow capsule just above the message field), so the field has the whole width ----
 :root { --sf-float-gap: 0px; }

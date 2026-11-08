@@ -13,7 +13,7 @@ import {
   circleIdOf,
 } from "./constants";
 import { invitesSentToday, queueInvite } from "./outbox";
-import { Friend, FriendInvite, MediaRef, FriendStatus, NewFriend, ProfilePicture, profileColorKey } from "./models";
+import { Friend, FriendInvite, MediaRef, FriendStatus, NewFriend, ProfilePicture, profileColorKey, pronounKey } from "./models";
 import { circleCol, friendRequestCol, messageCol, missingIndex, userFields } from "./paths";
 import { readAvatar } from "./avatar";
 import { deleteObjects } from "./sf-cache";
@@ -73,6 +73,7 @@ function toJson(doc: FirebaseFirestore.DocumentSnapshot): Friend {
     country: null, // filled in by withUnverified (confirmed friends only)
     mood: null, // filled in by withUnverified (confirmed friends only)
     moodMessage: null,
+    pronoun: null,
     presence: "offline", // filled in by withUnverified (confirmed friends only)
     icon: null, // filled in by withUnverified (confirmed friends only)
     color: null,
@@ -105,7 +106,7 @@ async function withUnverified(friend: Friend, entry: FirebaseFirestore.DocumentD
   const other = (entry.linkedUid as string | null | undefined) ?? (entry.signaledUids as string[] | undefined)?.[0];
   if (!other) return friend;
   // only what is shown here: the verification, the mood, the presence and the picture of the other person
-  const account = await userFields(other, "emailLower", "emailVerified", "phoneKey", "verifiedPhone", "country", "mood", "moodMessage", "presence", "lastSeenAt", "profileIcon", "profileColor", "profilePictureAt", "avatarObjectId", "displayName");
+  const account = await userFields(other, "emailLower", "emailVerified", "phoneKey", "verifiedPhone", "country", "mood", "moodMessage", "pronoun", "presence", "lastSeenAt", "profileIcon", "profileColor", "profilePictureAt", "avatarObjectId", "displayName");
   const unverified = account && entry.trusted !== true ? unverifiedDetails(account) : []; // "this is really them" (trusted) hides the warning
   // the mood is for confirmed friends only
   const mood =
@@ -114,13 +115,14 @@ async function withUnverified(friend: Friend, entry: FirebaseFirestore.DocumentD
           country: (account.country as string | null | undefined) ?? null,
           mood: Number.isInteger(account.mood) ? (account.mood as number) : null,
           moodMessage: (account.moodMessage as string | null | undefined) ?? null,
+          pronoun: pronounKey(account.pronoun),
           presence: presenceOf(account),
           icon: Number.isInteger(account.profileIcon) ? (account.profileIcon as number) : null,
           color: profileColorKey(account.profileColor),
           pictureAt: iso(account.profilePictureAt),
           pictureId: (account.avatarObjectId as string | null | undefined) ?? null,
         }
-      : { country: null, mood: null, moodMessage: null, presence: "offline" as const, icon: null, color: null, pictureAt: null, pictureId: null };
+      : { country: null, mood: null, moodMessage: null, pronoun: null, presence: "offline" as const, icon: null, color: null, pictureAt: null, pictureId: null };
   // I did not give a name: a confirmed friend is shown by the name of their account
   const name = entry.nameGiven === false && friend.status === "confirmed" ? ((account?.displayName as string | undefined) || friend.name) : friend.name;
   const lastSpokenAt = friend.lastSpokenAt ?? (friend.status === "confirmed" ? await lastSpoken(uid, friend.id) : null);

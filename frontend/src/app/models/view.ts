@@ -12,7 +12,7 @@ export interface FriendSlot {
 export type FriendDraft = { name: string; email: string; phone: string; message: string };
 
 /** The profile form: name, phone, country and language (autosaved). */
-export type ProfileDraft = { name: string; phone: string; country: string; language: string };
+export type ProfileDraft = { name: string; phone: string; country: string; language: string; pronoun: string };
 
 /** Where the autosave of the profile page is: nothing yet / changed / being saved / saved / failed. */
 export type SaveState = 'idle' | 'dirty' | 'saving' | 'saved' | 'error';

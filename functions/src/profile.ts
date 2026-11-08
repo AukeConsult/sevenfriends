@@ -5,7 +5,7 @@ import { asyncHandler, requireAuth } from "./auth";
 import { touchSync } from "./sync";
 import { parsePicture, readAvatar, removeAvatar, saveAvatar } from "./avatar";
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAX_FRIENDS, MAX_MOOD_MESSAGE, MAX_NAME_LENGTH, MOOD_COUNT } from "./constants";
-import { ProfileDetails, ProfilePicture, profileColorKey } from "./models";
+import { ProfileDetails, ProfilePicture, profileColorKey, pronounKey } from "./models";
 import { circleCol, userDoc } from "./paths";
 import { isLanguage } from "./models/shared/languages";
 import { PHONE_RE, isCountry, phoneKey, presenceOf, text } from "./validation";
@@ -29,6 +29,7 @@ function detailsOf(data: Record<string, unknown>): ProfileDetails {
     language: (data.language as string | null | undefined) ?? null,
     mood: Number.isInteger(data.mood) ? (data.mood as number) : null,
     moodMessage: (data.moodMessage as string | null | undefined) ?? null,
+    pronoun: pronounKey(data.pronoun),
   };
 }
 
@@ -100,6 +101,13 @@ profileRouter.put(
       return;
     }
 
+    // he or she (what friends read in a sentence about me); left out = unchanged, null = not chosen
+    const pronounGiven = "pronoun" in body;
+    if (pronounGiven && body.pronoun !== null && !pronounKey(body.pronoun)) {
+      res.status(400).json({ error: "The pronoun must be he or she" });
+      return;
+    }
+
     const ref = userDoc(uidOf(res));
     const before = (await ref.get()).data();
     const verifiedPhone = (before?.verifiedPhone as string | null | undefined) ?? null;
@@ -113,6 +121,7 @@ profileRouter.put(
         ...(colorGiven ? { profileColor: body.color } : {}),
         ...(countryGiven ? { country } : {}),
         ...(languageGiven ? { language } : {}),
+        ...(pronounGiven ? { pronoun: body.pronoun } : {}),
         // only what the request carries is changed: a save that leaves the phone out keeps it
         ...(phoneGiven || verifiedPhone
           ? { phone: verifiedPhone ?? phone, phoneKey: phoneKey(verifiedPhone ?? phone) } // reachable by this number, verified or not
@@ -122,7 +131,7 @@ profileRouter.put(
       { merge: true },
     );
     // confirmed friends see my icon: tell their apps
-    if ((iconGiven && (body.icon ?? null) !== (before?.profileIcon ?? null)) || (colorGiven && (body.color ?? null) !== (before?.profileColor ?? null))) await touchFriends(uidOf(res));
+    if ((iconGiven && (body.icon ?? null) !== (before?.profileIcon ?? null)) || (colorGiven && (body.color ?? null) !== (before?.profileColor ?? null)) || (pronounGiven && (body.pronoun ?? null) !== (before?.pronoun ?? null))) await touchFriends(uidOf(res));
     await touchSync(uidOf(res), "profileAt");
     res.json(detailsOf((await ref.get()).data() ?? {}));
   }),

@@ -3,6 +3,7 @@ import { Component, inject } from '@angular/core';
 import { countries } from '../core/countries';
 import { moodIcon, moodLabel } from '../core/moods';
 import { presenceLabel } from '../core/presence';
+import { possessive } from '../core/pronoun';
 import { FriendAvatar } from '../friend-avatar/friend-avatar';
 import { FriendContext } from '../friend-page/friend-context';
 
@@ -19,6 +20,7 @@ export class FriendProfile {
   protected readonly ctx = inject(FriendContext);
   protected readonly presenceLabel = presenceLabel;
   protected readonly moodIcon = moodIcon;
+  protected readonly possessive = possessive;
   protected readonly moodLabel = moodLabel;
   private readonly countryNames = new Map(countries().map((c) => [c.code, c.name]));
 

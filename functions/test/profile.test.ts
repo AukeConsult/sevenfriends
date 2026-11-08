@@ -240,3 +240,21 @@ describe("the profile colour", () => {
     expect((await profile(u(0))).color).toBe("blue");
   });
 });
+
+describe("my pronoun", () => {
+  it("not chosen at first; he or she chosen, kept when left out, and removed", async () => {
+    expect((await profile(u(0))).pronoun).toBeNull();
+    expect((await u(0).raw("put", "/profile", { pronoun: "he" }).expect(200)).body.pronoun).toBe("he");
+    expect((await u(0).raw("put", "/profile", { country: "NO" }).expect(200)).body.pronoun).toBe("he"); // left out = unchanged
+    expect((await u(0).raw("put", "/profile", { pronoun: "she" }).expect(200)).body.pronoun).toBe("she");
+    expect((await u(0).raw("put", "/profile", { pronoun: null }).expect(200)).body.pronoun).toBeNull();
+    expect((await profile(u(1))).pronoun).toBeNull(); // only mine
+  });
+
+  it.each([["they"], ["He"], [""], [1], [true]])("refuses %j, and keeps the old one", async (bad) => {
+    await u(0).raw("put", "/profile", { pronoun: "she" }).expect(200);
+    const res = await u(0).raw("put", "/profile", { pronoun: bad });
+    expect(res.status).toBe(400);
+    expect((await profile(u(0))).pronoun).toBe("she");
+  });
+});

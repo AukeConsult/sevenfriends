@@ -1,3 +1,5 @@
+import type { Pronoun } from "./profile";
+
 /** pending until the other person confirms; rejected when they rejected the request. */
 export type FriendStatus = "pending" | "confirmed" | "rejected";
 
@@ -32,6 +34,8 @@ export interface Friend {
   mood: number | null;
   /** the friend's short mood message, shown for confirmed friends only; null = none */
   moodMessage: string | null;
+  /** how the friend is referred to in a sentence (he / she), shown for confirmed friends only; null = not chosen ("their") */
+  pronoun: Pronoun | null;
   /** the icon (1-7) the friend chose for themselves; null = none (then the seat icon is shown). Confirmed friends only. */
   icon: number | null;
   /** the colour the friend chose for their profile (a key of PROFILE_COLORS); null = none. Confirmed friends only. */

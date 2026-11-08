@@ -44,7 +44,7 @@
               </header>
               <div class="sf-body">
                 @if (lastSpoken(friend); as spoken) { <p class="sf-hint sf-spoken">{{ spoken }}</p> }
-                @if (friend.sleepsMe) { <p class="sf-hint sf-spoken">😴 {{ friend.name }} has you on their sleep list too</p> }
+                @if (friend.sleepsMe) { <p class="sf-hint sf-spoken">😴 {{ friend.name }} has you on {{ possessive(friend.pronoun) }} sleep list too</p> }
               </div>
               <!-- the buttons use the whole width of the card (not only the part under the name) and stay on one line -->
               @if (deleting() === friend.id) {

@@ -9,7 +9,7 @@
       <div>
         <h2 class="m-0">{{ f.name }}</h2>
         <p class="sf-hint m-0">{{ presenceLabel(f.presence) }}</p>
-        @if (f.sleepsMe) { <p class="sf-hint m-0">😴 Has you on their sleep list</p> }
+        @if (f.sleepsMe) { <p class="sf-hint m-0">😴 Has you on {{ possessive(f.pronoun) }} sleep list</p> }
       </div>
     </section>
 

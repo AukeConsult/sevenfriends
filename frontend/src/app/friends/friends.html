@@ -80,7 +80,7 @@
                 }
                 @if (friend.status === 'confirmed') {
                   <p class="sf-hint sf-spoken">{{ lastSpoken(friend) }}</p>
-                  @if (friend.sleepsMe) { <p class="sf-hint sf-spoken">😴 {{ friend.name }} has you on their sleep list</p> }
+                  @if (friend.sleepsMe) { <p class="sf-hint sf-spoken">😴 {{ friend.name }} has you on {{ possessive(friend.pronoun) }} sleep list</p> }
                 }
 
                 @if (friend.incoming && friend.status === 'pending') {
