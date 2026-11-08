@@ -1,6 +1,6 @@
 import { CollectionReference, DocumentData, FieldValue, Timestamp, Transaction, getFirestore } from "firebase-admin/firestore";
-import { ensureDefaultCircle } from "./circles";
-import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAX_FRIENDS } from "./constants";
+import { ensureCircle } from "./circles";
+import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAX_FRIENDS, circleIdOf } from "./constants";
 import { EnsureSeatArgs } from "./models";
 import { circleCol, friendRequestCol, userDoc } from "./paths";
 import { signalRefsOf } from "./signals";
@@ -136,15 +136,15 @@ export function ensureSeat(
  * shown only on the Pending page), and the requester is informed: their entry gets
  * `waitingForSeat: true`. When a seat frees up the flag is cleared again.
  */
-export async function placeWaitingRequests(uid: string): Promise<void> {
-  await ensureDefaultCircle(uid);
+export async function placeWaitingRequests(uid: string, circleId: string = DEFAULT_CIRCLE_ID): Promise<void> {
+  await ensureCircle(uid, circleId); // only the requests for this circle are placed: the app in it is blind to the others
   const db = getFirestore();
-  const myFriends = circleCol(uid).doc(DEFAULT_CIRCLE_ID).collection(FRIENDS_SUBCOLLECTION);
+  const myFriends = circleCol(uid).doc(circleId).collection(FRIENDS_SUBCOLLECTION);
 
   await assignMissingSeats(myFriends); // friends from before the seat numbers get theirs first
-  const snap = await friendRequestCol(uid).where("status", "==", "pending").select("seatFriendId", "createdAt").get();
+  const snap = await friendRequestCol(uid).where("status", "==", "pending").select("seatFriendId", "createdAt", "circleId").get();
   const waiting = snap.docs
-    .filter((d) => !d.data().seatFriendId)
+    .filter((d) => !d.data().seatFriendId && circleIdOf(d.data()) === circleId)
     .sort((a, b) => millis(a.data().createdAt) - millis(b.data().createdAt));
 
   for (const doc of waiting) {

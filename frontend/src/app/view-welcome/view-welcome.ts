@@ -18,13 +18,11 @@ export class ViewWelcome {
   private readonly sanitizer = inject(DomSanitizer);
   protected readonly active = inject(ActiveCircleService);
   protected readonly circles = CIRCLE_CHOICES;
-  /** the Home page of each circle, side by side (each frame is bound to its circle for as long as it is open, and remembers nothing) */
-  protected readonly homes = CIRCLE_CHOICES.map((c) => ({ ...c, src: this.sanitizer.bypassSecurityTrustResourceUrl(`/?circle=${c.type}`) }));
   protected readonly pages: { circle: string; path: string; title: string; note: string; src: SafeResourceUrl }[] = [
     { circle: 'default', path: '/welcome', title: 'Welcome', note: 'The normal first page' },
-    { circle: 'buddies', path: '/young1', title: 'Buddies 1', note: 'Close buddies only, seats in a row' },
-    { circle: 'buddies', path: '/young2', title: 'Buddies 2', note: 'Your people, stack and chat' },
-    { circle: 'buddies', path: '/young3', title: 'Buddies 3', note: 'Your inner circle' },
+    { circle: 'buddies', path: '/buddy1', title: 'Buddies 1', note: 'Close buddies only, seats in a row' },
+    { circle: 'buddies', path: '/buddy2', title: 'Buddies 2', note: 'Your people, stack and chat' },
+    { circle: 'buddies', path: '/buddy3', title: 'Buddies 3', note: 'Your inner circle' },
     { circle: 'work', path: '/work1', title: 'Work 1', note: 'Seven key business contacts' },
     { circle: 'work', path: '/work2', title: 'Work 2', note: 'Stay close to the people your work needs' },
     { circle: 'work', path: '/work3', title: 'Work 3', note: 'A private space per business relation' },
@@ -36,7 +34,6 @@ export class ViewWelcome {
   /** by default only what belongs to the circle this app is in (its welcome pages and its Home); "Show all circles" shows everything, to compare */
   protected readonly showAll = signal(false);
   protected readonly circleLabel = computed(() => CIRCLE_CHOICES.find((c) => c.id === this.active.id)?.label ?? '');
-  protected readonly visibleHomes = computed(() => this.homes.filter((h) => this.showAll() || h.id === this.active.id));
   protected readonly visiblePages = computed(() => this.pages.filter((p) => this.showAll() || p.circle === this.active.id));
 
   /** how to measure every frame again (the window got another size) */

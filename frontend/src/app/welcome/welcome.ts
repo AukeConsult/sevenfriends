@@ -6,6 +6,13 @@ import { InstallService } from '../core/install.service';
 import { WelcomeService } from '../core/welcome.service';
 import { SeatDots } from '../seat-dots/seat-dots';
 
+/** The welcome pages of each circle (the first circle has this page itself) */
+const CIRCLE_PAGES: Record<string, string[]> = {
+  buddies: ['/buddy1', '/buddy2', '/buddy3'],
+  work: ['/work1', '/work2', '/work3'],
+  family: ['/family1', '/family2', '/family3'],
+};
+
 /**
  * The first page for someone who has not installed the app on this device (public, shown before sign-in): the same top for
  * everybody (logo, the promise, the seven seats, three numbers and three reasons) and ONE install action for this platform: Android (the app file), iPhone / iPad (Add to
@@ -32,6 +39,13 @@ export class Welcome {
   protected readonly invited = computed(() => this.friend() !== null);
   /** who the link points to, when it says so (an email or a phone number) */
   protected readonly invitedBy = computed(() => this.friend()?.email ?? this.friend()?.phone ?? null);
+
+  constructor() {
+    // a link that invites into another circle shows the welcome page of that circle (one of its pages, picked by chance)
+    const circle = this.friend()?.circle;
+    const pages = circle ? CIRCLE_PAGES[circle] : undefined;
+    if (pages && !this.auth.user()) void this.router.navigateByUrl(pages[Math.floor(Math.random() * pages.length)], { replaceUrl: true });
+  }
 
   protected continueInBrowser(): void {
     this.welcome.continueInBrowser();

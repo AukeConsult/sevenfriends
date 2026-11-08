@@ -4,10 +4,11 @@ import { DecodedIdToken } from "firebase-admin/auth";
 import { DocumentReference, FieldValue, getFirestore } from "firebase-admin/firestore";
 import { getMessaging } from "firebase-admin/messaging";
 import { asyncHandler, requireAuth } from "./auth";
-import { PUSH_DEVICE_COLLECTION } from "./constants";
-import { pushDeviceCol, userFields } from "./paths";
+import { DEFAULT_CIRCLE_ID, PUSH_DEVICE_COLLECTION, circleIdOf, circleTypeOf } from "./constants";
+import { circleCol, pushDeviceCol, userFields } from "./paths";
 import { noticesOf } from "./preferences";
 import { deleteRefs } from "./signals";
+import { circleProfileOf, activeCircleOf } from "./circle-profile";
 
 /**
  * Push notifications: the phone's or browser's own notification system wakes the device (Firebase Cloud Messaging),
@@ -31,6 +32,8 @@ export interface PushMessage {
    * message / request / answer is the one the push plays ("removed" has no sound of its own: the normal one)
    */
   kind: "message" | "request" | "answer" | "removed";
+  /** the circle of the receiver this is about: only their devices (apps) that are bound to that circle are woken; none = the first circle */
+  circleId?: string;
   /** a test from the person's own Settings page: sent whatever the switches say, and with the text shown */
   force?: boolean;
 }
@@ -63,10 +66,14 @@ function soundChoice(data: Record<string, any> | undefined, kind: PushMessage["k
   return typeof choice === "string" ? choice : null;
 }
 
-const channelFor = (kind: PushMessage["kind"], choice: string | null): string => {
+/** One channel for each circle and kind: `<circle>_<kind>_<sound>` (friends_message_drill ...); the Android app makes them, grouped by circle (Channels.java). */
+const channelFor = (circleType: string, kind: PushMessage["kind"], choice: string | null): string => {
   const sound = choice === "none" ? "silent" : choice?.startsWith("file:") ? (SOUND_KEY_BY_JINGLE[choice.slice(5)] ?? "default") : "default";
-  return `${kind}_${sound}`;
+  return `${circleType}_${kind}_${sound}`;
 };
+
+/** The page a tap opens, told which circle it is for (the app then opens in that circle). */
+const withCircle = (url: string, circleType: string): string => `${url}${url.includes("?") ? "&" : "?"}circle=${circleType}`;
 
 const MAX_BODY = 120;
 const MAX_TITLE = 100;
@@ -76,10 +83,11 @@ const DEAD_TOKEN = new Set(["messaging/registration-token-not-registered", "mess
 const deviceId = (token: string) => createHash("sha256").update(token).digest("hex").slice(0, 40);
 const cut = (text: string, max: number) => (text.length > max ? `${text.slice(0, max - 1)}…` : text);
 
-/** The name friends know this person by. */
-export async function nameOf(uid: string, token?: DecodedIdToken): Promise<string> {
+/** The name friends know this person by; with a circle: the name they have in that circle. */
+export async function nameOf(uid: string, token?: DecodedIdToken, circleId: string = DEFAULT_CIRCLE_ID): Promise<string> {
   const data = await userFields(uid, "displayName");
-  return (data?.displayName as string | undefined) ?? token?.name ?? token?.email ?? "Someone";
+  const shown = circleId === DEFAULT_CIRCLE_ID ? null : circleProfileOf(circleId, (await circleCol(uid).doc(circleId).get()).data(), data ?? {}).name;
+  return shown ?? (data?.displayName as string | undefined) ?? token?.name ?? token?.email ?? "Someone";
 }
 
 /** Sends a push to every device of `uid`. Never throws (the answer says what happened). */
@@ -89,22 +97,26 @@ export async function sendPush(uid: string, push: PushMessage): Promise<PushResu
     const notices = noticesOf(account);
     if (!push.force && !notices[push.kind]) return { devices: 0, delivered: 0, off: true };
 
-    const devices = (await pushDeviceCol(uid).select("token").get()).docs
+    // an app covers exactly one circle, so only the devices of the circle this is about are woken (a device without a circle is the first circle's)
+    const circleId = push.circleId ?? DEFAULT_CIRCLE_ID;
+    const devices = (await pushDeviceCol(uid).select("token", "circleId").get()).docs
+      .filter((d) => circleIdOf(d.data()) === circleId)
       .map((d) => ({ ref: d.ref, token: d.data().token as string }))
       .filter((d) => d.token);
     if (!devices.length) return { devices: 0, delivered: 0 };
 
     const choice = soundChoice(account, push.kind);
+    const circleType = circleTypeOf(circleId);
     const title = cut(push.title, MAX_TITLE);
     // "hide the text": the sender stays, the text of a message (or of a request) does not go to the lock screen
     const body = notices.hideText && !push.force ? (push.kind === "message" ? "New message" : "") : cut(push.body, MAX_BODY);
     const result = await getMessaging().sendEachForMulticast({
       tokens: devices.map((d) => d.token),
       // data only for the web: the app's service worker shows it (so it can use the event id and open the right page); "silent" = no sound
-      data: { id: push.id, title, body, url: push.url, ...(choice === "none" ? { silent: "1" } : {}) },
+      data: { id: push.id, title, body, url: withCircle(push.url, circleType), circle: circleType, ...(choice === "none" ? { silent: "1" } : {}) },
       webpush: { headers: { Urgency: "high", TTL: "3600" } },
       // the notification block is what lets Android show it in the chosen channel (with its jingle) while the app is closed
-      android: { priority: "high", notification: { channelId: channelFor(push.kind, choice), title, body } },
+      android: { priority: "high", notification: { channelId: channelFor(circleType, push.kind, choice), title, body } },
     });
 
     const dead: DocumentReference[] = [];
@@ -130,9 +142,10 @@ const tokenOf = (body: unknown): string | null => {
 /** A test: sends a notification to ALL my registered devices now, whatever my switches say, and tells how many were reached. */
 pushRouter.post(
   "/test",
-  asyncHandler(async (_req, res) => {
+  asyncHandler(async (req, res) => {
     const uid = (res.locals.token as DecodedIdToken).uid;
     const result = await sendPush(uid, {
+      circleId: activeCircleOf(req), // this app's circle
       id: `test-${Date.now()}`,
       title: "Seven Friends",
       body: "This is a test notification. It works!",
@@ -163,7 +176,7 @@ pushRouter.post(
 
     const existing = await mine.get();
     await mine.set(
-      { token, updatedAt: FieldValue.serverTimestamp(), ...(existing.exists ? {} : { createdAt: FieldValue.serverTimestamp() }) },
+      { token, circleId: activeCircleOf(req), updatedAt: FieldValue.serverTimestamp(), ...(existing.exists ? {} : { createdAt: FieldValue.serverTimestamp() }) },
       { merge: true },
     );
     res.status(204).end();

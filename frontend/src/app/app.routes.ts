@@ -18,7 +18,7 @@ import { Terms } from './terms/terms';
 import { About } from './about/about';
 import { Login } from './login/login';
 import { Welcome } from './welcome/welcome';
-import { Young } from './young/young';
+import { Buddy } from './buddy/buddy';
 import { Work } from './work/work';
 import { Family } from './family/family';
 import { ViewWelcome } from './view-welcome/view-welcome';
@@ -106,9 +106,13 @@ export const routes: Routes = [
   { path: 'work1', component: Work, data: { variant: 1 }, title: 'Seven Work' },
   { path: 'work2', component: Work, data: { variant: 2 }, title: 'Seven Work' },
   { path: 'work3', component: Work, data: { variant: 3 }, title: 'Seven Work' },
-  { path: 'young1', component: Young, data: { variant: 1 }, title: 'Seven Buddies' },
-  { path: 'young2', component: Young, data: { variant: 2 }, title: 'Seven Buddies' },
-  { path: 'young3', component: Young, data: { variant: 3 }, title: 'Seven Buddies' },
+  // the old addresses of the Buddies welcome pages
+  { path: 'young1', redirectTo: 'buddy1' },
+  { path: 'young2', redirectTo: 'buddy2' },
+  { path: 'young3', redirectTo: 'buddy3' },
+  { path: 'buddy1', component: Buddy, data: { variant: 1 }, title: 'Seven Buddies' },
+  { path: 'buddy2', component: Buddy, data: { variant: 2 }, title: 'Seven Buddies' },
+  { path: 'buddy3', component: Buddy, data: { variant: 3 }, title: 'Seven Buddies' },
   { path: 'welcome', component: Welcome, title: 'Welcome – Seven Friends' },
   { path: 'login', component: Login, canActivate: [guestGuard], title: 'Sign in – Seven Friends' },
   { path: 'login/email', component: LoginEmail, canActivate: [guestGuard], title: 'Email link – Seven Friends' },

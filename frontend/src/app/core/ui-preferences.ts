@@ -51,6 +51,8 @@ export interface PendingFriend {
   code: string | null;
   email: string | null;
   phone: string | null;
+  /** the kind of circle the link invites into (friends, buddies, work, family); null = an older link without one: the circle the app is in */
+  circle?: string | null;
 }
 
 /** The colour themes: `header` is the colour of the browser's address bar (the header colour of the theme in styles.scss); `dark` themes switch Bootstrap's dark mode on too. */
@@ -99,7 +101,7 @@ const text = (value: unknown): string | null => (typeof value === 'string' && va
 function pendingOf(value: unknown): PendingFriend | null {
   if (!value || typeof value !== 'object') return null;
   const v = value as Record<string, unknown>;
-  const pending = { code: text(v['code']), email: text(v['email']), phone: text(v['phone']) };
+  const pending = { code: text(v['code']), email: text(v['email']), phone: text(v['phone']), circle: text(v['circle']) };
   return pending.code || pending.email || pending.phone ? pending : null;
 }
 const STORAGE_KEY = 'sf-ui';

@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { activeCircleOf } from "./circle-profile";
 import { DecodedIdToken } from "firebase-admin/auth";
 import { FieldValue, Timestamp } from "firebase-admin/firestore";
 import { asyncHandler, requireAuth } from "./auth";
@@ -10,9 +11,11 @@ import { mediaLabel } from "./sf-cache";
 const uidOf = (res: { locals: Record<string, unknown> }) => (res.locals.token as DecodedIdToken).uid;
 
 /** My unread incoming messages, newest first. */
-export async function listUnreadMessages(uid: string): Promise<Message[]> {
-  const snap = await messageCol(uid).where("read", "==", false).select("fromName", "text", "media", "inBox", "time", "connectionId", "enc").get();
+/** My unread messages; with a circle only the ones that belong to it (a message without a circle belongs to the first). */
+export async function listUnreadMessages(uid: string, circleId?: string): Promise<Message[]> {
+  const snap = await messageCol(uid).where("read", "==", false).select("fromName", "text", "media", "inBox", "time", "connectionId", "enc", "circleId").get();
   return snap.docs
+    .filter((d) => !circleId || circleIdOf(d.data()) === circleId)
     .map((d) => {
       const data = d.data();
       return {
@@ -32,8 +35,8 @@ messagesRouter.use(requireAuth);
 
 messagesRouter.get(
   "/",
-  asyncHandler(async (_req, res) => {
-    res.json({ messages: await listUnreadMessages(uidOf(res)) });
+  asyncHandler(async (req, res) => {
+    res.json({ messages: await listUnreadMessages(uidOf(res), activeCircleOf(req)) });
   }),
 );
 

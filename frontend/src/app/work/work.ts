@@ -1,3 +1,4 @@
+import { ActiveCircleService } from '../core/active-circle.service';
 import { NgTemplateOutlet } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -14,6 +15,7 @@ import { WelcomeService } from '../core/welcome.service';
   templateUrl: './work.html',
 })
 export class Work {
+  private readonly active = inject(ActiveCircleService);
   private readonly router = inject(Router);
   private readonly welcome = inject(WelcomeService);
   protected readonly auth = inject(AuthService);
@@ -25,6 +27,8 @@ export class Work {
       return;
     }
     this.welcome.continueInBrowser();
+    // an app that has no circle yet is bound to this page's circle (the page decides) and the sign-in opens in it
+    if (this.active.bindIfFree('work', '/login')) return;
     void this.router.navigateByUrl('/login');
   }
 }

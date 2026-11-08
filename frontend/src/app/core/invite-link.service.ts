@@ -1,18 +1,22 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
+import { ActiveCircleService } from './active-circle.service';
 import { ApiService } from './api.service';
 import { APP_ORIGIN } from './app-origin';
 
 /**
- * My invite link (`/welcome?invite=<code>`): whoever opens it, signs in and confirms sends me a friend request.
+ * My invite link (`/welcome?invite=<code>&circle=<kind>`): whoever opens it, signs in and confirms sends me a request in that circle (the link decides which).
  * The code is made on the server the first time it is asked for. Shown on the profile page and on Add a friend.
  */
 @Injectable({ providedIn: 'root' })
 export class InviteLinkService {
   private readonly api = inject(ApiService);
+  private readonly active = inject(ActiveCircleService);
+  /** the kind of circle I am in: the link invites into it, and its welcome page is the one that is shown */
+  private readonly circle = this.active.type;
 
   private readonly code = signal<string | null>(null);
   /** the link to give away; null until the code is loaded */
-  readonly link = computed(() => (this.code() ? `${APP_ORIGIN}/welcome?invite=${this.code()}` : null));
+  readonly link = computed(() => (this.code() ? `${APP_ORIGIN}/welcome?invite=${this.code()}&circle=${this.circle}` : null));
   /** why the link could not be loaded (null = no problem); shown instead of the link, with a way to try again */
   readonly problem = signal<string | null>(null);
   /** what a button just did ("Link copied"), shown for a moment */
@@ -51,11 +55,11 @@ export class InviteLinkService {
       // the Android app: its own share sheet (the WebView has no navigator.share; an older app without it copies, as before)
       const app = (window as unknown as { SevenFriendsAndroid?: { share?(title: string, text: string): void } }).SevenFriendsAndroid;
       if (app?.share) {
-        app.share('Seven Friends', `Be my friend on Seven Friends: ${url}`);
+        app.share(this.active.words.app, `Be my ${this.active.words.one} on ${this.active.words.app}: ${url}`);
         return;
       }
       if (navigator.share) {
-        await navigator.share({ title: 'Seven Friends', text: 'Be my friend on Seven Friends:', url });
+        await navigator.share({ title: this.active.words.app, text: `Be my ${this.active.words.one} on ${this.active.words.app}:`, url });
         return;
       }
       await navigator.clipboard.writeText(url);

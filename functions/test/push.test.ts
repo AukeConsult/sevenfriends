@@ -68,7 +68,7 @@ describe("what is pushed", () => {
     const message = (await u(0).send(id, "Are you coming tonight?").expect(201)).body;
     expect(sentPushes).toHaveLength(1);
     expect(sentPushes[0].tokens.sort()).toEqual([token(1, "laptop"), token(1, "phone")].sort());
-    expect(sentPushes[0].data).toEqual({ id: `message-${message.id}`, title: "Person 00", body: "Are you coming tonight?", url: `/friends/${id}` });
+    expect(sentPushes[0].data).toEqual({ id: `message-${message.id}`, title: "Person 00", body: "Are you coming tonight?", url: `/friends/${id}?circle=friends`, circle: "friends" });
   });
 
   it("a long message is cut", async () => {
@@ -88,7 +88,7 @@ describe("what is pushed", () => {
     await register(u(1), token(1));
     const entry = (await u(0).raw("post", "/circles/default/friends", { name: "One", email: person(1).email, message: "Be my friend!" }).expect(201)).body;
     expect(sentPushes).toHaveLength(1);
-    expect(sentPushes[0].data).toEqual({ id: `request-${entry.id}`, title: "Person 00 wants to be your friend", body: "Be my friend!", url: "/" });
+    expect(sentPushes[0].data).toEqual({ id: `request-${entry.id}`, title: "Person 00 wants to be your friend", body: "Be my friend!", url: "/?circle=friends", circle: "friends" });
   });
 
   it("a request to somebody without an account sends nothing", async () => {
@@ -104,7 +104,7 @@ describe("what is pushed", () => {
     await u(1).check();
     await u(1).confirm(a.id).expect(200);
     expect(lastPush().tokens).toEqual([token(0)]);
-    expect(lastPush().data).toMatchObject({ id: `answer-${a.id}-confirmed`, title: "Person 01 accepted your friend request", url: "/friends" });
+    expect(lastPush().data).toMatchObject({ id: `answer-${a.id}-confirmed`, title: "Person 01 accepted your friend request", url: "/?circle=friends" });
 
     await u(2).check();
     await u(2).reject(b.id).expect(200);
@@ -127,7 +127,7 @@ describe("what is pushed", () => {
     const id = await connect(u(0), u(1));
     await register(u(1), token(1));
     await u(0).remove(id).expect(204);
-    expect(lastPush().data).toMatchObject({ id: `removed-${id}`, title: "Person 00 removed the friendship", url: "/friends" });
+    expect(lastPush().data).toMatchObject({ id: `removed-${id}`, title: "Person 00 removed the friendship", url: "/friends?circle=friends" });
 
     sentPushes.length = 0;
     const pending = await u(0).add(u(2).p);
@@ -203,17 +203,17 @@ describe("what the receiver chose", () => {
 
     await sounds(u(1), { message: "file:SevenFriends_raw2_Hyper.mp3" });
     await u(0).send(id, "one").expect(201);
-    expect(channel()).toBe("message_hyper");
+    expect(channel()).toBe("friends_message_hyper");
     expect(lastPush().data.silent).toBeUndefined();
 
     await sounds(u(1), { message: "none" });
     await u(0).send(id, "two").expect(201);
-    expect(channel()).toBe("message_silent");
+    expect(channel()).toBe("friends_message_silent");
     expect(lastPush().data.silent).toBe("1"); // the browser's notification is silent too
 
     await sounds(u(1), { message: "file:Unknown_jingle.mp3" });
     await u(0).send(id, "three").expect(201);
-    expect(channel()).toBe("message_default");
+    expect(channel()).toBe("friends_message_default");
   });
 });
 

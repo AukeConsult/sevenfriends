@@ -36,7 +36,7 @@ export class NotificationsService {
           { method: 'POST' },
         );
         // blind to the other circles: the messages are the ones of this circle; a request still always lands in the friends circle, so only that app shows them (until a request carries its circle)
-        this.friends.requests.set(this.active.id === 'default' ? res.requests : []);
+        this.friends.requests.set(res.requests); // the server answers with the requests of the circle this app is in only
         this.messages.replace(res.messages);
       } catch (err: any) {
         this.error.set(err.message ?? 'Could not load notifications');

@@ -1,5 +1,5 @@
 import { DocumentReference, FieldValue, Transaction, getFirestore } from "firebase-admin/firestore";
-import { USER_ACCOUNT_COLLECTION } from "./constants";
+import { USER_ACCOUNT_COLLECTION, circleIdOf } from "./constants";
 import { signalCol } from "./paths";
 
 /**
@@ -23,14 +23,14 @@ export async function findAccounts(email: string | null, phoneKey: string | null
   return [...found];
 }
 
-/** Ping `uid`: somebody added them. Id = the connection id. No names, no details. */
-export function writeSignal(tx: Transaction, uid: string, connectionId: string): void {
-  tx.set(signalCol(uid).doc(connectionId), { connectionId, time: FieldValue.serverTimestamp() });
+/** Ping `uid`: somebody added them, in the circle `circleId` (the other person's app of that circle is the one to look). Id = the connection id. No names, no details. */
+export function writeSignal(tx: Transaction, uid: string, connectionId: string, circleId: string): void {
+  tx.set(signalCol(uid).doc(connectionId), { connectionId, circleId, time: FieldValue.serverTimestamp() });
 }
 
-/** The pings waiting for `uid` right now (read at the start of a check, deleted when it has finished). */
-export async function readSignals(uid: string): Promise<DocumentReference[]> {
-  return (await signalCol(uid).select().get()).docs.map((d) => d.ref);
+/** The pings of one circle waiting for `uid` right now (read at the start of a check, deleted when it has finished); the pings of other circles stay for their own check. */
+export async function readSignals(uid: string, circleId: string): Promise<DocumentReference[]> {
+  return (await signalCol(uid).select("circleId").get()).docs.filter((d) => circleIdOf(d.data()) === circleId).map((d) => d.ref);
 }
 
 /** The pings an entry sent (it remembers whom in `signaledUids`), so they can be removed with it. */

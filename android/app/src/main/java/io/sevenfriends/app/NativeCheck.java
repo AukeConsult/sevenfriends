@@ -73,7 +73,7 @@ final class NativeCheck {
         // the kinds, one line each: the app and Android always agree, so there is one value
         LinearLayout kindsCard = card(activity, activity.getString(R.string.check_notifications));
         for (int i = 0; i < Channels.KINDS.length; i++) {
-            NotificationChannel channel = nm != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ? Channels.currentChannel(nm, Channels.KINDS[i]) : null;
+            NotificationChannel channel = nm != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ? Channels.currentChannel(nm, Channels.circle(activity), Channels.KINDS[i]) : null;
             boolean on = allowed && Channels.isOn(channel);
             String sound = channel == null ? "" : " · " + Channels.soundName(activity, channel);
             final int kind = i;

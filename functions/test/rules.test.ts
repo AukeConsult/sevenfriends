@@ -61,6 +61,12 @@ describe.skipIf(!USING_EMULATOR)("firestore security rules: every user controls 
     it("my friend list", async () => {
       await assertSucceeds(me().collection("user-account/uid01/friend-circle/default/friends").get());
     });
+
+    it("the friend list of each of my other circles (the app in that circle listens to it)", async () => {
+      for (const circle of ["buddies", "work", "family"]) {
+        await assertSucceeds(me().collection(`user-account/uid01/friend-circle/${circle}/friends`).get());
+      }
+    });
   });
 
   describe("even my own data is closed beyond what the app needs", () => {
@@ -84,6 +90,7 @@ describe.skipIf(!USING_EMULATOR)("firestore security rules: every user controls 
       ["a signed-in stranger: unread messages query", () => stranger().collection("user-account/uid01/messages").where("read", "==", false).get()],
       ["a signed-in stranger: the sync times", () => stranger().collection("user-account/uid01/sync").get()],
       ["a signed-in stranger: one message", () => stranger().doc("user-account/uid01/messages/m1").get()],
+      ["a signed-in stranger: my buddies list", () => stranger().collection("user-account/uid01/friend-circle/buddies/friends").get()],
       ["a signed-in stranger: my friend list", () => stranger().collection("user-account/uid01/friend-circle/default/friends").get()],
       ["a signed-in stranger: one friend", () => stranger().doc("user-account/uid01/friend-circle/default/friends/f1").get()],
       ["somebody not signed in: my friend list", () => anonymous().collection("user-account/uid01/friend-circle/default/friends").get()],

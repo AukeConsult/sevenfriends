@@ -13,6 +13,9 @@ export const PRESENCE_STALE_MS = 150_000;
 export const DEFAULT_CIRCLE_TYPE: CircleType = "friends";
 export const DEFAULT_CIRCLE_ID = "default";
 /** The circle a stored entry or message belongs to: the one it names, and `default` for what was stored before circles were written down. */
+/** The kind of circle an id is: the first circle (`default`) is `friends`, every other id is its type. */
+export const circleTypeOf = (id: string): string => (id === DEFAULT_CIRCLE_ID ? "friends" : id);
+
 export const circleIdOf = (data: { circleId?: unknown } | undefined | null): string => (typeof data?.circleId === "string" && data.circleId ? data.circleId : DEFAULT_CIRCLE_ID);
 export const DEFAULT_CIRCLE_NAME = "My friends";
 /** The id of the circle of a type: `default` for friends (the first circle, made for everybody), the type itself for the others (so there is one of each). */

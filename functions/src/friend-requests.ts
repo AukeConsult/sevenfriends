@@ -2,8 +2,9 @@ import { Router } from "express";
 import { DecodedIdToken } from "firebase-admin/auth";
 import { FieldValue, Timestamp, getFirestore } from "firebase-admin/firestore";
 import { asyncHandler, requireAuth } from "./auth";
-import { ensureDefaultCircle } from "./circles";
-import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION } from "./constants";
+import { ensureCircle } from "./circles";
+import { circleIdOf, FRIENDS_SUBCOLLECTION } from "./constants";
+import { activeCircleOf } from "./circle-profile";
 import { AcceptOutcome, FriendRequest } from "./models";
 import { circleCol, friendRequestCol, userDoc, userFields } from "./paths";
 import { assignMissingSeats, ensureSeat } from "./seats";
@@ -15,11 +16,13 @@ const uidOf = (res: { locals: Record<string, unknown> }) => (res.locals.token as
 export const friendRequestsRouter = Router();
 friendRequestsRouter.use(requireAuth);
 
-/** Pending requests from people who added *me* as a friend. */
-export async function listPendingRequests(uid: string): Promise<FriendRequest[]> {
+/** Pending requests from people who added *me* as a friend, in ONE circle: a request is for the circle of the same kind as the one it was sent from. */
+export async function listPendingRequests(uid: string, circleId: string): Promise<FriendRequest[]> {
   const snap = await friendRequestCol(uid).where("status", "==", "pending").get();
   const requests = await Promise.all(
-    snap.docs.map(async (d): Promise<FriendRequest> => {
+    snap.docs
+      .filter((d) => circleIdOf(d.data()) === circleId)
+      .map(async (d): Promise<FriendRequest> => {
       const data = d.data();
       const sender = await userFields(data.fromUid as string, "emailLower", "emailVerified", "phoneKey", "verifiedPhone");
       return {
@@ -47,10 +50,15 @@ friendRequestsRouter.post(
   "/:id/accept",
   asyncHandler(async (req, res) => {
     const uid = uidOf(res);
-    await ensureDefaultCircle(uid);
-
     const requestRef = friendRequestCol(uid).doc(req.params.id);
-    const myFriends = circleCol(uid).doc(DEFAULT_CIRCLE_ID).collection(FRIENDS_SUBCOLLECTION);
+    // the request is for one circle; an app in another circle is blind to it
+    const circleId = circleIdOf((await requestRef.get()).data());
+    if (circleId !== activeCircleOf(req)) {
+      res.status(404).json({ error: "Request not found" });
+      return;
+    }
+    await ensureCircle(uid, circleId);
+    const myFriends = circleCol(uid).doc(circleId).collection(FRIENDS_SUBCOLLECTION);
     await assignMissingSeats(myFriends); // friends from before the seat numbers get theirs first
 
     let requester: { uid: string; friendId: string } | null = null; // who is told about the answer
@@ -102,8 +110,8 @@ friendRequestsRouter.post(
     }
     if (result === "confirmed" && requester) {
       const { uid: to, friendId } = requester as { uid: string; friendId: string };
-      const name = await nameOf(uid, res.locals.token as DecodedIdToken);
-      await sendPush(to, { id: `answer-${friendId}-confirmed`, title: `${name} accepted your friend request`, body: "", url: "/friends", kind: "answer" });
+      const name = await nameOf(uid, res.locals.token as DecodedIdToken, circleId);
+      await sendPush(to, { circleId, id: `answer-${friendId}-confirmed`, title: `${name} accepted your friend request`, body: "", url: "/", kind: "answer" });
     }
     res.json({ ok: true, result });
   }),
@@ -117,10 +125,14 @@ friendRequestsRouter.post(
   "/:id/reject",
   asyncHandler(async (req, res) => {
     const uid = uidOf(res);
-    await ensureDefaultCircle(uid);
-
     const requestRef = friendRequestCol(uid).doc(req.params.id);
-    const mySeatRef = circleCol(uid).doc(DEFAULT_CIRCLE_ID).collection(FRIENDS_SUBCOLLECTION).doc(req.params.id);
+    const circleId = circleIdOf((await requestRef.get()).data());
+    if (circleId !== activeCircleOf(req)) {
+      res.status(404).json({ error: "Request not found" });
+      return;
+    }
+    await ensureCircle(uid, circleId);
+    const mySeatRef = circleCol(uid).doc(circleId).collection(FRIENDS_SUBCOLLECTION).doc(req.params.id);
 
     let requester: { uid: string; friendId: string } | null = null; // who is told about the answer
     const result = await getFirestore().runTransaction(async (tx) => {
@@ -163,8 +175,8 @@ friendRequestsRouter.post(
     }
     if (requester) {
       const { uid: to, friendId } = requester as { uid: string; friendId: string };
-      const name = await nameOf(uid, res.locals.token as DecodedIdToken);
-      await sendPush(to, { id: `answer-${friendId}-rejected`, title: `${name} rejected your friend request`, body: "", url: "/friends", kind: "answer" });
+      const name = await nameOf(uid, res.locals.token as DecodedIdToken, circleId);
+      await sendPush(to, { circleId, id: `answer-${friendId}-rejected`, title: `${name} rejected your friend request`, body: "", url: "/", kind: "answer" });
     }
     res.json({ ok: true });
   }),

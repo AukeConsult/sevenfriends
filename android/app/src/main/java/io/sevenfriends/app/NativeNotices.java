@@ -221,7 +221,7 @@ final class NativeNotices {
     /** Android's channel of this kind (there is one), or null before Android 8. */
     private NotificationChannel channelOf(int kind) {
         NotificationManager nm = activity.getSystemService(NotificationManager.class);
-        return nm == null ? null : Channels.currentChannel(nm, Channels.KINDS[kind]);
+        return nm == null ? null : Channels.currentChannel(nm, Channels.circle(activity), Channels.KINDS[kind]); // the kinds of the circle this app is in
     }
 
     private void run(String js) {

@@ -1,4 +1,5 @@
 import { Injectable, inject } from '@angular/core';
+import { CIRCLE_CHOICES } from './active-circle.service';
 import { PendingFriend, UiPreferencesService } from './ui-preferences';
 import { APP_ORIGIN } from './app-origin';
 
@@ -21,7 +22,9 @@ export function parseContact(value: string): { email: string | null; phone: stri
 function pendingFromParams(params: URLSearchParams): PendingFriend | null {
   const code = (params.get('invite') ?? '').trim().toLowerCase();
   const contact = parseContact(params.get('friend') ?? '');
-  return /^[a-z0-9]{10}$/.test(code) ? { code, email: null, phone: null } : contact ? { code: null, ...contact } : null;
+  const wanted = (params.get('circle') ?? '').trim().toLowerCase();
+  const circle = CIRCLE_CHOICES.find((c) => c.type === wanted)?.type ?? null; // the kind of circle the link invites into
+  return /^[a-z0-9]{10}$/.test(code) ? { code, email: null, phone: null, circle } : contact ? { code: null, ...contact, circle } : null;
 }
 
 /**
@@ -44,6 +47,7 @@ export class FriendLinkService {
     if (pending) this.prefs.set('pendingFriend', pending);
     params.delete('invite');
     params.delete('friend');
+    params.delete('circle');
     const rest = params.toString();
     history.replaceState(history.state, '', location.pathname + (rest ? `?${rest}` : '') + location.hash);
   }
@@ -51,7 +55,7 @@ export class FriendLinkService {
   /** The link as text again (to copy it: the welcome page does, before an app is downloaded, so it can be pasted in the app). */
   linkText(pending: PendingFriend): string {
     const query = pending.code ? `invite=${pending.code}` : `friend=${encodeURIComponent(pending.email ?? pending.phone ?? '')}`;
-    return `${APP_ORIGIN}/?${query}`;
+    return `${APP_ORIGIN}/?${query}${pending.circle ? `&circle=${pending.circle}` : ''}`;
   }
 
   /**

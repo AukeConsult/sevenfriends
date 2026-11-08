@@ -112,7 +112,7 @@ async function storeInBox(res: Response, connection: Connection, bytes: Buffer, 
 async function announceItem(res: Response, connection: Connection): Promise<void> {
   try {
     const uid = uidOf(res);
-    const fromName = await nameOf(uid);
+    const fromName = await nameOf(uid, undefined, connection.circleId);
     const mine = messageCol(uid).doc();
     const theirs = messageCol(connection.peerUid).doc(mine.id);
     const common = { connectionId: connection.id, fromUid: uid, fromName, toUid: connection.peerUid, text: "", inBox: true, time: FieldValue.serverTimestamp() };
@@ -123,7 +123,7 @@ async function announceItem(res: Response, connection: Connection): Promise<void
     touchFeed(batch, myEntry);
     await touchFeedIfExists(batch, circleCol(connection.peerUid).doc(connection.peerCircleId).collection(FRIENDS_SUBCOLLECTION).doc(connection.id));
     await batch.commit();
-    if (!(await sleepsMe(connection))) await sendPush(connection.peerUid, { id: `message-${mine.id}`, title: fromName, body: "📦 Added to the safebox", url: `/friends/${connection.id}/safebox`, kind: "message" });
+    if (!(await sleepsMe(connection))) await sendPush(connection.peerUid, { circleId: connection.peerCircleId, id: `message-${mine.id}`, title: fromName, body: "📦 Added to the safebox", url: `/friends/${connection.id}/safebox`, kind: "message" });
   } catch (err) {
     console.error("Could not announce the safebox item", err);
   }
@@ -262,7 +262,7 @@ safeboxRouter.post(
     const moved = { media: FieldValue.delete(), inBox: true };
     const myEntry = (res.locals.circleRef as DocumentReference).collection(FRIENDS_SUBCOLLECTION).doc(connection.id);
     const batch = getFirestore().batch();
-    const fromName = await nameOf(uidOf(res));
+    const fromName = await nameOf(uidOf(res), undefined, connection.circleId);
     batch.update(messageCol(uidOf(res)).doc(messageId), moved);
     const theirs = messageCol(connection.peerUid).doc(messageId);
     if ((await theirs.get()).exists) batch.update(theirs, { ...moved, read: false, fromName }); // my friend is told: unread again, on the home page too
@@ -270,7 +270,7 @@ safeboxRouter.post(
     await touchFeedIfExists(batch, circleCol(connection.peerUid).doc(connection.peerCircleId).collection(FRIENDS_SUBCOLLECTION).doc(connection.id));
     await batch.commit();
     await deleteObject(media.ownerId, media.objectId); // the file (and its preview) now lives in the box only
-    if (!(await sleepsMe(connection))) await sendPush(connection.peerUid, { id: `message-${messageId}-box`, title: fromName, body: "📦 Moved to the safebox", url: `/friends/${connection.id}/safebox`, kind: "message" });
+    if (!(await sleepsMe(connection))) await sendPush(connection.peerUid, { circleId: connection.peerCircleId, id: `message-${messageId}-box`, title: fromName, body: "📦 Moved to the safebox", url: `/friends/${connection.id}/safebox`, kind: "message" });
     res.status(201).json(item);
   }),
 );

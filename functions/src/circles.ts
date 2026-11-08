@@ -31,6 +31,17 @@ export async function ensureDefaultCircle(uid: string): Promise<void> {
   }
 }
 
+/** The circle with this id exists (the first one, or the one of a type, made empty when it is not there yet). Safe to call repeatedly. */
+export async function ensureCircle(uid: string, circleId: string): Promise<void> {
+  await ensureDefaultCircle(uid);
+  if (circleId === DEFAULT_CIRCLE_ID || !isCircleType(circleId)) return; // the id of every other circle is its type
+  try {
+    await circleCol(uid).doc(circleId).create({ name: CIRCLE_NAMES[circleId], type: circleId, createdAt: FieldValue.serverTimestamp(), profile: startProfile() });
+  } catch (err: any) {
+    if (err?.code !== 6) throw err; // 6 = ALREADY_EXISTS (fine)
+  }
+}
+
 /**
  * The choices (theme, text size, ...) were first kept on the account document: as `settings`, and before that as `theme` and `textSize`.
  * They belong to the circle now. The first time a person's circles are read, whatever is still on the account is moved into the default circle

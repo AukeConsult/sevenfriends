@@ -1,7 +1,8 @@
 import { DecodedIdToken } from "firebase-admin/auth";
 import { FieldValue, QueryDocumentSnapshot, getFirestore } from "firebase-admin/firestore";
-import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION } from "./constants";
+import { FRIENDS_SUBCOLLECTION } from "./constants";
 import { circleCol, friendRequestCol } from "./paths";
+import { circleProfileOf } from "./circle-profile";
 import { signalRefsOf } from "./signals";
 import { readFields, userFields } from "./paths";
 import { phoneKey } from "./validation";
@@ -58,9 +59,10 @@ export async function syncIncomingInvites(token: DecodedIdToken): Promise<void> 
     }
 
     const owner = (await readFields(ownerRef, "displayName", "email")) ?? {};
+    const shownAs = circleProfileOf(circleRef.id, (await circleRef.get()).data(), owner).name; // the name the sender has in that circle
     await requestRef.set({
       fromUid: ownerRef.id,
-      fromName: owner.displayName ?? owner.email ?? "Someone",
+      fromName: shownAs ?? owner.displayName ?? owner.email ?? "Someone",
       fromEmail: owner.email ?? null,
       message: (data.message as string | null | undefined) ?? null, // what the sender wrote with the request
       circleId: circleRef.id,
@@ -89,7 +91,7 @@ async function isDuplicateConnection(
   if (ownerLinked.docs.some((d) => d.id !== entryId)) return true;
 
   const mineLinked = await circleCol(myUid)
-    .doc(DEFAULT_CIRCLE_ID)
+    .doc(ownerCircle.id) // the circle of the same kind
     .collection(FRIENDS_SUBCOLLECTION)
     .where("linkedUid", "==", ownerUid)
     .select("status", "incomingRequestId")

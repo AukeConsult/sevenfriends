@@ -20,7 +20,9 @@ const emptyDraft = (): FriendDraft => ({ name: '', email: '', phone: '', message
   templateUrl: './add-friend.html',
 })
 export class AddFriend {
-  protected readonly w = inject(ActiveCircleService).words;
+  private readonly circle = inject(ActiveCircleService);
+  protected readonly w = this.circle.words;
+  private readonly circleType = this.circle.type;
   /** shown inside Home (under its top, in place of everything else) instead of as a page of its own: Cancel and Done tell Home to close it */
   readonly embedded = input(false);
   readonly closed = output<void>();
@@ -37,7 +39,8 @@ export class AddFriend {
   private readonly link = computed(() => {
     const me = this.user();
     const contact = me?.email ?? me?.phoneNumber;
-    return `${APP_ORIGIN}/welcome${contact ? `?friend=${encodeURIComponent(contact)}` : ''}`;
+    // the link says which circle it invites into: the welcome page of that circle is shown, and the request goes to it
+    return `${APP_ORIGIN}/welcome?${contact ? `friend=${encodeURIComponent(contact)}&` : ''}circle=${this.circleType}`;
   });
   /** set when the person has no account yet: who it was for, and the link to send */
   protected readonly result = signal<{ to: string; link: string } | null>(null);
@@ -78,6 +81,16 @@ export class AddFriend {
 
     if (this.isMe(d.email, d.phone)) {
       this.error.set('That is you. Add the email or phone number of a ' + this.w.one + '.'); // the server refuses it too
+      return;
+    }
+
+    // already on this list: say so, and send nothing (the server refuses it too)
+    const digits = (v: string | null | undefined) => (v ?? '').replace(/\D/g, '').slice(-8);
+    const same = this.friends.friends().find(
+      (f) => f.status !== 'rejected' && ((d.email.trim() && f.email?.toLowerCase() === d.email.trim().toLowerCase()) || (digits(d.phone).length >= 8 && digits(f.phone) === digits(d.phone))),
+    );
+    if (same) {
+      this.error.set(same.status === 'confirmed' ? `${same.name} is already your ${this.w.one}.` : `You have already added ${same.name}: the request waits for them.`);
       return;
     }
 

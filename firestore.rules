@@ -35,8 +35,8 @@ service cloud.firestore {
       allow get, write: if false;
     }
 
-    // only the default circle: it is the one the app lists
-    match /user-account/{uid}/friend-circle/default/friends/{friendId} {
+    // the friend list of each of my circles (an app is in one circle and listens to that one: friends, buddies, work or family)
+    match /user-account/{uid}/friend-circle/{circleId}/friends/{friendId} {
       allow list: if isOwner(uid);
       allow get, write: if false;
     }

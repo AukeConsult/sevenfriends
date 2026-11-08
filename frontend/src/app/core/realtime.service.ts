@@ -78,14 +78,16 @@ export class RealtimeService {
       const mine = (collectionName: string) => sdk.collection(db, 'user-account', uid, collectionName);
       this.stops = [
         // 1. pings: somebody added me
-        this.watch(sdk, mine('incoming-signal'), (_added, first) => {
+        this.watch(sdk, mine('incoming-signal'), (all, first) => {
+          // a ping says which circle was asked: an app in another circle does not react (no sound, no check) and leaves it for the app of that circle
+          if (!first && !all.some((s) => String(s.data['circleId'] ?? 'default') === this.active.id)) return;
           const known = new Set(this.friends.requests().map((r) => r.id));
           if (!first) this.ring('request'); // somebody just added me (what was there already is not announced)
           void this.refreshEverything().then(() => {
             if (first) return;
             for (const request of this.friends.requests()) {
               if (known.has(request.id)) continue;
-              this.notify('request', { title: `${request.fromName} wants to be your friend`, body: request.message ?? 'Open Seven Friends to answer.', id: `request-${request.id}`, go: '/' });
+              this.notify('request', { title: `${request.fromName} wants to be your ${this.active.words.one}`, body: request.message ?? `Open ${this.active.words.app} to answer.`, id: `request-${request.id}`, go: '/' });
             }
           });
         }),

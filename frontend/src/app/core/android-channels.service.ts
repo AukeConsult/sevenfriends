@@ -1,6 +1,7 @@
 import { effect, inject, Injectable, signal } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { NoticePreferences } from '../models';
+import { ActiveCircleService, CIRCLE_CHOICES } from './active-circle.service';
 import { NoticesService } from './notices.service';
 import { PushService } from './push.service';
 import { SoundService } from './sound.service';
@@ -13,7 +14,7 @@ type AndroidHost = {
 /**
  * Inside the Android app, between the page and the app around it (MainActivity.java, NativeNotices.java, Channels.java).
  *
- * To Android: which sound each kind of notification has, so Android's own notification settings show the same (one channel per kind,
+ * To Android: which sound each kind of notification has, so Android's own notification settings show the same (one channel per kind in each circle,
  * with that sound). Android shows a push in the channel the server names from the sound choice, so the channel must exist before the push
  * arrives: this runs at start, whenever the choice changes, and when the app comes back to the front.
  *
@@ -28,6 +29,9 @@ export class AndroidChannelsService {
   private readonly sounds = inject(SoundService);
   private readonly notices = inject(NoticesService);
   private readonly push = inject(PushService);
+  private readonly active = inject(ActiveCircleService);
+  /** the circle this app is in, as Android and the server name it (friends, buddies, work, family): Android has a group of channels for each */
+  private readonly circle = CIRCLE_CHOICES.find((c) => c.id === this.active.id)?.type ?? 'friends';
 
   /** The phone's notification volume in percent, as the Android app last sent it (null = not sent yet). The app's own volume follows it. */
   readonly phoneVolume = signal<number | null>(null);
@@ -40,10 +44,10 @@ export class AndroidChannelsService {
 
   constructor() {
     if (!Capacitor.isNativePlatform()) return;
-    effect(() => this.tell(JSON.stringify(this.sounds.choices())));
+    effect(() => this.tell(this.soundsJson()));
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible') {
-        this.tell(JSON.stringify(this.sounds.choices()));
+        this.tell(this.soundsJson());
         this.readStatus();
       }
     });
@@ -89,6 +93,11 @@ export class AndroidChannelsService {
 
   private get host(): AndroidHost {
     return window as unknown as AndroidHost;
+  }
+
+  /** the sounds of each kind, and the circle they are for */
+  private soundsJson(): string {
+    return JSON.stringify({ ...this.sounds.choices(), circle: this.circle });
   }
 
   private tell(sounds: string): void {

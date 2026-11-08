@@ -5,7 +5,8 @@ import { asyncHandler } from "./auth";
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION } from "./constants";
 import { ChatMessage, Conversation, MediaRef, MessageDeleteCriteria, MessageEnc, MessageEncMedia, MessageLink, MessageDeleteResult, NewMedia } from "./models";
 import { circleCol, messageCol, missingIndex, userFields } from "./paths";
-import { sendPush } from "./push";
+import { nameOf, sendPush } from "./push";
+import { findPeerEntry } from "./circle-profile";
 import { linkOf } from "./link-preview";
 import { Refused, parseMessageEnc, parseRelock, wrapsCover, wrapsFor } from "./box-encryption";
 import { publishedKeysOf } from "./keys";
@@ -186,25 +187,22 @@ conversationRouter.post(
     if (req.body?.media && !media) return;
 
     // the other side of the connection must still be there and confirmed
-    const peerEntry = await circleCol(connection.peerUid)
-      .doc(connection.peerCircleId)
-      .collection(FRIENDS_SUBCOLLECTION)
-      .doc(connection.id)
-      .get();
-    if (peerEntry.data()?.status !== "confirmed") {
+    const peerEntry = await findPeerEntry(token.uid, connection.circleId, connection.id, { linkedUid: connection.peerUid, peerCircleId: connection.peerCircleId });
+    if (peerEntry) connection.peerCircleId = peerEntry.ref.parent.parent?.id ?? connection.peerCircleId; // where their side really is
+    if (peerEntry?.data()?.status !== "confirmed") {
       res.status(409).json({ error: "This connection is not confirmed on both sides" });
       return;
     }
 
     const poke = req.body?.poke === true; // "poke anyway": the friend is told with a sound even when they have me on their sleep list
-    const muted = peerEntry.data()?.asleep === true && !poke;
+    const muted = peerEntry?.data()?.asleep === true && !poke;
     const link = locked ? null : await linkOf(text); // the page of the link may be shown in a frame (checked once, here); a locked text cannot be read, so it has none
     const mine = media ? messageCol(token.uid).doc(media.objectId) : messageCol(token.uid).doc(); // a message with a file has the id of the file: that is how the receiver is let in
     const theirs = messageCol(connection.peerUid).doc(mine.id); // same message id on both sides
     const common = {
       connectionId: connection.id,
       fromUid: token.uid,
-      fromName: ((await userFields(token.uid, "displayName"))?.displayName as string | undefined) ?? token.name ?? token.email ?? "Someone",
+      fromName: await nameOf(token.uid, token, connection.circleId), // the name I have in this circle
       toUid: connection.peerUid,
       text,
       ...(media ? { media } : {}),
@@ -226,7 +224,7 @@ conversationRouter.post(
     const saved = (await mine.get()).data()!;
     const created: ChatMessage = { id: mine.id, text, media, mine: true, read: true, time: iso(saved.time), edited: false, hidden: false, link, ...(locked ? { enc: wrapsFor(locked.enc, token.uid) } : {}) };
     // wake the other person's devices (before the answer: the function may stop right after it)
-    if (!muted) await sendPush(connection.peerUid, { id: `message-${mine.id}`, title: common.fromName, body: locked ? "🔒 New message" : text || mediaLabel(media!.kind), url: `/friends/${connection.id}`, kind: "message" });
+    if (!muted) await sendPush(connection.peerUid, { circleId: connection.peerCircleId, id: `message-${mine.id}`, title: common.fromName, body: locked ? "🔒 New message" : text || mediaLabel(media!.kind), url: `/friends/${connection.id}`, kind: "message" });
     res.status(201).json(created);
   }),
 );

@@ -1,6 +1,7 @@
 package io.sevenfriends.app;
 
 import android.app.NotificationChannel;
+import android.app.NotificationChannelGroup;
 import android.app.NotificationManager;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -12,15 +13,20 @@ import org.json.JSONObject;
 
 /**
  * The notification channels, so Android's own settings show exactly what the app's settings show: ONE channel per kind of
- * notification (new messages, friend requests, answers, removed friendships), with the sound the person chose for it in the app.
+ * notification (new messages, friend requests, answers, removed friendships) IN EACH CIRCLE (Friends, Buddies, Work, Family: a group
+ * of channels each), with the sound the person chose for it in the app.
  * <p>
- * The channel is called "<kind>_<sound>" (functions/src/push.ts, channelFor, names it in every push: the ids must match). Android
+ * The channel is called "<circle>_<kind>_<sound>" (functions/src/push.ts, channelFor, names it in every push: the ids must match). Android
  * never changes the sound of a channel that exists, so when the sound of a kind changes, the channel of the old sound is replaced
  * by the one of the new sound (sync()). If the kind was switched off in Android's settings, the new channel is switched off too.
  */
 final class Channels {
     /** the kinds of push, with the name Android's settings show (push.ts: PushMessage.kind) */
     static final String[] KINDS = {"message", "request", "answer", "removed"};
+    /** the circles, as the server names them in a push (circleTypeOf), with the name of the group Android's settings show */
+    static final String[] CIRCLES = {"friends", "buddies", "work", "family"};
+    private static final String[] CIRCLE_NAMES = {"Friends", "Buddies", "Work", "Family"};
+    static final String FIRST_CIRCLE = "friends";
     /** the name of each kind in the language of the phone (the strings.xml files in res) */
     private static final int[] KIND_NAME_IDS = {R.string.kind_message, R.string.kind_request, R.string.kind_answer, R.string.kind_removed};
     /** "default" is the phone's own sound; "silent" is "No sound" */
@@ -35,9 +41,18 @@ final class Channels {
         return context.getString(KIND_NAME_IDS[kind]);
     }
 
-    /** The channel a push of this kind with this sound key uses. */
-    static String id(String kind, String sound) {
-        return kind + "_" + sound;
+    /** The channel a push of this circle and kind with this sound key uses. */
+    static String id(String circle, String kind, String sound) {
+        return circle + "_" + kind + "_" + sound;
+    }
+
+    /** The circle this app is in (the page tells it with the sounds); the first circle until it has. */
+    static String circle(Context context) {
+        String circle = context.getSharedPreferences("channels", Context.MODE_PRIVATE).getString("circle", FIRST_CIRCLE);
+        for (String known : CIRCLES) {
+            if (known.equals(circle)) return circle;
+        }
+        return FIRST_CIRCLE;
     }
 
     /** The sound key of a sound the person chose in the app: "none", "file:<jingle file>" or a built-in sound. */
@@ -76,37 +91,57 @@ final class Channels {
         for (String jingle : JINGLES) nm.deleteNotificationChannel("sound_" + jingle);
         for (String kind : KINDS) nm.deleteNotificationChannelGroup("group_" + kind);
 
+        for (int c = 0; c < CIRCLES.length; c++) {
+            nm.createNotificationChannelGroup(new NotificationChannelGroup(CIRCLES[c], CIRCLE_NAMES[c]));
+        }
+        // the channels of the version before circles ("<kind>_<sound>") were the Friends circle's: they are replaced (a kind switched off stays off)
+        boolean[] wasOff = new boolean[KINDS.length];
         for (int i = 0; i < KINDS.length; i++) {
-            NotificationChannel existing = currentChannel(nm, KINDS[i]);
-            if (existing == null) {
-                make(context, nm, i, DEFAULT, false);
-            } else if (!kindName(context, i).contentEquals(existing.getName())) {
-                // the phone's language changed: Android keeps everything of a channel but lets its name be updated
-                existing.setName(kindName(context, i));
-                nm.createNotificationChannel(existing);
+            NotificationChannel legacy = currentChannel(nm, null, KINDS[i]);
+            if (legacy != null) {
+                wasOff[i] = legacy.getImportance() == NotificationManager.IMPORTANCE_NONE;
+                nm.deleteNotificationChannel(legacy.getId());
+            }
+        }
+        for (String circle : CIRCLES) {
+            for (int i = 0; i < KINDS.length; i++) {
+                NotificationChannel existing = currentChannel(nm, circle, KINDS[i]);
+                if (existing == null) {
+                    make(context, nm, circle, i, DEFAULT, FIRST_CIRCLE.equals(circle) && wasOff[i]);
+                } else if (!kindName(context, i).contentEquals(existing.getName())) {
+                    // the phone's language changed: Android keeps everything of a channel but lets its name be updated
+                    existing.setName(kindName(context, i));
+                    nm.createNotificationChannel(existing);
+                }
             }
         }
     }
 
     /**
-     * The sound the person chose for each kind (the app's sound settings as JSON: {"message": "file:...", "request": ..., "answer": ...}):
-     * each kind gets the channel of its sound.
+     * The sound the person chose for each kind (the app's sound settings as JSON: {"message": "file:...", "request": ..., "answer": ..., "circle": "buddies"}):
+     * each kind gets the channel of its sound, in the circle the app is in (`circle`; the first circle when it is left out).
      */
     static void sync(Context context, JSONObject sounds) {
         // what the page told, and when: NativeCheck shows it, so a bridge call that never arrives can be seen
         context.getSharedPreferences("channels", Context.MODE_PRIVATE).edit()
             .putString("lastSync", sounds.toString()).putLong("lastSyncTime", System.currentTimeMillis()).apply();
+        String wanted = sounds.optString("circle", FIRST_CIRCLE);
+        String circle = FIRST_CIRCLE;
+        for (String known : CIRCLES) {
+            if (known.equals(wanted)) circle = known;
+        }
+        context.getSharedPreferences("channels", Context.MODE_PRIVATE).edit().putString("circle", circle).apply();
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return;
         NotificationManager nm = context.getSystemService(NotificationManager.class);
         if (nm == null) return;
         for (int i = 0; i < KINDS.length; i++) {
             String kind = KINDS[i];
             String key = "removed".equals(kind) ? DEFAULT : soundKey(sounds.optString(kind, null));
-            if (nm.getNotificationChannel(id(kind, key)) != null) continue; // already the right one
-            NotificationChannel old = currentChannel(nm, kind);
+            if (nm.getNotificationChannel(id(circle, kind, key)) != null) continue; // already the right one
+            NotificationChannel old = currentChannel(nm, circle, kind);
             boolean off = old != null && old.getImportance() == NotificationManager.IMPORTANCE_NONE;
             if (old != null) nm.deleteNotificationChannel(old.getId());
-            make(context, nm, i, key, off);
+            make(context, nm, circle, i, key, off);
         }
     }
 
@@ -130,20 +165,22 @@ final class Channels {
         return channel.getId();
     }
 
-    /** The channel this kind has now (there is one), or null. */
-    static NotificationChannel currentChannel(NotificationManager nm, String kind) {
+    /** The channel this kind has now in this circle (there is one), or null. `circle` null: the channel of the version before circles ("<kind>_<sound>"). */
+    static NotificationChannel currentChannel(NotificationManager nm, String circle, String kind) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return null;
+        String prefix = circle == null ? kind + "_" : circle + "_" + kind + "_";
         for (NotificationChannel channel : nm.getNotificationChannels()) {
-            if (channel.getId().startsWith(kind + "_")) return channel;
+            if (channel.getId().startsWith(prefix)) return channel;
         }
         return null;
     }
 
-    private static void make(Context context, NotificationManager nm, int kind, String sound, boolean off) {
+    private static void make(Context context, NotificationManager nm, String circle, int kind, String sound, boolean off) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return; // channels only exist from Android 8 (minSdk is 24)
         int importance = off ? NotificationManager.IMPORTANCE_NONE
             : SILENT.equals(sound) ? NotificationManager.IMPORTANCE_DEFAULT : NotificationManager.IMPORTANCE_HIGH;
-        NotificationChannel channel = new NotificationChannel(id(KINDS[kind], sound), kindName(context, kind), importance);
+        NotificationChannel channel = new NotificationChannel(id(circle, KINDS[kind], sound), kindName(context, kind), importance);
+        channel.setGroup(circle); // Android lists the channels of each circle together
         if (SILENT.equals(sound)) {
             channel.setSound(null, null); // "No sound": the notification shows, nothing plays
         } else if (!DEFAULT.equals(sound)) {

@@ -1,7 +1,7 @@
 import express, { Request, Response, Router } from "express";
 import { DecodedIdToken } from "firebase-admin/auth";
 import { asyncHandler, requireAuth } from "./auth";
-import { BOX_PREFIX, CACHE_ROOT, CHUNK_BYTES, DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAX_CHUNKS, MAX_UPLOAD_BYTES } from "./constants";
+import { BOX_PREFIX, CACHE_ROOT, CHUNK_BYTES, FRIENDS_SUBCOLLECTION, MAX_CHUNKS, MAX_UPLOAD_BYTES } from "./constants";
 import { MediaKind, MediaUpload } from "./models";
 import { circleCol, messageCol, readFields, userFields } from "./paths";
 import {
@@ -156,8 +156,11 @@ cacheRouter.put(
 
 /** Is `reader` one of `owner`'s confirmed friends? */
 async function isFriendOf(reader: string, owner: string): Promise<boolean> {
-  const mine = await circleCol(reader).doc(DEFAULT_CIRCLE_ID).collection(FRIENDS_SUBCOLLECTION).where("linkedUid", "==", owner).select("status").get();
-  return mine.docs.some((d) => d.data().status === "confirmed");
+  for (const circle of (await circleCol(reader).get()).docs) { // in any of my circles
+    const mine = await circle.ref.collection(FRIENDS_SUBCOLLECTION).where("linkedUid", "==", owner).select("status").get();
+    if (mine.docs.some((d) => d.data().status === "confirmed")) return true;
+  }
+  return false;
 }
 
 /**
@@ -169,8 +172,11 @@ async function mayRead(reader: string, owner: string, objectId: string): Promise
   if (reader === owner) return true;
   // a safebox: the owner is `box-<connectionId>`, and only the two friends of that confirmed friendship may read it
   if (owner.startsWith(BOX_PREFIX)) {
-    const entry = (await circleCol(reader).doc(DEFAULT_CIRCLE_ID).collection(FRIENDS_SUBCOLLECTION).doc(owner.slice(BOX_PREFIX.length)).get()).data();
-    return entry?.status === "confirmed" && Boolean(entry.linkedUid);
+    for (const circle of (await circleCol(reader).get()).docs) { // the friendship can be in any of my circles
+      const entry = (await circle.ref.collection(FRIENDS_SUBCOLLECTION).doc(owner.slice(BOX_PREFIX.length)).get()).data();
+      if (entry) return entry.status === "confirmed" && Boolean(entry.linkedUid);
+    }
+    return false;
   }
   const message = await readFields(messageCol(reader).doc(objectId), "media", "fromUid");
   if (message?.media && message.fromUid === owner) return true;

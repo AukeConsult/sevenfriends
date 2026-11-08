@@ -15,7 +15,9 @@ import { HomeTop } from '../home-top/home-top';
   templateUrl: './share.html',
 })
 export class Share {
-  protected readonly w = inject(ActiveCircleService).words;
+  private readonly circle = inject(ActiveCircleService);
+  protected readonly w = this.circle.words;
+  private readonly circleType = this.circle.type;
   protected readonly install = inject(InstallService);
   protected readonly invite = inject(InviteLinkService);
   private readonly user = inject(AuthService).user;
@@ -37,6 +39,6 @@ export class Share {
   protected readonly friendLink = computed(() => {
     const me = this.user();
     const contact = me?.email ?? me?.phoneNumber;
-    return contact ? `${APP_ORIGIN}/welcome?friend=${encodeURIComponent(contact)}` : null;
+    return contact ? `${APP_ORIGIN}/welcome?friend=${encodeURIComponent(contact)}&circle=${this.circleType}` : null;
   });
 }

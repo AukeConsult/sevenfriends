@@ -3,6 +3,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { ApiService } from '../core/api.service';
 import { AuthService } from '../core/auth.service';
+import { ActiveCircleService, CIRCLE_CHOICES } from '../core/active-circle.service';
 import { FriendLinkService } from '../core/friend-link.service';
 import { FriendsService } from '../core/friends.service';
 import { NotificationsService } from '../core/notifications.service';
@@ -37,6 +38,7 @@ export class FriendJoin {
   private readonly friends = inject(FriendsService);
   private readonly notifications = inject(NotificationsService);
   private readonly router = inject(Router);
+  private readonly active = inject(ActiveCircleService);
 
   protected readonly loading = signal(true);
   protected readonly target = signal<Target | null>(null);
@@ -66,6 +68,12 @@ export class FriendJoin {
     if (!pending) {
       await this.router.navigateByUrl('/', { replaceUrl: true });
       return;
+    }
+    // the link decides the circle, and an app is in one circle only
+    const mine = CIRCLE_CHOICES.find((c) => c.id === this.active.id);
+    const wanted = CIRCLE_CHOICES.find((c) => c.type === pending.circle);
+    if (wanted && mine && wanted.id !== mine.id) {
+      return this.finish(`This invitation is for the ${wanted.label} circle, and this app is in the ${mine.label} circle. Open the link in an app for ${wanted.label}.`);
     }
     try {
       await this.friends.load(); // to see whether this person is already a friend

@@ -49,12 +49,24 @@ export class ActiveCircleService {
   readonly id: string = this.start();
   /** opened with `?circle=`: a preview, nothing is remembered */
   readonly preview: boolean = this.fromAddress() !== null;
+  /** this app has been bound to a circle (chosen once; for now it is the first circle until something binds it) */
+  readonly bound: boolean = this.isBound();
+  /** the kind of circle this is (friends, buddies, work, family): what an invite link says, so it invites into this circle */
+  readonly type: string = CIRCLE_CHOICES.find((c) => c.id === this.id)?.type ?? 'friends';
   /** the words of this circle */
   readonly words: CircleWords = WORDS[this.id] ?? WORDS['default'];
 
   private fromAddress(): string | null {
     const wanted = new URLSearchParams(typeof location === 'undefined' ? '' : location.search).get('circle');
     return CIRCLE_CHOICES.find((c) => c.id === wanted || c.type === wanted)?.id ?? null;
+  }
+
+  private isBound(): boolean {
+    try {
+      return localStorage.getItem(KEY) !== null;
+    } catch {
+      return false;
+    }
   }
 
   private start(): string {
@@ -69,12 +81,23 @@ export class ActiveCircleService {
   }
 
   /** For test and demo: bind this app to another circle and start again, so everything (the live updates too) belongs to that circle. */
-  choose(id: string): void {
+  choose(id: string, to?: string): void {
     try {
       localStorage.setItem(KEY, id);
     } catch {
       /* no storage: the choice cannot be kept */
     }
-    location.reload();
+    if (to) location.assign(to);
+    else location.reload();
+  }
+
+  /**
+   * A visitor who opens an invitation, or the welcome page of a circle, and goes on: an app that has no circle yet is bound to that one (the link decides)
+   * and the page `to` is opened afresh in it. An app that is bound already stays as it is. false = nothing was changed.
+   */
+  bindIfFree(id: string, to: string): boolean {
+    if (this.bound || this.preview || id === this.id) return false;
+    this.choose(id, to);
+    return true;
   }
 }

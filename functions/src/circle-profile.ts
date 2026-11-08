@@ -1,4 +1,4 @@
-import { DocumentData, FieldValue } from "firebase-admin/firestore";
+import { DocumentData, DocumentSnapshot, FieldValue } from "firebase-admin/firestore";
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAX_FRIENDS, MAX_MOOD_MESSAGE, MAX_NAME_LENGTH, MOOD_COUNT } from "./constants";
 import { CircleProfile, profileColorKey } from "./models";
 import { circleCol, userDoc } from "./paths";
@@ -96,6 +96,27 @@ export async function saveCircleProfile(uid: string, circleId: string, values: P
 }
 
 /**
+ * The other person's side of a friendship of mine (the entry with the same id, in the circle `peerCircleId` of theirs). When it is not there, their side may
+ * live in another circle of theirs (an entry made before the circle of the other side was written down): it is looked for, and my entry is corrected so the
+ * next time it is found at once. null = they have no side (any more).
+ */
+export async function findPeerEntry(uid: string, circleId: string, entryId: string, mine: { linkedUid?: unknown; peerCircleId?: unknown }): Promise<DocumentSnapshot | null> {
+  const peer = mine.linkedUid as string | undefined;
+  if (!peer) return null;
+  const declared = (mine.peerCircleId as string | undefined) ?? DEFAULT_CIRCLE_ID;
+  const there = await circleCol(peer).doc(declared).collection(FRIENDS_SUBCOLLECTION).doc(entryId).get();
+  if (there.exists) return there;
+  for (const circle of (await circleCol(peer).get()).docs) {
+    if (circle.id === declared) continue;
+    const other = await circle.ref.collection(FRIENDS_SUBCOLLECTION).doc(entryId).get();
+    if (!other.exists) continue;
+    await circleCol(uid).doc(circleId).collection(FRIENDS_SUBCOLLECTION).doc(entryId).update({ peerCircleId: circle.id });
+    return other;
+  }
+  return null;
+}
+
+/**
  * A friend's mood, name and colour are read from my account or circle, so my friends' lists do not change when they do. Touching their copy of the
  * friendship makes their app (which listens to its friend list) reload at once. With a circle: only the friends in that circle; without one (my picture,
  * my presence: they are the same everywhere): the friends in all my circles.
@@ -107,8 +128,8 @@ export async function touchFriends(uid: string, circleId?: string): Promise<void
     for (const entry of mine.docs) {
       const data = entry.data();
       if (!data.linkedUid) continue;
-      const theirs = circleCol(data.linkedUid as string).doc((data.peerCircleId as string | undefined) ?? DEFAULT_CIRCLE_ID).collection(FRIENDS_SUBCOLLECTION).doc(entry.id);
-      if ((await theirs.get()).exists) await theirs.update({ moodChangedAt: FieldValue.serverTimestamp() });
+      const theirs = await findPeerEntry(uid, circle.id, entry.id, data);
+      if (theirs) await theirs.ref.update({ moodChangedAt: FieldValue.serverTimestamp() });
     }
   }
 }

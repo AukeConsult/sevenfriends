@@ -168,6 +168,9 @@ friendsRouter.get(
   }),
 );
 
+/** What a person in each circle is called (for the messages of the server). */
+const ONE_PERSON: Record<string, string> = { default: "friend", buddies: "buddy", work: "contact", family: "family member" };
+
 /** Add a friend to the circle (max 7 per circle). */
 friendsRouter.post(
   "/",
@@ -194,6 +197,19 @@ friendsRouter.post(
     const accounts = await findAccounts(data.email, keys.phoneKey, (res.locals.token as DecodedIdToken).uid);
 
     const col = friendCol(res);
+    // already in this circle (same email, same phone number, or the same person's account)? Then say so, and send nothing
+    const sameKey = (d: FirebaseFirestore.DocumentData) =>
+      (data.email && String(d.email ?? "").toLowerCase() === data.email.toLowerCase()) ||
+      (keys.phoneKey && d.phoneKey === keys.phoneKey) ||
+      (d.linkedUid && accounts.includes(d.linkedUid as string));
+    const already = (await col.get()).docs.map((d) => d.data()).find((d) => d.status !== "rejected" && sameKey(d));
+    if (already) {
+      const who = (already.name as string | undefined) || data.email || "This person";
+      res.status(409).json({
+        error: already.status === "confirmed" ? `${who} is already your ${ONE_PERSON[(res.locals.circleRef as DocumentReference).id] ?? "friend"}.` : `You have already added ${who}: the request waits for them.`,
+      });
+      return;
+    }
     const ref = col.doc();
     await assignMissingSeats(col); // friends from before the seat numbers get theirs first, so the new friend takes a really free seat
     const added = await getFirestore().runTransaction(async (tx) => {
@@ -204,7 +220,7 @@ friendsRouter.post(
         ...keys,
         circleId: (res.locals.circleRef as DocumentReference).id, // my circle
         connectionId: ref.id, // one id for the whole connection: both lists and the request use it
-        peerCircleId: DEFAULT_CIRCLE_ID, // where the other person's entry will live
+        peerCircleId: (res.locals.circleRef as DocumentReference).id, // where the other person's entry will live: the circle of the same kind
         nameGiven, // false = the name shown is the email / phone I typed
         status: "pending" as FriendStatus,
         seat: freeSeat(existing.docs),
@@ -215,7 +231,7 @@ friendsRouter.post(
         invite: accounts.length || !data.email ? null : { to: data.email, sentAt: null },
         createdAt: FieldValue.serverTimestamp(),
       });
-      for (const account of accounts) writeSignal(tx, account, ref.id);
+      for (const account of accounts) writeSignal(tx, account, ref.id, (res.locals.circleRef as DocumentReference).id);
       return true;
     });
 
@@ -225,9 +241,10 @@ friendsRouter.post(
     }
     if (accounts.length) {
       // the people who already have an account hear about it at once (their devices), and find the request when they open the app
-      const fromName = await nameOf((res.locals.token as DecodedIdToken).uid, res.locals.token as DecodedIdToken);
+      const myCircle = (res.locals.circleRef as DocumentReference).id;
+      const fromName = await nameOf((res.locals.token as DecodedIdToken).uid, res.locals.token as DecodedIdToken, myCircle);
       for (const account of accounts) {
-        await sendPush(account, { id: `request-${ref.id}`, title: `${fromName} wants to be your friend`, body: data.message ?? "Open Seven Friends to answer.", url: "/", kind: "request" });
+        await sendPush(account, { circleId: myCircle, id: `request-${ref.id}`, title: `${fromName} wants to be your friend`, body: data.message ?? "Open Seven Friends to answer.", url: "/", kind: "request" });
       }
     }
     const saved = await ref.get();
@@ -384,7 +401,7 @@ friendsRouter.post(
       res.status(429).json({ error: "You have sent many invitations today. Try again tomorrow." });
       return;
     }
-    const fromName = ((await userFields(token.uid, "displayName"))?.displayName as string | undefined) ?? token.name ?? token.email ?? "Someone";
+    const fromName = await nameOf(token.uid, token, (res.locals.circleRef as DocumentReference).id);
 
     const sent = await getFirestore().runTransaction(async (tx) => {
       const entry = (await tx.get(ref)).data();
@@ -457,8 +474,8 @@ friendsRouter.delete(
     await deleteObjects(files);
     await deleteBox(id); // the files the two shared in their safebox go too
     if (endedWith) {
-      const name = await nameOf(uid, res.locals.token as DecodedIdToken);
-      await sendPush(endedWith, { id: `removed-${id}`, title: `${name} removed the friendship`, body: "The conversation is deleted for both of you.", url: "/friends", kind: "removed" });
+      const name = await nameOf(uid, res.locals.token as DecodedIdToken, circleIdOf(before));
+      await sendPush(endedWith, { circleId: (before?.peerCircleId as string | undefined) ?? DEFAULT_CIRCLE_ID, id: `removed-${id}`, title: `${name} removed the friendship`, body: "The conversation is deleted for both of you.", url: "/friends", kind: "removed" });
     }
     res.status(204).end();
   }),
