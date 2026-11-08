@@ -1,6 +1,17 @@
 {
   "name": "sevenfriends",
   "private": true,
+  "license": "GPL-3.0-only",
+  "author": "Leif Auke <leif@auke.no> (Blueboot R&D AS)",
+  "description": "Seven Friends: stay in touch with your seven closest friends",
+  "homepage": "https://sevenfriends.io",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AukeConsult/sevenfriends.git"
+  },
+  "bugs": {
+    "url": "https://github.com/AukeConsult/sevenfriends/issues"
+  },
   "scripts": {
     "install:all": "npm --prefix frontend install && npm --prefix functions install",
     "dev:functions": "npm --prefix functions run build:watch",

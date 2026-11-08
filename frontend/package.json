@@ -27,6 +27,8 @@
     ]
   },
   "private": true,
+  "license": "GPL-3.0-only",
+  "author": "Leif Auke <leif@auke.no> (Blueboot R&D AS)",
   "dependencies": {
     "@angular/common": "^20.3.0",
     "@angular/compiler": "^20.3.0",
