@@ -1,0 +1,18 @@
+<main class="sf-vw">
+  <h1 class="sf-vw-title">Welcome pages</h1>
+  <p class="sf-vw-sub">All the welcome pages side by side, to test and compare. Open one alone to see it in full size.</p>
+  <div class="sf-vw-grid">
+    @for (page of pages; track page.path) {
+      <section class="sf-vw-item">
+        <div class="sf-vw-head">
+          <div>
+            <strong>{{ page.title }}</strong>
+            <span class="sf-vw-note">{{ page.note }}</span>
+          </div>
+          <a [routerLink]="page.path" class="btn btn-outline-primary btn-sm">Open</a>
+        </div>
+        <iframe class="sf-vw-frame" [src]="page.src" [title]="page.title + ' preview'" scrolling="no" (load)="fit($event)"></iframe>
+      </section>
+    }
+  </div>
+</main>

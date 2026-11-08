@@ -18,6 +18,10 @@ import { Terms } from './terms/terms';
 import { About } from './about/about';
 import { Login } from './login/login';
 import { Welcome } from './welcome/welcome';
+import { Young } from './young/young';
+import { Work } from './work/work';
+import { Family } from './family/family';
+import { ViewWelcome } from './view-welcome/view-welcome';
 import { LoginEmail } from './login-email/login-email';
 import { LoginLink } from './login-link/login-link';
 import { MediaViewer } from './media-viewer/media-viewer';
@@ -95,6 +99,16 @@ export const routes: Routes = [
   { path: 'install/iphone', component: InstallDevice, data: { device: 'iphone' }, title: 'Add to your home screen – Seven Friends' },
   { path: 'install/windows', component: InstallDevice, data: { device: 'windows' }, title: 'Install the app – Seven Friends' },
   { path: 'install-app', component: InstallApp, title: 'Install the app – Seven Friends' },
+  { path: 'viewwelcome', component: ViewWelcome, title: 'Welcome pages – Seven Friends' },
+  { path: 'family1', component: Family, data: { variant: 1 }, title: 'Seven Family' },
+  { path: 'family2', component: Family, data: { variant: 2 }, title: 'Seven Family' },
+  { path: 'family3', component: Family, data: { variant: 3 }, title: 'Seven Family' },
+  { path: 'work1', component: Work, data: { variant: 1 }, title: 'Seven Work' },
+  { path: 'work2', component: Work, data: { variant: 2 }, title: 'Seven Work' },
+  { path: 'work3', component: Work, data: { variant: 3 }, title: 'Seven Work' },
+  { path: 'young1', component: Young, data: { variant: 1 }, title: 'Seven Buddies' },
+  { path: 'young2', component: Young, data: { variant: 2 }, title: 'Seven Buddies' },
+  { path: 'young3', component: Young, data: { variant: 3 }, title: 'Seven Buddies' },
   { path: 'welcome', component: Welcome, title: 'Welcome – Seven Friends' },
   { path: 'login', component: Login, canActivate: [guestGuard], title: 'Sign in – Seven Friends' },
   { path: 'login/email', component: LoginEmail, canActivate: [guestGuard], title: 'Email link – Seven Friends' },

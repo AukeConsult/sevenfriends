@@ -1,0 +1,66 @@
+<main class="sf-landing sf-yg" [class]="'sf-landing sf-yg sf-yg-v' + variant">
+  <!-- what is yours on the profile: friends, mood and colour -->
+  <ng-template #mine>
+    <div class="sf-yg-mine">
+      <div class="sf-yg-tile">
+        <span class="sf-yg-tile-pics" aria-hidden="true"><img src="icons/friends/friend1.svg" alt="" width="26" height="26" /><img src="icons/friends/friend3.svg" alt="" width="26" height="26" /><img src="icons/friends/friend5.svg" alt="" width="26" height="26" /></span>
+        <b>Your buddies</b>
+        <span>Seven who get you</span>
+      </div>
+      <div class="sf-yg-tile">
+        <span class="sf-yg-tile-pics" aria-hidden="true"><img src="icons/moods/mood1.svg" alt="" width="26" height="26" /><img src="icons/moods/mood3.svg" alt="" width="26" height="26" /></span>
+        <b>Your mood</b>
+        <span>Show how you feel</span>
+      </div>
+      <div class="sf-yg-tile">
+        <span class="sf-yg-tile-pics" aria-hidden="true"><i style="background:#F4C0D1"></i><i style="background:#9FE1CB"></i><i style="background:#CECBF6"></i><i style="background:#FAC775"></i></span>
+        <b>Your color</b>
+        <span>Pick yours</span>
+      </div>
+    </div>
+  </ng-template>
+  <div class="sf-yg-card">
+    <div class="sf-yg-brand"><span class="sf-yg-logo">7</span>Seven Buddies</div>
+    @switch (variant) {
+      @case (1) {
+      <h1 class="sf-yg-hd">Close buddies only.<br>Seven seats.</h1>
+      <p class="sf-yg-sub">Keep your people close and the noise away.</p>
+      <div class="sf-yg-row" aria-label="Seven seats, three taken">
+        <span class="sf-yg-cir" style="background:#F4C0D1;color:#72243E">1</span><span class="sf-yg-cir" style="background:#CECBF6;color:#3C3489">2</span><span class="sf-yg-cir" style="background:#9FE1CB;color:#085041">3</span><span class="sf-yg-seat">4</span><span class="sf-yg-seat">5</span><span class="sf-yg-seat">6</span><span class="sf-yg-seat">7</span>
+      </div>
+      <div class="sf-yg-pill" style="background:#EEEDFE;color:#3C3489"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 009 9 9 9 0 11-9-9z"/></svg><span>Mute anyone. Keep the friendship.</span></div>
+      <div class="sf-yg-pill" style="background:#FAECE7;color:#712B13"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 5a2 2 0 114 0 7 7 0 014 6v3a4 4 0 002 3H4a4 4 0 002-3v-3a7 7 0 014-6M9 17v1a3 3 0 006 0v-1"/></svg><span>Poke when it can’t wait.</span></div>
+      <div class="sf-yg-pill" style="background:#E1F5EE;color:#085041"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 7h1a2 2 0 002-2 1 1 0 011-1h6a1 1 0 011 1 2 2 0 002 2h1a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9a2 2 0 012-2"/><circle cx="12" cy="13" r="3"/></svg><span>Pics, videos, voice. Just you two.</span></div>
+      <ng-container [ngTemplateOutlet]="mine" />
+      <button type="button" class="sf-yg-cta" style="background:#534AB7;color:#EEEDFE" (click)="start()">{{ auth.user() ? 'Back to my seats' : 'Claim my seat' }}</button>
+      }
+      @case (2) {
+      <h1 class="sf-yg-hd">Your people.<br>Only the close ones.</h1>
+      <div class="sf-yg-stack" aria-hidden="true">
+        <span class="sf-yg-cir sf-yg-big" style="background:#F4C0D1;color:#72243E">A</span><span class="sf-yg-cir sf-yg-big" style="background:#FAC775;color:#633806">J</span><span class="sf-yg-cir sf-yg-big" style="background:#9FE1CB;color:#085041">M</span><span class="sf-yg-cir sf-yg-big" style="background:#CECBF6;color:#3C3489">S</span><span class="sf-yg-cir sf-yg-big" style="background:#B5D4F4;color:#0C447C">+3</span>
+      </div>
+      <p class="sf-yg-sub">Seven friends max. That’s what makes it real.</p>
+      <div class="sf-yg-chat" aria-hidden="true">
+        <span class="sf-yg-bub" style="background:#FBEAF0;color:#72243E;align-self:flex-start">you up?</span>
+        <span class="sf-yg-bub" style="background:#E1F5EE;color:#085041;align-self:flex-end">always</span>
+        <span class="sf-yg-note"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg> Private. No ads. No feed.</span>
+      </div>
+      <ng-container [ngTemplateOutlet]="mine" />
+      <button type="button" class="sf-yg-cta" style="background:#993556;color:#FBEAF0" (click)="start()">{{ auth.user() ? 'Back to my people' : 'Pick my people' }}</button>
+      }
+      @case (3) {
+      <h1 class="sf-yg-hd">Your inner circle</h1>
+      <p class="sf-yg-sub">Seven close friends around you.</p>
+      <svg class="sf-yg-circle" viewBox="0 0 200 170" role="img" aria-label="You in the middle with seven seats around, three taken"><circle cx="100" cy="85" r="60" fill="none" stroke="var(--sf-border)" stroke-width="1" stroke-dasharray="3 4"/><circle cx="100" cy="85" r="22" fill="#9FE1CB"/><text x="100" y="90" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">You</text>
+        <circle cx="100" cy="25" r="14" fill="#F4C0D1"/><circle cx="157" cy="43" r="14" fill="#CECBF6"/><circle cx="168" cy="102" r="14" fill="#FAC775"/>
+        <circle cx="130" cy="140" r="14" class="sf-yg-svgseat"/><circle cx="70" cy="140" r="14" class="sf-yg-svgseat"/><circle cx="32" cy="102" r="14" class="sf-yg-svgseat"/><circle cx="43" cy="43" r="14" class="sf-yg-svgseat"/></svg>
+      <div class="sf-yg-pill" style="background:#E1F5EE;color:#085041"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 8a5 5 0 010 8M17.7 5a9 9 0 010 14M6 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h2l3.5-4.5A.8.8 0 0111 5.5v13a.8.8 0 01-1.5.5L6 15M3 3l18 18"/></svg><span>Mute anyone, keep them close.</span></div>
+      <div class="sf-yg-pill" style="background:#FAECE7;color:#712B13"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 5a2 2 0 114 0 7 7 0 014 6v3a4 4 0 002 3H4a4 4 0 002-3v-3a7 7 0 014-6M9 17v1a3 3 0 006 0v-1"/></svg><span>Poke when it can’t wait.</span></div>
+      <ng-container [ngTemplateOutlet]="mine" />
+      <button type="button" class="sf-yg-cta" style="background:#0F6E56;color:#E1F5EE" (click)="start()">{{ auth.user() ? 'Back to my circle' : 'Build my circle' }}</button>
+      }
+    }
+    <p class="sf-yg-fine"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg> Private. No ads. No feed.</p>
+    <p class="sf-yg-fine"><a routerLink="/welcome">Install the app</a> · <a routerLink="/privacy">Privacy</a> · <a routerLink="/viewwelcome">All welcome pages</a></p>
+  </div>
+</main>

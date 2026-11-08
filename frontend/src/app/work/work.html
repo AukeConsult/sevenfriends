@@ -1,0 +1,53 @@
+<main class="sf-landing sf-wk" [class]="'sf-landing sf-wk sf-wk-v' + variant">
+  <!-- the three arguments, short: key people, control the noise, private per contact -->
+  <ng-template #why>
+    <div class="sf-wk-why">
+      <div class="sf-wk-tile"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2 20a7 7 0 0114 0"/><circle cx="17" cy="9" r="3"/><path d="M16 14.5a6 6 0 016 5.5"/></svg><b>Key people first</b><span>Seven seats keep them in view</span></div>
+      <div class="sf-wk-tile"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 009 9 9 9 0 11-9-9z"/></svg><b>Control the noise</b><span>Focus quiets the rest. Urgent gets through</span></div>
+      <div class="sf-wk-tile"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg><b>Private per contact</b><span>One locked room each</span></div>
+    </div>
+  </ng-template>
+  <div class="sf-wk-card">
+    @switch (variant) {
+      @case (1) {
+      <div class="sf-wk-brand"><span class="sf-wk-logo" style="background:#185FA5;color:#E6F1FB">7</span>Seven Work</div>
+      <h1 class="sf-wk-hd">Your seven key<br>business contacts</h1>
+      <p class="sf-wk-sub">The few people your work depends on. Close, clear, always reachable.</p>
+      <div class="sf-wk-list">
+        <div class="sf-wk-rowc"><span class="sf-wk-cir" style="background:#B5D4F4;color:#0C447C">1</span>Client<span class="sf-wk-r">Anna K.</span></div>
+        <div class="sf-wk-rowc"><span class="sf-wk-cir" style="background:#9FE1CB;color:#085041">2</span>Partner<span class="sf-wk-r">Jonas M.</span></div>
+        <div class="sf-wk-rowc"><span class="sf-wk-cir" style="background:#CECBF6;color:#3C3489">3</span>Mentor<span class="sf-wk-r">Sara L.</span></div>
+        <div class="sf-wk-rowc sf-wk-open"><span class="sf-wk-seat">4</span>Open seat<span class="sf-wk-r">Add contact</span></div>
+        <div class="sf-wk-rowc sf-wk-open"><span class="sf-wk-seat">5</span>Open seat<span class="sf-wk-r">Add contact</span></div>
+      </div>
+      <ng-container [ngTemplateOutlet]="why" />
+      <button type="button" class="sf-wk-cta" style="background:#185FA5;color:#E6F1FB" (click)="start()">{{ auth.user() ? 'Back to my seven' : 'Set up my seven' }}</button>
+      }
+      @case (2) {
+      <div class="sf-wk-brand"><span class="sf-wk-logo" style="background:#0F6E56;color:#E1F5EE">7</span>Seven Work</div>
+      <h1 class="sf-wk-hd">Stay close to the people your work needs</h1>
+      <div class="sf-wk-pill" style="background:#E1F5EE;color:#085041"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><span>See who you haven’t spoken to in a while</span></div>
+      <div class="sf-wk-pill" style="background:#E6F1FB;color:#0C447C"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 009 9 9 9 0 11-9-9z"/></svg><span><b>Focus.</b> Quiet the rest, keep the key people.</span></div>
+      <div class="sf-wk-pill" style="background:#FAEEDA;color:#633806"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 5a2 2 0 114 0 7 7 0 014 6v3a4 4 0 002 3H4a4 4 0 002-3v-3a7 7 0 014-6M9 17v1a3 3 0 006 0v-1"/></svg><span><b>Urgent.</b> A flagged message always gets through.</span></div>
+      <div class="sf-wk-nudge"><span class="sf-wk-cir sf-wk-sm" style="background:#B5D4F4;color:#0C447C">AK</span>Last spoken to 12 days ago<b>Say hi</b></div>
+      <ng-container [ngTemplateOutlet]="why" />
+      <button type="button" class="sf-wk-cta" style="background:#0F6E56;color:#E1F5EE" (click)="start()">{{ auth.user() ? 'Back to my contacts' : 'Get started' }}</button>
+      }
+      @case (3) {
+      <div class="sf-wk-brand"><span class="sf-wk-logo" style="background:#3C3489;color:#EEEDFE">7</span>Seven Work</div>
+      <h1 class="sf-wk-hd">One private space for each business relation</h1>
+      <p class="sf-wk-sub">No big channels. Just you and one contact.</p>
+      <div class="sf-wk-room">
+        <div class="sf-wk-roomhead"><span class="sf-wk-cir sf-wk-sm" style="background:#CECBF6;color:#3C3489">JM</span>Jonas M.<span class="sf-wk-lock"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg></span></div>
+        <div class="sf-wk-file"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3v4a1 1 0 001 1h4"/><path d="M17 21H7a2 2 0 01-2-2V5a2 2 0 012-2h7l5 5v11a2 2 0 01-2 2z"/><path d="M9 13h6M9 17h6"/></svg>Contract_v3.pdf<span>Locked</span></div>
+        <div class="sf-wk-file"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 8h.01"/><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M4 15l4-4a3 5 0 013 0l5 5"/><path d="M14 14l1-1a3 5 0 013 0l2 2"/></svg>Site photos<span>12 files</span></div>
+      </div>
+      <div class="sf-wk-pill" style="background:#EEEDFE;color:#3C3489"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 19H5a2 2 0 01-2-2V6a2 2 0 012-2h4l3 3h7a2 2 0 012 2v2M19 22v-3M17 19h4v3h-4z"/></svg><span><b>Shared files.</b> Only you and your contact can open them.</span></div>
+      <ng-container [ngTemplateOutlet]="why" />
+      <button type="button" class="sf-wk-cta" style="background:#534AB7;color:#EEEDFE" (click)="start()">{{ auth.user() ? 'Back to my contacts' : 'Start my first contact' }}</button>
+      }
+    }
+    <p class="sf-wk-fine"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg> Private. No ads. No feed.</p>
+    <p class="sf-wk-fine"><a routerLink="/welcome">Install the app</a> · <a routerLink="/privacy">Privacy</a> · <a routerLink="/viewwelcome">All welcome pages</a></p>
+  </div>
+</main>
