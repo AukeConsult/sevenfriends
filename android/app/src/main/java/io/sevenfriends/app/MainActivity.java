@@ -165,6 +165,7 @@ public class MainActivity extends BridgeActivity {
         if (url == null) url = pathOfWebsiteLink(intent.getData()); // a link of the website opened the app (see the intent filter in the manifest)
         if (url == null || !url.startsWith("/") || url.startsWith("//")) return; // only pages of the app itself
         intent.removeExtra(EXTRA_URL);
+
         intent.setData(null); // used once
         final WebView web = getBridge() != null ? getBridge().getWebView() : null;
         if (web == null) return;

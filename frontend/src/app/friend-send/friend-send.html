@@ -1,0 +1,88 @@
+<main class="sf-lock-page sf-send-page">
+  @if (ctx.blocked(); as why) {
+    <div class="alert alert-warning" role="alert">{{ why }}</div>
+  } @else {
+    <!-- the frame to write in; what opens (emojis, image / video / voice) expands above it, and closes when focus goes elsewhere -->
+    @if (emojiOpen()) {
+      <div class="sf-send-attach sf-send-emoji">
+        <div class="sf-emoji-wrap">
+          <div class="sf-emoji-tabs" role="tablist" aria-label="Emoji groups">
+            @for (group of emojiGroups; track group.name) {
+              <button type="button" role="tab" class="sf-emoji-tab" [class.sf-on]="emojiGroup() === group.name" [attr.aria-selected]="emojiGroup() === group.name"
+                      [attr.aria-label]="group.name" [title]="group.name" (click)="chooseEmojiGroup(group.name)">{{ group.icon }}</button>
+            }
+          </div>
+          <div class="sf-emoji-panel" role="tabpanel" [attr.aria-label]="emojiGroup()">
+            @for (emoji of emojisOfGroup(); track $index) {
+              <button type="button" class="sf-emoji" (click)="addEmoji(emoji)" [attr.aria-label]="'Add ' + emoji">{{ emoji }}</button>
+            }
+          </div>
+        </div>
+      </div>
+    }
+    @if (attach(); as kind) {
+        <div class="sf-send-attach">
+          @for (k of [kind]; track k) {
+            <app-add-media [kind]="k" [friendId]="ctx.friendId" [hosted]="true" [caption]="text()" (closed)="attach.set(null)" (sent)="attached()" />
+          }
+        </div>
+      }
+    <div class="sf-send-wrap">
+      <div class="sf-send-frame">
+        <textarea #field appClear class="sf-send-text" rows="5" maxlength="2000" [placeholder]="mediaReady() ? 'Add a text (optional)…' : 'Write to ' + friendName() + '…'" [attr.aria-label]="'Message to ' + friendName()"
+                  [value]="text()" (input)="text.set($any($event.target).value)" (focus)="emojiOpen.set(false)" (keydown.enter)="enterPressed($event)" [disabled]="busy()"></textarea>
+        <div class="sf-send-tools">
+          <button type="button" data-send="emoji" class="sf-send-tool" (click)="toggleEmoji()" [attr.aria-expanded]="emojiOpen()" aria-label="Add an emoji" title="Add an emoji">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M8 14a4 4 0 008 0M9 9.5h.01M15 9.5h.01" /></svg>
+          </button>
+          <button type="button" data-send="attach" class="sf-send-tool" (click)="openAttach('image')" [attr.aria-expanded]="attach() === 'image'" aria-label="Send an image" title="Send an image">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="9" cy="10" r="1.5" /><path d="M21 16l-5-5-8 9" /></svg>
+          </button>
+          <button type="button" data-send="attach" class="sf-send-tool" (click)="openAttach('video')" [attr.aria-expanded]="attach() === 'video'" aria-label="Send a video" title="Send a video">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="14" height="12" rx="2" /><path d="M16 10l6-3v10l-6-3z" /></svg>
+          </button>
+          <button type="button" data-send="attach" class="sf-send-tool" (click)="openAttach('audio')" [attr.aria-expanded]="attach() === 'audio'" aria-label="Send a voice message" title="Send a voice message">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" /><path d="M5 11a7 7 0 0014 0M12 18v3" /></svg>
+          </button>
+          <button type="button" class="sf-send-go ms-auto" [disabled]="busy() || !(text().trim() || mediaReady())" (click)="go()" aria-label="Send" title="Send">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- the ready-made messages: this friend's own first (my colour), then the general ones; Add opens the frame to change this friend's own -->
+    <div class="sf-send-bubbles">
+      @for (quick of ctx.ownQuick(); track 'own' + $index) {
+        <button type="button" class="btn sf-send-quick sf-mine-bubble text-start" [disabled]="busy()" (click)="deliver(quick)">{{ quick }}</button>
+      }
+      @for (quick of general(); track 'all' + $index) {
+        <button type="button" class="btn sf-send-quick text-start" [disabled]="busy()" (click)="deliver(quick)">{{ quick }}</button>
+      }
+      <button type="button" data-send="add" class="btn sf-send-add" (click)="toggleAdd()" [attr.aria-expanded]="addOpen()" [attr.aria-label]="'Add a message for ' + friendName() + ' only'" [title]="'Add a message for ' + friendName() + ' only'">+ Add</button>
+    </div>
+
+    @if (addOpen()) {
+      <div class="sf-send-addframe">
+        <p class="sf-hint m-0">Messages for {{ friendName() }} only. They are kept on this device, and saved as you type.</p>
+        @for (row of rows(); track $index) {
+          <div class="d-flex gap-2">
+            <input type="text" class="form-control" [value]="row" [maxLength]="quickLength" placeholder="For example: I'm on my way"
+                   (input)="setRow($index, $any($event.target).value)" [attr.aria-label]="'Message for ' + friendName() + ' ' + ($index + 1)" autocomplete="off" />
+            <button type="button" class="btn btn-outline-secondary" (click)="removeRow($index)" [attr.aria-label]="'Remove message ' + ($index + 1)">✕</button>
+          </div>
+        }
+        @if (rows().length < quickMax) {
+          <button type="button" class="btn btn-light btn-sm align-self-start" (click)="addRow()">+ Add a message</button>
+        }
+      </div>
+    }
+
+    @if (notice(); as done) {
+      <p class="sf-hint m-0" role="status">{{ done }}</p>
+    }
+    @if (error()) {
+      <div class="alert alert-danger" role="alert">{{ error() }}</div>
+    }
+  }
+</main>

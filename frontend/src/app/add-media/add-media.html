@@ -1,8 +1,18 @@
-<div class="sf-page-head">
-  <h1>{{ cameraOpen() ? text.recording : text.title }}</h1>
-</div>
+@if (!embedded) {
+  <div class="sf-page-head">
+    <h1>{{ cameraOpen() ? text.recording : text.title }}</h1>
+  </div>
+}
 
-<main class="sf-narrow">
+<main [class.sf-narrow]="!embedded" [class.sf-attach-panel]="embedded">
+  @if (embedded) {
+    <div class="d-flex justify-content-between align-items-center">
+      <strong class="sf-attach-title">{{ cameraOpen() ? text.recording : text.title }}</strong>
+      @if (hosted()) {
+        <button type="button" class="sf-icon-btn" (click)="closed.emit()" aria-label="Close" title="Close">✕</button>
+      }
+    </div>
+  }
   @if (cameraOpen()) {
     @if (kind === 'audio') {
       <!-- the voice recorder, on this page -->
@@ -40,7 +50,9 @@
     @if (error()) {
       <div class="alert alert-danger" role="alert">{{ error() }}</div>
     }
-    <a [routerLink]="['/friends', friendId]" class="btn btn-light">Cancel</a>
+    @if (!hosted()) {
+      <button type="button" class="btn btn-light" (click)="cancel()">Cancel</button>
+    }
   } @else {
     @if (preview(); as src) {
       @if (kind === 'image') {
@@ -70,16 +82,20 @@
     @if (trimmed()) {
       <p class="sf-hint text-center m-0">The video is longer than {{ maxSeconds }} seconds: only the first {{ maxSeconds }} seconds are sent.</p>
     }
+    @if (!hosted()) {
     <label class="sf-field"><span class="sf-hint">Add a text (optional)</span>
       <textarea appClear class="form-control" rows="2" maxlength="500" [value]="caption()" (input)="caption.set($any($event.target).value)" [disabled]="!!working()"></textarea>
     </label>
+    }
     @if (error()) {
       <div class="alert alert-danger" role="alert">{{ error() }}</div>
     }
+    @if (!hosted()) {
     <div class="d-flex gap-2">
-      <a [routerLink]="['/friends', friendId]" class="btn btn-light flex-fill" [class.disabled]="working()">Cancel</a>
+      <button type="button" class="btn btn-light flex-fill" [disabled]="!!working()" (click)="cancel()">Cancel</button>
       <button type="button" class="btn btn-primary flex-fill" [disabled]="!!working()" (click)="send()">{{ working() ?? 'Send' }}</button>
     </div>
+    }
     <button type="button" class="btn btn-link" [disabled]="!!working()" (click)="startAgain()">{{ text.another }}</button>
   }
 </main>

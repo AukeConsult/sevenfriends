@@ -1,9 +1,10 @@
 import { Capacitor } from '@capacitor/core';
-import { Component, OnDestroy, computed, inject, signal } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Component, OnDestroy, OnInit, computed, inject, input, output, signal } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Camera } from '../camera/camera';
 import { MAX_AUDIO_SECONDS, PreparedAudio, audioRecorderType, prepareAudioFile, prepareRecordedAudio } from '../core/audio';
 import { ChatService } from '../core/chat.service';
+import { ChatItem } from '../core/message-lock.service';
 import { Clearable } from '../core/clearable';
 import { MAX_IMAGE_BYTES, PreparedImage, formatBytes, prepareImage, rotateImage } from '../core/image';
 import { MediaService } from '../core/media.service';
@@ -23,7 +24,8 @@ const TEXT = {
 };
 
 /**
- * A full page to send an image, a video or a voice message to a friend (`/friends/:id/image`, `/video` and `/audio`): take or
+ * Sends an image, a video or a voice message to a friend. It opens inside the feed, above the message field (`<app-add-media [kind] [friendId]>` in the chat; it tells
+ * the chat with `closed` and `sent`), and still works as a full page on the earlier addresses (`/friends/:id/image`, `/video` and `/audio`). Take or
  * record it, or choose a file, see (or hear) it, add a text if you like, and Send. The file is made smaller in the browser
  * (an image to 1024 pixels and about 200 KB, a video to 1280 pixels, about 1.2 Mbit/s and at most 1 minute; a voice is recorded at 32 kbit/s,
  * at most 2 minutes, and a chosen audio file is sent as it is, at most 2 minutes and 25 MB). It and its name go to the server,
@@ -37,19 +39,30 @@ const TEXT = {
  */
 @Component({
   selector: 'app-add-media',
-  imports: [RouterLink, Clearable, Camera, Voice],
+  imports: [Clearable, Camera, Voice],
   templateUrl: './add-media.html',
 })
-export class AddMedia implements OnDestroy {
+export class AddMedia implements OnInit, OnDestroy {
   private readonly media = inject(MediaService);
   private readonly chat = inject(ChatService);
   private readonly lock = inject(MessageLockService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
-  protected readonly friendId = this.route.snapshot.paramMap.get('id') ?? '';
-  protected readonly kind: 'image' | 'video' | 'audio' = this.route.snapshot.data['kind'];
-  protected readonly text = TEXT[this.kind];
+  /** given when it is shown inside the feed; without them it is a page and takes both from its address */
+  readonly kindIn = input<'image' | 'video' | 'audio' | null>(null, { alias: 'kind' });
+  readonly friendIn = input<string | null>(null, { alias: 'friendId' });
+  /** hosted by a page that has its own writing frame and Send button (Send a message): the text comes from `caption`, the page calls `send()`, and a ✕ closes the card */
+  readonly hosted = input(false);
+  readonly captionIn = input('', { alias: 'caption' });
+  /** a file is ready to be sent (chosen or recorded, and nothing is being done to it) */
+  readonly hasFile = computed(() => !!this.file() && !this.working());
+  readonly closed = output<void>();
+  readonly sent = output<ChatItem>();
+  protected embedded = false;
+  protected friendId = '';
+  protected kind: 'image' | 'video' | 'audio' = 'image';
+  protected text = TEXT.image;
   protected readonly maxSeconds = MAX_VIDEO_SECONDS;
   protected readonly maxMinutes = MAX_AUDIO_SECONDS / 60;
   protected readonly file = signal<Prepared | null>(null);
@@ -73,24 +86,47 @@ export class AddMedia implements OnDestroy {
    * may close this app's page to save memory (a selfie in high resolution), and the person lands on the start page without the photo.
    * The page camera also gives a small picture at once, which is much faster than the full-size photo of the camera app.
    */
-  private readonly appPhoto = Capacitor.isNativePlatform() && this.kind === 'image';
+  private appPhoto = false;
   /**
    * A video in the Android app is filmed on the page too, small (960 x 540, at most one minute): the camera app of the phone films in full
    * quality (1080p or 4K, a huge file) while this page waits in the background, where Android may close it, and the big file would then
    * have to be made smaller in the page, which needs a lot of memory.
    */
-  private readonly appVideo = Capacitor.isNativePlatform() && this.kind === 'video';
-  protected readonly nativeCapture = this.phoneCamera && this.kind !== 'audio' && !this.appPhoto && !this.appVideo;
+  private appVideo = false;
+  protected nativeCapture = false;
   /** the browser can show the camera, or take the voice, on the page (needs https or localhost), and for a video or voice, record it */
-  protected readonly pageCamera =
-    Boolean(navigator.mediaDevices?.getUserMedia) &&
-    (this.kind === 'audio' ? audioRecorderType() !== null : (!this.phoneCamera || this.appPhoto || this.appVideo) && (this.kind === 'image' || recorderType() !== null));
+  protected pageCamera = false;
   protected readonly cameraOpen = signal(false);
 
   /** the upload that worked, when sending the message did not: the next try does not upload again */
   private stored: MediaUpload | null = null;
   /** the file was locked before it was uploaded: the key of the message and what the message must carry about the locked file (kept with the upload) */
   private sealed: { key: CryptoKey; media: MessageEncMedia } | null = null;
+
+  /** the kind and the friend are known now (an input is not set while the fields are made) */
+  ngOnInit(): void {
+    this.embedded = this.kindIn() !== null;
+    this.kind = this.kindIn() ?? this.route.snapshot.data['kind'];
+    this.friendId = this.friendIn() ?? this.route.snapshot.paramMap.get('id') ?? '';
+    this.text = TEXT[this.kind];
+    this.appPhoto = Capacitor.isNativePlatform() && this.kind === 'image';
+    this.appVideo = Capacitor.isNativePlatform() && this.kind === 'video';
+    this.nativeCapture = this.phoneCamera && this.kind !== 'audio' && !this.appPhoto && !this.appVideo;
+    this.pageCamera =
+      Boolean(navigator.mediaDevices?.getUserMedia) &&
+      (this.kind === 'audio' ? audioRecorderType() !== null : (!this.phoneCamera || this.appPhoto || this.appVideo) && (this.kind === 'image' || recorderType() !== null));
+  }
+
+  /** a file is chosen, the camera or the voice recorder is open, or something is being sent: tapping elsewhere must not close the panel (it would lose it) */
+  hasWork(): boolean {
+    return !!this.file() || !!this.working() || this.cameraOpen();
+  }
+
+  /** Cancel: the panel closes (in the feed), or the page goes back to the conversation. */
+  protected cancel(): void {
+    if (this.embedded) this.closed.emit();
+    else void this.router.navigate(['/friends', this.friendId]);
+  }
 
   protected onFile(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
@@ -203,7 +239,7 @@ export class AddMedia implements OnDestroy {
     this.sealed = null;
   }
 
-  protected async send(): Promise<void> {
+  async send(): Promise<void> {
     const file = this.file();
     if (!file || this.working()) return;
     this.working.set('Sending…');
@@ -225,8 +261,9 @@ export class AddMedia implements OnDestroy {
       this.working.set('Sending…');
       const size = 'width' in file && !this.sealed ? { width: file.width, height: file.height } : {}; // a locked file's size is inside the lock
       sending = true;
-      await this.chat.sendMedia(this.friendId, this.caption().trim(), { objectId: this.stored.objectId, ...size, durationMs: this.sealed ? undefined : (this.durationMs() ?? undefined) }, this.sealed ?? undefined);
-      await this.router.navigate(['/friends', this.friendId]); // the conversation loads the message, and the file, from the server
+      const message = await this.chat.sendMedia(this.friendId, (this.hosted() ? this.captionIn() : this.caption()).trim(), { objectId: this.stored.objectId, ...size, durationMs: this.sealed ? undefined : (this.durationMs() ?? undefined) }, this.sealed ?? undefined);
+      if (this.embedded) this.sent.emit(message); // the feed adds it and closes this panel
+      else await this.router.navigate(['/friends', this.friendId]); // the conversation loads the message, and the file, from the server
     } catch (err: any) {
       this.error.set(err instanceof ApiError && err.status >= 500 && sending ? `${err.message} (sending the message)` : (err.message ?? 'Could not send it'));
     } finally {

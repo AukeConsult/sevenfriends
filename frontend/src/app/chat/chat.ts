@@ -1,12 +1,13 @@
+import { AddMedia } from '../add-media/add-media';
 import { Clearable } from '../core/clearable';
+import { FriendContext } from '../friend-page/friend-context';
 import { DatePipe } from '@angular/common';
 import { NgTemplateOutlet } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Component, DestroyRef, ElementRef, HostListener, computed, effect, inject, signal, untracked, viewChild } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { ApiError } from '../core/api.service';
-import { KeysService } from '../core/keys.service';
 import { localLink } from '../core/link-embed';
 import { ChatItem } from '../core/message-lock.service';
 import { SafeboxService } from '../core/safebox.service';
@@ -23,11 +24,8 @@ import { UiPreferencesService } from '../core/ui-preferences';
 import { EMOJI_GROUPS } from '../core/emojis';
 import { FriendsService } from '../core/friends.service';
 import { initials } from '../core/initials';
-import { presenceLabel } from '../core/presence';
-import { moodIcon, moodLabel } from '../core/moods';
-import { countries } from '../core/countries';
 import { RealtimeService } from '../core/realtime.service';
-import { BoxKeys, ChatMessage, MessageDeleteCriteria, MessageLink, profileColorHex, profileColorInk, profileColorSoft } from '../models';
+import { ChatMessage, MessageDeleteCriteria, MessageLink, profileColorHex, profileColorInk, profileColorSoft } from '../models';
 
 // New messages, edits and deletes arrive live (RealtimeService). This refresh is only a safety net.
 const SAFETY_REFRESH_MS = 30000;
@@ -35,7 +33,7 @@ const SAFETY_REFRESH_MS = 30000;
 /** The message feed with one friend: /friends/:id (the id of the connection). */
 @Component({
   selector: 'app-chat',
-  imports: [DatePipe, FriendAvatar, MediaAudio, MediaImage, MediaVideo, NgTemplateOutlet, RouterLink, Clearable],
+  imports: [AddMedia, DatePipe, FriendAvatar, MediaAudio, MediaImage, MediaVideo, NgTemplateOutlet, RouterLink, Clearable],
   templateUrl: './chat.html',
   // the page takes a light colour that goes with my friend's colour (the header has the friend's own colour)
   host: {
@@ -50,7 +48,6 @@ const SAFETY_REFRESH_MS = 30000;
 export class Chat {
   private readonly chat = inject(ChatService);
   private readonly safebox = inject(SafeboxService);
-  private readonly keysService = inject(KeysService);
   private readonly prefs = inject(UiPreferencesService);
   private readonly live = inject(LiveChanges);
   private readonly mediaService = inject(MediaService);
@@ -61,46 +58,31 @@ export class Chat {
   private readonly end = viewChild<ElementRef<HTMLElement>>('end');
   private readonly field = viewChild<ElementRef<HTMLTextAreaElement>>('field');
   private readonly composer = viewChild<ElementRef<HTMLElement>>('composer');
-  private readonly bar = viewChild<ElementRef<HTMLElement>>('bar');
 
-  protected readonly friendId = inject(ActivatedRoute).snapshot.paramMap.get('id') ?? '';
-  protected readonly name = signal('');
-  /** the name for the header: the one of this conversation once it is loaded, until then the one of the friend list (which is usually already there), else nothing */
-  protected readonly headerName = computed(() => this.name() || this.friend()?.name || '');
-  /** the header shows the full name when it is at most this many characters, else the initials */
-  private static readonly HEADER_NAME_MAX = 15;
-  protected readonly headerText = computed(() => {
-    const full = this.headerName().trim();
-    return full.length <= Chat.HEADER_NAME_MAX ? full : initials(full);
-  });
-  protected readonly presenceLabel = presenceLabel;
-  protected readonly moodIcon = moodIcon;
-  protected readonly moodLabel = moodLabel;
-  protected readonly profileOpen = signal(false); // the friend's profile, under the header
-  private readonly countryNames = new Map(countries().map((c) => [c.code, c.name]));
+  /** everything about this friend that the header shares with the pages under it (the friend, the colour, the padlock, the profile) */
+  private readonly ctx = inject(FriendContext);
+  protected readonly friendId = this.ctx.friendId;
+  protected readonly name = this.ctx.name;
+  protected readonly friend = this.ctx.friend;
+  protected readonly seat = this.ctx.seat;
+  protected readonly friendColor = this.ctx.friendColor;
+  protected readonly friendInk = this.ctx.friendInk;
+  protected readonly blocked = this.ctx.blocked;
+  protected readonly messagesLocked = this.ctx.messagesLocked;
+  /** the header menu (it lives in the friend page) */
+  private readonly moreOpen = this.ctx.moreOpen;
+  protected readonly barHeight = this.ctx.barHeight;
 
-  protected countryName(code: string | null): string {
-    return (code && this.countryNames.get(code)) || '';
-  }
-
-  /** Opens the friend's profile and brings the top of the conversation into view. */
+  /** The friend's picture next to a message: opens the profile under the header. */
   protected showProfile(): void {
-    this.profileOpen.set(true);
-    window.scrollTo({ top: 0, behavior: 'instant' });
+    this.ctx.showProfile();
   }
   protected readonly initials = initials;
-  /** this friend, from the list (for the mood) */
-  /** the colour my friend chose for their profile (#rrggbb), or null */
-  protected readonly friendColor = computed(() => profileColorHex(this.friend()?.color));
-  protected readonly friendInk = computed(() => profileColorInk(this.friend()?.color));
   /** a very light tint of my friend's colour: the background of the conversation */
   protected readonly feedBackground = computed(() => profileColorSoft(this.friend()?.color));
   /** my own colour for my bubbles, and the text colour on it */
   protected readonly myColor = computed(() => profileColorHex(this.myAvatarService.color()));
   protected readonly myInk = computed(() => profileColorInk(this.myAvatarService.color()));
-  protected readonly friend = computed(() => this.friendsService.friends().find((f) => f.id === this.friendId) ?? null);
-  /** the seat of this friend (1-7): its icon friend{seat}.svg is shown in the header; 0 while the list is not loaded */
-  protected readonly seat = computed(() => this.friendsService.awake().findIndex((f) => f.id === this.friendId) + 1);
   protected readonly messages = signal<ChatItem[]>([]);
   /** false = oldest first (the default); true = newest first. Remembered on this device. */
   /** newest first? (a remembered choice, the same in every window; a refresh of the feed never changes it) */
@@ -113,7 +95,8 @@ export class Chat {
   private readonly me = inject(AuthService).user;
   protected readonly myInitials = computed(() => initials(this.me()?.displayName ?? this.me()?.email ?? this.me()?.phoneNumber));
   /** the ready-made messages of the + menu (a preference) */
-  protected readonly quickMessages = this.prefs.value('quickMessages');
+  /** this friend's own ready-made messages first, then the general ones */
+  protected readonly quickMessages = computed(() => [...this.ctx.ownQuick(), ...this.prefs.value('quickMessages')()]);
   protected readonly sortDesc = computed(() => this.prefs.value('chatOrder')() === 'newest');
   protected readonly shown = computed(() => (this.sortDesc() ? [...this.messages()].reverse() : this.messages()));
 
@@ -125,13 +108,13 @@ export class Chat {
     { label: 'All of them', days: null, icon: 'all' },
   ];
   protected readonly cleanupOpen = signal(false);
-  protected readonly cleanupWhose = signal<'mine' | 'both'>('mine');
+  protected readonly cleanupWhose = signal<'mine' | 'both'>(this.prefs.get('cleanupWhose'));
   /** my messages, or both sides' (never the friend's alone) */
   protected readonly whoseChoices = computed<{ value: 'mine' | 'both'; label: string }[]>(() => [
     { value: 'mine', label: 'My messages' },
     { value: 'both', label: `Both: mine and ${this.name() || 'my friend'}'s` },
   ]);
-  protected readonly cleanupDays = signal<number | null>(30);
+  protected readonly cleanupDays = signal<number | null>(this.prefs.get('cleanupDays'));
   protected readonly cleanupText = signal('');
   /** how many messages match (counted by the server); null while counting */
   protected readonly cleanupCount = signal<number | null>(null);
@@ -156,8 +139,6 @@ export class Chat {
   private countSeq = 0;
   protected readonly loaded = signal(false);
   protected readonly error = signal<string | null>(null);
-  /** set when this conversation cannot be opened (not confirmed, or not found) */
-  protected readonly blocked = signal<string | null>(null);
   protected readonly text = signal('');
   protected readonly sending = signal(false);
   protected readonly emojiGroups = EMOJI_GROUPS;
@@ -172,9 +153,10 @@ export class Chat {
   /** the emoji panel above the message field */
   protected readonly emojiOpen = signal(false);
   /** the menu of the smiley and the paperclip button */
+  /** the image, video or voice panel that is open above the message field (null = none) */
+  private readonly media = viewChild(AddMedia);
+  protected readonly attachKind = signal<'image' | 'video' | 'audio' | null>(null);
   protected readonly menuOpen = signal(false);
-  /** the menu of the three dots in the header (sort order, clean up) */
-  protected readonly moreOpen = signal(false);
   private menuPinned = false; // opened by a click or tap: it stays until the next click, instead of closing when the mouse leaves
 
   /** which menu is open: the smiley (emoji, quick messages) or the paperclip (image, video, voice) */
@@ -197,16 +179,6 @@ export class Chat {
     this.menuKind.set(kind);
     this.menuPinned = true; // opened by a click or tap: it stays until the next click
     this.menuOpen.set(true);
-  }
-
-  /** The three dots of the header: opening its menu closes the emoji picker and the smiley / paperclip menu (only one is open at a time). */
-  protected toggleMore(): void {
-    const open = !this.moreOpen();
-    this.moreOpen.set(open);
-    if (open) {
-      this.menuOpen.set(false);
-      this.emojiOpen.set(false);
-    }
   }
 
   /** A mouse over a button opens its menu (or the emoji picker) and closes the other one; leaving closes the menu (a finger has no hover: it taps). */
@@ -245,44 +217,18 @@ export class Chat {
   protected readonly editing = signal<string | null>(null);
   /** the height of the message field with its panel: the feed keeps this much room at the bottom, so no message hides behind it */
   protected readonly composerHeight = signal(64);
-  /** the height of the header: the message field sticks right under it when the newest message is on top */
-  protected readonly barHeight = signal(56);
-
-  /** the keys in use of me and of my friend (null until asked): the padlock in the header says whether new messages are locked */
-  private readonly boxKeys = signal<BoxKeys | null>(null);
-  private readonly boxPlain = this.prefs.value('boxPlain');
-  /** who has a key: 'both', 'friend' (only I have one, on this device), 'me' (only my friend has one), 'none', or 'checking' while it is not known */
-  protected readonly keyStatus = computed<'checking' | 'both' | 'me' | 'friend' | 'none'>(() => {
-    const box = this.boxKeys();
-    const state = this.keysService.state();
-    if (!box || state === 'checking') return 'checking';
-    const mine = state === 'ready' && box.mine.some((k) => k.id === this.keysService.thisKeyId());
-    const friend = box.friend.length > 0;
-    return mine && friend ? 'both' : friend ? 'me' : mine ? 'friend' : 'none';
-  });
-  /** both of us have a key (mine on this device, my friend's on any device) */
-  private readonly bothHaveKeys = computed(() => this.keyStatus() === 'both');
-  /** the frame under the header that explains the padlock and holds the switch */
-  protected readonly lockOpen = signal(false);
-  /** locking is on (the opposite of the "do not lock" choice, which is remembered on this device and is the same as in the safebox) */
-  protected readonly lockingOn = computed(() => !this.boxPlain());
-  protected setLocking(on: boolean): void {
-    this.prefs.set('boxPlain', !on);
-  }
-  /** new messages are locked: both have a key and locking is not switched off (the same choice as for new files in the safebox) */
-  protected readonly messagesLocked = computed(() => this.bothHaveKeys() && !this.boxPlain());
-  /** what the padlock says (for a screen reader, the tooltip and the menu) */
-  /** the short words for the menu item */
-  protected readonly lockMenuText = computed(() => (this.messagesLocked() ? 'Locking is on' : this.bothHaveKeys() ? 'Locking is off' : 'Locking: not set up yet'));
-  protected readonly lockText = computed(() =>
-    this.messagesLocked() ? 'New messages and files are locked' : this.bothHaveKeys() ? 'Locking is switched off for new messages and files' : 'Messages and files are not locked yet: you both need a key',
-  );
 
   constructor() {
-    void this.keysService.refresh(); // is there a key for me on this device?
-    void this.safebox.keys(this.friendId).then((keys) => this.boxKeys.set(keys)).catch(() => undefined); // and for my friend?
-    if (!this.friendsService.friends().length) void this.friendsService.load().catch(() => undefined); // opened directly (a reload): the seat comes from the list
-    this.realtime.openFeed.set(this.friendId); // new messages from this friend come here, not to the Home list
+    // the header menu shows the sort order and the clean-up only while the feed is open
+    this.ctx.feed.set({
+      sortDesc: () => this.sortDesc(),
+      toggleSort: () => this.toggleSort(),
+      toggleCleanup: () => this.toggleCleanup(),
+      closeMenus: () => {
+        this.menuOpen.set(false);
+        this.emojiOpen.set(false);
+      },
+    });
     this.refresh(true);
     if (this.prefs.get('feedIcons')) void this.myAvatarService.load();
 
@@ -298,15 +244,6 @@ export class Chat {
     effect(() => {
       const text = this.text();
       untracked(() => this.watchDraft(text));
-    });
-
-    // the header's height (it changes with the notch and the font size)
-    effect((onCleanup) => {
-      const header = this.bar()?.nativeElement;
-      if (!header) return;
-      const watch = new ResizeObserver(() => this.barHeight.set(header.offsetHeight));
-      watch.observe(header);
-      onCleanup(() => watch.disconnect());
     });
 
     // the message field grows with its text: keep the feed clear of it
@@ -326,7 +263,7 @@ export class Chat {
     const timer = setInterval(() => this.refresh(false), SAFETY_REFRESH_MS);
     inject(DestroyRef).onDestroy(() => {
       clearInterval(timer);
-      if (this.realtime.openFeed() === this.friendId) this.realtime.openFeed.set(null);
+      this.ctx.feed.set(null);
     });
   }
 
@@ -562,6 +499,20 @@ export class Chat {
     }
   }
 
+  protected openAttach(kind: 'image' | 'video' | 'audio'): void {
+    this.menuOpen.set(false);
+    this.menuPinned = false;
+    this.emojiOpen.set(false);
+    this.attachKind.set(kind);
+  }
+
+  /** The panel sent a file: the message is in the feed, the panel closes. */
+  protected attached(message: ChatItem): void {
+    this.messages.update((list) => [...list, message]);
+    this.attachKind.set(null);
+    this.scrollDown();
+  }
+
   /** A ready-made message from the + menu: sent at once. What is typed in the field stays as it is. */
   protected async sendQuick(text: string): Promise<void> {
     this.menuOpen.set(false);
@@ -673,11 +624,11 @@ export class Chat {
   @HostListener('document:click', ['$event'])
   protected onDocumentClick(event: Event): void {
     const target = event.target as Element | null;
+    if (this.attachKind() && !target?.closest('app-add-media, .sf-add') && !this.media()?.hasWork()) this.attachKind.set(null); // a click elsewhere closes the image / video / voice panel, unless it holds a file or a recording
     if (this.menuOpen() && !target?.closest('.sf-add')) {
       this.menuOpen.set(false);
       this.menuPinned = false;
     }
-    if (this.moreOpen() && !target?.closest('.sf-more')) this.moreOpen.set(false);
     if (this.cleanupOpen() && !target?.closest('.sf-cleanup, [aria-controls="cleanup"]')) this.closeCleanup();
     const selected = this.selected();
     if (selected && (target?.closest('.sf-message') as HTMLElement | null)?.dataset['id'] !== selected) {
@@ -693,12 +644,10 @@ export class Chat {
     this.deleting.set(null);
   }
 
-  /** Closes the delete frame and forgets what was chosen in it (the next opening starts fresh). */
+  /** Closes the delete frame; the words to look for are forgotten, whose and how old are remembered (see setWhose, setDays). */
   private closeCleanup(): void {
     if (!this.cleanupOpen()) return;
     this.cleanupOpen.set(false);
-    this.cleanupWhose.set('mine');
-    this.cleanupDays.set(30);
     this.cleanupText.set('');
     this.cleanupCount.set(null);
     this.cleanupAsk.set(false);
@@ -720,11 +669,13 @@ export class Chat {
 
   protected setWhose(whose: 'mine' | 'both'): void {
     this.cleanupWhose.set(whose);
+    this.prefs.set('cleanupWhose', whose);
     this.recount(0);
   }
 
   protected setDays(days: number | null): void {
     this.cleanupDays.set(days);
+    this.prefs.set('cleanupDays', days);
     this.recount(0);
   }
 

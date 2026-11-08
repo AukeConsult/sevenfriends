@@ -5,6 +5,7 @@ import { authGuard, guestGuard } from './core/auth.guard';
 import { AddFriend } from './add-friend/add-friend';
 import { AddMedia } from './add-media/add-media';
 import { Chat } from './chat/chat';
+import { FriendPage } from './friend-page/friend-page';
 import { DeleteAccount } from './delete-account/delete-account';
 import { Friends } from './friends/friends';
 import { Sleeping } from './sleeping/sleeping';
@@ -39,9 +40,20 @@ export const routes: Routes = [
   { path: 'friends/:id/image', component: AddMedia, data: { kind: 'image' }, canActivate: [authGuard], title: 'Send an image – Seven Friends' },
   { path: 'friends/:id/audio', component: AddMedia, data: { kind: 'audio' }, canActivate: [authGuard], title: 'Send a voice message – Seven Friends' },
   { path: 'friends/:id/video', component: AddMedia, data: { kind: 'video' }, canActivate: [authGuard], title: 'Send a video – Seven Friends' },
-  { path: 'friends/:id/safebox/:itemId', loadComponent: () => import('./safebox-view/safebox-view').then((m) => m.SafeboxView), canActivate: [authGuard], title: 'Safebox – Seven Friends' },
-  { path: 'friends/:id/safebox', loadComponent: () => import('./safebox/safebox').then((m) => m.Safebox), canActivate: [authGuard], title: 'Safebox – Seven Friends' },
-  { path: 'friends/:id', component: Chat, canActivate: [authGuard], title: 'Conversation – Seven Friends' },
+  // the page of one friend: the header stays, the messages or the safebox change under it
+  {
+    path: 'friends/:id',
+    component: FriendPage,
+    canActivate: [authGuard],
+    children: [
+      { path: '', component: Chat, title: 'Conversation – Seven Friends' },
+      { path: 'profile', loadComponent: () => import('./friend-profile/friend-profile').then((m) => m.FriendProfile), title: 'Profile – Seven Friends' },
+      { path: 'send', loadComponent: () => import('./friend-send/friend-send').then((m) => m.FriendSend), title: 'Send a message – Seven Friends' },
+      { path: 'lock', loadComponent: () => import('./friend-lock/friend-lock').then((m) => m.FriendLock), title: 'Locking – Seven Friends' },
+      { path: 'safebox/:itemId', loadComponent: () => import('./safebox-view/safebox-view').then((m) => m.SafeboxView), title: 'Safebox – Seven Friends' },
+      { path: 'safebox', loadComponent: () => import('./safebox/safebox').then((m) => m.Safebox), title: 'Safebox – Seven Friends' },
+    ],
+  },
   { path: 'media/:ownerId/:objectId', component: MediaViewer, canActivate: [authGuard], title: 'Image – Seven Friends' },
   { path: 'setup', component: Setup, canActivate: [authGuard], title: 'Set up – Seven Friends' },
   { path: 'pending', component: Pending, canActivate: [authGuard], title: 'Waiting – Seven Friends' },

@@ -313,7 +313,8 @@ router-outlet + * { display: block; min-height: 100dvh; }
 }
 .sf-page { max-width: 40rem; margin: 0 auto; }
 .sf-page.sf-page-wide { max-width: 64rem; } // lists with long file names use more of a wide screen
-.sf-page.sf-page-wide { max-width: none; padding-inline: 0.75rem; } // a file view uses the whole width of the screen
+.sf-page.sf-page-wide { max-width: none; padding-inline: 0.75rem; }
+.sf-page.sf-box-page { padding: 0.75rem 1.5rem calc(4.5rem + env(safe-area-inset-bottom)); } // the safebox list: room on both sides and at the bottom, clear of the bottom menu // a file view uses the whole width of the screen
 .sf-content { padding-top: 0.75rem; }
 .sf-feed { display: flex; flex-direction: column; gap: 0.5rem; padding-top: 0.75rem; padding-bottom: calc(3.5rem + 4rem + env(safe-area-inset-bottom)); } // + the composer
 .sf-landing {
@@ -633,6 +634,14 @@ router-outlet + * { display: block; min-height: 100dvh; }
 .sf-lock-mark { margin-inline-start: 0.25rem; vertical-align: -1px; opacity: 0.55; } // the small padlock at the end of a message that was sent locked
 .sf-locked-note { font-style: italic; opacity: 0.75; }
 .sf-lock-frame { display: grid; gap: 0.5rem; margin: 0.5rem var(--sf-gutter) 0; padding: 0.75rem 0.875rem; border: 1px solid var(--sf-border); border-radius: var(--sf-radius); background: var(--sf-card); font-size: var(--sf-fs-description); color: var(--sf-text); p { margin: 0; } .form-check { margin: 0; } } // the frame under the conversation header: what the padlock means and the switch
+.sf-tool-btn { position: relative; }
+.sf-tool-btn.sf-current { background: color-mix(in srgb, var(--sf-primary) 16%, transparent); color: var(--sf-primary); } // the icon of the page that is open under the header (the messages or the safebox)
+.sf-tool-dot { position: absolute; top: 0.2rem; right: 0.35rem; width: 0.6rem; height: 0.6rem; border-radius: 50%; background: var(--bs-danger, #dc3545); box-shadow: 0 0 0 2px var(--sf-header); } // a message arrived while the safebox is open
+.sf-lock-toast-anchor { position: sticky; height: 0; z-index: 4; } // under the header while the page scrolls; takes no room
+.sf-lock-toast { position: absolute; inset-inline: var(--sf-gutter); margin: 0.5rem auto 0; max-width: 28rem; padding: 0.625rem 0.875rem; border: 1px solid var(--bs-warning-border-subtle, #ffe69c); border-radius: var(--sf-radius); background: var(--bs-warning-bg-subtle, #fff3cd); color: var(--bs-warning-text-emphasis, #664d03); font-size: var(--sf-fs-description); box-shadow: 0 4px 14px color-mix(in srgb, var(--sf-text) 18%, transparent); animation: sf-toast 5s ease forwards; pointer-events: none;
+  &.sf-on { border-color: var(--bs-success-border-subtle, #a3cfbb); background: var(--bs-success-bg-subtle, #d1e7dd); color: var(--bs-success-text-emphasis, #0a3622); } } // what the padlock just did: green for locked, amber for not locked; it fades out
+@keyframes sf-toast { 0%, 80% { opacity: 1; } 100% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .sf-lock-toast { animation-duration: 5s; } }
 .sf-lock-btn { color: var(--bs-warning-text-emphasis, #997404); &.sf-on { color: var(--bs-success-text-emphasis, #0a3622); } } // the padlock in the conversation header: amber when open, green when locked
 .sf-tool-btn { // an action in the header with a text under its icon, so it is clear what it does
   flex: none;
@@ -693,6 +702,9 @@ router-outlet + * { display: block; min-height: 100dvh; }
   background: var(--sf-bg); // the same as the page (a friend's colour overrides it, see sf-feed-tinted)
   border-top: 1px solid var(--sf-border);
 }
+// the image / video / voice panel above the message field (see add-media)
+.sf-attach-panel { display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: var(--sf-media-max); margin: 0 auto; padding: 0.5rem var(--sf-gutter); max-height: 70dvh; overflow-y: auto; border-bottom: 1px solid var(--sf-border);
+  .sf-attach-preview { max-height: 30dvh; } }
 .sf-composer-row { display: flex; align-items: center; gap: 0.25rem; padding: 0.5rem var(--sf-gutter); }
 .sf-bubble-tap { cursor: pointer; }
 .sf-bubble .sf-box-note, .sf-bubble .sf-hint, .sf-bubble .text-secondary, .sf-bubble .text-muted, .sf-bubble small { color: inherit; } // whatever is in a bubble takes the bubble's text colour, so it reads on any background colour
@@ -826,7 +838,8 @@ app-voice { display: contents; }
   &:hover, &:focus-visible { background: var(--sf-bg); color: inherit; }
 }
 .sf-tap { cursor: pointer; } // the time of a picture, video or voice message opens its buttons, like the three dots
-.sf-more-menu { inset-inline-start: auto; inset-inline-end: 0; bottom: auto; top: 100%; transform-origin: top right; max-width: calc(100vw - 1rem); .sf-add-item span { white-space: normal; } } // the header menu opens below the three dots, at the right edge
+.sf-menu-sep { height: 1px; margin: 0.25rem 0.5rem; background: var(--sf-border); } // the line between the tools of the open page and the other pages in the header menu
+.sf-more-menu { inset-inline-start: auto; inset-inline-end: 0; bottom: auto; top: 100%; transform-origin: top right; width: max-content; max-width: calc(100vw - 1rem); .sf-add-item span { white-space: normal; } } // the header menu opens below the three dots, at the right edge; it is as wide as its longest text (the three dots are narrow, so without `width: max-content` it would be squeezed to their width)
 .sf-add-quick { min-width: 0; &:disabled { opacity: 0.5; } }
 .sf-add-emoji { display: inline-grid; place-items: center; width: 22px; font-size: 1.2rem; line-height: 1; }
 .sf-emoji-panel { display: grid; grid-template-columns: repeat(auto-fill, 1.5rem); justify-content: space-between; column-gap: 0.25rem; padding: 0.125rem var(--sf-gutter); border-bottom: 1px solid var(--sf-border); } // compact: small emojis, as many in a row as fit
@@ -1041,6 +1054,24 @@ app-voice { display: contents; }
   h2 { margin: 0; font-size: var(--sf-fs-text); font-weight: 700; }
   p { margin: 0; }
   .sf-box-keystatus { justify-content: flex-start; margin: 0; } } // all about locking (encryption) in one frame: closed it says whether files are locked, open it explains and holds the choices
+.sf-lock-page { display: grid; gap: 1rem; align-content: start; max-width: 40rem; width: 100%; margin: 0 auto; padding: 0.5rem var(--sf-gutter) calc(4.5rem + env(safe-area-inset-bottom));
+  section { display: grid; gap: 0.5rem; justify-items: start; }
+  h2 { margin: 0; font-size: var(--sf-fs-text); font-weight: 700; }
+  p { margin: 0; }
+  .sf-box-keystatus { justify-content: flex-start; margin: 0; } } // the page "Locking and keys" of a friend (it was the padlock frame of the safebox)
+// Send a message: what is mine has my colour, as my bubbles in the conversation; the rest is as light as the feed
+.sf-friend-page { min-height: 100dvh; } // the tint of the friend's colour reaches the bottom also on a short page
+.sf-send-quick { border-radius: 1.25rem 1.25rem 0.25rem 1.25rem; background: var(--sf-card); border: 1px solid var(--sf-border); color: inherit; white-space: pre-wrap; overflow-wrap: anywhere; &.sf-mine-bubble { background: var(--sf-my, linear-gradient(135deg, var(--sf-primary), var(--sf-primary-2))); color: var(--sf-my-ink, #fff); border-color: transparent; } }
+// the large frame to write in (Send a message): white, with a border; what opens covers it
+.sf-send-frame { display: flex; flex-direction: column; background: var(--sf-card); border: 1px solid var(--sf-border); border-radius: 1rem; &:focus-within { border-color: var(--sf-primary); } }
+.sf-send-text { width: 100%; resize: none; border: 0; outline: 0; background: transparent; color: inherit; padding: 0.875rem 1rem 0.25rem; min-height: 8rem; line-height: 1.4; font: inherit; border-radius: 1rem 1rem 0 0; }
+.sf-send-tools { display: flex; align-items: center; gap: 0.375rem; padding: 0.5rem 0.625rem; }
+.sf-send-tool { display: grid; place-items: center; width: 2.25rem; height: 2.25rem; border: 0; border-radius: 50%; color: var(--sf-primary); background: linear-gradient(135deg, #ffe27a, #fbbf24); box-shadow: 0 0.125rem 0.5rem rgb(0 0 0 / 0.2); &[aria-expanded='true'] { box-shadow: 0 0 0 2px var(--sf-primary); } } // the round yellow buttons of the message row in the conversation
+.sf-send-go { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; padding: 0; border: 0; border-radius: 50%; background: var(--sf-my, linear-gradient(135deg, var(--sf-primary), var(--sf-primary-2))); color: var(--sf-my-ink, #fff); &:disabled { opacity: 0.45; } } // the round Send button, in my colour
+.sf-send-attach { background: var(--sf-card); border: 1px solid var(--sf-border); border-radius: 1rem; .sf-attach-panel { border-bottom: 0; max-width: none; max-height: 60dvh; } } // the image / video / voice card: in the page, above the frame
+.sf-send-bubbles { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.sf-send-add { border: 1px dashed var(--sf-primary); border-radius: 1.25rem; color: var(--sf-primary); background: transparent; }
+.sf-send-addframe { display: grid; gap: 0.5rem; padding: 0.75rem; background: var(--sf-card); border: 1px solid var(--sf-border); border-radius: 1rem; }
 .sf-box-add summary { color: var(--sf-primary); } .sf-box-add.sf-over { border-color: var(--sf-primary); background: color-mix(in srgb, var(--sf-primary) 10%, var(--sf-card)); } // the Add files frame: in the brand colour, lit while files are dragged over it
 .sf-box-tools { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: center; gap: 0.5rem; margin-bottom: 0.75rem; > details { margin: 0; } > details[open] { flex: 1 1 100%; } } // the padlock and the Add files frame side by side
 .sf-box-add:not([open]) { border-radius: 999px; summary { gap: 0; padding: 0.5rem 0.75rem; &::after { display: none; } .sf-box-security-title { display: none; } } } // the Add files frame, closed: only the round icon beside the padlock (a file can still be dropped on it)

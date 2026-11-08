@@ -39,6 +39,11 @@ export interface UiPreferences {
   welcomeUntil: number | null;
   /** the safebox: files added are NOT encrypted even when both friends have a key (ticked on the safebox page); off (default) = they are encrypted */
   boxPlain: boolean;
+  /** the clean-up frame of a conversation: whose messages and how old they must be are remembered (the words to look for are not) */
+  cleanupWhose: 'mine' | 'both';
+  cleanupDays: number | null;
+  /** ready-made messages for ONE friend (by friend id), kept on this device only: listed first in that friend's + menu and on the Send a message page */
+  friendQuick: Record<string, string[]>;
 }
 
 /** Where a friend link points: an invite code, or an email / phone number. */
@@ -70,12 +75,23 @@ export const TEXT_SCALES: Record<UiPreferences['textSize'], number> = { tiny: 0.
 /** The same on a phone (a screen up to 575 px wide): one step up, so Small is what Normal was, Normal is what Big was, and Big is 15% more. */
 export const PHONE_TEXT_SCALES: Record<UiPreferences['textSize'], number> = { tiny: 0.9, small: 1, normal: 1.15, big: 1.3225, huge: 1.55 };
 
-export const DEFAULTS: UiPreferences = { theme: 'light', textSize: 'normal', settingsTab: 'profile', emojiTab: 'People', chatOrder: 'oldest', enterSends: true, sleepList: true, quickMessages: [], feedIcons: true, setup: 'new', lastPage: null, micRaw: false, pendingFriend: null, welcomeUntil: null, boxPlain: false };
+export const DEFAULTS: UiPreferences = { theme: 'light', textSize: 'normal', settingsTab: 'profile', emojiTab: 'People', chatOrder: 'oldest', enterSends: true, sleepList: true, quickMessages: [], feedIcons: true, setup: 'new', lastPage: null, micRaw: false, pendingFriend: null, welcomeUntil: null, boxPlain: false, cleanupWhose: 'mine', cleanupDays: 30, friendQuick: {} };
 
 /** The ready-made messages as stored: only texts, trimmed, not empty, not too long, not too many. */
 export function quickOf(value: unknown): string[] {
   if (!Array.isArray(value)) return [];
   return value.filter((v): v is string => typeof v === 'string').map((v) => v.trim().slice(0, QUICK_LENGTH)).filter(Boolean).slice(0, QUICK_MAX);
+}
+
+/** The ready-made messages of each friend as stored: by friend id, each list cleaned like the general one, empty lists left out, not too many friends. */
+export function friendQuickOf(value: unknown): Record<string, string[]> {
+  const result: Record<string, string[]> = {};
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return result;
+  for (const [id, list] of Object.entries(value as Record<string, unknown>).slice(0, 200)) {
+    const clean = quickOf(list);
+    if (clean.length) result[id] = clean;
+  }
+  return result;
 }
 
 const text = (value: unknown): string | null => (typeof value === 'string' && value ? value : null);
@@ -119,6 +135,9 @@ function read(): UiPreferences {
       pendingFriend: pendingOf(saved.pendingFriend),
       welcomeUntil: typeof saved.welcomeUntil === 'number' && Number.isFinite(saved.welcomeUntil) ? saved.welcomeUntil : null,
       boxPlain: saved.boxPlain === true,
+      cleanupWhose: saved.cleanupWhose === 'both' ? 'both' : 'mine',
+      friendQuick: friendQuickOf(saved.friendQuick),
+      cleanupDays: saved.cleanupDays === null || saved.cleanupDays === 1 || saved.cleanupDays === 7 ? saved.cleanupDays : 30,
     };
   } catch {
     return { ...DEFAULTS }; // private mode or damaged: the defaults, the choices last until the page is closed

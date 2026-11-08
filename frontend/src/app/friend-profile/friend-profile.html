@@ -1,0 +1,39 @@
+<main class="sf-lock-page">
+  <div class="sf-page-head">
+    <h1 class="m-0 mw-100"><span class="sf-ellipsis">Profile</span></h1>
+  </div>
+
+  @if (ctx.friend(); as f) {
+    <section class="sf-profile-head-block">
+      <app-friend-avatar [friend]="f" [seat]="ctx.seat() || 1" [size]="72" />
+      <div>
+        <h2 class="m-0">{{ f.name }}</h2>
+        <p class="sf-hint m-0">{{ presenceLabel(f.presence) }}</p>
+        @if (f.sleepsMe) { <p class="sf-hint m-0">😴 Has you on their sleep list</p> }
+      </div>
+    </section>
+
+    <section>
+      @if (countryName(f.country); as country) { <p class="sf-hint m-0">{{ country }}</p> }
+      @if (f.mood; as mood) {
+        <p class="sf-profile-mood">
+          <img [src]="moodIcon(mood)" [alt]="''" width="24" height="24" />
+          <span>{{ moodLabel(mood) }}</span>
+        </p>
+      }
+      @if (f.unverified.length && f.status !== 'rejected') {
+        <p class="sf-hint text-warning-emphasis m-0">
+          {{ f.name }} has not verified {{ f.unverified.length === 2 ? 'their email or phone' : f.unverified[0] === 'email' ? 'their email' : 'their phone' }},
+          so we cannot be sure it is really them.
+        </p>
+      }
+      <dl class="sf-details">
+        @if (f.phone) { <dt>Phone</dt><dd>{{ f.phone }}</dd> }
+        @if (f.email) { <dt>Email</dt><dd>{{ f.email }}</dd> }
+        @if (f.createdAt) { <dt>Added</dt><dd>{{ f.createdAt | date: 'mediumDate' }}</dd> }
+      </dl>
+    </section>
+  } @else {
+    <p class="text-secondary text-center">Opening the profile…</p>
+  }
+</main>

@@ -1,0 +1,102 @@
+<main class="sf-lock-page">
+  <div class="sf-page-head">
+    <h1 class="m-0 mw-100"><span class="sf-ellipsis">Locking and keys</span></h1>
+  </div>
+
+  <section>
+    <p>
+      @switch (ctx.keyStatus()) {
+        @case ('both') { Your messages and files are locked: only you and {{ friendName() }} can open them. }
+        @case ('me') { {{ friendName() }} has a key, but you have none on this device, so messages and files are not locked yet. }
+        @case ('friend') { You have a key, but {{ friendName() }} has not made one yet, so messages and files are not locked yet. }
+        @case ('none') { Neither of you has a key yet, so messages and files are not locked yet. }
+        @default { Checking the keys… }
+      }
+    </p>
+    @if (ctx.keyStatus() !== 'checking') {
+      <ul class="sf-box-keystatus list-unstyled" aria-label="Who has an encryption key">
+        <li [class.sf-has]="ctx.meHasKey()"><span aria-hidden="true">{{ ctx.meHasKey() ? '✓' : '✗' }}</span> You: {{ ctx.meHasKey() ? 'has a key' : 'no key yet' }}</li>
+        <li [class.sf-has]="ctx.friendHasKey()"><span aria-hidden="true">{{ ctx.friendHasKey() ? '✓' : '✗' }}</span> {{ friendName() }}: {{ ctx.friendHasKey() ? 'has a key' : 'no key yet' }}</li>
+      </ul>
+    }
+    @if (ctx.meHasKey() === false) {
+      <p class="sf-hint">
+        @if (keys.elsewhere()) {
+          You made a key before, but it is not on this device (it is on another device, or this browser cleared it). You can bring it back with your 24 words in Settings → Encryption.
+        } @else {
+          You can make your key in Settings → Encryption.
+        }
+      </p>
+      <a routerLink="/settings/encryption" class="btn btn-primary btn-sm">Make my key</a>
+    }
+  </section>
+
+  @if (canEncrypt()) {
+    <section>
+      <h2>Files you added earlier</h2>
+      @if (plainItems().length) {
+        <p>{{ plainItems().length === 1 ? '1 file was' : plainItems().length + ' files were' }} added before locking was possible, so {{ plainItems().length === 1 ? 'it is' : 'they are' }} not locked. You can lock {{ plainItems().length === 1 ? 'it' : 'them' }} now: each file is replaced by a locked copy that keeps its name and date. You can also lock a single file with the lock button next to it.</p>
+        <button type="button" class="btn btn-outline-primary btn-sm" (click)="encryptAll()" [disabled]="encrypting() !== null">
+          {{ encrypting() ? 'Locking ' + (encrypting()!.done + 1) + ' of ' + encrypting()!.total + '…' : (plainItems().length === 1 ? 'Lock this file' : 'Lock all ' + plainItems().length + ' files') }}
+        </button>
+      } @else {
+        <p>All the files in this safebox are locked.</p>
+      }
+      @if (error()) { <div class="alert alert-danger m-0" role="alert">{{ error() }}</div> }
+    </section>
+  }
+
+  <!-- simple by default: the status above is all most people need; the rest is behind one button -->
+  <div class="d-flex justify-content-center">
+    <button type="button" class="btn btn-light btn-sm" [attr.aria-expanded]="advanced()" (click)="advanced.set(!advanced())">{{ advanced() ? 'Hide advanced' : 'Advanced' }}</button>
+  </div>
+
+  @if (advanced()) {
+    <section>
+      <h2>How does locking work?</h2>
+      <p>Each of you has a small secret <strong>key</strong>, made once on the device you use. It never leaves that device. Messages and files are locked only when you both have a key.</p>
+      <p>All files are kept on our secure server. A locked file is unreadable there: only you and your friend can open it, not even we can. A file that is not locked can be read by our system.</p>
+    </section>
+
+    @if (canEncrypt()) {
+      <section>
+        <h2>Your choice for new files and messages</h2>
+        <div class="form-check">
+          <input type="checkbox" class="form-check-input" id="box-plain" [checked]="plain()" (change)="prefs.set('boxPlain', $any($event.target).checked)" />
+          <label class="form-check-label" for="box-plain">Do not lock the files and messages I send</label>
+        </div>
+        <p class="sf-hint">Leave this empty and every file you add and every message you send is locked. Tick it only if you want to send them without locking. The choice is remembered on this device.</p>
+      </section>
+    }
+
+    <section>
+      <h2>Is it really {{ friendName() }}'s key?</h2>
+      <p>
+        Each key has a code. To be sure {{ friendName() }}'s key is really theirs, ask them to read you the code under Settings → Encryption on their device, or compare it in person.
+        If it is the same as the code below, the key is theirs.
+      </p>
+      @for (key of ctx.friendKeys(); track key.id) {
+        <p class="sf-hint m-0">{{ friendName() }}: {{ key.label || 'a device' }}</p>
+        <pre class="sf-fingerprint">{{ ctx.readable(key.fingerprint) }}</pre>
+      } @empty {
+        <p class="sf-hint">{{ friendName() }} has no key yet.</p>
+      }
+      @if (keys.fingerprint(); as mine) {
+        <p class="sf-hint m-0">Your code, for {{ friendName() }} to compare:</p>
+        <pre class="sf-fingerprint">{{ ctx.readable(mine) }}</pre>
+      }
+    </section>
+
+    <section>
+      <h2>Your keys</h2>
+      <p>To see your devices, make a new key, or restore your key with your 24 words, open <a routerLink="/settings/encryption">Settings → Encryption</a>.</p>
+      @if (keys.diagnosis(); as d) {
+        <p class="sf-hint">
+          Details for this browser: account …{{ d.account.slice(-6) }} ·
+          key in this browser: {{ d.localKeyId ? 'yes (' + d.localKeyId.slice(0, 8) + ')' : 'no' }}{{ d.localKeyId ? ', ' + (d.localPublished === 'yes' ? 'published' : d.localPublished === 'removed' ? 'removed' : 'not published') : '' }} ·
+          keys in use on the server: you {{ ctx.serverKeys().mine }}, {{ friendName() }} {{ ctx.serverKeys().friend }}
+        </p>
+      }
+    </section>
+  }
+</main>
