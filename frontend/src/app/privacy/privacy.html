@@ -8,7 +8,7 @@
   <h1>Your data and privacy</h1>
 </div>
 
-<main class="sf-narrow vstack gap-3">
+<main class="sf-narrow sf-reading vstack gap-3">
   @if (auth.user()) {
     <app-info-nav />
   }
@@ -38,12 +38,24 @@
       <li>Your friends see the contact details you put on your profile (phone, email, social accounts). Leave a field empty if you do not want to share it.</li>
       <li>If you have not verified your email or phone, your friends are told that, because someone else could be using it.</li>
       <li>Only you and your friend can read your conversation.</li>
-      <li>When you and your friend both have an encryption key, your messages, pictures, videos and voice messages are locked on your devices before they are sent. We store them locked and cannot read them. We still see who wrote to whom, when, and how big a file is. What was sent before keys were set up, or while locking was switched off, is not locked.</li>
       <li>Someone who knows your email address or phone number can send you a friend request.</li>
     </ul>
     <p class="small text-secondary m-0">
       The app runs on Google Firebase (login, database, file storage, hosting and notifications): your data is stored with Google on our behalf.
     </p>
+  </section>
+
+  <section class="vstack gap-2">
+    <h2 class="sf-section-title m-0">Locked messages and files</h2>
+    <ul class="m-0 ps-3">
+      <li>When you and your friend both have an encryption key, your <strong>messages, pictures, videos and voice messages</strong> are locked on your devices before they are sent. Every message has its own key, locked for you and for your friend.</li>
+      <li>We store them locked and <strong>cannot read them</strong>. A notification says only "New message", and so does the list on your home page.</li>
+      <li>Files in the <strong>safebox</strong> are locked the same way.</li>
+      <li>Your key stays on your device. If you lose it and your recovery words, what was locked for it cannot be opened again, by anyone.</li>
+      <li>We can still see who wrote to whom, when, which kind of file it is and how big. A friend's name still shows in a notification.</li>
+      <li>You can switch locking off with the padlock in a conversation. What was sent before keys were set up, or while locking was off, is not locked, and we can read it. A link in a plain message gets a preview made by our server; a link in a locked message does not.</li>
+    </ul>
+    <p class="small text-secondary m-0">Set up or restore your key in Settings → Encryption.</p>
   </section>
 
   <section class="vstack gap-2">

@@ -297,6 +297,8 @@ app-root {
   padding: 1.25rem var(--sf-gutter) calc(4.5rem + env(safe-area-inset-bottom)); // clear of the bottom menu, which is always shown
 }
 
+.sf-narrow.sf-reading { max-width: 42rem; } // the pages with a lot of text (About, Terms, Data and privacy): wider than a form, so the lines are longer
+
 // =====================================================================
 // Standard layout classes. All pages use these; there are no page-local
 // style files. Sizes, gutters and fonts come from the variables above.
