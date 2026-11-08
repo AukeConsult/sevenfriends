@@ -57,6 +57,7 @@ export const routes: Routes = [
       { path: '', component: Chat, title: 'Conversation – Seven Friends' },
       { path: 'profile', loadComponent: () => import('./friend-profile/friend-profile').then((m) => m.FriendProfile), title: 'Profile – Seven Friends' },
       { path: 'send', loadComponent: () => import('./friend-send/friend-send').then((m) => m.FriendSend), title: 'Send a message – Seven Friends' },
+      { path: 'recovery', loadComponent: () => import('./friend-recovery/friend-recovery').then((m) => m.FriendRecovery), title: 'Recovery – Seven Friends' },
       { path: 'lock', loadComponent: () => import('./friend-lock/friend-lock').then((m) => m.FriendLock), title: 'Locking – Seven Friends' },
       { path: 'safebox/:itemId', loadComponent: () => import('./safebox-view/safebox-view').then((m) => m.SafeboxView), title: 'Safebox – Seven Friends' },
       { path: 'safebox', loadComponent: () => import('./safebox/safebox').then((m) => m.Safebox), title: 'Safebox – Seven Friends' },

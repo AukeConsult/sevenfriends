@@ -82,6 +82,8 @@ export const CACHE_ROOT = "sf-cache";
 export const KEY_COLLECTION = "keys";
 export const KEY_BACKUP_COLLECTION = "key-backup";
 export const KEY_BACKUP_DOC = "current";
+/** recovery-request/{connectionId}: a person with a new key asks their friend to unlock the old messages and files for it (docs/design/message-encryption.md, "Recovery") */
+export const RECOVERY_COLLECTION = "recovery-request";
 export const SAFEBOX_COLLECTION = "safebox";
 export const SAFEBOX_ITEMS = "items";
 export const SAFEBOX_MAX_BYTES = 200 * 1024 * 1024;

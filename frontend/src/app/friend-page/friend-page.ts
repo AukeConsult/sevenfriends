@@ -57,6 +57,7 @@ export class FriendPage {
   protected readonly onFeed = computed(() => this.url().replace(/\/$/, '') === `/friends/${this.ctx.friendId}`);
   protected readonly onSend = computed(() => this.url().startsWith(`/friends/${this.ctx.friendId}/send`));
   protected readonly onProfile = computed(() => this.url().startsWith(`/friends/${this.ctx.friendId}/profile`));
+  protected readonly onRecovery = computed(() => this.url().startsWith(`/friends/${this.ctx.friendId}/recovery`));
   protected readonly onLock = computed(() => this.url().startsWith(`/friends/${this.ctx.friendId}/lock`));
 
   constructor() {

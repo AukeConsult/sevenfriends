@@ -222,3 +222,16 @@ export async function openText(connectionId: string, enc: MessageEnc, text: stri
 export async function openTextWith(connectionId: string, enc: MessageEnc, text: string, key: CryptoKey): Promise<string> {
   return new TextDecoder().decode(await unlock(key, connectionId, 'text', enc.iv, fromBase64(text)));
 }
+
+/**
+ * Recovery: the key of a message or file, opened with this device's key and locked again for ONE other key (the new key of the friend who asks). The opened key is only
+ * held for this one step (it has to be exportable to be locked again) and is not kept; nothing readable leaves the device.
+ */
+export async function rewrapKey(enc: { wraps: SafeboxWrap[] }, myKeyId: string, privateKey: CryptoKey, target: { uid: string; key: PublishedKey }, noun: 'file' | 'message' = 'file'): Promise<SafeboxWrap> {
+  const mine = enc.wraps.find((w) => w.keyId === myKeyId);
+  if (!mine) throw new Error(`This ${noun} was locked for another device.`);
+  const key = await crypto.subtle.unwrapKey('raw', fromBase64(mine.wrappedKey), privateKey, { name: 'RSA-OAEP' }, { name: 'AES-GCM', length: 256 }, true, FILE_KEY_USAGES);
+  const publicKey = await crypto.subtle.importKey('jwk', target.key.publicKey, RSA, false, ['wrapKey']);
+  const wrapped = await crypto.subtle.wrapKey('raw', key, publicKey, { name: 'RSA-OAEP' });
+  return { uid: target.uid, keyId: target.key.id, wrappedKey: toBase64(wrapped) };
+}

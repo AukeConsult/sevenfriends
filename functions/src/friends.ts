@@ -3,6 +3,7 @@ import { DecodedIdToken } from "firebase-admin/auth";
 import { DocumentReference, FieldValue, Timestamp, getFirestore } from "firebase-admin/firestore";
 import { asyncHandler } from "./auth";
 import { conversationRouter } from "./conversation";
+import { recoveryRouter } from "./recovery";
 import { deleteBox, safeboxRouter } from "./safebox";
 import {
   DEFAULT_CIRCLE_ID,
@@ -155,6 +156,7 @@ export const friendsRouter = Router({ mergeParams: true });
 // The message feed of a connection: /circles/:circleId/friends/:friendId/messages
 friendsRouter.use("/:friendId/messages", conversationRouter);
 friendsRouter.use("/:friendId/safebox", safeboxRouter);
+friendsRouter.use("/:friendId/recovery", recoveryRouter);
 
 /** List the friends in a circle. */
 friendsRouter.get(

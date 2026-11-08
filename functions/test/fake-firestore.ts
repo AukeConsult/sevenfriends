@@ -223,21 +223,26 @@ export class Query {
     private readonly sort?: { field: string; dir: "asc" | "desc" },
     private readonly max?: number,
     private readonly fields?: string[],
+    private readonly after?: { value: any },
   ) {}
 
   where(field: string, op: string, value: any) {
     if (op !== "==" && op !== "in" && op !== ">=") throw new Error(`fake-firestore: operator "${op}" not supported`);
-    return new Query(this.scope, [...this.filters, { field, op, value }], this.sort, this.max, this.fields);
+    return new Query(this.scope, [...this.filters, { field, op, value }], this.sort, this.max, this.fields, this.after);
   }
   orderBy(field: string, dir: "asc" | "desc" = "asc") {
-    return new Query(this.scope, this.filters, { field, dir }, this.max, this.fields);
+    return new Query(this.scope, this.filters, { field, dir }, this.max, this.fields, this.after);
   }
   limit(n: number) {
-    return new Query(this.scope, this.filters, this.sort, n, this.fields);
+    return new Query(this.scope, this.filters, this.sort, n, this.fields, this.after);
   }
   /** Only these fields come back (none = only the documents' names). */
   select(...fields: string[]) {
-    return new Query(this.scope, this.filters, this.sort, this.max, fields);
+    return new Query(this.scope, this.filters, this.sort, this.max, fields, this.after);
+  }
+  /** Continue after this value of the ordered field (needs orderBy). */
+  startAfter(value: any) {
+    return new Query(this.scope, this.filters, this.sort, this.max, this.fields, { value });
   }
   /** The number of documents, without reading them. */
   count() {
@@ -272,6 +277,7 @@ export class Query {
       const { field, dir } = this.sort;
       found = found.filter((d) => d.get(field) !== undefined); // like Firestore: documents without the field drop out
       found.sort((a, b) => order(a.get(field), b.get(field)) * (dir === "asc" ? 1 : -1));
+      if (this.after) found = found.filter((d) => order(d.get(field), this.after!.value) * (dir === "asc" ? 1 : -1) > 0);
     }
     if (this.max !== undefined) found = found.slice(0, this.max);
     if (this.fields) found = found.map((d) => projected(d, this.fields!));

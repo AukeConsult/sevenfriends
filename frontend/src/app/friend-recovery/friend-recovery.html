@@ -1,0 +1,94 @@
+<main class="sf-lock-page">
+  <div class="sf-page-head">
+    <h1 class="m-0 mw-100"><span class="sf-ellipsis">Recovery</span></h1>
+  </div>
+
+  @if (error()) { <p class="text-danger small" role="alert">{{ error() }}</p> }
+
+  @if (state(); as s) {
+    @switch (s.role) {
+      @case ('requester') {
+        @switch (s.status) {
+          @case ('asked') {
+            <section>
+              <h2>Waiting for {{ friendName() }}</h2>
+              <p>We sent {{ friendName() }} a message. It starts when they open the app and say yes.</p>
+              <div class="progress mb-2" role="progressbar" aria-label="Waiting"><div class="progress-bar" style="width: 6%"></div></div>
+              <p class="sf-hint">Your new key: <strong>{{ short() }}</strong>. {{ friendName() }} checks this code with you.</p>
+              <button type="button" class="btn btn-outline-secondary btn-sm" (click)="cancel()" [disabled]="busy()">Cancel the request</button>
+            </section>
+          }
+          @case ('approved') {
+            <section>
+              <h2>{{ friendName() }} is unlocking your history</h2>
+              <div class="progress mb-2" role="progressbar" aria-label="Progress" [attr.aria-valuenow]="percent()" aria-valuemin="0" aria-valuemax="100"><div class="progress-bar" [style.width.%]="percent()"></div></div>
+              <p class="sf-hint">{{ added() }} of {{ s.total }} done.</p>
+              <p class="sf-hint">Stay on this page until it is done. {{ friendName() }}’s app must stay open too. New messages work as usual.</p>
+            </section>
+          }
+          @case ('done') {
+            <section>
+              <p class="text-success">Done. Your history with {{ friendName() }} is open again on this device.</p>
+              <a class="btn btn-primary btn-sm" [routerLink]="['/friends', ctx.friendId]">Back to the conversation</a>
+            </section>
+          }
+        }
+      }
+      @case ('helper') {
+        @switch (s.status) {
+          @case ('asked') {
+            <section>
+              <h2>{{ friendName() }} has a new key</h2>
+              <p>They ask you to open their old messages and files again. Your app locks the keys again for their new key. Only keys move: nothing readable is sent.</p>
+              <p>Their new key: <strong>{{ short() }}</strong></p>
+              <details class="mb-2"><summary class="small">Full code</summary><pre class="sf-fingerprint small">{{ fingerprint() }}</pre></details>
+              <p class="sf-hint">Check with {{ friendName() }} (in person, or by phone) that this is really their key before you say yes.</p>
+              <button type="button" class="btn btn-primary btn-sm" (click)="approve()" [disabled]="busy()">Approve and start</button>
+              <a class="btn btn-link btn-sm" [routerLink]="['/friends', ctx.friendId]">Not now</a>
+            </section>
+          }
+          @case ('approved') {
+            <section>
+              <h2>Helping {{ friendName() }}</h2>
+              <div class="progress mb-2" role="progressbar" aria-label="Progress" [attr.aria-valuenow]="percent()" aria-valuemin="0" aria-valuemax="100"><div class="progress-bar" [style.width.%]="percent()"></div></div>
+              <p class="sf-hint">{{ added() }} of {{ s.total }} done.</p>
+              @if (running()) {
+                <p class="sf-hint">Stay on this page until it is done.</p>
+              } @else {
+                <button type="button" class="btn btn-primary btn-sm" (click)="approve()" [disabled]="busy()">Continue</button>
+              }
+            </section>
+          }
+          @case ('done') {
+            <section>
+              <p class="text-success">Done. {{ friendName() }} can open their old messages again.</p>
+              @if (skipped() > 0) { <p class="sf-hint">{{ skipped() }} could not be opened on this device (they were locked for a key it does not have).</p> }
+              <a class="btn btn-primary btn-sm" [routerLink]="['/friends', ctx.friendId]">Back to the conversation</a>
+            </section>
+          }
+        }
+      }
+      @default {
+        <section>
+          <h2>Get your old messages back</h2>
+          <p>After you make a new key, messages and safebox files from before are locked for the old key, so this device cannot open them.</p>
+          <p>{{ friendName() }} still can. Their app can lock those keys again for your new key. Only the keys move: nothing readable is sent, and the server sees nothing.</p>
+          <ol class="ps-3">
+            <li>We send {{ friendName() }} a request.</li>
+            <li>They check that it is you and approve.</li>
+            <li>Their app opens your history again. This page shows how far it is.</li>
+          </ol>
+          <p class="sf-hint">Keep this page open until it says done.</p>
+          @if (ctx.meHasKey() === false) {
+            <p class="sf-hint">You need a key on this device first.</p>
+            <a routerLink="/settings/encryption" class="btn btn-primary btn-sm">Make my key</a>
+          } @else {
+            <button type="button" class="btn btn-primary btn-sm" (click)="ask()" [disabled]="busy()">Ask {{ friendName() }} to help</button>
+          }
+        </section>
+      }
+    }
+  } @else if (!error()) {
+    <p class="sf-hint">Checking…</p>
+  }
+</main>

@@ -78,3 +78,38 @@ export function readableFingerprint(fingerprint: string): string {
   for (let i = 0; i < groups.length; i += 8) lines.push(groups.slice(i, i + 8).join(" "));
   return lines.join("\n");
 }
+
+/**
+ * Recovery (design: docs/design/message-encryption.md): a person with a NEW key asks their friend to open the old messages and safebox files for it. The friend's
+ * device opens each message key with its own key and locks it again for the new key; only the keys move. One request per friendship.
+ */
+export type RecoveryStatus = "none" | "asked" | "approved" | "done";
+
+/** What GET .../recovery returns. `role` is mine in this request: the one who asked (requester) or the friend who is asked (helper). */
+export interface RecoveryState {
+  role: "none" | "requester" | "helper";
+  status: RecoveryStatus;
+  /** the new key of the one who asked: the helper compares it with them before approving */
+  keyId: string | null;
+  fingerprint: string | null;
+  /** how many messages and files needed a new copy when the friend approved, and how many have one now */
+  total: number;
+  added: number;
+  /** the friend's name as in the list */
+  friendName: string;
+}
+
+/** One message or file whose key the helper can open (the helper's own copies of its key); the helper locks it again for the new key. */
+export interface RecoveryTodoItem {
+  id: string;
+  wraps: { uid: string; keyId: string; wrappedKey: string }[];
+  /** the keys in use of the one who asks that have no copy of this key yet: the helper locks it for each of them */
+  missing: string[];
+}
+
+/** GET .../recovery/todo?part=messages|box&after=<cursor>: the next items to do; `next` = continue after this cursor, null = this part is finished. */
+export interface RecoveryTodo {
+  part: "messages" | "box";
+  items: RecoveryTodoItem[];
+  next: string | null;
+}

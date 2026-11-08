@@ -10,7 +10,7 @@ const IV_LENGTH = 16;
 /** an RSA-3072 wrapped key: 384 bytes */
 const WRAP_LENGTH = 512;
 const MAX_META_LENGTH = 1500;
-const MAX_WRAPS = 40;
+export const MAX_WRAPS = 40;
 /** The most a locked message text may be (base64): 2000 characters are at most 6000 bytes, plus the 16 bytes of the lock. */
 const MAX_LOCKED_TEXT_LENGTH = Math.ceil((6000 + 16) / 3) * 4;
 
@@ -26,6 +26,11 @@ const bad = (error: string, status = 400): Refused => ({ status, error });
 const isBase64 = (v: unknown, length?: number): v is string => typeof v === "string" && BASE64.test(v) && (length === undefined || v.length === length);
 
 /** The copies of a file key or message key: at least one, not too many, each locked for a key id and a person. */
+export function wrapValid(w: unknown): w is SafeboxWrap {
+  const x = w as Partial<SafeboxWrap> | null;
+  return Boolean(x && typeof x.uid === "string" && x.uid && KEY_ID.test(String(x.keyId)) && isBase64(x.wrappedKey, WRAP_LENGTH));
+}
+
 function wrapsValid(wraps: unknown): wraps is SafeboxWrap[] {
   if (!Array.isArray(wraps) || !wraps.length || wraps.length > MAX_WRAPS) return false;
   return wraps.every((w) => w && typeof w.uid === "string" && w.uid && KEY_ID.test(w.keyId) && isBase64(w.wrappedKey, WRAP_LENGTH));
