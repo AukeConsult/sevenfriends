@@ -1,5 +1,12 @@
 <div class="sf-page-head">
-  <h1><span class="sf-title-dot" aria-hidden="true"></span>Add a friend</h1>
+  <h1 [class.d-flex]="embedded()" [class.align-items-center]="embedded()" [class.justify-content-center]="embedded()" [class.gap-1]="embedded()">
+    @if (embedded()) {
+      <button type="button" class="sf-back-inline" aria-label="Back to home" (click)="closed.emit()"></button>
+      <span>Add a friend</span>
+    } @else {
+      <span class="sf-title-dot" aria-hidden="true"></span>Add a friend
+    }
+  </h1>
 </div>
 
 @if (result(); as done) {
@@ -22,7 +29,8 @@
       </div>
     </div>
     <div class="sf-actions">
-      <a [routerLink]="backTo" [queryParams]="backParams" class="btn btn-light flex-fill">Done</a>
+      @if (embedded()) { <button type="button" class="btn btn-light flex-fill" (click)="closed.emit()">Done</button> }
+      @else { <a [routerLink]="backTo" [queryParams]="backParams" class="btn btn-light flex-fill">Done</a> }
       <button type="button" class="btn btn-light flex-fill" (click)="another()">Add another</button>
     </div>
   </main>
@@ -53,7 +61,8 @@
     }
 
     <div class="sf-actions">
-      <a [routerLink]="backTo" [queryParams]="backParams" class="btn btn-light flex-fill" [class.disabled]="sending()">Cancel</a>
+      @if (embedded()) { <button type="button" class="btn btn-light flex-fill" (click)="closed.emit()" [disabled]="sending()">Cancel</button> }
+      @else { <a [routerLink]="backTo" [queryParams]="backParams" class="btn btn-light flex-fill" [class.disabled]="sending()">Cancel</a> }
       <button type="submit" class="btn btn-primary flex-fill" [disabled]="sending()">
         {{ sending() ? 'Sending…' : 'Add friend' }}
       </button>

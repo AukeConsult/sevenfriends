@@ -5,15 +5,18 @@ import { Router, RouterLink } from '@angular/router';
 import { ChatService } from '../core/chat.service';
 import { ApiService } from '../core/api.service';
 import { MoodEditor } from '../mood-editor/mood-editor';
+import { FriendAvatar } from '../friend-avatar/friend-avatar';
+import { HomeSeats } from '../home-seats/home-seats';
+import { HomeTop } from '../home-top/home-top';
+import { Sleeping } from '../sleeping/sleeping';
+import { AddFriend } from '../add-friend/add-friend';
 import { AuthService } from '../core/auth.service';
 import { FriendsService } from '../core/friends.service';
-import { InviteLinkService } from '../core/invite-link.service';
 import { MessagesService } from '../core/messages.service';
 import { NotificationsService } from '../core/notifications.service';
 import { InstallService } from '../core/install.service';
 import { UiPreferencesService } from '../core/ui-preferences';
 import { Friend, FriendRequest, Message, Notice, ProfileDetails } from '../models';
-import { APP_ORIGIN } from '../core/app-origin';
 import { AndroidChannelsService } from '../core/android-channels.service';
 import { KeysService } from '../core/keys.service';
 import { PushService } from '../core/push.service';
@@ -37,7 +40,7 @@ interface MessageGroup {
  */
 @Component({
   selector: 'app-notifications',
-  imports: [DatePipe, RouterLink, MoodEditor],
+  imports: [DatePipe, FriendAvatar, HomeSeats, HomeTop, RouterLink, MoodEditor, Sleeping, AddFriend],
   templateUrl: './notifications.html',
   host: { '(click)': 'emptySpaceClicked($event)' },
 })
@@ -50,29 +53,33 @@ export class Notifications {
   private readonly router = inject(Router);
 
   /** A click on an empty part of the home page (nothing that reacts to a click) opens the friend list. */
+  /** the silent list is open: it takes the place of everything under the top of Home */
+  protected readonly silentOpen = signal(false);
+  protected readonly addOpen = signal(false);
+
   protected emptySpaceClicked(event: Event): void {
     const target = event.target as HTMLElement | null;
+    if (this.silentOpen() || this.addOpen()) {
+      // the silent list or the add-friend form is open: a click on empty space (not on a card, the form or anything that reacts) is back to the normal Home
+      if (!target || target.closest('a, button, input, textarea, select, summary, label, details, form, .card, .alert, [role="button"], [tabindex], [contenteditable]')) return;
+      if (window.getSelection()?.toString()) return;
+      this.silentOpen.set(false);
+      this.addOpen.set(false);
+      return;
+    }
     if (!target || target.closest('a, button, input, textarea, select, summary, label, details, app-mood-editor, [role="button"], [tabindex], [contenteditable]')) return;
     if (window.getSelection()?.toString()) return; // the person was selecting text
-    void this.router.navigateByUrl('/friends');
+    void this.router.navigateByUrl('/');
   }
   protected readonly install = inject(InstallService);
   private readonly android = inject(AndroidChannelsService);
   private readonly push = inject(PushService);
-  protected readonly invite = inject(InviteLinkService);
   private readonly prefs = inject(UiPreferencesService);
   private readonly keys = inject(KeysService);
   /** the first-time setup was left for later: Home offers it again */
   protected readonly setupLeft = computed(() => this.prefs.value('setup')() === 'skipped');
 
   private readonly user = inject(AuthService).user;
-
-  /** the link to hand out: whoever opens it, signs in and confirms sends ME a friend request (my email, or my phone number without an email) */
-  protected readonly friendLink = computed(() => {
-    const me = this.user();
-    const contact = me?.email ?? me?.phoneNumber;
-    return contact ? `${APP_ORIGIN}/welcome?friend=${encodeURIComponent(contact)}` : null;
-  });
 
   /**
    * My own details, when none of them is verified. I still receive requests, but my friends are told that I have
@@ -158,7 +165,46 @@ export class Notifications {
     this.android.openSettings();
   }
 
-  protected readonly needsYou = computed(() => this.androidOff() !== null || this.pushOff() !== null || this.setupLeft() || this.unverified().length > 0 || this.seated().length > 0 || this.waitingCount() > 0 || this.groups().length > 0);
+  /** the setup notes can be hidden for 24 hours (the time is kept on this device, so they stay away when the app is opened again) */
+  private static readonly CHECKS_KEY = 'sf-checks-hidden-until';
+  protected readonly checksHidden = signal(Number(this.readHiddenUntil()) > Date.now());
+
+  private readHiddenUntil(): string | null {
+    try {
+      return localStorage.getItem(Notifications.CHECKS_KEY);
+    } catch {
+      return null;
+    }
+  }
+
+  protected hideChecks(): void {
+    try {
+      localStorage.setItem(Notifications.CHECKS_KEY, String(Date.now() + 24 * 60 * 60 * 1000));
+    } catch {
+      /* storage is not available: hidden until the app is opened again */
+    }
+    this.checksHidden.set(true);
+  }
+
+  /** the setup notes: sound and notifications not set up, the phone's notification switch, details not verified (folded into one line on Home) */
+  protected readonly checkCount = computed(() => [this.setupLeft(), this.androidOff() !== null, this.pushOff() !== null, this.unverified().length > 0].filter(Boolean).length);
+
+  /** what needs me from people: requests, a request waiting for a seat, unread messages */
+  protected readonly needsYou = computed(() => this.seated().length > 0 || this.waitingCount() > 0 || this.groups().length > 0);
+
+  /** "Good evening, Leif" */
+  protected readonly greeting = computed(() => {
+    const hour = new Date().getHours();
+    const part = hour < 5 ? 'Good night' : hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+    const first = (this.user()?.displayName ?? '').trim().split(/\s+/)[0];
+    return first ? `${part}, ${first}` : part;
+  });
+
+  /** how many of my friends are active right now */
+  protected readonly around = computed(() => {
+    const n = this.friendsService.awake().filter((f) => f.status === 'confirmed' && f.presence === 'active').length;
+    return n === 0 ? 'Nobody is around right now' : n === 1 ? '1 of your seven is around right now' : `${n} of your seven are around right now`;
+  });
 
   /** the quick replies being typed, by friend */
   protected readonly replies = signal<Partial<Record<string, string>>>({});
@@ -211,7 +257,7 @@ export class Notifications {
     try {
       const result = await this.friendsService.acceptRequest(request.id);
       if (result === 'confirmed') {
-        await this.router.navigateByUrl('/friends'); // the new friend is there
+        await this.router.navigateByUrl('/'); // the new friend is there
         return;
       }
       this.notice.set({
@@ -239,6 +285,25 @@ export class Notifications {
     const days = Math.floor((this.now - new Date(friend.lastSpokenAt).getTime()) / 86_400_000);
     const span = days < 60 ? `${Math.max(2, Math.round(days / 7))} weeks` : `${Math.round(days / 30)} months`;
     return `You haven't talked to ${friend.name} for ${span}`;
+  }
+
+  /** seats still free */
+  protected readonly freeSeats = computed(() => 7 - this.friendsService.awake().length);
+
+  /** when it is quiet: the friend I have not talked to for the longest time (a confirmed friend), to say hi to */
+  protected readonly nudge = computed<Friend | null>(
+    () =>
+      this.friendsService
+        .awake()
+        .filter((f) => f.status === 'confirmed')
+        .sort((a, b) => (a.lastSpokenAt ?? '').localeCompare(b.lastSpokenAt ?? ''))[0] ?? null,
+  );
+
+  /** "You last spoke 3 days ago" */
+  protected lastTalk(friend: Friend): string {
+    if (!friend.lastSpokenAt) return `You haven't talked to ${friend.name} yet`;
+    const days = Math.floor((this.now - new Date(friend.lastSpokenAt).getTime()) / 86_400_000);
+    return days < 1 ? 'You spoke today' : days === 1 ? 'You last spoke yesterday' : `You last spoke ${days} days ago`;
   }
 
   /** a friend I have not talked to for a while (or never): a gentle nudge */

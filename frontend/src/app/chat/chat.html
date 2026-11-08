@@ -177,7 +177,7 @@
 <main class="sf-feed" [style.padding-bottom]="sortDesc() ? null : 'calc(' + composerHeight() + 'px + 3.5rem + 1rem + var(--sf-float-gap) + env(safe-area-inset-bottom))'">
   @if (blocked()) {
     <div class="alert alert-warning" role="alert">{{ blocked() }}</div>
-    <a routerLink="/friends" class="btn btn-primary">Back to friends</a>
+    <a routerLink="/" class="btn btn-primary">Back to home</a>
   } @else {
     @if (!loaded()) {
       <p class="sf-hint-center">Loading…</p>

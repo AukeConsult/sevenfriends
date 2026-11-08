@@ -26,12 +26,40 @@
           {{ f.name }} has not verified {{ f.unverified.length === 2 ? 'their email or phone' : f.unverified[0] === 'email' ? 'their email' : 'their phone' }},
           so we cannot be sure it is really them.
         </p>
+        <button type="button" class="btn btn-light btn-sm align-self-start" (click)="trust(f)" [disabled]="busy()">This is really {{ f.name }}</button>
       }
       <dl class="sf-details">
         @if (f.phone) { <dt>Phone</dt><dd>{{ f.phone }}</dd> }
         @if (f.email) { <dt>Email</dt><dd>{{ f.email }}</dd> }
         @if (f.createdAt) { <dt>Added</dt><dd>{{ f.createdAt | date: 'mediumDate' }}</dd> }
       </dl>
+    </section>
+
+    <section>
+      @if (f.status === 'rejected') {
+        <p class="sf-hint m-0">They rejected your request. Delete it to remove it from both lists.</p>
+      } @else if (f.status === 'pending') {
+        <p class="sf-hint m-0">{{ f.incoming ? 'Wants to be your friend' : f.waiting ? 'Their list is full. You are on their waiting list.' : 'Waiting for them to confirm' }}</p>
+      }
+      @if (f.incoming && f.status === 'pending') {
+        <div class="sf-actions">
+          <button type="button" class="btn btn-primary flex-fill" (click)="confirm(f)" [disabled]="busy()">Confirm</button>
+          <button type="button" class="btn btn-outline-secondary flex-fill" (click)="reject(f)" [disabled]="busy()">Reject</button>
+        </div>
+      } @else if (asking()) {
+        <div class="sf-confirm" role="alertdialog" [attr.aria-label]="(sleepable(f) ? 'Put to sleep ' : 'Delete ') + f.name">
+          <p class="sf-confirm-text">{{ deleteMessage(f) }}</p>
+          <div class="sf-confirm-actions">
+            <button type="button" class="btn btn-light btn-sm" (click)="asking.set(false)" [disabled]="busy()">Cancel</button>
+            <button type="button" class="btn btn-danger btn-sm" (click)="remove(f)" [disabled]="busy()">
+              {{ busy() ? 'Please wait…' : sleepable(f) ? 'Put to sleep' : 'Delete' }}
+            </button>
+          </div>
+        </div>
+      } @else {
+        <button type="button" class="btn btn-outline-danger btn-sm align-self-start" (click)="asking.set(true)">{{ sleepable(f) ? 'Add ' + f.name + ' to the sleep list…' : 'Delete ' + f.name + '…' }}</button>
+      }
+      @if (error(); as e) { <p class="text-danger m-0" role="alert">{{ e }}</p> }
     </section>
   } @else {
     <p class="text-secondary text-center">Opening the profile…</p>

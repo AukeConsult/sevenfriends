@@ -1,11 +1,21 @@
 <main class="sf-page">
-  <header class="sf-hero sf-hero-home text-center">
-    <div class="sf-logo sf-logo-lg" aria-hidden="true">7</div>
-    <h1>Seven Friends</h1>
-  </header>
+  <!-- a slim top: the small logo and the name, then a greeting and who is around -->
+  <app-home-top />
+  @if (silentOpen()) {
+    <!-- the silent list, from the top down: everything else is hidden -->
+    <app-sleeping [embedded]="true" (closed)="silentOpen.set(false)" />
+  } @else if (addOpen()) {
+    <!-- add a friend, from the top down: everything else is hidden -->
+    <app-add-friend [embedded]="true" (closed)="addOpen.set(false)" />
+  } @else {
+  <h1 class="sf-home-hi">{{ greeting() }}</h1>
+  <p class="sf-home-sub">{{ around() }}</p>
 
-  <!-- my mood, small, right under the header -->
+  <!-- my mood, small, right under the greeting -->
   <app-mood-editor class="d-block mb-3" />
+
+  <!-- the seven seats: pictures in a row, the empty seats too; arrange them and the silent bucket -->
+  <app-home-seats (silent)="silentOpen.set(true)" (add)="addOpen.set(true)" />
 
   @if (error()) {
     <div class="alert alert-danger d-flex align-items-center justify-content-between" role="alert">
@@ -24,11 +34,11 @@
     <p class="text-secondary">Checking for news…</p>
   }
 
-  <!-- 1. what needs me -->
-  @if (needsYou()) {
-    <section aria-label="Needs you">
-      <h2 class="sf-section">Needs you</h2>
-
+  <!-- the setup notes (sound, notifications, unverified details) fold into one line that opens -->
+  @if (checkCount() > 0 && !checksHidden()) {
+    <details class="sf-checks">
+      <summary><span aria-hidden="true">⚠️</span> {{ checkCount() }} {{ checkCount() === 1 ? 'thing' : 'things' }} to check in your setup<button type="button" class="sf-checks-x" aria-label="Hide these for 24 hours" title="Hide for 24 hours" (click)="$event.preventDefault(); $event.stopPropagation(); hideChecks()">✕</button></summary>
+      <div class="vstack gap-2 mt-2">
       @if (setupLeft()) {
         <div class="alert alert-info d-flex flex-wrap align-items-center justify-content-between gap-2" role="status">
           <span>Your sound and notifications are not set up yet.</span>
@@ -64,11 +74,20 @@
           Your {{ unverified().join(' and ') }} is not verified yet: confirm it (in Settings) so friend requests can reach you.
         </div>
       }
+      </div>
+    </details>
+  }
+
+  <!-- 1. what needs me -->
+  @if (needsYou()) {
+    <section aria-label="Needs you">
+      <h2 class="sf-section">Needs you</h2>
 
       @if (seated().length) {
-        <ul class="sf-list">
+        <ul class="sf-list sf-home-cards">
           @for (request of seated(); track request.id) {
             <li class="sf-list-item">
+              <span class="sf-home-ic" aria-hidden="true">🙋</span>
               <span class="sf-list-text">
                 <strong>{{ request.fromName }}</strong>
                 <small>wants to be your friend</small>
@@ -92,10 +111,11 @@
       }
 
       @if (groups().length) {
-        <ul class="sf-list">
+        <ul class="sf-list sf-home-cards">
           @for (group of groups(); track group.key) {
             <li class="sf-message-item">
               <div class="sf-message-head">
+                @if (group.friend; as friend) { <app-friend-avatar [friend]="friend" [seat]="friend.seat ?? 1" [small]="true" [size]="36" /> }
                 <strong class="sf-ellipsis">{{ group.name }}@if (group.count > 1) { <span class="badge text-bg-primary ms-2">{{ group.count }}</span> }</strong>
                 <span class="sf-message-actions">
                   @if (group.connectionId) {
@@ -121,19 +141,33 @@
       }
     </section>
   } @else if (loaded() && !error() && !quiet().length) {
-    <div class="sf-empty">
-      <span class="sf-empty-icon" aria-hidden="true">🌙</span>
-      <p class="mb-0">All quiet. Nothing needs you right now.</p>
-    </div>
+    <!-- quiet: a small line, and something useful to do instead of an empty page -->
+    <p class="sf-home-quiet"><span aria-hidden="true">🌙</span> All quiet. Nothing needs you right now.</p>
+    @if (nudge(); as friend) {
+      <ul class="sf-list sf-home-cards">
+        <li class="sf-list-item">
+          <app-friend-avatar [friend]="friend" [seat]="friend.seat ?? 1" [small]="true" [size]="36" />
+          <span class="sf-list-text"><strong>Say hi to {{ friend.name }}?</strong><small>{{ lastTalk(friend) }}</small></span>
+          <a [routerLink]="['/friends', friend.id]" class="btn btn-outline-primary btn-sm">Say hi</a>
+        </li>
+      </ul>
+    }
+    @if (freeSeats() > 0) {
+      <a routerLink="/share" class="sf-link-row">
+        {{ freeSeats() === 1 ? 'You have a free seat: invite a friend' : 'You have ' + freeSeats() + ' free seats: invite friends' }}
+        <span aria-hidden="true">›</span>
+      </a>
+    }
   }
 
   <!-- 2. keep in touch: only friends who have gone quiet -->
   @if (quiet().length) {
     <section aria-label="Keep in touch">
       <h2 class="sf-section">Keep in touch</h2>
-      <ul class="sf-list">
+      <ul class="sf-list sf-home-cards">
         @for (friend of quiet(); track friend.id) {
           <li class="sf-list-item">
+            <app-friend-avatar [friend]="friend" [seat]="friend.seat ?? 1" [small]="true" [size]="36" />
             <span class="sf-list-text">{{ quietText(friend) }}</span>
             <a [routerLink]="['/friends', friend.id]" class="btn btn-outline-primary btn-sm">Say hi</a>
           </li>
@@ -141,29 +175,5 @@
       </ul>
     </section>
   }
-
-  <!-- 4. share -->
-  <details class="sf-expand sf-expand-quiet mt-4 mb-3">
-    <summary>Share</summary>
-    <div class="vstack gap-3 mt-2">
-      @if (!install.installed() && install.mobile) {
-        <a routerLink="/install-app" class="sf-install-chip align-self-start"><span aria-hidden="true">📲</span> Install the app</a>
-      }
-      @if (friendLink(); as url) {
-        <div class="card card-body vstack gap-2">
-          <strong>Invite friends with a link</strong>
-          <p class="m-0">Send this link to the friends you would like to take part. When they open it, sign in (or create an account) and confirm, a friend request is sent to you.</p>
-          @if (!invite.canShare) {
-            <input type="text" class="form-control" [value]="url" readonly aria-label="Your friend link" (focus)="$any($event.target).select()" />
-          }
-          <div class="d-flex flex-wrap gap-2">
-            <button type="button" class="btn btn-primary btn-sm" (click)="invite.share(url)">Share link</button>
-            @if (!invite.canShare) { <button type="button" class="btn btn-light btn-sm" (click)="invite.copy(url)">Copy link</button> }
-          </div>
-          @if (invite.note(); as note) { <span class="small text-secondary" role="status">{{ note }}</span> }
-          <span class="small text-secondary">The link contains your {{ url.includes('%40') ? 'email address' : 'phone number' }}.</span>
-        </div>
-      }
-    </div>
-  </details>
+  }
 </main>

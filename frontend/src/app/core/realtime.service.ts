@@ -213,13 +213,13 @@ export class RealtimeService {
         title: friend.status === 'confirmed' ? `${friend.name} accepted your friend request` : `${friend.name} rejected your friend request`,
         body: '',
         id: `answer-${friend.id}-${friend.status}`, // one per answer
-        go: '/friends',
+        go: '/',
       });
     }
     // gone from my list although I did not delete it (my own deletes are removed from the list at once): they ended it
     for (const [id, was] of before) {
       if (!now.has(id)) {
-        this.notify('answer', { title: `${was.name} removed the friendship`, body: 'The conversation is deleted for both of you.', id: `removed-${id}`, go: '/friends' });
+        this.notify('answer', { title: `${was.name} removed the friendship`, body: 'The conversation is deleted for both of you.', id: `removed-${id}`, go: '/' });
       }
     }
   }

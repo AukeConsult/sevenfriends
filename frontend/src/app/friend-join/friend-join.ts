@@ -64,7 +64,7 @@ export class FriendJoin {
   private async start(): Promise<void> {
     const pending = this.link.pending();
     if (!pending) {
-      await this.router.navigateByUrl('/friends', { replaceUrl: true });
+      await this.router.navigateByUrl('/', { replaceUrl: true });
       return;
     }
     try {
@@ -132,7 +132,7 @@ export class FriendJoin {
         message: this.message().trim() || null,
       });
       this.link.clear();
-      await this.router.navigateByUrl('/friends', { replaceUrl: true });
+      await this.router.navigateByUrl('/', { replaceUrl: true });
     } catch (err: any) {
       this.error.set(err.message ?? 'Could not send the friend request');
     } finally {
@@ -150,7 +150,7 @@ export class FriendJoin {
       const result = await this.friends.acceptRequest(request.id);
       this.link.clear(); // answered: the request itself stays on the Home page when there is no seat, the link is done with
       if (result === 'confirmed') {
-        await this.router.navigateByUrl('/friends', { replaceUrl: true });
+        await this.router.navigateByUrl('/', { replaceUrl: true });
         return;
       }
       this.error.set(`You have no free seats. The request from ${request.fromName} stays pending: put a friend on the sleep list or remove one to make room, then confirm it on the Home page.`);

@@ -1,5 +1,5 @@
 <header #bar class="sf-bar" [class.sf-has-color]="!!ctx.friendColor()" [style.--sf-friend]="ctx.friendColor()" [style.--sf-friend-ink]="ctx.friendInk()">
-  <a routerLink="/friends" class="sf-back" aria-label="Back to friends">‹</a>
+  <a routerLink="/" class="sf-back" aria-label="Back to home">‹</a>
   @if (ctx.seat() > 0 || ctx.friend()?.asleep) {
     <span class="sf-seat">
       @if (ctx.friend(); as f) {

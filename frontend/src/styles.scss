@@ -1099,6 +1099,7 @@ app-voice { display: contents; }
 .sf-back-inline { display: inline-grid; place-items: center; width: 1.75rem; height: 1.75rem; margin-inline-end: 0.25rem; color: var(--sf-primary); text-decoration: none; // a small arrow to the left of the title icon
   &::before { content: ''; width: 0.5rem; height: 0.5rem; margin-inline-start: 0.2rem; border-left: 2.5px solid currentColor; border-bottom: 2.5px solid currentColor; border-radius: 1px; transform: rotate(45deg); }
   &:hover, &:focus-visible { color: var(--sf-primary-hover); } }
+button.sf-back-inline { padding: 0; border: 0; background: none; cursor: pointer; } // the back arrow as a button (the silent list inside Home): no box, the same small arrow as the link
 .sf-box-open { flex: none; width: 3.5rem; height: 3.5rem; padding: 0; border: 0; border-radius: var(--sf-radius); background: var(--sf-bg); overflow: hidden; cursor: pointer; display: grid; place-items: center; }
 .sf-box-thumb { display: block; width: 100%; height: 100%; img { width: 100%; height: 100%; object-fit: cover; display: block; } }
 .sf-box-wait { display: block; width: 100%; height: 100%; background: var(--sf-bg); }
@@ -1297,3 +1298,64 @@ nav.sf-tabs {
   .sf-wl-other { background: var(--bs-danger-bg-subtle, #f8d7da); color: var(--bs-danger-text-emphasis, #58151c); }
   .sf-wl-us { background: var(--bs-success-bg-subtle, #d1e7dd); color: var(--bs-success-text-emphasis, #0a3622); } }
 @media (max-width: 359.98px) { .sf-wl-cards { grid-template-columns: 1fr; } }
+
+// ---- Home: the seven seats (round pictures in a row), arranging, the silent bucket ----
+.sf-hs { margin-bottom: 1rem; }
+.sf-hs-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 0.5rem; }
+.sf-hs-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.875rem 0.25rem; }
+.sf-hs-seat { min-width: 0; }
+.sf-hs-friend { display: flex; flex-direction: column; align-items: center; gap: 0.125rem; text-align: center; text-decoration: none; color: var(--sf-text); cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent;
+  &:focus-visible { outline: 2px solid var(--sf-primary); outline-offset: 3px; border-radius: var(--sf-radius); }
+  &.sf-hs-dim .sf-hs-ring { opacity: 0.6; }
+}
+.sf-hs-ring { position: relative; display: block; width: 3.75rem; height: 3.75rem; padding: 3px; border-radius: 50%; background: var(--sf-friend, var(--sf-border));
+  .sf-avatar { width: 100%; height: 100%; display: block; border-radius: 50%; background: var(--sf-card); }
+  .sf-dot { right: 0; bottom: 0; width: 0.9rem; height: 0.9rem; } }
+.sf-hs-unread { position: absolute; right: -0.25rem; top: -0.25rem; min-width: 1.2rem; height: 1.2rem; padding: 0 0.3rem; border-radius: 0.6rem; background: var(--sf-primary); color: #fff; font-size: 0.75rem; font-weight: 700; line-height: 1.2rem; text-align: center; box-shadow: 0 0 0 2px var(--sf-surface, #fff); }
+.sf-hs-name { max-width: 100%; font-size: 0.8125rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sf-hs-sub { display: inline-flex; align-items: center; gap: 0.2rem; max-width: 100%; font-size: 0.6875rem; line-height: 1.2; color: var(--sf-muted); overflow: hidden; white-space: nowrap; img { flex: none; } }
+.sf-hs-free .sf-hs-ring { background: none; border: 2px dashed var(--sf-border); padding: 0; display: grid; place-items: center; color: var(--sf-muted); }
+.sf-share-ic { display: inline-grid; place-items: center; width: 2.25rem; height: 2.25rem; border-radius: 50%; background: var(--bs-primary-bg-subtle); color: var(--sf-primary); }
+.sf-share-mini { flex: none; display: inline-flex; margin-top: 0.15rem; color: var(--sf-primary); }
+.sf-sl-row { display: flex; flex-wrap: wrap; gap: 0.75rem 0.5rem; }
+.sf-sl-item { width: 4.25rem; }
+.sf-sl-btn { width: 100%; padding: 0; border: 0; background: none; font: inherit; }
+.sf-sl-row .sf-hs-ring { width: 3.25rem; height: 3.25rem; }
+.sf-sl-name { max-width: 100%; font-size: 0.6875rem; line-height: 1.2; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sf-sl-on .sf-hs-ring { box-shadow: 0 0 0 2px var(--sf-card), 0 0 0 4px var(--sf-primary); }
+.sf-hs-tip { margin: 0.5rem 0 0; text-align: center; font-size: 0.625rem; line-height: 1.2; color: var(--sf-muted); }
+.sf-hs-bucket.sf-drop > * { outline: none; } // only the bucket's own border shows
+button.sf-hs-free { padding: 0; border: 0; background: none; font: inherit; width: 100%; }
+.sf-hs-plus { font-size: 1.5rem; line-height: 1; }
+@property --sf-hs-a { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+/* the ring that turns around the picture while a friend is held, and stays closed once the friend is picked up */
+.sf-hs-ring::after { content: ''; position: absolute; inset: -5px; border-radius: 50%; pointer-events: none; opacity: 0;
+  background: conic-gradient(var(--sf-primary) var(--sf-hs-a), transparent 0);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px)); mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px)); }
+.sf-hs-press .sf-hs-ring::after { opacity: 1; animation: sf-hs-turn 450ms linear forwards; }
+.sf-hs-lift .sf-hs-ring::after { opacity: 1; --sf-hs-a: 360deg; }
+.sf-hs-lift { cursor: grabbing; z-index: 2; touch-action: none; filter: drop-shadow(0 6px 10px rgb(0 0 0 / 0.25)); }
+@keyframes sf-hs-turn { from { --sf-hs-a: 0deg; } to { --sf-hs-a: 360deg; } }
+@media (prefers-reduced-motion: reduce) { .sf-hs-press .sf-hs-ring::after { animation-duration: 1ms; } }
+.sf-hs-seat.sf-drop > .sf-hs-friend { outline: 2px dashed var(--sf-primary); outline-offset: 4px; border-radius: var(--sf-radius); }
+.sf-hs-bucket { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.875rem; padding: 0.5rem 0.75rem; border: 1px solid var(--sf-border); border-radius: 999px; background: var(--sf-card); color: var(--sf-muted); text-decoration: none; font-size: 0.875rem;
+  &.sf-hs-bucket-open { padding-block: 1rem; border: 2px dashed var(--sf-border); border-radius: var(--sf-radius); }
+  &.sf-drop { border: 2px dashed var(--sf-primary); background: var(--bs-primary-bg-subtle); color: var(--sf-primary); } }
+@media (min-width: 576px) { .sf-hs-row { grid-template-columns: repeat(7, 1fr); } }
+
+// ---- Home: the slim top, the greeting, the folded setup line, the cards (no side bars) ----
+.sf-home-top { display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding-bottom: 0.5rem; margin-bottom: 0.75rem; border-bottom: 1px solid var(--sf-border); }
+.sf-home-top .sf-logo { margin: 0; }
+.sf-home-name { font-weight: 600; }
+.sf-home-hi { margin: 0; font-size: 1.5rem; font-weight: 600; text-align: center; }
+.sf-home-sub { margin: 0 0 0.75rem; font-size: 0.875rem; color: var(--sf-muted); text-align: center; }
+.sf-home-quiet { margin: 0 0 0.75rem; text-align: center; font-size: 0.875rem; color: var(--sf-muted); }
+.sf-checks { margin-bottom: 1rem; padding: 0.5rem 0.75rem; border-radius: var(--sf-radius); background: var(--sf-warn-bg); color: var(--sf-warn-text);
+  > summary { cursor: pointer; font-size: 0.875rem; font-weight: 600; list-style: none; &::-webkit-details-marker { display: none; } &::after { content: '▾'; float: right; } }
+  &[open] > summary::after { content: '▴'; } }
+.sf-checks-x { float: right; margin: -0.125rem 0 0 0.5rem; padding: 0 0.25rem; border: 0; background: none; color: inherit; font-size: 0.8125rem; line-height: 1.4; opacity: 0.7; cursor: pointer; &:hover { opacity: 1; } }
+.sf-home-cards { display: grid; gap: 0.5rem;
+  > li { padding: 0.625rem 0.75rem; border: 0; border-radius: 0.875rem; background: var(--sf-card); }
+  > li:last-child { border-bottom: 0; } }
+.sf-home-ic { flex: none; display: grid; place-items: center; width: 2.25rem; height: 2.25rem; border-radius: 50%; background: var(--bs-primary-bg-subtle); font-size: 1.125rem; }
+.sf-home-cards .sf-message-head { justify-content: flex-start; .sf-message-actions { margin-inline-start: auto; } }

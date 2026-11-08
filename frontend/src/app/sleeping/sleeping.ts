@@ -1,5 +1,5 @@
-import { DatePipe } from '@angular/common';
-import { Component, computed, inject, signal } from '@angular/core';
+import { DatePipe, NgTemplateOutlet } from '@angular/common';
+import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FriendAvatar } from '../friend-avatar/friend-avatar';
 import { FriendsService } from '../core/friends.service';
@@ -18,11 +18,14 @@ const MAX_FRIENDS = 7; // seats (the same number as on the Friends page)
  */
 @Component({
   selector: 'app-sleeping',
-  imports: [DatePipe, RouterLink, FriendAvatar],
+  imports: [DatePipe, NgTemplateOutlet, RouterLink, FriendAvatar],
   templateUrl: './sleeping.html',
 })
 export class Sleeping {
   private readonly friendsService = inject(FriendsService);
+  /** shown inside Home (under its top, in place of everything else) instead of as a page of its own: the back arrow then closes it */
+  readonly embedded = input(false);
+  readonly closed = output<void>();
   private readonly messagesService = inject(MessagesService);
 
   /** unread messages per friend (by connection id), as on the friends page: a sleeping friend can still have written */
@@ -51,7 +54,11 @@ export class Sleeping {
   protected readonly possessive = possessive;
   protected readonly moodLabel = moodLabel;
 
+  /** the friend whose circle was tapped */
+  protected readonly selected = computed(() => this.sleeping().find((f) => f.id === this.expanded()) ?? null);
+
   protected toggleProfile(friend: Friend): void {
+    this.deleting.set(null);
     this.expanded.update((id) => (id === friend.id ? null : friend.id));
   }
 
@@ -78,7 +85,10 @@ export class Sleeping {
 
   protected async wake(friend: Friend): Promise<void> {
     const woken = await this.run(async () => void (await this.friendsService.sleep(friend.id, false)));
-    if (woken) void this.router.navigate(['/friends']); // awake again: straight back to the list, where the friend has a seat
+    if (!woken) return;
+    this.expanded.set(null);
+    if (this.embedded()) this.closed.emit(); // awake again: back to Home, where the friend has a seat
+    else void this.router.navigate(['/']);
   }
 
   protected async remove(friend: Friend): Promise<void> {

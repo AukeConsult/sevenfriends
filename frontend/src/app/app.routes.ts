@@ -7,13 +7,13 @@ import { AddMedia } from './add-media/add-media';
 import { Chat } from './chat/chat';
 import { FriendPage } from './friend-page/friend-page';
 import { DeleteAccount } from './delete-account/delete-account';
-import { Friends } from './friends/friends';
 import { Sleeping } from './sleeping/sleeping';
 import { FriendJoin } from './friend-join/friend-join';
 import { InstallApp } from './install-app/install-app';
 import { InstallDevice } from './install-device/install-device';
 import { Privacy } from './privacy/privacy';
 import { Locking } from './locking/locking';
+import { Share } from './share/share';
 import { Terms } from './terms/terms';
 import { About } from './about/about';
 import { Login } from './login/login';
@@ -34,7 +34,8 @@ import { SoundPicker } from './sound-picker/sound-picker';
 
 export const routes: Routes = [
   { path: '', component: Notifications, canActivate: [authGuard], title: 'Notifications – Seven Friends' },
-  { path: 'friends', component: Friends, canActivate: [authGuard], title: 'Friends – Seven Friends' },
+  { path: 'friends', pathMatch: 'full', redirectTo: '' }, // the old list: old links and notifications land on Home
+  { path: 'share', component: Share, canActivate: [authGuard], title: 'Share – Seven Friends' },
   { path: 'friends/sleeping', component: Sleeping, canActivate: [authGuard], title: 'Sleep list – Seven Friends' },
   { path: 'friends/join', component: FriendJoin, canActivate: [authGuard], title: 'Friend request – Seven Friends' },
   { path: 'friends/add', component: AddFriend, canActivate: [authGuard], title: 'Add a friend – Seven Friends' },

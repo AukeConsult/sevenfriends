@@ -14,7 +14,7 @@ export class ChatService {
   private readonly lock = inject(MessageLockService);
 
   private base(friendId: string): string {
-    // the circle is known once the Friends page has been opened; the default circle otherwise
+    // the circle is known once the friend list has been loaded; the default circle otherwise
     return `/circles/${this.friends.circle()?.id ?? 'default'}/friends/${friendId}/messages`;
   }
 
