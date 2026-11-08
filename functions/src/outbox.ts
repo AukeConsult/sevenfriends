@@ -13,6 +13,8 @@ export interface InviteMail {
   message: string | null;
   /** the kind of circle the invitation is into (friends, buddies, work, family): the app name and the link in the email follow it; none = friends */
   circle?: string;
+  /** the invite code of the sender: the link in the email carries it (never an email address or phone number) */
+  code?: string;
 }
 
 /** The name of the app in each circle, and how the circle is written in an address (/welcome/<route>). */
@@ -20,16 +22,16 @@ const APP_NAME: Record<string, string> = { friends: "Seven Friends", buddies: "S
 const ROUTE: Record<string, string> = { friends: "friends", buddies: "buddy", work: "work", family: "family" };
 
 /** The values a template can use (see settings.ts and `.env.example`). */
-function placeholders({ fromName, to, message, circle }: InviteMail): Record<string, string> {
+function placeholders({ fromName, to, message, circle, code }: InviteMail): Record<string, string> {
   const kind = circle && APP_NAME[circle] ? circle : "friends";
   return {
     fromName,
     message: message ? `"${message}"` : "",
     to,
     appUrl: setting("APP_URL"),
-    // the same circle as the invitation: its name, and a link to the welcome page of that circle that knows who is invited
+    // the same circle as the invitation: its name, and the link to the welcome page of that circle with the sender's invite code
     appName: APP_NAME[kind],
-    inviteUrl: `${setting("APP_URL").replace(/\/+$/, "")}/welcome/${ROUTE[kind]}?from=${encodeURIComponent(to)}`,
+    inviteUrl: `${setting("APP_URL").replace(/\/+$/, "")}/welcome/${ROUTE[kind]}${code ? `?invite=${code}` : ""}`,
   };
 }
 

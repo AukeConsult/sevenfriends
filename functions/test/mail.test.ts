@@ -152,14 +152,21 @@ describe("with the invitation emails of the app", () => {
 });
 
 describe("how the invitation email looks (assets/mail/invite.html)", () => {
-  const sample = { fromUid: "x", fromName: "Leif Auke", to: "friend@example.com", message: "Hi! Be my friend." };
+  const sample = { fromUid: "x", fromName: "Leif Auke", to: "friend@example.com", message: "Hi! Be my friend.", code: "abcdefghjk" };
 
   it("follows the circle: its app name and its welcome page", async () => {
     const { inviteHtml } = await import("../src/outbox");
     const html = inviteHtml({ ...sample, circle: "buddies" })!;
     expect(html).toContain("Open Seven Buddies");
-    expect(html).toContain('href="https://sevenfriends.io/welcome/buddy?from=friend%40example.com"');
+    expect(html).toContain('href="https://sevenfriends.io/welcome/buddy?invite=abcdefghjk"');
     expect(html).not.toMatch(/\{\w+\}/);
+  });
+
+  it("a link never carries an email address: without a code it is the plain welcome page", async () => {
+    const { inviteHtml } = await import("../src/outbox");
+    const html = inviteHtml({ ...sample, code: undefined })!;
+    expect(html).toContain('href="https://sevenfriends.io/welcome/friends"');
+    expect(html).not.toContain("from=");
   });
 
   it("fills in the places and keeps the message block", async () => {
@@ -168,7 +175,7 @@ describe("how the invitation email looks (assets/mail/invite.html)", () => {
     expect(html).toContain("Leif Auke wants you as a close friend");
     expect(html).toContain("friend@example.com");
     expect(html).toContain("&quot;Hi! Be my friend.&quot;");
-    expect(html).toContain('href="https://sevenfriends.io/welcome/friends?from=friend%40example.com"');
+    expect(html).toContain('href="https://sevenfriends.io/welcome/friends?invite=abcdefghjk"');
     expect(html).toContain("Open Seven Friends");
     expect(html).not.toMatch(/\{\w+\}/); // nothing left unfilled
     expect(html).not.toContain("HOW THE INVITATION EMAIL LOOKS"); // the note at the top is not sent

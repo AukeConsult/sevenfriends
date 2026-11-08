@@ -14,6 +14,7 @@ import {
   circleIdOf,
   circleTypeOf,
 } from "./constants";
+import { inviteCodeOf } from "./invite";
 import { invitesSentToday, queueInvite } from "./outbox";
 import { Friend, FriendInvite, MediaRef, FriendStatus, NewFriend, ProfilePicture, profileColorKey, pronounKey } from "./models";
 import { circleProfileOf, friendNameOf } from "./circle-profile";
@@ -405,7 +406,7 @@ friendsRouter.post(
       res.status(429).json({ error: "You have sent many invitations today. Try again tomorrow." });
       return;
     }
-    const fromName = await nameOf(token.uid, token, (res.locals.circleRef as DocumentReference).id);
+    const [fromName, code] = await Promise.all([nameOf(token.uid, token, (res.locals.circleRef as DocumentReference).id), inviteCodeOf(token.uid)]);
 
     const sent = await getFirestore().runTransaction(async (tx) => {
       const entry = (await tx.get(ref)).data();
@@ -413,6 +414,7 @@ friendsRouter.post(
       queueInvite(tx, {
         fromUid: token.uid,
         fromName,
+        code,
         circle: circleTypeOf((res.locals.circleRef as DocumentReference).id),
         to: entry.invite.to,
         message: (entry.message as string | null | undefined) ?? null,

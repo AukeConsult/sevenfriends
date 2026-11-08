@@ -24,19 +24,21 @@ const uidOf = (res: { locals: Record<string, unknown> }) => (res.locals.token as
 export const inviteRouter = Router();
 inviteRouter.use(requireAuth);
 
+/** A person's invite code: the one they have, or a new one made now (an existing code is never changed). */
+export async function inviteCodeOf(uid: string): Promise<string> {
+  const ref = userDoc(uid);
+  const existing = (await ref.get()).data()?.inviteCode as string | undefined;
+  if (existing) return existing;
+  const code = newCode();
+  await ref.set({ inviteCode: code }, { merge: true });
+  return code;
+}
+
 /** My invite code (made the first time it is asked for). */
 inviteRouter.get(
   "/code",
   asyncHandler(async (_req, res) => {
-    const ref = userDoc(uidOf(res));
-    const existing = (await ref.get()).data()?.inviteCode as string | undefined;
-    if (existing) {
-      res.json({ code: existing });
-      return;
-    }
-    const code = newCode();
-    await ref.set({ inviteCode: code }, { merge: true });
-    res.json({ code });
+    res.json({ code: await inviteCodeOf(uidOf(res)) });
   }),
 );
 
