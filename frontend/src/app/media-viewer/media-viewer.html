@@ -1,8 +1,11 @@
-<div class="sf-back-row">
-  <button type="button" class="btn btn-light" (click)="back()" aria-label="Back">‹ Back</button>
-</div>
 <div class="sf-page-head">
-  <h1>{{ file()?.name ?? 'Image, video or audio' }}</h1>
+  <h1 class="m-0 mw-100">
+    <!-- the arrow and the name go back, like the title of the safebox pages -->
+    <button type="button" class="sf-title-link sf-title-button" (click)="back()" aria-label="Back">
+      <span class="sf-back-inline" aria-hidden="true"></span>
+      <span class="sf-ellipsis">{{ file()?.name ?? 'Image, video or audio' }}</span>
+    </button>
+  </h1>
 </div>
 
 <main class="sf-viewer">

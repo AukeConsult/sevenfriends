@@ -1185,6 +1185,7 @@ nav.sf-tabs {
 
 .sf-title-link { display: inline-flex; align-items: center; gap: 0.5rem; max-width: 100%; min-height: 2.75rem; color: inherit; text-decoration: none; cursor: pointer; } // a page title that is also the way back: the arrow, the icon and the text are one big tap target
 .sf-title-link:hover, .sf-title-link:focus-visible { color: var(--sf-primary); }
+.sf-title-button { padding: 0; border: 0; background: none; font: inherit; } // the same title as a button (it goes back in the history)
 @media (max-width: 575.98px) {
   .sf-choice-round img { --sf-pick: calc((100vw - 2 * var(--sf-gutter) - 1rem) / 2 - 0.75rem); width: var(--sf-pick); height: var(--sf-pick); max-width: 10rem; max-height: 10rem; } // the icons of the profile on a phone: two in a row, as big as the width allows (at most 10rem)
   .sf-choices:has(.sf-choice-round) { gap: 0.75rem 1rem; }

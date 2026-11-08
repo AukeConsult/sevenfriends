@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { MediaUpload, MessageEnc, MessageEncMedia } from '../models';
-import { ApiService } from './api.service';
+import { ApiError, ApiService } from './api.service';
 import { AuthService } from './auth.service';
 import { MessageMediaMeta, openMessageKey, openMessageMedia, openMessageMeta, sealMessageMedia } from './box-crypto';
 import { myDeviceKey } from './my-key';
@@ -57,28 +57,39 @@ export class MediaService {
 
   private async uploadWithPreview(kind: 'image' | 'video', file: PreparedImage, progress?: Progress): Promise<MediaUpload> {
     const stored = await this.upload(kind, file.blob, file.name, progress);
-    await this.api.request<void>(`/sf-cache/${stored.objectId}/thumb`, { method: 'PUT', body: file.thumb, headers: { 'Content-Type': file.thumb.type } });
+    await this.at('the preview', () => this.api.request<void>(`/sf-cache/${stored.objectId}/thumb`, { method: 'PUT', body: file.thumb, headers: { 'Content-Type': file.thumb.type } }));
     return stored;
+  }
+
+  /** Runs one step of an upload; a failure of the server (500 or more) says which step it was, so it can be found in the log. */
+  private async at<T>(step: string, run: () => Promise<T>): Promise<T> {
+    try {
+      return await run();
+    } catch (err) {
+      throw err instanceof ApiError && err.status >= 500 ? new ApiError(`${err.message} (${step})`, err.status) : err;
+    }
   }
 
   /** One request for a small file; a file over 8 MB goes in pieces (the server joins them), still through the API. */
   private async upload(kind: 'image' | 'video' | 'audio', blob: Blob, name: string, progress?: Progress, locked = false): Promise<MediaUpload> {
     const query = `kind=${kind}&name=${encodeURIComponent(name)}${locked ? '&locked=1' : ''}`;
     if (blob.size <= CHUNK_BYTES) {
-      return this.api.request<MediaUpload>(`/sf-cache?${query}`, { method: 'POST', body: blob, headers: { 'Content-Type': blob.type || 'application/octet-stream' } });
+      return this.at('uploading the file', () => this.api.request<MediaUpload>(`/sf-cache?${query}`, { method: 'POST', body: blob, headers: { 'Content-Type': blob.type || 'application/octet-stream' } }));
     }
-    const { uploadId, chunkBytes } = await this.api.request<{ uploadId: string; chunkBytes: number }>('/sf-cache/uploads', { method: 'POST' });
+    const { uploadId, chunkBytes } = await this.at('starting the upload', () => this.api.request<{ uploadId: string; chunkBytes: number }>('/sf-cache/uploads', { method: 'POST' }));
     const parts = Math.ceil(blob.size / chunkBytes);
     for (let n = 0; n < parts; n++) {
       progress?.(n, parts);
-      await this.api.request<void>(`/sf-cache/uploads/${uploadId}/${n}`, {
-        method: 'PUT',
-        body: blob.slice(n * chunkBytes, (n + 1) * chunkBytes),
-        headers: { 'Content-Type': 'application/octet-stream' },
-      });
+      await this.at(`piece ${n + 1} of ${parts}`, () =>
+        this.api.request<void>(`/sf-cache/uploads/${uploadId}/${n}`, {
+          method: 'PUT',
+          body: blob.slice(n * chunkBytes, (n + 1) * chunkBytes),
+          headers: { 'Content-Type': 'application/octet-stream' },
+        }),
+      );
     }
     progress?.(parts, parts);
-    return this.api.request<MediaUpload>(`/sf-cache/uploads/${uploadId}/finish?${query}&parts=${parts}`, { method: 'POST' });
+    return this.at('joining the pieces', () => this.api.request<MediaUpload>(`/sf-cache/uploads/${uploadId}/finish?${query}&parts=${parts}`, { method: 'POST' }));
   }
 
   /**
@@ -95,7 +106,7 @@ export class MediaService {
     };
     const sealed = await sealMessageMedia(connectionId, key, { file: file.blob, thumb: 'thumb' in file ? file.thumb : null, meta });
     const upload = await this.upload(kind, sealed.file, '', progress, true);
-    if (sealed.thumb) await this.api.request<void>(`/sf-cache/${upload.objectId}/thumb?locked=1`, { method: 'PUT', body: sealed.thumb, headers: { 'Content-Type': 'application/octet-stream' } });
+    if (sealed.thumb) await this.at('the preview', () => this.api.request<void>(`/sf-cache/${upload.objectId}/thumb?locked=1`, { method: 'PUT', body: sealed.thumb!, headers: { 'Content-Type': 'application/octet-stream' } }));
     return { upload, media: sealed.media };
   }
 

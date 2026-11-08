@@ -10,6 +10,7 @@ import { MediaService } from '../core/media.service';
 import { MessageLockService } from '../core/message-lock.service';
 import { MAX_VIDEO_SECONDS, PreparedVideo, prepareRecorded, prepareVideo, recorderType } from '../core/video';
 import { MediaUpload, MessageEncMedia } from '../models';
+import { ApiError } from '../core/api.service';
 import { Voice } from '../voice/voice';
 
 type Prepared = PreparedImage | PreparedVideo | PreparedAudio;
@@ -207,6 +208,7 @@ export class AddMedia implements OnDestroy {
     if (!file || this.working()) return;
     this.working.set('Sending…');
     this.error.set(null);
+    let sending = false; // false = the file is still being uploaded
     try {
       const progress = (done: number, total: number) => this.working.set(`Sending… ${done} of ${total}`);
       if (!this.stored) {
@@ -222,10 +224,11 @@ export class AddMedia implements OnDestroy {
       }
       this.working.set('Sending…');
       const size = 'width' in file && !this.sealed ? { width: file.width, height: file.height } : {}; // a locked file's size is inside the lock
+      sending = true;
       await this.chat.sendMedia(this.friendId, this.caption().trim(), { objectId: this.stored.objectId, ...size, durationMs: this.sealed ? undefined : (this.durationMs() ?? undefined) }, this.sealed ?? undefined);
       await this.router.navigate(['/friends', this.friendId]); // the conversation loads the message, and the file, from the server
     } catch (err: any) {
-      this.error.set(err.message ?? 'Could not send it');
+      this.error.set(err instanceof ApiError && err.status >= 500 && sending ? `${err.message} (sending the message)` : (err.message ?? 'Could not send it'));
     } finally {
       this.working.set(null);
     }
