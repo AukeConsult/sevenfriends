@@ -7,7 +7,7 @@ import { ChatMessage, Conversation, MediaRef, MessageDeleteCriteria, MessageEnc,
 import { circleCol, messageCol, missingIndex, userFields } from "./paths";
 import { sendPush } from "./push";
 import { linkOf } from "./link-preview";
-import { Refused, parseMessageEnc, wrapsCover, wrapsFor } from "./box-encryption";
+import { Refused, parseMessageEnc, parseRelock, wrapsCover, wrapsFor } from "./box-encryption";
 import { publishedKeysOf } from "./keys";
 import { touchFeed, touchFeedIfExists } from "./sync";
 import { deleteObject, deleteObjects, isObjectId, mediaLabel, objectInfo } from "./sf-cache";
@@ -276,7 +276,7 @@ async function ownMessage(req: Request, res: Response, allowMoved = false) {
     return null;
   }
   const myEntry = (res.locals.circleRef as DocumentReference).collection(FRIENDS_SUBCOLLECTION).doc(connection.id);
-  return { mine, theirs: messageCol(connection.peerUid).doc(mine.id), peerEntry: peerEntryOf(connection), myEntry, media: (data.media as MediaRef | undefined) ?? null, hidden: Boolean(data.hidden), wasLocked: Boolean(data.enc), peerUid: connection.peerUid };
+  return { mine, theirs: messageCol(connection.peerUid).doc(mine.id), peerEntry: peerEntryOf(connection), myEntry, media: (data.media as MediaRef | undefined) ?? null, hidden: Boolean(data.hidden), enc: (data.enc as MessageEnc | undefined) ?? null, peerUid: connection.peerUid };
 }
 
 /** The friend's copy of the friendship. */
@@ -291,12 +291,27 @@ conversationRouter.put(
     const own = await ownMessage(req, res);
     if (!own) return;
     const uid = uidOf(res);
-    const locked = await lockedText(req.body, uid, own.peerUid, res); // a new text is locked with a NEW message key
-    if (locked === null) return;
-    if (!locked && own.wasLocked) {
-      res.status(400).json({ error: "A locked message stays locked: send the new text locked" });
+    // a message that is locked stays locked, with the SAME key: the app locks the new text with the key the message has and sends only the text and its new iv (the copies of the key stay as they are)
+    if (own.enc) {
+      const again = parseRelock(req.body?.text, req.body?.iv);
+      if ("error" in again) {
+        res.status(again.status).json({ error: again.error });
+        return;
+      }
+      const theirCopy = await own.theirs.get();
+      const batch = getFirestore().batch();
+      batch.update(own.mine, { text: again.text, enc: { ...own.enc, iv: again.iv }, editedAt: FieldValue.serverTimestamp() });
+      if (theirCopy.exists) batch.update(own.theirs, { text: again.text, enc: { ...(theirCopy.data()!.enc as MessageEnc), iv: again.iv }, editedAt: FieldValue.serverTimestamp() });
+      await touchFeedIfExists(batch, own.peerEntry);
+      touchFeed(batch, own.myEntry); // my other devices reload the feed
+      await batch.commit();
+      const saved = (await own.mine.get()).data()!;
+      const edited: ChatMessage = { id: own.mine.id, text: again.text, media: own.media, mine: true, read: true, time: iso(saved.time), edited: true, hidden: own.hidden, link: null, enc: { ...own.enc, iv: again.iv } };
+      res.json(edited);
       return;
     }
+    const locked = await lockedText(req.body, uid, own.peerUid, res); // a plain message may become a locked one: its text is locked with a new key
+    if (locked === null) return;
     const text = locked ? locked.text : typeof req.body?.text === "string" ? req.body.text.trim() : "";
     if (!text && !own.media) {
       res.status(400).json({ error: "Write a message first" });

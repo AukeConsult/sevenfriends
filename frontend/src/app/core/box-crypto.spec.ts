@@ -1,5 +1,5 @@
 import { PublishedKey, canonicalPublicKey, fingerprintOf, keyIdOf } from '../models';
-import { classify, openFileKey, openMeta, openPart, openText, sealFile, sealMeta, sealText } from './box-crypto';
+import { classify, openFileKey, openMeta, openPart, openText, resealText, sealFile, sealMeta, sealText } from './box-crypto';
 import { KeyStore, StoredDeviceKey, createDeviceKey } from './device-key';
 
 /** A key store that lives in memory (the real one is IndexedDB). */
@@ -126,6 +126,20 @@ describe('box crypto', () => {
       await expectAsync(openText('conn1', enc, text, stranger.published.id, stranger.stored.privateKey)).toBeRejectedWithError(/message was locked for another device/);
       const forFriend = { ...enc, wraps: [{ ...enc.wraps[1], keyId: me.published.id }] };
       await expectAsync(openText('conn1', forFriend, text, me.published.id, me.stored.privateKey)).toBeRejected();
+    });
+
+    it('is edited with the same key: a new iv, the same copies, and both friends read the new text', async () => {
+      const { text, enc } = await lockMessage();
+      const mine = { ...enc, wraps: enc.wraps.filter((w) => w.keyId === me.published.id) };
+      const again = await resealText('conn1', mine, 'changed my mind: 8 o\'clock', me.published.id, me.stored.privateKey);
+      expect(again.iv).not.toBe(enc.iv);
+      expect(again.text).not.toBe(text);
+      for (const who of [me, friend]) {
+        const copies = { ...enc, iv: again.iv, wraps: enc.wraps.filter((w) => w.keyId === who.published.id) };
+        expect(await openText('conn1', copies, again.text, who.published.id, who.stored.privateKey)).toBe('changed my mind: 8 o\'clock');
+      }
+      // a key that has no copy cannot change it
+      await expectAsync(resealText('conn1', enc, 'x', stranger.published.id, stranger.stored.privateKey)).toBeRejectedWithError(/another device/);
     });
 
     it('is refused when moved to another conversation, changed, or taken for a file part', async () => {

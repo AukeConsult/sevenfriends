@@ -262,7 +262,7 @@ export class RealtimeService {
       if (unseen.length) this.ring('message');
       for (const m of unseen) {
         const connectionId = m.data['connectionId'] as string | undefined;
-        const text = String(m.data['text'] ?? '');
+        const text = m.data['enc'] ? '🔒 New message' : String(m.data['text'] ?? ''); // a locked text is unreadable here: only the sender is named
         this.notify('message', {
           title: String(m.data['fromName'] ?? 'New message'),
           body: text.length > 120 ? `${text.slice(0, 120)}…` : text,

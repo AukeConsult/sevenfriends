@@ -81,6 +81,15 @@ export function wrapsCover(enc: { wraps: SafeboxWrap[] }, people: { uid: string;
 /** The copies of the file key that a person may see: their own (the others stay on the server). */
 export const wrapsFor = <T extends { wraps: SafeboxWrap[] }>(enc: T, uid: string): T => ({ ...enc, wraps: enc.wraps.filter((w) => w.uid === uid) });
 
+/** A locked text: base64, at least the 16-byte lock plus one byte, a whole number of base64 groups, not longer than a message can be. */
+const lockedTextOk = (text: unknown): text is string => isBase64(text) && text.length >= 24 && text.length <= MAX_LOCKED_TEXT_LENGTH && text.length % 4 === 0;
+
+/** A new text for a message that is already locked (an edit): the text locked with the same message key and its new iv. The copies of the key are not sent: they stay as they are. */
+export function parseRelock(text: unknown, iv: unknown): { text: string; iv: string } | Refused {
+  if (!lockedTextOk(text) || !isBase64(iv, IV_LENGTH)) return bad("The locked message is not valid");
+  return { text, iv };
+}
+
 /**
  * A locked message (design: docs/design/message-encryption.md): `text` is the locked text (base64) and `enc` the iv and the copies of the message
  * key. Checks the shape only, the server cannot look inside; keeps just the known fields. The caller checks the copies with `wrapsCover`.
@@ -88,8 +97,6 @@ export const wrapsFor = <T extends { wraps: SafeboxWrap[] }>(enc: T, uid: string
 export function parseMessageEnc(text: unknown, enc: unknown): { text: string; enc: MessageEnc } | Refused {
   const e = enc as Partial<MessageEnc> | null;
   if (!e || typeof e !== "object" || e.v !== 1) return bad("The locked message is not valid");
-  // the locked text is the 16-byte lock plus at least one byte, and a multiple of 4 characters of base64
-  if (!isBase64(text) || text.length < 24 || text.length > MAX_LOCKED_TEXT_LENGTH || text.length % 4 !== 0) return bad("The locked message is not valid");
-  if (!isBase64(e.iv, IV_LENGTH) || !wrapsValid(e.wraps)) return bad("The locked message is not valid");
+  if (!lockedTextOk(text) || !isBase64(e.iv, IV_LENGTH) || !wrapsValid(e.wraps)) return bad("The locked message is not valid");
   return { text, enc: { v: 1, iv: e.iv, wraps: e.wraps.map((w) => ({ uid: w.uid, keyId: w.keyId, wrappedKey: w.wrappedKey })) } };
 }

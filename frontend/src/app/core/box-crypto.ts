@@ -155,6 +155,16 @@ export async function sealText(connectionId: string, text: string, recipients: R
   return { text: toBase64(sealed.data), enc: { v: 1, iv: toBase64(sealed.iv), wraps: await wrapKeyFor(key, recipients) } };
 }
 
+/**
+ * A new text for a message that is already locked (an edit): locked again with the message key it already has (opened with the key of this device),
+ * with a new iv. The copies of the key stay as they are, so the same keys can read it and nobody else is let in.
+ */
+export async function resealText(connectionId: string, enc: MessageEnc, text: string, myKeyId: string, privateKey: CryptoKey): Promise<{ text: string; iv: string }> {
+  const key = await openFileKey(enc, myKeyId, privateKey, 'message');
+  const sealed = await lock(key, connectionId, 'text', encoder.encode(text));
+  return { text: toBase64(sealed.data), iv: toBase64(sealed.iv) };
+}
+
 /** The text of a locked message, opened with the private key of this device; throws when no copy was locked for this key or the text was changed. */
 export async function openText(connectionId: string, enc: MessageEnc, text: string, myKeyId: string, privateKey: CryptoKey): Promise<string> {
   const key = await openFileKey(enc, myKeyId, privateKey, 'message');

@@ -76,6 +76,9 @@
 
 // Root font size: every rem (Bootstrap + our own) scales with the view size.
 html { font-size: calc(16px * var(--sf-text-scale, 1)); } // the person's text size (Preferences) multiplies it
+body { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; } // no marking of text and no copy menu anywhere in the app (it also gets in the way of pressing and dragging)
+input, textarea, [contenteditable='true'] { -webkit-user-select: text; user-select: text; } // what a person types can still be marked, cut and pasted
+.sf-recovery-words, .sf-fingerprint { -webkit-user-select: all; user-select: all; } // the recovery words and the key code are meant to be copied
 @media (max-width: 575.98px) { html { font-size: calc(16px * var(--sf-text-scale-phone, 1.15)); } } // a phone: one step bigger than a computer (Normal here = what Big is there)
 
 @media (min-width: 576px) {
@@ -265,7 +268,7 @@ app-root {
 // on a phone the bar is only as high as its text (and the back arrow): no spare room above and below
 @media (max-width: 575.98px) {
   .sf-bar { min-height: calc(2.75rem + var(--sf-safe-top)); gap: 0; padding-top: calc(0.125rem + var(--sf-safe-top)); padding-bottom: 0.125rem; } // every header on a phone is at least 44px high (the status bar space comes on top)
-  .sf-bar .sf-back { height: 2.25rem; width: 2.5rem; font-size: 1.75rem; }
+  .sf-bar .sf-back { height: 2.25rem; width: 2rem; font-size: 0; line-height: 0; } // a narrower arrow, so the picture or title moves left // a narrower arrow, so the picture or title moves left; the arrow is centred on the line of the picture (line-height = height)
   .sf-bar h1, .sf-bar .h1, .sf-bar .h5, .sf-bar-text > * { line-height: 1.2; }
 }
 .sf-bar-extra { margin-left: auto; } // something on the right of the title (a count, a button)
@@ -281,6 +284,8 @@ app-root {
   text-decoration: none;
 }
 
+.sf-bar .sf-back { display: flex; align-items: center; justify-content: center; font-size: 0; line-height: 0; } // the text arrow is hidden: the chevron below is drawn instead (wide and narrow screens). A flex row, not a grid: in a grid the hidden text became a second row and pushed the chevron up
+.sf-bar .sf-back::before { content: ''; width: 0.7rem; height: 0.7rem; margin-inline-start: 0.25rem; border-left: 2.5px solid currentColor; border-bottom: 2.5px solid currentColor; border-radius: 1px; transform: rotate(45deg); } // the arrow in a header is drawn as a chevron, so it sits exactly on the centre line of the picture (a text arrow sits a little high)
 .sf-bar-title { margin: 0; font-size: var(--sf-fs-title); font-weight: 700; }
 
 .sf-narrow {
@@ -623,6 +628,10 @@ router-outlet + * { display: block; min-height: 100dvh; }
 .sf-name-arrow { flex: none; font-size: 0.8em; opacity: 0.6; }
 .sf-profile.sf-profile-bar { margin: 0; padding: 0.75rem var(--sf-gutter); border: 0; border-bottom: 1px solid var(--sf-border); border-radius: 0; }
 .sf-bar-text strong, .sf-bar-text .sf-bar-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sf-lock-mark { margin-inline-start: 0.25rem; vertical-align: -1px; opacity: 0.55; } // the small padlock at the end of a message that was sent locked
+.sf-locked-note { font-style: italic; opacity: 0.75; }
+.sf-lock-frame { display: grid; gap: 0.5rem; margin: 0.5rem var(--sf-gutter) 0; padding: 0.75rem 0.875rem; border: 1px solid var(--sf-border); border-radius: var(--sf-radius); background: var(--sf-card); font-size: var(--sf-fs-description); color: var(--sf-text); p { margin: 0; } .form-check { margin: 0; } } // the frame under the conversation header: what the padlock means and the switch
+.sf-lock-btn { color: var(--bs-warning-text-emphasis, #997404); &.sf-on { color: var(--bs-success-text-emphasis, #0a3622); } } // the padlock in the conversation header: amber when open, green when locked
 .sf-tool-btn { // an action in the header with a text under its icon, so it is clear what it does
   flex: none;
   min-width: 3rem;
@@ -766,17 +775,24 @@ app-voice { display: contents; }
   img { display: block; max-width: 100%; max-height: calc(100dvh - 12rem); margin: 0 auto; object-fit: contain; }
 }
 .sf-bubble-tap:focus-visible { outline: 2px solid var(--sf-primary); outline-offset: 2px; }
-.sf-msg-actions-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.375rem; margin: 0.375rem 0 0.75rem; // one row for all the buttons of a message, with room under it so a tap hits the right one
+.sf-msg-actions-row:not(:has(*)) { display: none; } // a message without buttons has no row, and so no empty room under its time
+.sf-meta-line { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 0.375rem; margin: 0.125rem 0 0.375rem; max-width: calc(100vw - 2 * var(--sf-gutter));
+  > small.sf-hint { margin: 0; line-height: 1.3; }
+  .sf-msg-actions-row { display: contents; } // the buttons are part of this line, not a row of their own
+  .btn { min-height: 1.5rem; padding: 0 0.5rem; font-size: var(--sf-fs-description); } // slim buttons, also the preview button
+}
+.sf-mine .sf-meta-line { justify-content: flex-end; } // the time and the buttons of the message under the bubble: one line
+.sf-msg-actions-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.375rem; margin: 0.25rem 0 0.375rem; // one row for all the buttons of a message, with room under it so a tap hits the right one
   &:empty { display: none; }
   .sf-msg-actions { display: contents; } // the groups dissolve: their buttons share the row
-  .sf-msg-actions .btn { min-height: 2rem; white-space: nowrap; }
+  .sf-msg-actions .btn { min-height: 1.5rem; padding: 0 0.5rem; white-space: nowrap; }
   // the row is as wide as its buttons (not as wide as the message above it), up to the width of the screen: all buttons on ONE line when they fit
   width: max-content; max-width: calc(100vw - 2 * var(--sf-gutter));
 }
 .sf-mine .sf-msg-actions-row { justify-content: flex-end; }
-@media (max-width: 575.98px) { .sf-msg-actions-row { gap: 0.5rem 0.25rem; .sf-msg-actions .btn { padding-inline: 0.75rem; } } } // a little narrower buttons on a phone, so four still fit in a line
+@media (max-width: 575.98px) { .sf-msg-actions-row { gap: 0.375rem 0.25rem; .sf-msg-actions .btn { padding-inline: 0.5rem; } } } // narrow buttons on a phone, so four still fit in a line
 .sf-msg-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 0.375rem; margin-top: 0.25rem;
-  .btn { min-height: 1.75rem; padding: 0 0.75rem; font-size: var(--sf-fs-description); } // small, quiet buttons under a message
+  .btn { min-height: 1.5rem; padding: 0 0.5rem; font-size: var(--sf-fs-description); } // small, slim, quiet buttons under a message
 }
 .sf-editing { display: flex; align-items: center; justify-content: space-between; padding: 0.25rem var(--sf-gutter); background: var(--bs-primary-bg-subtle); }
 .sf-composer-field { resize: none; max-height: 8rem; overflow-y: auto; line-height: 1.4; }
@@ -808,7 +824,7 @@ app-voice { display: contents; }
   &:hover, &:focus-visible { background: var(--sf-bg); color: inherit; }
 }
 .sf-tap { cursor: pointer; } // the time of a picture, video or voice message opens its buttons, like the three dots
-.sf-more-menu { inset-inline-start: auto; inset-inline-end: 0; bottom: auto; top: 100%; transform-origin: top right; white-space: nowrap; } // the header menu opens below the three dots, at the right edge
+.sf-more-menu { inset-inline-start: auto; inset-inline-end: 0; bottom: auto; top: 100%; transform-origin: top right; max-width: calc(100vw - 1rem); .sf-add-item span { white-space: normal; } } // the header menu opens below the three dots, at the right edge
 .sf-add-quick { min-width: 0; &:disabled { opacity: 0.5; } }
 .sf-add-emoji { display: inline-grid; place-items: center; width: 22px; font-size: 1.2rem; line-height: 1; }
 .sf-emoji-panel { display: grid; grid-template-columns: repeat(auto-fill, 1.5rem); justify-content: space-between; column-gap: 0.25rem; padding: 0.125rem var(--sf-gutter); border-bottom: 1px solid var(--sf-border); } // compact: small emojis, as many in a row as fit
@@ -874,7 +890,10 @@ app-voice { display: contents; }
   border-radius: var(--sf-radius);
   background: transparent;
   color: var(--sf-muted);
+  padding: 0.5rem 0.75rem; // the same room as the card of a friend (.sf-card), so the icon, the text and the grip line up with it
   &:active { transform: scale(0.98); }
+  .sf-avatar { width: 2rem; height: 2rem; }
+  .sf-slot-waiting { width: 2rem; height: 2rem; font-size: 1rem; }
 }
 .sf-card { padding: 0.5rem 0.75rem; .sf-avatar { width: 2rem; height: 2rem; font-size: var(--sf-fs-description); } }
 .sf-head { display: flex; align-items: center; gap: 0.5rem; }
@@ -965,6 +984,7 @@ app-voice { display: contents; }
 // ---- Message feed: header buttons and the delete-several frame ----
 .sf-bar-actions { display: flex; margin-left: auto; }
 .sf-bar-actions .sf-icon-btn { margin: 0; }
+@media (max-width: 575.98px) { .sf-bar-actions .sf-tool-btn { min-width: 2.375rem; padding-inline: 0.0625rem; svg { width: 20px; height: 20px; } } .sf-bar-actions .sf-more { margin-inline-end: -1rem; } } // the three dots reach further to the right, nearer the edge. The buttons in a header are a little narrower and smaller on a phone, so the name has more room
 .sf-cleanup-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem 0.75rem; } // the count on the left, the button on the right, on one line
 .sf-cleanup { display: flex; flex-direction: column; gap: 0.5rem; padding: 0.75rem var(--sf-gutter); background: var(--sf-card); border-bottom: 1px solid var(--sf-border); }
 .sf-doomed .sf-bubble { outline: 2px dashed #dc2626; outline-offset: 2px; opacity: 0.7; } // marked by the delete frame: will be deleted
@@ -975,12 +995,12 @@ app-voice { display: contents; }
 .sf-feed { overflow-anchor: none; } // no jumping when the feed is turned around (sort order) or the message field changes height
 
 // Radio choices in two columns (the delete frame in the message feed)
-.sf-chip-radio { display: flex; align-items: center; gap: 0.5rem; margin: 0; padding: 0.5rem 0.75rem; border: 1px solid var(--sf-border); border-radius: var(--sf-radius); background: var(--sf-card); cursor: pointer; overflow-wrap: anywhere;
+.sf-chip-radio { display: flex; align-items: center; gap: 0.375rem; margin: 0; padding: 0.25rem 0.5rem; font-size: var(--sf-fs-description); border: 1px solid var(--sf-border); border-radius: var(--sf-radius); background: var(--sf-card); cursor: pointer; overflow-wrap: anywhere;
   .sf-pic { flex: none; color: var(--sf-muted); }
   &:has(input:checked) { border-color: var(--sf-primary); background: var(--bs-primary-bg-subtle); color: var(--sf-primary); font-weight: 600; .sf-pic { color: var(--sf-primary); } }
   &:has(input:focus-visible) { box-shadow: var(--bs-focus-ring-box-shadow, 0 0 0 0.2rem rgb(13 110 253 / 0.25)); } }
 .sf-cleanup .btn .sf-pic { vertical-align: -4px; }
-.sf-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--sf-border); .form-check { margin: 0; overflow-wrap: anywhere; } }
+.sf-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.375rem 0.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--sf-border); .form-check { margin: 0; overflow-wrap: anywhere; } }
 
 // ---- The clear button ("×") inside optional text fields (directive `appClear`) ----
 .sf-clearable { position: relative; display: block; }
@@ -1020,6 +1040,8 @@ app-voice { display: contents; }
   p { margin: 0; }
   .sf-box-keystatus { justify-content: flex-start; margin: 0; } } // all about locking (encryption) in one frame: closed it says whether files are locked, open it explains and holds the choices
 .sf-box-add summary { color: var(--sf-primary); } .sf-box-add.sf-over { border-color: var(--sf-primary); background: color-mix(in srgb, var(--sf-primary) 10%, var(--sf-card)); } // the Add files frame: in the brand colour, lit while files are dragged over it
+.sf-box-tools { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: center; gap: 0.5rem; margin-bottom: 0.75rem; > details { margin: 0; } > details[open] { flex: 1 1 100%; } } // the padlock and the Add files frame side by side
+.sf-box-add:not([open]) { border-radius: 999px; summary { gap: 0; padding: 0.5rem 0.75rem; &::after { display: none; } .sf-box-security-title { display: none; } } } // the Add files frame, closed: only the round icon beside the padlock (a file can still be dropped on it)
 .sf-box-lock { width: fit-content; margin-inline: auto; &:not([open]) { border-radius: 999px; } &[open] { width: auto; margin-inline: 0; } summary { gap: 0.375rem; padding: 0.5rem 0.75rem; &::after { display: none; } } } // the lock frame, closed: only a padlock (round); open: the whole frame
 .sf-box-usage { display: grid; gap: 0.25rem; margin-bottom: 0.75rem; .progress { height: 0.5rem; } }
 .sf-box-empty { display: grid; justify-items: center; gap: 0.5rem; padding: 2rem 1rem; svg { color: var(--sf-muted); } }

@@ -85,7 +85,7 @@ export class Safebox {
     return mine && friend ? 'both' : friend ? 'me' : mine ? 'friend' : 'none';
   });
   /** the key frame shows only the status; the codes, the choice for new files and the details are behind the Advanced button */
-  protected readonly advanced = signal(false);
+  protected readonly advanced = signal(inject(ActivatedRoute).snapshot.queryParamMap.has('advanced')); // the padlock in the conversation header opens it
   /** the Add files frame is open (it is always open while the box is empty) */
   protected readonly addOpen = signal(false);
   /** the keys in use of my friend (their codes are shown under Advanced, to compare with what they read from their own device) */

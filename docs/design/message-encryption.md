@@ -1,6 +1,6 @@
 # Message encryption: design
 
-Status: proposal. Step 1 is built: `sealText` and `openText` in `core/box-crypto.ts` (they share the key generation, the key locking and `openFileKey` with the safebox) and the `MessageEnc` type in `models/shared/message.ts`, with unit tests in `box-crypto.spec.ts`. Step 2 is built (server, accepts both forms): `parseMessageEnc` in `functions/src/box-encryption.ts` (shares the wrap checks, `wrapsCover` and `wrapsFor` with the safebox), send, edit, the feed, the unread list and delete-by-text in `conversation.ts` and `messages.ts`, tests in `functions/test/message-encrypted.test.ts`. Nothing sends a locked message yet: that is step 3. Nothing else yet. It reuses the key system of the safebox (`docs/design/safebox-encryption.md`): the device keys, the fingerprints, the recovery words and `core/box-crypto.ts`. Date: 2026-11-08.
+Status: proposal. Step 1 is built: `sealText` and `openText` in `core/box-crypto.ts` (they share the key generation, the key locking and `openFileKey` with the safebox) and the `MessageEnc` type in `models/shared/message.ts`, with unit tests in `box-crypto.spec.ts`. Step 2 is built (server, accepts both forms): `parseMessageEnc` in `functions/src/box-encryption.ts` (shares the wrap checks, `wrapsCover` and `wrapsFor` with the safebox), send, edit, the feed, the unread list and delete-by-text in `conversation.ts` and `messages.ts`, tests in `functions/test/message-encrypted.test.ts`. Step 3 is built: `core/message-lock.service.ts` (lock on send, open the feed, `ChatItem`), `core/chat.service.ts`, the message screen (lock mark, "locked for another device", the padlock frame with the switch), the live notice and the draft link preview skip locked texts. Not built: pictures, video and voice in messages, link previews for locked messages, the "friend unlocks it for you" function. It reuses the key system of the safebox (`docs/design/safebox-encryption.md`): the device keys, the fingerprints, the recovery words and `core/box-crypto.ts`. Date: 2026-11-08.
 
 ## Goals and limits
 - The text of a message is locked on the device of the sender. The server and the database only hold unreadable text.
@@ -24,7 +24,7 @@ enc: { v: 1, iv, wraps: [{ uid, keyId, wrappedKey }] }   // text = the locked te
 ```
 - A locked message has `enc` and its `text` field holds the ciphertext. A message without `enc` is plain text (old messages, or no key on one side).
 - Each friend's copy of the message keeps only their own wraps (like `wrapsFor`), so nobody gets the other's copies.
-- An edit locks the new text with a NEW message key and replaces `enc`.
+- An edit locks the new text with the SAME message key (opened with this device's copy) and a new iv. The app sends only the text and the iv (`parseRelock`); the copies of the key stay as they are, so the same keys, and nobody else, can read the edited message. A plain message may become a locked one by an edit (a new key, as for a new message); a locked one never becomes plain.
 
 ## What the server still sees
 Who writes to whom, when, the size of the text (roughly), whether a message has a file, and read status. It no longer sees the text.
@@ -32,7 +32,7 @@ Who writes to whom, when, the size of the text (roughly), whether a message has 
 ## Changes by part
 **Client** (`core/box-crypto.ts`, `core/messages.service.ts`, `chat/`)
 - `lockText` and `unlockText` next to the file functions, with tests (round trip, wrong friendship, wrong part, a changed byte, a missing copy).
-- Send: lock when both have a key, else plain. Edit: the same.
+- Send: lock when both have a key, else plain. Edit: a locked message is locked again with the key it has; a plain one is sent like a new message.
 - Show: unlock the text of loaded messages; a lock mark on locked messages; the "locked for another device" line.
 - Search: on the device only, over the loaded messages.
 

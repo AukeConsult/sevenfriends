@@ -142,13 +142,13 @@
             </div>
           </div>
         } @else {
-          <a routerLink="/friends/add" class="btn sf-slot-empty w-100 flex-grow-1 text-start d-flex align-items-center gap-3">
+          <a routerLink="/friends/add" class="btn sf-slot-empty w-100 flex-grow-1 text-start d-flex align-items-center gap-2">
             <span class="sf-seat">
-              <img class="sf-avatar sf-avatar-empty" [src]="'icons/friends/friend' + slot.position + '.svg'" [alt]="''" width="40" height="40" />
+              <img class="sf-avatar sf-avatar-empty" [src]="'icons/friends/friend' + slot.position + '.svg'" [alt]="''" width="32" height="32" />
               <span class="sf-seat-no" aria-hidden="true">{{ slot.position }}</span>
             </span>
-            <span class="flex-grow-1">Add a close friend</span>
-            <span class="sf-fs-heading text-primary" aria-hidden="true">+</span>
+            <span class="flex-grow-1 sf-friend-name">Open seat</span>
+            <span class="sf-fs-title text-primary" aria-hidden="true">+</span>
             <!-- drag an empty seat onto a friend: the friend moves into this seat -->
             <span class="sf-grip" role="button" tabindex="0" [attr.aria-label]="'Move seat ' + slot.position + '. Drag it onto a friend, or use the arrow keys.'" title="Drag onto a friend"
                   (pointerdown)="dragStart($event, slot.position)" (pointermove)="dragMove($event)" (pointerup)="dragEnd($event)" (pointercancel)="dragEnd($event, true)"
@@ -162,10 +162,10 @@
     <!-- one more row like an empty seat: opens the waiting list -->
     @if (showSleepList()) {
     <li class="col-12 col-md-6 d-flex flex-column" data-sleep="true" [class.sf-drop]="overSleep()">
-      <a routerLink="/friends/sleeping" class="btn sf-slot-empty w-100 flex-grow-1 text-start d-flex align-items-center gap-3">
+      <a routerLink="/friends/sleeping" class="btn sf-slot-empty w-100 flex-grow-1 text-start d-flex align-items-center gap-2">
         <span class="sf-slot-waiting" aria-hidden="true">😴</span>
-        <span class="flex-grow-1">Sleep list@if (sleeping() > 0) { ({{ sleeping() }}) }</span>
-        <span class="sf-fs-heading text-primary" aria-hidden="true">›</span>
+        <span class="flex-grow-1 sf-friend-name">Sleep list@if (sleeping() > 0) { ({{ sleeping() }}) }</span>
+        <span class="sf-fs-title text-primary" aria-hidden="true">›</span>
       </a>
     </li>
     }

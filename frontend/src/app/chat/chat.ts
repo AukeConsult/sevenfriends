@@ -6,6 +6,9 @@ import { Component, DestroyRef, ElementRef, HostListener, computed, effect, inje
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ApiError } from '../core/api.service';
+import { KeysService } from '../core/keys.service';
+import { localLink } from '../core/link-embed';
+import { ChatItem } from '../core/message-lock.service';
 import { SafeboxService } from '../core/safebox.service';
 import { FriendAvatar } from '../friend-avatar/friend-avatar';
 import { MediaAudio } from '../media-audio/media-audio';
@@ -22,8 +25,9 @@ import { FriendsService } from '../core/friends.service';
 import { initials } from '../core/initials';
 import { presenceLabel } from '../core/presence';
 import { moodIcon, moodLabel } from '../core/moods';
+import { countries } from '../core/countries';
 import { RealtimeService } from '../core/realtime.service';
-import { ChatMessage, MessageDeleteCriteria, MessageLink, profileColorHex, profileColorInk, profileColorSoft } from '../models';
+import { BoxKeys, ChatMessage, MessageDeleteCriteria, MessageLink, profileColorHex, profileColorInk, profileColorSoft } from '../models';
 
 // New messages, edits and deletes arrive live (RealtimeService). This refresh is only a safety net.
 const SAFETY_REFRESH_MS = 30000;
@@ -46,6 +50,7 @@ const SAFETY_REFRESH_MS = 30000;
 export class Chat {
   private readonly chat = inject(ChatService);
   private readonly safebox = inject(SafeboxService);
+  private readonly keysService = inject(KeysService);
   private readonly prefs = inject(UiPreferencesService);
   private readonly live = inject(LiveChanges);
   private readonly mediaService = inject(MediaService);
@@ -71,6 +76,18 @@ export class Chat {
   protected readonly presenceLabel = presenceLabel;
   protected readonly moodIcon = moodIcon;
   protected readonly moodLabel = moodLabel;
+  protected readonly profileOpen = signal(false); // the friend's profile, under the header
+  private readonly countryNames = new Map(countries().map((c) => [c.code, c.name]));
+
+  protected countryName(code: string | null): string {
+    return (code && this.countryNames.get(code)) || '';
+  }
+
+  /** Opens the friend's profile and brings the top of the conversation into view. */
+  protected showProfile(): void {
+    this.profileOpen.set(true);
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }
   protected readonly initials = initials;
   /** this friend, from the list (for the mood) */
   /** the colour my friend chose for their profile (#rrggbb), or null */
@@ -84,7 +101,7 @@ export class Chat {
   protected readonly friend = computed(() => this.friendsService.friends().find((f) => f.id === this.friendId) ?? null);
   /** the seat of this friend (1-7): its icon friend{seat}.svg is shown in the header; 0 while the list is not loaded */
   protected readonly seat = computed(() => this.friendsService.awake().findIndex((f) => f.id === this.friendId) + 1);
-  protected readonly messages = signal<ChatMessage[]>([]);
+  protected readonly messages = signal<ChatItem[]>([]);
   /** false = oldest first (the default); true = newest first. Remembered on this device. */
   /** newest first? (a remembered choice, the same in every window; a refresh of the feed never changes it) */
   /** the Enter key sends the message (a preference) */
@@ -130,7 +147,7 @@ export class Chat {
     for (const m of this.messages()) {
       if (this.cleanupWhose() === 'mine' && !m.mine) continue;
       if (cutoff !== null && !(m.time && new Date(m.time).getTime() < cutoff)) continue;
-      if (text && !m.text.toLowerCase().includes(text)) continue;
+      if (text && (m.locked || !m.text.toLowerCase().includes(text))) continue; // the server cannot read a locked text, so it never deletes one by its words
       ids.add(m.id);
     }
     return ids;
@@ -231,7 +248,39 @@ export class Chat {
   /** the height of the header: the message field sticks right under it when the newest message is on top */
   protected readonly barHeight = signal(56);
 
+  /** the keys in use of me and of my friend (null until asked): the padlock in the header says whether new messages are locked */
+  private readonly boxKeys = signal<BoxKeys | null>(null);
+  private readonly boxPlain = this.prefs.value('boxPlain');
+  /** who has a key: 'both', 'friend' (only I have one, on this device), 'me' (only my friend has one), 'none', or 'checking' while it is not known */
+  protected readonly keyStatus = computed<'checking' | 'both' | 'me' | 'friend' | 'none'>(() => {
+    const box = this.boxKeys();
+    const state = this.keysService.state();
+    if (!box || state === 'checking') return 'checking';
+    const mine = state === 'ready' && box.mine.some((k) => k.id === this.keysService.thisKeyId());
+    const friend = box.friend.length > 0;
+    return mine && friend ? 'both' : friend ? 'me' : mine ? 'friend' : 'none';
+  });
+  /** both of us have a key (mine on this device, my friend's on any device) */
+  private readonly bothHaveKeys = computed(() => this.keyStatus() === 'both');
+  /** the frame under the header that explains the padlock and holds the switch */
+  protected readonly lockOpen = signal(false);
+  /** locking is on (the opposite of the "do not lock" choice, which is remembered on this device and is the same as in the safebox) */
+  protected readonly lockingOn = computed(() => !this.boxPlain());
+  protected setLocking(on: boolean): void {
+    this.prefs.set('boxPlain', !on);
+  }
+  /** new messages are locked: both have a key and locking is not switched off (the same choice as for new files in the safebox) */
+  protected readonly messagesLocked = computed(() => this.bothHaveKeys() && !this.boxPlain());
+  /** what the padlock says (for a screen reader, the tooltip and the menu) */
+  /** the short words for the menu item */
+  protected readonly lockMenuText = computed(() => (this.messagesLocked() ? 'Locking is on' : this.bothHaveKeys() ? 'Locking is off' : 'Locking: not set up yet'));
+  protected readonly lockText = computed(() =>
+    this.messagesLocked() ? 'New messages and files are locked' : this.bothHaveKeys() ? 'Locking is switched off for new messages and files' : 'Messages and files are not locked yet: you both need a key',
+  );
+
   constructor() {
+    void this.keysService.refresh(); // is there a key for me on this device?
+    void this.safebox.keys(this.friendId).then((keys) => this.boxKeys.set(keys)).catch(() => undefined); // and for my friend?
     if (!this.friendsService.friends().length) void this.friendsService.load().catch(() => undefined); // opened directly (a reload): the seat comes from the list
     this.realtime.openFeed.set(this.friendId); // new messages from this friend come here, not to the Home list
     this.refresh(true);
@@ -321,6 +370,14 @@ export class Chat {
   private watchDraft(text: string): void {
     clearTimeout(this.draftTimer);
     const url = this.parts(text).find((p) => p.url)?.url ?? null;
+    if (this.messagesLocked() && !this.editing()) {
+      // a locked message: the link is looked at on this device only (the server must not read it); only a known player is shown while writing
+      this.draftSeq++;
+      const local = localLink(text);
+      this.draftLink.set(local && !local.unchecked ? local : null);
+      if (!local || local.unchecked) this.draftOpen.set(false);
+      return;
+    }
     if (!url || this.editing()) {
       this.draftSeq++;
       this.draftLink.set(null);
@@ -427,7 +484,12 @@ export class Chat {
     this.selected.update((id) => (id === message.id ? null : message.id));
   }
 
-  protected startEdit(message: ChatMessage): void {
+  protected startEdit(message: ChatItem): void {
+    if (message.locked === 'shut') {
+      this.error.set('This message is locked for another device, so it cannot be changed here.');
+      this.selected.set(null);
+      return;
+    }
     this.editing.set(message.id);
     this.selected.set(null);
     this.text.set(message.text);
@@ -482,7 +544,7 @@ export class Chat {
     this.error.set(null);
     try {
       if (editingId) {
-        const changed = await this.chat.edit(this.friendId, editingId, text);
+        const changed = await this.chat.edit(this.friendId, editingId, text, this.messages().find((m) => m.id === editingId)); // a locked message stays locked, with the same key
         this.messages.update((list) => list.map((m) => (m.id === editingId ? changed : m)));
         this.editing.set(null);
       } else {

@@ -82,18 +82,46 @@ describe("a locked message", () => {
     expect((await pool[1].feed(id)).body.messages).toHaveLength(0);
   });
 
-  it("is edited with a new lock, and only a locked text may replace it", async () => {
+  it("is edited with the same key: a new locked text and iv, the copies of the key stay as they are", async () => {
     const { id, mine, theirs, wraps } = await twoWithKeys();
     const sent = (await pool[0].raw("post", messages(id), locked(wraps)).expect(201)).body;
-    expect((await pool[0].raw("put", messages(id, `/${sent.id}`), { text: "now plain" })).status).toBe(400); // a locked message stays locked
-    const again = locked(wraps);
+    const again = { text: b64(48), iv: b64(12) };
     const edited = (await pool[0].raw("put", messages(id, `/${sent.id}`), again).expect(200)).body;
     expect(edited).toMatchObject({ text: again.text, edited: true });
+    expect(edited.enc).toEqual({ v: 1, iv: again.iv, wraps: sent.enc.wraps });
     const theirCopy = (await pool[1].feed(id)).body.messages[0];
     expect(theirCopy).toMatchObject({ text: again.text, edited: true });
-    expect(theirCopy.enc).toEqual({ v: 1, iv: again.enc.iv, wraps: [expect.objectContaining({ uid: pool[1].p.uid, keyId: theirs })] });
-    expect((await pool[0].feed(id)).body.messages[0].enc.wraps).toEqual([expect.objectContaining({ keyId: mine })]);
-    expect((await pool[0].raw("put", messages(id, `/${sent.id}`), locked([wraps[0]]))).status).toBe(409); // a copy is missing
+    expect(theirCopy.enc).toEqual({ v: 1, iv: again.iv, wraps: [expect.objectContaining({ uid: pool[1].p.uid, keyId: theirs })] });
+    expect((await pool[0].feed(id)).body.messages[0].enc).toEqual({ v: 1, iv: again.iv, wraps: [expect.objectContaining({ keyId: mine })] });
+    expect(theirCopy.enc.wraps[0].wrappedKey).toBe(wraps[1].wrappedKey); // the copy of the key was not touched
+  });
+
+  it("is still edited when a key was added after it was sent (the keys it has do not change)", async () => {
+    const { id, wraps } = await twoWithKeys();
+    const sent = (await pool[0].raw("post", messages(id), locked(wraps)).expect(201)).body;
+    await publish(pool[1], keys[0]); // my friend gets a second device
+    const again = { text: b64(48), iv: b64(12) };
+    expect((await pool[0].raw("put", messages(id, `/${sent.id}`), again)).status).toBe(200);
+    expect((await pool[1].feed(id)).body.messages[0].enc.wraps).toHaveLength(1); // the new device has no copy
+  });
+
+  it("stays locked: a plain text, a missing iv, a bad text and a whole new lock are refused for it", async () => {
+    const { id, wraps } = await twoWithKeys();
+    const sent = (await pool[0].raw("post", messages(id), locked(wraps)).expect(201)).body;
+    const edit = async (body: object) => (await pool[0].raw("put", messages(id, `/${sent.id}`), body)).status;
+    expect(await edit({ text: "now plain" })).toBe(400);
+    expect(await edit({ text: b64(48) })).toBe(400); // no iv
+    expect(await edit({ text: b64(48), iv: "short" })).toBe(400);
+    expect(await edit({ text: "plain text", iv: b64(12) })).toBe(400);
+    expect(await edit({ text: b64(9000), iv: b64(12) })).toBe(400);
+    expect(await edit(locked(wraps))).toBe(400); // keys are not sent again: this is a text without an iv
+    expect((await pool[1].feed(id)).body.messages[0]).toMatchObject({ text: sent.text, edited: false });
+  });
+
+  it("can be changed only by its sender", async () => {
+    const { id, wraps } = await twoWithKeys();
+    const sent = (await pool[0].raw("post", messages(id), locked(wraps)).expect(201)).body;
+    expect((await pool[1].raw("put", messages(id, `/${sent.id}`), { text: b64(48), iv: b64(12) })).status).toBe(403);
   });
 
   it("is not found by the delete-by-text of the server (it cannot read it)", async () => {
@@ -108,6 +136,15 @@ describe("a locked message", () => {
 });
 
 describe("plain messages", () => {
+  it("can be edited into a locked message when both have keys", async () => {
+    const { id, mine, wraps } = await twoWithKeys();
+    const sent = (await pool[0].send(id, "plain at first")).body;
+    const body = locked(wraps);
+    const edited = (await pool[0].raw("put", messages(id, `/${sent.id}`), body).expect(200)).body;
+    expect(edited).toMatchObject({ text: body.text, edited: true });
+    expect(edited.enc.wraps).toEqual([expect.objectContaining({ keyId: mine })]);
+  });
+
   it("still work as before, with or without keys, and carry no lock", async () => {
     const { id } = await twoWithKeys();
     const sent = (await pool[0].send(id, "hello 😊")).body;

@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { FriendAvatar } from '../friend-avatar/friend-avatar';
 import { FriendsService } from '../core/friends.service';
 import { countries } from '../core/countries';
@@ -35,6 +35,7 @@ export class Sleeping {
 
   protected readonly sleeping = this.friendsService.sleeping;
   /** waking up needs a free seat: fewer than 7 friends in a seat */
+  private readonly router = inject(Router);
   protected readonly seatFree = computed(() => this.friendsService.awake().length < MAX_FRIENDS);
   protected readonly max = MAX_FRIENDS;
   protected readonly error = signal<string | null>(null);
@@ -74,7 +75,8 @@ export class Sleeping {
   }
 
   protected async wake(friend: Friend): Promise<void> {
-    await this.run(async () => void (await this.friendsService.sleep(friend.id, false)));
+    const woken = await this.run(async () => void (await this.friendsService.sleep(friend.id, false)));
+    if (woken) void this.router.navigate(['/friends']); // awake again: straight back to the list, where the friend has a seat
   }
 
   protected async remove(friend: Friend): Promise<void> {
@@ -84,13 +86,16 @@ export class Sleeping {
     });
   }
 
-  private async run(action: () => Promise<void>): Promise<void> {
+  /** Runs the action; false when it failed (the error is shown). */
+  private async run(action: () => Promise<void>): Promise<boolean> {
     this.busy.set(true);
     this.error.set(null);
     try {
       await action();
+      return true;
     } catch (err: any) {
       this.error.set(err.message ?? 'Something went wrong');
+      return false;
     } finally {
       this.busy.set(false);
     }

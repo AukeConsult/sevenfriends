@@ -3,7 +3,10 @@
   @if (seat() > 0 || friend()?.asleep) {
     <span class="sf-seat">
       @if (friend(); as f) {
-        <app-friend-avatar [friend]="f" [seat]="seat() || 1" [small]="true" [size]="36" />
+        <button type="button" class="sf-name-btn" (click)="profileOpen.set(!profileOpen())" aria-controls="friend-profile" [attr.aria-expanded]="profileOpen()"
+                [attr.aria-label]="(profileOpen() ? 'Hide the profile of ' : 'Show the profile of ') + f.name">
+          <app-friend-avatar [friend]="f" [seat]="seat() || 1" [small]="true" [size]="36" />
+        </button>
         <span class="sf-dot" [class]="'sf-dot-' + f.presence" [title]="presenceLabel(f.presence)" role="img" [attr.aria-label]="presenceLabel(f.presence)"></span>
         @if (f.mood; as mood) {
           <img class="sf-seat-mood" [src]="moodIcon(mood)" [alt]="moodLabel(mood)" [title]="moodLabel(mood)" width="18" height="18" />
@@ -19,11 +22,18 @@
   </div>
   @if (!blocked()) {
     <div class="sf-bar-actions">
+      <!-- the padlock: closed = new messages and files are locked; open = not. It opens the lock choices (Advanced) in the safebox. -->
+      <button type="button" class="sf-tool-btn sf-lock-btn" [class.sf-on]="messagesLocked()" (click)="lockOpen.set(!lockOpen())" aria-controls="lock-frame" [attr.aria-expanded]="lockOpen()" [attr.aria-label]="lockText()" [attr.title]="lockText()">
+        @if (messagesLocked()) {
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>
+        } @else {
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 7.75-1.4" /></svg>
+        }
+      </button>
       <a [routerLink]="['/friends', friendId, 'safebox']" class="sf-tool-btn" aria-label="Safebox: files only you and this friend see" title="Safebox: files only you and this friend see">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="12" cy="12" r="3" /><path d="M12 15v2M7 20v1M17 20v1" />
         </svg>
-        <span>Safebox</span>
       </a>
       <div class="sf-add sf-more">
         <button type="button" class="sf-tool-btn" (click)="toggleMore()" [attr.aria-expanded]="moreOpen()" aria-haspopup="true" aria-label="Sort order and clean up" title="Sort order and clean up">
@@ -36,6 +46,15 @@
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" [style.transform]="sortDesc() ? 'scaleY(-1)' : null"><path d="M3 6h9M3 12h6M3 18h3M18 5v14M14.5 15.5L18 19l3.5-3.5" /></svg>
               <span>{{ sortDesc() ? 'Show oldest first' : 'Show newest first' }}</span>
             </button>
+            <!-- the same as the padlock and the safebox button in the header, with words -->
+            <button type="button" role="menuitem" class="sf-add-item" aria-controls="lock-frame" (click)="moreOpen.set(false); lockOpen.set(!lockOpen())">
+              @if (messagesLocked()) { <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg> } @else { <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 7.75-1.4" /></svg> }
+              <span>{{ lockMenuText() }}</span>
+            </button>
+            <a role="menuitem" class="sf-add-item" [routerLink]="['/friends', friendId, 'safebox']" (click)="moreOpen.set(false)">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="12" cy="12" r="3" /><path d="M12 15v2M7 20v1M17 20v1" /></svg>
+              <span>Safebox with {{ friend()?.name ?? 'your friend' }}</span>
+            </a>
             <button type="button" role="menuitem" class="sf-add-item" aria-controls="cleanup" (click)="moreOpen.set(false); toggleCleanup()">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 22-1-4" /><path d="M19 13.99a1 1 0 0 0 1-1V12a2 2 0 0 0-2-2h-3a1 1 0 0 1-1-1V4a2 2 0 0 0-4 0v5a1 1 0 0 1-1 1H6a2 2 0 0 0-2 2v.99a1 1 0 0 0 1 1" /><path d="M5 14h14l1.973 6.767A1 1 0 0 1 20 22H4a1 1 0 0 1-.973-1.233z" /><path d="m8 22 1-4" /></svg>
               <span>Clean up messages</span>
@@ -46,6 +65,30 @@
     </div>
   }
 </header>
+
+@if (profileOpen() && friend(); as f) {
+  <!-- the profile of the friend: who they are and how to reach them -->
+  <section id="friend-profile" class="sf-profile sf-profile-bar" [attr.aria-label]="'Profile of ' + f.name">
+    @if (countryName(f.country); as country) { <p class="sf-hint m-0">{{ country }}</p> }
+    @if (f.mood; as mood) {
+      <p class="sf-profile-mood">
+        <img [src]="moodIcon(mood)" [alt]="''" width="24" height="24" />
+        <span>{{ moodLabel(mood) }}</span>
+      </p>
+    }
+    @if (f.unverified.length && f.status !== 'rejected') {
+      <p class="sf-hint text-warning-emphasis m-0">
+        {{ f.name }} has not verified {{ f.unverified.length === 2 ? 'their email or phone' : f.unverified[0] === 'email' ? 'their email' : 'their phone' }},
+        so we cannot be sure it is really them.
+      </p>
+    }
+    <dl class="sf-details">
+      @if (f.phone) { <dt>Phone</dt><dd>{{ f.phone }}</dd> }
+      @if (f.email) { <dt>Email</dt><dd>{{ f.email }}</dd> }
+      @if (f.createdAt) { <dt>Added</dt><dd>{{ f.createdAt | date: 'mediumDate' }}</dd> }
+    </dl>
+  </section>
+}
 
 <!-- the small pictures of the clean-up choices -->
 <ng-template #pic let-name>
@@ -62,6 +105,46 @@
     }
   </svg>
 </ng-template>
+
+<!-- Expanding frame: what the padlock means, whether the keys are there, and the switch to turn locking off -->
+<div class="sf-expand" [class.open]="lockOpen()" [attr.inert]="lockOpen() ? null : ''">
+  <div class="sf-expand-inner">
+    <section id="lock-frame" class="sf-lock-frame" [class.sf-on]="messagesLocked()" aria-label="About locking">
+      @switch (keyStatus()) {
+        @case ('both') {
+          @if (lockingOn()) {
+            <p>What you send to {{ friend()?.name ?? 'your friend' }} is locked on your device before it leaves it. Only the two of you can read it. Not even we can.</p>
+          } @else {
+            <p>Locking is switched off. What you send is not locked, so our system can read it. Switch locking on to lock what you send again.</p>
+          }
+          <div class="form-check form-switch">
+            <input type="checkbox" role="switch" class="form-check-input" id="lock-switch" [checked]="lockingOn()" (change)="setLocking($any($event.target).checked)" />
+            <label class="form-check-label" for="lock-switch">Lock what I send</label>
+          </div>
+          <p class="sf-hint">What was sent earlier stays as it was sent. The choice is remembered on this device and is the same as for the files in the safebox.</p>
+        }
+        @case ('friend') {
+          <p>You have a key, but {{ friend()?.name ?? 'your friend' }} has not made one yet. Until {{ friend()?.name ?? 'your friend' }} does, what you send is not locked, and our system can read it.</p>
+          <p class="sf-hint">Ask {{ friend()?.name ?? 'your friend' }} to make a key under Settings → Encryption. Locking starts by itself when they have one.</p>
+        }
+        @case ('me') {
+          <p>{{ friend()?.name ?? 'Your friend' }} has a key, but you have none on this device. Until you make one, what you send is not locked, and our system can read it.</p>
+          <p class="sf-hint">Locking starts by itself when you have a key.</p>
+          <a routerLink="/settings/encryption" class="btn btn-primary btn-sm align-self-start">Make my key</a>
+        }
+        @case ('none') {
+          <p>Neither of you has a key yet, so nothing is locked. Our system can read what you send.</p>
+          <p class="sf-hint">Each of you makes a key. Locking starts by itself when you both have one. Make yours now, then ask {{ friend()?.name ?? 'your friend' }} to make theirs.</p>
+          <a routerLink="/settings/encryption" class="btn btn-primary btn-sm align-self-start">Make my key</a>
+        }
+        @default {
+          <p class="sf-hint">Checking the keys…</p>
+        }
+      }
+      <p class="sf-hint"><a [routerLink]="['/friends', friendId, 'safebox']" [queryParams]="{ advanced: 1 }">More about locking</a>, and how to check that the key is really {{ friend()?.name ?? 'your friend' }}'s.</p>
+    </section>
+  </div>
+</div>
 
 <!-- Expanding frame: clean up the conversation: remove several messages at once (by age and / or text) -->
 <div class="sf-expand" [class.open]="cleanupOpen()" [attr.inert]="cleanupOpen() ? null : ''">
@@ -231,9 +314,11 @@
       <div class="sf-message" [attr.data-id]="message.id" [class.sf-mine]="message.mine" [class.sf-has-avatar]="feedIcons()" [class.sf-message-media]="message.media || (message.link && previewing().has(message.id))" [class.sf-message-wide]="message.link && previewing().has(message.id)" [class.sf-doomed]="doomed().has(message.id)">
         @if (feedIcons()) {
           <!-- the picture of who wrote it: the friend's, or mine -->
-          <span class="sf-feed-avatar" aria-hidden="true">
+          <span class="sf-feed-avatar" [attr.aria-hidden]="message.mine ? 'true' : null">
             @if (!message.mine && friend(); as f) {
-              <app-friend-avatar [friend]="f" [seat]="seat() || 1" [small]="true" [size]="28" />
+              <button type="button" class="sf-name-btn" (click)="showProfile()" [attr.aria-label]="'Show the profile of ' + f.name">
+                <app-friend-avatar [friend]="f" [seat]="seat() || 1" [small]="true" [size]="28" />
+              </button>
             } @else if (message.mine) {
               @if (myAvatar(); as mine) { <img [src]="mine" alt="" width="28" height="28" /> } @else { <span class="sf-feed-initials">{{ myInitials() }}</span> }
             }
@@ -263,7 +348,8 @@
               }
             }
           }
-          @if (message.text) { <span class="sf-caption">@for (part of parts(message.text); track $index) {@if (part.url) {<a [href]="part.url" target="_blank" rel="noopener noreferrer nofollow">{{ part.text }}</a>} @else {<ng-container>{{ part.text }}</ng-container>}}</span> }
+          @if (message.locked === 'shut') { <span class="sf-caption sf-locked-note">🔒 This message was locked for another device.</span> }
+          @else if (message.text) { <span class="sf-caption">@for (part of parts(message.text); track $index) {@if (part.url) {<a [href]="part.url" target="_blank" rel="noopener noreferrer nofollow">{{ part.text }}</a>} @else {<ng-container>{{ part.text }}</ng-container>}}@if (message.locked === 'open') { <svg class="sf-lock-mark" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Locked"><title>Locked: only you and your friend can read this</title><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg> }</span> }
         </div>
         @if (message.link?.embedUrl; as embedUrl) {
           <!-- the page of the link, shown here when its site allows it; it is loaded only after a tap -->
@@ -273,16 +359,15 @@
                 <a [href]="message.link!.url" target="_blank" rel="noopener noreferrer nofollow" class="btn btn-light btn-sm">Open in a new tab</a>
                 <button type="button" class="btn btn-light btn-sm" (click)="togglePreview(message.id)">Hide preview</button>
               </div>
+              @if (message.link?.unchecked) { <span class="sf-hint">This page was not checked. It stays blank if its site does not allow it here.</span> }
               <iframe [src]="frameUrl(embedUrl)" title="Preview of the link" sandbox="allow-scripts allow-same-origin allow-forms allow-presentation" referrerpolicy="no-referrer" loading="lazy" allow="fullscreen"></iframe>
-            </div>
-          } @else {
-            <div class="sf-msg-actions">
-              <button type="button" class="btn btn-light btn-sm" (click)="togglePreview(message.id)">Show preview</button>
             </div>
           }
         }
+        <!-- the time, the preview button and all the buttons of the message in ONE line (it wraps only when the screen is too narrow) -->
+        <div class="sf-meta-line">
         @if (message.time && !(message.media && pictureHidden().has(message.id))) {
-          <small class="sf-hint sf-tap" (click)="more(message)">{{ message.time | date: 'd MMM, HH:mm' }}@if (message.edited) { · edited }@if (doomed().has(message.id)) { · <strong class="text-danger">will be deleted</strong> }· <button type="button" class="btn btn-link btn-sm p-0 align-baseline" [attr.aria-expanded]="selected() === message.id" [attr.aria-label]="message.inBox ? 'Delete' : message.media ? 'Open, download, hide, move to the safebox' : message.mine ? 'Copy, edit, delete' : 'Copy'" [attr.title]="message.inBox ? 'Delete' : message.media ? 'Open, download, hide, move to the safebox' : message.mine ? 'Copy, edit, delete' : 'Copy'">⋯</button></small>
+          <small class="sf-hint sf-tap" (click)="more(message)">{{ message.time | date: 'd MMM, HH:mm' }}@if (message.edited) { · edited }@if (doomed().has(message.id)) { · <strong class="text-danger">will be deleted</strong> }· <button type="button" class="btn btn-link btn-sm p-0 align-baseline" [attr.aria-expanded]="selected() === message.id" [attr.aria-label]="message.inBox ? 'Delete' : message.media ? 'Open, download, hide, move to the safebox' : message.mine ? 'Copy, edit, delete' : 'Copy'" [attr.title]="message.inBox ? 'Delete' : message.media ? 'Open, download, hide, move to the safebox' : message.mine ? 'Copy, edit, delete' : 'Copy'">⋯</button>@if (message.link?.embedUrl && !previewing().has(message.id)) { <button type="button" class="btn btn-light btn-sm py-0 ms-2 align-baseline" (click)="$event.stopPropagation(); togglePreview(message.id)">Show preview</button> }</small>
         }
         <!-- all the buttons of a message in ONE row (they wrap only when the screen is too narrow) -->
         <div class="sf-msg-actions-row">
@@ -345,6 +430,7 @@
             }
           </div>
         }
+        </div>
         </div>
       </div>
     }

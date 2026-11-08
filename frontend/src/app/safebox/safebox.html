@@ -13,6 +13,8 @@
     <p class="sf-hint m-0">Only you and {{ friendName() }} can see these files.</p>
   </div>
 
+  <!-- the padlock and the Add files frame side by side: both are a round icon while closed, and each takes the whole width when it is open -->
+  <div class="sf-box-tools">
   <!-- everything about encryption in one frame, in plain words: closed, it says whether files are locked; open, it explains and holds the choices -->
   @if (keyStatus() !== 'checking') {
     <!-- only a padlock while closed: shut and green when new files are locked, open and amber when they are not; tap it for the explanation and the choices -->
@@ -78,12 +80,12 @@
 
           @if (canEncrypt()) {
           <section>
-            <h2>Your choice for new files</h2>
+            <h2>Your choice for new files and messages</h2>
             <div class="form-check">
               <input type="checkbox" class="form-check-input" id="box-plain" [checked]="plain()" (change)="prefs.set('boxPlain', $any($event.target).checked)" />
-              <label class="form-check-label" for="box-plain">Do not lock the files I add</label>
+              <label class="form-check-label" for="box-plain">Do not lock the files and messages I send</label>
             </div>
-            <p class="sf-hint">Leave this empty and every file you add is locked. Tick it only if you want to add files without locking them. The choice is remembered on this device.</p>
+            <p class="sf-hint">Leave this empty and every file you add and every message you send is locked. Tick it only if you want to send them without locking. The choice is remembered on this device.</p>
           </section>
           }
 
@@ -120,6 +122,36 @@
       </div>
     </details>
   }
+  @if (box()) {
+    <input #picker type="file" class="visually-hidden" multiple tabindex="-1" aria-hidden="true"
+           accept="image/*,video/*,audio/*,.pdf,.txt,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.odt,.ods,.odp,.zip,.csv"
+           (change)="chosen(picker)" />
+
+    <!-- the same kind of frame as the key one: closed it is one line, open it holds the drop zone (always open while the box is empty); files can be dropped on the frame even when it is closed -->
+    <details class="sf-box-security sf-box-add" [class.sf-over]="over()" [open]="addOpen() || !items().length" (toggle)="addOpen.set($any($event.target).open)"
+             (dragover)="dragOver($event)" (dragleave)="over.set(false)" (drop)="dropped($event)">
+      <summary [attr.aria-label]="adding() !== null ? 'Adding ' + adding() : 'Add files: tap to open, or drop files on this icon'" [attr.title]="adding() !== null ? 'Adding ' + adding() : 'Add files'">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5M4 20h16" /></svg>
+        <span class="sf-box-security-title">
+          @if (adding() !== null) { Adding {{ adding() }}… } @else { Add files <small>Tap to open, or drop files on this frame</small> }
+        </span>
+      </summary>
+      <div class="sf-box-security-body">
+        <div class="sf-box-dropzone" [class.sf-busy]="adding() !== null" role="button" tabindex="0"
+             aria-label="Add files: choose them, or drop them here"
+             (click)="adding() === null && picker.click()" (keydown.enter)="adding() === null && picker.click()" (keydown.space)="$event.preventDefault(); adding() === null && picker.click()">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5M4 20h16" /></svg>
+          @if (adding() !== null) {
+            <strong>Adding {{ adding() }}…</strong>
+          } @else {
+            <strong>Add files</strong>
+            <span class="sf-hint">Drop files here, or tap to choose them</span>
+          }
+        </div>
+      </div>
+    </details>
+  }
+  </div>
   @if (loadError()) {
     <div class="alert alert-danger d-flex align-items-center justify-content-between" role="alert">
       <span>{{ loadError() }}</span>
@@ -140,33 +172,6 @@
       </div>
     }
 
-    <input #picker type="file" class="visually-hidden" multiple tabindex="-1" aria-hidden="true"
-           accept="image/*,video/*,audio/*,.pdf,.txt,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.odt,.ods,.odp,.zip,.csv"
-           (change)="chosen(picker)" />
-
-    <!-- the same kind of frame as the key one: closed it is one line, open it holds the drop zone (always open while the box is empty); files can be dropped on the frame even when it is closed -->
-    <details class="sf-box-security sf-box-add" [class.sf-over]="over()" [open]="addOpen() || !items().length" (toggle)="addOpen.set($any($event.target).open)"
-             (dragover)="dragOver($event)" (dragleave)="over.set(false)" (drop)="dropped($event)">
-      <summary>
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5M4 20h16" /></svg>
-        <span class="sf-box-security-title">
-          @if (adding() !== null) { Adding {{ adding() }}… } @else { Add files <small>Tap to open, or drop files on this frame</small> }
-        </span>
-      </summary>
-      <div class="sf-box-security-body">
-        <div class="sf-box-dropzone" [class.sf-busy]="adding() !== null" role="button" tabindex="0"
-             aria-label="Add files: choose them, or drop them here"
-             (click)="adding() === null && picker.click()" (keydown.enter)="adding() === null && picker.click()" (keydown.space)="$event.preventDefault(); adding() === null && picker.click()">
-          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5M4 20h16" /></svg>
-          @if (adding() !== null) {
-            <strong>Adding {{ adding() }}…</strong>
-          } @else {
-            <strong>Add files</strong>
-            <span class="sf-hint">Drop files here, or tap to choose them</span>
-          }
-        </div>
-      </div>
-    </details>
 
     @if (!items().length) {
       <p class="sf-box-empty text-secondary text-center">
