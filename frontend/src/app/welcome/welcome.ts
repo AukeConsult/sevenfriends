@@ -1,25 +1,28 @@
 import { Component, computed, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../core/auth.service';
 import { FriendLinkService } from '../core/friend-link.service';
 import { InstallService } from '../core/install.service';
 import { WelcomeService } from '../core/welcome.service';
-import { Hero } from '../hero/hero';
+import { SeatDots } from '../seat-dots/seat-dots';
 
 /**
  * The first page for someone who has not installed the app on this device (public, shown before sign-in): the same top for
- * everybody (logo, slogan, the points) and ONE install action for this platform: Android (the app file), iPhone / iPad (Add to
+ * everybody (logo, the promise, the seven seats, three numbers and three reasons) and ONE install action for this platform: Android (the app file), iPhone / iPad (Add to
  * Home Screen), Windows (the installer) or another computer (the browser's own install). "Continue in the browser" goes on to
  * sign-in. When a friend invitation is waiting, it says so first. See docs/invite-install-login.md.
  */
 @Component({
   selector: 'app-welcome',
-  imports: [RouterLink, Hero],
+  imports: [RouterLink, SeatDots],
   templateUrl: './welcome.html',
 })
 export class Welcome {
   private readonly app = inject(InstallService);
   private readonly welcome = inject(WelcomeService);
   private readonly router = inject(Router);
+  /** signed in: the page is still shown (it is always open at /welcome), with a way on to the home page */
+  protected readonly auth = inject(AuthService);
   private readonly friendLinks = inject(FriendLinkService);
   private readonly friend = this.friendLinks.pending;
   protected readonly kind: 'android' | 'ios' | 'windows' | 'other' = this.app.androidDevice ? 'android' : this.app.ios ? 'ios' : this.app.windows ? 'windows' : 'other';

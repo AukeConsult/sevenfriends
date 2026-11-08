@@ -94,7 +94,7 @@ export const routes: Routes = [
   { path: 'install/iphone', component: InstallDevice, data: { device: 'iphone' }, title: 'Add to your home screen – Seven Friends' },
   { path: 'install/windows', component: InstallDevice, data: { device: 'windows' }, title: 'Install the app – Seven Friends' },
   { path: 'install-app', component: InstallApp, title: 'Install the app – Seven Friends' },
-  { path: 'welcome', component: Welcome, canActivate: [guestGuard], title: 'Welcome – Seven Friends' },
+  { path: 'welcome', component: Welcome, title: 'Welcome – Seven Friends' },
   { path: 'login', component: Login, canActivate: [guestGuard], title: 'Sign in – Seven Friends' },
   { path: 'login/email', component: LoginEmail, canActivate: [guestGuard], title: 'Email link – Seven Friends' },
   { path: 'login/phone', component: PhoneAuth, canActivate: [guestGuard], data: { mode: 'login' }, title: 'Phone sign-in – Seven Friends' },

@@ -1,55 +1,54 @@
 <main class="sf-landing sf-welcome">
-  <app-hero />
+  <!-- the top: the logo, the promise, the seven seats, and what that gives you -->
+  <div class="sf-hero text-center">
+    <div class="sf-logo sf-logo-lg">7</div>
+    <p class="sf-welcome-name m-0 mt-2">Seven Friends</p>
+    <h1 class="mt-2 mb-2">Seven seats. The people who matter.</h1>
+    <p class="sf-hero-tag m-0">Close, quiet and private. Stay close to the friends who matter most.</p>
+    <app-seat-dots [blink]="true" />
+  </div>
 
-  <p class="sf-welcome-lead">The app that closes down, so your attention goes to the ones who matter. Only 7 seats.</p>
+  <div class="sf-wl-stats" role="list">
+    <div role="listitem"><b>7</b><span>active seats</span></div>
+    <div role="listitem"><b>0</b><span>ads and feeds</span></div>
+    <div role="listitem">
+      <b><svg viewBox="0 0 32 32" width="28" height="28" aria-hidden="true"><rect x="6" y="14" width="20" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="2.4" /><path d="M10 14v-3a6 6 0 0112 0v3" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" /><circle cx="16" cy="21" r="2" fill="currentColor" /></svg></b>
+      <span>locked by you</span>
+    </div>
+  </div>
 
-  <ul class="sf-points sf-points-icons">
-    <li>
-      <svg class="sf-ico" viewBox="0 0 32 32" aria-hidden="true">
-        <circle class="sf-seat-dot" style="--i:0" cx="6" cy="16" r="2.6" /><circle class="sf-seat-dot" style="--i:1" cx="11" cy="9" r="2.6" /><circle class="sf-seat-dot" style="--i:2" cx="19" cy="9" r="2.6" />
-        <circle class="sf-seat-dot" style="--i:3" cx="26" cy="16" r="2.6" /><circle class="sf-seat-dot" style="--i:4" cx="19" cy="23" r="2.6" /><circle class="sf-seat-dot" style="--i:5" cx="11" cy="23" r="2.6" />
-        <circle class="sf-seat-dot" style="--i:6" cx="16" cy="16" r="2.6" />
-      </svg>
-      <span>Only seven seats: your closest friends, never lost in a crowd.</span>
-    </li>
-    <li>
-      <svg class="sf-ico sf-ico-bounce" viewBox="0 0 32 32" aria-hidden="true">
-        <path d="M5 7h22a2 2 0 012 2v12a2 2 0 01-2 2H15l-6 5v-5H5a2 2 0 01-2-2V9a2 2 0 012-2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" /><path d="M9 13h14M9 18h8" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-      </svg>
-      <span>Messages, photos, video and voice. No ads, no feeds.</span>
-    </li>
-    <li>
-      <svg class="sf-ico sf-ico-spin" viewBox="0 0 32 32" aria-hidden="true">
-        <circle cx="16" cy="16" r="5.5" fill="currentColor" /><path d="M16 3v4M16 25v4M3 16h4M25 16h4M6.8 6.8l2.8 2.8M22.4 22.4l2.8 2.8M25.2 6.8l-2.8 2.8M9.6 22.4l-2.8 2.8" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-      </svg>
-      <span>See who is awake and how they feel.</span>
-    </li>
-    <li>
-      <svg class="sf-ico" viewBox="0 0 32 32" aria-hidden="true">
-        <rect x="6" y="14" width="20" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="2" /><path d="M10 14v-3a6 6 0 0112 0v3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" /><circle cx="16" cy="21" r="2" fill="currentColor" />
-      </svg>
-      <span>A locked safebox for you and each friend: only the two of you can open the files. Not even we can.</span>
-    </li>
-    <li>
-      <svg class="sf-ico" viewBox="0 0 32 32" aria-hidden="true">
-        <path d="M5 7h22a2 2 0 012 2v12a2 2 0 01-2 2H15l-6 5v-5H5a2 2 0 01-2-2V9a2 2 0 012-2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" /><rect x="12" y="13" width="8" height="6" rx="1.5" fill="currentColor" /><path d="M14 13v-1.5a2 2 0 014 0V13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
-      </svg>
-      <span>Locked messages: your messages, photos, video and voice are locked on your phone and opened on your friend's. Not even we can read them.</span>
-    </li>
-    <li>
-      <svg class="sf-ico sf-ico-pulse" viewBox="0 0 32 32" aria-hidden="true">
-        <path d="M16 3l11 4v8c0 7-4.5 11.5-11 14C9.5 26.5 5 22 5 15V7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" /><path d="M11 16l3.5 3.5L21 12.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-      </svg>
-      <span>Your data stays yours.</span>
-    </li>
-  </ul>
+  <div class="sf-wl-cards">
+    <section class="sf-wl-card">
+      <svg class="sf-wl-ico" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 27s-10-6.2-10-14a6 6 0 0110-4.2A6 6 0 0126 13c0 7.8-10 14-10 14z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" /></svg>
+      <h2>Nobody gets lost</h2>
+      <p>Every close friend has a seat. No group chat or feed buries the people you care about.</p>
+    </section>
+    <section class="sf-wl-card">
+      <svg class="sf-wl-ico" viewBox="0 0 32 32" aria-hidden="true"><rect x="6" y="14" width="20" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="2" /><path d="M10 14v-3a6 6 0 0112 0v3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" /><circle cx="16" cy="21" r="2" fill="currentColor" /></svg>
+      <h2>A private room for each friend</h2>
+      <p>Messages, photos, video, voice and files are locked on your phone. Only you two can open them. Not even we can.</p>
+    </section>
+    <section class="sf-wl-card sf-wl-wide">
+      <svg class="sf-wl-ico" viewBox="0 0 32 32" aria-hidden="true"><path d="M8 22h16l-2-3v-5a6 6 0 00-12 0v5zM13 25a3 3 0 006 0M5 5l22 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+      <h2>Quiet, until it matters</h2>
+      <div class="sf-wl-versus">
+        <div class="sf-wl-other"><strong>Other apps</strong>Ping you all day long</div>
+        <div class="sf-wl-us"><strong>Seven Friends</strong>Seven friends get your attention. Sleep list stays silent. A poke if it is urgent</div>
+      </div>
+    </section>
+  </div>
 
   <div class="sf-form-width mx-auto w-100 vstack gap-3">
     @if (invited()) {
       <div class="alert alert-info text-center m-0" role="status">
         <strong>You have been invited{{ invitedBy() ? ' by ' + invitedBy() : '' }}.</strong>
-        Get the app, or sign in or create your account first: your invitation is kept and waits for you.
+        @if (auth.user()) { Continue to your home page to answer it: your invitation is kept and waits for you. } @else { Get the app, or sign in or create your account first: your invitation is kept and waits for you. }
       </div>
+    }
+
+    @if (auth.user()) {
+      <!-- already signed in: /welcome is still open to everybody, so here is the way on -->
+      <a class="btn btn-primary btn-lg" routerLink="/">Continue to your home page</a>
     }
 
     <!-- the two ways to use it: the app (the install action for this platform), or the browser -->
@@ -59,6 +58,7 @@
       </div>
     </section>
 
+    @if (!auth.user()) {
     <section class="card sf-way">
       <div class="card-body vstack gap-2">
         <h2 class="h5 m-0">Use it in the browser</h2>
@@ -66,9 +66,10 @@
         <button type="button" class="btn btn-outline-secondary w-100" (click)="continueInBrowser()">{{ invited() ? 'Sign in or create an account first' : 'Continue in the browser' }}</button>
       </div>
     </section>
+    }
 
     <p class="small text-center text-secondary mb-0">
-      <a routerLink="/terms">Terms of use</a> · <a routerLink="/privacy">Data and privacy</a> · <a routerLink="/about">About</a>
+      <a routerLink="/terms">Terms of use</a> · <a routerLink="/privacy">Data and privacy</a> · <a routerLink="/locking">How locking works</a> · <a routerLink="/about">About</a>
     </p>
   </div>
 </main>

@@ -1278,3 +1278,22 @@ nav.sf-tabs {
   b { display: block; font-size: 1.25rem; font-weight: 600; }
   span { display: block; margin-top: 0.125rem; font-size: 0.75rem; color: var(--sf-muted); line-height: 1.4; } }
 .sf-lock-warn { padding: 0.75rem; border-radius: var(--sf-radius); background: var(--bs-warning-bg-subtle, #fff3cd); color: var(--bs-warning-text-emphasis, #664d03); }
+
+// ---- Welcome page: the three numbers and the cards ----
+.sf-welcome-name { font-weight: 600; font-size: 1.0625rem; }
+.sf-wl-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; max-width: 26rem; margin-inline: auto; width: 100%;
+  > div { padding: 0.625rem 0.375rem; border: 1px solid var(--sf-border); border-radius: 1rem; background: var(--sf-card); text-align: center; }
+  b { display: flex; align-items: center; justify-content: center; height: 2rem; font-size: 1.875rem; font-weight: 600; line-height: 1; color: var(--sf-primary); }
+  span { display: block; margin-top: 0.25rem; font-size: 0.75rem; line-height: 1.3; color: var(--sf-muted); } }
+.sf-wl-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; max-width: 26rem; margin-inline: auto; width: 100%; }
+.sf-wl-card { padding: 0.75rem; border: 1px solid var(--sf-border); border-radius: var(--sf-radius); background: var(--sf-card);
+  &.sf-wl-wide { grid-column: 1 / -1; }
+  h2 { margin: 0 0 0.25rem; font-size: 0.9375rem; font-weight: 600; }
+  p { margin: 0; font-size: 0.8125rem; line-height: 1.45; color: var(--sf-muted); } }
+.sf-wl-ico { display: block; width: 1.75rem; height: 1.75rem; margin-bottom: 0.375rem; padding: 0.25rem; border-radius: 0.5rem; background: var(--bs-primary-bg-subtle); color: var(--sf-primary); }
+.sf-wl-versus { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.375rem; font-size: 0.75rem; line-height: 1.4;
+  strong { display: block; font-weight: 600; }
+  > div { padding: 0.5rem 0.625rem; border-radius: 0.625rem; }
+  .sf-wl-other { background: var(--bs-danger-bg-subtle, #f8d7da); color: var(--bs-danger-text-emphasis, #58151c); }
+  .sf-wl-us { background: var(--bs-success-bg-subtle, #d1e7dd); color: var(--bs-success-text-emphasis, #0a3622); } }
+@media (max-width: 359.98px) { .sf-wl-cards { grid-template-columns: 1fr; } }
