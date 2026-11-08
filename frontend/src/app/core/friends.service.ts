@@ -1,10 +1,12 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { ApiError, ApiService } from './api.service';
 import { AcceptResult, Circle, Friend, FriendRequest, NewFriend } from '../models';
+import { UiPreferencesService } from './ui-preferences';
 
 @Injectable({ providedIn: 'root' })
 export class FriendsService {
   private readonly api = inject(ApiService);
+  private readonly prefs = inject(UiPreferencesService);
 
   readonly circle = signal<Circle | null>(null);
   readonly friends = signal<Friend[]>([]);
@@ -25,6 +27,15 @@ export class FriendsService {
     }
     const res = await this.api.request<{ friends: Friend[] }>(`/circles/${circle.id}/friends`);
     this.friends.set(res.friends);
+    this.forgetOldFriends(res.friends);
+  }
+
+  /** The ready-made messages kept on this device for a friend who is not in the list any more (removed, or the account was reset) are deleted with the friend. */
+  private forgetOldFriends(friends: Friend[]): void {
+    const kept = this.prefs.get('friendQuick');
+    const ids = new Set(friends.map((f) => f.id));
+    const left = Object.fromEntries(Object.entries(kept).filter(([id]) => ids.has(id)));
+    if (Object.keys(left).length !== Object.keys(kept).length) this.prefs.set('friendQuick', left);
   }
 
   /**

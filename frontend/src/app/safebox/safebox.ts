@@ -146,11 +146,6 @@ export class Safebox {
   /** the files being locked: how many are done, of how many (null = not running) */
   protected readonly encrypting = signal<{ done: number; total: number } | null>(null);
 
-  /** Locks every unencrypted file of the box (one by one; it stops at the first one that fails and says which). */
-  protected async encryptAll(): Promise<void> {
-    await this.encryptFiles(this.plainItems());
-  }
-
   protected async encryptOne(item: SafeboxItem): Promise<void> {
     await this.encryptFiles([item]);
   }
@@ -161,25 +156,13 @@ export class Safebox {
     this.busy.set(true);
     this.encrypting.set({ done: 0, total: files.length });
     try {
-      for (const item of files) {
-        try {
-          await this.lockOne(item);
-        } catch (err: any) {
-          this.error.set(`“${item.name}” could not be encrypted: ${err.message ?? 'something went wrong'}`);
-          break;
-        }
-        this.encrypting.update((p) => p && { ...p, done: p.done + 1 });
-      }
+      const failed = await this.ctx.lockFiles(files, (done) => this.encrypting.update((p) => p && { ...p, done }));
+      if (failed) this.error.set(failed);
     } finally {
       this.encrypting.set(null);
       this.busy.set(false);
       await this.reload();
     }
-  }
-
-  /** One file (the friend page asks again for the keys when they changed while it was sent). */
-  private lockOne(item: SafeboxItem): Promise<void> {
-    return this.ctx.lockExisting(item);
   }
 
   /** Saves the file under its own name. */

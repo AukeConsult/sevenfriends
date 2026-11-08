@@ -137,7 +137,7 @@ function read(): UiPreferences {
       boxPlain: saved.boxPlain === true,
       cleanupWhose: saved.cleanupWhose === 'both' ? 'both' : 'mine',
       friendQuick: friendQuickOf(saved.friendQuick),
-      cleanupDays: saved.cleanupDays === null || saved.cleanupDays === 1 || saved.cleanupDays === 7 ? saved.cleanupDays : 30,
+      cleanupDays: saved.cleanupDays === null || (typeof saved.cleanupDays === 'number' && Number.isInteger(saved.cleanupDays) && saved.cleanupDays > 0) ? saved.cleanupDays : 30,
     };
   } catch {
     return { ...DEFAULTS }; // private mode or damaged: the defaults, the choices last until the page is closed

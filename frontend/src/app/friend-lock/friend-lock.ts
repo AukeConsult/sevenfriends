@@ -21,7 +21,7 @@ export class FriendLock {
   protected readonly prefs = inject(UiPreferencesService);
   protected readonly keys = this.ctx.keysService;
 
-  protected readonly friendName = computed(() => this.ctx.friend()?.name ?? 'your friend');
+  protected readonly friendName = this.ctx.friendName;
   /** the codes and the details are behind the Advanced button (the address can ask for them open: ?advanced) */
   protected readonly advanced = signal(inject(ActivatedRoute).snapshot.queryParamMap.has('advanced'));
   /** ticked (and remembered on this device): what I send is not locked even though both of us have a key */
@@ -53,15 +53,8 @@ export class FriendLock {
     this.error.set(null);
     this.encrypting.set({ done: 0, total: files.length });
     try {
-      for (const item of files) {
-        try {
-          await this.ctx.lockExisting(item);
-        } catch (err: any) {
-          this.error.set(`“${item.name}” could not be encrypted: ${err.message ?? 'something went wrong'}`);
-          break;
-        }
-        this.encrypting.update((p) => p && { ...p, done: p.done + 1 });
-      }
+      const failed = await this.ctx.lockFiles(files, (done) => this.encrypting.update((p) => p && { ...p, done }));
+      if (failed) this.error.set(failed);
     } finally {
       this.encrypting.set(null);
       await this.reload();

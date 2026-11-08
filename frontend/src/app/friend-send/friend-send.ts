@@ -23,7 +23,7 @@ export class FriendSend {
   private readonly chat = inject(ChatService);
   private readonly prefs = inject(UiPreferencesService);
 
-  protected readonly friendName = computed(() => this.ctx.friend()?.name ?? 'your friend');
+  protected readonly friendName = this.ctx.friendName;
   protected readonly general = this.prefs.value('quickMessages');
   protected readonly enterSends = this.prefs.value('enterSends');
   protected readonly quickMax = QUICK_MAX;
@@ -106,10 +106,11 @@ export class FriendSend {
     const next = value.slice(0, start) + emoji + value.slice(end);
     if (next.length > 2000) return; // the same limit as the field
     this.text.set(next);
-    setTimeout(() => {
-      input?.focus();
-      input?.setSelectionRange(start + emoji.length, start + emoji.length);
-    });
+    if (input) {
+      input.value = next; // not focused: focusing the field would close the picker (the next emoji goes after this one, as in the conversation)
+      const caret = start + emoji.length;
+      input.setSelectionRange(caret, caret);
+    }
   }
 
   // ------------------------------------------------------------------ sending

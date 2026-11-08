@@ -48,6 +48,9 @@ export class FriendContext {
     this.prefs.set('friendQuick', all);
   }
 
+  /** the friend's name for a sentence */
+  readonly friendName = computed(() => this.friend()?.name ?? 'your friend');
+
   readonly friend = computed(() => this.friends.friends().find((f) => f.id === this.friendId) ?? null);
   /** the seat of this friend (1-7): its icon friend{seat}.svg is shown in the header; 0 while the list is not loaded */
   readonly seat = computed(() => this.friends.awake().findIndex((f) => f.id === this.friendId) + 1);
@@ -114,8 +117,6 @@ export class FriendContext {
   readonly serverKeys = computed(() => ({ mine: this.boxKeys()?.mine.length ?? 0, friend: this.boxKeys()?.friend.length ?? 0 }));
   /** both of us have a key (mine on this device, my friend's on any device) */
   readonly bothHaveKeys = computed(() => this.keyStatus() === 'both');
-  /** locking is on (the opposite of the "do not lock" choice, which is remembered on this device and is the same as in the safebox) */
-  readonly lockingOn = computed(() => !this.boxPlain());
   /** new messages are locked: both have a key and locking is not switched off (the same choice as for new files in the safebox) */
   readonly messagesLocked = computed(() => this.bothHaveKeys() && !this.boxPlain());
   /** what the padlock says (for a screen reader and the tooltip) */
@@ -125,8 +126,27 @@ export class FriendContext {
 
   constructor() {
     void this.keys.refresh(); // is there a key for me on this device?
-    void this.safebox.keys(this.friendId).then((keys) => this.boxKeys.set(keys)).catch(() => undefined); // and for my friend?
+    void this.safebox
+      .keys(this.friendId)
+      .then((keys) => this.boxKeys.set(keys))
+      .catch((err) => {
+        if (err instanceof ApiError && (err.status === 403 || err.status === 404)) this.blocked.set(err.message); // not a confirmed friend (any page of this friend can be opened directly)
+      }); // and for my friend?
     if (!this.friends.friends().length) void this.friends.load().catch(() => undefined); // opened directly (a reload): the seat comes from the list
+  }
+
+  /** Locks files one by one (the safebox and the Locking and keys page both do this); stops at the first one that fails and returns what to say about it, null when all are done. */
+  async lockFiles(files: SafeboxItem[], progress: (done: number) => void): Promise<string | null> {
+    let done = 0;
+    for (const item of files) {
+      try {
+        await this.lockExisting(item);
+      } catch (err: any) {
+        return `“${item.name}” could not be encrypted: ${err.message ?? 'something went wrong'}`;
+      }
+      progress(++done);
+    }
+    return null;
   }
 
   /** Locks a file that was put in the box before locking was possible; when the keys changed while it was sent (409) the keys are read again and it is tried once more. */
@@ -144,10 +164,6 @@ export class FriendContext {
     }
   }
 
-  setLocking(on: boolean): void {
-    this.prefs.set('boxPlain', !on);
-  }
-
   /**
    * The padlock of the header. When both of us have a key it switches locking on or off and says what that means (the message fades away by itself).
    * When one of us has no key there is nothing to switch: it opens the Locking and keys page, which says who needs to make one.
@@ -159,9 +175,9 @@ export class FriendContext {
       void this.router.navigate(['/friends', this.friendId, 'lock']);
       return;
     }
-    const on = !this.lockingOn();
-    this.setLocking(on);
-    const who = this.friend()?.name ?? 'your friend';
+    const on = this.boxPlain(); // it was off: the switch turns it on
+    this.prefs.set('boxPlain', !on);
+    const who = this.friendName();
     this.lockNotice.set(
       on
         ? `Locking is on. What you send to ${who} is locked on your device, so only the two of you can read it. Not even we can.`

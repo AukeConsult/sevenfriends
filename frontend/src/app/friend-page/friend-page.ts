@@ -66,7 +66,7 @@ export class FriendPage {
 
     // a message arrived while the safebox is open: a dot on the Messages icon until the feed is opened
     effect(() => {
-      const onFeed = this.url().replace(/\/$/, '') === `/friends/${this.ctx.friendId}`;
+      const onFeed = this.onFeed();
       const live = this.realtime.latestMessage();
       untracked(() => {
         if (onFeed) {

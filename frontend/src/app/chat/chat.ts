@@ -25,7 +25,7 @@ import { EMOJI_GROUPS } from '../core/emojis';
 import { FriendsService } from '../core/friends.service';
 import { initials } from '../core/initials';
 import { RealtimeService } from '../core/realtime.service';
-import { ChatMessage, MessageDeleteCriteria, MessageLink, profileColorHex, profileColorInk, profileColorSoft } from '../models';
+import { ChatMessage, MessageDeleteCriteria, MessageLink } from '../models';
 
 // New messages, edits and deletes arrive live (RealtimeService). This refresh is only a safety net.
 const SAFETY_REFRESH_MS = 30000;
@@ -35,15 +35,6 @@ const SAFETY_REFRESH_MS = 30000;
   selector: 'app-chat',
   imports: [AddMedia, DatePipe, FriendAvatar, MediaAudio, MediaImage, MediaVideo, NgTemplateOutlet, RouterLink, Clearable],
   templateUrl: './chat.html',
-  // the page takes a light colour that goes with my friend's colour (the header has the friend's own colour)
-  host: {
-    '[class.sf-feed-tinted]': '!!feedBackground()',
-    '[style.--sf-feed-bg]': 'feedBackground()',
-    '[style.--sf-friend]': 'friendColor()',
-    '[style.--sf-friend-ink]': 'friendInk()',
-    '[style.--sf-my]': 'myColor()',
-    '[style.--sf-my-ink]': 'myInk()',
-  },
 })
 export class Chat {
   private readonly chat = inject(ChatService);
@@ -65,8 +56,6 @@ export class Chat {
   protected readonly name = this.ctx.name;
   protected readonly friend = this.ctx.friend;
   protected readonly seat = this.ctx.seat;
-  protected readonly friendColor = this.ctx.friendColor;
-  protected readonly friendInk = this.ctx.friendInk;
   protected readonly blocked = this.ctx.blocked;
   protected readonly messagesLocked = this.ctx.messagesLocked;
   /** the header menu (it lives in the friend page) */
@@ -78,11 +67,6 @@ export class Chat {
     this.ctx.showProfile();
   }
   protected readonly initials = initials;
-  /** a very light tint of my friend's colour: the background of the conversation */
-  protected readonly feedBackground = computed(() => profileColorSoft(this.friend()?.color));
-  /** my own colour for my bubbles, and the text colour on it */
-  protected readonly myColor = computed(() => profileColorHex(this.myAvatarService.color()));
-  protected readonly myInk = computed(() => profileColorInk(this.myAvatarService.color()));
   protected readonly messages = signal<ChatItem[]>([]);
   /** false = oldest first (the default); true = newest first. Remembered on this device. */
   /** newest first? (a remembered choice, the same in every window; a refresh of the feed never changes it) */
@@ -94,7 +78,6 @@ export class Chat {
   protected readonly myAvatar = this.myAvatarService.src;
   private readonly me = inject(AuthService).user;
   protected readonly myInitials = computed(() => initials(this.me()?.displayName ?? this.me()?.email ?? this.me()?.phoneNumber));
-  /** the ready-made messages of the + menu (a preference) */
   /** this friend's own ready-made messages first, then the general ones */
   protected readonly quickMessages = computed(() => [...this.ctx.ownQuick(), ...this.prefs.value('quickMessages')()]);
   protected readonly sortDesc = computed(() => this.prefs.value('chatOrder')() === 'newest');
@@ -114,8 +97,14 @@ export class Chat {
     { value: 'mine', label: 'My messages' },
     { value: 'both', label: `Both: mine and ${this.name() || 'my friend'}'s` },
   ]);
-  protected readonly cleanupDays = signal<number | null>(this.prefs.get('cleanupDays'));
+  protected readonly cleanupDays = signal<number | null>(this.rememberedDays());
   protected readonly cleanupText = signal('');
+
+  /** the age that was chosen last, when one of the choices above has it (otherwise a month) */
+  private rememberedDays(): number | null {
+    const days = this.prefs.get('cleanupDays');
+    return this.ageChoices.some((choice) => choice.days === days) ? days : 30;
+  }
   /** how many messages match (counted by the server); null while counting */
   protected readonly cleanupCount = signal<number | null>(null);
   protected readonly cleanupAsk = signal(false);
@@ -230,7 +219,6 @@ export class Chat {
       },
     });
     this.refresh(true);
-    if (this.prefs.get('feedIcons')) void this.myAvatarService.load();
 
     // a message from THIS friend arrived: show it at once
     effect(() => {

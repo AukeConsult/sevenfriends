@@ -4,7 +4,7 @@
   </div>
 
   @if (ctx.friend(); as f) {
-    <section class="sf-profile-head-block">
+    <section>
       <app-friend-avatar [friend]="f" [seat]="ctx.seat() || 1" [size]="72" />
       <div>
         <h2 class="m-0">{{ f.name }}</h2>
