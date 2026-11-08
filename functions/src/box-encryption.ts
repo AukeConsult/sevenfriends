@@ -1,4 +1,4 @@
-import { ENC_HEADER_MAX, EncryptedUploadHeader, MessageEnc, PublishedKey, SafeboxEnc, SafeboxKind, SafeboxWrap } from "./models";
+import { ENC_HEADER_MAX, EncryptedUploadHeader, MessageEnc, MessageEncMedia, PublishedKey, SafeboxEnc, SafeboxKind, SafeboxWrap } from "./models";
 
 /** The server cannot look inside an encrypted file: it checks the shape of what it is sent and that every key of both friends has its copy of the file key. */
 
@@ -98,5 +98,19 @@ export function parseMessageEnc(text: unknown, enc: unknown): { text: string; en
   const e = enc as Partial<MessageEnc> | null;
   if (!e || typeof e !== "object" || e.v !== 1) return bad("The locked message is not valid");
   if (!lockedTextOk(text) || !isBase64(e.iv, IV_LENGTH) || !wrapsValid(e.wraps)) return bad("The locked message is not valid");
-  return { text, enc: { v: 1, iv: e.iv, wraps: e.wraps.map((w) => ({ uid: w.uid, keyId: w.keyId, wrappedKey: w.wrappedKey })) } };
+  const media = e.media === undefined ? undefined : cleanMedia(e.media);
+  if (media === null) return bad("The locked message is not valid");
+  return { text, enc: { v: 1, iv: e.iv, wraps: e.wraps.map((w) => ({ uid: w.uid, keyId: w.keyId, wrappedKey: w.wrappedKey })), ...(media ? { media } : {}) } };
 }
+
+/** The locked file part of a message: the three ivs and the locked meta. null = not valid. */
+function cleanMedia(value: unknown): MessageEncMedia | null {
+  const m = value as Partial<MessageEncMedia> | null;
+  if (!m || typeof m !== "object") return null;
+  if (!isBase64(m.iv, IV_LENGTH) || !isBase64(m.metaIv, IV_LENGTH) || !isBase64(m.meta) || m.meta.length > MAX_META_LENGTH) return null;
+  if (m.thumbIv !== null && !isBase64(m.thumbIv, IV_LENGTH)) return null;
+  return { iv: m.iv, thumbIv: m.thumbIv, metaIv: m.metaIv, meta: m.meta };
+}
+
+/** The most a locked file (or preview) may be: its plain size plus the 16 bytes of the lock. */
+export const LOCK_BYTES = 16;

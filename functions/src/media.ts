@@ -8,6 +8,7 @@ import {
   OBJECT_NAME,
   checkBytes,
   checkHead,
+  checkLockedSize,
   chunkName,
   cleanFileName,
   deleteChunks,
@@ -21,6 +22,8 @@ import {
 
 const uidOf = (res: Response) => (res.locals.token as DecodedIdToken).uid;
 const MESSAGE_KINDS: MediaKind[] = ["image", "video", "audio"];
+/** `?locked=1`: the file was locked on the sender's device (message encryption), so the server stores ciphertext and checks only the size. */
+const locked = (req: Request) => req.query.locked === "1";
 
 /** The file comes as the plain request body (any content type except JSON: the type is found from the first bytes, not from the header). */
 const fileBody = express.raw({ type: () => true, limit: MAX_UPLOAD_BYTES });
@@ -32,7 +35,7 @@ const chunkBody = express.raw({ type: () => true, limit: CHUNK_BYTES });
  */
 export const cacheRouter = Router();
 
-/** Upload a file to send in a message: `POST /api/sf-cache?kind=image|video|audio&name=<file name>`, the file as the body. Answers where it is stored. */
+/** Upload a file to send in a message: `POST /api/sf-cache?kind=image|video|audio&name=<file name>`, the file as the body (`&locked=1`: a locked file, no name). Answers where it is stored. */
 cacheRouter.post(
   "/",
   requireAuth,
@@ -44,14 +47,14 @@ cacheRouter.post(
       return;
     }
     const bytes = Buffer.isBuffer(req.body) ? req.body : Buffer.alloc(0);
-    const checked = checkBytes(kind, bytes);
+    const checked = locked(req) ? checkLockedSize(kind, bytes.length) : checkBytes(kind, bytes); // a locked file (`locked=1`) cannot be looked into: only its size is checked
     if ("error" in checked) {
       res.status(checked.status).json({ error: checked.error });
       return;
     }
     const uid = uidOf(res);
     const objectId = messageCol(uid).doc().id; // a message with this file gets the same id
-    const name = cleanFileName(req.query.name);
+    const name = locked(req) ? null : cleanFileName(req.query.name); // the name of a locked file is locked inside the message
     await putObject(uid, objectId, bytes, kind, checked.mime, name);
     res.status(201).json({ ownerId: uid, objectId, kind, mime: checked.mime, name, bytes: bytes.length } satisfies MediaUpload);
   }),
@@ -115,13 +118,13 @@ cacheRouter.post(
       return;
     }
     const size = pieces.reduce((sum, p) => sum + p!.bytes, 0);
-    const checked = checkHead(kind, await readHead(uid, chunkName(objectId, 0), 12), size);
+    const checked = locked(req) ? checkLockedSize(kind, size) : checkHead(kind, await readHead(uid, chunkName(objectId, 0), 12), size);
     if ("error" in checked) {
       await deleteChunks(uid, objectId);
       res.status(checked.status).json({ error: checked.error });
       return;
     }
-    const name = cleanFileName(req.query.name);
+    const name = locked(req) ? null : cleanFileName(req.query.name);
     await joinChunks(uid, objectId, parts, objectId, kind, checked.mime, name);
     await deleteChunks(uid, objectId);
     res.status(201).json({ ownerId: uid, objectId, kind, mime: checked.mime, name, bytes: size } satisfies MediaUpload);
@@ -141,7 +144,7 @@ cacheRouter.put(
       return;
     }
     const bytes = Buffer.isBuffer(req.body) ? req.body : Buffer.alloc(0);
-    const checked = checkBytes("thumb", bytes);
+    const checked = locked(req) ? checkLockedSize("thumb", bytes.length) : checkBytes("thumb", bytes);
     if ("error" in checked) {
       res.status(checked.status).json({ error: checked.error });
       return;

@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { ChatMessage, Conversation, MessageDeleteCriteria, MessageDeleteResult, MessageLink, NewMedia } from '../models';
+import { ChatMessage, Conversation, MessageDeleteCriteria, MessageDeleteResult, MessageEncMedia, MessageLink, NewMedia } from '../models';
 import { ApiError, ApiService } from './api.service';
 import { FriendsService } from './friends.service';
 import { ChatItem, MessageLockService, SealedText } from './message-lock.service';
@@ -39,9 +39,26 @@ export class ChatService {
     }
   }
 
-  /** Sends a message: a text, a file that was uploaded (then the text is its caption), or both. */
-  send(friendId: string, text: string, media?: NewMedia): Promise<ChatItem> {
-    return this.lockedRequest(friendId, text, false, (body) => this.api.request<ChatMessage>(this.base(friendId), { method: 'POST', body: JSON.stringify({ ...body, media }) }));
+  /** Sends a text message, locked on this device when both of us have a key and locking is on, plain otherwise. */
+  send(friendId: string, text: string): Promise<ChatItem> {
+    return this.lockedRequest(friendId, text, false, (body) => this.api.request<ChatMessage>(this.base(friendId), { method: 'POST', body: JSON.stringify(body) }));
+  }
+
+  /**
+   * Sends a message with a file that was uploaded (the text is its caption, and may be empty). A file that was uploaded locked (`locked`) goes with its caption
+   * locked by the same message key, and the copies of the key are made now for the keys in use now (once more if they changed meanwhile); a plain file goes with a plain caption.
+   */
+  async sendMedia(friendId: string, text: string, media: NewMedia, locked?: { key: CryptoKey; media: MessageEncMedia }): Promise<ChatItem> {
+    const post = (body: object) => this.api.request<ChatMessage>(this.base(friendId), { method: 'POST', body: JSON.stringify({ ...body, media }) });
+    if (!locked) return this.lock.open(friendId, await post({ text }));
+    for (let attempt = 0; ; attempt++) {
+      const sealed = await this.lock.sealWith(friendId, locked.key, text, locked.media);
+      try {
+        return await this.lock.open(friendId, await post(sealed));
+      } catch (err) {
+        if (!(attempt === 0 && err instanceof ApiError && err.status === 409)) throw err;
+      }
+    }
   }
 
   /**

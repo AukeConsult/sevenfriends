@@ -1,9 +1,10 @@
 import { Injectable, inject } from '@angular/core';
-import { ChatMessage, MessageEnc, fingerprintOf, keyIdOf } from '../models';
+import { ChatMessage, MediaRef, MessageEnc, MessageEncMedia } from '../models';
 import { AuthService } from './auth.service';
-import { openText, resealText, sealText } from './box-crypto';
-import { getDeviceKey } from './device-key';
+import { newMessageKey, openMessageKey, openMessageMeta, openTextWith, resealText, sealText, sealTextWith } from './box-crypto';
 import { LocalLink, localLink } from './link-embed';
+import { MediaService } from './media.service';
+import { myDeviceKey } from './my-key';
 import { SafeboxService } from './safebox.service';
 import { UiPreferencesService } from './ui-preferences';
 
@@ -25,17 +26,15 @@ export class MessageLockService {
   private readonly auth = inject(AuthService);
   private readonly safebox = inject(SafeboxService);
   private readonly prefs = inject(UiPreferencesService);
+  private readonly mediaFiles = inject(MediaService);
   /** the same choice as for new files in the safebox: ticked = do not lock what I send (remembered on this device) */
   private readonly plain = this.prefs.value('boxPlain');
   /** the texts that were opened, by friend, message and iv (a new edit has a new iv): the feed is read again after every new message, a key is not used again for what is known */
-  private readonly opened = new Map<string, string>();
+  private readonly opened = new Map<string, { text: string; media: MediaRef | null }>();
 
   /** The key of this person on this device with its id, or null when there is none. */
-  private async myKey(): Promise<{ uid: string; keyId: string; privateKey: CryptoKey } | null> {
-    const uid = this.auth.user()?.uid;
-    const device = uid ? await getDeviceKey(uid) : null;
-    const fingerprint = device ? await fingerprintOf(device.publicKey) : null;
-    return uid && device && fingerprint ? { uid, keyId: keyIdOf(fingerprint), privateKey: device.privateKey } : null;
+  private myKey(): Promise<{ uid: string; keyId: string; privateKey: CryptoKey } | null> {
+    return myDeviceKey(this.auth.user()?.uid);
   }
 
   /**
@@ -52,6 +51,23 @@ export class MessageLockService {
     return sealText(friendId, text, [{ uid: mine.uid, keys: keys.mine }, { uid: keys.friendUid, keys: keys.friend }]);
   }
 
+  /**
+   * The key for a message with a picture, video or voice, or null when it goes plain (locking is switched off, or one of us has no key; mine counts only on this device).
+   * The file is locked with this key before it is uploaded; the caption and the copies of the key are made when the message is sent (`sealWith`).
+   */
+  async mediaKey(friendId: string): Promise<CryptoKey | null> {
+    if (this.plain()) return null;
+    const [keys, mine] = await Promise.all([this.safebox.keys(friendId), this.myKey()]);
+    return mine && keys.mine.some((k) => k.id === mine.keyId) && keys.friend.length ? newMessageKey() : null;
+  }
+
+  /** The caption (may be empty) locked with the key the file was locked with, and the copies of the key for the keys in use now. Throws when a key is missing now. */
+  async sealWith(friendId: string, key: CryptoKey, text: string, media: MessageEncMedia): Promise<SealedText> {
+    const [keys, mine] = await Promise.all([this.safebox.keys(friendId), this.myKey()]);
+    if (!mine || !keys.mine.some((k) => k.id === mine.keyId) || !keys.friend.length) throw new Error('This message is locked, so it needs a key for you and for your friend. Try again.');
+    return sealTextWith(friendId, key, text, [{ uid: mine.uid, keys: keys.mine }, { uid: keys.friendUid, keys: keys.friend }], media);
+  }
+
   /** A new text for a message that is locked: locked with the key the message already has, so the same keys (and nobody else) can read it. Throws when this device cannot open the message. */
   async reseal(friendId: string, message: ChatItem, text: string): Promise<{ text: string; iv: string }> {
     const mine = await this.myKey();
@@ -59,20 +75,28 @@ export class MessageLockService {
     return resealText(friendId, message.enc, text, mine.keyId, mine.privateKey);
   }
 
-  /** A message of the feed with its real text when it was locked and this device can open it. */
+  /** A message of the feed with its real text (and the real type and size of its file) when it was locked and this device can open it. */
   async open(friendId: string, message: ChatMessage): Promise<ChatItem> {
     const enc = message.enc;
     if (!enc) return message;
+    // a locked file is opened when it is read: the media service is told which message key belongs to it
+    if (message.media && enc.media) this.mediaFiles.registerLocked(friendId, message.media.ownerId, message.media.objectId, enc);
     // the server cannot read a locked text and made no link for it: the link is found here, on this device (see link-embed.ts)
     const id = `${friendId}/${message.id}/${enc.iv}`;
     const known = this.opened.get(id);
-    if (known !== undefined) return { ...message, text: known, link: localLink(known), locked: 'open' };
+    if (known) return { ...message, text: known.text, media: known.media, link: localLink(known.text), locked: 'open' };
     try {
       const mine = await this.myKey();
       if (!mine) throw new Error('no key');
-      const text = await openText(friendId, enc, message.text, mine.keyId, mine.privateKey);
-      this.opened.set(id, text);
-      return { ...message, text, link: localLink(text), locked: 'open' };
+      const key = await openMessageKey(enc, mine.keyId, mine.privateKey);
+      const text = await openTextWith(friendId, enc, message.text, key);
+      let media = message.media;
+      if (media && enc.media) {
+        const meta = await openMessageMeta(friendId, enc.media, key);
+        media = { ...media, mime: meta.mime, name: meta.name, width: meta.width, height: meta.height, durationMs: meta.durationMs };
+      }
+      this.opened.set(id, { text, media });
+      return { ...message, text, media, link: localLink(text), locked: 'open' };
     } catch {
       return { ...message, text: '', locked: 'shut' };
     }

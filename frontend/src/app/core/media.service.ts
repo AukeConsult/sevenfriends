@@ -1,6 +1,9 @@
 import { Injectable, inject } from '@angular/core';
-import { MediaUpload } from '../models';
+import { MediaUpload, MessageEnc, MessageEncMedia } from '../models';
 import { ApiService } from './api.service';
+import { AuthService } from './auth.service';
+import { MessageMediaMeta, openMessageKey, openMessageMedia, openMessageMeta, sealMessageMedia } from './box-crypto';
+import { myDeviceKey } from './my-key';
 import { PreparedAudio } from './audio';
 import { PreparedImage } from './image';
 import { PreparedVideo } from './video';
@@ -19,11 +22,23 @@ export interface StoredFile {
   bytes: number;
 }
 
-/** Files in messages: uploading them, and reading them back from the media cache of the server. */
+/** A locked file of a message: which friendship it belongs to and the locked message (with my copies of the message key), to open the file with. */
+interface LockedEntry {
+  friendId: string;
+  enc: MessageEnc;
+}
+
+const LOCKED_STORE = 'sf-locked-media';
+
+/** Files in messages: uploading them, and reading them back from the media cache of the server. A file of a locked message is locked on the sender's device and opened on the reader's. */
 @Injectable({ providedIn: 'root' })
 export class MediaService {
   private readonly api = inject(ApiService);
+  private readonly auth = inject(AuthService);
   private readonly files = new Map<string, Promise<StoredFile>>();
+  /** the files that are locked (by `ownerId/objectId`), told by the conversation when it opens the messages; kept for this tab so the full-size page can open them after a reload */
+  private locked: Map<string, LockedEntry> | null = null;
+  private storing = false;
 
   /** Sends the image and its small preview to the server, which stores them in the cache. The answer says where (owner and object id). */
   async uploadImage(image: PreparedImage, progress?: Progress): Promise<MediaUpload> {
@@ -47,8 +62,8 @@ export class MediaService {
   }
 
   /** One request for a small file; a file over 8 MB goes in pieces (the server joins them), still through the API. */
-  private async upload(kind: 'image' | 'video' | 'audio', blob: Blob, name: string, progress?: Progress): Promise<MediaUpload> {
-    const query = `kind=${kind}&name=${encodeURIComponent(name)}`;
+  private async upload(kind: 'image' | 'video' | 'audio', blob: Blob, name: string, progress?: Progress, locked = false): Promise<MediaUpload> {
+    const query = `kind=${kind}&name=${encodeURIComponent(name)}${locked ? '&locked=1' : ''}`;
     if (blob.size <= CHUNK_BYTES) {
       return this.api.request<MediaUpload>(`/sf-cache?${query}`, { method: 'POST', body: blob, headers: { 'Content-Type': blob.type || 'application/octet-stream' } });
     }
@@ -67,6 +82,67 @@ export class MediaService {
   }
 
   /**
+   * Locks a picture, video or voice with the key of its message on this device and uploads only the locked file (and its locked preview). The name, type,
+   * size in pixels and length go inside the lock. Returns what the server stored and what the message must carry (`enc.media`).
+   */
+  async uploadLocked(kind: 'image' | 'video' | 'audio', file: PreparedImage | PreparedVideo | PreparedAudio, connectionId: string, key: CryptoKey, progress?: Progress): Promise<{ upload: MediaUpload; media: MessageEncMedia }> {
+    const meta: MessageMediaMeta = {
+      name: file.name,
+      mime: file.blob.type || (kind === 'image' ? 'image/jpeg' : kind === 'video' ? 'video/mp4' : 'audio/webm'),
+      width: 'width' in file ? file.width : null,
+      height: 'height' in file ? file.height : null,
+      durationMs: 'durationMs' in file ? file.durationMs : null,
+    };
+    const sealed = await sealMessageMedia(connectionId, key, { file: file.blob, thumb: 'thumb' in file ? file.thumb : null, meta });
+    const upload = await this.upload(kind, sealed.file, '', progress, true);
+    if (sealed.thumb) await this.api.request<void>(`/sf-cache/${upload.objectId}/thumb?locked=1`, { method: 'PUT', body: sealed.thumb, headers: { 'Content-Type': 'application/octet-stream' } });
+    return { upload, media: sealed.media };
+  }
+
+  /** The conversation tells which files are locked (the locked message, with my copies of its key): they are opened here when they are read. */
+  registerLocked(friendId: string, ownerId: string, objectId: string, enc: MessageEnc): void {
+    const known = this.lockedFiles();
+    if (known.has(`${ownerId}/${objectId}`)) return;
+    known.set(`${ownerId}/${objectId}`, { friendId, enc });
+    if (!this.storing) {
+      this.storing = true;
+      queueMicrotask(() => {
+        this.storing = false;
+        try {
+          sessionStorage.setItem(LOCKED_STORE, JSON.stringify([...known]));
+        } catch {
+          /* no storage: the full-size page then needs the conversation opened first */
+        }
+      });
+    }
+  }
+
+  private lockedFiles(): Map<string, LockedEntry> {
+    if (!this.locked) {
+      try {
+        this.locked = new Map(JSON.parse(sessionStorage.getItem(LOCKED_STORE) ?? '[]') as [string, LockedEntry][]);
+      } catch {
+        this.locked = new Map();
+      }
+    }
+    return this.locked;
+  }
+
+  /** A locked file (or preview) opened on this device. */
+  private async openLocked(entry: LockedEntry, blob: Blob, thumb: boolean): Promise<StoredFile> {
+    const mine = await myDeviceKey(this.auth.user()?.uid);
+    if (!mine) throw new Error('There is no encryption key on this device. Set one up (or restore it) in Settings → Encryption.');
+    const media = entry.enc.media;
+    if (!media) throw new Error('This file could not be opened.');
+    const key = await openMessageKey(entry.enc, mine.keyId, mine.privateKey);
+    const meta = await openMessageMeta(entry.friendId, media, key);
+    const plain = await openMessageMedia(entry.friendId, media, key, thumb ? 'thumb' : 'file', await blob.arrayBuffer());
+    const type = thumb ? 'image/jpeg' : meta.mime;
+    const opened = new Blob([plain], { type });
+    return { url: URL.createObjectURL(opened), name: thumb ? null : meta.name, type, bytes: opened.size };
+  }
+
+  /**
    * `getObject(userid/objectid)`: reads the file from the server (`name` is the object id, or `<object id>.thumb` for the small preview).
    * A file never changes under its name, so one that was read is kept for as long as the app is open.
    */
@@ -74,7 +150,12 @@ export class MediaService {
     const key = `${ownerId}/${name}`;
     let file = this.files.get(key);
     if (!file) {
-      file = this.api.file(`/sf-cache/${key}`).then(({ blob, name: fileName }) => ({ url: URL.createObjectURL(blob), name: fileName, type: blob.type, bytes: blob.size }));
+      const locked = this.lockedFiles().get(`${ownerId}/${name.replace(/\.thumb$/, '')}`);
+      file = this.api.file(`/sf-cache/${key}`).then(({ blob, name: fileName }) => {
+        if (locked) return this.openLocked(locked, blob, name.endsWith('.thumb'));
+        if (blob.type === 'application/octet-stream') throw new Error('This file is locked. Open the conversation first, then try again.');
+        return { url: URL.createObjectURL(blob), name: fileName, type: blob.type, bytes: blob.size };
+      });
       this.files.set(key, file);
       file.catch(() => this.files.delete(key)); // the next time, it asks again
     }

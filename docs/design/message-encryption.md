@@ -1,6 +1,6 @@
 # Message encryption: design
 
-Status: proposal. Step 1 is built: `sealText` and `openText` in `core/box-crypto.ts` (they share the key generation, the key locking and `openFileKey` with the safebox) and the `MessageEnc` type in `models/shared/message.ts`, with unit tests in `box-crypto.spec.ts`. Step 2 is built (server, accepts both forms): `parseMessageEnc` in `functions/src/box-encryption.ts` (shares the wrap checks, `wrapsCover` and `wrapsFor` with the safebox), send, edit, the feed, the unread list and delete-by-text in `conversation.ts` and `messages.ts`, tests in `functions/test/message-encrypted.test.ts`. Step 3 is built: `core/message-lock.service.ts` (lock on send, open the feed, `ChatItem`), `core/chat.service.ts`, the message screen (lock mark, "locked for another device", the padlock frame with the switch), the live notice and the draft link preview skip locked texts. Not built: pictures, video and voice in messages, link previews for locked messages, the "friend unlocks it for you" function. It reuses the key system of the safebox (`docs/design/safebox-encryption.md`): the device keys, the fingerprints, the recovery words and `core/box-crypto.ts`. Date: 2026-11-08.
+Status: proposal. Step 1 is built: `sealText` and `openText` in `core/box-crypto.ts` (they share the key generation, the key locking and `openFileKey` with the safebox) and the `MessageEnc` type in `models/shared/message.ts`, with unit tests in `box-crypto.spec.ts`. Step 2 is built (server, accepts both forms): `parseMessageEnc` in `functions/src/box-encryption.ts` (shares the wrap checks, `wrapsCover` and `wrapsFor` with the safebox), send, edit, the feed, the unread list and delete-by-text in `conversation.ts` and `messages.ts`, tests in `functions/test/message-encrypted.test.ts`. Step 3 is built: `core/message-lock.service.ts` (lock on send, open the feed, `ChatItem`), `core/chat.service.ts`, the message screen (lock mark, "locked for another device", the padlock frame with the switch), the live notice and the draft link preview skip locked texts. Step 4 is built: pictures, video and voice in messages are locked with the same message key as the caption (see "Pictures, video and voice" below). Not built: moving a locked picture or video to the safebox, link previews for locked messages, the "friend unlocks it for you" function. It reuses the key system of the safebox (`docs/design/safebox-encryption.md`): the device keys, the fingerprints, the recovery words and `core/box-crypto.ts`. Date: 2026-11-08.
 
 ## Goals and limits
 - The text of a message is locked on the device of the sender. The server and the database only hold unreadable text.
@@ -64,3 +64,17 @@ Who writes to whom, when, the size of the text (roughly), whether a message has 
 - Push without text is less handy; it is the price of the lock.
 - Search on the device covers only the loaded part of the history.
 - An old client that sends plain text in a conversation where both have keys: the message is not locked. The app should refuse to send plain in that case once all clients are updated.
+
+## Pictures, video and voice (step 4)
+
+A message with a file has one message key for the text and the file. The device makes the key first, locks the file (part `file`), its small preview (`thumb`) and
+a `meta` (name, type, size in pixels, length) with it, and uploads only the locked file (`POST /api/sf-cache?kind=...&locked=1`, the preview `PUT .../thumb?locked=1`).
+The server checks only the size (the plain limit plus the 16 bytes of the lock) and stores binary data with no name. When the message is sent, the caption (empty is fine)
+is locked with the same key and the copies of the key are made for the keys in use at that moment; `enc.media` carries the three ivs and the locked meta.
+
+- The server refuses a locked file in a plain message, a plain file in a locked message, and a preview that does not fit (`enc.media.thumbIv`).
+- The server knows the kind and the number of bytes; it does not know the name, the real type, the pixels or the length (those fields are empty in the message it keeps).
+- The reader opens the key once, then the text and the meta; the media service opens the file when it is read (`MediaService.registerLocked`, kept in the session storage of the tab so the full-size page works after a reload).
+- An edit of the caption uses the same key (the file stays readable). A file cannot be locked by an edit.
+- A locked picture or video cannot be moved to the safebox yet (the server answers 409 and the button is hidden).
+

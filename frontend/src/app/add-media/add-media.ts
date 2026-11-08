@@ -7,8 +7,9 @@ import { ChatService } from '../core/chat.service';
 import { Clearable } from '../core/clearable';
 import { MAX_IMAGE_BYTES, PreparedImage, formatBytes, prepareImage, rotateImage } from '../core/image';
 import { MediaService } from '../core/media.service';
+import { MessageLockService } from '../core/message-lock.service';
 import { MAX_VIDEO_SECONDS, PreparedVideo, prepareRecorded, prepareVideo, recorderType } from '../core/video';
-import { MediaUpload } from '../models';
+import { MediaUpload, MessageEncMedia } from '../models';
 import { Voice } from '../voice/voice';
 
 type Prepared = PreparedImage | PreparedVideo | PreparedAudio;
@@ -41,6 +42,7 @@ const TEXT = {
 export class AddMedia implements OnDestroy {
   private readonly media = inject(MediaService);
   private readonly chat = inject(ChatService);
+  private readonly lock = inject(MessageLockService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
@@ -86,6 +88,8 @@ export class AddMedia implements OnDestroy {
 
   /** the upload that worked, when sending the message did not: the next try does not upload again */
   private stored: MediaUpload | null = null;
+  /** the file was locked before it was uploaded: the key of the message and what the message must carry about the locked file (kept with the upload) */
+  private sealed: { key: CryptoKey; media: MessageEncMedia } | null = null;
 
   protected onFile(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
@@ -126,6 +130,7 @@ export class AddMedia implements OnDestroy {
     this.preview.set(URL.createObjectURL(file.blob));
     this.file.set(file);
     this.stored = null;
+    this.sealed = null;
   }
 
   /** The line under the preview: name, size in pixels (not for audio), length and bytes. */
@@ -194,6 +199,7 @@ export class AddMedia implements OnDestroy {
     this.file.set(null);
     this.error.set(null);
     this.stored = null;
+    this.sealed = null;
   }
 
   protected async send(): Promise<void> {
@@ -203,11 +209,20 @@ export class AddMedia implements OnDestroy {
     this.error.set(null);
     try {
       const progress = (done: number, total: number) => this.working.set(`Sending… ${done} of ${total}`);
-      this.stored ??=
-        this.kind === 'image' ? await this.media.uploadImage(file as PreparedImage, progress) : this.kind === 'audio' ? await this.media.uploadAudio(file as PreparedAudio, progress) : await this.media.uploadVideo(file as PreparedVideo, progress);
+      if (!this.stored) {
+        // both of us have a key and locking is on: the file is locked here with the key of its message, and only the locked file leaves the device
+        const key = await this.lock.mediaKey(this.friendId);
+        if (key) {
+          const locked = await this.media.uploadLocked(this.kind, file, this.friendId, key, progress);
+          this.stored = locked.upload;
+          this.sealed = { key, media: locked.media };
+        } else {
+          this.stored = this.kind === 'image' ? await this.media.uploadImage(file as PreparedImage, progress) : this.kind === 'audio' ? await this.media.uploadAudio(file as PreparedAudio, progress) : await this.media.uploadVideo(file as PreparedVideo, progress);
+        }
+      }
       this.working.set('Sending…');
-      const size = 'width' in file ? { width: file.width, height: file.height } : {};
-      await this.chat.send(this.friendId, this.caption().trim(), { objectId: this.stored.objectId, ...size, durationMs: this.durationMs() ?? undefined });
+      const size = 'width' in file && !this.sealed ? { width: file.width, height: file.height } : {}; // a locked file's size is inside the lock
+      await this.chat.sendMedia(this.friendId, this.caption().trim(), { objectId: this.stored.objectId, ...size, durationMs: this.sealed ? undefined : (this.durationMs() ?? undefined) }, this.sealed ?? undefined);
       await this.router.navigate(['/friends', this.friendId]); // the conversation loads the message, and the file, from the server
     } catch (err: any) {
       this.error.set(err.message ?? 'Could not send it');

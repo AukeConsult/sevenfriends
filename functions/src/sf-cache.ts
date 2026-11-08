@@ -94,6 +94,20 @@ export function checkBytes(kind: CacheKind | "thumb", bytes: Buffer): { mime: st
   return checkHead(kind, bytes, bytes.length);
 }
 
+/**
+ * The same check for a LOCKED file (a message locked on the sender's device): the server cannot look inside ciphertext, so only the size is checked
+ * (the plain limit plus the 16 bytes of the lock). It is stored as plain binary data; the real type is locked inside the message.
+ */
+export function checkLockedSize(kind: CacheKind | "thumb", size: number): { mime: string } | { status: number; error: string } {
+  const rule = KIND_RULES[kind];
+  if (size <= 16) return { status: 400, error: "Send the file as the request body" };
+  if (size - 16 > rule.maxBytes) return { status: 413, error: `That file is too big (at most ${Math.round(rule.maxBytes / 1024 / (rule.maxBytes >= MB ? 1024 : 1))} ${rule.maxBytes >= MB ? "MB" : "KB"})` };
+  return { mime: LOCKED_MIME };
+}
+
+/** The content type of a locked file in the cache. */
+export const LOCKED_MIME = "application/octet-stream";
+
 /** The same check for a file whose first bytes (`head`) and whole size are known (a file put together from pieces). */
 export function checkHead(kind: CacheKind | "thumb", head: Buffer, size: number): { mime: string } | { status: number; error: string } {
   const rule = KIND_RULES[kind];

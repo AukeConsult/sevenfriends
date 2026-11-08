@@ -31,6 +31,19 @@ export interface MessageEnc {
   /** the iv of the text (12 bytes, base64) */
   iv: string;
   wraps: SafeboxWrap[];
+  /** set when the picture, video or voice of the message is locked too (with the same message key): the ivs and the locked name, type and size */
+  media?: MessageEncMedia;
+}
+
+/** The locked file of a message: the file and its preview are stored as ciphertext; the name, type, size in pixels and length are locked inside `meta`. */
+export interface MessageEncMedia {
+  /** the iv of the file (12 bytes, base64) */
+  iv: string;
+  /** the iv of the preview, or null = no preview */
+  thumbIv: string | null;
+  /** the iv and the locked data of the meta ({ name, mime, width, height, durationMs }) */
+  metaIv: string;
+  meta: string;
 }
 
 /** A message in the feed of one connection. */

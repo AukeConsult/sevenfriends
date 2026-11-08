@@ -159,3 +159,63 @@ describe("plain messages", () => {
     expect((await pool[1].check()).messages[0].text).toBe("hello again");
   });
 });
+
+describe("a locked message with a file", () => {
+  const media = () => ({ iv: b64(12), thumbIv: null as string | null, metaIv: b64(12), meta: b64(80) });
+  const lockedFile = (wraps: ReturnType<typeof wrap>[], m = media(), text = b64(24)) => ({ text, enc: { v: 1, iv: b64(12), wraps, media: m } });
+  /** the locked file as the app uploads it: random bytes, `locked=1`, no name */
+  const upload = async (user: User, kind = "image", size = 3000) => (await user.file("post", `/sf-cache?kind=${kind}&locked=1`, randomBytes(size)).expect(201)).body;
+
+  it("is stored as binary data with no name, and the server learns only the kind and the size", async () => {
+    const { id, wraps } = await twoWithKeys();
+    const file = await upload(pool[0]);
+    expect(file).toMatchObject({ kind: "image", mime: "application/octet-stream", name: null, bytes: 3000 });
+    const sent = (await pool[0].raw("post", messages(id), { ...lockedFile(wraps), media: { objectId: file.objectId, width: 640, height: 480 } }).expect(201)).body;
+    expect(sent.media).toMatchObject({ kind: "image", mime: "application/octet-stream", name: null, width: null, height: null, durationMs: null, hasThumb: false });
+    const theirs = (await pool[1].feed(id)).body.messages[0];
+    expect(theirs.enc.media).toBeDefined();
+    expect(theirs.media).toMatchObject({ ownerId: pool[0].p.uid, objectId: file.objectId, mime: "application/octet-stream" });
+    // the friend reads the locked bytes through the proxy, still locked
+    expect((await pool[1].getObject(pool[0].p.uid, file.objectId)).status).toBe(200);
+  });
+
+  it("has a locked preview that fits the file", async () => {
+    const { id, wraps } = await twoWithKeys();
+    const file = await upload(pool[0]);
+    await pool[0].file("put", `/sf-cache/${file.objectId}/thumb?locked=1`, randomBytes(900)).expect(204);
+    const send = async (thumbIv: string | null) => (await pool[0].raw("post", messages(id), { ...lockedFile(wraps, { ...media(), thumbIv }), media: { objectId: file.objectId } })).status;
+    expect(await send(null)).toBe(400); // the preview is there but the message does not know it
+    expect(await send(b64(12))).toBe(201);
+  });
+
+  it("is refused when the file and the message do not agree", async () => {
+    const { id, wraps } = await twoWithKeys();
+    const plain = (await pool[0].file("post", "/sf-cache?kind=image", Buffer.concat([Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]), Buffer.alloc(100)])).expect(201)).body;
+    const locked1 = await upload(pool[0]);
+    const send = async (body: object) => (await pool[0].raw("post", messages(id), body)).status;
+    expect(await send({ ...lockedFile(wraps), media: { objectId: plain.objectId } })).toBe(400); // a plain file in a locked message
+    expect(await send({ text: "hello", media: { objectId: locked1.objectId } })).toBe(400); // a locked file in a plain message
+    expect(await send({ ...locked(wraps), media: { objectId: locked1.objectId } })).toBe(400); // the message says nothing of the file
+    expect(await send(lockedFile(wraps))).toBe(400); // the message names a file but none is attached
+    expect(await send({ ...lockedFile(wraps, { ...media(), iv: "short" }), media: { objectId: locked1.objectId } })).toBe(400);
+    expect(await send({ ...lockedFile(wraps), media: { objectId: locked1.objectId } })).toBe(201);
+  });
+
+  it("keeps the file locked when the caption is edited, and cannot be moved to the safebox", async () => {
+    const { id, wraps } = await twoWithKeys();
+    const file = await upload(pool[0], "audio", 500);
+    const sent = (await pool[0].raw("post", messages(id), { ...lockedFile(wraps), media: { objectId: file.objectId } }).expect(201)).body;
+    const edited = (await pool[0].raw("put", messages(id, `/${sent.id}`), { text: b64(40), iv: b64(12) }).expect(200)).body;
+    expect(edited.enc.media).toEqual(sent.enc.media);
+    expect((await pool[1].feed(id)).body.messages[0].enc.media).toEqual(sent.enc.media);
+    // a plain edit cannot lock a file afterwards
+    await pool[0].raw("put", messages(id, `/${sent.id}`), { ...lockedFile(wraps), media: undefined }).expect(400);
+  });
+
+  it("is refused when the locked file is too big or empty", async () => {
+    await pool[0].file("post", "/sf-cache?kind=image&locked=1", Buffer.alloc(0)).expect(400);
+    await pool[0].file("post", "/sf-cache?kind=image&locked=1", randomBytes(10)).expect(400);
+    await pool[0].file("post", "/sf-cache?kind=image&locked=1", randomBytes(10 * 1024 * 1024 + 17)).expect(413);
+  });
+});
+

@@ -1,5 +1,5 @@
 import { PublishedKey, canonicalPublicKey, fingerprintOf, keyIdOf } from '../models';
-import { classify, openFileKey, openMeta, openPart, openText, resealText, sealFile, sealMeta, sealText } from './box-crypto';
+import { classify, newMessageKey, openFileKey, openMessageKey, openMessageMedia, openMessageMeta, openMeta, openPart, openText, openTextWith, resealText, sealFile, sealMessageMedia, sealMeta, sealText, sealTextWith } from './box-crypto';
 import { KeyStore, StoredDeviceKey, createDeviceKey } from './device-key';
 
 /** A key store that lives in memory (the real one is IndexedDB). */
@@ -150,6 +150,65 @@ describe('box crypto', () => {
       await expectAsync(openText('conn1', enc, btoa(String.fromCharCode(...bytes)), me.published.id, me.stored.privateKey)).toBeRejectedWithError(/changed or damaged/);
       const key = await openFileKey(enc, me.published.id, me.stored.privateKey, 'message');
       await expectAsync(openMeta('conn1', { ...enc, metaIv: enc.iv, meta: text } as never, key)).toBeRejected();
+    });
+  });
+
+  describe('the file of a message', () => {
+    const recipients = () => [{ uid: 'me', keys: [me.published] }, { uid: 'friend', keys: [friend.published] }];
+    const picture = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    const meta = { name: 'holiday.jpg', mime: 'image/jpeg', width: 640, height: 480, durationMs: null };
+
+    it('is locked with the key of its message, with the caption, so that both friends open all of it and the server none', async () => {
+      const key = await newMessageKey();
+      const file = await sealMessageMedia('conn1', key, { file: new Blob([picture]), thumb: new Blob([new Uint8Array([9, 9, 9])]), meta });
+      const { text, enc } = await sealTextWith('conn1', key, 'look at this', recipients(), file.media);
+      expect(enc.media).toEqual(file.media);
+      expect(new Uint8Array(await file.file.arrayBuffer()).length).toBe(picture.length + 16);
+      expect(JSON.stringify(enc)).not.toContain('holiday');
+      for (const who of [me, friend]) {
+        const mine = { ...enc, wraps: enc.wraps.filter((w) => w.keyId === who.published.id) };
+        const opened = await openMessageKey(mine, who.published.id, who.stored.privateKey);
+        expect(await openTextWith('conn1', mine, text, opened)).toBe('look at this');
+        expect(await openMessageMeta('conn1', enc.media!, opened)).toEqual(meta);
+        expect(new Uint8Array(await openMessageMedia('conn1', enc.media!, opened, 'file', await file.file.arrayBuffer()))).toEqual(picture);
+        expect(new Uint8Array(await openMessageMedia('conn1', enc.media!, opened, 'thumb', await file.thumb!.arrayBuffer()))).toEqual(new Uint8Array([9, 9, 9]));
+      }
+    });
+
+    it('has no preview when there is none, and an empty caption can be locked', async () => {
+      const key = await newMessageKey();
+      const file = await sealMessageMedia('conn1', key, { file: new Blob([picture]), thumb: null, meta: { ...meta, mime: 'audio/webm', width: null, height: null, durationMs: 4200 } });
+      expect(file.thumb).toBeNull();
+      expect(file.media.thumbIv).toBeNull();
+      const { text, enc } = await sealTextWith('conn1', key, '', recipients(), file.media);
+      const opened = await openMessageKey({ wraps: enc.wraps.filter((w) => w.uid === 'me') }, me.published.id, me.stored.privateKey);
+      expect(await openTextWith('conn1', enc, text, opened)).toBe('');
+      expect((await openMessageMeta('conn1', enc.media!, opened)).durationMs).toBe(4200);
+    });
+
+    it('is refused for a stranger, in another conversation, and when it was changed', async () => {
+      const key = await newMessageKey();
+      const file = await sealMessageMedia('conn1', key, { file: new Blob([picture]), thumb: null, meta });
+      const { enc } = await sealTextWith('conn1', key, 'hi', recipients(), file.media);
+      await expectAsync(openMessageKey(enc, stranger.published.id, stranger.stored.privateKey)).toBeRejected();
+      const opened = await openMessageKey({ wraps: enc.wraps.filter((w) => w.uid === 'me') }, me.published.id, me.stored.privateKey);
+      await expectAsync(openMessageMedia('conn2', enc.media!, opened, 'file', await file.file.arrayBuffer())).toBeRejected();
+      const bytes = new Uint8Array(await file.file.arrayBuffer());
+      bytes[0] ^= 1;
+      await expectAsync(openMessageMedia('conn1', enc.media!, opened, 'file', bytes.buffer)).toBeRejected();
+      await expectAsync(openMessageMedia('conn1', enc.media!, opened, 'thumb', bytes.buffer)).toBeRejected(); // there is no preview
+    });
+
+    it('keeps the file readable when the caption is edited with the same key', async () => {
+      const key = await newMessageKey();
+      const file = await sealMessageMedia('conn1', key, { file: new Blob([picture]), thumb: null, meta });
+      const { text, enc } = await sealTextWith('conn1', key, 'first', recipients(), file.media);
+      const mine = { ...enc, wraps: enc.wraps.filter((w) => w.uid === 'me') };
+      const again = await resealText('conn1', mine, 'second', me.published.id, me.stored.privateKey);
+      const opened = await openMessageKey(mine, me.published.id, me.stored.privateKey);
+      expect(await openTextWith('conn1', { ...mine, iv: again.iv }, again.text, opened)).toBe('second');
+      expect(new Uint8Array(await openMessageMedia('conn1', enc.media!, opened, 'file', await file.file.arrayBuffer()))).toEqual(picture);
+      expect(text).not.toBe(again.text);
     });
   });
 });

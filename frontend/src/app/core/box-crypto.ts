@@ -1,4 +1,4 @@
-import { EncryptedUploadHeader, MessageEnc, PublishedKey, SafeboxEnc, SafeboxKind, SafeboxWrap } from '../models';
+import { EncryptedUploadHeader, MessageEnc, MessageEncMedia, PublishedKey, SafeboxEnc, SafeboxKind, SafeboxWrap } from '../models';
 
 /**
  * The encryption of a safebox file (design: docs/design/safebox-encryption.md). Each file gets a random AES-256-GCM key; the file, its small
@@ -150,9 +150,57 @@ export async function sealMeta(connectionId: string, fileKey: CryptoKey, meta: B
  * Returns what the server keeps: `text` is the locked text (base64) and replaces the plain text; `enc` holds the iv and the locked key copies.
  */
 export async function sealText(connectionId: string, text: string, recipients: Recipient[]): Promise<{ text: string; enc: MessageEnc }> {
-  const key = await newKey();
+  return sealTextWith(connectionId, await newKey(), text, recipients);
+}
+
+/**
+ * The same with a message key that already exists: a message with a picture, video or voice has its key before the file is uploaded (the file is
+ * locked with it first), and the caption and the copies of the key are made when the message is sent. `media` (from `sealMessageMedia`) goes into `enc`.
+ */
+export async function sealTextWith(connectionId: string, key: CryptoKey, text: string, recipients: Recipient[], media?: MessageEncMedia): Promise<{ text: string; enc: MessageEnc }> {
   const sealed = await lock(key, connectionId, 'text', encoder.encode(text));
-  return { text: toBase64(sealed.data), enc: { v: 1, iv: toBase64(sealed.iv), wraps: await wrapKeyFor(key, recipients) } };
+  return { text: toBase64(sealed.data), enc: { v: 1, iv: toBase64(sealed.iv), wraps: await wrapKeyFor(key, recipients), ...(media ? { media } : {}) } };
+}
+
+/** A new key for a message with a file. */
+export const newMessageKey = newKey;
+
+/** What is locked in `enc.media.meta` of a message: what the server must not learn about the file. */
+export interface MessageMediaMeta {
+  name: string | null;
+  mime: string;
+  width: number | null;
+  height: number | null;
+  durationMs: number | null;
+}
+
+/** The file of a message locked with the message key (part "file"), with its preview (part "thumb") and its meta (part "meta"). `media` goes into the message's `enc`. */
+export async function sealMessageMedia(connectionId: string, key: CryptoKey, input: { file: Blob; thumb: Blob | null; meta: MessageMediaMeta }): Promise<{ file: Blob; thumb: Blob | null; media: MessageEncMedia }> {
+  const file = await lock(key, connectionId, 'file', await input.file.arrayBuffer());
+  const thumb = input.thumb ? await lock(key, connectionId, 'thumb', await input.thumb.arrayBuffer()) : null;
+  const meta = await lock(key, connectionId, 'meta', encoder.encode(JSON.stringify(input.meta)));
+  return {
+    file: new Blob([file.data], { type: 'application/octet-stream' }),
+    thumb: thumb ? new Blob([thumb.data], { type: 'application/octet-stream' }) : null,
+    media: { iv: toBase64(file.iv), thumbIv: thumb ? toBase64(thumb.iv) : null, metaIv: toBase64(meta.iv), meta: toBase64(meta.data) },
+  };
+}
+
+/** The message key of a locked message, opened with the private key of this device. */
+export const openMessageKey = (enc: { wraps: SafeboxWrap[] }, myKeyId: string, privateKey: CryptoKey): Promise<CryptoKey> => openFileKey(enc, myKeyId, privateKey, 'message');
+
+/** The file (`thumb`: its preview) of a locked message opened; `data` is what the server holds. */
+export async function openMessageMedia(connectionId: string, media: MessageEncMedia, key: CryptoKey, part: 'file' | 'thumb', data: ArrayBuffer): Promise<ArrayBuffer> {
+  const iv = part === 'file' ? media.iv : media.thumbIv;
+  if (!iv) throw new Error('There is no preview.');
+  return unlock(key, connectionId, part, iv, data);
+}
+
+export async function openMessageMeta(connectionId: string, media: MessageEncMedia, key: CryptoKey): Promise<MessageMediaMeta> {
+  const meta = JSON.parse(new TextDecoder().decode(await unlock(key, connectionId, 'meta', media.metaIv, fromBase64(media.meta)))) as Partial<MessageMediaMeta>;
+  if (typeof meta.mime !== 'string') throw new Error('This file could not be opened: it was changed or damaged.');
+  const number = (v: unknown) => (typeof v === 'number' && Number.isFinite(v) ? v : null);
+  return { name: typeof meta.name === 'string' ? meta.name : null, mime: meta.mime, width: number(meta.width), height: number(meta.height), durationMs: number(meta.durationMs) };
 }
 
 /**
@@ -167,6 +215,10 @@ export async function resealText(connectionId: string, enc: MessageEnc, text: st
 
 /** The text of a locked message, opened with the private key of this device; throws when no copy was locked for this key or the text was changed. */
 export async function openText(connectionId: string, enc: MessageEnc, text: string, myKeyId: string, privateKey: CryptoKey): Promise<string> {
-  const key = await openFileKey(enc, myKeyId, privateKey, 'message');
+  return openTextWith(connectionId, enc, text, await openFileKey(enc, myKeyId, privateKey, 'message'));
+}
+
+/** The same with the message key already opened (a message with a file opens its key once for the text and the file). */
+export async function openTextWith(connectionId: string, enc: MessageEnc, text: string, key: CryptoKey): Promise<string> {
   return new TextDecoder().decode(await unlock(key, connectionId, 'text', enc.iv, fromBase64(text)));
 }

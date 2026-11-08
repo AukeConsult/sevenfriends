@@ -231,6 +231,10 @@ safeboxRouter.post(
       res.status(404).json({ error: "That message has no picture or video" });
       return;
     }
+    if (message?.enc?.media) {
+      res.status(409).json({ error: "This picture or video is locked. It cannot be moved to the safebox yet." }); // the server cannot read it; moving a locked file is not built yet
+      return;
+    }
     if (media.bytes > MAX_FILE_BYTES) {
       res.status(413).json({ error: `That file is too big for the safebox (at most ${Math.round(MAX_FILE_BYTES / 1024 / 1024)} MB)` });
       return;

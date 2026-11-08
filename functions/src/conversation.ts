@@ -3,14 +3,14 @@ import { DecodedIdToken } from "firebase-admin/auth";
 import { DocumentReference, FieldValue, Timestamp, getFirestore } from "firebase-admin/firestore";
 import { asyncHandler } from "./auth";
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION } from "./constants";
-import { ChatMessage, Conversation, MediaRef, MessageDeleteCriteria, MessageEnc, MessageLink, MessageDeleteResult, NewMedia } from "./models";
+import { ChatMessage, Conversation, MediaRef, MessageDeleteCriteria, MessageEnc, MessageEncMedia, MessageLink, MessageDeleteResult, NewMedia } from "./models";
 import { circleCol, messageCol, missingIndex, userFields } from "./paths";
 import { sendPush } from "./push";
 import { linkOf } from "./link-preview";
 import { Refused, parseMessageEnc, parseRelock, wrapsCover, wrapsFor } from "./box-encryption";
 import { publishedKeysOf } from "./keys";
 import { touchFeed, touchFeedIfExists } from "./sync";
-import { deleteObject, deleteObjects, isObjectId, mediaLabel, objectInfo } from "./sf-cache";
+import { LOCKED_MIME, deleteObject, deleteObjects, isObjectId, mediaLabel, objectInfo } from "./sf-cache";
 
 export const MAX_MESSAGE_LENGTH = 2000;
 const FEED_LIMIT = 200; // the feed shows the latest 200 messages
@@ -84,15 +84,29 @@ conversationRouter.get(
 );
 
 /** The file of a message I am sending: I must have uploaded it (`POST /api/sf-cache`) and not sent it yet. Answers with an error and returns null otherwise. */
-async function attachedMedia(uid: string, body: NewMedia, res: Response): Promise<MediaRef | null> {
+async function attachedMedia(uid: string, body: NewMedia, res: Response, lockedMedia: MessageEncMedia | null = null): Promise<MediaRef | null> {
   const info = isObjectId(body?.objectId) ? await objectInfo(uid, body.objectId) : null;
   if (!info || !(info.kind === "image" || info.kind === "video" || info.kind === "audio")) {
     res.status(400).json({ error: "Upload the file first" });
     return null;
   }
+  // a locked file was uploaded with `locked=1` (stored as binary data) and goes with a locked message; a plain file never does
+  if ((info.mime === LOCKED_MIME) !== Boolean(lockedMedia)) {
+    res.status(400).json({ error: lockedMedia ? "That file was not uploaded locked" : "That file is locked: send it in a locked message" });
+    return null;
+  }
   if ((await messageCol(uid).doc(body.objectId).get()).exists) {
     res.status(409).json({ error: "That file has been sent already" });
     return null;
+  }
+  const hasThumb = Boolean(await objectInfo(uid, `${body.objectId}.thumb`));
+  if (lockedMedia) {
+    if (hasThumb !== (lockedMedia.thumbIv !== null)) {
+      res.status(400).json({ error: "The locked preview does not fit the file" });
+      return null;
+    }
+    // the name, type and size are locked inside the message: the server knows only the kind and how many bytes
+    return { ownerId: uid, objectId: body.objectId, kind: info.kind as MediaRef["kind"], mime: LOCKED_MIME, name: null, bytes: info.bytes, width: null, height: null, durationMs: null, hasThumb };
   }
   const whole = (v: unknown, max: number) => (Number.isInteger(v) && (v as number) >= 1 && (v as number) <= max ? (v as number) : null);
   return {
@@ -105,7 +119,7 @@ async function attachedMedia(uid: string, body: NewMedia, res: Response): Promis
     width: whole(body.width, 20_000),
     height: whole(body.height, 20_000),
     durationMs: whole(body.durationMs, 86_400_000),
-    hasThumb: Boolean(await objectInfo(uid, `${body.objectId}.thumb`)),
+    hasThumb,
   };
 }
 
@@ -151,7 +165,11 @@ conversationRouter.post(
       res.status(400).json({ error: `A message can be at most ${MAX_MESSAGE_LENGTH} characters` });
       return;
     }
-    const media = req.body?.media ? await attachedMedia(token.uid, req.body.media, res) : null;
+    if (Boolean(locked?.enc.media) !== Boolean(locked && req.body?.media)) {
+      res.status(400).json({ error: "A locked file goes with a locked message, and the other way round" });
+      return;
+    }
+    const media = req.body?.media ? await attachedMedia(token.uid, req.body.media, res, locked?.enc.media ?? null) : null;
     if (req.body?.media && !media) return;
 
     // the other side of the connection must still be there and confirmed
@@ -312,6 +330,10 @@ conversationRouter.put(
     }
     const locked = await lockedText(req.body, uid, own.peerUid, res); // a plain message may become a locked one: its text is locked with a new key
     if (locked === null) return;
+    if (locked?.enc.media) {
+      res.status(400).json({ error: "A file can be locked only when the message is sent" });
+      return;
+    }
     const text = locked ? locked.text : typeof req.body?.text === "string" ? req.body.text.trim() : "";
     if (!text && !own.media) {
       res.status(400).json({ error: "Write a message first" });

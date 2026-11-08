@@ -383,7 +383,7 @@
                 <button type="button" class="btn btn-light btn-sm" (click)="moving.set(null)" [disabled]="movingBusy()">Cancel</button>
                 <button type="button" class="btn btn-primary btn-sm" (click)="toBox(message)" [disabled]="movingBusy()">Move</button>
               } @else {
-                <button type="button" class="btn btn-light btn-sm" (click)="moving.set(message.id)">To the safebox</button>
+                @if (!message.enc?.media) { <button type="button" class="btn btn-light btn-sm" (click)="moving.set(message.id)">To the safebox</button> }
               }
             }
             <a [routerLink]="['/media', media.ownerId, media.objectId]" class="btn btn-light btn-sm">Open</a>
@@ -401,7 +401,7 @@
               <button type="button" class="btn btn-primary btn-sm" (click)="toBox(message)" [disabled]="movingBusy()">Move</button>
             } @else {
               <button type="button" class="btn btn-light btn-sm" (click)="togglePicture(message.id)">{{ pictureHidden().has(message.id) ? 'Show' : 'Hide' }}</button>
-              <button type="button" class="btn btn-light btn-sm" (click)="moving.set(message.id)">To the safebox</button>
+              @if (!message.enc?.media) { <button type="button" class="btn btn-light btn-sm" (click)="moving.set(message.id)">To the safebox</button> }
             }
           </div>
          }
