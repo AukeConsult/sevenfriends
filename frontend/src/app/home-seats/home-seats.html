@@ -15,7 +15,6 @@
                (pointerdown)="dragStart($event, slot.position)" (pointermove)="dragMove($event)" (pointerup)="dragEnd($event)" (pointercancel)="dragEnd($event, true)">
             <span class="sf-hs-ring">
               <app-friend-avatar [friend]="friend" [seat]="slot.position" [size]="56" />
-              <span class="sf-seat-no" aria-hidden="true">{{ slot.position }}</span>
               @if (friend.status === 'confirmed') {
                 <span class="sf-dot" [class]="'sf-dot-' + friend.presence" [title]="presenceLabel(friend.presence)" role="img" [attr.aria-label]="presenceLabel(friend.presence)"></span>
               }
@@ -36,7 +35,7 @@
           </div>
         } @else {
           <button type="button" class="sf-hs-friend sf-hs-free" [attr.aria-label]="'Seat ' + slot.position + ' is free: add a ' + w.one" (click)="add.emit()">
-            <span class="sf-hs-ring"><span class="sf-hs-plus" aria-hidden="true">+</span><span class="sf-seat-no" aria-hidden="true">{{ slot.position }}</span></span>
+            <span class="sf-hs-ring"><span class="sf-hs-plus" aria-hidden="true">+</span></span>
             <span class="sf-hs-name">Free seat</span>
             <span class="sf-hs-sub">Add a {{ w.one }}</span>
           </button>
