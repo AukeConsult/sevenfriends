@@ -14,8 +14,9 @@ import {
 } from "./constants";
 import { invitesSentToday, queueInvite } from "./outbox";
 import { Friend, FriendInvite, MediaRef, FriendStatus, NewFriend, ProfilePicture, profileColorKey, pronounKey } from "./models";
+import { circleProfileOf } from "./circle-profile";
 import { circleCol, friendRequestCol, messageCol, missingIndex, userFields } from "./paths";
-import { readAvatar } from "./avatar";
+import { avatarOf, readAvatar } from "./avatar";
 import { deleteObjects } from "./sf-cache";
 import { tellFriendAsleep } from "./sync";
 import { nameOf, sendPush } from "./push";
@@ -108,23 +109,27 @@ async function withUnverified(friend: Friend, entry: FirebaseFirestore.DocumentD
   // only what is shown here: the verification, the mood, the presence and the picture of the other person
   const account = await userFields(other, "emailLower", "emailVerified", "phoneKey", "verifiedPhone", "country", "mood", "moodMessage", "pronoun", "presence", "lastSeenAt", "profileIcon", "profileColor", "profilePictureAt", "avatarObjectId", "displayName");
   const unverified = account && entry.trusted !== true ? unverifiedDetails(account) : []; // "this is really them" (trusted) hides the warning
+  // how the other person shows in the circle I am in (their name, colour and mood there): the circle their side of the friendship lives in
+  const peerCircle = (entry.peerCircleId as string | undefined) ?? DEFAULT_CIRCLE_ID;
+  const profile = circleProfileOf(peerCircle, peerCircle === DEFAULT_CIRCLE_ID ? undefined : (await circleCol(other).doc(peerCircle).get()).data(), account ?? {});
+  const picture = await avatarOf(other, peerCircle); // the picture they show in that circle
   // the mood is for confirmed friends only
   const mood =
     friend.status === "confirmed" && account
       ? {
           country: (account.country as string | null | undefined) ?? null,
-          mood: Number.isInteger(account.mood) ? (account.mood as number) : null,
-          moodMessage: (account.moodMessage as string | null | undefined) ?? null,
+          mood: profile.mood,
+          moodMessage: profile.moodMessage,
           pronoun: pronounKey(account.pronoun),
           presence: presenceOf(account),
-          icon: Number.isInteger(account.profileIcon) ? (account.profileIcon as number) : null,
-          color: profileColorKey(account.profileColor),
-          pictureAt: iso(account.profilePictureAt),
-          pictureId: (account.avatarObjectId as string | null | undefined) ?? null,
+          icon: profile.icon,
+          color: profile.color,
+          pictureAt: iso(picture.at),
+          pictureId: picture.id,
         }
       : { country: null, mood: null, moodMessage: null, pronoun: null, presence: "offline" as const, icon: null, color: null, pictureAt: null, pictureId: null };
   // I did not give a name: a confirmed friend is shown by the name of their account
-  const name = entry.nameGiven === false && friend.status === "confirmed" ? ((account?.displayName as string | undefined) || friend.name) : friend.name;
+  const name = entry.nameGiven === false && friend.status === "confirmed" ? (profile.name || (account?.displayName as string | undefined) || friend.name) : friend.name;
   const lastSpokenAt = friend.lastSpokenAt ?? (friend.status === "confirmed" ? await lastSpoken(uid, friend.id) : null);
   return { ...friend, name, ...mood, lastSpokenAt, ...(unverified.length ? { unverified } : {}) };
 }
@@ -342,7 +347,7 @@ friendsRouter.get(
       res.status(404).json({ error: "Friend not found" });
       return;
     }
-    res.json({ image: await readAvatar(entry.linkedUid as string) } satisfies ProfilePicture);
+    res.json({ image: await readAvatar(entry.linkedUid as string, (entry.peerCircleId as string | undefined) ?? DEFAULT_CIRCLE_ID) } satisfies ProfilePicture);
   }),
 );
 

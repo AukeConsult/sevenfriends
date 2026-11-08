@@ -1,3 +1,4 @@
+import { ActiveCircleService } from '../core/active-circle.service';
 import { Capacitor } from '@capacitor/core';
 import { DatePipe } from '@angular/common';
 import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
@@ -45,6 +46,7 @@ interface MessageGroup {
   host: { '(click)': 'emptySpaceClicked($event)' },
 })
 export class Notifications {
+  protected readonly w = inject(ActiveCircleService).words;
   private readonly notifications = inject(NotificationsService);
   private readonly friendsService = inject(FriendsService);
   private readonly messagesService = inject(MessagesService);
@@ -131,8 +133,8 @@ export class Notifications {
   protected readonly androidOff = computed(() => {
     const blocked = this.android.blocked();
     if (!blocked || this.androidLater()) return null;
-    if (blocked.appOff) return 'Notifications are switched off for Seven Friends in Android, so you will not hear about new messages or friend requests.';
-    const names: Record<string, string> = { message: 'new messages', request: 'friend requests', answer: 'answers to your requests', removed: 'removed friendships' };
+    if (blocked.appOff) return `Notifications are switched off for ${this.w.app} in Android, so you will not hear about new messages or ${this.w.one} requests.`;
+    const names: Record<string, string> = { message: 'new messages', request: `${this.w.one} requests`, answer: 'answers to your requests', removed: 'removed connections' };
     const off = blocked.off.map((kind) => names[kind] ?? kind);
     return off.length ? `In Android these notifications are switched off: ${off.join(', ')}.` : null;
   });

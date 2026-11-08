@@ -1,4 +1,5 @@
 import { Clearable } from '../core/clearable';
+import { ActiveCircleService } from '../core/active-circle.service';
 import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../core/auth.service';
@@ -19,6 +20,7 @@ const emptyDraft = (): FriendDraft => ({ name: '', email: '', phone: '', message
   templateUrl: './add-friend.html',
 })
 export class AddFriend {
+  protected readonly w = inject(ActiveCircleService).words;
   /** shown inside Home (under its top, in place of everything else) instead of as a page of its own: Cancel and Done tell Home to close it */
   readonly embedded = input(false);
   readonly closed = output<void>();
@@ -70,12 +72,12 @@ export class AddFriend {
 
     const hasContact = [d.email, d.phone].some((v) => v.trim());
     if (!hasContact) {
-      this.error.set('Add an email or a phone number, so your friend can be found.');
+      this.error.set('Add an email or a phone number, so your ' + this.w.one + ' can be found.');
       return;
     }
 
     if (this.isMe(d.email, d.phone)) {
-      this.error.set('That is you. Add the email or phone number of a friend.'); // the server refuses it too
+      this.error.set('That is you. Add the email or phone number of a ' + this.w.one + '.'); // the server refuses it too
       return;
     }
 
@@ -95,7 +97,7 @@ export class AddFriend {
         this.result.set({ to: created.name || created.email || created.phone || 'This person', link: this.link() });
       }
     } catch (err: any) {
-      this.error.set(err.message ?? 'Could not send the friend request');
+      this.error.set(err.message ?? 'Could not send the ' + this.w.one + ' request');
     } finally {
       this.sending.set(false);
     }

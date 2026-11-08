@@ -1,12 +1,17 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { DecodedIdToken } from "firebase-admin/auth";
-import { DocumentSnapshot, FieldValue, Timestamp, getFirestore } from "firebase-admin/firestore";
+import { DocumentData, DocumentSnapshot, FieldValue, Timestamp, getFirestore } from "firebase-admin/firestore";
 import { asyncHandler, requireAuth } from "./auth";
 import {
+  CIRCLE_NAMES,
   DEFAULT_CIRCLE_ID,
   DEFAULT_CIRCLE_NAME,
   DEFAULT_CIRCLE_TYPE,
+  circleIdForType,
+  isCircleType,
 } from "./constants";
+import { circleProfileOf, parseProfilePatch, saveCircleProfile, startProfile, touchFriends } from "./circle-profile";
+import { touchSync } from "./sync";
 import { friendsRouter } from "./friends";
 import { Circle, CircleType, parseSettings, settingsOf } from "./models";
 import { circleCol, userDoc } from "./paths";
@@ -46,7 +51,7 @@ export async function moveOldSettings(uid: string): Promise<void> {
   });
 }
 
-function circleJson(doc: DocumentSnapshot): Circle {
+function circleJson(doc: DocumentSnapshot, account: DocumentData): Circle {
   const data = doc.data() ?? {};
   return {
     id: doc.id,
@@ -54,6 +59,7 @@ function circleJson(doc: DocumentSnapshot): Circle {
     type: data.type as CircleType,
     createdAt: data.createdAt instanceof Timestamp ? data.createdAt.toDate().toISOString() : null,
     settings: settingsOf(data.settings),
+    profile: circleProfileOf(doc.id, data, account),
   };
 }
 
@@ -69,10 +75,65 @@ circlesRouter.get(
     const uid = uidOf(res);
     await ensureDefaultCircle(uid);
     await moveOldSettings(uid); // settings that were still on the account move to the circle
-    const snap = await circleCol(uid).orderBy("createdAt", "asc").get();
+    const [snap, account] = await Promise.all([circleCol(uid).orderBy("createdAt", "asc").get(), userDoc(uid).get()]);
     res.json({
-      circles: snap.docs.filter((d) => d.data().type).map(circleJson),
+      circles: snap.docs.filter((d) => d.data().type).map((d) => circleJson(d, account.data() ?? {})),
     });
+  }),
+);
+
+/**
+ * Make the circle of a type: `{ type: "buddies" | "work" | "family" }`. A person has one circle of each type (its id is the type), so a second one of the same
+ * type is refused (409). It starts with my name and colour and no mood; its settings are the defaults.
+ */
+circlesRouter.post(
+  "/",
+  asyncHandler(async (req, res) => {
+    const type = req.body?.type;
+    if (!isCircleType(type)) {
+      res.status(400).json({ error: "Choose friends, buddies, work or family" });
+      return;
+    }
+    const uid = uidOf(res);
+    await ensureDefaultCircle(uid);
+    const ref = circleCol(uid).doc(circleIdForType(type));
+    const account = (await userDoc(uid).get()).data() ?? {};
+    try {
+      await ref.create({ name: CIRCLE_NAMES[type], type, createdAt: FieldValue.serverTimestamp(), profile: startProfile() });
+    } catch (err: any) {
+      if (err?.code === 6) {
+        res.status(409).json({ error: "You already have that circle" });
+        return;
+      }
+      throw err;
+    }
+    res.status(201).json(circleJson(await ref.get(), account));
+  }),
+);
+
+/**
+ * How I show in one circle: `{ name?, color?, mood?, moodMessage? }`, only what changes (the rules of the profile page: a name is never empty, a mood is 1 to 4,
+ * a colour is one of the colours). Nothing is saved when one value is wrong.
+ */
+circlesRouter.put(
+  "/:circleId/profile",
+  asyncHandler(async (req, res) => {
+    const uid = uidOf(res);
+    const ref = circleCol(uid).doc(req.params.circleId);
+    const snap = await ref.get();
+    if (!snap.exists || !snap.data()?.type) {
+      res.status(404).json({ error: "Circle not found" });
+      return;
+    }
+    const parsed = parseProfilePatch(req.body ?? {});
+    if ("error" in parsed) {
+      res.status(400).json({ error: parsed.error });
+      return;
+    }
+    await saveCircleProfile(uid, ref.id, parsed.values);
+    await touchFriends(uid, ref.id); // the friends in this circle see the new name, colour or mood at once
+    await touchSync(uid, "profileAt");
+    res.json(circleJson(await ref.get(), (await userDoc(uid).get()).data() ?? {}).profile);
   }),
 );
 
@@ -95,7 +156,7 @@ circlesRouter.put(
       return;
     }
     await ref.set({ settings: { ...settingsOf(snap.data()?.settings), ...settings } }, { merge: true });
-    res.json(circleJson(await ref.get()));
+    res.json(circleJson(await ref.get(), (await userDoc(uidOf(res)).get()).data() ?? {}));
   }),
 );
 

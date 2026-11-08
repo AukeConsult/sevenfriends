@@ -2,9 +2,9 @@
   <h1 [class.d-flex]="embedded()" [class.align-items-center]="embedded()" [class.justify-content-center]="embedded()" [class.gap-1]="embedded()">
     @if (embedded()) {
       <button type="button" class="sf-back-inline" aria-label="Back to home" (click)="closed.emit()"></button>
-      <span>Add a friend</span>
+      <span>Add a {{ w.one }}</span>
     } @else {
-      <span class="sf-title-dot" aria-hidden="true"></span>Add a friend
+      <span class="sf-title-dot" aria-hidden="true"></span>Add a {{ w.one }}
     }
   </h1>
 </div>
@@ -13,7 +13,7 @@
   <!-- the person has no account yet: the request is saved, and this is the link to send -->
   <main class="sf-narrow">
     <div class="alert alert-success m-0" role="status">
-      <strong>Saved.</strong> {{ done.to }} is not on Seven Friends yet. Your request waits for them.
+      <strong>Saved.</strong> {{ done.to }} is not on {{ w.app }} yet. Your request waits for them.
     </div>
     <h2 class="sf-section">Send them this link</h2>
     <div class="card">
@@ -35,7 +35,7 @@
     </div>
   </main>
 } @else {
-  <form class="sf-narrow" (submit)="$event.preventDefault(); send()" aria-label="Add a friend">
+  <form class="sf-narrow" (submit)="$event.preventDefault(); send()" [attr.aria-label]="'Add a ' + w.one">
     <p class="small text-secondary m-0">Their email or phone number is how they are found.</p>
 
     <label class="sf-field"><span class="form-label small text-secondary m-0">Email</span>
@@ -53,7 +53,7 @@
     <label class="sf-field"><span class="form-label small text-secondary m-0">Message (optional)</span>
       <textarea appClear class="form-control" rows="2" maxlength="500" [value]="draft().message"
                 (input)="setField('message', $any($event.target).value)"
-                placeholder="Hi! I would like to have you as a close friend."></textarea>
+                [placeholder]="w.hello"></textarea>
     </label>
 
     @if (error()) {
@@ -64,7 +64,7 @@
       @if (embedded()) { <button type="button" class="btn btn-light flex-fill" (click)="closed.emit()" [disabled]="sending()">Cancel</button> }
       @else { <a [routerLink]="backTo" [queryParams]="backParams" class="btn btn-light flex-fill" [class.disabled]="sending()">Cancel</a> }
       <button type="submit" class="btn btn-primary flex-fill" [disabled]="sending()">
-        {{ sending() ? 'Sending…' : 'Add friend' }}
+        {{ sending() ? 'Sending…' : 'Add ' + w.one }}
       </button>
     </div>
   </form>

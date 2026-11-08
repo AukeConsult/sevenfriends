@@ -6,8 +6,8 @@
   @switch (step()) {
     @case (null) { <p class="sf-hint m-0" role="status">Getting ready…</p> }
     @case ('profile') {
-      <h2 class="sf-section-title m-0">Who are you to your friends?</h2>
-      <p class="small text-secondary m-0">This is what your friends see. You can change it later under Settings → Profile.</p>
+      <h2 class="sf-section-title m-0">Who are you to your {{ w.many }}?</h2>
+      <p class="small text-secondary m-0">This is what your {{ w.many }} see. You can change it later under Settings → Profile.</p>
       <label class="d-grid gap-1"><span class="form-label small text-secondary m-0">Your name</span>
         <input type="text" class="form-control" [value]="name()" (input)="name.set($any($event.target).value)" maxlength="100" autocomplete="name" />
       </label>
@@ -36,7 +36,7 @@
         </div>
       }
       <div class="text-center">
-        <span class="form-label small text-secondary m-0">Your colour <span class="text-secondary">(your friends see it)</span></span>
+        <span class="form-label small text-secondary m-0">Your colour <span class="text-secondary">(your {{ w.many }} see it)</span></span>
         <div class="sf-colors justify-content-center mt-1" role="radiogroup" aria-label="Your colour">
           <button type="button" class="sf-color sf-color-none" role="radio" [attr.aria-checked]="!color()" [class.sf-chosen]="!color()" aria-label="No colour" title="No colour" (click)="color.set(null)"></button>
           @for (c of colors; track c.key) {
@@ -65,7 +65,7 @@
     }
     @case ('email') {
       <h2 class="sf-section-title m-0">Verify your email</h2>
-      <p class="small text-secondary m-0">Your friends see a warning until your email is verified, and they can only find you by email once it is. We send a link to <strong>{{ email() }}</strong>.</p>
+      <p class="small text-secondary m-0">Your {{ w.many }} see a warning until your email is verified, and they can only find you by email once it is. We send a link to <strong>{{ email() }}</strong>.</p>
       @if (emailVerified()) {
         <div class="alert alert-success m-0" role="status">✓ Your email is verified.</div>
       } @else if (emailSent()) {
@@ -88,7 +88,7 @@
       } @else if (install.canInstall()) {
         <button type="button" class="btn btn-sm btn-primary align-self-center" (click)="installApp()">Install the app</button>
       } @else if (install.ios) {
-        <div class="alert alert-info m-0" role="status">In Safari, tap <strong>Share</strong>, then <strong>Add to Home Screen</strong>. Then open Seven Friends from your home screen.</div>
+        <div class="alert alert-info m-0" role="status">In Safari, tap <strong>Share</strong>, then <strong>Add to Home Screen</strong>. Then open {{ w.app }} from your home screen.</div>
       } @else {
         <div class="alert alert-info m-0" role="status">Your browser has no install button here. Look for <strong>Install app</strong> in its menu, or see Settings → Install the app.</div>
       }
@@ -182,17 +182,17 @@
     @case ('friend') {
       <div class="text-center vstack gap-3 align-items-center">
         <div class="sf-logo sf-logo-lg mx-auto" aria-hidden="true">✓</div>
-        <h2 class="sf-section-title m-0">{{ installLast() ? 'Your friends' : 'You are all set' }}</h2>
+        <h2 class="sf-section-title m-0">{{ installLast() ? 'Your ' + w.many : 'You are all set' }}</h2>
         @if (hasFriends()) {
-          <div class="alert alert-success m-0 w-100" role="status">✓ You already have friends. Everything is ready.</div>
+          <div class="alert alert-success m-0 w-100" role="status">✓ You already have {{ w.many }}. Everything is ready.</div>
           <button type="button" class="btn btn-primary" (click)="afterFriend()">{{ installLast() ? 'Next' : 'Finish' }}</button>
-          <button type="button" class="btn btn-outline-primary btn-sm" (click)="addFriend()">Add another friend</button>
+          <button type="button" class="btn btn-outline-primary btn-sm" (click)="addFriend()">Add another {{ w.one }}</button>
         } @else {
-          <p class="m-0">Add your first friend: there are only seven seats, so choose the friends who matter most.</p>
-          <button type="button" class="btn btn-primary" (click)="addFriend()">Add a friend</button>
+          <p class="m-0">Add your first {{ w.one }}: there are only seven seats, so choose the {{ w.many }} who matter most.</p>
+          <button type="button" class="btn btn-primary" (click)="addFriend()">Add a {{ w.one }}</button>
         }
         @if (invite.link()) {
-          <p class="small text-secondary m-0">Or send your invite link. When they open it and sign in, you get their friend request.</p>
+          <p class="small text-secondary m-0">Or send your invite link. When they open it and sign in, you get their {{ w.one }} request.</p>
           <button type="button" class="btn btn-outline-primary btn-sm" (click)="invite.share()">{{ invite.canShare ? 'Share my invite link' : 'Copy my invite link' }}</button>
           @if (invite.note(); as note) { <p class="small text-secondary m-0" role="status">{{ note }}</p> }
         }

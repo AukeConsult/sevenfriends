@@ -4,6 +4,7 @@ import type { DocumentData, Query, QuerySnapshot } from 'firebase/firestore'; //
 import { LiveMessage } from '../models';
 import { AuthService } from './auth.service';
 import { DesktopNoticeService } from './desktop-notice.service';
+import { ActiveCircleService } from './active-circle.service';
 import { FriendsService } from './friends.service';
 import { LiveChanges } from './live-changes';
 import { NotificationsService } from './notifications.service';
@@ -38,6 +39,7 @@ export class RealtimeService {
   private readonly auth = inject(AuthService);
   private readonly notifications = inject(NotificationsService);
   private readonly friends = inject(FriendsService);
+  private readonly active = inject(ActiveCircleService);
   private readonly sound = inject(SoundService);
   private readonly desktop = inject(DesktopNoticeService);
   private readonly push = inject(PushService);
@@ -88,7 +90,7 @@ export class RealtimeService {
           });
         }),
         // 2. my own friend list: a change means an answer, a deletion or a new link
-        this.watchFriends(sdk, sdk.collection(db, 'user-account', uid, 'friend-circle', 'default', 'friends')),
+        this.watchFriends(sdk, sdk.collection(db, 'user-account', uid, 'friend-circle', this.active.id, 'friends')),
         // 2b. my other devices: a changed profile or sounds (times only, written by the backend)
         this.watchSync(sdk, mine('sync')),
         // 3. messages: only the unread ones (what I wrote is already read), so a new document is a new message for me
@@ -250,7 +252,8 @@ export class RealtimeService {
     });
   }
 
-  private onMessages(added: Added[], first: boolean): void {
+  private onMessages(all: Added[], first: boolean): void {
+    const added = all.filter((m) => String(m.data['circleId'] ?? 'default') === this.active.id); // blind to the other circles: no sound, no notice, no open feed update
     if (!first) {
       // tell the open feed (the Chat page checks that the message is for its connection)
       for (const m of added) {

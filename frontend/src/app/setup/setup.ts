@@ -1,3 +1,4 @@
+import { ActiveCircleService } from '../core/active-circle.service';
 import { Component, computed, inject, signal, viewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../core/api.service';
@@ -36,6 +37,7 @@ type Permission = 'granted' | 'denied' | 'ask';
   templateUrl: './setup.html',
 })
 export class Setup {
+  protected readonly w = inject(ActiveCircleService).words;
   protected readonly sounds = inject(SoundService);
   protected readonly install = inject(InstallService);
   protected readonly prefs = inject(UiPreferencesService);

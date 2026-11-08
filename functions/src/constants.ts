@@ -1,4 +1,4 @@
-import { CircleType } from "./models";
+import { CIRCLE_TYPES, CircleType } from "./models";
 
 export const USER_ACCOUNT_COLLECTION = "user-account";
 /** user-account/{uid}/friend-circle/{circleId}  – one document per circle */
@@ -15,6 +15,10 @@ export const DEFAULT_CIRCLE_ID = "default";
 /** The circle a stored entry or message belongs to: the one it names, and `default` for what was stored before circles were written down. */
 export const circleIdOf = (data: { circleId?: unknown } | undefined | null): string => (typeof data?.circleId === "string" && data.circleId ? data.circleId : DEFAULT_CIRCLE_ID);
 export const DEFAULT_CIRCLE_NAME = "My friends";
+/** The id of the circle of a type: `default` for friends (the first circle, made for everybody), the type itself for the others (so there is one of each). */
+export const circleIdForType = (type: CircleType): string => (type === DEFAULT_CIRCLE_TYPE ? DEFAULT_CIRCLE_ID : type);
+export const CIRCLE_NAMES: Record<CircleType, string> = { friends: DEFAULT_CIRCLE_NAME, buddies: "My buddies", work: "My work contacts", family: "My family" };
+export const isCircleType = (value: unknown): value is CircleType => CIRCLE_TYPES.includes(value as CircleType);
 
 /** user-account/{uid}/friend-request/{friendId} – incoming requests for that user */
 export const FRIEND_REQUEST_COLLECTION = "friend-request";

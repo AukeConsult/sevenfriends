@@ -37,7 +37,7 @@
         <input class="form-check-input" type="checkbox" role="switch" id="pref-icons" [checked]="prefs.get('feedIcons')" (change)="prefs.set('feedIcons', $any($event.target).checked)" />
         <label class="form-check-label" for="pref-icons">Show a picture next to each message</label>
       </div>
-      <span class="small text-secondary">Your friend's picture and yours, in a conversation.</span>
+      <span class="small text-secondary">Your {{ w.one }}'s picture and yours, in a conversation.</span>
       <div class="form-check form-switch m-0">
         <input class="form-check-input" type="checkbox" role="switch" id="pref-enter" [checked]="prefs.get('enterSends')" (change)="prefs.set('enterSends', $any($event.target).checked)" />
         <label class="form-check-label" for="pref-enter">Enter sends the message</label>
@@ -57,14 +57,14 @@
       }
     </div>
   </div>
-  <h2 class="sf-section-title m-0 mt-2">Friends</h2>
+  <h2 class="sf-section-title m-0 mt-2">{{ w.Many }}</h2>
   <div class="card">
     <div class="card-body vstack gap-2">
       <div class="form-check form-switch m-0">
         <input class="form-check-input" type="checkbox" role="switch" id="pref-sleep" [checked]="prefs.get('sleepList')" (change)="prefs.set('sleepList', $any($event.target).checked)" />
         <label class="form-check-label" for="pref-sleep">Use a sleep list</label>
       </div>
-      <span class="small text-secondary">Off: a friend you remove is deleted, and the sleep list row is hidden while it is empty.</span>
+      <span class="small text-secondary">Off: a {{ w.one }} you remove is deleted, and the sleep list row is hidden while it is empty.</span>
     </div>
   </div>
 } @else {

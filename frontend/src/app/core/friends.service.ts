@@ -2,11 +2,13 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { ApiError, ApiService } from './api.service';
 import { AcceptResult, Circle, Friend, FriendRequest, NewFriend } from '../models';
 import { UiPreferencesService } from './ui-preferences';
+import { ActiveCircleService } from './active-circle.service';
 
 @Injectable({ providedIn: 'root' })
 export class FriendsService {
   private readonly api = inject(ApiService);
   private readonly prefs = inject(UiPreferencesService);
+  private readonly active = inject(ActiveCircleService);
 
   readonly circle = signal<Circle | null>(null);
   readonly friends = signal<Friend[]>([]);
@@ -16,10 +18,11 @@ export class FriendsService {
   readonly sleeping = computed(() => this.friends().filter((f) => f.asleep));
   readonly requests = signal<FriendRequest[]>([]);
 
-  /** Loads the user's circle (the first one, i.e. the default) and its friends. */
+  /** Loads the circle this app is bound to (the default one unless another was chosen; it is made when it does not exist yet) and its friends. Other circles are not looked at. */
   async load(): Promise<void> {
     const { circles } = await this.api.request<{ circles: Circle[] }>('/circles');
-    const circle = circles[0] ?? null;
+    let circle = circles.find((c) => c.id === this.active.id) ?? null;
+    if (!circle && this.active.id !== 'default') circle = await this.makeCircle(this.active.id);
     this.circle.set(circle);
     if (!circle) {
       this.friends.set([]);
@@ -28,6 +31,19 @@ export class FriendsService {
     const res = await this.api.request<{ friends: Friend[] }>(`/circles/${circle.id}/friends`);
     this.friends.set(res.friends);
     this.forgetOldFriends(res.friends);
+  }
+
+  /** Makes the circle of a type (the circle this app is bound to does not exist yet); when it already exists the list tells. */
+  private async makeCircle(type: string): Promise<Circle | null> {
+    try {
+      return await this.api.request<Circle>('/circles', { method: 'POST', body: JSON.stringify({ type }) });
+    } catch (err) {
+      const { circles } = await this.api.request<{ circles: Circle[] }>('/circles');
+      const found = circles.find((c) => c.id === type);
+      if (found) return found;
+      // it could not be made: say why (most often the server is an older version that cannot make more circles yet)
+      throw new ApiError(`Could not make the ${type} circle: ${(err as Error).message}. Is the newest version of the backend deployed?`, 503);
+    }
   }
 
   /** The ready-made messages kept on this device for a friend who is not in the list any more (removed, or the account was reset) are deleted with the friend. */

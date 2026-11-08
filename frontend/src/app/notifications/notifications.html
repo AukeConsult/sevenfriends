@@ -71,7 +71,7 @@
 
       @if (unverified().length) {
         <div class="alert alert-warning" role="status">
-          Your {{ unverified().join(' and ') }} is not verified yet: confirm it (in Settings) so friend requests can reach you.
+          Your {{ unverified().join(' and ') }} is not verified yet: confirm it (in Settings) so {{ w.one }} requests can reach you.
         </div>
       }
       </div>
@@ -90,7 +90,7 @@
               <span class="sf-home-ic" aria-hidden="true">🙋</span>
               <span class="sf-list-text">
                 <strong>{{ request.fromName }}</strong>
-                <small>wants to be your friend</small>
+                <small>wants to be your {{ w.one }}</small>
                 @if (request.message) { <small class="fst-italic">“{{ request.message }}”</small> }
                 @if (request.fromUnverified.length) {
                   <small class="text-warning-emphasis">Has not verified {{ request.fromUnverified.length === 2 ? 'their email or phone' : request.fromUnverified[0] === 'email' ? 'their email' : 'their phone' }}: we cannot be sure it is really them.</small>
@@ -154,7 +154,7 @@
     }
     @if (freeSeats() > 0) {
       <a routerLink="/share" class="sf-link-row">
-        {{ freeSeats() === 1 ? 'You have a free seat: invite a friend' : 'You have ' + freeSeats() + ' free seats: invite friends' }}
+        {{ freeSeats() === 1 ? 'You have a free seat: invite a ' + w.one : 'You have ' + freeSeats() + ' free seats: invite ' + w.many }}
         <span aria-hidden="true">›</span>
       </a>
     }

@@ -1,4 +1,5 @@
 import { DatePipe, NgTemplateOutlet } from '@angular/common';
+import { ActiveCircleService } from '../core/active-circle.service';
 import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FriendAvatar } from '../friend-avatar/friend-avatar';
@@ -22,6 +23,7 @@ const MAX_FRIENDS = 7; // seats (the same number as on the Friends page)
   templateUrl: './sleeping.html',
 })
 export class Sleeping {
+  protected readonly w = inject(ActiveCircleService).words;
   private readonly friendsService = inject(FriendsService);
   /** shown inside Home (under its top, in place of everything else) instead of as a page of its own: the back arrow then closes it */
   readonly embedded = input(false);

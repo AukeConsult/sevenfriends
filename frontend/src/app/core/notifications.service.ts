@@ -1,5 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { CheckResult } from '../models';
+import { ActiveCircleService } from './active-circle.service';
 import { ApiService } from './api.service';
 import { FriendsService } from './friends.service';
 import { MessagesService } from './messages.service';
@@ -14,6 +15,7 @@ export class NotificationsService {
   private readonly api = inject(ApiService);
   private readonly friends = inject(FriendsService);
   private readonly messages = inject(MessagesService);
+  private readonly active = inject(ActiveCircleService);
 
   readonly loading = signal(false);
   readonly loaded = signal(false);
@@ -33,8 +35,9 @@ export class NotificationsService {
           '/notifications/check',
           { method: 'POST' },
         );
-        this.friends.requests.set(res.requests);
-        this.messages.messages.set(res.messages);
+        // blind to the other circles: the messages are the ones of this circle; a request still always lands in the friends circle, so only that app shows them (until a request carries its circle)
+        this.friends.requests.set(this.active.id === 'default' ? res.requests : []);
+        this.messages.replace(res.messages);
       } catch (err: any) {
         this.error.set(err.message ?? 'Could not load notifications');
       } finally {

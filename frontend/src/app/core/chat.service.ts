@@ -1,3 +1,4 @@
+import { ActiveCircleService } from './active-circle.service';
 import { Injectable, inject } from '@angular/core';
 import { ChatMessage, Conversation, MessageDeleteCriteria, MessageDeleteResult, MessageEncMedia, MessageLink, NewMedia } from '../models';
 import { ApiError, ApiService } from './api.service';
@@ -8,6 +9,7 @@ import { MessagesService } from './messages.service';
 /** The message feed of one connection (the friend id is the connection id). */
 @Injectable({ providedIn: 'root' })
 export class ChatService {
+  private readonly active = inject(ActiveCircleService);
   private readonly api = inject(ApiService);
   private readonly friends = inject(FriendsService);
   private readonly unread = inject(MessagesService);
@@ -15,7 +17,7 @@ export class ChatService {
 
   private base(friendId: string): string {
     // the circle is known once the friend list has been loaded; the default circle otherwise
-    return `/circles/${this.friends.circle()?.id ?? 'default'}/friends/${friendId}/messages`;
+    return `/circles/${this.friends.circle()?.id ?? this.active.id}/friends/${friendId}/messages`;
   }
 
   /** The feed; a message that was sent locked comes with its real text when this device can open it (see ChatItem). */

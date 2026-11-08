@@ -10,11 +10,11 @@
     </h1>
   </div>
   <p class="text-secondary">
-    Friends who sleep have no seat. Your conversation with them is kept. Wake a friend up to give them a seat again.
+    {{ w.Many }} who sleep have no seat. Your conversation with them is kept. Wake a {{ w.one }} up to give them a seat again.
   </p>
 
   @if (!seatFree() && sleeping().length) {
-    <div class="alert alert-info" role="status">All {{ max }} seats are taken. Free a seat (put a friend to sleep) before you wake someone up.</div>
+    <div class="alert alert-info" role="status">All {{ max }} seats are taken. Free a seat (put a {{ w.one }} to sleep) before you wake someone up.</div>
   }
 
   @if (error()) {
@@ -90,7 +90,7 @@
   }
 </ng-template>
 @if (embedded()) {
-  <section aria-label="Silent friends"><ng-container [ngTemplateOutlet]="body" /></section>
+  <section [attr.aria-label]="'Silent ' + w.many"><ng-container [ngTemplateOutlet]="body" /></section>
 } @else {
   <main class="sf-page"><ng-container [ngTemplateOutlet]="body" /></main>
 }

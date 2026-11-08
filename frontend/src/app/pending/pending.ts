@@ -1,4 +1,5 @@
 import { DatePipe } from '@angular/common';
+import { ActiveCircleService } from '../core/active-circle.service';
 import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FriendsService } from '../core/friends.service';
@@ -15,6 +16,7 @@ import { FriendRequest } from '../models';
   templateUrl: './pending.html',
 })
 export class Pending {
+  protected readonly w = inject(ActiveCircleService).words;
   private readonly notifications = inject(NotificationsService);
   private readonly friendsService = inject(FriendsService);
 

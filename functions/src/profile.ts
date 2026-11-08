@@ -3,10 +3,11 @@ import { DecodedIdToken } from "firebase-admin/auth";
 import { FieldValue, getFirestore } from "firebase-admin/firestore";
 import { asyncHandler, requireAuth } from "./auth";
 import { touchSync } from "./sync";
-import { parsePicture, readAvatar, removeAvatar, saveAvatar } from "./avatar";
-import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAX_FRIENDS, MAX_MOOD_MESSAGE, MAX_NAME_LENGTH, MOOD_COUNT } from "./constants";
+import { avatarOf, parsePicture, readAvatar, removeAvatar, saveAvatar } from "./avatar";
+import { DEFAULT_CIRCLE_ID, MAX_FRIENDS, MAX_MOOD_MESSAGE, MAX_NAME_LENGTH, MOOD_COUNT } from "./constants";
 import { ProfileDetails, ProfilePicture, profileColorKey, pronounKey } from "./models";
 import { circleCol, userDoc } from "./paths";
+import { activeCircleOf, circleProfileOf, saveCircleProfile, touchFriends } from "./circle-profile";
 import { isLanguage } from "./models/shared/languages";
 import { PHONE_RE, isCountry, phoneKey, presenceOf, text } from "./validation";
 
@@ -33,10 +34,23 @@ function detailsOf(data: Record<string, unknown>): ProfileDetails {
   };
 }
 
+/**
+ * My details as I show them in the circle the app is in: the name, colour, icon, mood and mood message are that circle's (the first circle keeps them on
+ * the account); the phone, country, language, pronoun and picture are the same in every circle.
+ */
+async function detailsIn(uid: string, circleId: string, account: Record<string, unknown>): Promise<ProfileDetails> {
+  const details = detailsOf(account);
+  if (circleId === DEFAULT_CIRCLE_ID) return details;
+  const mine = circleProfileOf(circleId, (await circleCol(uid).doc(circleId).get()).data(), account);
+  const picture = await avatarOf(uid, circleId);
+  return { ...details, name: mine.name ?? details.name, color: mine.color, icon: mine.icon, mood: mine.mood, moodMessage: mine.moodMessage, hasPicture: Boolean(picture.id) };
+}
+
 profileRouter.get(
   "/",
-  asyncHandler(async (_req, res) => {
-    res.json(detailsOf((await userDoc(uidOf(res)).get()).data() ?? {}));
+  asyncHandler(async (req, res) => {
+    const uid = uidOf(res);
+    res.json(await detailsIn(uid, activeCircleOf(req), (await userDoc(uid).get()).data() ?? {}));
   }),
 );
 
@@ -108,6 +122,8 @@ profileRouter.put(
       return;
     }
 
+    const circleId = activeCircleOf(req);
+    const first = circleId === DEFAULT_CIRCLE_ID; // the first circle keeps name, colour and icon on the account; another circle on itself
     const ref = userDoc(uidOf(res));
     const before = (await ref.get()).data();
     const verifiedPhone = (before?.verifiedPhone as string | null | undefined) ?? null;
@@ -116,9 +132,9 @@ profileRouter.put(
     // set+merge so it also works if the account document does not exist yet
     await ref.set(
       {
-        ...(nameGiven ? { displayName: name } : {}),
-        ...(iconGiven ? { profileIcon: body.icon } : {}),
-        ...(colorGiven ? { profileColor: body.color } : {}),
+        ...(nameGiven && first ? { displayName: name } : {}),
+        ...(iconGiven && first ? { profileIcon: body.icon } : {}),
+        ...(colorGiven && first ? { profileColor: body.color } : {}),
         ...(countryGiven ? { country } : {}),
         ...(languageGiven ? { language } : {}),
         ...(pronounGiven ? { pronoun: body.pronoun } : {}),
@@ -130,10 +146,19 @@ profileRouter.put(
       },
       { merge: true },
     );
+    if (!first && (nameGiven || iconGiven || colorGiven)) {
+      await saveCircleProfile(uidOf(res), circleId, {
+        ...(nameGiven ? { name } : {}),
+        ...(iconGiven ? { icon: body.icon as number | null } : {}),
+        ...(colorGiven ? { color: body.color === null ? null : profileColorKey(body.color) } : {}),
+      });
+      await touchFriends(uidOf(res), circleId); // only the friends in this circle see it
+    }
     // confirmed friends see my icon: tell their apps
-    if ((iconGiven && (body.icon ?? null) !== (before?.profileIcon ?? null)) || (colorGiven && (body.color ?? null) !== (before?.profileColor ?? null)) || (pronounGiven && (body.pronoun ?? null) !== (before?.pronoun ?? null))) await touchFriends(uidOf(res));
+    const changed = (given: boolean, now: unknown, was: unknown) => given && (now ?? null) !== (was ?? null);
+    if (changed(pronounGiven, body.pronoun, before?.pronoun) || (first && (changed(iconGiven, body.icon, before?.profileIcon) || changed(colorGiven, body.color, before?.profileColor)))) await touchFriends(uidOf(res));
     await touchSync(uidOf(res), "profileAt");
-    res.json(detailsOf((await ref.get()).data() ?? {}));
+    res.json(await detailsIn(uidOf(res), circleId, (await ref.get()).data() ?? {}));
   }),
 );
 
@@ -162,21 +187,28 @@ profileRouter.put(
     }
     const moodMessage = text(body.moodMessage, MAX_MOOD_MESSAGE);
 
+    const circleId = activeCircleOf(req);
     const ref = userDoc(uidOf(res));
-    const before = (await ref.get()).data();
-    await ref.set(
-      {
-        ...(moodGiven ? { mood: body.mood } : {}),
-        ...(moodMessageGiven ? { moodMessage } : {}),
-        profileUpdatedAt: FieldValue.serverTimestamp(),
-      },
-      { merge: true },
-    );
-    const saved = (await ref.get()).data() ?? {};
-    // confirmed friends see the mood: tell their apps (it changes their copy of the friendship, which they listen to)
-    if ((saved.mood ?? null) !== (before?.mood ?? null) || (saved.moodMessage ?? null) !== (before?.moodMessage ?? null)) await touchFriends(uidOf(res));
+    if (circleId !== DEFAULT_CIRCLE_ID) {
+      // another circle keeps its own mood: only the friends in that circle see it
+      await saveCircleProfile(uidOf(res), circleId, { ...(moodGiven ? { mood: body.mood as number | null } : {}), ...(moodMessageGiven ? { moodMessage } : {}) });
+      await touchFriends(uidOf(res), circleId);
+    } else {
+      const before = (await ref.get()).data();
+      await ref.set(
+        {
+          ...(moodGiven ? { mood: body.mood } : {}),
+          ...(moodMessageGiven ? { moodMessage } : {}),
+          profileUpdatedAt: FieldValue.serverTimestamp(),
+        },
+        { merge: true },
+      );
+      const after = (await ref.get()).data() ?? {};
+      // confirmed friends see the mood: tell their apps (it changes their copy of the friendship, which they listen to)
+      if ((after.mood ?? null) !== (before?.mood ?? null) || (after.moodMessage ?? null) !== (before?.moodMessage ?? null)) await touchFriends(uidOf(res));
+    }
     await touchSync(uidOf(res), "profileAt");
-    res.json(detailsOf(saved));
+    res.json(await detailsIn(uidOf(res), circleId, (await ref.get()).data() ?? {}));
   }),
 );
 
@@ -200,27 +232,13 @@ profileRouter.put(
   }),
 );
 
-/**
- * A friend's mood is read from their account, so my friends' lists do not change when it does. Touching their copy of the
- * friendship makes their app (which listens to its friend list) reload at once and show the new mood.
- */
-async function touchFriends(uid: string): Promise<void> {
-  const mine = await circleCol(uid).doc(DEFAULT_CIRCLE_ID).collection(FRIENDS_SUBCOLLECTION).where("status", "==", "confirmed").select("linkedUid", "peerCircleId").get();
-  for (const entry of mine.docs) {
-    const data = entry.data();
-    if (!data.linkedUid) continue;
-    const theirs = circleCol(data.linkedUid as string).doc((data.peerCircleId as string | undefined) ?? DEFAULT_CIRCLE_ID).collection(FRIENDS_SUBCOLLECTION).doc(entry.id);
-    if ((await theirs.get()).exists) await theirs.update({ moodChangedAt: FieldValue.serverTimestamp() });
-  }
-}
-
 // ---------------------------------------------------------------- my picture
 
 /** My uploaded picture, as a data URL (or null). It is an object in the media cache, not part of my account document. */
 profileRouter.get(
   "/picture",
-  asyncHandler(async (_req, res) => {
-    res.json({ image: await readAvatar(uidOf(res)) } satisfies ProfilePicture);
+  asyncHandler(async (req, res) => {
+    res.json({ image: await readAvatar(uidOf(res), activeCircleOf(req)) } satisfies ProfilePicture);
   }),
 );
 
@@ -233,8 +251,9 @@ profileRouter.put(
       res.status(400).json({ error: picture.error });
       return;
     }
-    await saveAvatar(uidOf(res), picture.bytes);
-    await touchFriends(uidOf(res)); // confirmed friends see my picture: tell their apps
+    const circleId = activeCircleOf(req);
+    await saveAvatar(uidOf(res), picture.bytes, true, circleId);
+    await touchFriends(uidOf(res), circleId === DEFAULT_CIRCLE_ID ? undefined : circleId); // confirmed friends (of this circle) see my picture: tell their apps
     await touchSync(uidOf(res), "profileAt");
     res.json({ image: req.body.image } satisfies ProfilePicture);
   }),
@@ -243,9 +262,10 @@ profileRouter.put(
 /** Remove my picture. */
 profileRouter.delete(
   "/picture",
-  asyncHandler(async (_req, res) => {
-    await removeAvatar(uidOf(res));
-    await touchFriends(uidOf(res));
+  asyncHandler(async (req, res) => {
+    const circleId = activeCircleOf(req);
+    await removeAvatar(uidOf(res), circleId);
+    await touchFriends(uidOf(res), circleId === DEFAULT_CIRCLE_ID ? undefined : circleId);
     await touchSync(uidOf(res), "profileAt");
     res.status(204).end();
   }),

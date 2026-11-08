@@ -35,16 +35,16 @@
             </span>
           </div>
         } @else {
-          <button type="button" class="sf-hs-friend sf-hs-free" [attr.aria-label]="'Seat ' + slot.position + ' is free: add a friend'" (click)="add.emit()">
+          <button type="button" class="sf-hs-friend sf-hs-free" [attr.aria-label]="'Seat ' + slot.position + ' is free: add a ' + w.one" (click)="add.emit()">
             <span class="sf-hs-ring"><span class="sf-hs-plus" aria-hidden="true">+</span><span class="sf-seat-no" aria-hidden="true">{{ slot.position }}</span></span>
             <span class="sf-hs-name">Free seat</span>
-            <span class="sf-hs-sub">Add a friend</span>
+            <span class="sf-hs-sub">Add a {{ w.one }}</span>
           </button>
         }
       </li>
     }
   </ul>
-  <p class="sf-hs-tip">{{ dragging() ? (showBucket() ? 'Drop on a seat or the bucket' : 'Drop on a seat') : 'Press and hold a friend to move' }}</p>
+  <p class="sf-hs-tip">{{ dragging() ? (showBucket() ? 'Drop on a seat or the bucket' : 'Drop on a seat') : 'Press and hold a ' + w.one + ' to move' }}</p>
 
   @if (showBucket()) {
     <!-- the silent bucket: the sleep list. A friend dropped here has no seat and makes no sound (the conversation is kept) -->

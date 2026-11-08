@@ -1,5 +1,6 @@
 import { Injectable, effect, inject, untracked } from '@angular/core';
 import { Circle, CircleSettings } from '../models';
+import { ActiveCircleService } from './active-circle.service';
 import { ApiService } from './api.service';
 import { AuthService } from './auth.service';
 import { DEFAULTS, UiPreferencesService } from './ui-preferences';
@@ -18,6 +19,7 @@ export class LookSyncService {
   private readonly api = inject(ApiService);
   private readonly auth = inject(AuthService);
   private readonly prefs = inject(UiPreferencesService);
+  private readonly active = inject(ActiveCircleService);
   private readonly signals = SYNCED.map((key) => [key, this.prefs.value(key)] as const);
 
   /** the circle the settings belong to (null = not known yet) */
@@ -46,7 +48,7 @@ export class LookSyncService {
   private async pull(): Promise<void> {
     try {
       const { circles } = await this.api.request<{ circles: Circle[] }>('/circles');
-      const circle = circles[0]; // the circle the person works in (the first one for now)
+      const circle = circles.find((c) => c.id === this.active.id); // the circle this app is bound to
       if (!circle) return;
       this.circleId = circle.id;
       const stored = circle.settings ?? {};

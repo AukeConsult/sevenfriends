@@ -1,4 +1,5 @@
 import { Component, computed, inject, output, signal } from '@angular/core';
+import { ActiveCircleService } from '../core/active-circle.service';
 import { Router } from '@angular/router';
 import { FriendAvatar } from '../friend-avatar/friend-avatar';
 import { FriendsService } from '../core/friends.service';
@@ -22,6 +23,7 @@ const MAX_FRIENDS = 7;
   templateUrl: './home-seats.html',
 })
 export class HomeSeats {
+  protected readonly w = inject(ActiveCircleService).words;
   private readonly friendsService = inject(FriendsService);
   private readonly messagesService = inject(MessagesService);
   private readonly notifications = inject(NotificationsService);
@@ -157,7 +159,7 @@ export class HomeSeats {
         await this.friendsService.moveToSeat(mover.id, to);
       }
     } catch (err: any) {
-      this.error.set(err.message ?? 'Could not move the friend');
+      this.error.set(err.message ?? 'Could not move the ' + this.w.one);
     }
   }
 
@@ -170,7 +172,7 @@ export class HomeSeats {
     try {
       await this.friendsService.moveToSeat(mover.id, to);
     } catch (err: any) {
-      this.error.set(err.message ?? 'Could not move the friend');
+      this.error.set(err.message ?? 'Could not move the ' + this.w.one);
     }
   }
 }

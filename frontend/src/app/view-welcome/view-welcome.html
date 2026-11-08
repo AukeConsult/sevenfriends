@@ -1,8 +1,31 @@
 <main class="sf-vw">
   <h1 class="sf-vw-title">Welcome pages</h1>
-  <p class="sf-vw-sub">All the welcome pages side by side, to test and compare. Open one alone to see it in full size.</p>
+  <p class="sf-vw-sub">The Home page and the welcome pages of the circle this app is in: {{ circleLabel() }}. Open one alone to see it in full size.</p>
+
+  <section class="sf-vw-circles" aria-label="The circle this app uses">
+    <strong>This app uses the circle</strong>
+    <div class="sf-vw-seg" role="group">
+      @for (c of circles; track c.id) {
+        <button type="button" class="btn btn-sm" [class.btn-primary]="active.id === c.id" [class.btn-outline-primary]="active.id !== c.id" [attr.aria-pressed]="active.id === c.id" (click)="active.choose(c.id)">{{ c.label }}</button>
+      }
+    </div>
+    <label class="sf-vw-all"><input type="checkbox" [checked]="showAll()" (change)="showAll.set($any($event.target).checked)" /> Show all circles</label>
+    <span class="sf-vw-note">For test and demo. An app covers exactly one circle and cannot see the others. The friends, seats, messages and sounds of the other circles are hidden. A circle is made the first time it is chosen.</span>
+  </section>
+
+  <h2 class="sf-vw-h2">{{ showAll() ? 'Home of each circle' : 'Home of the ' + circleLabel() + ' circle' }}</h2>
   <div class="sf-vw-grid">
-    @for (page of pages; track page.path) {
+    @for (home of visibleHomes(); track home.id) {
+      <section class="sf-vw-item">
+        <div class="sf-vw-head"><strong>{{ home.label }}</strong></div>
+        <div class="sf-vw-box"><iframe class="sf-vw-frame" [src]="home.src" [title]="'Home of the ' + home.label + ' circle'" scrolling="no" (load)="fit($event)"></iframe></div>
+      </section>
+    }
+  </div>
+
+  <h2 class="sf-vw-h2">Welcome pages</h2>
+  <div class="sf-vw-grid">
+    @for (page of visiblePages(); track page.path) {
       <section class="sf-vw-item">
         <div class="sf-vw-head">
           <div>
@@ -11,7 +34,7 @@
           </div>
           <a [routerLink]="page.path" class="btn btn-outline-primary btn-sm">Open</a>
         </div>
-        <iframe class="sf-vw-frame" [src]="page.src" [title]="page.title + ' preview'" scrolling="no" (load)="fit($event)"></iframe>
+        <div class="sf-vw-box"><iframe class="sf-vw-frame" [src]="page.src" [title]="page.title + ' preview'" scrolling="no" (load)="fit($event)"></iframe></div>
       </section>
     }
   </div>

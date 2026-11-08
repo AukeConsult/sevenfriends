@@ -1,3 +1,4 @@
+import { ActiveCircleService } from './active-circle.service';
 import { Injectable, inject } from '@angular/core';
 import { BoxKeys, Safebox, SafeboxItem, fingerprintOf, keyIdOf } from '../models';
 import { ApiService } from './api.service';
@@ -17,6 +18,7 @@ export interface BoxFile {
 /** The safebox of one friendship (the friend id is the connection id): files only the two friends see. */
 @Injectable({ providedIn: 'root' })
 export class SafeboxService {
+  private readonly active = inject(ActiveCircleService);
   private readonly api = inject(ApiService);
   private readonly friends = inject(FriendsService);
   private readonly auth = inject(AuthService);
@@ -27,7 +29,7 @@ export class SafeboxService {
   private readonly previews = new Map<string, Promise<BoxFile>>();
 
   private base(friendId: string): string {
-    return `/circles/${this.friends.circle()?.id ?? 'default'}/friends/${friendId}/safebox`;
+    return `/circles/${this.friends.circle()?.id ?? this.active.id}/friends/${friendId}/safebox`;
   }
 
   /** The keys in use of me and of this friend: files can be locked only when both of us have one. */

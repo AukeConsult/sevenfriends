@@ -1,3 +1,4 @@
+import { ActiveCircleService } from './active-circle.service';
 import { Injectable, inject, signal } from '@angular/core';
 import { ProfilePicture } from '../models';
 import { ApiService } from './api.service';
@@ -10,6 +11,7 @@ import { FriendsService } from './friends.service';
  */
 @Injectable({ providedIn: 'root' })
 export class FriendPictureService {
+  private readonly active = inject(ActiveCircleService);
   private readonly api = inject(ApiService);
   private readonly friends = inject(FriendsService);
 
@@ -30,7 +32,7 @@ export class FriendPictureService {
 
   private async load(friendId: string, key: string): Promise<void> {
     try {
-      const { image } = await this.api.request<ProfilePicture>(`/circles/${this.friends.circle()?.id ?? 'default'}/friends/${friendId}/picture`);
+      const { image } = await this.api.request<ProfilePicture>(`/circles/${this.friends.circle()?.id ?? this.active.id}/friends/${friendId}/picture`);
       if (image) this.pictures.update((all) => ({ ...all, [key]: image }));
     } catch {
       this.asked.delete(key); // the next time it is asked for, it tries again

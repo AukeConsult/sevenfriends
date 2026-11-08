@@ -2,7 +2,7 @@ import express, { Request, Response, Router } from "express";
 import { DecodedIdToken } from "firebase-admin/auth";
 import { DocumentReference, FieldValue, Timestamp, getFirestore } from "firebase-admin/firestore";
 import { asyncHandler } from "./auth";
-import { FRIENDS_SUBCOLLECTION, MAX_UPLOAD_BYTES, SAFEBOX_MAX_BYTES, SAFEBOX_MAX_ITEMS, boxOwner } from "./constants";
+import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAX_UPLOAD_BYTES, SAFEBOX_MAX_BYTES, SAFEBOX_MAX_ITEMS, boxOwner } from "./constants";
 import { connectionOf, sleepsMe } from "./conversation";
 import { BoxKeys, ENC_HEADER_MAX, MediaRef, Safebox, SafeboxItem } from "./models";
 import { parseEncryptedUpload, wrapsCover, wrapsFor } from "./box-encryption";
@@ -48,7 +48,7 @@ safeboxRouter.get(
     const connection = await connectionOf(req, res);
     if (!connection) return;
     const uid = uidOf(res);
-    const items = (await safeboxItems(connection.id).get()).docs.map((d) => toItem(d.id, d.data(), uid)).sort((a, b) => (b.createdAt ?? "").localeCompare(a.createdAt ?? ""));
+    const items = (await safeboxItems(connection.id).get()).docs.filter((d) => inCircle(d.data(), uid, connection.circleId)).map((d) => toItem(d.id, d.data(), uid)).sort((a, b) => (b.createdAt ?? "").localeCompare(a.createdAt ?? ""));
     const box: Safebox = { items, usedBytes: items.reduce((sum, i) => sum + i.bytes, 0), maxBytes: SAFEBOX_MAX_BYTES, maxFileBytes: MAX_FILE_BYTES };
     res.json(box);
   }),
@@ -69,6 +69,12 @@ safeboxRouter.get(
 );
 
 type Connection = NonNullable<Awaited<ReturnType<typeof connectionOf>>>;
+
+/** Which circle each of the two friends has this friendship in, written on every file: a file never belongs to more than the friendship of its two circles, and cannot show up in another one. */
+const circlesOf = (connection: Connection, me: string): Record<string, string> => ({ [me]: connection.circleId, [connection.peerUid]: connection.peerCircleId });
+
+/** True when the file belongs to the circle I am looking from (a file stored before circles were written down counts as the default circle). */
+const inCircle = (data: FirebaseFirestore.DocumentData, uid: string, circleId: string): boolean => ((data.circles as Record<string, string> | undefined)?.[uid] ?? DEFAULT_CIRCLE_ID) === circleId;
 
 /**
  * Stores a checked file in the box (and its preview, when it has one) and answers with the new item, or answers with an error
@@ -95,7 +101,7 @@ async function storeInBox(res: Response, connection: Connection, bytes: Buffer, 
   const owner = uidOf(res);
   await putObject(boxOwner(connection.id), ref.id, bytes, checked.kind, checked.mime, name, owner);
   if (thumb) await putObject(boxOwner(connection.id), `${ref.id}.thumb`, thumb, "thumb", "image/jpeg", null, owner);
-  await ref.set({ name, kind: checked.kind, mime: checked.mime, bytes: bytes.length, addedBy: owner, ...(originalSender ? { originalSender } : {}), hasThumb: Boolean(thumb), createdAt: FieldValue.serverTimestamp() });
+  await ref.set({ name, kind: checked.kind, mime: checked.mime, bytes: bytes.length, addedBy: owner, circles: circlesOf(connection, owner), ...(originalSender ? { originalSender } : {}), hasThumb: Boolean(thumb), createdAt: FieldValue.serverTimestamp() });
   return toItem(ref.id, (await ref.get()).data()!, uidOf(res));
 }
 
@@ -184,7 +190,7 @@ safeboxRouter.post(
     const name = boxOwner(connection.id);
     await putObject(name, ref.id, upload.file, kind, "application/octet-stream", null, owner);
     if (upload.thumb) await putObject(name, `${ref.id}.thumb`, upload.thumb, "thumb", "application/octet-stream", null, owner);
-    const fields = { name: "Encrypted file", kind, mime: "application/octet-stream", bytes: upload.file.length, addedBy: owner, hasThumb: Boolean(upload.thumb), enc, ...(replaced ?? { createdAt: FieldValue.serverTimestamp() }) };
+    const fields = { name: "Encrypted file", kind, mime: "application/octet-stream", bytes: upload.file.length, addedBy: owner, circles: circlesOf(connection, owner), hasThumb: Boolean(upload.thumb), enc, ...(replaced ?? { createdAt: FieldValue.serverTimestamp() }) };
     if (old) {
       // ONE atomic step: the locked item appears and the plain item goes in the same transaction (it still must be there and still plain), so the
       // list never shows both or neither. If it fails, the locked file just stored is taken away again and the plain file stays.

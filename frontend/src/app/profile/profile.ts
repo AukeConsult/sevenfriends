@@ -1,3 +1,4 @@
+import { ActiveCircleService } from '../core/active-circle.service';
 import { Clearable } from '../core/clearable';
 import { Component, DestroyRef, computed, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -24,6 +25,7 @@ const RETRY_MS = 5000;
   templateUrl: './profile.html',
 })
 export class Profile {
+  protected readonly w = inject(ActiveCircleService).words;
   private readonly api = inject(ApiService);
   private readonly presence = inject(PresenceService);
   private readonly push = inject(PushService);

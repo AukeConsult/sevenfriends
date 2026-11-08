@@ -139,3 +139,94 @@ describe("settings that were still on the account move to the circle", () => {
     expect((await account(pool[1]).get()).data()?.settings).toEqual({ theme: "dark" }); // not read yet: still there
   });
 });
+
+describe("more circles: one of each type, each with my own name, colour and mood", () => {
+  const circles = async (user: User) => (await user.raw("get", "/circles").expect(200)).body.circles as { id: string; type: string; profile: { name: string | null; color: string | null; mood: number | null; moodMessage: string | null } }[];
+
+  it("makes the circle of a type once, with my name and colour and no mood", async () => {
+    await pool[0].raw("put", "/profile", { name: "Leif", color: "blue" }).expect(200);
+    const made = await pool[0].raw("post", "/circles", { type: "work" }).expect(201);
+    expect(made.body).toMatchObject({ id: "work", type: "work", name: "My work contacts", profile: { name: "Leif", color: "blue", mood: null, moodMessage: null } });
+    await pool[0].raw("post", "/circles", { type: "work" }).expect(409);
+    expect((await circles(pool[0])).map((c) => c.id).sort()).toEqual(["default", "work"]);
+    expect((await circles(pool[1])).map((c) => c.id)).toEqual(["default"]); // only mine
+  });
+
+  it("refuses a type that does not exist", async () => {
+    await pool[0].raw("post", "/circles", { type: "colleagues" }).expect(400);
+    await pool[0].raw("post", "/circles", {}).expect(400);
+  });
+
+  it("keeps the profile of each circle apart", async () => {
+    await pool[0].raw("put", "/profile", { name: "Leif" }).expect(200);
+    await pool[0].raw("post", "/circles", { type: "family" }).expect(201);
+    await pool[0].raw("put", "/circles/family/profile", { name: "Dad", color: "orange", mood: 2, moodMessage: "At home" }).expect(200);
+    const all = await circles(pool[0]);
+    expect(all.find((c) => c.id === "family")!.profile).toEqual({ name: "Dad", color: "orange", mood: 2, moodMessage: "At home" });
+    expect(all.find((c) => c.id === "default")!.profile).toMatchObject({ name: "Leif", mood: null }); // the friends circle is not touched
+  });
+
+  it("the friends circle profile is the account profile", async () => {
+    await pool[0].raw("put", "/circles/default/profile", { name: "Leif A", mood: 1 }).expect(200);
+    expect((await pool[0].raw("get", "/profile").expect(200)).body).toMatchObject({ name: "Leif A", mood: 1 });
+    expect((await circles(pool[0])).find((c) => c.id === "default")!.profile).toMatchObject({ name: "Leif A", mood: 1 });
+  });
+
+  it("refuses wrong values and saves nothing", async () => {
+    await pool[0].raw("post", "/circles", { type: "buddies" }).expect(201);
+    await pool[0].raw("put", "/circles/buddies/profile", { name: "", mood: 2 }).expect(400);
+    await pool[0].raw("put", "/circles/buddies/profile", { mood: 9 }).expect(400);
+    await pool[0].raw("put", "/circles/buddies/profile", { color: "plaid" }).expect(400);
+    await pool[0].raw("put", "/circles/nothing/profile", { mood: 2 }).expect(404);
+    expect((await circles(pool[0])).find((c) => c.id === "buddies")!.profile.mood).toBeNull();
+  });
+});
+
+describe("a friend sees how I show in the circle we share", () => {
+  /** pool[1]'s side of the friendship says that pool[0]'s side lives in the circle `circle` (what an invitation into that circle will write) */
+  const livesIn = async (viewer: User, id: string, circle: string) =>
+    getFirestore().collection("user-account").doc(viewer.p.uid).collection("friend-circle").doc("default").collection("friends").doc(id).update({ peerCircleId: circle });
+
+  it("the mood and colour of that circle, not the ones of my account", async () => {
+    const id = await connect(pool[0], pool[1]);
+    await pool[0].raw("put", "/profile", { color: "blue" }).expect(200);
+    await pool[0].raw("put", "/profile/mood", { mood: 1, moodMessage: "Friends mood" }).expect(200);
+    await pool[0].raw("post", "/circles", { type: "work" }).expect(201);
+    await pool[0].raw("put", "/circles/work/profile", { color: "purple", mood: 3, moodMessage: "In a meeting" }).expect(200);
+
+    let seen = (await pool[1].friends()).find((f) => f.id === id)!;
+    expect(seen).toMatchObject({ mood: 1, moodMessage: "Friends mood", color: "blue" }); // the friends circle: the account, as before
+
+    await livesIn(pool[1], id, "work");
+    seen = (await pool[1].friends()).find((f) => f.id === id)!;
+    expect(seen).toMatchObject({ mood: 3, moodMessage: "In a meeting", color: "purple" });
+  });
+
+  it("a change in that circle makes the friend's copy of the friendship change, so their app reloads", async () => {
+    const id = await connect(pool[0], pool[1]);
+    await pool[0].raw("post", "/circles", { type: "work" }).expect(201);
+    const copy = getFirestore().collection("user-account").doc(pool[0].p.uid).collection("friend-circle").doc("default").collection("friends").doc(id);
+    await copy.update({ moodChangedAt: FieldValue.delete() }); // the touch goes to the peer entry: pool[1]'s copy
+    const theirs = getFirestore().collection("user-account").doc(pool[1].p.uid).collection("friend-circle").doc("default").collection("friends").doc(id);
+    await theirs.update({ moodChangedAt: FieldValue.delete() });
+    await pool[0].raw("put", "/circles/default/profile", { mood: 2 }).expect(200);
+    expect((await theirs.get()).data()?.moodChangedAt).toBeDefined();
+  });
+});
+
+describe("the profile page is the profile of the circle the app is in", () => {
+  it("name, colour, icon and mood are kept per circle (the X-Circle header says which), the rest is shared", async () => {
+    await pool[0].raw("put", "/profile", { name: "Alex", color: "blue", icon: 2 }).expect(200);
+    await pool[0].raw("put", "/profile/mood", { mood: 1, moodMessage: "Friends mood" }).expect(200);
+    await pool[0].raw("post", "/circles", { type: "work" }).expect(201);
+
+    const inWork = async (method: "get" | "put", path: string, body?: object) => pool[0].raw(method, path, body).set("X-Circle", "work");
+    await (await inWork("put", "/profile", { name: "Alex Berg", color: "purple", icon: 5 })).body;
+    await inWork("put", "/profile/mood", { mood: 3, moodMessage: "In a meeting" }).then((r) => expect(r.status).toBe(200));
+
+    const work = (await inWork("get", "/profile")).body;
+    expect(work).toMatchObject({ name: "Alex Berg", color: "purple", icon: 5, mood: 3, moodMessage: "In a meeting" });
+    const friends = (await pool[0].raw("get", "/profile").expect(200)).body; // no header: the first circle, as before
+    expect(friends).toMatchObject({ name: "Alex", color: "blue", icon: 2, mood: 1, moodMessage: "Friends mood" });
+  });
+});

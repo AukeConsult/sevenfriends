@@ -1,3 +1,4 @@
+import { ActiveCircleService } from '../core/active-circle.service';
 import { AddMedia } from '../add-media/add-media';
 import { Clearable } from '../core/clearable';
 import { FriendContext } from '../friend-page/friend-context';
@@ -38,6 +39,7 @@ const SAFETY_REFRESH_MS = 30000;
   templateUrl: './chat.html',
 })
 export class Chat {
+  protected readonly w = inject(ActiveCircleService).words;
   private readonly chat = inject(ChatService);
   private readonly safebox = inject(SafeboxService);
   private readonly prefs = inject(UiPreferencesService);

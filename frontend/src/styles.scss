@@ -1361,7 +1361,7 @@ button.sf-hs-free { padding: 0; border: 0; background: none; font: inherit; widt
 .sf-home-cards .sf-message-head { justify-content: flex-start; .sf-message-actions { margin-inline-start: auto; } }
 
 /* the three welcome pages for young people (/young1, /young2, /young3) */
-.sf-yg { display: grid; place-items: start center; padding: 1.25rem 1rem 2rem; }
+.sf-yg { display: grid; grid-template-columns: minmax(0, 1fr); place-items: start center; padding: 1.25rem 1rem 2rem; }
 .sf-yg-card { width: 100%; max-width: 22rem; display: flex; flex-direction: column; gap: 0.75rem; }
 .sf-yg-hd { margin: 0; text-align: center; font-size: 1.75rem; line-height: 1.12; font-weight: 700; }
 .sf-yg-sub { margin: 0; text-align: center; color: var(--sf-muted); }
@@ -1381,14 +1381,15 @@ button.sf-hs-free { padding: 0; border: 0; background: none; font: inherit; widt
 .sf-yg-fine { display: flex; justify-content: center; align-items: center; gap: 0.25rem; margin: 0; font-size: 0.75rem; color: var(--sf-muted); }
 
 /* the test page that shows all the welcome pages (/viewwelcome) */
-.sf-vw { padding: 1rem; max-width: 80rem; margin: 0 auto; }
+.sf-vw { overflow-wrap: anywhere; padding: 1rem; width: 100%; max-width: 80rem; margin: 0 auto; min-width: 0; box-sizing: border-box; overflow-x: hidden; }
 .sf-vw-title { font-size: 1.5rem; font-weight: 700; margin: 0; }
 .sf-vw-sub { color: var(--sf-muted); margin: 0.25rem 0 1rem; }
-.sf-vw-grid { display: grid; grid-template-columns: repeat(auto-fill, 390px); justify-content: start; gap: 1.5rem 1rem; align-items: start; }
-.sf-vw-item { display: flex; flex-direction: column; gap: 0.5rem; width: 390px; max-width: 100%; }
+.sf-vw-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(390px, 100%), 390px)); justify-content: start; max-width: 100%; gap: 1.5rem 1rem; align-items: start; }
+.sf-vw-item { display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: 390px; min-width: 0; }
 .sf-vw-head { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
 .sf-vw-note { display: block; font-size: 0.8125rem; color: var(--sf-muted); }
-.sf-vw-frame { width: 100%; height: 20rem; display: block; border: 1px solid var(--sf-border); border-radius: 1.25rem; background: var(--sf-bg); }
+.sf-vw-box { width: 100%; max-width: 390px; overflow: hidden; }
+.sf-vw-frame { width: 390px; max-width: none; transform-origin: 0 0; box-sizing: border-box; height: 20rem; display: block; border: 1px solid var(--sf-border); border-radius: 1.25rem; background: var(--sf-bg); }
 
 /* more life for the young pages: a tint for each page, the seats pop in one by one, the circle slowly turns, the button reacts */
 .sf-yg-v1 { background: #EEEDFE; }
@@ -1435,7 +1436,7 @@ button.sf-hs-free { padding: 0; border: 0; background: none; font: inherit; widt
   i { width: 1rem; height: 1rem; border-radius: 50%; border: 2px solid var(--sf-card); } i + i { margin-left: -0.25rem; } }
 
 /* the three welcome pages for Seven Work (/work1, /work2, /work3) */
-.sf-wk { display: grid; place-items: start center; min-height: 100vh; padding: 1.25rem 1rem 2rem; }
+.sf-wk { display: grid; grid-template-columns: minmax(0, 1fr); place-items: start center; min-height: 100vh; padding: 1.25rem 1rem 2rem; }
 .sf-wk-v1 { background: #E6F1FB; } .sf-wk-v2 { background: #E1F5EE; } .sf-wk-v3 { background: #EEEDFE; }
 .sf-wk-card { width: 100%; max-width: 22rem; display: flex; flex-direction: column; gap: 0.75rem; }
 .sf-wk-brand { display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-weight: 600; }
@@ -1463,7 +1464,7 @@ button.sf-hs-free { padding: 0; border: 0; background: none; font: inherit; widt
   svg { color: var(--sf-primary); } b { font-size: 0.8125rem; color: var(--sf-text); } }
 
 /* the three welcome pages for Seven Family (/family1, /family2, /family3) */
-.sf-fm { display: grid; place-items: start center; min-height: 100vh; padding: 1.25rem 1rem 2rem; }
+.sf-fm { display: grid; grid-template-columns: minmax(0, 1fr); place-items: start center; min-height: 100vh; padding: 1.25rem 1rem 2rem; }
 .sf-fm-v1 { background: #FAECE7; } .sf-fm-v2 { background: #E1F5EE; } .sf-fm-v3 { background: #FBEAF0; }
 .sf-fm-card { width: 100%; max-width: 22rem; display: flex; flex-direction: column; gap: 0.75rem; }
 .sf-fm-brand { display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-weight: 600; }
@@ -1488,3 +1489,10 @@ button.sf-hs-free { padding: 0; border: 0; background: none; font: inherit; widt
 .sf-yg-brand { display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-weight: 700; font-size: 1.0625rem; }
 .sf-yg-logo { display: grid; place-items: center; width: 1.875rem; height: 1.875rem; border-radius: 0.625rem; background: var(--sf-primary); color: #fff; font-weight: 700; }
 .sf-yg-v1 .sf-yg-logo { background: #534AB7; } .sf-yg-v2 .sf-yg-logo { background: #993556; } .sf-yg-v3 .sf-yg-logo { background: #0F6E56; }
+
+.sf-vw-circles { box-sizing: border-box; max-width: 100%; display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem; margin: 0 0 1.5rem; padding: 0.75rem 1rem; border-radius: 1rem; background: var(--sf-card); }
+.sf-vw-seg { display: flex; flex-wrap: wrap; gap: 0.375rem; }
+.sf-vw-circles .sf-vw-note { flex-basis: 100%; }
+.sf-vw-h2 { font-size: 1.125rem; font-weight: 700; margin: 0.5rem 0 0.75rem; }
+
+.sf-vw-all { display: inline-flex; align-items: center; gap: 0.375rem; font-size: 0.875rem; }

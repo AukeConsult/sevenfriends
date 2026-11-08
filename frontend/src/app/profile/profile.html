@@ -53,9 +53,9 @@
           </div>
         }
       }
-      <!-- my colour: my friends see it on their friend list and in the header of our conversation -->
+      <!-- my colour: my {{ w.many }} see it on their list and in the header of our conversation -->
       <div class="mt-3 text-center">
-        <span class="form-label small text-secondary m-0">Your colour <span class="text-secondary">(your friends see it)</span></span>
+        <span class="form-label small text-secondary m-0">Your colour <span class="text-secondary">(your {{ w.many }} see it)</span></span>
         <div class="sf-colors justify-content-center mt-1" role="radiogroup" aria-label="Your colour">
           <button type="button" class="sf-color sf-color-none" role="radio" [attr.aria-checked]="!color()" [class.sf-chosen]="!color()" aria-label="No colour" title="No colour" [disabled]="loading()" (click)="chooseColor(null)"></button>
           @for (c of colors; track c.key) {
@@ -74,7 +74,7 @@
         }
       </label>
       <label class="d-grid gap-1 mt-2 text-start">
-        <span class="form-label small text-secondary m-0">Friends say about you</span>
+        <span class="form-label small text-secondary m-0">{{ w.Many }} say about you</span>
         <select class="form-select" [value]="form().pronoun" (change)="setField('pronoun', $any($event.target).value)" (blur)="flush()" [disabled]="loading()">
           <option value="" [selected]="!form().pronoun"></option>
           <option value="he" [selected]="form().pronoun === 'he'">He / his</option>
@@ -106,7 +106,7 @@
           @if (verificationSent()) {
             <span class="small text-success">Verification email sent to this address. Open the link in it, then come back here.</span>
           } @else if (!emailVerified()) {
-            <span class="small text-secondary">Friends can only find you by email once it is verified.</span>
+            <span class="small text-secondary">{{ w.Many }} can only find you by email once it is verified.</span>
           }
           @if (verificationError()) { <span class="small text-danger">{{ verificationError() }}</span> }
         </div>
@@ -153,7 +153,7 @@
           <span class="small text-secondary">Verified by text message, so it cannot be edited.</span>
         } @else {
           <!-- TODO: bring back when SMS verification is ready
-          <span class="small text-secondary">Friends can only find you by phone once it is verified.</span>
+          <span class="small text-secondary">{{ w.Many }} can only find you by phone once it is verified.</span>
           -->
           @if (phoneProblem()) {
             <span class="small text-warning-emphasis">This is not a phone number yet, so it is not saved. Use digits, and + ( ) - if you like.</span>
@@ -170,7 +170,7 @@
   <div class="card mt-2">
     <div class="card-body vstack gap-2">
       <h2 class="sf-section-title m-0">Your invite link</h2>
-      <p class="small text-secondary m-0">Send this link to someone. When they open it, sign in (or create an account) and confirm, a friend request is sent to you.</p>
+      <p class="small text-secondary m-0">Send this link to someone. When they open it, sign in (or create an account) and confirm, a {{ w.one }} request is sent to you.</p>
       @if (invite.link(); as url) {
         @if (!invite.canShare) {
           <input type="text" class="form-control" [value]="url" readonly aria-label="Your invite link" (focus)="$any($event.target).select()" />

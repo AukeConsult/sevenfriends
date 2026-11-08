@@ -1,4 +1,5 @@
 import { Component, computed, inject } from '@angular/core';
+import { ActiveCircleService } from '../core/active-circle.service';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../core/auth.service';
 import { APP_ORIGIN } from '../core/app-origin';
@@ -14,6 +15,7 @@ import { HomeTop } from '../home-top/home-top';
   templateUrl: './share.html',
 })
 export class Share {
+  protected readonly w = inject(ActiveCircleService).words;
   protected readonly install = inject(InstallService);
   protected readonly invite = inject(InviteLinkService);
   private readonly user = inject(AuthService).user;
