@@ -4,7 +4,8 @@ import { DecodedIdToken } from "firebase-admin/auth";
 import { DocumentReference, FieldValue, getFirestore } from "firebase-admin/firestore";
 import { getMessaging } from "firebase-admin/messaging";
 import { asyncHandler, requireAuth } from "./auth";
-import { DEFAULT_CIRCLE_ID, PUSH_DEVICE_COLLECTION, circleIdOf, circleTypeOf } from "./constants";
+import { DEFAULT_CIRCLE_ID, PUSH_DEVICE_COLLECTION, circleTypeOf } from "./constants";
+import { CIRCLE_TYPES } from "./models";
 import { circleCol, pushDeviceCol, userFields } from "./paths";
 import { noticesOf } from "./preferences";
 import { deleteRefs } from "./signals";
@@ -14,7 +15,7 @@ import { circleProfileOf, activeCircleOf } from "./circle-profile";
  * Push notifications: the phone's or browser's own notification system wakes the device (Firebase Cloud Messaging),
  * so a message, a friend request or an answer arrives also when the app is closed or the screen is locked.
  *
- * A device registers with `POST /push/devices { token }` (when the person turns push on in Settings) and is removed
+ * A device registers with `POST /push/devices { token, app? }` (`app`: `all` by default, or one circle type for an app made for that circle; when the person turns push on in Settings) and is removed
  * with `DELETE /push/devices { token }` (switch off, log out). The backend sends the push when the thing is written
  * (message, request, answer, removal), to every device of the person that gets it. A push carries the SAME id as the
  * desktop notification of that event, so a device that shows both shows one.
@@ -32,7 +33,7 @@ export interface PushMessage {
    * message / request / answer is the one the push plays ("removed" has no sound of its own: the normal one)
    */
   kind: "message" | "request" | "answer" | "removed";
-  /** the circle of the receiver this is about: only their devices (apps) that are bound to that circle are woken; none = the first circle */
+  /** the circle of the receiver this is about: their devices that handle it are woken (see `devicesFor`); none = the first circle */
   circleId?: string;
   /** a test from the person's own Settings page: sent whatever the switches say, and with the text shown */
   force?: boolean;
@@ -73,7 +74,7 @@ const channelFor = (circleType: string, kind: PushMessage["kind"], choice: strin
 };
 
 /** The page a tap opens, told which circle it is for (the app then opens in that circle). */
-const withCircle = (url: string, circleType: string): string => `${url}${url.includes("?") ? "&" : "?"}circle=${circleType}`;
+const withCircle = (url: string, circleType: string): string => `${url}${url.includes("?") ? "&" : "?"}incircle=${circleType}`; // the app asks before it opens a page of another circle
 
 const MAX_BODY = 120;
 const MAX_TITLE = 100;
@@ -97,12 +98,8 @@ export async function sendPush(uid: string, push: PushMessage): Promise<PushResu
     const notices = noticesOf(account);
     if (!push.force && !notices[push.kind]) return { devices: 0, delivered: 0, off: true };
 
-    // an app covers exactly one circle, so only the devices of the circle this is about are woken (a device without a circle is the first circle's)
     const circleId = push.circleId ?? DEFAULT_CIRCLE_ID;
-    const devices = (await pushDeviceCol(uid).select("token", "circleId").get()).docs
-      .filter((d) => circleIdOf(d.data()) === circleId)
-      .map((d) => ({ ref: d.ref, token: d.data().token as string }))
-      .filter((d) => d.token);
+    const devices = await devicesFor(uid, circleTypeOf(circleId));
     if (!devices.length) return { devices: 0, delivered: 0 };
 
     const choice = soundChoice(account, push.kind);
@@ -131,8 +128,33 @@ export async function sendPush(uid: string, push: PushMessage): Promise<PushResu
   }
 }
 
+/** What a device can be: the app that handles every circle (the website, the installed web app, the Seven Friends app), or an app made for one circle. */
+const APP_KINDS = ["all", ...CIRCLE_TYPES];
+
+/** The app a device registered as (`all` for the apps of every circle, and for devices that registered before there was a choice). */
+const appOf = (data: { app?: unknown } | undefined): string => (typeof data?.app === "string" && APP_KINDS.includes(data.app) ? data.app : "all");
+
+/**
+ * The devices of a person that get a push about a circle (of that type). A device of the app made for this very circle is the first choice (and then
+ * the only one: a person who has both apps is not woken twice). Without one, the devices of the all-circles app get it, whatever circle they are in at
+ * the moment: the push says which circle it is about, and the app decides what to do (see `incircle` in the url).
+ */
+async function devicesFor(uid: string, circleType: string): Promise<{ ref: DocumentReference; token: string }[]> {
+  const all = (await pushDeviceCol(uid).select("token", "app").get()).docs
+    .map((d) => ({ ref: d.ref, token: d.data().token as string, app: appOf(d.data()) }))
+    .filter((d) => d.token);
+  const own = all.filter((d) => d.app === circleType);
+  return (own.length ? own : all.filter((d) => d.app === "all")).map(({ ref, token }) => ({ ref, token }));
+}
+
 export const pushRouter = Router();
 pushRouter.use(requireAuth);
+
+/** The app that registers: `{ app }` is `all` (the default) or one circle type, for an app made for a single circle. */
+const appKindOf = (body: unknown): string => {
+  const app = (body as { app?: unknown } | undefined)?.app;
+  return typeof app === "string" && APP_KINDS.includes(app) ? app : "all";
+};
 
 const tokenOf = (body: unknown): string | null => {
   const token = (body as { token?: unknown } | undefined)?.token;
@@ -176,7 +198,7 @@ pushRouter.post(
 
     const existing = await mine.get();
     await mine.set(
-      { token, circleId: activeCircleOf(req), updatedAt: FieldValue.serverTimestamp(), ...(existing.exists ? {} : { createdAt: FieldValue.serverTimestamp() }) },
+      { token, app: appKindOf(req.body), circleId: FieldValue.delete(), updatedAt: FieldValue.serverTimestamp(), ...(existing.exists ? {} : { createdAt: FieldValue.serverTimestamp() }) },
       { merge: true },
     );
     res.status(204).end();

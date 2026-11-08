@@ -56,6 +56,51 @@ describe("devices", () => {
   });
 });
 
+describe("which devices are woken for a circle", () => {
+  const registerAs = (user: User, t: string, app?: string) => user.raw("post", "/push/devices", { token: t, ...(app ? { app } : {}) }).expect(204);
+  const testIn = (user: User, circle: string) => user.raw("post", "/push/test").set("X-Circle", circle).expect(200);
+
+  it("the app of every circle (the default) gets a push about any circle, and the push says which one", async () => {
+    await registerAs(u(1), token(1));
+    expect((await testIn(u(1), "work")).body).toEqual({ devices: 1, delivered: 1 });
+    expect(lastPush().data).toMatchObject({ circle: "work", url: "/sound-and-notifications?incircle=work" });
+    expect((await testIn(u(1), "family")).body).toEqual({ devices: 1, delivered: 1 });
+    expect(lastPush().data).toMatchObject({ circle: "family" });
+  });
+
+  it("an app made for one circle gets only that circle", async () => {
+    await registerAs(u(1), token(1), "buddies");
+    expect((await testIn(u(1), "buddies")).body).toEqual({ devices: 1, delivered: 1 });
+    expect((await testIn(u(1), "work")).body).toEqual({ devices: 0, delivered: 0 });
+    expect((await testIn(u(1), "default")).body).toEqual({ devices: 0, delivered: 0 });
+  });
+
+  it("with both, the app made for the circle gets it and the other app does not (no double ring); other circles go to the app of every circle", async () => {
+    await registerAs(u(1), token(1, "all"));
+    await registerAs(u(1), token(1, "work"), "work");
+    await testIn(u(1), "work");
+    expect(lastPush().tokens).toEqual([token(1, "work")]);
+    await testIn(u(1), "family");
+    expect(lastPush().tokens).toEqual([token(1, "all")]);
+  });
+
+  it("a device from before there was a choice counts as the app of every circle, and an unknown app too", async () => {
+    await getFirestore().collection("user-account").doc("uid01").collection("push-device").doc("old").set({ token: token(1, "old"), circleId: "buddies" });
+    await registerAs(u(1), token(1, "odd"), "something-else");
+    await testIn(u(1), "work");
+    expect(lastPush().tokens.sort()).toEqual([token(1, "odd"), token(1, "old")].sort());
+  });
+
+  it("registering again as another app changes the device (the circle of an old registration is dropped)", async () => {
+    await registerAs(u(1), token(1));
+    await registerAs(u(1), token(1), "family");
+    const docs = (await getFirestore().collection("user-account").doc("uid01").collection("push-device").get()).docs.map((d) => d.data());
+    expect(docs).toHaveLength(1);
+    expect(docs[0].app).toBe("family");
+    expect("circleId" in docs[0]).toBe(false);
+  });
+});
+
 describe("what is pushed", () => {
   it("a message goes to the receiver's devices, with the event id, the sender and the page; not to the sender", async () => {
     const id = await connect(u(0), u(1));
@@ -67,7 +112,7 @@ describe("what is pushed", () => {
     const message = (await u(0).send(id, "Are you coming tonight?").expect(201)).body;
     expect(sentPushes).toHaveLength(1);
     expect(sentPushes[0].tokens.sort()).toEqual([token(1, "laptop"), token(1, "phone")].sort());
-    expect(sentPushes[0].data).toEqual({ id: `message-${message.id}`, title: "Person 00", body: "Are you coming tonight?", url: `/friends/${id}?circle=friends`, circle: "friends" });
+    expect(sentPushes[0].data).toEqual({ id: `message-${message.id}`, title: "Person 00", body: "Are you coming tonight?", url: `/friends/${id}?incircle=friends`, circle: "friends" });
   });
 
   it("a long message is cut", async () => {
@@ -87,7 +132,7 @@ describe("what is pushed", () => {
     await register(u(1), token(1));
     const entry = (await u(0).raw("post", "/circles/default/friends", { name: "One", email: person(1).email, message: "Be my friend!" }).expect(201)).body;
     expect(sentPushes).toHaveLength(1);
-    expect(sentPushes[0].data).toEqual({ id: `request-${entry.id}`, title: "Person 00 wants to be your friend", body: "Be my friend!", url: "/?circle=friends", circle: "friends" });
+    expect(sentPushes[0].data).toEqual({ id: `request-${entry.id}`, title: "Person 00 wants to be your friend", body: "Be my friend!", url: "/?incircle=friends", circle: "friends" });
   });
 
   it("a request to somebody without an account sends nothing", async () => {
@@ -103,7 +148,7 @@ describe("what is pushed", () => {
     await u(1).check();
     await u(1).confirm(a.id).expect(200);
     expect(lastPush().tokens).toEqual([token(0)]);
-    expect(lastPush().data).toMatchObject({ id: `answer-${a.id}-confirmed`, title: "Person 01 accepted your friend request", url: "/?circle=friends" });
+    expect(lastPush().data).toMatchObject({ id: `answer-${a.id}-confirmed`, title: "Person 01 accepted your friend request", url: "/?incircle=friends" });
 
     await u(2).check();
     await u(2).reject(b.id).expect(200);
@@ -126,7 +171,7 @@ describe("what is pushed", () => {
     const id = await connect(u(0), u(1));
     await register(u(1), token(1));
     await u(0).remove(id).expect(204);
-    expect(lastPush().data).toMatchObject({ id: `removed-${id}`, title: "Person 00 removed the friendship", url: "/friends?circle=friends" });
+    expect(lastPush().data).toMatchObject({ id: `removed-${id}`, title: "Person 00 removed the friendship", url: "/friends?incircle=friends" });
 
     sentPushes.length = 0;
     const pending = await u(0).add(u(2).p);

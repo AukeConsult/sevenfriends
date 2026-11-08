@@ -2,6 +2,7 @@ import { Component, effect, inject, untracked } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { UiPreferencesService } from './core/ui-preferences';
 import { BottomNav } from './bottom-nav/bottom-nav';
+import { CircleSwitch } from './circle-switch/circle-switch';
 import { AndroidChannelsService } from './core/android-channels.service';
 import { AppUpdateService } from './core/app-update.service';
 import { AuthService } from './core/auth.service';
@@ -39,7 +40,7 @@ function mediaReturn(url: string | null): string | null {
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, BottomNav],
+  imports: [RouterOutlet, BottomNav, CircleSwitch],
   templateUrl: './app.html'
 })
 export class App {

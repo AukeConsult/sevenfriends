@@ -2,6 +2,7 @@ import { Injectable, effect, inject, signal, untracked } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { environment } from '../../environments/environment';
 import { ApiService } from './api.service';
+import { APP_KIND } from './app-kind';
 import { AuthService } from './auth.service';
 import { DesktopNoticeService } from './desktop-notice.service';
 
@@ -126,7 +127,7 @@ export class PushService {
   private async refresh(): Promise<void> {
     const token = await this.currentToken();
     if (!token) throw new Error('This browser did not give a push token.');
-    await this.api.request<void>('/push/devices', { method: 'POST', body: JSON.stringify({ token }) });
+    await this.api.request<void>('/push/devices', { method: 'POST', body: JSON.stringify({ token, app: APP_KIND }) });
     this.write(TOKEN_KEY, token);
   }
 

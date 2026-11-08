@@ -1,5 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { ActiveCircleService } from './active-circle.service';
 
 const STORAGE_KEY = 'sf-desktop-notices';
 const WORKER_URL = '/firebase-messaging-sw.js'; // the one service worker of the app (push + notification clicks)
@@ -31,6 +32,7 @@ export interface DesktopNotice {
 @Injectable({ providedIn: 'root' })
 export class DesktopNoticeService {
   private readonly router = inject(Router);
+  private readonly active = inject(ActiveCircleService);
 
   readonly supported = typeof Notification !== 'undefined';
 
@@ -52,6 +54,11 @@ export class DesktopNoticeService {
       // a click on a notice: the worker brings the tab to the front and tells it where to go
       navigator.serviceWorker.addEventListener('message', (event) => {
         if (event.data?.type === 'open' && typeof event.data.url === 'string') void this.router.navigateByUrl(event.data.url);
+        // a push while the app is in front: the page shows it itself for its own circle; one about ANOTHER circle is shown here as a notification
+        const push = event.data?.type === 'push' ? (event.data.data as { id: string; title?: string; body?: string; url?: string; circle?: string; silent?: string } | undefined) : undefined;
+        if (push?.title && push.circle && push.circle !== this.active.type) {
+          void this.show({ id: push.id, title: push.title, body: push.body ?? '', go: push.url ?? '/', silent: push.silent === '1' }, true);
+        }
       });
     }
     if (this.wanted()) void this.registerWorker();
