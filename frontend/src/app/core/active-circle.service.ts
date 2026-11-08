@@ -39,6 +39,11 @@ const WORDS: Record<string, CircleWords> = Object.fromEntries(
   Object.entries(BASE).map(([id, w]) => [id, { ...w, One: cap(w.one), Many: cap(w.many) }]),
 );
 
+/** The words of the circle with this id (a welcome page speaks the language of its own circle, whichever circle the app is in). */
+export function circleWords(id: string): CircleWords {
+  return WORDS[id] ?? WORDS['default'];
+}
+
 /**
  * The ONE circle this app is bound to. An app covers exactly one circle and is blind to the others: its friends, seats, messages, unread counts and
  * live updates are all that circle's. For now the binding is `default` (friends); the test page (/viewwelcome) can choose another one for test and demo,

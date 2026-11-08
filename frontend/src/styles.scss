@@ -326,7 +326,13 @@ router-outlet + * { display: block; min-height: 100dvh; }
 }
 // The sign-in page: the three ways to sign in are compact (small gap under the hero, lower buttons)
 .sf-landing { gap: 1rem; }
-.sf-landing .sf-hero { padding-bottom: 1rem; }
+.sf-landing .sf-hero { padding-bottom: 0.5rem; }
+// the top of the first pages (sign-in and welcome) is compact: a small logo, a smaller headline, so more of the page shows at once
+.sf-landing .sf-logo-lg { width: 3rem; height: 3rem; border-radius: 1rem; font-size: 1.5rem; }
+.sf-landing .sf-hero h1 { font-size: 1.35rem; margin: 0.4rem 0 0.2rem !important; }
+.sf-landing .sf-welcome-name { font-size: 0.9375rem; margin-top: 0.25rem !important; }
+.sf-landing .sf-hero-tag { font-size: 0.9rem; }
+.sf-landing .sf-hero-dots { margin-top: 0.5rem; }
 .sf-signin-options { gap: 0.5rem !important; }
 .sf-signin-options .btn { min-height: 2.5rem; padding-block: 0.25rem; }
 .sf-landing .sf-divider { margin-block: 0.75rem; }
@@ -335,9 +341,6 @@ router-outlet + * { display: block; min-height: 100dvh; }
 @media (max-height: 780px) {
   .sf-landing { gap: 1rem; padding-top: calc(1.25rem + var(--sf-safe-top)); padding-bottom: calc(1.25rem + env(safe-area-inset-bottom)); }
   .sf-landing .sf-hero { margin-top: calc(-1.25rem - var(--sf-safe-top)); padding-top: calc(1.25rem + var(--sf-safe-top)); padding-bottom: 1rem; }
-  .sf-landing .sf-logo-lg { width: 3.75rem; height: 3.75rem; border-radius: 1.2rem; font-size: 1.9rem; }
-  .sf-landing .sf-hero h1 { font-size: 1.6rem; margin: 0.5rem 0 0.25rem !important; }
-  .sf-landing .sf-hero-dots { margin-top: 0.75rem; }
   .sf-landing .sf-divider { margin-block: 0.75rem; }
 }
 // The welcome page (the install step): the same top for everybody, the four points, then one install action
@@ -1503,3 +1506,35 @@ button.sf-hs-free { padding: 0; border: 0; background: none; font: inherit; widt
 .sf-circle-pop { position: absolute; inset-inline-end: 0; bottom: calc(100% + 0.25rem); min-width: 12rem; display: flex; flex-direction: column; padding: 0.25rem; border: 1px solid var(--sf-border); border-radius: 1rem; background: var(--sf-card); box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.15); z-index: 6; }
 .sf-circle-opt { display: flex; align-items: center; gap: 0.5rem; min-height: 2.75rem; padding: 0 0.75rem; border: 0; border-radius: 0.75rem; background: none; color: inherit; font: inherit; text-align: start; text-decoration: none; cursor: pointer; &:hover, &:focus-visible { background: var(--sf-surface, rgba(0, 0, 0, 0.05)); } }
 .sf-circle-tick { width: 1.25rem; color: var(--sf-primary); font-weight: 700; }
+
+/* the welcome pages of Seven Friends (friends1, friends2) */
+.sf-fr { display: grid; grid-template-columns: minmax(0, 1fr); place-items: start center; min-height: 100vh; padding: 1.25rem 1rem 2rem; }
+.sf-fr-v1 { background: #E6F1FB; } .sf-fr-v2 { background: #EEEDFE; } .sf-fr-v3 { background: #E1F5EE; }
+.sf-fr-card { width: 100%; max-width: 22rem; display: flex; flex-direction: column; gap: 0.75rem; }
+.sf-fr-brand { display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-weight: 600; }
+.sf-fr-logo { display: grid; place-items: center; width: 1.75rem; height: 1.75rem; border-radius: 0.5rem; font-weight: 700; background: #185FA5; color: #E6F1FB; }
+.sf-fr-hd { margin: 0; text-align: center; font-size: 1.625rem; line-height: 1.15; font-weight: 700; letter-spacing: -0.01em; }
+.sf-fr-sub { margin: 0; text-align: center; color: var(--sf-muted); }
+.sf-fr-ring { position: relative; width: 14rem; height: 13rem; margin: 0.25rem auto; }
+.sf-fr-seat { position: absolute; left: calc(50% - 1.3rem); top: calc(50% - 1.3rem); width: 2.6rem; height: 2.6rem; border-radius: 50%; display: grid; place-items: center; font-weight: 600; transform: rotate(var(--a)) translateY(-5.2rem) rotate(calc(-1 * var(--a))); }
+.sf-fr-seat i { font-style: normal; }
+.sf-fr-me { position: absolute; left: calc(50% - 1.5rem); top: calc(50% - 1.5rem); width: 3rem; height: 3rem; border-radius: 50%; display: grid; place-items: center; background: #185FA5; color: #E6F1FB; font-weight: 600; font-size: 0.875rem; }
+.sf-fr-vs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.625rem; }
+.sf-fr-vs > div { border-radius: 0.875rem; padding: 0.75rem; font-size: 0.8125rem; b { display: block; font-weight: 600; margin-bottom: 0.5rem; } p { margin: 0 0 0.3rem; padding: 0.35rem 0.5rem; border-radius: 0.5rem; background: var(--sf-card); } }
+.sf-fr-other { background: #FCEBEB; color: #791F1F; }
+.sf-fr-us { background: #E6F1FB; color: #0C447C; }
+.sf-fr-dim { opacity: 0.5; }
+.sf-fr-facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.5rem; div { padding: 0.625rem 0.25rem; border-radius: 0.875rem; background: var(--sf-card); text-align: center; font-size: 0.75rem; color: var(--sf-muted); } b { display: block; font-size: 1.25rem; font-weight: 600; color: inherit; } }
+.sf-fr-cta { width: 100%; margin-top: 0.25rem; padding: 0.8rem 1rem; border: 0; border-radius: 0.75rem; font-size: 1.0625rem; font-weight: 600; cursor: pointer; }
+.sf-fr-fine { margin: 0; text-align: center; font-size: 0.75rem; color: var(--sf-muted); }
+.sf-fr-room { display: flex; flex-direction: column; gap: 0.375rem; padding: 0.75rem; border-radius: 0.875rem; background: var(--sf-card); }
+.sf-fr-roomhead { display: flex; align-items: center; gap: 0.5rem; font-weight: 600; font-size: 0.9375rem; }
+.sf-fr-lock { margin-left: auto; color: var(--sf-muted); }
+.sf-fr-small { position: static; width: 1.75rem; height: 1.75rem; font-size: 0.6875rem; transform: none; }
+.sf-fr-bubble { margin: 0; padding: 0.4rem 0.75rem; border-radius: 0.875rem 0.875rem 0.875rem 0.25rem; background: var(--sf-bg); font-size: 0.875rem; align-self: flex-start; }
+.sf-fr-mine { align-self: flex-end; border-radius: 0.875rem 0.875rem 0.25rem 0.875rem; background: #E1F5EE; color: #085041; }
+.sf-fr-file { display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.5rem; border-radius: 0.5rem; background: var(--sf-bg); font-size: 0.8125rem; span { margin-left: auto; color: #0F6E56; } }
+
+/* the three arguments shared by every welcome page (WhyTiles) */
+.sf-why-lead { margin: 0.25rem 0 0; text-align: center; font-weight: 600; font-size: 1rem; line-height: 1.3; }
+.sf-why { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.5rem; div { padding: 0.625rem 0.375rem; border-radius: 0.875rem; background: var(--sf-card); text-align: center; font-size: 0.75rem; line-height: 1.25; color: var(--sf-muted); } b { display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 600; color: var(--sf-text, inherit); } }

@@ -8,35 +8,8 @@
     <app-seat-dots [blink]="true" />
   </div>
 
-  <div class="sf-wl-stats" role="list">
-    <div role="listitem"><b>7</b><span>active seats</span></div>
-    <div role="listitem"><b>0</b><span>ads and feeds</span></div>
-    <div role="listitem">
-      <b><svg viewBox="0 0 32 32" width="28" height="28" aria-hidden="true"><rect x="6" y="14" width="20" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="2.4" /><path d="M10 14v-3a6 6 0 0112 0v3" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" /><circle cx="16" cy="21" r="2" fill="currentColor" /></svg></b>
-      <span>locked by you</span>
-    </div>
-  </div>
-
-  <div class="sf-wl-cards">
-    <section class="sf-wl-card">
-      <svg class="sf-wl-ico" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 27s-10-6.2-10-14a6 6 0 0110-4.2A6 6 0 0126 13c0 7.8-10 14-10 14z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" /></svg>
-      <h2>Nobody gets lost</h2>
-      <p>Every close friend gets a seat. No feed buries them.</p>
-    </section>
-    <section class="sf-wl-card">
-      <svg class="sf-wl-ico" viewBox="0 0 32 32" aria-hidden="true"><rect x="6" y="14" width="20" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="2" /><path d="M10 14v-3a6 6 0 0112 0v3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" /><circle cx="16" cy="21" r="2" fill="currentColor" /></svg>
-      <h2>A private room per friend</h2>
-      <p>Locked on your phone. Only you two can open it. Not even we can.</p>
-    </section>
-    <section class="sf-wl-card sf-wl-wide">
-      <svg class="sf-wl-ico" viewBox="0 0 32 32" aria-hidden="true"><path d="M8 22h16l-2-3v-5a6 6 0 00-12 0v5zM13 25a3 3 0 006 0M5 5l22 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
-      <h2>Quiet, until it matters</h2>
-      <div class="sf-wl-versus">
-        <div class="sf-wl-other"><strong>Other apps</strong>Ping you all day</div>
-        <div class="sf-wl-us"><strong>Seven Friends</strong>Seven get through. Sleep list stays silent. Poke if urgent</div>
-      </div>
-    </section>
-  </div>
+  <!-- the three arguments that every welcome page shares, under the argument of this circle -->
+  <app-why circle="default" />
 
   <div class="sf-form-width mx-auto w-100 vstack gap-3">
     @if (invited()) {

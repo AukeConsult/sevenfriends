@@ -3,9 +3,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ActiveCircleService, CIRCLE_CHOICES } from '../core/active-circle.service';
 import { AuthService } from '../core/auth.service';
 
-/** The welcome pages of each circle; a visit to /welcome/<circle> opens one of them, picked by chance (friends have /welcome for now). */
+/** The welcome pages of each circle; a visit to /welcome/<circle> opens one of them, picked by chance . */
 export const CIRCLE_PAGES: Record<string, string[]> = {
-  friends: ['/welcome'],
+  friends: ['/friends1', '/friends2', '/friends3'],
   buddies: ['/buddy1', '/buddy2', '/buddy3'],
   work: ['/work1', '/work2', '/work3'],
   family: ['/family1', '/family2', '/family3'],

@@ -19,6 +19,7 @@ import { About } from './about/about';
 import { Login } from './login/login';
 import { Welcome } from './welcome/welcome';
 import { Buddy } from './buddy/buddy';
+import { FriendsWelcome } from './friends-welcome/friends-welcome';
 import { CircleEntry } from './circle-entry/circle-entry';
 import { Work } from './work/work';
 import { Family } from './family/family';
@@ -121,6 +122,9 @@ export const routes: Routes = [
   { path: 'welcome/buddy', component: CircleEntry, data: { circle: 'buddies', welcome: true }, title: 'Seven Buddies' },
   { path: 'welcome/work', component: CircleEntry, data: { circle: 'work', welcome: true }, title: 'Seven Work' },
   { path: 'welcome/family', component: CircleEntry, data: { circle: 'family', welcome: true }, title: 'Seven Family' },
+  { path: 'friends1', component: FriendsWelcome, data: { variant: 1 }, title: 'Seven Friends' },
+  { path: 'friends2', component: FriendsWelcome, data: { variant: 2 }, title: 'Seven Friends' },
+  { path: 'friends3', component: FriendsWelcome, data: { variant: 3 }, title: 'Seven Friends' },
   { path: 'welcome', component: Welcome, title: 'Welcome – Seven Friends' },
   { path: 'login', component: Login, canActivate: [guestGuard], title: 'Sign in – Seven Friends' },
   { path: 'login/email', component: LoginEmail, canActivate: [guestGuard], title: 'Email link – Seven Friends' },

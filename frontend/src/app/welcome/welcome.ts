@@ -4,6 +4,7 @@ import { AuthService } from '../core/auth.service';
 import { FriendLinkService } from '../core/friend-link.service';
 import { InstallService } from '../core/install.service';
 import { WelcomeService } from '../core/welcome.service';
+import { WhyTiles } from '../why-tiles/why-tiles';
 import { SeatDots } from '../seat-dots/seat-dots';
 import { CIRCLE_PAGES } from '../circle-entry/circle-entry';
 
@@ -15,7 +16,7 @@ import { CIRCLE_PAGES } from '../circle-entry/circle-entry';
  */
 @Component({
   selector: 'app-welcome',
-  imports: [RouterLink, SeatDots],
+  imports: [RouterLink, SeatDots, WhyTiles],
   templateUrl: './welcome.html',
 })
 export class Welcome {
@@ -37,7 +38,7 @@ export class Welcome {
   constructor() {
     // a link that invites into another circle shows the welcome page of that circle (one of its pages, picked by chance)
     const circle = this.friend()?.circle;
-    const pages = circle && circle !== 'friends' ? CIRCLE_PAGES[circle] : undefined;
+    const pages = circle ? CIRCLE_PAGES[circle] : undefined;
     if (pages && !this.auth.user()) void this.router.navigateByUrl(pages[Math.floor(Math.random() * pages.length)], { replaceUrl: true });
   }
 

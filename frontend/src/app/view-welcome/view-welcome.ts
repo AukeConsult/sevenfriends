@@ -20,6 +20,9 @@ export class ViewWelcome {
   protected readonly circles = CIRCLE_CHOICES;
   protected readonly pages: { circle: string; path: string; title: string; note: string; src: SafeResourceUrl }[] = [
     { circle: 'default', path: '/welcome', title: 'Welcome', note: 'The normal first page' },
+    { circle: 'default', path: '/friends1', title: 'Friends 1', note: 'Seven people around you' },
+    { circle: 'default', path: '/friends2', title: 'Friends 2', note: 'Quiet, until it matters' },
+    { circle: 'default', path: '/friends3', title: 'Friends 3', note: 'A private room per friend' },
     { circle: 'buddies', path: '/buddy1', title: 'Buddies 1', note: 'Close buddies only, seats in a row' },
     { circle: 'buddies', path: '/buddy2', title: 'Buddies 2', note: 'Your people, stack and chat' },
     { circle: 'buddies', path: '/buddy3', title: 'Buddies 3', note: 'Your inner circle' },
