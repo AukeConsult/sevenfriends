@@ -1,5 +1,5 @@
 import { PublishedKey, canonicalPublicKey, fingerprintOf, keyIdOf } from '../models';
-import { classify, openFileKey, openMeta, openPart, sealFile, sealMeta } from './box-crypto';
+import { classify, openFileKey, openMeta, openPart, openText, sealFile, sealMeta, sealText } from './box-crypto';
 import { KeyStore, StoredDeviceKey, createDeviceKey } from './device-key';
 
 /** A key store that lives in memory (the real one is IndexedDB). */
@@ -91,5 +91,51 @@ describe('box crypto', () => {
     expect(await classify(new Blob([new Uint8Array([1])], { type: 'image/png' }), 'a.png')).toEqual({ kind: 'image', mime: 'image/png' });
     await expectAsync(classify(new Blob([new Uint8Array([0x4d, 0x5a, 0, 1, 2])]), 'a.exe')).toBeRejectedWithError(/not a supported/);
     await expectAsync(classify(new Blob([]), 'empty.txt')).toBeRejectedWithError(/empty/);
+  });
+
+  describe('the text of a message', () => {
+    const message = 'meet me at the old oak at 7, bring the cake 🎂';
+    const lockMessage = (text = message) => sealText('conn1', text, [{ uid: 'me', keys: [me.published] }, { uid: 'friend', keys: [friend.published] }]);
+
+    it('is locked so that both friends can read it and the server cannot', async () => {
+      const { text, enc } = await lockMessage();
+      expect(enc.wraps.map((w) => w.uid)).toEqual(['me', 'friend']);
+      expect(atob(text)).not.toContain('oak');
+      for (const who of [me, friend]) {
+        const mine = { ...enc, wraps: enc.wraps.filter((w) => w.keyId === who.published.id) };
+        expect(await openText('conn1', mine, text, who.published.id, who.stored.privateKey)).toBe(message);
+      }
+    });
+
+    it('uses a new key and iv for every message', async () => {
+      const [a, b] = [await lockMessage(), await lockMessage()];
+      expect(a.enc.iv).not.toBe(b.enc.iv);
+      expect(a.enc.wraps[0].wrappedKey).not.toBe(b.enc.wraps[0].wrappedKey);
+      expect(a.text).not.toBe(b.text);
+    });
+
+    it('can be empty or long', async () => {
+      for (const text of ['', 'x'.repeat(2000)]) {
+        const { text: locked, enc } = await lockMessage(text);
+        expect(await openText('conn1', enc, locked, me.published.id, me.stored.privateKey)).toBe(text);
+      }
+    });
+
+    it('cannot be read by a key it was not locked for', async () => {
+      const { text, enc } = await lockMessage();
+      await expectAsync(openText('conn1', enc, text, stranger.published.id, stranger.stored.privateKey)).toBeRejectedWithError(/message was locked for another device/);
+      const forFriend = { ...enc, wraps: [{ ...enc.wraps[1], keyId: me.published.id }] };
+      await expectAsync(openText('conn1', forFriend, text, me.published.id, me.stored.privateKey)).toBeRejected();
+    });
+
+    it('is refused when moved to another conversation, changed, or taken for a file part', async () => {
+      const { text, enc } = await lockMessage();
+      await expectAsync(openText('conn2', enc, text, me.published.id, me.stored.privateKey)).toBeRejectedWithError(/changed or damaged/);
+      const bytes = Uint8Array.from(atob(text), (c) => c.charCodeAt(0));
+      bytes[1] ^= 1;
+      await expectAsync(openText('conn1', enc, btoa(String.fromCharCode(...bytes)), me.published.id, me.stored.privateKey)).toBeRejectedWithError(/changed or damaged/);
+      const key = await openFileKey(enc, me.published.id, me.stored.privateKey, 'message');
+      await expectAsync(openMeta('conn1', { ...enc, metaIv: enc.iv, meta: text } as never, key)).toBeRejected();
+    });
   });
 });

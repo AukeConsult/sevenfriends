@@ -104,27 +104,62 @@ export class Friends {
     return this.slots().find((s) => s.position === seat)?.friend ?? null;
   }
 
-  protected dragStart(event: PointerEvent, seat: number): void {
-    event.preventDefault();
-    event.stopPropagation();
-    (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
-    this.dragging.set({ from: seat, startX: event.clientX, startY: event.clientY });
-    this.dragDx.set(0);
-    this.dragDy.set(0);
-    this.dropSeat.set(seat);
+  /** where the pointer is and how far the page was scrolled when the drag began: the card follows the pointer AND the scrolling */
+  private pointer = { x: 0, y: 0 };
+  private startScroll = 0;
+
+  /** How fast the page scrolls (px per frame) while a card is held near the top or bottom edge of the window: down at the bottom edge, up at the top, faster the closer to the edge. */
+  private scrollSpeed(): number {
+    const edge = 120;
+    const top = 56; // under the bar at the top
+    const bottom = window.innerHeight - this.pointer.y;
+    if (bottom < edge) return Math.ceil(((edge - Math.max(bottom, 0)) / edge) * 24);
+    if (this.pointer.y < top + edge) return -Math.ceil(((top + edge - Math.max(this.pointer.y, 0)) / (top + edge)) * 24);
+    return 0;
   }
 
-  protected dragMove(event: PointerEvent): void {
+  /** The card follows the pointer, and what is under it decides the seat (or the sleep list) to drop on. */
+  private dragUpdate(): void {
     const drag = this.dragging();
     if (!drag) return;
-    this.dragDx.set(event.clientX - drag.startX);
-    this.dragDy.set(event.clientY - drag.startY);
-    const under = document.elementFromPoint(event.clientX, event.clientY);
+    this.dragDx.set(this.pointer.x - drag.startX);
+    this.dragDy.set(this.pointer.y - drag.startY + (window.scrollY - this.startScroll));
+    const under = document.elementFromPoint(this.pointer.x, this.pointer.y);
     const sleep = !!under?.closest('[data-sleep]') && !!this.friendIn(drag.from) && this.sleepable(this.friendIn(drag.from)!);
     this.overSleep.set(sleep);
     const seat = under?.closest('[data-seat]')?.getAttribute('data-seat');
     if (sleep) this.dropSeat.set(drag.from);
     else if (seat) this.dropSeat.set(Number(seat));
+  }
+
+  /** While a card is held, the page scrolls when it is near the top or bottom edge (so the sleep list or a far seat comes into view). */
+  private autoScroll = (): void => {
+    if (!this.dragging()) return;
+    const speed = this.scrollSpeed();
+    if (speed) {
+      window.scrollBy({ top: speed, behavior: 'instant' }); // not 'smooth': the page's own smooth scrolling (Bootstrap) would make every small step slow and Android crawls
+      this.dragUpdate(); // the page moved under the pointer
+    }
+    requestAnimationFrame(this.autoScroll);
+  };
+
+  protected dragStart(event: PointerEvent, seat: number): void {
+    event.preventDefault();
+    event.stopPropagation();
+    (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
+    this.dragging.set({ from: seat, startX: event.clientX, startY: event.clientY });
+    this.pointer = { x: event.clientX, y: event.clientY };
+    this.startScroll = window.scrollY;
+    this.dragDx.set(0);
+    this.dragDy.set(0);
+    this.dropSeat.set(seat);
+    requestAnimationFrame(this.autoScroll);
+  }
+
+  protected dragMove(event: PointerEvent): void {
+    if (!this.dragging()) return;
+    this.pointer = { x: event.clientX, y: event.clientY };
+    this.dragUpdate();
   }
 
   protected async dragEnd(event: PointerEvent, cancelled = false): Promise<void> {

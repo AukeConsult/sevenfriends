@@ -3,10 +3,12 @@ import { DecodedIdToken } from "firebase-admin/auth";
 import { DocumentReference, FieldValue, Timestamp, getFirestore } from "firebase-admin/firestore";
 import { asyncHandler } from "./auth";
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION } from "./constants";
-import { ChatMessage, Conversation, MediaRef, MessageDeleteCriteria, MessageLink, MessageDeleteResult, NewMedia } from "./models";
+import { ChatMessage, Conversation, MediaRef, MessageDeleteCriteria, MessageEnc, MessageLink, MessageDeleteResult, NewMedia } from "./models";
 import { circleCol, messageCol, missingIndex, userFields } from "./paths";
 import { sendPush } from "./push";
 import { linkOf } from "./link-preview";
+import { Refused, parseMessageEnc, wrapsCover, wrapsFor } from "./box-encryption";
+import { publishedKeysOf } from "./keys";
 import { touchFeed, touchFeedIfExists } from "./sync";
 import { deleteObject, deleteObjects, isObjectId, mediaLabel, objectInfo } from "./sf-cache";
 
@@ -63,7 +65,7 @@ conversationRouter.get(
     const feed = messageCol(uid).where("connectionId", "==", connection.id);
     let docs: FirebaseFirestore.QueryDocumentSnapshot[];
     try {
-      docs = (await feed.orderBy("time", "desc").limit(FEED_LIMIT).select("text", "fromUid", "read", "time", "editedAt", "hidden", "inBox", "media", "link").get()).docs;
+      docs = (await feed.orderBy("time", "desc").limit(FEED_LIMIT).select("text", "fromUid", "read", "time", "editedAt", "hidden", "inBox", "media", "link", "enc").get()).docs;
     } catch (err) {
       if (!missingIndex(err)) throw err;
       console.warn("The index messages(connectionId, time) is not there yet: reading the whole feed", err); // works, only slower, until the index is built
@@ -72,7 +74,7 @@ conversationRouter.get(
     const messages: ChatMessage[] = docs
       .map((d) => {
         const m = d.data();
-        return { id: d.id, text: m.text as string, mine: m.fromUid === uid, read: Boolean(m.read), time: iso(m.time), edited: Boolean(m.editedAt), hidden: Boolean(m.hidden), inBox: Boolean(m.inBox) || (!m.text && !m.media && !m.link), media: (m.media as MediaRef | undefined) ?? null, link: (m.link as MessageLink | undefined) ?? null };
+        return { id: d.id, text: m.text as string, mine: m.fromUid === uid, read: Boolean(m.read), time: iso(m.time), edited: Boolean(m.editedAt), hidden: Boolean(m.hidden), inBox: Boolean(m.inBox) || (!m.text && !m.media && !m.link), media: (m.media as MediaRef | undefined) ?? null, link: (m.link as MessageLink | undefined) ?? null, ...(m.enc ? { enc: m.enc as MessageEnc } : {}) };
       })
       .sort((a, b) => (a.time ?? "").localeCompare(b.time ?? ""))
       .slice(-FEED_LIMIT);
@@ -107,6 +109,28 @@ async function attachedMedia(uid: string, body: NewMedia, res: Response): Promis
   };
 }
 
+/**
+ * A locked text (design: docs/design/message-encryption.md): the body of a send or an edit may carry `enc` next to `text`, and then `text` is the locked text.
+ * Answers with an error and returns null when it is not valid or when a key of me or my friend was added or retired while the person was sending (the
+ * app then asks again for the keys and locks the text anew). Returns undefined when the body has no `enc`: a plain text, as before.
+ */
+async function lockedText(body: unknown, myUid: string, peerUid: string, res: Response): Promise<{ text: string; enc: MessageEnc } | null | undefined> {
+  const raw = body as { text?: unknown; enc?: unknown } | undefined;
+  if (raw?.enc === undefined) return undefined;
+  const parsed = parseMessageEnc(raw.text, raw.enc);
+  if ("error" in parsed) {
+    const refused = parsed as Refused;
+    res.status(refused.status).json({ error: refused.error });
+    return null;
+  }
+  const [mine, friend] = await Promise.all([publishedKeysOf(myUid), publishedKeysOf(peerUid)]);
+  if (!wrapsCover(parsed.enc, [{ uid: myUid, keys: mine }, { uid: peerUid, keys: friend }])) {
+    res.status(409).json({ error: "The encryption keys changed while the message was sent. Try again." });
+    return null;
+  }
+  return parsed;
+}
+
 /** Send a message: { text?, media? }, a text, a file you uploaded (the text is then its caption) or both. Both people get a copy. */
 conversationRouter.post(
   "/",
@@ -115,12 +139,15 @@ conversationRouter.post(
     if (!connection) return;
     const token = res.locals.token as DecodedIdToken;
 
-    const text = typeof req.body?.text === "string" ? req.body.text.trim() : "";
+    // `enc` = the text is locked on the sender's device (then `text` is the locked text and the server never reads it)
+    const locked = await lockedText(req.body, token.uid, connection.peerUid, res);
+    if (locked === null) return;
+    const text = locked ? locked.text : typeof req.body?.text === "string" ? req.body.text.trim() : "";
     if (!text && !req.body?.media) {
       res.status(400).json({ error: "Write a message first" });
       return;
     }
-    if (text.length > MAX_MESSAGE_LENGTH) {
+    if (!locked && text.length > MAX_MESSAGE_LENGTH) {
       res.status(400).json({ error: `A message can be at most ${MAX_MESSAGE_LENGTH} characters` });
       return;
     }
@@ -138,7 +165,7 @@ conversationRouter.post(
       return;
     }
 
-    const link = await linkOf(text); // the page of the link may be shown in a frame (checked once, here)
+    const link = locked ? null : await linkOf(text); // the page of the link may be shown in a frame (checked once, here); a locked text cannot be read, so it has none
     const mine = media ? messageCol(token.uid).doc(media.objectId) : messageCol(token.uid).doc(); // a message with a file has the id of the file: that is how the receiver is let in
     const theirs = messageCol(connection.peerUid).doc(mine.id); // same message id on both sides
     const common = {
@@ -153,8 +180,9 @@ conversationRouter.post(
     };
     const batch = getFirestore().batch();
     // each copy says which circle it belongs to FOR ITS OWNER: mine in my circle, the friend's in theirs
-    batch.set(mine, { ...common, circleId: connection.circleId, read: true }); // my own message needs no reading
-    batch.set(theirs, { ...common, circleId: connection.peerCircleId, read: false });
+    // a locked message keeps in each copy only that person's copies of the message key
+    batch.set(mine, { ...common, ...(locked ? { enc: wrapsFor(locked.enc, token.uid) } : {}), circleId: connection.circleId, read: true }); // my own message needs no reading
+    batch.set(theirs, { ...common, ...(locked ? { enc: wrapsFor(locked.enc, connection.peerUid) } : {}), circleId: connection.peerCircleId, read: false });
     // "last spoken to": both sides of the friendship remember when the last message was written
     const myEntry = (res.locals.circleRef as DocumentReference).collection(FRIENDS_SUBCOLLECTION).doc(connection.id);
     batch.update(myEntry, { lastMessageAt: FieldValue.serverTimestamp() });
@@ -163,9 +191,9 @@ conversationRouter.post(
     await batch.commit();
 
     const saved = (await mine.get()).data()!;
-    const created: ChatMessage = { id: mine.id, text, media, mine: true, read: true, time: iso(saved.time), edited: false, hidden: false, link };
+    const created: ChatMessage = { id: mine.id, text, media, mine: true, read: true, time: iso(saved.time), edited: false, hidden: false, link, ...(locked ? { enc: wrapsFor(locked.enc, token.uid) } : {}) };
     // wake the other person's devices (before the answer: the function may stop right after it)
-    await sendPush(connection.peerUid, { id: `message-${mine.id}`, title: common.fromName, body: text || mediaLabel(media!.kind), url: `/friends/${connection.id}`, kind: "message" });
+    await sendPush(connection.peerUid, { id: `message-${mine.id}`, title: common.fromName, body: locked ? "🔒 New message" : text || mediaLabel(media!.kind), url: `/friends/${connection.id}`, kind: "message" });
     res.status(201).json(created);
   }),
 );
@@ -198,12 +226,12 @@ conversationRouter.post(
     const contains = typeof body.contains === "string" ? body.contains.trim().toLowerCase().slice(0, 100) : "";
     const cutoff = days === null ? null : Date.now() - days * DAY_MS;
 
-    const snap = await messageCol(uid).where("connectionId", "==", connection.id).select("fromUid", "time", "text", "media").get();
+    const snap = await messageCol(uid).where("connectionId", "==", connection.id).select("fromUid", "time", "text", "media", "enc").get();
     const matching = snap.docs.filter((d) => {
       const m = d.data();
       if (whose === "mine" && m.fromUid !== uid) return false;
       if (cutoff !== null && !(m.time instanceof Timestamp && m.time.toMillis() < cutoff)) return false;
-      return !contains || String(m.text).toLowerCase().includes(contains);
+      return !contains || (!m.enc && String(m.text).toLowerCase().includes(contains)); // a locked text cannot be searched on the server
     });
 
     let deleted = 0;
@@ -248,7 +276,7 @@ async function ownMessage(req: Request, res: Response, allowMoved = false) {
     return null;
   }
   const myEntry = (res.locals.circleRef as DocumentReference).collection(FRIENDS_SUBCOLLECTION).doc(connection.id);
-  return { mine, theirs: messageCol(connection.peerUid).doc(mine.id), peerEntry: peerEntryOf(connection), myEntry, media: (data.media as MediaRef | undefined) ?? null, hidden: Boolean(data.hidden) };
+  return { mine, theirs: messageCol(connection.peerUid).doc(mine.id), peerEntry: peerEntryOf(connection), myEntry, media: (data.media as MediaRef | undefined) ?? null, hidden: Boolean(data.hidden), wasLocked: Boolean(data.enc), peerUid: connection.peerUid };
 }
 
 /** The friend's copy of the friendship. */
@@ -262,25 +290,33 @@ conversationRouter.put(
   asyncHandler(async (req, res) => {
     const own = await ownMessage(req, res);
     if (!own) return;
-    const text = typeof req.body?.text === "string" ? req.body.text.trim() : "";
+    const uid = uidOf(res);
+    const locked = await lockedText(req.body, uid, own.peerUid, res); // a new text is locked with a NEW message key
+    if (locked === null) return;
+    if (!locked && own.wasLocked) {
+      res.status(400).json({ error: "A locked message stays locked: send the new text locked" });
+      return;
+    }
+    const text = locked ? locked.text : typeof req.body?.text === "string" ? req.body.text.trim() : "";
     if (!text && !own.media) {
       res.status(400).json({ error: "Write a message first" });
       return;
     }
-    if (text.length > MAX_MESSAGE_LENGTH) {
+    if (!locked && text.length > MAX_MESSAGE_LENGTH) {
       res.status(400).json({ error: `A message can be at most ${MAX_MESSAGE_LENGTH} characters` });
       return;
     }
-    const link = await linkOf(text);
+    const link = locked ? null : await linkOf(text);
     const change = { text, editedAt: FieldValue.serverTimestamp(), link: link ?? FieldValue.delete() }; // the link follows the new text
+    const enc = (person: string) => (locked ? wrapsFor(locked.enc, person) : FieldValue.delete()); // each copy keeps only its owner's copies of the key
     const batch = getFirestore().batch();
-    batch.update(own.mine, change);
-    if ((await own.theirs.get()).exists) batch.update(own.theirs, change);
+    batch.update(own.mine, { ...change, enc: enc(uid) });
+    if ((await own.theirs.get()).exists) batch.update(own.theirs, { ...change, enc: enc(own.peerUid) });
     await touchFeedIfExists(batch, own.peerEntry);
     touchFeed(batch, own.myEntry); // my other devices reload the feed
     await batch.commit();
     const saved = (await own.mine.get()).data()!;
-    const edited: ChatMessage = { id: own.mine.id, text, media: own.media, mine: true, read: true, time: iso(saved.time), edited: true, hidden: own.hidden, link };
+    const edited: ChatMessage = { id: own.mine.id, text, media: own.media, mine: true, read: true, time: iso(saved.time), edited: true, hidden: own.hidden, link, ...(locked ? { enc: wrapsFor(locked.enc, uid) } : {}) };
     res.json(edited);
   }),
 );

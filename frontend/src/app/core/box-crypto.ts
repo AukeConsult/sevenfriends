@@ -1,18 +1,21 @@
-import { EncryptedUploadHeader, PublishedKey, SafeboxEnc, SafeboxKind } from '../models';
+import { EncryptedUploadHeader, MessageEnc, PublishedKey, SafeboxEnc, SafeboxKind, SafeboxWrap } from '../models';
 
 /**
  * The encryption of a safebox file (design: docs/design/safebox-encryption.md). Each file gets a random AES-256-GCM key; the file, its small
  * preview and its name and type ("meta") are locked with it. The file key is then locked (RSA-OAEP) once for every key in use of the two friends,
  * so either can open the file. Everything here runs in the browser: the server only ever gets ciphertext and the locked copies of the file key.
  *
- * Every AES lock binds the friendship and the part ("file", "thumb" or "meta") as additional data, so the server cannot move a file or a preview
- * to another box, or swap one part for another, without the opening failing.
+ * Every AES lock binds the friendship and the part ("file", "thumb", "meta" or, for a message, "text") as additional data, so the server cannot move a
+ * file or a preview to another box, or swap one part for another, without the opening failing.
+ *
+ * A message (design: docs/design/message-encryption.md) is locked the same way: its own random key, the text locked with it (part "text"), and the
+ * key locked once for every key in use of both friends (`sealText`, `openText`).
  */
 
 const RSA: RsaHashedImportParams = { name: 'RSA-OAEP', hash: 'SHA-256' };
 const FILE_KEY_USAGES: KeyUsage[] = ['encrypt', 'decrypt'];
 
-export type Part = 'file' | 'thumb' | 'meta';
+export type Part = 'file' | 'thumb' | 'meta' | 'text';
 
 /** What is locked in `meta`: the real name and type of the file. */
 export interface BoxMeta {
@@ -58,6 +61,22 @@ async function unlock(key: CryptoKey, connectionId: string, part: Part, iv: stri
   }
 }
 
+/** A new random AES-256-GCM key: for one file, or for one message. */
+const newKey = (): Promise<CryptoKey> => crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, true, FILE_KEY_USAGES);
+
+/** The key locked (RSA-OAEP) once for every key in use of the people: the copies the server keeps next to the locked data. */
+async function wrapKeyFor(key: CryptoKey, recipients: Recipient[]): Promise<SafeboxWrap[]> {
+  const wraps: SafeboxWrap[] = [];
+  for (const person of recipients) {
+    for (const published of person.keys) {
+      const publicKey = await crypto.subtle.importKey('jwk', published.publicKey, RSA, false, ['wrapKey']);
+      const wrapped = await crypto.subtle.wrapKey('raw', key, publicKey, { name: 'RSA-OAEP' });
+      wraps.push({ uid: person.uid, keyId: published.id, wrappedKey: toBase64(wrapped) });
+    }
+  }
+  return wraps;
+}
+
 /** What kind of file this is and its type, from what the browser says and its first bytes; throws for a kind the box does not take. */
 export async function classify(file: Blob, name: string): Promise<{ kind: SafeboxKind; mime: string }> {
   const type = file.type.split(';')[0].trim().toLowerCase();
@@ -78,18 +97,11 @@ export async function classify(file: Blob, name: string): Promise<{ kind: Safebo
  */
 export async function sealFile(input: { connectionId: string; file: Blob; name: string; kind: SafeboxKind; mime: string; thumb?: Blob | null; recipients: Recipient[] }): Promise<Blob> {
   const { connectionId } = input;
-  const fileKey = await crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, true, FILE_KEY_USAGES);
+  const fileKey = await newKey();
   const file = await lock(fileKey, connectionId, 'file', await input.file.arrayBuffer());
   const thumb = input.thumb ? await lock(fileKey, connectionId, 'thumb', await input.thumb.arrayBuffer()) : null;
   const meta = await lock(fileKey, connectionId, 'meta', encoder.encode(JSON.stringify({ name: input.name, mime: input.mime } satisfies BoxMeta)));
-  const wraps: SafeboxEnc['wraps'] = [];
-  for (const person of input.recipients) {
-    for (const key of person.keys) {
-      const publicKey = await crypto.subtle.importKey('jwk', key.publicKey, RSA, false, ['wrapKey']);
-      const wrapped = await crypto.subtle.wrapKey('raw', fileKey, publicKey, { name: 'RSA-OAEP' });
-      wraps.push({ uid: person.uid, keyId: key.id, wrappedKey: toBase64(wrapped) });
-    }
-  }
+  const wraps = await wrapKeyFor(fileKey, input.recipients);
   const header: EncryptedUploadHeader = {
     v: 1,
     kind: input.kind,
@@ -104,13 +116,13 @@ export async function sealFile(input: { connectionId: string; file: Blob; name: 
 }
 
 /** The file key of an encrypted file, opened with the private key of this device; throws when none of the copies was locked for this key. */
-export async function openFileKey(enc: SafeboxEnc, myKeyId: string, privateKey: CryptoKey): Promise<CryptoKey> {
+export async function openFileKey(enc: { wraps: SafeboxWrap[] }, myKeyId: string, privateKey: CryptoKey, noun: 'file' | 'message' = 'file'): Promise<CryptoKey> {
   const wrap = enc.wraps.find((w) => w.keyId === myKeyId);
-  if (!wrap) throw new Error('This file was locked for another device.');
+  if (!wrap) throw new Error(`This ${noun} was locked for another device.`);
   try {
     return await crypto.subtle.unwrapKey('raw', fromBase64(wrap.wrappedKey), privateKey, { name: 'RSA-OAEP' }, { name: 'AES-GCM', length: 256 }, false, FILE_KEY_USAGES);
   } catch {
-    throw new Error('This file could not be opened with the key on this device.');
+    throw new Error(`This ${noun} could not be opened with the key on this device.`);
   }
 }
 
@@ -131,4 +143,20 @@ export async function openMeta(connectionId: string, enc: SafeboxEnc, fileKey: C
 export async function sealMeta(connectionId: string, fileKey: CryptoKey, meta: BoxMeta): Promise<{ metaIv: string; meta: string }> {
   const sealed = await lock(fileKey, connectionId, 'meta', encoder.encode(JSON.stringify(meta)));
   return { metaIv: toBase64(sealed.iv), meta: toBase64(sealed.data) };
+}
+
+/**
+ * Locks the text of a message: a new key for this message, the text locked with it, the key locked for every key in use of both friends.
+ * Returns what the server keeps: `text` is the locked text (base64) and replaces the plain text; `enc` holds the iv and the locked key copies.
+ */
+export async function sealText(connectionId: string, text: string, recipients: Recipient[]): Promise<{ text: string; enc: MessageEnc }> {
+  const key = await newKey();
+  const sealed = await lock(key, connectionId, 'text', encoder.encode(text));
+  return { text: toBase64(sealed.data), enc: { v: 1, iv: toBase64(sealed.iv), wraps: await wrapKeyFor(key, recipients) } };
+}
+
+/** The text of a locked message, opened with the private key of this device; throws when no copy was locked for this key or the text was changed. */
+export async function openText(connectionId: string, enc: MessageEnc, text: string, myKeyId: string, privateKey: CryptoKey): Promise<string> {
+  const key = await openFileKey(enc, myKeyId, privateKey, 'message');
+  return new TextDecoder().decode(await unlock(key, connectionId, 'text', enc.iv, fromBase64(text)));
 }

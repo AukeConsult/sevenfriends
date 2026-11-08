@@ -11,14 +11,14 @@ const uidOf = (res: { locals: Record<string, unknown> }) => (res.locals.token as
 
 /** My unread incoming messages, newest first. */
 export async function listUnreadMessages(uid: string): Promise<Message[]> {
-  const snap = await messageCol(uid).where("read", "==", false).select("fromName", "text", "media", "inBox", "time", "connectionId").get();
+  const snap = await messageCol(uid).where("read", "==", false).select("fromName", "text", "media", "inBox", "time", "connectionId", "enc").get();
   return snap.docs
     .map((d) => {
       const data = d.data();
       return {
         id: d.id,
         fromName: (data.fromName as string) ?? "Someone",
-        text: (data.text as string) || (data.media ? mediaLabel(data.media.kind) : data.inBox ? "📦 In the safebox" : ""),
+        text: (data.enc ? "🔒 Message" : (data.text as string)) || (data.media ? mediaLabel(data.media.kind) : data.inBox ? "📦 In the safebox" : ""),
         time: data.time instanceof Timestamp ? data.time.toDate().toISOString() : null,
         connectionId: (data.connectionId as string | undefined) ?? null,
         circleId: circleIdOf(data),

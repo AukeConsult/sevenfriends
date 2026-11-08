@@ -1,4 +1,5 @@
 import { MediaRef } from "./media";
+import { SafeboxWrap } from "./safebox";
 
 /** An unread message, as listed on Home. */
 export interface Message {
@@ -20,6 +21,18 @@ export interface MessageLink {
   embedUrl: string | null;
 }
 
+/**
+ * What makes the text of a message locked (design: docs/design/message-encryption.md). The text is AES-256-GCM with one random key for this message
+ * (base64, in the `text` field in place of the plain text); `wraps` are the copies of that key, one for every key in use of both friends (the same
+ * shape as in the safebox). In a message sent to the app `wraps` holds only the copies for the reader.
+ */
+export interface MessageEnc {
+  v: 1;
+  /** the iv of the text (12 bytes, base64) */
+  iv: string;
+  wraps: SafeboxWrap[];
+}
+
 /** A message in the feed of one connection. */
 export interface ChatMessage {
   id: string;
@@ -39,6 +52,8 @@ export interface ChatMessage {
   inBox?: boolean;
   /** the first link of the text, or null */
   link: MessageLink | null;
+  /** set when the text is locked: `text` is then the locked text (base64) and this holds the iv and MY copies of the message key (see MessageEnc) */
+  enc?: MessageEnc;
 }
 
 /** The feed of one connection. */

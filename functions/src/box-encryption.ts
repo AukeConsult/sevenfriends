@@ -1,4 +1,4 @@
-import { ENC_HEADER_MAX, EncryptedUploadHeader, PublishedKey, SafeboxEnc, SafeboxKind } from "./models";
+import { ENC_HEADER_MAX, EncryptedUploadHeader, MessageEnc, PublishedKey, SafeboxEnc, SafeboxKind, SafeboxWrap } from "./models";
 
 /** The server cannot look inside an encrypted file: it checks the shape of what it is sent and that every key of both friends has its copy of the file key. */
 
@@ -11,6 +11,8 @@ const IV_LENGTH = 16;
 const WRAP_LENGTH = 512;
 const MAX_META_LENGTH = 1500;
 const MAX_WRAPS = 40;
+/** The most a locked message text may be (base64): 2000 characters are at most 6000 bytes, plus the 16 bytes of the lock. */
+const MAX_LOCKED_TEXT_LENGTH = Math.ceil((6000 + 16) / 3) * 4;
 
 export interface EncryptedUpload {
   header: EncryptedUploadHeader;
@@ -22,6 +24,12 @@ export type Refused = { status: number; error: string };
 const bad = (error: string, status = 400): Refused => ({ status, error });
 
 const isBase64 = (v: unknown, length?: number): v is string => typeof v === "string" && BASE64.test(v) && (length === undefined || v.length === length);
+
+/** The copies of a file key or message key: at least one, not too many, each locked for a key id and a person. */
+function wrapsValid(wraps: unknown): wraps is SafeboxWrap[] {
+  if (!Array.isArray(wraps) || !wraps.length || wraps.length > MAX_WRAPS) return false;
+  return wraps.every((w) => w && typeof w.uid === "string" && w.uid && KEY_ID.test(w.keyId) && isBase64(w.wrappedKey, WRAP_LENGTH));
+}
 
 /** Cuts the request body into header, file and preview, and checks the header's shape. */
 export function parseEncryptedUpload(body: Buffer, maxFileBytes: number): EncryptedUpload | Refused {
@@ -44,10 +52,7 @@ export function parseEncryptedUpload(body: Buffer, maxFileBytes: number): Encryp
   if (thumbLength && (thumbLength as number) < 16) return bad("The upload is not valid");
   if (!isBase64(enc.iv, IV_LENGTH) || !isBase64(enc.metaIv, IV_LENGTH) || !isBase64(enc.meta) || enc.meta.length > MAX_META_LENGTH) return bad("The upload is not valid");
   if (thumbLength ? !isBase64(enc.thumbIv, IV_LENGTH) : enc.thumbIv !== null) return bad("The upload is not valid");
-  if (!Array.isArray(enc.wraps) || !enc.wraps.length || enc.wraps.length > MAX_WRAPS) return bad("The upload is not valid");
-  for (const w of enc.wraps) {
-    if (!w || typeof w.uid !== "string" || !w.uid || !KEY_ID.test(w.keyId) || !isBase64(w.wrappedKey, WRAP_LENGTH)) return bad("The upload is not valid");
-  }
+  if (!wrapsValid(enc.wraps)) return bad("The upload is not valid");
   const start = 4 + headerLength;
   const file = body.subarray(start, start + (fileLength as number));
   const thumb = thumbLength ? body.subarray(start + (fileLength as number)) : null;
@@ -66,7 +71,7 @@ export function parseEncryptedUpload(body: Buffer, maxFileBytes: number): Encryp
  * Every key in use of me and of my friend must have exactly one copy of the file key, and nothing else may be there. If a key was added or
  * retired while the person was sending, the copies do not fit any more: the app asks again for the keys and locks the file anew.
  */
-export function wrapsCover(enc: SafeboxEnc, people: { uid: string; keys: PublishedKey[] }[]): boolean {
+export function wrapsCover(enc: { wraps: SafeboxWrap[] }, people: { uid: string; keys: PublishedKey[] }[]): boolean {
   const expected = people.flatMap((p) => p.keys.map((k) => `${p.uid}/${k.id}`));
   const given = enc.wraps.map((w) => `${w.uid}/${w.keyId}`);
   if (!expected.length || new Set(given).size !== given.length || given.length !== expected.length) return false;
@@ -74,4 +79,17 @@ export function wrapsCover(enc: SafeboxEnc, people: { uid: string; keys: Publish
 }
 
 /** The copies of the file key that a person may see: their own (the others stay on the server). */
-export const wrapsFor = (enc: SafeboxEnc, uid: string): SafeboxEnc => ({ ...enc, wraps: enc.wraps.filter((w) => w.uid === uid) });
+export const wrapsFor = <T extends { wraps: SafeboxWrap[] }>(enc: T, uid: string): T => ({ ...enc, wraps: enc.wraps.filter((w) => w.uid === uid) });
+
+/**
+ * A locked message (design: docs/design/message-encryption.md): `text` is the locked text (base64) and `enc` the iv and the copies of the message
+ * key. Checks the shape only, the server cannot look inside; keeps just the known fields. The caller checks the copies with `wrapsCover`.
+ */
+export function parseMessageEnc(text: unknown, enc: unknown): { text: string; enc: MessageEnc } | Refused {
+  const e = enc as Partial<MessageEnc> | null;
+  if (!e || typeof e !== "object" || e.v !== 1) return bad("The locked message is not valid");
+  // the locked text is the 16-byte lock plus at least one byte, and a multiple of 4 characters of base64
+  if (!isBase64(text) || text.length < 24 || text.length > MAX_LOCKED_TEXT_LENGTH || text.length % 4 !== 0) return bad("The locked message is not valid");
+  if (!isBase64(e.iv, IV_LENGTH) || !wrapsValid(e.wraps)) return bad("The locked message is not valid");
+  return { text, enc: { v: 1, iv: e.iv, wraps: e.wraps.map((w) => ({ uid: w.uid, keyId: w.keyId, wrappedKey: w.wrappedKey })) } };
+}
