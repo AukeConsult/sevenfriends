@@ -3,7 +3,7 @@ import { DecodedIdToken } from "firebase-admin/auth";
 import { DocumentReference, FieldValue, Timestamp, getFirestore } from "firebase-admin/firestore";
 import { asyncHandler } from "./auth";
 import { FRIENDS_SUBCOLLECTION, MAX_UPLOAD_BYTES, SAFEBOX_MAX_BYTES, SAFEBOX_MAX_ITEMS, boxOwner } from "./constants";
-import { connectionOf } from "./conversation";
+import { connectionOf, sleepsMe } from "./conversation";
 import { BoxKeys, ENC_HEADER_MAX, MediaRef, Safebox, SafeboxItem } from "./models";
 import { parseEncryptedUpload, wrapsCover, wrapsFor } from "./box-encryption";
 import { publishedKeysOf } from "./keys";
@@ -117,7 +117,7 @@ async function announceItem(res: Response, connection: Connection): Promise<void
     touchFeed(batch, myEntry);
     await touchFeedIfExists(batch, circleCol(connection.peerUid).doc(connection.peerCircleId).collection(FRIENDS_SUBCOLLECTION).doc(connection.id));
     await batch.commit();
-    await sendPush(connection.peerUid, { id: `message-${mine.id}`, title: fromName, body: "📦 Added to the safebox", url: `/friends/${connection.id}/safebox`, kind: "message" });
+    if (!(await sleepsMe(connection))) await sendPush(connection.peerUid, { id: `message-${mine.id}`, title: fromName, body: "📦 Added to the safebox", url: `/friends/${connection.id}/safebox`, kind: "message" });
   } catch (err) {
     console.error("Could not announce the safebox item", err);
   }
@@ -264,7 +264,7 @@ safeboxRouter.post(
     await touchFeedIfExists(batch, circleCol(connection.peerUid).doc(connection.peerCircleId).collection(FRIENDS_SUBCOLLECTION).doc(connection.id));
     await batch.commit();
     await deleteObject(media.ownerId, media.objectId); // the file (and its preview) now lives in the box only
-    await sendPush(connection.peerUid, { id: `message-${messageId}-box`, title: fromName, body: "📦 Moved to the safebox", url: `/friends/${connection.id}/safebox`, kind: "message" });
+    if (!(await sleepsMe(connection))) await sendPush(connection.peerUid, { id: `message-${messageId}-box`, title: fromName, body: "📦 Moved to the safebox", url: `/friends/${connection.id}/safebox`, kind: "message" });
     res.status(201).json(item);
   }),
 );

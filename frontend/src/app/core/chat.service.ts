@@ -40,16 +40,16 @@ export class ChatService {
   }
 
   /** Sends a text message, locked on this device when both of us have a key and locking is on, plain otherwise. */
-  send(friendId: string, text: string): Promise<ChatItem> {
-    return this.lockedRequest(friendId, text, false, (body) => this.api.request<ChatMessage>(this.base(friendId), { method: 'POST', body: JSON.stringify(body) }));
+  send(friendId: string, text: string, poke = false): Promise<ChatItem> {
+    return this.lockedRequest(friendId, text, false, (body) => this.api.request<ChatMessage>(this.base(friendId), { method: 'POST', body: JSON.stringify(poke ? { ...body, poke } : body) }));
   }
 
   /**
    * Sends a message with a file that was uploaded (the text is its caption, and may be empty). A file that was uploaded locked (`locked`) goes with its caption
    * locked by the same message key, and the copies of the key are made now for the keys in use now (once more if they changed meanwhile); a plain file goes with a plain caption.
    */
-  async sendMedia(friendId: string, text: string, media: NewMedia, locked?: { key: CryptoKey; media: MessageEncMedia }): Promise<ChatItem> {
-    const post = (body: object) => this.api.request<ChatMessage>(this.base(friendId), { method: 'POST', body: JSON.stringify({ ...body, media }) });
+  async sendMedia(friendId: string, text: string, media: NewMedia, locked?: { key: CryptoKey; media: MessageEncMedia }, poke = false): Promise<ChatItem> {
+    const post = (body: object) => this.api.request<ChatMessage>(this.base(friendId), { method: 'POST', body: JSON.stringify({ ...body, media, ...(poke ? { poke } : {}) }) });
     if (!locked) return this.lock.open(friendId, await post({ text }));
     for (let attempt = 0; ; attempt++) {
       const sealed = await this.lock.sealWith(friendId, locked.key, text, locked.media);

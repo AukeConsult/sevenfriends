@@ -49,6 +49,10 @@ export class FriendContext {
   }
 
   /** the friend's name for a sentence */
+  /** "Poke anyway" is on for the next message (only offered when the friend has me on their sleep list); it goes off again after a send. */
+  readonly poke = signal(false);
+  /** The next message is a poke: it makes a sound for a friend who has me on their sleep list. */
+  readonly pokes = computed(() => this.poke() && this.friend()?.sleepsMe === true);
   readonly friendName = computed(() => this.friend()?.name ?? 'your friend');
 
   readonly friend = computed(() => this.friends.friends().find((f) => f.id === this.friendId) ?? null);

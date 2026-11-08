@@ -1,4 +1,5 @@
 import { Capacitor } from '@capacitor/core';
+import { FriendContext } from '../friend-page/friend-context';
 import { Component, OnDestroy, OnInit, computed, inject, input, output, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Camera } from '../camera/camera';
@@ -45,6 +46,7 @@ const TEXT = {
 export class AddMedia implements OnInit, OnDestroy {
   private readonly media = inject(MediaService);
   private readonly chat = inject(ChatService);
+  private readonly ctx = inject(FriendContext, { optional: true }); // only inside a friend page (the pages of the old routes have none)
   private readonly lock = inject(MessageLockService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
@@ -261,7 +263,8 @@ export class AddMedia implements OnInit, OnDestroy {
       this.working.set('Sending…');
       const size = 'width' in file && !this.sealed ? { width: file.width, height: file.height } : {}; // a locked file's size is inside the lock
       sending = true;
-      const message = await this.chat.sendMedia(this.friendId, (this.hosted() ? this.captionIn() : this.caption()).trim(), { objectId: this.stored.objectId, ...size, durationMs: this.sealed ? undefined : (this.durationMs() ?? undefined) }, this.sealed ?? undefined);
+      const message = await this.chat.sendMedia(this.friendId, (this.hosted() ? this.captionIn() : this.caption()).trim(), { objectId: this.stored.objectId, ...size, durationMs: this.sealed ? undefined : (this.durationMs() ?? undefined) }, this.sealed ?? undefined, this.ctx?.pokes() ?? false);
+      this.ctx?.poke.set(false);
       if (this.embedded) this.sent.emit(message); // the feed adds it and closes this panel
       else await this.router.navigate(['/friends', this.friendId]); // the conversation loads the message, and the file, from the server
     } catch (err: any) {

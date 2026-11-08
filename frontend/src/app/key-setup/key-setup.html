@@ -24,7 +24,7 @@
       <button type="button" class="btn btn-light" [disabled]="busy()" (click)="cancel()">Cancel</button>
       <button type="button" class="btn btn-primary" [disabled]="!proved() || busy()" (click)="done()">{{ busy() ? 'Saving and checking…' : 'Save my key' }}</button>
     </div>
-    <span class="small text-secondary">Cancel makes no key. You can make one later under Settings → Encryption.</span>
+    <span class="small text-secondary">Cancel makes no key. You can make one later under Settings → Keys.</span>
   </div>
   @if (problem(); as text) { <div class="alert alert-warning m-0" role="alert">{{ text }}</div> }
 } @else {

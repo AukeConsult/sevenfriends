@@ -1,0 +1,141 @@
+@if (!auth.user()) {
+  <div class="sf-back-row">
+    <a routerLink="/login" class="btn btn-light" aria-label="Back to sign in">‹ Back</a>
+  </div>
+}
+<div class="sf-page-head">
+  <h1>Locking: how your messages stay private</h1>
+</div>
+
+<main class="sf-narrow sf-reading vstack gap-3">
+  @if (auth.user()) {
+    <app-info-nav />
+  }
+  <p class="m-0 text-center">
+    When you and your friend both have a key, your messages are locked. Only the two of you can read them. Not even we can.
+  </p>
+
+  <section class="vstack gap-2">
+    <h2 class="sf-section-title m-0">What does “locked” mean?</h2>
+    <p class="m-0">
+      Think of a letter in a small box with a padlock. Only you and your friend have a key to that padlock. Anyone who picks up the box on the way,
+      even the postman, sees a closed box and nothing more.
+    </p>
+    <p class="m-0">
+      That is how a locked message works. Your text is scrambled into something that looks like nonsense. Only your friend’s key can turn it back into your words.
+    </p>
+  </section>
+
+  <section class="vstack gap-2">
+    <h2 class="sf-section-title m-0">The lock is made on your device, not on our server</h2>
+    <p class="m-0">
+      This is the important part. Your message is locked on your own phone or computer, before it is sent. Our server only receives the scrambled version.
+      The server never has a key, so it cannot open it. It could not do it even if we wanted to, and nobody who got into our server could either.
+    </p>
+    <div class="sf-lock-figure" role="img" aria-label="Your message is readable on your device and on your friend's device. The server holds only unreadable text and has no key.">
+      <div class="sf-lock-zone sf-lock-readable">
+        <strong>Your device</strong>
+        <span class="sf-lock-badge">Readable here</span>
+        <code>See you at 7</code>
+        <small>1. You write it<br />2. Your device locks it</small>
+        <span class="sf-lock-key sf-lock-has">🔑 Key stays here</span>
+      </div>
+      <div class="sf-lock-arrow" aria-hidden="true">›</div>
+      <div class="sf-lock-zone sf-lock-server">
+        <strong>Our server</strong>
+        <span class="sf-lock-badge">Never readable here</span>
+        <code>Xq9#vT2k8…</code>
+        <small>Stores and passes on<br />unreadable text only</small>
+        <span class="sf-lock-key sf-lock-none">No key. Ever.</span>
+      </div>
+      <div class="sf-lock-arrow" aria-hidden="true">›</div>
+      <div class="sf-lock-zone sf-lock-readable">
+        <strong>Friend’s device</strong>
+        <span class="sf-lock-badge">Readable here</span>
+        <code>See you at 7</code>
+        <small>3. Their device unlocks it<br />4. They read it</small>
+        <span class="sf-lock-key sf-lock-has">🔑 Key stays here</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="vstack gap-2">
+    <h2 class="sf-section-title m-0">What is locked, and what is not</h2>
+    <p class="m-0">
+      A locked message hides everything you wrote: the text, and also any picture, video or voice message you send. Files in your safebox are locked in the same way.
+    </p>
+    <div class="sf-lock-table" role="table" aria-label="What is locked and what is not">
+      <div class="sf-lock-head" role="row"><span role="columnheader">What</span><span role="columnheader">Not locked</span><span role="columnheader">Locked</span></div>
+      <div role="row"><span>The text you write</span><span class="sf-lock-bad">We can read it</span><span class="sf-lock-good">Only you two</span></div>
+      <div role="row"><span>Pictures, video, voice</span><span class="sf-lock-bad">We can see them</span><span class="sf-lock-good">Only you two</span></div>
+      <div role="row"><span>File names in the safebox</span><span class="sf-lock-bad">We can read them</span><span class="sf-lock-good">Only you two</span></div>
+      <div role="row"><span>Who writes to whom, and when</span><span>We know this</span><span>We know this</span></div>
+      <div role="row"><span>Notification on the phone</span><span>Shows the text</span><span>Says “New message”</span></div>
+    </div>
+    <p class="m-0">
+      We still need to know who is writing to whom, and when, so we can deliver the message and tell your friend it has arrived.
+    </p>
+  </section>
+
+  <section class="vstack gap-2">
+    <h2 class="sf-section-title m-0">Even what is not locked is kept safe</h2>
+    <p class="m-0">
+      Messages that are not locked are not open to the world either. They are kept on protected servers (Google Firebase, which we use as our service provider and
+      which stores the data on our behalf). Nobody else gets access to them. We do not sell your data, we do not share it, and there are no advertisements.
+    </p>
+    <p class="m-0">
+      The difference is this: what is not locked can be read by us, because we hold the data. What is locked cannot, because we never have the key. Locking is the extra step for anything
+      you want to keep between the two of you only.
+    </p>
+  </section>
+
+  <section class="vstack gap-2">
+    <h2 class="sf-section-title m-0">When is a message locked?</h2>
+    <p class="m-0">
+      A message is locked only when both you and your friend have set up a key. You set up yours when you first start the app. If your friend has no key yet,
+      the message is sent as normal text.
+    </p>
+    <p class="m-0">The padlock in the header of every conversation shows what will happen:</p>
+    <ul class="m-0">
+      <li><strong>Locked:</strong> both of you have a key, and your new messages are locked.</li>
+      <li><strong>Not locked:</strong> one of you has no key yet, or you have switched locking off.</li>
+    </ul>
+    <p class="m-0">Messages sent before locking was on stay as they were. They are not locked afterwards.</p>
+  </section>
+
+  <section class="vstack gap-2">
+    <h2 class="sf-section-title m-0">The numbers, in plain words</h2>
+    <div class="sf-lock-nums">
+      <div><b>256-bit</b><span>a new key for every single message</span></div>
+      <div><b>3072-bit</b><span>the strength of the lock on each key copy</span></div>
+      <div><b>2 copies</b><span>of each message key: yours and your friend’s</span></div>
+      <div><b>24 words</b><span>that let you restore your key on a new device</span></div>
+    </div>
+    <p class="m-0">
+      Every message gets its own brand new key, so opening one message never opens another. A copy of that key is then locked once for you and once for your friend,
+      so you can both read it. These are the kind of locks that banks and governments use. Guessing such a key would take longer than the age of the universe.
+    </p>
+  </section>
+
+  <section class="vstack gap-2">
+    <h2 class="sf-section-title m-0">Your 24 recovery words</h2>
+    <p class="m-0">
+      When you set up your key, the app shows you 24 words, once. Write them on paper and keep them somewhere safe. If you lose your phone, or get a new one,
+      these words let you get your key back and read your locked messages again.
+    </p>
+    <div class="sf-lock-warn">
+      <strong>Important:</strong> we do not keep your words and cannot send them to you. If you lose both your device and your 24 words, your locked messages and files
+      can never be opened again, by anyone.
+    </div>
+  </section>
+
+  <section class="vstack gap-2">
+    <h2 class="sf-section-title m-0">Good to know</h2>
+    <ul class="m-0">
+      <li>On a new device, messages locked earlier show “locked for another device” until you restore your key with the 24 words.</li>
+      <li>Searching in locked messages works only on this device, among the messages already loaded.</li>
+      <li>Link previews are not made for locked messages.</li>
+      <li>You manage your keys under Settings → Keys.</li>
+    </ul>
+  </section>
+</main>

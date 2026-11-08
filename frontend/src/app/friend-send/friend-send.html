@@ -27,6 +27,7 @@
           }
         </div>
       }
+    <app-poke-toggle />
     <div class="sf-send-frame">
       <textarea #field appClear class="sf-send-text" rows="5" maxlength="2000" [placeholder]="mediaReady() ? 'Add a text (optional)…' : 'Write to ' + friendName() + '…'" [attr.aria-label]="'Message to ' + friendName()"
                 [value]="text()" (input)="text.set($any($event.target).value)" (focus)="emojiOpen.set(false)" (keydown.enter)="enterPressed($event)" [disabled]="busy()"></textarea>

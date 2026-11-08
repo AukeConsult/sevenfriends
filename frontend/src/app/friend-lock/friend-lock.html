@@ -22,9 +22,9 @@
     @if (ctx.meHasKey() === false) {
       <p class="sf-hint">
         @if (keys.elsewhere()) {
-          You made a key before, but it is not on this device (it is on another device, or this browser cleared it). You can bring it back with your 24 words in Settings → Encryption.
+          You made a key before, but it is not on this device (it is on another device, or this browser cleared it). You can bring it back with your 24 words in Settings → Keys.
         } @else {
-          You can make your key in Settings → Encryption.
+          You can make your key in Settings → Keys.
         }
       </p>
       <a routerLink="/settings/encryption" class="btn btn-primary btn-sm">Make my key</a>
@@ -72,7 +72,7 @@
     <section>
       <h2>Is it really {{ friendName() }}'s key?</h2>
       <p>
-        Each key has a code. To be sure {{ friendName() }}'s key is really theirs, ask them to read you the code under Settings → Encryption on their device, or compare it in person.
+        Each key has a code. To be sure {{ friendName() }}'s key is really theirs, ask them to read you the code under Settings → Keys on their device, or compare it in person.
         If it is the same as the code below, the key is theirs.
       </p>
       @for (key of ctx.friendKeys(); track key.id) {
@@ -89,7 +89,7 @@
 
     <section>
       <h2>Your keys</h2>
-      <p>To see your devices, make a new key, or restore your key with your 24 words, open <a routerLink="/settings/encryption">Settings → Encryption</a>.</p>
+      <p>To see your devices, make a new key, or restore your key with your 24 words, open <a routerLink="/settings/encryption">Settings → Keys</a>.</p>
       @if (keys.diagnosis(); as d) {
         <p class="sf-hint">
           Details for this browser: account …{{ d.account.slice(-6) }} ·

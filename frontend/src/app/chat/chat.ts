@@ -1,6 +1,7 @@
 import { AddMedia } from '../add-media/add-media';
 import { Clearable } from '../core/clearable';
 import { FriendContext } from '../friend-page/friend-context';
+import { PokeToggle } from '../friend-page/poke-toggle';
 import { DatePipe } from '@angular/common';
 import { NgTemplateOutlet } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -33,7 +34,7 @@ const SAFETY_REFRESH_MS = 30000;
 /** The message feed with one friend: /friends/:id (the id of the connection). */
 @Component({
   selector: 'app-chat',
-  imports: [AddMedia, DatePipe, FriendAvatar, MediaAudio, MediaImage, MediaVideo, NgTemplateOutlet, RouterLink, Clearable],
+  imports: [AddMedia, PokeToggle, DatePipe, FriendAvatar, MediaAudio, MediaImage, MediaVideo, NgTemplateOutlet, RouterLink, Clearable],
   templateUrl: './chat.html',
 })
 export class Chat {
@@ -473,7 +474,8 @@ export class Chat {
         this.messages.update((list) => list.map((m) => (m.id === editingId ? changed : m)));
         this.editing.set(null);
       } else {
-        const message = await this.chat.send(this.friendId, text);
+        const message = await this.chat.send(this.friendId, text, this.ctx.pokes());
+        this.ctx.poke.set(false);
         this.messages.update((list) => [...list, message]);
       }
       this.text.set('');
@@ -509,7 +511,8 @@ export class Chat {
     this.sending.set(true);
     this.error.set(null);
     try {
-      const message = await this.chat.send(this.friendId, text);
+      const message = await this.chat.send(this.friendId, text, this.ctx.pokes());
+      this.ctx.poke.set(false);
       this.messages.update((list) => [...list, message]);
       this.scrollDown();
     } catch (err: any) {

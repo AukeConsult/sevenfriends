@@ -107,7 +107,8 @@
         <app-add-media [kind]="k" [friendId]="friendId" (closed)="attachKind.set(null)" (sent)="attached($event)" />
       }
     }
-    <div class="sf-composer-row">
+    <app-poke-toggle />
+    <div class="sf-composer-row" [style.display]="attachKind() ? 'none' : null"><!-- hidden while the image / video / voice card is open: the card has its own writing field; what was typed here stays -->
       <!-- two buttons: the smiley (emoji, quick messages) and the paperclip (image, video, voice); a mouse opens them on hover, a finger on a tap -->
       <div class="sf-add" (mouseleave)="hoverMenu(false)" (keydown.escape)="menuOpen.set(false)">
         <div class="d-flex gap-1">

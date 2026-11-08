@@ -1,6 +1,7 @@
 import { Component, DestroyRef, ElementRef, HostListener, computed, inject, signal, viewChild } from '@angular/core';
 import { AddMedia } from '../add-media/add-media';
 import { ChatService } from '../core/chat.service';
+import { PokeToggle } from '../friend-page/poke-toggle';
 import { Clearable } from '../core/clearable';
 import { EMOJI_GROUPS } from '../core/emojis';
 import { QUICK_LENGTH, QUICK_MAX, UiPreferencesService, quickOf } from '../core/ui-preferences';
@@ -15,7 +16,7 @@ import { FriendContext } from '../friend-page/friend-context';
  */
 @Component({
   selector: 'app-friend-send',
-  imports: [AddMedia, Clearable],
+  imports: [AddMedia, Clearable, PokeToggle],
   templateUrl: './friend-send.html',
 })
 export class FriendSend {
@@ -122,7 +123,8 @@ export class FriendSend {
     this.error.set(null);
     this.notice.set(null);
     try {
-      await this.chat.send(this.ctx.friendId, text);
+      await this.chat.send(this.ctx.friendId, text, this.ctx.pokes());
+      this.ctx.poke.set(false);
       this.notice.set(`Sent: ${text.length > 40 ? text.slice(0, 40) + '…' : text}`);
       if (clear) {
         this.text.set('');

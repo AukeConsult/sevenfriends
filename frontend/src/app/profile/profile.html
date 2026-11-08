@@ -76,7 +76,7 @@
       <label class="d-grid gap-1 mt-2 text-start">
         <span class="form-label small text-secondary m-0">Friends say about you</span>
         <select class="form-select" [value]="form().pronoun" (change)="setField('pronoun', $any($event.target).value)" (blur)="flush()" [disabled]="loading()">
-          <option value="" [selected]="!form().pronoun">They / their</option>
+          <option value="" [selected]="!form().pronoun"></option>
           <option value="he" [selected]="form().pronoun === 'he'">He / his</option>
           <option value="she" [selected]="form().pronoun === 'she'">She / her</option>
         </select>

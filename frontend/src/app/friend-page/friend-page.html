@@ -17,7 +17,6 @@
     <span class="sf-fs-description sf-bar-name" [attr.title]="ctx.headerName()" [attr.aria-label]="ctx.headerName() || 'Conversation'">{{ ctx.headerText() }}</span>
     @if (ctx.friend(); as f) {
       <!-- on a phone the header has two rows: the status has the room under the name -->
-      <span class="sf-bar-status">{{ presenceLabel(f.presence) }}</span>
       @if (f.sleepsMe) { <span class="sf-mood-line"><span>😴 Has you on {{ possessive(f.pronoun) }} sleep list</span></span> }
     }
   </div>

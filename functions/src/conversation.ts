@@ -145,7 +145,20 @@ async function lockedText(body: unknown, myUid: string, peerUid: string, res: Re
   return parsed;
 }
 
-/** Send a message: { text?, media? }, a text, a file you uploaded (the text is then its caption) or both. Both people get a copy. */
+/**
+ * True when my friend has ME on their sleep list (`asleep` on THEIR entry of the connection): what I write to them then arrives silently
+ * (no push, no sound, no desktop notice; it is still unread) unless it is a poke. Best effort: when their entry cannot be read the answer is false (they are told).
+ */
+export async function sleepsMe(connection: { id: string; peerUid: string; peerCircleId: string }): Promise<boolean> {
+  try {
+    const entry = await circleCol(connection.peerUid).doc(connection.peerCircleId).collection(FRIENDS_SUBCOLLECTION).doc(connection.id).get();
+    return entry.data()?.asleep === true;
+  } catch {
+    return false;
+  }
+}
+
+/** Send a message: { text?, media?, poke? }, a text, a file you uploaded (the text is then its caption) or both. Both people get a copy. */
 conversationRouter.post(
   "/",
   asyncHandler(async (req, res) => {
@@ -183,6 +196,8 @@ conversationRouter.post(
       return;
     }
 
+    const poke = req.body?.poke === true; // "poke anyway": the friend is told with a sound even when they have me on their sleep list
+    const muted = peerEntry.data()?.asleep === true && !poke;
     const link = locked ? null : await linkOf(text); // the page of the link may be shown in a frame (checked once, here); a locked text cannot be read, so it has none
     const mine = media ? messageCol(token.uid).doc(media.objectId) : messageCol(token.uid).doc(); // a message with a file has the id of the file: that is how the receiver is let in
     const theirs = messageCol(connection.peerUid).doc(mine.id); // same message id on both sides
@@ -200,7 +215,7 @@ conversationRouter.post(
     // each copy says which circle it belongs to FOR ITS OWNER: mine in my circle, the friend's in theirs
     // a locked message keeps in each copy only that person's copies of the message key
     batch.set(mine, { ...common, ...(locked ? { enc: wrapsFor(locked.enc, token.uid) } : {}), circleId: connection.circleId, read: true }); // my own message needs no reading
-    batch.set(theirs, { ...common, ...(locked ? { enc: wrapsFor(locked.enc, connection.peerUid) } : {}), circleId: connection.peerCircleId, read: false });
+    batch.set(theirs, { ...common, ...(locked ? { enc: wrapsFor(locked.enc, connection.peerUid) } : {}), ...(poke ? { poke: true } : {}), circleId: connection.peerCircleId, read: false });
     // "last spoken to": both sides of the friendship remember when the last message was written
     const myEntry = (res.locals.circleRef as DocumentReference).collection(FRIENDS_SUBCOLLECTION).doc(connection.id);
     batch.update(myEntry, { lastMessageAt: FieldValue.serverTimestamp() });
@@ -211,7 +226,7 @@ conversationRouter.post(
     const saved = (await mine.get()).data()!;
     const created: ChatMessage = { id: mine.id, text, media, mine: true, read: true, time: iso(saved.time), edited: false, hidden: false, link, ...(locked ? { enc: wrapsFor(locked.enc, token.uid) } : {}) };
     // wake the other person's devices (before the answer: the function may stop right after it)
-    await sendPush(connection.peerUid, { id: `message-${mine.id}`, title: common.fromName, body: locked ? "🔒 New message" : text || mediaLabel(media!.kind), url: `/friends/${connection.id}`, kind: "message" });
+    if (!muted) await sendPush(connection.peerUid, { id: `message-${mine.id}`, title: common.fromName, body: locked ? "🔒 New message" : text || mediaLabel(media!.kind), url: `/friends/${connection.id}`, kind: "message" });
     res.status(201).json(created);
   }),
 );

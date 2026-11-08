@@ -314,7 +314,7 @@ router-outlet + * { display: block; min-height: 100dvh; }
 .sf-page { max-width: 40rem; margin: 0 auto; }
 .sf-page.sf-page-wide { max-width: 64rem; } // lists with long file names use more of a wide screen
 .sf-page.sf-page-wide { max-width: none; padding-inline: 0.75rem; }
-.sf-page.sf-box-page { padding: 0.75rem 1.5rem calc(4.5rem + env(safe-area-inset-bottom)); } // the safebox list: room on both sides and at the bottom, clear of the bottom menu // a file view uses the whole width of the screen
+.sf-page.sf-box-page { padding: 0.25rem 1.5rem calc(4.5rem + env(safe-area-inset-bottom)); } // the safebox list: room on both sides and at the bottom, clear of the bottom menu // a file view uses the whole width of the screen
 .sf-content { padding-top: 0.75rem; }
 .sf-feed { display: flex; flex-direction: column; gap: 0.5rem; padding-top: 0.75rem; padding-bottom: calc(3.5rem + 4rem + env(safe-area-inset-bottom)); } // + the composer
 .sf-landing {
@@ -1001,11 +1001,11 @@ app-voice { display: contents; }
 .sf-bar-actions .sf-icon-btn { margin: 0; }
 @media (max-width: 575.98px) { .sf-bar-actions .sf-tool-btn { min-width: 2.375rem; padding-inline: 0.0625rem; svg { width: 20px; height: 20px; } } } // The buttons in a header are a little narrower and smaller on a phone, so the name has more room
 // the friend header on a phone has two rows: the picture, the name with its status and the three dots on top; the four pages as tabs with a word under each icon below
-.sf-tool-label, .sf-bar-status { display: none; }
+.sf-bar .sf-bar-actions .sf-tool-btn { min-width: 4rem; padding-inline: 0.5rem; } // on a wider view the header has room for a word under each icon too
+.sf-bar .sf-bar-actions .sf-tool-label { display: block; font-size: 0.7rem; line-height: 1.2; white-space: nowrap; }
 @media (max-width: 575.98px) {
   .sf-bar:has(.sf-bar-actions) { flex-wrap: wrap; padding-bottom: 0.25rem; }
   .sf-bar:has(.sf-bar-actions) .sf-bar-text { flex: 1 1 0; }
-  .sf-bar-status { display: block; font-size: var(--sf-fs-description); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .sf-bar > .sf-more { order: 1; margin-inline-start: auto; margin-inline-end: -1rem; }
   .sf-bar .sf-bar-actions { order: 2; flex: 0 0 100%; margin-inline-start: 0; padding-inline-start: 0.5rem; justify-content: space-around; }
   .sf-bar .sf-bar-actions .sf-tool-btn { min-width: 4rem; padding-inline: 0.5rem; }
@@ -1084,7 +1084,7 @@ app-voice { display: contents; }
 .sf-send-add { border: 1px dashed var(--sf-primary); border-radius: 1.25rem; color: var(--sf-primary); background: transparent; }
 .sf-send-addframe { display: grid; gap: 0.5rem; padding: 0.75rem; background: var(--sf-card); border: 1px solid var(--sf-border); border-radius: 1rem; }
 .sf-box-add summary { color: var(--sf-primary); } .sf-box-add.sf-over { border-color: var(--sf-primary); background: color-mix(in srgb, var(--sf-primary) 10%, var(--sf-card)); } // the Add files frame: in the brand colour, lit while files are dragged over it
-.sf-box-tools { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: center; gap: 0.5rem; margin-bottom: 0.75rem; > details { margin: 0; } > details[open] { flex: 1 1 100%; } } // the padlock and the Add files frame side by side
+.sf-box-tools { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: center; gap: 0.5rem; margin-top: 0.5rem; margin-bottom: 0.75rem; > details { margin: 0; } > details[open] { flex: 1 1 100%; } } // the padlock and the Add files frame side by side
 .sf-box-add:not([open]) { border-radius: 999px; summary { gap: 0; padding: 0.5rem 0.75rem; &::after { display: none; } .sf-box-security-title { display: none; } } } // the Add files frame, closed: only the round icon beside the padlock (a file can still be dropped on it)
 .sf-box-lock { width: fit-content; margin-inline: auto; &:not([open]) { border-radius: 999px; } &[open] { width: auto; margin-inline: 0; } summary { gap: 0.375rem; padding: 0.5rem 0.75rem; &::after { display: none; } } } // the lock frame, closed: only a padlock (round); open: the whole frame
 .sf-box-usage { display: grid; gap: 0.25rem; margin-bottom: 0.75rem; .progress { height: 0.5rem; } }
@@ -1252,3 +1252,29 @@ nav.sf-tabs {
 
 .sf-recovery-words { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem 1.5rem; margin: 0; padding: 1rem 1rem 1rem 3rem; font-size: var(--sf-fs-description); border: 1px solid var(--sf-border); border-radius: var(--sf-radius); background: var(--sf-card); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; user-select: all; li::marker { color: var(--sf-muted); } @media (min-width: 576px) { grid-template-columns: repeat(3, 1fr); } } // the 24 recovery words, numbered
 .sf-fingerprint { padding: 0.5rem 0.75rem; border: 1px solid var(--sf-border); border-radius: var(--sf-radius); background: var(--sf-card); color: var(--sf-text); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.8125rem; white-space: pre-wrap; user-select: all; } // a key code to read out
+
+.sf-poke { display: flex; align-items: center; gap: 0.5rem; margin: 0.25rem 0.5rem; padding: 0.375rem 0.625rem; border: 1px solid var(--sf-border); border-radius: var(--sf-radius); background: var(--sf-card); color: var(--sf-muted); font-size: var(--sf-fs-description); cursor: pointer; &.sf-on { border-color: var(--sf-primary); background: var(--bs-primary-bg-subtle); color: var(--sf-primary); } .sf-poke-note { font-weight: 400; } } // my friend has me on their sleep list: the choice to poke anyway, above the writing field
+
+// ---- The Locking page (Info tab): the figure, the table, the numbers ----
+.sf-lock-figure { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items: stretch; gap: 0.25rem; margin: 0.5rem 0;
+  @media (max-width: 575.98px) { grid-template-columns: 1fr; .sf-lock-arrow { transform: rotate(90deg); justify-self: center; } } }
+.sf-lock-zone { display: flex; flex-direction: column; align-items: center; gap: 0.375rem; padding: 0.75rem 0.5rem; border: 1px solid var(--sf-border); border-radius: var(--sf-radius); text-align: center; font-size: var(--sf-fs-description);
+  &.sf-lock-readable { background: var(--bs-success-bg-subtle, #d1e7dd); }
+  &.sf-lock-server { background: var(--sf-card); border-style: dashed; }
+  code { padding: 0.125rem 0.5rem; border-radius: 0.375rem; background: var(--sf-card); color: var(--sf-text); }
+  small { color: var(--sf-muted); line-height: 1.4; } }
+.sf-lock-badge { font-size: 0.75rem; font-weight: 600; opacity: 0.8; }
+.sf-lock-key { padding: 0.125rem 0.5rem; border-radius: 999px; font-size: 0.8125rem; font-weight: 600;
+  &.sf-lock-has { background: var(--bs-warning-bg-subtle, #fff3cd); color: var(--bs-warning-text-emphasis, #664d03); }
+  &.sf-lock-none { background: var(--bs-danger-bg-subtle, #f8d7da); color: var(--bs-danger-text-emphasis, #58151c); } }
+.sf-lock-arrow { align-self: center; font-size: 1.75rem; line-height: 1; color: var(--sf-muted); }
+.sf-lock-table { display: grid; border: 1px solid var(--sf-border); border-radius: var(--sf-radius); overflow: hidden; font-size: var(--sf-fs-description);
+  > div { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 0.5rem; padding: 0.5rem 0.75rem; background: var(--sf-card); border-top: 1px solid var(--sf-border); }
+  > div:first-child { border-top: 0; font-weight: 600; } }
+.sf-lock-good { color: var(--bs-success-text-emphasis, #0a3622); font-weight: 600; }
+.sf-lock-bad { color: var(--bs-danger-text-emphasis, #58151c); }
+.sf-lock-nums { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; @media (max-width: 575.98px) { grid-template-columns: repeat(2, 1fr); }
+  > div { padding: 0.75rem 0.5rem; border-radius: var(--sf-radius); background: var(--sf-card); text-align: center; }
+  b { display: block; font-size: 1.25rem; font-weight: 600; }
+  span { display: block; margin-top: 0.125rem; font-size: 0.75rem; color: var(--sf-muted); line-height: 1.4; } }
+.sf-lock-warn { padding: 0.75rem; border-radius: var(--sf-radius); background: var(--bs-warning-bg-subtle, #fff3cd); color: var(--bs-warning-text-emphasis, #664d03); }

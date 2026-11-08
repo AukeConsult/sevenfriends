@@ -258,7 +258,9 @@ export class RealtimeService {
         if (connectionId) this.latestMessage.set({ connectionId, messageId: m.id, seq: ++this.seq });
       }
       // a sound, unless I am reading that very conversation (I see the message arrive)
-      const unseen = added.filter((m) => m.data['connectionId'] !== this.openFeed());
+      // a friend on my sleep list is silent: no sound and no desktop notice, unless the message is a poke (it stays unread)
+      const asleep = new Set(this.friends.sleeping().map((f) => f.id));
+      const unseen = added.filter((m) => m.data['connectionId'] !== this.openFeed() && (m.data['poke'] === true || !asleep.has(m.data['connectionId'] as string)));
       if (unseen.length) this.ring('message');
       for (const m of unseen) {
         const connectionId = m.data['connectionId'] as string | undefined;
