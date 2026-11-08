@@ -175,7 +175,8 @@ async function mayRead(reader: string, owner: string, objectId: string): Promise
   const message = await readFields(messageCol(reader).doc(objectId), "media", "fromUid");
   if (message?.media && message.fromUid === owner) return true;
   const account = await userFields(owner, "avatarObjectId");
-  return account?.avatarObjectId === objectId && (await isFriendOf(reader, owner));
+  const isPicture = account?.avatarObjectId === objectId || !(await circleCol(owner).where("profile.avatarObjectId", "==", objectId).limit(1).get()).empty; // the account's, or one of a circle
+  return isPicture && (await isFriendOf(reader, owner));
 }
 
 /**

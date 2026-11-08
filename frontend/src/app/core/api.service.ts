@@ -2,6 +2,7 @@ import { Injectable, Injector, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import type { User } from 'firebase/auth';
 import { environment } from '../../environments/environment';
+import { ActiveCircleService } from './active-circle.service';
 import { AuthService } from './auth.service';
 
 export class ApiError extends Error {
@@ -27,6 +28,7 @@ const DEAD_SESSION = new Set([
 @Injectable({ providedIn: 'root' })
 export class ApiService {
   private readonly auth = inject(AuthService);
+  private readonly circle = inject(ActiveCircleService);
   // the Router is fetched when it is needed: the Router itself (through the title strategy) depends on services that
   // use this one, so asking for it here would be a circular dependency and the app would not start
   private readonly injector = inject(Injector);
@@ -67,7 +69,8 @@ export class ApiService {
     return fetch(`${environment.apiBase}${path}`, {
       ...init,
       // JSON unless the caller sends something else (a file)
-      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json', ...(init.headers as Record<string, string> | undefined) },
+      // every call says which circle the app is in (it is bound to one): the server shows and saves the profile of that circle
+      headers: { Authorization: `Bearer ${token}`, 'X-Circle': this.circle.id, 'Content-Type': 'application/json', ...(init.headers as Record<string, string> | undefined) },
     });
   }
 

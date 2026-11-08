@@ -1,6 +1,6 @@
 import { FieldValue, getFirestore } from "firebase-admin/firestore";
-import { MAX_PICTURE_BYTES } from "./constants";
-import { profilePictureDoc, userDoc, userFields } from "./paths";
+import { DEFAULT_CIRCLE_ID, MAX_PICTURE_BYTES } from "./constants";
+import { circleCol, profilePictureDoc, userDoc, userFields } from "./paths";
 import { checkBytes, deleteObject, putObject, readAll } from "./sf-cache";
 
 /**
@@ -9,14 +9,27 @@ import { checkBytes, deleteObject, putObject, readAll } from "./sf-cache";
  */
 const PICTURE_URL = /^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/]+={0,2})$/;
 
-/** The picture as a data URL, or null when the person has none. */
-export async function readAvatar(uid: string): Promise<string | null> {
-  const account = await userFields(uid, "avatarObjectId");
-  const id = account?.avatarObjectId as string | undefined;
+/**
+ * Which picture a person shows in a circle: the first circle uses the one of the account; another circle may have a picture of its own (`profile.avatarObjectId`
+ * and `profile.pictureAt` on the circle document, `null` = no picture in this circle), and shows the one of the account until it has.
+ * `own`: the picture belongs to this circle (it is not the account's).
+ */
+export async function avatarOf(uid: string, circleId: string = DEFAULT_CIRCLE_ID): Promise<{ id: string | null; at: unknown; own: boolean }> {
+  const account = await userFields(uid, "avatarObjectId", "profilePictureAt");
+  const basic = { id: (account?.avatarObjectId as string | null | undefined) ?? null, at: account?.profilePictureAt ?? null, own: false };
+  if (circleId === DEFAULT_CIRCLE_ID) return basic;
+  const profile = ((await circleCol(uid).doc(circleId).get()).data()?.profile ?? {}) as Record<string, unknown>;
+  return "avatarObjectId" in profile ? { id: (profile.avatarObjectId as string | null) ?? null, at: profile.pictureAt ?? null, own: true } : basic;
+}
+
+/** The picture as a data URL, or null when the person has none (in that circle). */
+export async function readAvatar(uid: string, circleId: string = DEFAULT_CIRCLE_ID): Promise<string | null> {
+  const id = (await avatarOf(uid, circleId)).id ?? undefined;
   if (id) {
     const bytes = await readAll(uid, id);
     return bytes ? toDataUrl(bytes) : null;
   }
+  if (circleId !== DEFAULT_CIRCLE_ID) return null;
   // a picture saved before the media cache existed: move it there now
   const old = (await profilePictureDoc(uid).get()).data()?.image as string | undefined;
   const match = old ? PICTURE_URL.exec(old) : null;
@@ -37,8 +50,16 @@ export function parsePicture(image: unknown): { bytes: Buffer } | { error: strin
 }
 
 /** Store a new picture (the type is found from the bytes), and remove the one it replaces. `changed`: also stamp the time friends fetch it again by. */
-export async function saveAvatar(uid: string, bytes: Buffer, changed = true): Promise<void> {
+export async function saveAvatar(uid: string, bytes: Buffer, changed = true, circleId: string = DEFAULT_CIRCLE_ID): Promise<void> {
   const checked = checkBytes("avatar", bytes) as { mime: string };
+  if (circleId !== DEFAULT_CIRCLE_ID) {
+    const own = await avatarOf(uid, circleId);
+    const objectId = getFirestore().collection("_").doc().id;
+    await putObject(uid, objectId, bytes, "avatar", checked.mime);
+    await circleCol(uid).doc(circleId).update({ "profile.avatarObjectId": objectId, "profile.pictureAt": FieldValue.serverTimestamp() });
+    if (own.own && own.id) await deleteObject(uid, own.id);
+    return;
+  }
   const ref = userDoc(uid);
   const before = (await ref.get()).data()?.avatarObjectId as string | undefined;
   const objectId = getFirestore().collection("_").doc().id;
@@ -48,7 +69,14 @@ export async function saveAvatar(uid: string, bytes: Buffer, changed = true): Pr
 }
 
 /** Remove the picture. */
-export async function removeAvatar(uid: string): Promise<void> {
+export async function removeAvatar(uid: string, circleId: string = DEFAULT_CIRCLE_ID): Promise<void> {
+  if (circleId !== DEFAULT_CIRCLE_ID) {
+    // no picture in THIS circle (the account's picture and the other circles keep theirs)
+    const own = await avatarOf(uid, circleId);
+    await circleCol(uid).doc(circleId).update({ "profile.avatarObjectId": null, "profile.pictureAt": null });
+    if (own.own && own.id) await deleteObject(uid, own.id);
+    return;
+  }
   const ref = userDoc(uid);
   const before = (await ref.get()).data()?.avatarObjectId as string | undefined;
   await ref.set({ avatarObjectId: null, profilePictureAt: null, photoURL: null }, { merge: true });
