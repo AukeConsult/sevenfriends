@@ -147,7 +147,7 @@
       <ul class="sf-list sf-home-cards">
         <li class="sf-list-item">
           <app-friend-avatar [friend]="friend" [seat]="friend.seat ?? 1" [small]="true" [size]="36" />
-          <span class="sf-list-text"><strong>Say hi to {{ friend.name }}?</strong><small>{{ lastTalk(friend) }}</small></span>
+          <span class="sf-list-text"><strong class="small">Say hi to {{ friend.name }}?</strong><small>{{ lastTalk(friend) }}</small></span>
           <a [routerLink]="['/friends', friend.id]" class="btn btn-outline-primary btn-sm">Say hi</a>
         </li>
       </ul>

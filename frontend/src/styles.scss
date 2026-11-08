@@ -1328,7 +1328,6 @@ nav.sf-tabs {
 .sf-sl-name { max-width: 100%; font-size: 0.6875rem; line-height: 1.2; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sf-sl-on .sf-hs-ring { box-shadow: 0 0 0 2px var(--sf-card), 0 0 0 4px var(--sf-primary); }
 .sf-hs-tip { margin: 0.5rem 0 0; text-align: center; font-size: 0.625rem; line-height: 1.2; color: var(--sf-muted); }
-.sf-hs-bucket.sf-drop > * { outline: none; } // only the bucket's own border shows
 button.sf-hs-free { padding: 0; border: 0; background: none; font: inherit; width: 100%; }
 .sf-hs-plus { font-size: 1.5rem; line-height: 1; }
 @property --sf-hs-a { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
@@ -1342,10 +1341,13 @@ button.sf-hs-free { padding: 0; border: 0; background: none; font: inherit; widt
 @keyframes sf-hs-turn { from { --sf-hs-a: 0deg; } to { --sf-hs-a: 360deg; } }
 @media (prefers-reduced-motion: reduce) { .sf-hs-press .sf-hs-ring::after { animation-duration: 1ms; } }
 .sf-hs-seat.sf-drop > .sf-hs-friend { outline: 2px dashed var(--sf-primary); outline-offset: 4px; border-radius: var(--sf-radius); }
-.sf-hs-bucket { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.875rem; padding: 0.5rem 0.75rem; border: 1px solid var(--sf-border); border-radius: 999px; background: var(--sf-card); color: var(--sf-muted); text-decoration: none; font-size: 0.875rem;
-  &.sf-hs-bucket-open { padding-block: 1rem; border: 2px dashed var(--sf-border); border-radius: var(--sf-radius); }
-  &.sf-drop { border: 2px dashed var(--sf-primary); background: var(--bs-primary-bg-subtle); color: var(--sf-primary); } }
-@media (min-width: 576px) { .sf-hs-row { grid-template-columns: repeat(7, 1fr); } }
+button.sf-hs-sleep { padding: 0; border: 0; background: none; font: inherit; width: 100%; }
+.sf-hs-sleep .sf-hs-ring { background: none; border: 2px dashed var(--sf-border); padding: 0; display: grid; place-items: center; color: var(--sf-muted); }
+.sf-hs-moon { font-size: 1.5rem; line-height: 1; }
+.sf-hs-sleep-open .sf-hs-ring { border-color: var(--sf-muted); }
+.sf-hs-sleep.sf-drop .sf-hs-ring { border-color: var(--sf-primary); background: var(--bs-primary-bg-subtle); transform: scale(1.08); }
+.sf-hs-sleep.sf-drop .sf-hs-sub { color: var(--sf-primary); }
+@media (min-width: 576px) { .sf-hs-row { grid-template-columns: repeat(8, 1fr); } }
 
 // ---- Home: the slim top, the greeting, the folded setup line, the cards (no side bars) ----
 .sf-home-top { display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding-bottom: 0.5rem; margin-bottom: 0.75rem; border-bottom: 1px solid var(--sf-border); }

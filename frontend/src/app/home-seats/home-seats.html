@@ -42,15 +42,20 @@
         }
       </li>
     }
+    @if (showBucket()) {
+      <!-- the eighth circle: the sleep list. A friend dropped here has no seat and makes no sound (the conversation is kept); a tap opens the list -->
+      <li class="sf-hs-seat">
+        <button type="button" class="sf-hs-friend sf-hs-sleep" data-bucket="true" [class.sf-drop]="overBucket()" [class.sf-hs-sleep-open]="!!dragging()" [attr.aria-label]="'Silent: open the sleep list' + (sleeping() > 0 ? ', ' + sleeping() + ' here' : '')" (click)="silent.emit()">
+          <span class="sf-hs-ring">
+            <span class="sf-hs-moon" aria-hidden="true">😴</span>
+            @if (sleeping() > 0) { <span class="sf-hs-unread" aria-hidden="true">{{ sleeping() }}</span> }
+          </span>
+          <span class="sf-hs-name">Silent</span>
+          <span class="sf-hs-sub">{{ dragging() ? 'Drop here' : 'Sleep list' }}</span>
+        </button>
+      </li>
+    }
   </ul>
-  <p class="sf-hs-tip">{{ dragging() ? (showBucket() ? 'Drop on a seat or the bucket' : 'Drop on a seat') : 'Press and hold a ' + w.one + ' to move' }}</p>
+  <p class="sf-hs-tip">{{ dragging() ? (showBucket() ? 'Drop on a seat or the Silent circle' : 'Drop on a seat') : 'Press and hold a ' + w.one + ' to move' }}</p>
 
-  @if (showBucket()) {
-    <!-- the silent bucket: the sleep list. A friend dropped here has no seat and makes no sound (the conversation is kept) -->
-    <button type="button" class="sf-hs-bucket w-100 text-start" data-bucket="true" [class.sf-drop]="overBucket()" [class.sf-hs-bucket-open]="!!dragging()" (click)="silent.emit()">
-      <span aria-hidden="true">😴</span>
-      <span class="flex-grow-1">{{ dragging() ? 'Drop here: silent' : 'Silent' }}@if (sleeping() > 0) { ({{ sleeping() }}) }</span>
-      <span aria-hidden="true">›</span>
-    </button>
-  }
 </section>
