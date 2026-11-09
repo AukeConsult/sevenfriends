@@ -38,3 +38,10 @@ export type PhoneStep = 'number' | 'code';
 
 /** The login form either signs in or creates an account. */
 export type AuthMode = 'signin' | 'signup';
+
+/** A file chosen on the upload page of the safebox, and how it is going. */
+export interface ChosenFile {
+  file: File;
+  state: 'waiting' | 'sending' | 'done' | 'failed';
+  error?: string;
+}

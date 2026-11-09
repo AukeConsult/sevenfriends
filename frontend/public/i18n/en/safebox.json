@@ -9,7 +9,7 @@
   "dropFilesHereOr": "Drop files here, or tap to choose them",
   "retry": "Retry",
   "usedOfMaxbytes": "{{ used }} of {{ maxBytes }}",
-  "nothingHereYetAdd": "Nothing here yet. Add pictures, videos or documents you want to share with only {{ friendName }}.",
+  "nothingHereYetAdd": "Nothing here yet. Tap New to add a file, a note or something else you want to share with only {{ friendName }}.",
   "newName": "New name",
   "takeItemnameOutOf": "Take “{{ itemName }}” out of the safebox? It disappears for both of you and cannot be got back.",
   "cancel": "Cancel",
@@ -54,5 +54,6 @@
   "showKindInTheList": "Show {{ kind }} in the list",
   "allKindsAreOff": "Nothing to show: every kind is switched off. Tick a kind in the New frame to see its items again.",
   "album": "Album",
-  "case": "Case"
+  "case": "Case",
+  "file": "File"
 }

@@ -1,0 +1,18 @@
+{
+  "backToTheSafebox": "Back to the safebox",
+  "newFile": "New file",
+  "yourFriend": "your friend",
+  "lockedOnThisDevice": "Locked on this device. Only you and {{ friendName }} can open it.",
+  "notLocked": "These files are stored without a lock.",
+  "chooseFiles": "Choose files, or drop them here",
+  "strongChooseFilesStrong": "<strong>Choose files</strong>",
+  "dropFilesHereOr": "Drop files here, or tap to choose them",
+  "takeAPhoto": "Take a photo",
+  "sending": "sending…",
+  "done": "in the safebox",
+  "removeItemname": "Remove {{ itemName }}",
+  "cancel": "Cancel",
+  "uploading": "Uploading…",
+  "upload": "Upload",
+  "couldNotAdd": "Could not add this file"
+}

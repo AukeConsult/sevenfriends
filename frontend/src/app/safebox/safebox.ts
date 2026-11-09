@@ -4,14 +4,14 @@ import { AppDatePipe } from '../core/app-date.pipe';
 import { isObjectType, objectIcon, objectKind, objectKinds } from '../core/safebox-objects';
 import { NgTemplateOutlet } from '@angular/common';
 import { Component, DestroyRef, computed, effect, inject, input, signal } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { KeysService } from '../core/keys.service';
 import { FriendsService } from '../core/friends.service';
-import { formatBytes, prepareImage } from '../core/image';
+import { formatBytes } from '../core/image';
 import { SafeboxService } from '../core/safebox.service';
 import { UiPreferencesService } from '../core/ui-preferences';
 import { FriendContext } from '../friend-page/friend-context';
-import { BoxKeys, Safebox as SafeboxData, SafeboxItem } from '../models';
+import { Safebox as SafeboxData, SafeboxItem } from '../models';
 
 /** The small preview picture of an image in the box (only the preview is read, never the file; a file without one shows an icon instead). */
 @Component({
@@ -53,6 +53,7 @@ export class Safebox {
   private readonly service = inject(SafeboxService);
   private readonly friends = inject(FriendsService);
   private readonly ctx = inject(FriendContext);
+  private readonly router = inject(Router);
   protected readonly prefs = inject(UiPreferencesService);
 
   protected readonly friendId = inject(ActivatedRoute).snapshot.paramMap.get('id') ?? '';
@@ -60,8 +61,6 @@ export class Safebox {
   protected readonly box = signal<SafeboxData | null>(null);
   protected readonly loadError = signal<string | null>(null);
   protected readonly error = signal<string | null>(null);
-  /** the name of the file being added, while it is sent */
-  protected readonly adding = signal<string | null>(null);
   protected readonly busy = signal(false);
   /** the file whose "take it out" question is open, and the one being renamed (with the new name) */
   protected readonly deleting = signal<string | null>(null);
@@ -75,11 +74,7 @@ export class Safebox {
   });
   protected readonly formatBytes = formatBytes;
 
-  /** the keys in use of me and of my friend, and who has one: asked once by the friend page */
-  private readonly boxKeys = this.ctx.boxKeys;
   protected readonly keyStatus = this.ctx.keyStatus;
-  /** the Add files frame is open (it is always open while the box is empty) */
-  protected readonly addOpen = signal(false);
   protected readonly newOpen = signal(false);
   /** files are stored encrypted (both of us have a key) */
   protected readonly canEncrypt = computed(() => this.keyStatus() === 'both');
@@ -109,19 +104,14 @@ export class Safebox {
     const rest = this.hidden().filter((k) => k !== type);
     this.prefs.set('boxHidden', on ? rest : [...rest, type]);
   }
-  /** the keys to lock a new file for, or null (then it is stored as before) */
-  private encryptWith(): BoxKeys | null {
-    return this.canEncrypt() && !this.plain() ? this.boxKeys() : null;
-  }
-
   constructor() {
     // the band under the header says how many files of this friendship this device cannot open
     effect(() => this.ctx.lockedFiles.set(this.shutCount()));
     inject(DestroyRef).onDestroy(() => this.ctx.lockedFiles.set(0));
     if (!this.friends.friends().length) void this.friends.load().catch(() => undefined); // for the friend's name
     void this.reload();
-    // the menu of the header: Add files opens the frame to add them (after the click that chose it has been seen by any click-outside rule)
-    this.ctx.setPageTool({ label: tr('safebox.addFiles', 'Add files'), kind: 'files', run: () => setTimeout(() => this.addOpen.set(true)) }, inject(DestroyRef));
+    // the menu of the header: Add files opens the page to upload them
+    this.ctx.setPageTool({ label: tr('safebox.addFiles', 'Add files'), kind: 'files', run: () => void this.router.navigate(['/friends', this.friendId, 'safebox', 'new', 'file']) }, inject(DestroyRef));
   }
 
   protected async reload(): Promise<void> {
@@ -131,48 +121,6 @@ export class Safebox {
     } catch (err: any) {
       this.loadError.set(err.message ?? tr('safebox.couldNotOpenThe', 'Could not open the safebox'));
     }
-  }
-
-  /** Files chosen with the button: pictures are made smaller here (with a preview), everything else goes as it is. */
-  protected async chosen(input: HTMLInputElement): Promise<void> {
-    const files = Array.from(input.files ?? []);
-    input.value = ''; // the same file can be chosen again
-    await this.addAll(files);
-  }
-
-  /** a file is being dragged over the frame */
-  protected readonly over = signal(false);
-
-  protected dragOver(event: DragEvent): void {
-    if (!event.dataTransfer?.types.includes('Files')) return;
-    event.preventDefault(); // allows the drop
-    this.over.set(true);
-  }
-
-  protected async dropped(event: DragEvent): Promise<void> {
-    event.preventDefault();
-    this.over.set(false);
-    if (this.adding() !== null) return;
-    await this.addAll(Array.from(event.dataTransfer?.files ?? []));
-  }
-
-  /** Adds the files (chosen or dropped) one by one: pictures are made smaller here (with a preview), everything else goes as it is. */
-  private async addAll(files: File[]): Promise<void> {
-    this.error.set(null);
-    const max = this.box()?.maxFileBytes ?? 0;
-    for (const file of files) {
-      this.adding.set(file.name);
-      try {
-        if (file.type.startsWith('image/')) await this.service.addImage(this.friendId, await prepareImage(file as File), this.encryptWith());
-        else if (max && file.size > max) throw new Error(`“${file.name}” is too big (at most ${formatBytes(max)})`);
-        else await this.service.add(this.friendId, file, file.name, undefined, this.encryptWith());
-      } catch (err: any) {
-        this.error.set(err.message ?? tr('safebox.couldNotAdd', 'Could not add “{{ fileName }}”', { fileName: file.name }));
-        break;
-      }
-    }
-    this.adding.set(null);
-    await this.reload();
   }
 
   /** the files that are stored unencrypted */
@@ -279,8 +227,8 @@ export class Safebox {
     return isObjectType(item.type);
   }
 
-  /** The kinds a new object can be (the "New" frame): note first, then the rest; a note has its own page. */
-  protected readonly kinds = objectKinds();
+  /** What the "New" frame offers: a file (the upload page), then the kinds of object; a note has its own page. */
+  protected readonly kinds: { type: string; label: string; icon: string }[] = [{ type: 'file', label: tr('safebox.file', 'File'), icon: 'M12 16V4M7 9l5-5 5 5M4 20h16' }, ...objectKinds()];
 
   protected newLink(type: string): string[] {
     return type === 'note' ? ['/friends', this.friendId, 'safebox', 'note'] : ['/friends', this.friendId, 'safebox', 'new', type];

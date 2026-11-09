@@ -1090,7 +1090,6 @@ app-voice { display: contents; }
 .sf-send-bubbles { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 .sf-send-add { border: 1px dashed var(--sf-primary); border-radius: 1.25rem; color: var(--sf-primary); background: transparent; }
 .sf-send-addframe { display: grid; gap: 0.5rem; padding: 0.75rem; background: var(--sf-card); border: 1px solid var(--sf-border); border-radius: 1rem; }
-.sf-box-add summary { color: var(--sf-primary); } .sf-box-add.sf-over { border-color: var(--sf-primary); background: color-mix(in srgb, var(--sf-primary) 10%, var(--sf-card)); } // the Add files frame: in the brand colour, lit while files are dragged over it
 .sf-box-tools { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: center; gap: 0.5rem; margin-top: 0.5rem; margin-bottom: 0.75rem; > details { margin: 0; } > details[open] { flex: 1 1 100%; } } // the padlock and the Add files frame side by side
 .sf-box-newnote { display: inline-flex; align-items: center; gap: 0.375rem; min-height: var(--sf-touch); padding: 0.5rem 0.875rem; border: 1px solid var(--sf-border); border-radius: 999px; background: var(--sf-card); color: var(--sf-primary); font-size: var(--sf-fs-description); font-weight: 600; text-decoration: none; } // the "New note" pill beside the round Add files icon
 .sf-box-new:not([open]) { border-radius: 999px; summary { gap: 0.375rem; padding: 0.5rem 0.875rem; font-size: var(--sf-fs-description); font-weight: 600; color: var(--sf-primary); &::after { display: none; } } } // the New frame, closed: one pill; open: the whole frame with a pill for each kind
@@ -1111,7 +1110,6 @@ app-voice { display: contents; }
 .sf-box-tile-sub { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--sf-fs-description); color: var(--sf-muted); } // the line under the name: when it is, the first line, or what kind it is
 .sf-box-tile-lock { position: absolute; top: 0.625rem; inset-inline-end: 0.625rem; display: grid; place-items: center; width: 1.5rem; height: 1.5rem; border-radius: 50%; background: var(--sf-card); color: var(--sf-primary); box-shadow: 0 0.0625rem 0.25rem rgb(0 0 0 / 0.25); } // the padlock of a locked item, in the top right corner
 .sf-box-when { color: var(--sf-primary); font-weight: 600; } // the date and time line in the list
-.sf-box-add:not([open]) { border-radius: 999px; summary { gap: 0; padding: 0.5rem 0.75rem; &::after { display: none; } .sf-box-security-title { display: none; } } } // the Add files frame, closed: only the round icon beside the padlock (a file can still be dropped on it)
 .sf-box-lock { width: fit-content; margin-inline: auto; &:not([open]) { border-radius: 999px; } &[open] { width: auto; margin-inline: 0; } summary { gap: 0.375rem; padding: 0.5rem 0.75rem; &::after { display: none; } } } // the lock frame, closed: only a padlock (round); open: the whole frame
 .sf-box-usage { display: grid; gap: 0.25rem; margin-bottom: 0.75rem; .progress { height: 0.5rem; } }
 .sf-box-empty { display: grid; justify-items: center; gap: 0.5rem; padding: 2rem 1rem; svg { color: var(--sf-muted); } }
