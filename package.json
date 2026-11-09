@@ -24,6 +24,7 @@
     "deploy": "node scripts/sync-models.mjs && firebase deploy --only functions,firestore,storage,hosting",
     "deploy:hosting": "node scripts/sync-models.mjs && firebase deploy --only hosting",
     "deploy:functions": "node scripts/sync-models.mjs && firebase deploy --only functions",
+    "deploy:indexes": "firebase deploy --only firestore:indexes",
     "deploy:rules": "firebase deploy --only firestore,storage",
     "android:sync": "npm --prefix frontend run build && npm --prefix frontend exec cap -- sync android",
     "android:config": "node scripts/android-config.mjs",

@@ -54,6 +54,7 @@ export class App {
   protected readonly active = inject(ActiveCircleService);
 
   constructor() {
+    this.active.watchHistory(); // the back button never opens a page of another circle
     inject(LanguageService); // the texts follow the language of the account (or the country, or the browser)
     inject(RealtimeService); // starts listening for live updates (friend requests, messages) once somebody is signed in
     inject(LookSyncService); // the theme and the text size are kept on the account, so every device shows them

@@ -44,7 +44,6 @@ export class FriendsService {
     const res = await this.api.request<{ friends: Friend[] }>(`/circles/${circle.id}/friends`);
     if (generation !== this.active.generation) return;
     this.friends.set(res.friends);
-    this.forgetOldFriends(res.friends);
   }
 
   /** Makes the circle of a type (the circle this app is bound to does not exist yet); when it already exists the list tells. */
@@ -60,12 +59,15 @@ export class FriendsService {
     }
   }
 
-  /** The ready-made messages kept on this device for a friend who is not in the list any more (removed, or the account was reset) are deleted with the friend. */
-  private forgetOldFriends(friends: Friend[]): void {
+  /**
+   * The ready-made messages kept on this device for a friend (UiPreferences.friendQuick) are deleted with the friend. This is done when the friend is
+   * removed, never from a list that is loaded: a list is one circle only, and the friends of the other circles are not in it.
+   */
+  private forgetQuickOf(id: string): void {
     const kept = this.prefs.get('friendQuick');
-    const ids = new Set(friends.map((f) => f.id));
-    const left = Object.fromEntries(Object.entries(kept).filter(([id]) => ids.has(id)));
-    if (Object.keys(left).length !== Object.keys(kept).length) this.prefs.set('friendQuick', left);
+    if (!(id in kept)) return;
+    const { [id]: _gone, ...left } = kept;
+    this.prefs.set('friendQuick', left);
   }
 
   /**
@@ -132,6 +134,7 @@ export class FriendsService {
   async remove(id: string): Promise<void> {
     await this.api.request<void>(`${this.friendsPath()}/${id}`, { method: 'DELETE' });
     this.friends.update((list) => list.filter((f) => f.id !== id));
+    this.forgetQuickOf(id);
   }
 
   private friendsPath(): string {

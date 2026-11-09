@@ -1,5 +1,5 @@
 import { Injectable, Injector, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { tr } from './i18n';
 
 /** The circles an app can be bound to: the id each one has on the server (friends is the first circle, `default`), and its name. */
@@ -82,6 +82,7 @@ export class ActiveCircleService {
   private readonly isBound = signal<boolean>(this.readBound());
   private readonly hooks: ((id: string) => void)[] = [];
   private changes = 0;
+  private guarding = false;
 
   /** Counts the switches once the new circle's page is shown: the root of the page is made again when it changes, so no page keeps something of the old circle. */
   readonly epoch = signal(0);
@@ -183,6 +184,29 @@ export class ActiveCircleService {
     // the Router is fetched when needed: the Router depends on services that depend on this one
     const done = () => { if (changed) this.epoch.update((n) => n + 1); };
     this.injector.get(Router).navigateByUrl(to ?? '/', { replaceUrl: true }).then(done, done);
+  }
+
+  /**
+   * The back button must not step into a page of another circle (a friend or a conversation that is not in the circle in use). Every history entry
+   * is marked with the circle it was shown in (also kept over a reload); a step back or forward to an entry of another circle is turned into Home of
+   * the circle in use. Started once by the app.
+   */
+  watchHistory(): void {
+    if (this.guarding) return;
+    this.guarding = true;
+    const router = this.injector.get(Router);
+    router.events.subscribe((e) => {
+      if (e instanceof NavigationStart && e.navigationTrigger === 'popstate') {
+        const circle = (e.restoredState as { circle?: string } | undefined)?.circle;
+        if (circle && circle !== this.current()) router.navigateByUrl('/', { replaceUrl: true });
+      } else if (e instanceof NavigationEnd) {
+        try {
+          history.replaceState({ ...history.state, circle: this.current() }, '');
+        } catch {
+          /* no history: nothing to mark */
+        }
+      }
+    });
   }
 
   /**
