@@ -5,8 +5,10 @@ import { asyncHandler, requireAuth } from "./auth";
 import { MAX_WRAPS, wrapValid } from "./box-encryption";
 import { FRIENDS_SUBCOLLECTION } from "./constants";
 import { publishedOf } from "./keys";
-import { PublishedKey, RecoveryTodoItem, SafeboxWrap } from "./models";
-import { circleCol, keyCol, messageCol, safeboxItems } from "./paths";
+import { OwnRecoveryRequest, PublishedKey, RecoveryTodoItem, SafeboxWrap } from "./models";
+import { liveRequest, liveRequests, openRequest, requestOf, tellDone } from "./own-request";
+import { circleCol, keyCol, messageCol, ownRequestCol, safeboxItems } from "./paths";
+import { touchSync } from "./sync";
 
 /**
  * Recovery from my own other device (design: docs/design/message-encryption.md): a device of mine whose key can open my messages and files gives the keys of my
@@ -46,19 +48,123 @@ async function myConnections(uid: string): Promise<string[]> {
   return [...ids];
 }
 
-/** `?me=<my key id>`: the keys waiting to be allowed, when the key of this device may allow them. */
+/**
+ * `?me=<my key id>`: the requests of my other devices that this device may allow (when the key of this device is a shared one). A key that waits (added next to
+ * the others) has a request made for it here if it had none, so every waiting key is a request. `keys` are the keys of the live requests (asked or working).
+ */
 ownRecoveryRouter.get(
   "/pending",
   asyncHandler(async (req, res) => {
-    const keys = await myKeys(uidOf(res));
+    const uid = uidOf(res);
+    const keys = await myKeys(uid);
     const me = typeof req.query.me === "string" ? req.query.me : "";
     const eligible = keys.some((k) => k.key.id === me && k.shared);
-    res.json({ eligible, keys: eligible ? keys.filter((k) => !k.shared).map((k) => k.key) : [] });
+    if (!eligible) {
+      res.json({ eligible, keys: [], requests: [] });
+      return;
+    }
+    for (const k of keys.filter((k) => !k.shared)) if (!(await liveRequest(uid, k.key.id))) await openRequest(uid, k.key);
+    const open = (await liveRequests(uid)).filter((r) => r.id !== me && (r.data.status === "asked" || r.data.status === "working") && keys.some((k) => k.key.id === r.id));
+    res.json({ eligible, keys: open.map((r) => keys.find((k) => k.key.id === r.id)!.key), requests: open.map((r) => requestOf(r.id, r.data)) });
   }),
 );
 
+/** `?key=<my key id>`: the request that THIS device made (or the one made for it), so it can show how far it is. Null when there is none. */
+ownRecoveryRouter.get(
+  "/request",
+  asyncHandler(async (req, res) => {
+    const uid = uidOf(res);
+    const id = typeof req.query.key === "string" ? req.query.key : "";
+    const data = id ? await liveRequest(uid, id) : undefined;
+    res.json({ request: data ? requestOf(id, data) : null } satisfies { request: OwnRecoveryRequest | null });
+  }),
+);
+
+/**
+ * `{ key }`: the person asks (again) for this device's key, at any time, also when everything works. Needs another key of mine that opens everything. A new request
+ * replaces the old one; it shows on my other devices.
+ */
+ownRecoveryRouter.post(
+  "/ask",
+  asyncHandler(async (req, res) => {
+    const uid = uidOf(res);
+    const keys = await myKeys(uid);
+    const target = keys.find((k) => k.key.id === req.body?.key);
+    if (!target) {
+      res.status(409).json({ error: "That key is not in use" });
+      return;
+    }
+    if (!keys.some((k) => k.shared && k.key.id !== target.key.id)) {
+      res.status(409).json({ error: "No other device of yours has a key that opens your old messages. Use your 24 recovery words, or ask a friend." });
+      return;
+    }
+    await openRequest(uid, target.key, await countLacking(uid, target.key.id));
+    res.status(201).json({ request: requestOf(target.key.id, (await ownRequestCol(uid).doc(target.key.id).get()).data() ?? {}) });
+  }),
+);
+
+/** The key `me` of a device of mine that may allow others (shared), other than the one asking. */
+const helperOk = (keys: { key: PublishedKey; shared: boolean }[], me: unknown, target: string): boolean => keys.some((k) => k.key.id === me && k.shared && k.key.id !== target);
+
+/** `{ key, me }`: a device begins the work: the request is `working`, with how many messages and files need a copy. */
+ownRecoveryRouter.post(
+  "/start",
+  asyncHandler(async (req, res) => {
+    const uid = uidOf(res);
+    const target = await waitingKey(uid, req.body?.key);
+    if (!target || !helperOk(await myKeys(uid), req.body?.me, target.id)) {
+      res.status(409).json({ error: "That key is not waiting for access" });
+      return;
+    }
+    const counts = await countLacking(uid, target.id);
+    const ref = ownRequestCol(uid).doc(target.id);
+    if ((await ref.get()).exists) await ref.update({ status: "working", total: counts.messages + counts.files, added: 0 });
+    else await openRequest(uid, target, counts);
+    await touchSync(uid, "keysAt");
+    res.json({ ok: true });
+  }),
+);
+
+/** `{ key, me }`: "Not me": the key that asked is removed at once, and the device that asked is told (the request stays `declined` until it has shown it). */
+ownRecoveryRouter.post(
+  "/decline",
+  asyncHandler(async (req, res) => {
+    const uid = uidOf(res);
+    const target = await waitingKey(uid, req.body?.key);
+    if (!target || !helperOk(await myKeys(uid), req.body?.me, target.id)) {
+      res.status(409).json({ error: "That key is not waiting for access" });
+      return;
+    }
+    await keyCol(uid).doc(target.id).set({ revoked: true, revokedAt: FieldValue.serverTimestamp() }, { merge: true });
+    const ref = ownRequestCol(uid).doc(target.id);
+    if ((await ref.get()).exists) await ref.update({ status: "declined" });
+    await touchSync(uid, "keysAt");
+    res.json({ ok: true });
+  }),
+);
+
+/** `{ key }`: the asking device has shown a declined or finished request: it is deleted (nothing is kept). */
+ownRecoveryRouter.post(
+  "/dismiss",
+  asyncHandler(async (req, res) => {
+    const uid = uidOf(res);
+    const id = typeof req.body?.key === "string" ? req.body.key : "";
+    const data = id ? await liveRequest(uid, id) : undefined;
+    if (data && (data.status === "declined" || data.status === "done")) {
+      await ownRequestCol(uid).doc(id).delete();
+      await touchSync(uid, "keysAt");
+    }
+    res.json({ ok: true });
+  }),
+);
+
+/** A key of mine that is waiting (added next to the others), or one that has a live request (asked again, also when it was allowed before). */
 async function waitingKey(uid: string, id: unknown): Promise<PublishedKey | null> {
-  return (await myKeys(uid)).find((k) => k.key.id === id && !k.shared)?.key ?? null;
+  const k = (await myKeys(uid)).find((k) => k.key.id === id);
+  if (!k) return null;
+  if (!k.shared) return k.key;
+  const r = await liveRequest(uid, k.key.id);
+  return r && (r.status === "asked" || r.status === "working") ? k.key : null;
 }
 
 /**
@@ -141,7 +247,13 @@ ownRecoveryRouter.post(
       batch.update(snap.ref, { "enc.wraps": [...enc.wraps, { uid, keyId, wrappedKey }] });
       added++;
     });
-    if (added) await batch.commit();
+    if (added) {
+      await batch.commit();
+      const ref = ownRequestCol(me).doc(target.id);
+      const request = (await ref.get()).data();
+      if (request) await ref.update({ added: (request.added ?? 0) + added });
+      await touchSync(me, "keysAt"); // the asking device shows the progress
+    }
     res.json({ added });
   }),
 );
@@ -186,6 +298,11 @@ ownRecoveryRouter.post(
       return;
     }
     await keyCol(me).doc(target.id).update({ ownShared: true, ownSharedAt: FieldValue.serverTimestamp() });
+    const request = await liveRequest(me, target.id);
+    if (request) {
+      await ownRequestCol(me).doc(target.id).update({ status: "done", added: request.total ?? 0 });
+      await tellDone(me, { id: target.id, label: target.label });
+    }
     res.json({ ok: true });
   }),
 );

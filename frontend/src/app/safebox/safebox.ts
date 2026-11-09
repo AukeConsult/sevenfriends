@@ -4,7 +4,6 @@ import { AppDatePipe } from '../core/app-date.pipe';
 import { Component, DestroyRef, computed, effect, inject, input, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { KeysService } from '../core/keys.service';
-import { RecoveryHint } from '../recovery-hint/recovery-hint';
 import { FriendsService } from '../core/friends.service';
 import { formatBytes, prepareImage } from '../core/image';
 import { SafeboxService } from '../core/safebox.service';
@@ -44,7 +43,7 @@ export class SafeboxThumb {
  */
 @Component({
   selector: 'app-safebox',
-  imports: [AppDatePipe, RouterLink, SafeboxThumb, RecoveryHint, TranslocoDirective],
+  imports: [AppDatePipe, RouterLink, SafeboxThumb, TranslocoDirective],
   templateUrl: './safebox.html',
   providers: [provideTranslocoScope('safebox')],
 })
@@ -89,6 +88,9 @@ export class Safebox {
   }
 
   constructor() {
+    // the band under the header says how many files of this friendship this device cannot open
+    effect(() => this.ctx.lockedFiles.set(this.shutCount()));
+    inject(DestroyRef).onDestroy(() => this.ctx.lockedFiles.set(0));
     if (!this.friends.friends().length) void this.friends.load().catch(() => undefined); // for the friend's name
     void this.reload();
     // the menu of the header: Add files opens the frame to add them (after the click that chose it has been seen by any click-outside rule)
@@ -148,10 +150,9 @@ export class Safebox {
 
   /** the files that are stored unencrypted */
   private readonly deviceKeys = inject(KeysService);
-  /** true when a locked file has no copy for the key of this device */
-  protected readonly shutItems = computed(() => {
+  private readonly shutCount = computed(() => {
     const mine = this.deviceKeys.thisKeyId();
-    return !!mine && this.items().some((item) => item.enc && !item.enc.wraps.some((w) => w.keyId === mine));
+    return mine ? this.items().filter((item) => item.enc && !item.enc.wraps.some((w) => w.keyId === mine)).length : 0;
   });
   protected readonly plainItems = computed(() => this.items().filter((item) => !item.enc));
   /** the files being locked: how many are done, of how many (null = not running) */

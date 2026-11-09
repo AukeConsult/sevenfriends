@@ -287,5 +287,13 @@
   "needsYourHelp": "{{ friendName }} needs your help",
   "openToUnlockTheir": "Open the app to unlock their old messages again.",
   "openedYourHistory": "{{ friendName }} opened your history",
-  "declinedYourRequest": "{{ friendName }} declined your request"
+  "declinedYourRequest": "{{ friendName }} declined your request",
+  "getThemBack": "Get them back",
+  "lockedMessagesAndFiles": "{{ messages }} messages and {{ files }} files with {{ name }} are locked on this device.",
+  "lockedFilesWith": "{{ count }} files with {{ name }} are locked on this device.",
+  "lockedMessagesWith": "{{ count }} messages with {{ name }} are locked on this device.",
+  "removeThisKeyNotYou": "Remove this key? Then that device can no longer open your messages. If it was not you, also change your login.",
+  "removeIt": "Remove it",
+  "cancel": "Cancel",
+  "notMe": "Not me"
 }

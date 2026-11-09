@@ -15,9 +15,10 @@ import { userDoc } from "./paths";
 
 /**
  * The same person is signed in on several devices, or somebody else changed what I see: my profile (`profileAt`) or my sounds (`preferencesAt`) changed,
- * or the requests that reached me did (`requestsAt`: the person who asked deleted the request, or I answered it on another device).
+ * or the requests that reached me did (`requestsAt`: the person who asked deleted the request, or I answered it on another device), or a request of my
+ * devices to open my old messages changed (`keysAt`: docs/design/recovery-own-devices.md).
  */
-export async function touchSync(uid: string, field: "profileAt" | "preferencesAt" | "requestsAt"): Promise<void> {
+export async function touchSync(uid: string, field: "profileAt" | "preferencesAt" | "requestsAt" | "keysAt"): Promise<void> {
   try {
     await userDoc(uid).collection("sync").doc("state").set({ [field]: FieldValue.serverTimestamp() }, { merge: true });
   } catch (err) {

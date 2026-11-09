@@ -11,7 +11,6 @@ import { AppDatePipe } from '../core/app-date.pipe';
 import { Component, DestroyRef, ElementRef, HostListener, computed, effect, inject, signal, untracked, viewChild } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Router, RouterLink } from '@angular/router';
-import { RecoveryHint } from '../recovery-hint/recovery-hint';
 import { ApiError } from '../core/api.service';
 import { localLink } from '../core/link-embed';
 import { ChatItem } from '../core/message-lock.service';
@@ -38,7 +37,7 @@ const SAFETY_REFRESH_MS = 30000;
 /** The message feed with one friend: /friends/:id (the id of the connection). */
 @Component({
   selector: 'app-chat',
-  imports: [AddMedia, PokeToggle, AppDatePipe, FriendAvatar, MediaAudio, MediaImage, MediaVideo, NgTemplateOutlet, RouterLink, Clearable, RecoveryHint, TranslocoDirective],
+  imports: [AddMedia, PokeToggle, AppDatePipe, FriendAvatar, MediaAudio, MediaImage, MediaVideo, NgTemplateOutlet, RouterLink, Clearable, TranslocoDirective],
   templateUrl: './chat.html',
   providers: [provideTranslocoScope('chat')],
 })
@@ -76,6 +75,7 @@ export class Chat {
   protected readonly initials = initials;
   protected readonly messages = signal<ChatItem[]>([]);
   protected readonly hasShut = computed(() => this.messages().some((m) => m.locked === 'shut'));
+  private readonly lockedCount = computed(() => this.messages().filter((m) => m.locked === 'shut').length);
   /** false = oldest first (the default); true = newest first. Remembered on this device. */
   /** newest first? (a remembered choice, the same in every window; a refresh of the feed never changes it) */
   /** the Enter key sends the message (a preference) */
@@ -216,6 +216,9 @@ export class Chat {
   protected readonly composerHeight = signal(64);
 
   constructor() {
+    // the band under the header says how many messages of this friendship this device cannot open
+    effect(() => this.ctx.lockedMessages.set(this.lockedCount()));
+    inject(DestroyRef).onDestroy(() => this.ctx.lockedMessages.set(0));
     // the header menu shows the sort order and the clean-up only while the feed is open
     this.ctx.feed.set({
       sortDesc: () => this.sortDesc(),

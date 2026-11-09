@@ -2,7 +2,6 @@
 <main class="sf-page sf-page-wide sf-box-page">
   <!-- the title and the way back are in the header of the friend page (the Safebox icon) -->
   <p class="sf-hint text-center m-0">{{ t('safebox.onlyYouAndFriendname', { friendName: friendName() }) || 'Only you and ' + friendName() + ' can see these files.' }}</p>
-  @if (shutItems()) { <app-recovery-hint [friendId]="friendId" what="files" /> }
   @if (canEncrypt() && plainItems().length) {
     <p class="sf-hint text-center m-0">{{ t('safebox.areNotLocked', { are: plainItems().length === 1 ? '1 file is' : (t('safebox.plainitemslengthFilesAre', { plainItemsLength: plainItems().length }) || plainItems().length + ' files are') }) || (plainItems().length === 1 ? '1 file is' : (t('safebox.plainitemslengthFilesAre', { plainItemsLength: plainItems().length }) || plainItems().length + ' files are')) + ' not locked.' }} <a [routerLink]="['/friends', friendId, 'lock']">{{ t('safebox.lockThem', { them: plainItems().length === 1 ? 'it' : 'them' }) || 'Lock ' + (plainItems().length === 1 ? 'it' : 'them') }}</a></p>
   }

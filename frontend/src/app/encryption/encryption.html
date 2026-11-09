@@ -11,25 +11,97 @@
   <app-key-setup (finished)="keys.refresh()" />
 
   @if (!showingWords()) {
+    <!-- does this device have a working key, and can it open everything? what to do when not -->
+    @if (finished()) { <div class="alert alert-success m-0" role="status">{{ t('encryption.doneYourHistoryIs') || 'Done. Your history is open on this device.' }}</div> }
+    @if (keys.state() === 'ready') {
+      @if (lockedTotal() > 0) {
+        <div class="alert alert-warning m-0" role="status">
+          <strong>{{ t('encryption.someThingsAreLocked') || 'Some of your old messages and files are locked on this device.' }}</strong><br />
+          {{ t('encryption.lockedCounts', { messages: lockedCounts()?.messages ?? 0, files: lockedCounts()?.files ?? 0 }) || (lockedCounts()?.messages ?? 0) + ' messages and ' + (lockedCounts()?.files ?? 0) + ' files cannot be opened here yet. They were locked for another key.' }}
+        </div>
+        <ng-container *ngTemplateOutlet="ways" />
+      } @else {
+        <details class="sf-expand sf-expand-quiet">
+          <summary>{{ lockedCounts() ? (t('encryption.keyWorksNothingLocked') || '✓ Your key works. Nothing is locked on this device.') : (t('encryption.askOrTryRecovery') || 'Recovery: ask my other devices or a friend, even when all is fine') }}</summary>
+          <div class="vstack gap-2 mt-2">
+            <p class="small text-secondary m-0">{{ t('encryption.youCanAskAnyTime') || 'You can still ask at any time, for example to make sure that all your devices open everything.' }}</p>
+            <ng-container *ngTemplateOutlet="ways" />
+          </div>
+        </details>
+      }
+    } @else if (noKeyReason(); as reason) {
+      <div class="alert alert-warning m-0" role="status">
+        <strong>{{ t('encryption.thisDeviceHasNoWorking') || 'This device has no working key.' }}</strong><br />
+        {{ reason }}
+        {{ t('encryption.soYourOldMessages') || 'Your old messages and files are locked here until it has one. Restore your key with your 24 words (below), or make a new key and then ask your other devices or a friend to open your history for it.' }}
+      </div>
+    }
+  }
+
+  <ng-template #ways>
+    <div class="vstack gap-3">
+      <!-- 1. my other devices -->
+      <section class="vstack gap-2">
+        <h2 class="sf-section-title m-0">{{ t('encryption.myOtherDevices') || 'My other devices' }}</h2>
+        @switch (mine()?.status) {
+          @case ('asked') {
+            <p class="m-0">{{ t('encryption.waitingForYourOther') || 'Waiting for one of your other devices to say Allow.' }}</p>
+            <ul class="small m-0 ps-3">
+              @for (key of otherDevices(); track key.id) { <li>{{ key.label || 'A device' }}</li> }
+            </ul>
+            <p class="small text-secondary m-0">{{ t('encryption.openTheAppOn') || 'Open Seven Friends on one of these devices (it must be logged in and show the same account). A banner asks you to Allow. It does not matter which one.' }}</p>
+            <div class="progress" role="progressbar" [attr.aria-label]="t('encryption.waiting') || 'Waiting'"><div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 100%"></div></div>
+            <button type="button" class="btn btn-outline-secondary btn-sm align-self-start" (click)="askOthers()" [disabled]="askBusy()">{{ t('encryption.askAgain') || 'Ask again' }}</button>
+          }
+          @case ('working') {
+            <p class="m-0">{{ t('encryption.yourOtherDeviceIs') || 'Your other device is opening your history for this one.' }}</p>
+            <div class="progress" role="progressbar" [attr.aria-valuenow]="percent()" aria-valuemin="0" aria-valuemax="100"><div class="progress-bar" [style.width.%]="percent()"></div></div>
+            <p class="small text-secondary m-0">{{ t('encryption.addedOfTotal', { added: mine()!.added, total: mine()!.total }) || mine()!.added + ' of ' + mine()!.total + ' done. Keep the app open on both devices.' }}</p>
+          }
+          @case ('declined') {
+            <p class="m-0">{{ t('encryption.oneOfYourOther') || 'One of your other devices said it was not you, and removed the key of this device. Use your 24 words, or ask a friend.' }}</p>
+            <button type="button" class="btn btn-outline-secondary btn-sm align-self-start" (click)="dismissAsk()">{{ t('encryption.dismiss') || 'Dismiss' }}</button>
+          }
+          @default {
+            @if (otherKeys() > 0) {
+              <p class="m-0">{{ t('encryption.askYourOtherDevices') || 'Ask your other devices to open your old messages for this one. A card shows on them (and a message, when they are closed).' }}</p>
+              <button type="button" class="btn btn-primary btn-sm align-self-start" (click)="askOthers()" [disabled]="askBusy()">{{ t('encryption.askMyOtherDevices') || 'Ask my other devices' }}</button>
+            } @else {
+              <p class="small text-secondary m-0">{{ t('encryption.noOtherDeviceHas') || 'No other device of yours has a key. Ask a friend below.' }}</p>
+            }
+          }
+        }
+        @if (askError()) { <p class="text-danger small m-0" role="alert">{{ askError() }}</p> }
+      </section>
+
+      <!-- 2. my friends -->
+      <section class="vstack gap-2">
+        <h2 class="sf-section-title m-0">{{ t('encryption.myFriends') || 'My friends' }}</h2>
+        <p class="m-0">{{ t('encryption.aFriendCanOpen') || 'A friend can open what you shared with them: they open the keys on their device and lock them again for you. Ask one friend at a time.' }}</p>
+        @if (friendList().length) {
+          <ul class="sf-list">
+            @for (friend of friendList(); track friend.id) {
+              <li class="sf-list-item">
+                <span class="sf-list-text"><strong>{{ friend.name }}</strong></span>
+                <a class="btn btn-outline-primary btn-sm" [routerLink]="['/friends', friend.id, 'recovery']">{{ t('encryption.askFriend') || 'Ask' }}</a>
+              </li>
+            }
+          </ul>
+        } @else {
+          <p class="small text-secondary m-0">{{ t('encryption.noFriendsInThis') || 'No friends in this circle yet.' }}</p>
+        }
+      </section>
+    </div>
+  </ng-template>
+
+  @if (!showingWords()) {
     @if (keys.state() === 'ready') {
       <div class="d-flex justify-content-center">
         <button type="button" class="btn btn-light btn-sm" [attr.aria-expanded]="advanced()" (click)="advanced.set(!advanced())">{{ advanced() ? 'Hide advanced' : 'Advanced' }}</button>
       </div>
       @if (advanced()) {
         <h2 class="sf-section-title m-0 mt-2">{{ t('encryption.yourDevices') || 'Your devices' }}</h2>
-        <div class="d-flex flex-wrap align-items-center gap-2">
-          <button type="button" class="btn btn-light btn-sm" (click)="checkLocked()">{{ t('encryption.checkWhatIsStill') || 'Check what is still locked here' }}</button>
-          @if (locked(); as l) {
-            <span class="small">
-              @if (!l.messages && !l.files) { {{ t('encryption.everythingCanBeOpened') || 'Everything can be opened on this device.' }} }
-              @else { {{ t('encryption.messagesMessagesAndFiles', { messages: l.messages, files: l.files }) || l.messages + ' messages and ' + l.files + ' files are still locked for this device. Tap Allow on a device that opens them, or ask your friend to help from the Recovery page.' }} }
-            </span>
-          }
-        </div>
         @if (allowNote()) { <p class="small m-0">{{ allowNote() }}</p> }
-        @if (waitingHere()) {
-          <p class="small text-secondary m-0">{{ t('encryption.thisDeviceCannotOpen') || 'This device cannot open your old messages yet. Open Seven Friends on your first device (the one with your oldest key) and tap Allow here under Advanced, or ask your friend to help from the Recovery page.' }}</p>
-        }
         @if (severalKeys() && own.waiting().length === 0) {
           <details class="sf-expand sf-expand-quiet">
             <summary>{{ t('encryption.thisDeviceOpensMy') || 'This device opens my old messages' }}</summary>

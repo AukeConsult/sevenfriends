@@ -11,6 +11,9 @@ import { LiveChanges } from './live-changes';
 import { NotificationsService } from './notifications.service';
 import { PushService } from './push.service';
 import { RecoveryInboxService } from './recovery-inbox.service';
+import { KeysService } from './keys.service';
+import { LockedItemsService } from './locked-items.service';
+import { OwnRecoveryService } from './own-recovery.service';
 import { SoundService } from './sound.service';
 import { tr } from './i18n';
 
@@ -50,6 +53,9 @@ export class RealtimeService {
   private readonly active = inject(ActiveCircleService);
   private readonly activity = inject(CircleActivityService);
   private readonly recovery = inject(RecoveryInboxService);
+  private readonly ownRecovery = inject(OwnRecoveryService);
+  private readonly locked = inject(LockedItemsService);
+  private readonly keys = inject(KeysService);
   private readonly sound = inject(SoundService);
   private readonly desktop = inject(DesktopNoticeService);
   private readonly push = inject(PushService);
@@ -188,13 +194,19 @@ export class RealtimeService {
       source,
       (snapshot, first) => {
         for (const change of snapshot.docChanges()) {
-          for (const field of ['profileAt', 'preferencesAt', 'requestsAt']) {
+          for (const field of ['profileAt', 'preferencesAt', 'requestsAt', 'keysAt']) {
             const stamp = change.doc.data()[field]?.toMillis?.() as number | undefined;
             if (stamp === undefined || this.syncStamps.get(field) === stamp) continue;
             this.syncStamps.set(field, stamp);
             if (first) continue; // what was already there is loaded by the pages themselves
             // the person who asked took the request back, or I answered it on another device: the search is run again, so the request goes from Home and the seats
-            if (field === 'requestsAt') void this.refreshEverything();
+            if (field === 'keysAt') {
+              // a request of one of my devices to open my old messages changed (made, working, declined, finished): both sides look again
+              void this.ownRecovery.check();
+              void this.ownRecovery.refreshMine();
+              void this.keys.refresh();
+              void this.locked.check(true);
+            } else if (field === 'requestsAt') void this.refreshEverything();
             else this.live.emit({ type: field === 'profileAt' ? 'profile' : 'sounds' });
           }
         }

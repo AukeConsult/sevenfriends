@@ -1549,6 +1549,8 @@ button.sf-hs-sleep { padding: 0; border: 0; background: none; font: inherit; wid
 // "A new key was added to your account": a small card above the bottom bar, on the device that can allow it
 .sf-own-key { position: fixed; inset-inline-start: 0.75rem; inset-inline-end: 0.75rem; bottom: 4.5rem; z-index: 1500; max-width: 26rem; margin: 0 auto; display: flex; flex-direction: column; gap: 0.5rem; padding: 0.75rem 1rem; border-radius: 0.75rem; background: var(--sf-card); border: 1px solid var(--bs-border-color); box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15); }
 .sf-own-key strong { display: block; font-weight: 600; }
+.sf-locked-band { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem; margin: 0.5rem var(--sf-gutter, 1rem); padding: 0.5rem 0.75rem; border-radius: var(--sf-radius); background: #fff3cd; border: 1px solid #f1d98a; color: #664d03; font-size: var(--sf-fs-description); }
+.sf-locked-text { flex: 1 1 12rem; }
 .sf-own-key-code { display: block; font-size: 0.8125rem; color: var(--sf-muted); }
 .sf-own-key-note { display: block; font-size: 0.875rem; margin-top: 0.25rem; }
 .sf-own-key-actions { display: flex; gap: 0.5rem; }

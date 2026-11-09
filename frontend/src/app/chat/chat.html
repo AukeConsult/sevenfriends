@@ -186,7 +186,6 @@
       <p class="sf-hint-center">{{ t('chat.noMessagesYetSay', { name: name() }) || 'No messages yet. Say hello to ' + name() + '.' }}</p>
     }
 
-    @if (hasShut()) { <app-recovery-hint [friendId]="friendId" /> }
     @for (message of shown(); track message.id) {
       <div class="sf-message" [attr.data-id]="message.id" [class.sf-mine]="message.mine" [class.sf-has-avatar]="feedIcons()" [class.sf-message-media]="message.media || (message.link && previewing().has(message.id))" [class.sf-message-wide]="message.link && previewing().has(message.id)" [class.sf-doomed]="doomed().has(message.id)" [class.sf-pending]="message.id.startsWith('pending-')">
         @if (feedIcons()) {

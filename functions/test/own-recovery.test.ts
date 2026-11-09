@@ -2,6 +2,7 @@ import { webcrypto, randomBytes } from "node:crypto";
 import { getFirestore } from "firebase-admin/firestore";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { User, connect, seedPool } from "./helpers";
+import { sentPushes } from "./setup";
 
 /** Recovery from my own other device: the key of a device that can open my messages gives my other keys their copies, for every friend at once. */
 let pool: User[];
@@ -39,7 +40,7 @@ describe("a key of mine is allowed by another device of mine", () => {
   it("the first key needs nothing; a key added next to it waits, and only the first key is asked to help", async () => {
     const s = await story();
     expect((await pool[0].raw("get", own(`/pending?me=${s.browser}`)).expect(200)).body).toMatchObject({ eligible: true, keys: [expect.objectContaining({ id: s.phone })] });
-    expect((await pool[0].raw("get", own(`/pending?me=${s.phone}`)).expect(200)).body).toEqual({ eligible: false, keys: [] }); // the new device has nothing to give
+    expect((await pool[0].raw("get", own(`/pending?me=${s.phone}`)).expect(200)).body).toEqual({ eligible: false, keys: [], requests: [] }); // the new device has nothing to give
     expect((await pool[0].raw("get", own("/pending?me=nope")).expect(200)).body.eligible).toBe(false);
   });
 
@@ -83,7 +84,7 @@ describe("a key of mine is allowed by another device of mine", () => {
     await pool[0].raw("post", own("/trust"), { key: "nope" }).expect(409);
     await pool[0].raw("post", own("/trust"), { key: s.phone }).expect(200);
     expect((await pool[0].raw("get", own(`/pending?me=${s.phone}`)).expect(200)).body).toMatchObject({ eligible: true, keys: [expect.objectContaining({ id: s.browser })] });
-    expect((await pool[0].raw("get", own(`/pending?me=${s.browser}`)).expect(200)).body).toEqual({ eligible: false, keys: [] });
+    expect((await pool[0].raw("get", own(`/pending?me=${s.browser}`)).expect(200)).body).toEqual({ eligible: false, keys: [], requests: [] });
   });
 
   it("tells how many messages and files are still locked for a key", async () => {
@@ -91,5 +92,83 @@ describe("a key of mine is allowed by another device of mine", () => {
     expect((await pool[0].raw("get", own(`/status?key=${s.phone}`)).expect(200)).body).toEqual({ messages: 1, files: 0 });
     expect((await pool[0].raw("get", own(`/status?key=${s.browser}`)).expect(200)).body).toEqual({ messages: 0, files: 0 });
     await pool[0].raw("get", own("/status?key=nope")).expect(409);
+  });
+});
+
+/** The request of a device to my other devices (docs/design/recovery-own-devices.md): made by itself, asked at any time, live progress, "Not me", nothing kept when done. */
+describe("a device asks my other devices", () => {
+  const stamp = async (uid: string) => (await getFirestore().collection("user-account").doc(uid).collection("sync").doc("state").get()).data()?.keysAt;
+  const device = () => pool[0].raw("post", "/push/devices", { token: "token-00-a".padEnd(30, "x") }).expect(204);
+  const mine = async (key: string) => (await pool[0].raw("get", own(`/request?key=${key}`)).expect(200)).body.request;
+
+  it("a key added next to others makes a request by itself, with a push and a stamp", async () => {
+    const id = await connect(pool[0], pool[1]);
+    void id;
+    const browser = await publish(pool[0], keys[0]);
+    await device();
+    sentPushes.length = 0;
+    const phone = await publish(pool[0], keys[2]);
+    expect(await mine(phone)).toMatchObject({ keyId: phone, status: "asked" });
+    expect(await mine(browser)).toBeNull(); // the first key needs nothing
+    expect(sentPushes.at(-1)?.data).toMatchObject({ id: `own-recovery-${phone}`, url: expect.stringMatching(/^\//) });
+    expect(await stamp(pool[0].p.uid)).toBeTruthy();
+    const pending = (await pool[0].raw("get", own(`/pending?me=${browser}`)).expect(200)).body;
+    expect(pending.requests).toEqual([expect.objectContaining({ keyId: phone, status: "asked" })]);
+    expect(pending.keys).toEqual([expect.objectContaining({ id: phone })]);
+  });
+
+  it("works with progress on both sides, and a finished request is told and then deleted", async () => {
+    const s = await story();
+    await device();
+    await pool[0].raw("post", own("/start"), { key: s.phone, me: s.browser }).expect(200);
+    expect(await mine(s.phone)).toMatchObject({ status: "working", total: 1, added: 0 });
+    await pool[0].raw("post", own("/start"), { key: s.phone, me: s.phone }).expect(409); // the asking key cannot help itself
+    await pool[0].raw("post", own("/wraps"), { key: s.phone, part: "messages", items: [{ id: s.sent, wrap: wrap(s.u0, s.phone) }] }).expect(200);
+    expect(await mine(s.phone)).toMatchObject({ status: "working", added: 1 });
+    sentPushes.length = 0;
+    await pool[0].raw("post", own("/done"), { key: s.phone }).expect(200);
+    expect(await mine(s.phone)).toMatchObject({ status: "done" });
+    expect(sentPushes.at(-1)?.data).toMatchObject({ id: `own-recovery-done-${s.phone}`, title: expect.stringContaining("is open on") });
+    await pool[0].raw("post", own("/dismiss"), { key: s.phone }).expect(200);
+    expect(await mine(s.phone)).toBeNull(); // nothing is kept
+    expect((await getFirestore().collection("user-account").doc(s.u0).collection("own-recovery-request").doc(s.phone).get()).exists).toBe(false);
+  });
+
+  it("asking again at any time: a new request replaces the old one, also after it was allowed", async () => {
+    const s = await story();
+    await pool[0].raw("post", own("/wraps"), { key: s.phone, part: "messages", items: [{ id: s.sent, wrap: wrap(s.u0, s.phone) }] }).expect(200);
+    await pool[0].raw("post", own("/done"), { key: s.phone }).expect(200);
+    await pool[0].raw("post", own("/dismiss"), { key: s.phone }).expect(200);
+    const asked = (await pool[0].raw("post", own("/ask"), { key: s.phone }).expect(201)).body.request;
+    expect(asked).toMatchObject({ keyId: s.phone, status: "asked", total: 0 }); // nothing is missing, and it can still be asked
+    expect((await pool[0].raw("get", own(`/pending?me=${s.browser}`)).expect(200)).body.requests).toHaveLength(1);
+    // and the other device can do the work for a key that was allowed before (the request opens it)
+    await pool[0].raw("get", own(`/todo?key=${s.phone}&part=messages`)).expect(200);
+    await pool[0].raw("post", own("/ask"), { key: s.phone }).expect(201); // again
+    await pool[0].raw("post", own("/ask"), { key: "nope" }).expect(409);
+  });
+
+  it("needs another device with a key: a lone key cannot ask", async () => {
+    await connect(pool[0], pool[1]);
+    const only = await publish(pool[0], keys[0]);
+    await pool[0].raw("post", own("/ask"), { key: only }).expect(409);
+  });
+
+  it("\"Not me\" removes the key that asked, and the asking device reads it once", async () => {
+    const s = await story();
+    await pool[0].raw("post", own("/decline"), { key: s.phone, me: s.phone }).expect(409); // only a device that can help
+    await pool[0].raw("post", own("/decline"), { key: s.phone, me: s.browser }).expect(200);
+    expect((await pool[0].raw("get", "/keys").expect(200)).body.keys.find((k: { id: string }) => k.id === s.phone).revoked).toBe(true);
+    expect(await mine(s.phone)).toMatchObject({ status: "declined" });
+    expect((await pool[0].raw("get", own(`/pending?me=${s.browser}`)).expect(200)).body.requests).toEqual([]);
+    await pool[0].raw("post", own("/dismiss"), { key: s.phone }).expect(200);
+    expect(await mine(s.phone)).toBeNull();
+  });
+
+  it("a person cannot touch the requests of somebody else", async () => {
+    const s = await story();
+    expect((await pool[1].raw("get", own(`/request?key=${s.phone}`)).expect(200)).body.request).toBeNull();
+    await pool[1].raw("post", own("/decline"), { key: s.phone, me: s.browser }).expect(409);
+    await pool[1].raw("post", own("/ask"), { key: s.phone }).expect(409);
   });
 });

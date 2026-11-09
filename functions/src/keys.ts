@@ -3,6 +3,7 @@ import { DecodedIdToken } from "firebase-admin/auth";
 import { FieldValue, Timestamp, getFirestore } from "firebase-admin/firestore";
 import { asyncHandler, requireAuth } from "./auth";
 import { MyKeys, KeyBackup, MAX_KEYS_PER_PERSON, MAX_KEY_LABEL, PublicKeyJwk, PublishedKey, canonicalPublicKey, fingerprintOf, keyIdOf } from "./models";
+import { openRequest } from "./own-request";
 import { keyBackupDoc, keyCol } from "./paths";
 import { text } from "./validation";
 
@@ -88,6 +89,8 @@ keysRouter.post(
     batch.set(ref, already ? { label } : { publicKey: key, fingerprint, label, revoked: false, ownShared: first, createdAt: FieldValue.serverTimestamp() }, { merge: true });
     if (backup) batch.set(keyBackupDoc(uid), { ...backup, savedAt: FieldValue.serverTimestamp() });
     await batch.commit();
+    // a key added next to other keys waits for a device of mine to allow it: that is a request, shown on my other devices (docs/design/recovery-own-devices.md)
+    if (!already && !first) await openRequest(uid, { id, label, fingerprint });
     // the answer is what is stored (read back), not what was sent
     res.status(already ? 200 : 201).json(publishedOf(id, (await ref.get()).data() ?? {}));
   }),

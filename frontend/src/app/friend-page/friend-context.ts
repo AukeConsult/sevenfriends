@@ -61,6 +61,9 @@ export class FriendContext {
   readonly seat = computed(() => this.friends.awake().findIndex((f) => f.id === this.friendId) + 1);
   /** the name of this conversation once it is loaded (the feed tells it) */
   readonly name = signal('');
+  /** how many messages / safebox files of this friendship this device cannot open (set by the feed and the safebox; the band under the header shows it) */
+  readonly lockedMessages = signal(0);
+  readonly lockedFiles = signal(0);
   /** set when this conversation cannot be opened (not confirmed, or not found): the feed tells it */
   readonly blocked = signal<string | null>(null);
   /** the name for the header: the one of the conversation once it is loaded, until then the one of the friend list, else nothing */

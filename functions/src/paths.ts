@@ -28,6 +28,9 @@ export const signalCol = (uid: string) => userDoc(uid).collection(INCOMING_SIGNA
 /** the public keys of a person's devices (the document id is the key ID) */
 export const keyCol = (uid: string) => userDoc(uid).collection(KEY_COLLECTION);
 /** the scrambled backup of the private key */
+/** the requests of my devices to open my old messages for them (docs/design/recovery-own-devices.md) */
+export const ownRequestCol = (uid: string) => userDoc(uid).collection("own-recovery-request");
+
 export const keyBackupDoc = (uid: string) => userDoc(uid).collection(KEY_BACKUP_COLLECTION).doc(KEY_BACKUP_DOC);
 export const pushDeviceCol = (uid: string) => userDoc(uid).collection(PUSH_DEVICE_COLLECTION);
 /**

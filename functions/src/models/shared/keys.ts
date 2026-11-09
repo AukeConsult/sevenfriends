@@ -131,3 +131,20 @@ export interface RecoveryTodo {
   items: RecoveryTodoItem[];
   next: string | null;
 }
+
+/**
+ * A device asks my OTHER devices to open my old messages and files for its key (design: docs/design/recovery-own-devices.md). Made by itself when a key is
+ * published next to other keys, and by the person at any time (a new request replaces the old one). `declined` and `done` are only news on their way:
+ * the asking device shows them and deletes the request (nothing is kept).
+ */
+export interface OwnRecoveryRequest {
+  /** the key of the device that asks */
+  keyId: string;
+  label: string;
+  fingerprint: string;
+  status: "asked" | "working" | "declined" | "done";
+  /** how many messages and files lack a copy for that key (when the request was made / the work began) and how many have one now */
+  total: number;
+  added: number;
+  createdAt: string | null;
+}

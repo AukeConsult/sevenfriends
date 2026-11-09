@@ -21,14 +21,22 @@ const ASK_AGAIN_MS = 5 * 60 * 1000;
             <span class="sf-own-key-note">{{ tr('core.givingItAccessDone', 'Giving it access… ' + (done()) + ' done. Stay in the app.', { done: done() }) }}</span>
           } @else if (message()) {
             <span class="sf-own-key-note">{{ message() }}</span>
+          } @else if (confirming()) {
+            <span class="sf-own-key-note">{{ tr('core.removeThisKeyNotYou', 'Remove this key? Then that device can no longer open your messages. If it was not you, also change your login.') }}</span>
           } @else {
             <span class="sf-own-key-note">{{ tr('core.wasThisYouAllow', 'Was this you? Allow it to open your old messages and files.') }}</span>
           }
         </div>
         @if (!working()) {
           <div class="sf-own-key-actions">
-            <button type="button" class="btn btn-primary btn-sm" (click)="allow()">{{ tr('core.allow', 'Allow') }}</button>
-            <button type="button" class="btn btn-outline-secondary btn-sm" (click)="hide()">{{ tr('core.notNow', 'Not now') }}</button>
+            @if (confirming()) {
+              <button type="button" class="btn btn-danger btn-sm" (click)="notMe()">{{ tr('core.removeIt', 'Remove it') }}</button>
+              <button type="button" class="btn btn-outline-secondary btn-sm" (click)="confirming.set(false)">{{ tr('core.cancel', 'Cancel') }}</button>
+            } @else {
+              <button type="button" class="btn btn-primary btn-sm" (click)="allow()">{{ tr('core.allow', 'Allow') }}</button>
+              <button type="button" class="btn btn-outline-secondary btn-sm" (click)="confirming.set(true)">{{ tr('core.notMe', 'Not me') }}</button>
+              <button type="button" class="btn btn-outline-secondary btn-sm" (click)="hide()">{{ tr('core.notNow', 'Not now') }}</button>
+            }
           </div>
         }
       </div>
@@ -40,6 +48,8 @@ export class OwnKeyPrompt {
   private readonly service = inject(OwnRecoveryService);
   private readonly auth = inject(AuthService);
   protected readonly hidden = signal(false);
+  /** "Not me" asks once more before the key is removed (a frame in the card, no pop-up) */
+  protected readonly confirming = signal(false);
   protected readonly working = signal(false);
   protected readonly done = signal(0);
   protected readonly message = signal<string | null>(null);
@@ -79,6 +89,19 @@ export class OwnKeyPrompt {
       this.message.set(err.message ?? tr('core.thatDidNotWork', 'That did not work. Try again.'));
     } finally {
       this.working.set(false);
+    }
+  }
+
+  /** The key that asked is not mine: it is removed, and the device that asked is told. */
+  protected async notMe(): Promise<void> {
+    const key = this.next();
+    if (!key || this.working()) return;
+    try {
+      await this.service.notMe(key);
+    } catch (err: any) {
+      this.message.set(err.message ?? tr('core.thatDidNotWork', 'That did not work. Try again.'));
+    } finally {
+      this.confirming.set(false);
     }
   }
 

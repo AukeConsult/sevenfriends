@@ -58,5 +58,8 @@
   "recoveryAskAgain": "Ask again",
   "recoveryDismiss": "Dismiss",
   "openedYourHistory": "{{ friendName }} opened your history.",
-  "openedYourHistoryMany": "{{ friendNames }} opened your history."
+  "openedYourHistoryMany": "{{ friendNames }} opened your history.",
+  "lockedOnThisDevice": "Locked on this device",
+  "lockedCounts": "{{ messages }} messages and {{ files }} files cannot be opened here yet",
+  "getThemBack": "Get them back"
 }

@@ -1,6 +1,10 @@
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { AppDatePipe } from '../core/app-date.pipe';
-import { Component, computed, inject, signal, viewChild } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
+import { Component, DestroyRef, computed, effect, inject, signal, untracked, viewChild } from '@angular/core';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { FriendsService } from '../core/friends.service';
+import { LockedItemsService } from '../core/locked-items.service';
 import { OwnRecoveryService } from '../core/own-recovery.service';
 import { KeySetup } from '../key-setup/key-setup';
 import { KeysService, RestoreResult } from '../core/keys.service';
@@ -11,7 +15,7 @@ import { tr } from '../core/i18n';
 /** Settings → Keys: the encryption key of this device (make it, see it), the keys of my other devices, a new key, and restoring a key from the 24 words. */
 @Component({
   selector: 'app-encryption',
-  imports: [AppDatePipe, KeySetup, TranslocoDirective],
+  imports: [AppDatePipe, KeySetup, NgTemplateOutlet, RouterLink, TranslocoDirective],
   templateUrl: './encryption.html',
   providers: [provideTranslocoScope('encryption')],
 })
@@ -25,12 +29,6 @@ export class Encryption {
   protected readonly allowing = signal<string | null>(null);
   protected readonly allowed = signal(0);
   protected readonly allowNote = signal<string | null>(null);
-  /** true when one of my keys in use is waiting for access and this device is not the one that can give it */
-  protected readonly waitingHere = computed(() => {
-    const inUse = this.keys.published().filter((k) => !k.revoked).sort((x, y) => (x.createdAt ?? '').localeCompare(y.createdAt ?? ''));
-    return inUse.length > 1 && inUse[0].id !== this.keys.thisKeyId() && this.own.waiting().length === 0;
-  });
-
   /** the recovery words are on the screen: nothing else on the page is offered meanwhile */
   protected readonly showingWords = computed(() => this.keySetup().showingWords());
   /** the keys that are in use, then the retired ones */
@@ -45,25 +43,84 @@ export class Encryption {
   protected readonly typed = signal('');
   protected readonly restoreText = signal<string | null>(null);
 
+  // ---- what this device cannot open, and the ways to get it back (docs/design/recovery-own-devices.md)
+  protected readonly lockedCounts = inject(LockedItemsService).counts;
+  private readonly lockedService = inject(LockedItemsService);
+  protected readonly lockedTotal = this.lockedService.total;
+  private readonly friendsService = inject(FriendsService);
+  private readonly router = inject(Router);
+  /** where to go when my other devices have done it: only an address inside the app (the band under the header of a friend's page sends `?from=`) */
+  private readonly from = ((): string | null => {
+    const from = inject(ActivatedRoute).snapshot.queryParamMap.get('from') ?? '';
+    return from.startsWith('/') && !from.startsWith('//') ? from : null;
+  })();
+  /** the request of THIS device to my other devices: asked, working, declined, done */
+  protected readonly mine = this.own.mine;
+  protected readonly askBusy = signal(false);
+  protected readonly askError = signal<string | null>(null);
+  protected readonly finished = signal(false);
+  /** my friends of the circle in use: asking a friend is one friendship at a time */
+  protected readonly friendList = computed(() => this.friendsService.friends().filter((f) => f.status === 'confirmed'));
+  /** the other devices of mine that have a working key: one of them has to do it */
+  protected readonly otherDevices = computed(() => this.keys.published().filter((k) => !k.revoked && k.id !== this.keys.thisKeyId()));
+  /** other devices of mine that have a key (they can open my history) */
+  protected readonly otherKeys = computed(() => this.keys.published().filter((k) => !k.revoked && k.id !== this.keys.thisKeyId()).length);
+  protected readonly percent = computed(() => {
+    const request = this.mine();
+    return request?.total ? Math.min(100, Math.round((request.added / request.total) * 100)) : 0;
+  });
+  /** why there is no working key on this device, in words (null = nothing to warn about) */
+  protected readonly noKeyReason = computed((): string | null => {
+    if (this.keys.state() !== 'none') return null;
+    const d = this.keys.diagnosis();
+    if (d?.localPublished === 'removed') return tr('encryption.theKeyOnThisRemoved', 'The key on this device was removed, from another of your devices or with "Not me".');
+    if (d?.localPublished === 'no') return tr('encryption.theKeyOnThisNever', 'The key on this device was never saved on the server, so it does not count.');
+    if (this.keys.elsewhere()) return tr('encryption.thisDeviceHasNoKey', 'Your account has keys on other devices, but this device has none.');
+    return null;
+  });
+
   constructor() {
     void this.own.check();
+    void this.own.refreshMine();
+    void this.lockedService.check(true);
+    if (!this.friendsService.circle()) void this.friendsService.load().catch(() => undefined);
+    // the stamp of the server makes the page live; this is the safety net
+    const timer = setInterval(() => void this.own.refreshMine(), 2500);
+    inject(DestroyRef).onDestroy(() => clearInterval(timer));
+    // my other devices have done it: told here once, the request is deleted (nothing is kept), and the person goes back to where they came from
+    effect(() => {
+      if (this.mine()?.status !== 'done' || this.finished()) return;
+      untracked(() => {
+        this.finished.set(true);
+        void this.own.dismissMine().catch(() => undefined);
+        void this.keys.refresh();
+        void this.lockedService.check(true);
+        if (this.from) setTimeout(() => void this.router.navigateByUrl(this.from!, { replaceUrl: true }), 1800);
+      });
+    });
+  }
+
+  /** Ask my other devices to open my old messages for this one (at any time, again and again). */
+  protected async askOthers(): Promise<void> {
+    if (this.askBusy()) return;
+    this.askBusy.set(true);
+    this.askError.set(null);
+    try {
+      await this.own.ask();
+    } catch (err: any) {
+      this.askError.set(err?.message || tr('encryption.thatDidNotWork', 'That did not work. Try again.'));
+    } finally {
+      this.askBusy.set(false);
+    }
+  }
+
+  /** One of my other devices said "Not me": it is read, the request is deleted. */
+  protected async dismissAsk(): Promise<void> {
+    await this.own.dismissMine().catch(() => undefined);
+    void this.keys.refresh();
   }
 
   protected readonly severalKeys = computed(() => this.keys.published().filter((k) => !k.revoked).length > 1);
-
-  /** how many messages and files are still locked for the key of this device (null = not checked) */
-  protected readonly locked = signal<{ messages: number; files: number } | null>(null);
-
-  protected async checkLocked(): Promise<void> {
-    const id = this.keys.thisKeyId();
-    if (!id) return;
-    this.locked.set(null);
-    try {
-      this.locked.set(await this.own.status(id));
-    } catch (err: any) {
-      this.allowNote.set(err?.message || tr('encryption.thatDidNotWork', 'That did not work. Try again.'));
-    }
-  }
 
   protected async trustThis(): Promise<void> {
     this.allowNote.set(null);
