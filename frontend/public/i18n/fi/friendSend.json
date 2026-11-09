@@ -1,0 +1,21 @@
+{
+  "emojiGroups": "Emojiryhmät",
+  "addAnEmoji": "Lisää emoji",
+  "sendAnImage": "Lähetä kuva",
+  "sendAVideo": "Lähetä video",
+  "sendAVoiceMessage": "Lähetä ääniviesti",
+  "send": "Lähetä",
+  "add": "+ Lisää",
+  "messagesForFriendnameOnly": "Viestit vain käyttäjälle {{ friendName }}. Ne säilytetään tällä laitteella ja tallennetaan kirjoittaessasi.",
+  "forExampleIM": "Esimerkiksi: Olen tulossa",
+  "addAMessage": "+ Lisää viesti",
+  "couldNotSendThe": "Viestiä ei voitu lähettää",
+  "addEmoji": "Lisää {{ emoji }}",
+  "addATextOptional": "Lisää teksti (valinnainen)…",
+  "writeToFriendname": "Kirjoita käyttäjälle {{ friendName }}…",
+  "messageToFriendname": "Viesti käyttäjälle {{ friendName }}",
+  "addAMessageFor": "Lisää viesti vain käyttäjälle {{ friendName }}",
+  "messageForFriendnameIndex": "Viesti käyttäjälle {{ friendName }} {{ index }}",
+  "removeMessageIndex": "Poista viesti {{ index }}",
+  "messagesForOnly": "Viestit vain käyttäjälle {{ friendName }}"
+}

@@ -1,0 +1,16 @@
+{
+  "backToHome": "返回首页",
+  "back": "‹ 返回",
+  "waitingForASeat": "等待空位",
+  "theseManyWantTo": "这些{{ many }}想加入你，但你的位置都满了。他们能看到自己在你的等候名单里。他们会一直留在这里，直到你腾出位置，或他们撤回请求。",
+  "retry": "重试",
+  "checking": "检查中…",
+  "nobodyIsWaitingFor": "没有人在等空位。",
+  "strongFromnameStrong": "<strong>{{ fromName }}</strong>",
+  "hasNotVerifiedTheir": "还没有验证邮箱或手机号：我们不能确定就是本人。",
+  "pending": "待处理",
+  "reject": "拒绝",
+  "requestFromname": "' + request.fromName + '",
+  "mediumdate": "mediumDate",
+  "sinceMediumdate": "自 {{ mediumDate }} 起"
+}

@@ -1,0 +1,14 @@
+{
+  "cancel": "Anuluj",
+  "takeThePhoto": "Zrób zdjęcie",
+  "startRecording": "Zacznij nagrywać",
+  "stop": "Stop",
+  "useAnotherCamera": "Użyj innej kamery",
+  "theCamera": "Kamera",
+  "theCameraIsBlocked": "Kamera jest zablokowana. Zezwól na nią dla tej strony w ustawieniach przeglądarki albo wybierz plik.",
+  "noCameraWasFound": "Nie znaleziono kamery. Wybierz plik.",
+  "theCameraIsIn": "Kamera jest używana przez inny program. Zamknij go i spróbuj ponownie albo wybierz plik.",
+  "theCameraCouldNot": "Nie udało się uruchomić kamery. Wybierz plik.",
+  "thePhotoCouldNot": "Nie udało się zrobić zdjęcia. Spróbuj ponownie.",
+  "thisBrowserCannotRecord": "Ta przeglądarka nie potrafi nagrywać wideo. Wybierz plik."
+}

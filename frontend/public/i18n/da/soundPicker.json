@@ -1,0 +1,11 @@
+{
+  "backToSounds": "Tilbage til lyde",
+  "back": "‹ Tilbage",
+  "hintTapASound": "{{ hint }}. Tryk på en lyd for at vælge og høre den.",
+  "sevenFriendsJingles": "Seven Friends-jingler",
+  "otherSounds": "Andre lyde",
+  "stop": "■ Stop",
+  "play": "▶ Afspil",
+  "done": "Færdig",
+  "soundForLabel": "Lyd til {{ label }}"
+}

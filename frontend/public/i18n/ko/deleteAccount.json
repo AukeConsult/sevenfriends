@@ -1,0 +1,17 @@
+{
+  "deleteMyAccount": "내 계정 삭제",
+  "strongThisCannotBe": "<strong>되돌릴 수 없어요.</strong> Seven Friends에서 완전히 삭제돼요.",
+  "everythingAboutYouIs": "나에 관한 모든 것이 삭제돼요:",
+  "yourAccountYourProfile": "계정, 프로필, 로그인 정보",
+  "allYourFriendsAnd": "모든 친구와 보내거나 받은 모든 요청",
+  "everyMessageYouSent": "보내거나 받은 모든 메시지. 친구들도 그 대화를 잃게 돼요",
+  "yourNameAndContact": "다른 친구들의 목록에 있는 내 이름과 연락처",
+  "yourFriendsAreNot": "친구들에게 따로 알리지 않아요. 친구 목록에서 내가 사라질 뿐이에요.",
+  "typeWordToConfirm": "확인하려면 입력하세요: {{ word }}",
+  "cancel": "취소",
+  "deleting": "삭제하는 중…",
+  "deleteEverything": "모두 삭제",
+  "couldNotDeleteYour": "계정을 삭제할 수 없어요. 바뀐 것은 없으니 다시 해 주세요.",
+  "thisCannotBeUndone": "되돌릴 수 없어요.",
+  "youWillBeErased": " Seven Friends에서 완전히 삭제돼요.'\">"
+}

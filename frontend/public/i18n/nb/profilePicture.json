@@ -1,0 +1,19 @@
+{
+  "yourPicture": "Bildet ditt",
+  "chooseAPhotoAnd": "Velg et bilde og plasser det i sirkelen. Det gjøres lite (256 piksler) før det lagres, så et stort bilde går fint.",
+  "chooseAPhoto": "Velg et bilde",
+  "removeMyPicture": "Fjern bildet mitt",
+  "cancel": "Avbryt",
+  "yourPhotoDragTo": "Bildet ditt: dra for å flytte det",
+  "dragThePhotoTo": "Dra bildet for å flytte det. Knip, rull eller bruk glidebryteren for å zoome.",
+  "zoom": "Zoom",
+  "saving": "Lagrer…",
+  "useThisPicture": "Bruk dette bildet",
+  "chooseAnotherPhoto": "Velg et annet bilde",
+  "chooseAnImageFile": "Velg en bildefil (et foto).",
+  "thatImageIsVery": "Det bildet er veldig stort. Velg et under 20 MB.",
+  "thisImageCannotBe": "Dette bildet kan ikke åpnes. Prøv et annet (JPEG, PNG eller WebP).",
+  "couldNotSaveThe": "Kunne ikke lagre bildet. Prøv igjen.",
+  "couldNotRemoveThe": "Kunne ikke fjerne bildet. Prøv igjen.",
+  "thePictureIsToo": "Bildet er for stort til å lagres."
+}

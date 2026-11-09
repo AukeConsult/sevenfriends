@@ -1,0 +1,21 @@
+{
+  "back": "वापस",
+  "back2": "‹ वापस",
+  "verifyYourPhone": "अपना फ़ोन सत्यापित करें",
+  "signInWithPhone": "फ़ोन से साइन इन करें",
+  "standardMessageRatesFrom": "आपकी फ़ोन कंपनी के सामान्य संदेश शुल्क लग सकते हैं।",
+  "phoneNumberWithCountry": "देश कोड के साथ फ़ोन नंबर",
+  "sending": "भेज रहे हैं…",
+  "sendCode": "कोड भेजें",
+  "weSentACode": "हमने <strong>{{ phone }}</strong> पर एक कोड भेजा है।",
+  "code": "कोड",
+  "changeNumber": "नंबर बदलें",
+  "checking": "जाँच हो रही है…",
+  "confirm": "पुष्टि करें",
+  "writeTheNumberWith": "नंबर देश कोड के साथ लिखें, जैसे +47 900 00 000।",
+  "writeTheCodeFrom": "टेक्स्ट संदेश में आया कोड लिखें।",
+  "couldNotSendThe": "कोड भेजा नहीं जा सका। कृपया फिर कोशिश करें।",
+  "thatCodeDidNot": "यह कोड काम नहीं आया। कृपया फिर कोशिश करें।",
+  "weSendACodeLinking": "हम टेक्स्ट संदेश से एक कोड भेजते हैं। सत्यापन के बाद, आपका नंबर जोड़ने वाले {{ many }} आपको ढूँढ सकते हैं।",
+  "weSendACodeNoPassword": "हम टेक्स्ट संदेश से एक कोड भेजते हैं। पासवर्ड की ज़रूरत नहीं।"
+}

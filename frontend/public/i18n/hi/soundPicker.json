@@ -1,0 +1,11 @@
+{
+  "backToSounds": "आवाज़ों पर वापस",
+  "back": "‹ वापस",
+  "hintTapASound": "{{ hint }}। चुनने और सुनने के लिए किसी आवाज़ को दबाएँ।",
+  "sevenFriendsJingles": "Seven Friends जिंगल",
+  "otherSounds": "दूसरी आवाज़ें",
+  "stop": "■ रोकें",
+  "play": "▶ चलाएँ",
+  "done": "हो गया",
+  "soundForLabel": "{{ label }} के लिए आवाज़"
+}

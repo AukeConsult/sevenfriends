@@ -1,0 +1,14 @@
+{
+  "cancel": "Annullér",
+  "takeThePhoto": "Tag billedet",
+  "startRecording": "Start optagelse",
+  "stop": "Stop",
+  "useAnotherCamera": "Brug et andet kamera",
+  "theCamera": "Kameraet",
+  "theCameraIsBlocked": "Kameraet er blokeret. Tillad det for dette websted i browserens indstillinger, eller vælg en fil i stedet.",
+  "noCameraWasFound": "Der blev ikke fundet noget kamera. Vælg en fil i stedet.",
+  "theCameraIsIn": "Kameraet bruges af et andet program. Luk det og prøv igen, eller vælg en fil i stedet.",
+  "theCameraCouldNot": "Kameraet kunne ikke startes. Vælg en fil i stedet.",
+  "thePhotoCouldNot": "Billedet kunne ikke tages. Prøv igen.",
+  "thisBrowserCannotRecord": "Denne browser kan ikke optage video. Vælg en fil i stedet."
+}

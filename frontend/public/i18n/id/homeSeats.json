@@ -1,0 +1,17 @@
+{
+  "yourSevenSeats": "Tujuh kursimu",
+  "yourSeven": "Tujuhmu",
+  "waiting": "Menunggu",
+  "pending": "Tertunda",
+  "addAOne": "Tambah {{ one }}",
+  "silent": "Senyap",
+  "dropHere": "Letakkan di sini",
+  "sleepList": "Daftar tidur",
+  "couldNotMoveThe": "Tidak bisa memindahkan ",
+  "openTheConversationWith": "Buka percakapan dengan {{ friendName }}. Tekan dan tahan untuk memindahkan.",
+  "countUnread": "{{ count }} belum dibaca",
+  "seatPositionIsFree": "Kursi {{ position }} kosong: tambah {{ one }}",
+  "dropOnASeat": "Letakkan di kursi atau lingkaran Senyap",
+  "dropOnASeat2": "Letakkan di kursi",
+  "pressAndHoldA": "Tekan dan tahan {{ one }} untuk memindahkan"
+}

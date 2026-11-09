@@ -1,0 +1,11 @@
+{
+  "backToSounds": "Takaisin ääniin",
+  "back": "‹ Takaisin",
+  "hintTapASound": "{{ hint }}. Napauta ääntä valitaksesi sen ja kuullaksesi sen.",
+  "sevenFriendsJingles": "Seven Friends -tunnarit",
+  "otherSounds": "Muut äänet",
+  "stop": "■ Pysäytä",
+  "play": "▶ Toista",
+  "done": "Valmis",
+  "soundForLabel": "Ääni: {{ label }}"
+}

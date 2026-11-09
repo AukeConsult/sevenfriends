@@ -1,0 +1,17 @@
+{
+  "deleteMyAccount": "Slett kontoen min",
+  "strongThisCannotBe": "<strong>Dette kan ikke angres.</strong> Du blir slettet fra Seven Friends, helt og holdent.",
+  "everythingAboutYouIs": "Alt om deg slettes:",
+  "yourAccountYourProfile": "kontoen din, profilen din og innloggingen din",
+  "allYourFriendsAnd": "alle vennene dine og alle forespørsler, sendt eller mottatt",
+  "everyMessageYouSent": "alle meldinger du har sendt eller mottatt. Vennene dine mister samtalen også",
+  "yourNameAndContact": "navnet ditt og kontaktinformasjonen din i andre venners lister",
+  "yourFriendsAreNot": "Vennene dine får ikke beskjed. De har bare ikke deg som venn lenger.",
+  "typeWordToConfirm": "Skriv {{ word }} for å bekrefte",
+  "cancel": "Avbryt",
+  "deleting": "Sletter…",
+  "deleteEverything": "Slett alt",
+  "couldNotDeleteYour": "Kunne ikke slette kontoen din. Ingenting ble endret, prøv igjen.",
+  "thisCannotBeUndone": "Dette kan ikke angres.",
+  "youWillBeErased": "Du blir slettet fra Seven Friends, helt og holdent.'\">"
+}

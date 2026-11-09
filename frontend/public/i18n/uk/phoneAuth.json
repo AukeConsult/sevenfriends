@@ -1,0 +1,21 @@
+{
+  "back": "Назад",
+  "back2": "‹ Назад",
+  "verifyYourPhone": "Підтверди свій телефон",
+  "signInWithPhone": "Вхід за телефоном",
+  "standardMessageRatesFrom": "Може стягуватися плата за SMS за тарифами твого оператора.",
+  "phoneNumberWithCountry": "Номер телефону з кодом країни",
+  "sending": "Надсилаю…",
+  "sendCode": "Надіслати код",
+  "weSentACode": "Ми надіслали код на <strong>{{ phone }}</strong>.",
+  "code": "Код",
+  "changeNumber": "Змінити номер",
+  "checking": "Перевіряю…",
+  "confirm": "Підтвердити",
+  "writeTheNumberWith": "Введи номер із кодом країни, наприклад +47 900 00 000.",
+  "writeTheCodeFrom": "Введи код із SMS.",
+  "couldNotSendThe": "Не вдалося надіслати код. Спробуй ще раз.",
+  "thatCodeDidNot": "Цей код не підійшов. Спробуй ще раз.",
+  "weSendACodeLinking": "Ми надсилаємо код в SMS. Після підтвердження тебе зможуть знайти ті, хто додає твій номер ({{ many }}).",
+  "weSendACodeNoPassword": "Ми надсилаємо код в SMS. Пароль не потрібен."
+}

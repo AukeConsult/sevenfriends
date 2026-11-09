@@ -1,0 +1,16 @@
+{
+  "backToHome": "Tillbaka till startsidan",
+  "back": "‹ Tillbaka",
+  "waitingForASeat": "Väntar på en plats",
+  "theseManyWantTo": "Dessa {{ many }} vill vara med dig, men alla dina platser är upptagna. De kan se att de står på din väntelista. De stannar här tills du frigör en plats, eller tills de drar tillbaka förfrågan.",
+  "retry": "Försök igen",
+  "checking": "Kontrollerar…",
+  "nobodyIsWaitingFor": "Ingen väntar på en plats.",
+  "strongFromnameStrong": "<strong>{{ fromName }}</strong>",
+  "hasNotVerifiedTheir": "Har inte verifierat sin e-postadress eller sitt telefonnummer: vi kan inte vara säkra på att det verkligen är hen.",
+  "pending": "Väntande",
+  "reject": "Avslå",
+  "requestFromname": "' + request.fromName + '",
+  "mediumdate": "mediumDate",
+  "sinceMediumdate": "sedan {{ mediumDate }}"
+}

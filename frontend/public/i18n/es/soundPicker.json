@@ -1,0 +1,11 @@
+{
+  "backToSounds": "Volver a sonidos",
+  "back": "‹ Atrás",
+  "hintTapASound": "{{ hint }}. Toca un sonido para elegirlo y oírlo.",
+  "sevenFriendsJingles": "Jingles de Seven Friends",
+  "otherSounds": "Otros sonidos",
+  "stop": "■ Parar",
+  "play": "▶ Reproducir",
+  "done": "Listo",
+  "soundForLabel": "Sonido para {{ label }}"
+}

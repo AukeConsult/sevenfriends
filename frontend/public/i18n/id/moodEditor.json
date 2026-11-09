@@ -1,0 +1,9 @@
+{
+  "tapToSayHow": "Ketuk untuk bilang kabarmu",
+  "yourMood": "Suasana hatimu",
+  "noMood": "Tanpa suasana hati",
+  "aFewWordsAbout": "Beberapa kata tentang kabarmu (opsional)",
+  "moodMessage": "Pesan suasana hati",
+  "couldNotLoadYour": "Tidak bisa memuat suasana hatimu",
+  "couldNotSaveYour": "Tidak bisa menyimpan suasana hatimu"
+}

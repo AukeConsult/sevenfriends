@@ -1,0 +1,16 @@
+{
+  "backToHome": "Terug naar start",
+  "back": "‹ Terug",
+  "waitingForASeat": "Wachten op een plek",
+  "theseManyWantTo": "Deze {{ many }} willen zich bij je voegen, maar al je plekken zijn bezet. Ze kunnen zien dat ze op je wachtlijst staan. Ze blijven hier tot je een plek vrijmaakt, of tot ze hun verzoek intrekken.",
+  "retry": "Opnieuw proberen",
+  "checking": "Controleren…",
+  "nobodyIsWaitingFor": "Niemand wacht op een plek.",
+  "strongFromnameStrong": "<strong>{{ fromName }}</strong>",
+  "hasNotVerifiedTheir": "Heeft het e-mailadres of telefoonnummer niet bevestigd: we kunnen er niet zeker van zijn dat zij het echt zijn.",
+  "pending": "In behandeling",
+  "reject": "Afwijzen",
+  "requestFromname": "' + request.fromName + '",
+  "mediumdate": "mediumDate",
+  "sinceMediumdate": "sinds {{ mediumDate }}"
+}

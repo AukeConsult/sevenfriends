@@ -1,0 +1,21 @@
+{
+  "back": "Terug",
+  "back2": "‹ Terug",
+  "verifyYourPhone": "Bevestig je telefoon",
+  "signInWithPhone": "Inloggen met telefoon",
+  "standardMessageRatesFrom": "Het standaardtarief van je telefoonprovider voor berichten kan gelden.",
+  "phoneNumberWithCountry": "Telefoonnummer met landcode",
+  "sending": "Versturen…",
+  "sendCode": "Code versturen",
+  "weSentACode": "We hebben een code gestuurd naar <strong>{{ phone }}</strong>.",
+  "code": "Code",
+  "changeNumber": "Nummer wijzigen",
+  "checking": "Controleren…",
+  "confirm": "Bevestigen",
+  "writeTheNumberWith": "Schrijf het nummer met landcode, bijvoorbeeld +47 900 00 000.",
+  "writeTheCodeFrom": "Vul de code uit de sms in.",
+  "couldNotSendThe": "Kon de code niet versturen. Probeer het opnieuw.",
+  "thatCodeDidNot": "Die code werkte niet. Probeer het opnieuw.",
+  "weSendACodeLinking": "We sturen een code per sms. Na bevestiging kunnen {{ many }} die je nummer toevoegen je vinden.",
+  "weSendACodeNoPassword": "We sturen een code per sms. Geen wachtwoord nodig."
+}

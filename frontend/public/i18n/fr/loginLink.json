@@ -1,0 +1,8 @@
+{
+  "title": "Connexion en cours",
+  "invalid": "Ce lien n'est pas valide, ou il a expiré. Demande-en un nouveau.",
+  "newLink": "Envoie-moi un nouveau lien",
+  "busy": "Connexion en cours…",
+  "confirm": "Pour terminer, confirme l'adresse e-mail à laquelle ce lien a été envoyé.",
+  "failed": "Impossible de te connecter avec ce lien. Demande-en un nouveau."
+}

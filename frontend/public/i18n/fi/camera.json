@@ -1,0 +1,14 @@
+{
+  "cancel": "Peruuta",
+  "takeThePhoto": "Ota valokuva",
+  "startRecording": "Aloita kuvaus",
+  "stop": "Pysäytä",
+  "useAnotherCamera": "Käytä toista kameraa",
+  "theCamera": "Kamera",
+  "theCameraIsBlocked": "Kamera on estetty. Salli se tälle sivustolle selaimen asetuksissa tai valitse sen sijaan tiedosto.",
+  "noCameraWasFound": "Kameraa ei löytynyt. Valitse sen sijaan tiedosto.",
+  "theCameraIsIn": "Toinen ohjelma käyttää kameraa. Sulje se ja yritä uudelleen tai valitse sen sijaan tiedosto.",
+  "theCameraCouldNot": "Kameraa ei voitu käynnistää. Valitse sen sijaan tiedosto.",
+  "thePhotoCouldNot": "Valokuvaa ei voitu ottaa. Yritä uudelleen.",
+  "thisBrowserCannotRecord": "Tämä selain ei voi kuvata videota. Valitse sen sijaan tiedosto."
+}

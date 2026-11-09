@@ -1,0 +1,8 @@
+{
+  "title": "Logowanie",
+  "invalid": "Ten link jest nieprawidłowy lub wygasł. Poproś o nowy.",
+  "newLink": "Wyślij mi nowy link",
+  "busy": "Logowanie…",
+  "confirm": "Na koniec potwierdź adres e-mail, na który wysłano ten link.",
+  "failed": "Nie udało się zalogować tym linkiem. Poproś o nowy."
+}

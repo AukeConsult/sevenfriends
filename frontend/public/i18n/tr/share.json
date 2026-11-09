@@ -1,0 +1,17 @@
+{
+  "share": "Paylaş",
+  "allYourSevenSeats": "Yedi yerin de dolu. Yer açarsan bağlantın yine çalışır.",
+  "installTheApp": "Uygulamayı yükle",
+  "strongInviteFriendsWith": "<strong>Arkadaşlarını bir bağlantıyla davet et</strong>",
+  "sendThisLinkTo": "Bu bağlantıyı katılmasını istediğin arkadaşlara gönder. Açıp giriş yaptıklarında (ya da hesap oluşturduklarında) ve onayladıklarında sana bir arkadaşlık isteği gönderilir.",
+  "shareLink": "Bağlantıyı paylaş",
+  "copyLink": "Bağlantıyı kopyala",
+  "seat": "yer",
+  "seats": "yer",
+  "youHaveFreeseatsFree": "{{ freeSeats }} boş {{ seats }} var. Önemli olanları davet et: {{ many }}.",
+  "inviteFriendsWithA": "Arkadaşlarını bir bağlantıyla davet et",
+  "yourOneLink": "{{ one }} bağlantın",
+  "emailAddress": "e-posta adresi",
+  "phoneNumber": "telefon numarası",
+  "theLinkContainsYour": "Bağlantıda şu bilgin yer alır: {{ number }}."
+}

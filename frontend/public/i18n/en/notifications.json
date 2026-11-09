@@ -55,5 +55,8 @@
   "youHavenTTalked2": "You haven't talked to {{ friendName }} for {{ span }}",
   "youSpokeToday": "You spoke today",
   "youLastSpokeYesterday": "You last spoke yesterday",
-  "youLastSpokeDays": "You last spoke {{ days }} days ago"
+  "youLastSpokeDays": "You last spoke {{ days }} days ago",
+  "unverifiedEmail": "email",
+  "unverifiedPhone": "phone number",
+  "unverifiedAnd": "{{ a }} and {{ b }}"
 }

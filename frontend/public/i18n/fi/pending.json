@@ -1,0 +1,16 @@
+{
+  "backToHome": "Takaisin etusivulle",
+  "back": "‹ Takaisin",
+  "waitingForASeat": "Odottaa paikkaa",
+  "theseManyWantTo": "Nämä {{ many }} haluavat liittyä seuraasi, mutta kaikki paikkasi ovat täynnä. He näkevät olevansa odotuslistallasi. He pysyvät täällä, kunnes vapautat paikan tai he peruvat pyynnön.",
+  "retry": "Yritä uudelleen",
+  "checking": "Tarkistetaan…",
+  "nobodyIsWaitingFor": "Kukaan ei odota paikkaa.",
+  "strongFromnameStrong": "<strong>{{ fromName }}</strong>",
+  "hasNotVerifiedTheir": "Ei ole vahvistanut sähköpostiaan tai puhelintaan: emme voi olla varmoja, että kyseessä on oikeasti hän.",
+  "pending": "Odottaa",
+  "reject": "Hylkää",
+  "requestFromname": "' + request.fromName + '",
+  "mediumdate": "mediumDate",
+  "sinceMediumdate": "alkaen {{ mediumDate }}"
+}

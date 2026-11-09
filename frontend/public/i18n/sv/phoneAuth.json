@@ -1,0 +1,21 @@
+{
+  "back": "Tillbaka",
+  "back2": "‹ Tillbaka",
+  "verifyYourPhone": "Verifiera din telefon",
+  "signInWithPhone": "Logga in med telefon",
+  "standardMessageRatesFrom": "Din telefonoperatörs vanliga sms-avgifter kan gälla.",
+  "phoneNumberWithCountry": "Telefonnummer med landskod",
+  "sending": "Skickar…",
+  "sendCode": "Skicka kod",
+  "weSentACode": "Vi skickade en kod till <strong>{{ phone }}</strong>.",
+  "code": "Kod",
+  "changeNumber": "Ändra nummer",
+  "checking": "Kontrollerar…",
+  "confirm": "Bekräfta",
+  "writeTheNumberWith": "Skriv numret med landskod, till exempel +47 900 00 000.",
+  "writeTheCodeFrom": "Skriv koden från sms:et.",
+  "couldNotSendThe": "Kunde inte skicka koden. Försök igen.",
+  "thatCodeDidNot": "Koden fungerade inte. Försök igen.",
+  "weSendACodeLinking": "Vi skickar en kod med sms. När numret är verifierat kan {{ many }} som lägger till ditt nummer hitta dig.",
+  "weSendACodeNoPassword": "Vi skickar en kod med sms. Inget lösenord behövs."
+}

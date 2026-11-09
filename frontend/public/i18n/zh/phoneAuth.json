@@ -1,0 +1,21 @@
+{
+  "back": "返回",
+  "back2": "‹ 返回",
+  "verifyYourPhone": "验证你的手机",
+  "signInWithPhone": "使用手机登录",
+  "standardMessageRatesFrom": "可能会按你的运营商标准收取短信费用。",
+  "phoneNumberWithCountry": "带国家区号的手机号",
+  "sending": "发送中…",
+  "sendCode": "发送验证码",
+  "weSentACode": "我们已向 <strong>{{ phone }}</strong> 发送了验证码。",
+  "code": "验证码",
+  "changeNumber": "更换号码",
+  "checking": "检查中…",
+  "confirm": "确认",
+  "writeTheNumberWith": "请写上带国家区号的号码，例如 +47 900 00 000。",
+  "writeTheCodeFrom": "请填写短信中的验证码。",
+  "couldNotSendThe": "无法发送验证码。请再试一次。",
+  "thatCodeDidNot": "这个验证码无效。请再试一次。",
+  "weSendACodeLinking": "我们会通过短信发送验证码。验证后，通过你的号码添加你的{{ many }}就能找到你。",
+  "weSendACodeNoPassword": "我们会通过短信发送验证码。不需要密码。"
+}

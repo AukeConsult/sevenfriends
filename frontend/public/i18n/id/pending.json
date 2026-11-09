@@ -1,0 +1,16 @@
+{
+  "backToHome": "Kembali ke beranda",
+  "back": "‹ Kembali",
+  "waitingForASeat": "Menunggu kursi",
+  "theseManyWantTo": "{{ many }} ini ingin bergabung denganmu, tapi semua kursimu terisi. Mereka bisa melihat bahwa mereka ada di daftar tunggumu. Mereka tetap di sini sampai kamu mengosongkan kursi, atau sampai mereka menarik permintaannya.",
+  "retry": "Coba lagi",
+  "checking": "Memeriksa…",
+  "nobodyIsWaitingFor": "Tidak ada yang menunggu kursi.",
+  "strongFromnameStrong": "<strong>{{ fromName }}</strong>",
+  "hasNotVerifiedTheir": "Belum memverifikasi email atau teleponnya: kami tidak bisa memastikan itu benar-benar dia.",
+  "pending": "Tertunda",
+  "reject": "Tolak",
+  "requestFromname": "' + request.fromName + '",
+  "mediumdate": "mediumDate",
+  "sinceMediumdate": "sejak {{ mediumDate }}"
+}

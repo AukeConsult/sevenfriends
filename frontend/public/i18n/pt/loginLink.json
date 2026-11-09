@@ -1,0 +1,8 @@
+{
+  "title": "Fazendo seu login",
+  "invalid": "Este link não é válido, ou expirou. Peça um novo.",
+  "newLink": "Enviar um novo link",
+  "busy": "Fazendo seu login…",
+  "confirm": "Para terminar, confirme o endereço de e-mail para o qual este link foi enviado.",
+  "failed": "Não foi possível fazer seu login com este link. Peça um novo."
+}

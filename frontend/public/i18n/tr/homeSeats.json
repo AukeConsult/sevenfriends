@@ -1,0 +1,17 @@
+{
+  "yourSevenSeats": "Yedi yerin",
+  "yourSeven": "Yedi kişin",
+  "waiting": "Bekleyenler",
+  "pending": "Beklemede",
+  "addAOne": "{{ one }} ekle",
+  "silent": "Sessiz",
+  "dropHere": "Buraya bırak",
+  "sleepList": "Uyku listesi",
+  "couldNotMoveThe": "Taşınamadı: ",
+  "openTheConversationWith": "Sohbeti aç: {{ friendName }}. Taşımak için basılı tut.",
+  "countUnread": "{{ count }} okunmamış",
+  "seatPositionIsFree": "{{ position }}. yer boş: {{ one }} ekle",
+  "dropOnASeat": "Bir yere ya da Sessiz çevreye bırak",
+  "dropOnASeat2": "Bir yere bırak",
+  "pressAndHoldA": "Taşımak için basılı tut: {{ one }}"
+}

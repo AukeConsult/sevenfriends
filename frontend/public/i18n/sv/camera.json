@@ -1,0 +1,14 @@
+{
+  "cancel": "Avbryt",
+  "takeThePhoto": "Ta fotot",
+  "startRecording": "Starta inspelning",
+  "stop": "Stoppa",
+  "useAnotherCamera": "Använd en annan kamera",
+  "theCamera": "Kameran",
+  "theCameraIsBlocked": "Kameran är blockerad. Tillåt den för den här webbplatsen i webbläsarens inställningar, eller välj en fil istället.",
+  "noCameraWasFound": "Ingen kamera hittades. Välj en fil istället.",
+  "theCameraIsIn": "Kameran används av ett annat program. Stäng det och försök igen, eller välj en fil istället.",
+  "theCameraCouldNot": "Kameran kunde inte startas. Välj en fil istället.",
+  "thePhotoCouldNot": "Fotot kunde inte tas. Försök igen.",
+  "thisBrowserCannotRecord": "Den här webbläsaren kan inte spela in video. Välj en fil istället."
+}

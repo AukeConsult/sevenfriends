@@ -1,0 +1,16 @@
+{
+  "backToHome": "Назад на главную",
+  "back": "‹ Назад",
+  "waitingForASeat": "Ждут места",
+  "theseManyWantTo": "Эти люди ({{ many }}) хотят присоединиться к тебе, но все твои места заняты. Они видят, что находятся в твоём списке ожидания. Они остаются здесь, пока ты не освободишь место или пока не отзовут запрос.",
+  "retry": "Повторить",
+  "checking": "Проверяем…",
+  "nobodyIsWaitingFor": "Никто не ждёт места.",
+  "strongFromnameStrong": "<strong>{{ fromName }}</strong>",
+  "hasNotVerifiedTheir": "Не подтвердил(а) почту или телефон: мы не можем быть уверены, что это действительно он(а).",
+  "pending": "В ожидании",
+  "reject": "Отклонить",
+  "requestFromname": "' + request.fromName + '",
+  "mediumdate": "mediumDate",
+  "sinceMediumdate": "с {{ mediumDate }}"
+}

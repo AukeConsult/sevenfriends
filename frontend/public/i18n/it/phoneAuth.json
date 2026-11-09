@@ -1,0 +1,21 @@
+{
+  "back": "Indietro",
+  "back2": "‹ Indietro",
+  "verifyYourPhone": "Verifica il tuo telefono",
+  "signInWithPhone": "Accedi con il telefono",
+  "standardMessageRatesFrom": "Possono essere applicate le tariffe standard del tuo operatore per gli SMS.",
+  "phoneNumberWithCountry": "Numero di telefono con prefisso internazionale",
+  "sending": "Invio…",
+  "sendCode": "Invia il codice",
+  "weSentACode": "Abbiamo inviato un codice a <strong>{{ phone }}</strong>.",
+  "code": "Codice",
+  "changeNumber": "Cambia numero",
+  "checking": "Controllo…",
+  "confirm": "Conferma",
+  "writeTheNumberWith": "Scrivi il numero con il prefisso internazionale, per esempio +47 900 00 000.",
+  "writeTheCodeFrom": "Scrivi il codice dell'SMS.",
+  "couldNotSendThe": "Impossibile inviare il codice. Riprova.",
+  "thatCodeDidNot": "Il codice non ha funzionato. Riprova.",
+  "weSendACodeLinking": "Ti mandiamo un codice via SMS. Una volta verificato, i tuoi {{ many }} che aggiungono il tuo numero possono trovarti.",
+  "weSendACodeNoPassword": "Ti mandiamo un codice via SMS. Nessuna password."
+}

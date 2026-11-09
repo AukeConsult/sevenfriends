@@ -1,0 +1,8 @@
+{
+  "title": "Giriş yapılıyor",
+  "invalid": "Bu bağlantı geçerli değil ya da süresi doldu. Yeni bir tane iste.",
+  "newLink": "Bana yeni bağlantı gönder",
+  "busy": "Giriş yapılıyor…",
+  "confirm": "Bitirmek için bu bağlantının gönderildiği e-posta adresini onayla.",
+  "failed": "Bu bağlantıyla giriş yapılamadı. Yeni bir tane iste."
+}

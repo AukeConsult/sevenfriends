@@ -1,0 +1,14 @@
+{
+  "title": "Recevoir un lien de connexion par e-mail",
+  "checkTitle": "Vérifie tes e-mails.",
+  "sentTo": "Nous avons envoyé un lien de connexion à",
+  "openHere": "Ouvre-le sur cet appareil pour te connecter.",
+  "noEmail": "Pas d'e-mail ? Regarde dans tes spams, ou réessaie.",
+  "another": "Utiliser une autre adresse e-mail",
+  "intro": "Pas besoin de mot de passe. Nous t'envoyons un lien par e-mail, et l'ouvrir te connecte. Cela prouve aussi que l'adresse est la tienne, pour que tes {{ many }} qui t'ajoutent par e-mail puissent te trouver.",
+  "yourEmail": "Ton adresse e-mail",
+  "sending": "Envoi…",
+  "send": "Envoyer le lien",
+  "writeEmail": "Saisis d'abord ton adresse e-mail.",
+  "sendFailed": "Impossible d'envoyer le lien. Réessaie."
+}

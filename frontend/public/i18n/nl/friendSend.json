@@ -1,0 +1,21 @@
+{
+  "emojiGroups": "Emojigroepen",
+  "addAnEmoji": "Een emoji toevoegen",
+  "sendAnImage": "Afbeelding sturen",
+  "sendAVideo": "Video sturen",
+  "sendAVoiceMessage": "Spraakbericht sturen",
+  "send": "Versturen",
+  "add": "+ Toevoegen",
+  "messagesForFriendnameOnly": "Berichten alleen voor {{ friendName }}. Ze worden op dit apparaat bewaard en opgeslagen terwijl je typt.",
+  "forExampleIM": "Bijvoorbeeld: ik ben onderweg",
+  "addAMessage": "+ Bericht toevoegen",
+  "couldNotSendThe": "Kon het bericht niet versturen",
+  "addEmoji": "{{ emoji }} toevoegen",
+  "addATextOptional": "Voeg een tekst toe (optioneel)…",
+  "writeToFriendname": "Schrijf naar {{ friendName }}…",
+  "messageToFriendname": "Bericht aan {{ friendName }}",
+  "addAMessageFor": "Een bericht alleen voor {{ friendName }} toevoegen",
+  "messageForFriendnameIndex": "Bericht voor {{ friendName }} {{ index }}",
+  "removeMessageIndex": "Bericht {{ index }} verwijderen",
+  "messagesForOnly": "Berichten alleen voor {{ friendName }}"
+}

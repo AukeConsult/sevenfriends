@@ -1,0 +1,17 @@
+{
+  "share": "分享",
+  "allYourSevenSeats": "你的七个位置都满了。腾出位置之后，你的链接依然有效。",
+  "installTheApp": "安装应用",
+  "strongInviteFriendsWith": "<strong>用链接邀请朋友</strong>",
+  "sendThisLinkTo": "把这个链接发给你希望加入的朋友。对方打开后，登录（或创建账号）并确认，你就会收到一条好友请求。",
+  "shareLink": "分享链接",
+  "copyLink": "复制链接",
+  "seat": "位置",
+  "seats": "位置",
+  "youHaveFreeseatsFree": "你有 {{ freeSeats }} 个空{{ seats }}。邀请对你重要的{{ many }}吧。",
+  "inviteFriendsWithA": "用链接邀请朋友",
+  "yourOneLink": "你的{{ one }}链接",
+  "emailAddress": "邮箱地址",
+  "phoneNumber": "手机号",
+  "theLinkContainsYour": "这个链接包含你的{{ number }}。"
+}

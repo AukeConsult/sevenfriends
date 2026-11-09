@@ -1,0 +1,14 @@
+{
+  "title": "Mejla mig en inloggningslänk",
+  "checkTitle": "Kolla din e-post.",
+  "sentTo": "Vi skickade en inloggningslänk till",
+  "openHere": "Öppna den på den här enheten för att logga in.",
+  "noEmail": "Ingen e-post? Titta i skräpposten, eller försök igen.",
+  "another": "Använd en annan e-postadress",
+  "intro": "Inget lösenord behövs. Vi mejlar dig en länk, och när du öppnar den är du inloggad. Det bevisar också att adressen är din, så att {{ many }} som lägger till dig via e-post kan hitta dig.",
+  "yourEmail": "Din e-postadress",
+  "sending": "Skickar…",
+  "send": "Skicka länk",
+  "writeEmail": "Skriv din e-postadress först.",
+  "sendFailed": "Kunde inte skicka länken. Försök igen."
+}

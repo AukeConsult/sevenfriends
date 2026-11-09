@@ -1,0 +1,11 @@
+{
+  "backToSounds": "소리로 돌아가기",
+  "back": "‹ 뒤로",
+  "hintTapASound": "{{ hint }}. 소리를 눌러 선택하고 들어 보세요.",
+  "sevenFriendsJingles": "Seven Friends 징글",
+  "otherSounds": "다른 소리",
+  "stop": "■ 정지",
+  "play": "▶ 재생",
+  "done": "완료",
+  "soundForLabel": "소리: {{ label }}"
+}

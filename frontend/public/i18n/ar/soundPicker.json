@@ -1,0 +1,11 @@
+{
+  "backToSounds": "العودة إلى الأصوات",
+  "back": "‹ رجوع",
+  "hintTapASound": "{{ hint }}. اضغط على صوت لاختياره وسماعه.",
+  "sevenFriendsJingles": "نغمات Seven Friends",
+  "otherSounds": "أصوات أخرى",
+  "stop": "■ إيقاف",
+  "play": "▶ تشغيل",
+  "done": "تم",
+  "soundForLabel": "الصوت لـ {{ label }}"
+}

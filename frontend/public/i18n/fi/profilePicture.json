@@ -1,0 +1,19 @@
+{
+  "yourPicture": "Kuvasi",
+  "chooseAPhotoAnd": "Valitse valokuva ja aseta se ympyrään. Se pienennetään (256 pikseliä) ennen tallennusta, joten iso kuva käy hyvin.",
+  "chooseAPhoto": "Valitse valokuva",
+  "removeMyPicture": "Poista kuvani",
+  "cancel": "Peruuta",
+  "yourPhotoDragTo": "Valokuvasi: siirrä vetämällä",
+  "dragThePhotoTo": "Siirrä valokuvaa vetämällä. Zoomaa nipistämällä, vierittämällä tai liukusäätimellä.",
+  "zoom": "Zoomaus",
+  "saving": "Tallennetaan…",
+  "useThisPicture": "Käytä tätä kuvaa",
+  "chooseAnotherPhoto": "Valitse toinen valokuva",
+  "chooseAnImageFile": "Valitse kuvatiedosto (valokuva).",
+  "thatImageIsVery": "Kuva on hyvin suuri. Valitse alle 20 MB:n kuva.",
+  "thisImageCannotBe": "Tätä kuvaa ei voi avata. Kokeile toista (JPEG, PNG tai WebP).",
+  "couldNotSaveThe": "Kuvaa ei voitu tallentaa. Yritä uudelleen.",
+  "couldNotRemoveThe": "Kuvaa ei voitu poistaa. Yritä uudelleen.",
+  "thePictureIsToo": "Kuva on liian suuri tallennettavaksi."
+}

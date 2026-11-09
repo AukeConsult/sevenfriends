@@ -1,0 +1,14 @@
+{
+  "title": "Kirimi aku tautan masuk lewat email",
+  "checkTitle": "Cek emailmu.",
+  "sentTo": "Kami mengirim tautan masuk ke",
+  "openHere": "Buka di perangkat ini untuk masuk.",
+  "noEmail": "Tidak ada email? Cek folder spam, atau coba lagi.",
+  "another": "Pakai alamat email lain",
+  "intro": "Tanpa kata sandi. Kami mengirim tautan lewat email, dan membukanya langsung memasukkanmu. Ini juga membuktikan alamat itu milikmu, jadi {{ many }} yang menambahmu lewat email bisa menemukanmu.",
+  "yourEmail": "Alamat emailmu",
+  "sending": "Mengirim…",
+  "send": "Kirim tautan",
+  "writeEmail": "Tulis alamat emailmu dulu.",
+  "sendFailed": "Tidak bisa mengirim tautan. Silakan coba lagi."
+}

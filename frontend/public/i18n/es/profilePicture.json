@@ -1,0 +1,19 @@
+{
+  "yourPicture": "Tu foto",
+  "chooseAPhotoAnd": "Elige una foto y colócala en el círculo. Se reduce (256 píxeles) antes de guardarse, así que una foto grande no es problema.",
+  "chooseAPhoto": "Elegir una foto",
+  "removeMyPicture": "Quitar mi foto",
+  "cancel": "Cancelar",
+  "yourPhotoDragTo": "Tu foto: arrastra para moverla",
+  "dragThePhotoTo": "Arrastra la foto para moverla. Pellizca, desplaza o usa el control deslizante para hacer zoom.",
+  "zoom": "Zoom",
+  "saving": "Guardando…",
+  "useThisPicture": "Usar esta foto",
+  "chooseAnotherPhoto": "Elegir otra foto",
+  "chooseAnImageFile": "Elige un archivo de imagen (una foto).",
+  "thatImageIsVery": "Esa imagen es muy grande. Elige una de menos de 20 MB.",
+  "thisImageCannotBe": "No se puede abrir esta imagen. Prueba con otra (JPEG, PNG o WebP).",
+  "couldNotSaveThe": "No se pudo guardar la foto. Inténtalo de nuevo.",
+  "couldNotRemoveThe": "No se pudo quitar la foto. Inténtalo de nuevo.",
+  "thePictureIsToo": "La foto es demasiado grande para guardarla."
+}

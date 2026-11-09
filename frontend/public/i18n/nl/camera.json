@@ -1,0 +1,14 @@
+{
+  "cancel": "Annuleren",
+  "takeThePhoto": "Foto maken",
+  "startRecording": "Opname starten",
+  "stop": "Stop",
+  "useAnotherCamera": "Andere camera gebruiken",
+  "theCamera": "De camera",
+  "theCameraIsBlocked": "De camera is geblokkeerd. Sta hem toe voor deze site in de browserinstellingen, of kies in plaats daarvan een bestand.",
+  "noCameraWasFound": "Er is geen camera gevonden. Kies in plaats daarvan een bestand.",
+  "theCameraIsIn": "De camera wordt door een ander programma gebruikt. Sluit dat af en probeer het opnieuw, of kies een bestand.",
+  "theCameraCouldNot": "De camera kon niet worden gestart. Kies in plaats daarvan een bestand.",
+  "thePhotoCouldNot": "De foto kon niet worden gemaakt. Probeer het opnieuw.",
+  "thisBrowserCannotRecord": "Deze browser kan geen video opnemen. Kies in plaats daarvan een bestand."
+}

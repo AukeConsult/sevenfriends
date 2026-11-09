@@ -1,0 +1,21 @@
+{
+  "emojiGroups": "Emojigrupper",
+  "addAnEmoji": "Lägg till en emoji",
+  "sendAnImage": "Skicka en bild",
+  "sendAVideo": "Skicka en video",
+  "sendAVoiceMessage": "Skicka ett röstmeddelande",
+  "send": "Skicka",
+  "add": "+ Lägg till",
+  "messagesForFriendnameOnly": "Meddelanden bara för {{ friendName }}. De sparas på den här enheten, och sparas medan du skriver.",
+  "forExampleIM": "Till exempel: Jag är på väg",
+  "addAMessage": "+ Lägg till ett meddelande",
+  "couldNotSendThe": "Kunde inte skicka meddelandet",
+  "addEmoji": "Lägg till {{ emoji }}",
+  "addATextOptional": "Lägg till en text (valfritt)…",
+  "writeToFriendname": "Skriv till {{ friendName }}…",
+  "messageToFriendname": "Meddelande till {{ friendName }}",
+  "addAMessageFor": "Lägg till ett meddelande bara för {{ friendName }}",
+  "messageForFriendnameIndex": "Meddelande för {{ friendName }} {{ index }}",
+  "removeMessageIndex": "Ta bort meddelande {{ index }}",
+  "messagesForOnly": "Meddelanden bara för {{ friendName }}"
+}

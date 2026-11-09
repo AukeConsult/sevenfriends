@@ -1,0 +1,21 @@
+{
+  "back": "Назад",
+  "back2": "‹ Назад",
+  "verifyYourPhone": "Подтверди телефон",
+  "signInWithPhone": "Вход по телефону",
+  "standardMessageRatesFrom": "Может взиматься плата за SMS по тарифу твоего оператора.",
+  "phoneNumberWithCountry": "Номер телефона с кодом страны",
+  "sending": "Отправляем…",
+  "sendCode": "Отправить код",
+  "weSentACode": "Мы отправили код на <strong>{{ phone }}</strong>.",
+  "code": "Код",
+  "changeNumber": "Изменить номер",
+  "checking": "Проверяем…",
+  "confirm": "Подтвердить",
+  "writeTheNumberWith": "Напиши номер с кодом страны, например +47 900 00 000.",
+  "writeTheCodeFrom": "Напиши код из SMS.",
+  "couldNotSendThe": "Не удалось отправить код. Попробуй ещё раз.",
+  "thatCodeDidNot": "Этот код не подошёл. Попробуй ещё раз.",
+  "weSendACodeLinking": "Мы отправляем код по SMS. После подтверждения тебя смогут найти те, кто добавит твой номер ({{ many }}).",
+  "weSendACodeNoPassword": "Мы отправляем код по SMS. Пароль не нужен."
+}

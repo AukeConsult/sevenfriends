@@ -1,0 +1,21 @@
+{
+  "back": "Takaisin",
+  "back2": "‹ Takaisin",
+  "verifyYourPhone": "Vahvista puhelimesi",
+  "signInWithPhone": "Kirjaudu puhelimella",
+  "standardMessageRatesFrom": "Puhelinoperaattorisi tavalliset viestimaksut voivat tulla veloitettavaksi.",
+  "phoneNumberWithCountry": "Puhelinnumero maatunnuksella",
+  "sending": "Lähetetään…",
+  "sendCode": "Lähetä koodi",
+  "weSentACode": "Lähetimme koodin numeroon <strong>{{ phone }}</strong>.",
+  "code": "Koodi",
+  "changeNumber": "Vaihda numero",
+  "checking": "Tarkistetaan…",
+  "confirm": "Vahvista",
+  "writeTheNumberWith": "Kirjoita numero maatunnuksella, esimerkiksi +47 900 00 000.",
+  "writeTheCodeFrom": "Kirjoita tekstiviestin koodi.",
+  "couldNotSendThe": "Koodia ei voitu lähettää. Yritä uudelleen.",
+  "thatCodeDidNot": "Koodi ei toiminut. Yritä uudelleen.",
+  "weSendACodeLinking": "Lähetämme koodin tekstiviestillä. Kun numero on vahvistettu, sinut löytävät {{ many }}, jotka lisäävät numerosi.",
+  "weSendACodeNoPassword": "Lähetämme koodin tekstiviestillä. Salasanaa ei tarvita."
+}

@@ -1,0 +1,19 @@
+{
+  "yourPicture": "Jouw foto",
+  "chooseAPhotoAnd": "Kies een foto en zet hem in de cirkel. Hij wordt klein gemaakt (256 pixels) voordat hij wordt opgeslagen, dus een grote foto is prima.",
+  "chooseAPhoto": "Kies een foto",
+  "removeMyPicture": "Mijn foto verwijderen",
+  "cancel": "Annuleren",
+  "yourPhotoDragTo": "Jouw foto: sleep om te verplaatsen",
+  "dragThePhotoTo": "Sleep de foto om hem te verplaatsen. Knijp, scroll of gebruik de schuifregelaar om te zoomen.",
+  "zoom": "Zoom",
+  "saving": "Opslaan…",
+  "useThisPicture": "Deze foto gebruiken",
+  "chooseAnotherPhoto": "Kies een andere foto",
+  "chooseAnImageFile": "Kies een afbeeldingsbestand (een foto).",
+  "thatImageIsVery": "Die afbeelding is erg groot. Kies er een van minder dan 20 MB.",
+  "thisImageCannotBe": "Deze afbeelding kan niet worden geopend. Probeer een andere (JPEG, PNG of WebP).",
+  "couldNotSaveThe": "Kon de foto niet opslaan. Probeer het opnieuw.",
+  "couldNotRemoveThe": "Kon de foto niet verwijderen. Probeer het opnieuw.",
+  "thePictureIsToo": "De foto is te groot om op te slaan."
+}

@@ -1,0 +1,11 @@
+{
+  "backToSounds": "Назад к звукам",
+  "back": "‹ Назад",
+  "hintTapASound": "{{ hint }}. Нажми на звук, чтобы выбрать его и услышать.",
+  "sevenFriendsJingles": "Джинглы Seven Friends",
+  "otherSounds": "Другие звуки",
+  "stop": "■ Стоп",
+  "play": "▶ Играть",
+  "done": "Готово",
+  "soundForLabel": "Звук для: {{ label }}"
+}

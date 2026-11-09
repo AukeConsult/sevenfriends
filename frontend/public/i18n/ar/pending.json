@@ -1,0 +1,16 @@
+{
+  "backToHome": "العودة إلى الرئيسية",
+  "back": "‹ رجوع",
+  "waitingForASeat": "في انتظار مقعد",
+  "theseManyWantTo": "هؤلاء ({{ many }}) يريدون الانضمام إليك، لكن كل مقاعدك مشغولة. يستطيعون أن يروا أنهم في قائمة انتظارك. يبقون هنا حتى تُخلي مقعدًا، أو حتى يسحبوا الطلب.",
+  "retry": "إعادة المحاولة",
+  "checking": "جارٍ الفحص…",
+  "nobodyIsWaitingFor": "لا أحد ينتظر مقعدًا.",
+  "strongFromnameStrong": "<strong>{{ fromName }}</strong>",
+  "hasNotVerifiedTheir": "لم يوثّق بريده الإلكتروني أو هاتفه: لا يمكننا التأكد أنه هو فعلًا.",
+  "pending": "معلّق",
+  "reject": "رفض",
+  "requestFromname": "' + request.fromName + '",
+  "mediumdate": "mediumDate",
+  "sinceMediumdate": "منذ {{ mediumDate }}"
+}

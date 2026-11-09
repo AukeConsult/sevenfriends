@@ -1,0 +1,16 @@
+{
+  "backToHome": "Ana sayfaya dön",
+  "back": "‹ Geri",
+  "waitingForASeat": "Yer bekleyenler",
+  "theseManyWantTo": "Seninle olmak isteyen {{ many }} var ama tüm yerlerin dolu. Bekleme listende olduklarını görebilirler. Sen bir yer açana ya da istekten vazgeçene kadar burada kalırlar.",
+  "retry": "Tekrar dene",
+  "checking": "Kontrol ediliyor…",
+  "nobodyIsWaitingFor": "Yer bekleyen kimse yok.",
+  "strongFromnameStrong": "<strong>{{ fromName }}</strong>",
+  "hasNotVerifiedTheir": "E-postasını veya telefonunu doğrulamamış: gerçekten o olduğundan emin olamayız.",
+  "pending": "Beklemede",
+  "reject": "Reddet",
+  "requestFromname": "' + request.fromName + '",
+  "mediumdate": "mediumDate",
+  "sinceMediumdate": "{{ mediumDate }} tarihinden beri"
+}

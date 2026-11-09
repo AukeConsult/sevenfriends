@@ -1,0 +1,17 @@
+{
+  "share": "Jaa",
+  "allYourSevenSeats": "Kaikki seitsemän paikkaasi ovat täynnä. Linkkisi toimii silti, jos teet tilaa.",
+  "installTheApp": "Asenna sovellus",
+  "strongInviteFriendsWith": "<strong>Kutsu ystäviä linkillä</strong>",
+  "sendThisLinkTo": "Lähetä tämä linkki ystäville, jotka haluaisit mukaan. Kun he avaavat sen, kirjautuvat sisään (tai luovat tilin) ja hyväksyvät, sinulle lähetetään kaveripyyntö.",
+  "shareLink": "Jaa linkki",
+  "copyLink": "Kopioi linkki",
+  "seat": "paikka",
+  "seats": "paikkaa",
+  "youHaveFreeseatsFree": "Vapaana: {{ freeSeats }} {{ seats }}. Kutsu sinulle tärkeät {{ many }}.",
+  "inviteFriendsWithA": "Kutsu ystäviä linkillä",
+  "yourOneLink": "Linkkisi ({{ one }})",
+  "emailAddress": "sähköpostiosoite",
+  "phoneNumber": "puhelinnumero",
+  "theLinkContainsYour": "Linkki sisältää omat tietosi: {{ number }}."
+}

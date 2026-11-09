@@ -1,0 +1,21 @@
+{
+  "back": "Voltar",
+  "back2": "‹ Voltar",
+  "verifyYourPhone": "Verifique seu telefone",
+  "signInWithPhone": "Entrar com o telefone",
+  "standardMessageRatesFrom": "Podem valer as tarifas normais de mensagens da sua operadora.",
+  "phoneNumberWithCountry": "Número de telefone com código do país",
+  "sending": "Enviando…",
+  "sendCode": "Enviar código",
+  "weSentACode": "Enviamos um código para <strong>{{ phone }}</strong>.",
+  "code": "Código",
+  "changeNumber": "Trocar número",
+  "checking": "Verificando…",
+  "confirm": "Confirmar",
+  "writeTheNumberWith": "Escreva o número com o código do país, por exemplo +47 900 00 000.",
+  "writeTheCodeFrom": "Escreva o código da mensagem de texto.",
+  "couldNotSendThe": "Não foi possível enviar o código. Tente de novo.",
+  "thatCodeDidNot": "Esse código não funcionou. Tente de novo.",
+  "weSendACodeLinking": "Enviamos um código por mensagem de texto. Depois de verificado, os {{ many }} que adicionarem seu número conseguem encontrar você.",
+  "weSendACodeNoPassword": "Enviamos um código por mensagem de texto. Sem senha."
+}

@@ -1,0 +1,17 @@
+{
+  "deleteMyAccount": "Radera mitt konto",
+  "strongThisCannotBe": "<strong>Det går inte att ångra.</strong> Du raderas helt från Seven Friends.",
+  "everythingAboutYouIs": "Allt om dig raderas:",
+  "yourAccountYourProfile": "ditt konto, din profil och din inloggning",
+  "allYourFriendsAnd": "alla dina vänner och alla förfrågningar, skickade eller mottagna",
+  "everyMessageYouSent": "alla meddelanden du skickat eller tagit emot. Dina vänner förlorar konversationen också",
+  "yourNameAndContact": "ditt namn och dina kontaktuppgifter i andra vänners listor",
+  "yourFriendsAreNot": "Dina vänner får inget besked. De har helt enkelt inte dig som vän längre.",
+  "typeWordToConfirm": "Skriv {{ word }} för att bekräfta",
+  "cancel": "Avbryt",
+  "deleting": "Raderar…",
+  "deleteEverything": "Radera allt",
+  "couldNotDeleteYour": "Kunde inte radera ditt konto. Inget har ändrats, försök igen.",
+  "thisCannotBeUndone": "Det går inte att ångra.",
+  "youWillBeErased": "Du raderas helt från Seven Friends.'\">"
+}

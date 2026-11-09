@@ -1,0 +1,14 @@
+{
+  "cancel": "キャンセル",
+  "takeThePhoto": "撮影する",
+  "startRecording": "録画を開始",
+  "stop": "停止",
+  "useAnotherCamera": "別のカメラを使う",
+  "theCamera": "カメラ",
+  "theCameraIsBlocked": "カメラがブロックされています。ブラウザの設定でこのサイトに許可するか、代わりにファイルを選んでください。",
+  "noCameraWasFound": "カメラが見つかりません。代わりにファイルを選んでください。",
+  "theCameraIsIn": "カメラは別のプログラムが使用中です。閉じてからもう一度お試しいただくか、代わりにファイルを選んでください。",
+  "theCameraCouldNot": "カメラを起動できませんでした。代わりにファイルを選んでください。",
+  "thePhotoCouldNot": "写真を撮れませんでした。もう一度お試しください。",
+  "thisBrowserCannotRecord": "このブラウザでは動画を録画できません。代わりにファイルを選んでください。"
+}

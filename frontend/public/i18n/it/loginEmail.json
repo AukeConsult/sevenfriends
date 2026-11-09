@@ -1,0 +1,14 @@
+{
+  "title": "Mandami un link di accesso via email",
+  "checkTitle": "Controlla la tua email.",
+  "sentTo": "Abbiamo inviato un link di accesso a",
+  "openHere": "Aprilo su questo dispositivo per accedere.",
+  "noEmail": "Nessuna email? Guarda nella cartella spam, oppure riprova.",
+  "another": "Usa un altro indirizzo email",
+  "intro": "Nessuna password. Ti mandiamo un link via email e aprendolo accedi. Dimostra anche che l'indirizzo è tuo, così i tuoi {{ many }} che ti aggiungono via email possono trovarti.",
+  "yourEmail": "Il tuo indirizzo email",
+  "sending": "Invio…",
+  "send": "Invia il link",
+  "writeEmail": "Scrivi prima il tuo indirizzo email.",
+  "sendFailed": "Impossibile inviare il link. Riprova."
+}

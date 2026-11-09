@@ -1,0 +1,21 @@
+{
+  "back": "Tilbake",
+  "back2": "‹ Tilbake",
+  "verifyYourPhone": "Bekreft telefonen din",
+  "signInWithPhone": "Logg inn med telefon",
+  "standardMessageRatesFrom": "Vanlige meldingspriser fra telefonselskapet ditt kan gjelde.",
+  "phoneNumberWithCountry": "Telefonnummer med landskode",
+  "sending": "Sender…",
+  "sendCode": "Send kode",
+  "weSentACode": "Vi sendte en kode til <strong>{{ phone }}</strong>.",
+  "code": "Kode",
+  "changeNumber": "Bytt nummer",
+  "checking": "Sjekker…",
+  "confirm": "Bekreft",
+  "writeTheNumberWith": "Skriv nummeret med landskode, for eksempel +47 900 00 000.",
+  "writeTheCodeFrom": "Skriv koden fra tekstmeldingen.",
+  "couldNotSendThe": "Kunne ikke sende koden. Prøv igjen.",
+  "thatCodeDidNot": "Den koden virket ikke. Prøv igjen.",
+  "weSendACodeLinking": "Vi sender en kode i en tekstmelding. Når nummeret er bekreftet, kan {{ many }} som legger til nummeret ditt, finne deg.",
+  "weSendACodeNoPassword": "Vi sender en kode i en tekstmelding. Du trenger ikke passord."
+}

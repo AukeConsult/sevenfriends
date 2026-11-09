@@ -1,0 +1,14 @@
+{
+  "title": "Send meg en innloggingslenke",
+  "checkTitle": "Sjekk e-posten din.",
+  "sentTo": "Vi sendte en innloggingslenke til",
+  "openHere": "Åpne den på denne enheten for å logge inn.",
+  "noEmail": "Ingen e-post? Se i søppelpostmappen, eller prøv igjen.",
+  "another": "Bruk en annen e-postadresse",
+  "intro": "Du trenger ikke passord. Vi sender deg en lenke på e-post, og når du åpner den, er du logget inn. Den viser også at adressen er din, så {{ many }} som legger deg til via e-post, kan finne deg.",
+  "yourEmail": "E-postadressen din",
+  "sending": "Sender…",
+  "send": "Send lenke",
+  "writeEmail": "Skriv inn e-postadressen din først.",
+  "sendFailed": "Kunne ikke sende lenken. Prøv igjen."
+}

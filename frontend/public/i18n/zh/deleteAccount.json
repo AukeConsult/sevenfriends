@@ -1,0 +1,17 @@
+{
+  "deleteMyAccount": "删除我的账号",
+  "strongThisCannotBe": "<strong>此操作无法撤销。</strong>你会被从 Seven Friends 中彻底抹去。",
+  "everythingAboutYouIs": "与你有关的一切都会被删除：",
+  "yourAccountYourProfile": "你的账号、个人资料和登录信息",
+  "allYourFriendsAnd": "你所有的朋友，以及每一条已发送或已收到的请求",
+  "everyMessageYouSent": "你发送或收到的每一条消息。你的朋友也会失去这些对话",
+  "yourNameAndContact": "你在其他朋友列表里的姓名和联系方式",
+  "yourFriendsAreNot": "不会通知你的朋友。他们只是不再有你这个朋友了。",
+  "typeWordToConfirm": "输入 {{ word }} 以确认",
+  "cancel": "取消",
+  "deleting": "删除中…",
+  "deleteEverything": "全部删除",
+  "couldNotDeleteYour": "无法删除你的账号。没有任何改动，请再试一次。",
+  "thisCannotBeUndone": "此操作无法撤销。",
+  "youWillBeErased": "你会被从 Seven Friends 中彻底抹去。'\">"
+}

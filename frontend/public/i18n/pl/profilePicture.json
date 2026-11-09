@@ -1,0 +1,19 @@
+{
+  "yourPicture": "Twoje zdjęcie",
+  "chooseAPhotoAnd": "Wybierz zdjęcie i ustaw je w kółku. Przed zapisem jest pomniejszane (256 pikseli), więc duże zdjęcie nie jest problemem.",
+  "chooseAPhoto": "Wybierz zdjęcie",
+  "removeMyPicture": "Usuń moje zdjęcie",
+  "cancel": "Anuluj",
+  "yourPhotoDragTo": "Twoje zdjęcie: przeciągnij, żeby je przesunąć",
+  "dragThePhotoTo": "Przeciągnij zdjęcie, żeby je przesunąć. Ściągnij palce, przewiń lub użyj suwaka, żeby powiększyć.",
+  "zoom": "Powiększenie",
+  "saving": "Zapisuję…",
+  "useThisPicture": "Użyj tego zdjęcia",
+  "chooseAnotherPhoto": "Wybierz inne zdjęcie",
+  "chooseAnImageFile": "Wybierz plik ze zdjęciem (fotografią).",
+  "thatImageIsVery": "To zdjęcie jest bardzo duże. Wybierz mniejsze niż 20 MB.",
+  "thisImageCannotBe": "Nie można otworzyć tego zdjęcia. Spróbuj innego (JPEG, PNG lub WebP).",
+  "couldNotSaveThe": "Nie udało się zapisać zdjęcia. Spróbuj ponownie.",
+  "couldNotRemoveThe": "Nie udało się usunąć zdjęcia. Spróbuj ponownie.",
+  "thePictureIsToo": "Zdjęcie jest za duże, żeby je zapisać."
+}

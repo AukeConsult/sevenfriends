@@ -1,0 +1,17 @@
+{
+  "deleteMyAccount": "Supprimer mon compte",
+  "strongThisCannotBe": "<strong>Cette action est irréversible.</strong> Tu seras effacé de Seven Friends, complètement.",
+  "everythingAboutYouIs": "Tout ce qui te concerne est supprimé :",
+  "yourAccountYourProfile": "ton compte, ton profil et ta connexion",
+  "allYourFriendsAnd": "tous tes amis et chaque demande, envoyée ou reçue",
+  "everyMessageYouSent": "chaque message envoyé ou reçu. Tes amis perdent aussi la conversation",
+  "yourNameAndContact": "ton nom et tes coordonnées dans les listes des autres amis",
+  "yourFriendsAreNot": "Tes amis ne sont pas prévenus. Ils ne t'ont simplement plus comme ami.",
+  "typeWordToConfirm": "Écris {{ word }} pour confirmer",
+  "cancel": "Annuler",
+  "deleting": "Suppression…",
+  "deleteEverything": "Tout supprimer",
+  "couldNotDeleteYour": "Impossible de supprimer ton compte. Rien n'a été modifié, réessaie.",
+  "thisCannotBeUndone": "Cette action est irréversible.",
+  "youWillBeErased": "Tu seras effacé de Seven Friends, complètement.'\">"
+}

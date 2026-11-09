@@ -1,0 +1,8 @@
+{
+  "title": "Logger deg inn",
+  "invalid": "Denne lenken er ikke gyldig, eller den er utløpt. Be om en ny.",
+  "newLink": "Send meg en ny lenke",
+  "busy": "Logger deg inn…",
+  "confirm": "For å bli ferdig, bekreft e-postadressen denne lenken ble sendt til.",
+  "failed": "Kunne ikke logge deg inn med denne lenken. Be om en ny."
+}

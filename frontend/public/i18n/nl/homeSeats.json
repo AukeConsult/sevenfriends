@@ -1,0 +1,17 @@
+{
+  "yourSevenSeats": "Je zeven plekken",
+  "yourSeven": "Je zeven",
+  "waiting": "Wachtend",
+  "pending": "In behandeling",
+  "addAOne": "{{ one }} toevoegen",
+  "silent": "Stil",
+  "dropHere": "Hier neerzetten",
+  "sleepList": "Slaaplijst",
+  "couldNotMoveThe": "Kon niet verplaatsen: ",
+  "openTheConversationWith": "Open het gesprek met {{ friendName }}. Houd ingedrukt om te verplaatsen.",
+  "countUnread": "{{ count }} ongelezen",
+  "seatPositionIsFree": "Plek {{ position }} is vrij: voeg een {{ one }} toe",
+  "dropOnASeat": "Zet neer op een plek of in de stille kring",
+  "dropOnASeat2": "Zet neer op een plek",
+  "pressAndHoldA": "Houd een {{ one }} ingedrukt om te verplaatsen"
+}

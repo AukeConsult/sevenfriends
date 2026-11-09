@@ -1,0 +1,17 @@
+{
+  "deleteMyAccount": "Hesabımı sil",
+  "strongThisCannotBe": "<strong>Bu geri alınamaz.</strong> Seven Friends'ten tamamen silineceksin.",
+  "everythingAboutYouIs": "Seninle ilgili her şey silinir:",
+  "yourAccountYourProfile": "hesabın, profilin ve girişin",
+  "allYourFriendsAnd": "tüm arkadaşların ve gönderilen ya da alınan her istek",
+  "everyMessageYouSent": "gönderdiğin ya da aldığın her mesaj. Arkadaşların da sohbeti kaybeder",
+  "yourNameAndContact": "adın ve iletişim bilgilerin, diğer arkadaşlarının listelerinde",
+  "yourFriendsAreNot": "Arkadaşlarına haber verilmez. Sadece artık seni arkadaş olarak görmezler.",
+  "typeWordToConfirm": "Onaylamak için şunu yaz: {{ word }}",
+  "cancel": "Vazgeç",
+  "deleting": "Siliniyor…",
+  "deleteEverything": "Her şeyi sil",
+  "couldNotDeleteYour": "Hesabın silinemedi. Hiçbir şey değişmedi, lütfen tekrar dene.",
+  "thisCannotBeUndone": "Bu geri alınamaz.",
+  "youWillBeErased": "Seven Friends'ten tamamen silineceksin.'\">"
+}

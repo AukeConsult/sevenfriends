@@ -1,0 +1,9 @@
+{
+  "tapToSayHow": "Tipp, um zu sagen, wie es dir geht",
+  "yourMood": "Deine Stimmung",
+  "noMood": "Keine Stimmung",
+  "aFewWordsAbout": "Ein paar Worte dazu, wie es dir geht (optional)",
+  "moodMessage": "Stimmungsnachricht",
+  "couldNotLoadYour": "Deine Stimmung konnte nicht geladen werden",
+  "couldNotSaveYour": "Deine Stimmung konnte nicht gespeichert werden"
+}

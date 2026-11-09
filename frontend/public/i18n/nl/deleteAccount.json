@@ -1,0 +1,17 @@
+{
+  "deleteMyAccount": "Mijn account verwijderen",
+  "strongThisCannotBe": "<strong>Dit kan niet ongedaan worden gemaakt.</strong> Je wordt helemaal uit Seven Friends gewist.",
+  "everythingAboutYouIs": "Alles over jou wordt verwijderd:",
+  "yourAccountYourProfile": "je account, je profiel en je login",
+  "allYourFriendsAnd": "al je vrienden en elk verzoek, verstuurd of ontvangen",
+  "everyMessageYouSent": "elk bericht dat je hebt verstuurd of ontvangen. Je vrienden raken het gesprek ook kwijt",
+  "yourNameAndContact": "je naam en contactgegevens in de lijsten van andere vrienden",
+  "yourFriendsAreNot": "Je vrienden krijgen geen bericht. Ze hebben je gewoon niet meer als vriend.",
+  "typeWordToConfirm": "Typ {{ word }} om te bevestigen",
+  "cancel": "Annuleren",
+  "deleting": "Verwijderen…",
+  "deleteEverything": "Alles verwijderen",
+  "couldNotDeleteYour": "Kon je account niet verwijderen. Er is niets gewijzigd, probeer het opnieuw.",
+  "thisCannotBeUndone": "Dit kan niet ongedaan worden gemaakt.",
+  "youWillBeErased": "Je wordt helemaal uit Seven Friends gewist.'\">"
+}

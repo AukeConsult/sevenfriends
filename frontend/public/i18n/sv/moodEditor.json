@@ -1,0 +1,9 @@
+{
+  "tapToSayHow": "Tryck för att säga hur du mår",
+  "yourMood": "Ditt humör",
+  "noMood": "Inget humör",
+  "aFewWordsAbout": "Några ord om hur du mår (valfritt)",
+  "moodMessage": "Humörmeddelande",
+  "couldNotLoadYour": "Kunde inte ladda ditt humör",
+  "couldNotSaveYour": "Kunde inte spara ditt humör"
+}

@@ -1,0 +1,17 @@
+{
+  "yourSevenSeats": "Seitsemän paikkaasi",
+  "yourSeven": "Seitsemäsi",
+  "waiting": "Odottaa",
+  "pending": "Odottaa",
+  "addAOne": "Lisää {{ one }}",
+  "silent": "Hiljaiset",
+  "dropHere": "Pudota tähän",
+  "sleepList": "Unilista",
+  "couldNotMoveThe": "Siirto epäonnistui: ",
+  "openTheConversationWith": "Avaa keskustelu käyttäjän {{ friendName }} kanssa. Siirrä painamalla pitkään.",
+  "countUnread": "{{ count }} lukematonta",
+  "seatPositionIsFree": "Paikka {{ position }} on vapaa: lisää {{ one }}",
+  "dropOnASeat": "Pudota paikan tai Hiljaiset-ympyrän päälle",
+  "dropOnASeat2": "Pudota paikan päälle",
+  "pressAndHoldA": "Siirrä painamalla pitkään: {{ one }}"
+}

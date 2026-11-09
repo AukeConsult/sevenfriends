@@ -1,0 +1,16 @@
+{
+  "backToHome": "Назад на головну",
+  "back": "‹ Назад",
+  "waitingForASeat": "Чекають на місце",
+  "theseManyWantTo": "Ці запити ({{ many }}) від людей, які хочуть приєднатися до тебе, але всі твої місця зайняті. Вони бачать, що перебувають у твоєму списку очікування. Вони лишаються тут, доки ти не звільниш місце або доки вони не відкличуть запит.",
+  "retry": "Повторити",
+  "checking": "Перевіряю…",
+  "nobodyIsWaitingFor": "Ніхто не чекає на місце.",
+  "strongFromnameStrong": "<strong>{{ fromName }}</strong>",
+  "hasNotVerifiedTheir": "Не підтвердив(ла) свою пошту чи телефон: ми не можемо бути певні, що це справді ця людина.",
+  "pending": "У черзі",
+  "reject": "Відхилити",
+  "requestFromname": "' + request.fromName + '",
+  "mediumdate": "mediumDate",
+  "sinceMediumdate": "з {{ mediumDate }}"
+}

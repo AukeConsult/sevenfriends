@@ -1,0 +1,21 @@
+{
+  "back": "Kembali",
+  "back2": "‹ Kembali",
+  "verifyYourPhone": "Verifikasi teleponmu",
+  "signInWithPhone": "Masuk dengan telepon",
+  "standardMessageRatesFrom": "Tarif pesan standar dari operator teleponmu mungkin berlaku.",
+  "phoneNumberWithCountry": "Nomor telepon dengan kode negara",
+  "sending": "Mengirim…",
+  "sendCode": "Kirim kode",
+  "weSentACode": "Kami mengirim kode ke <strong>{{ phone }}</strong>.",
+  "code": "Kode",
+  "changeNumber": "Ganti nomor",
+  "checking": "Memeriksa…",
+  "confirm": "Konfirmasi",
+  "writeTheNumberWith": "Tulis nomor dengan kode negara, misalnya +47 900 00 000.",
+  "writeTheCodeFrom": "Tulis kode dari SMS.",
+  "couldNotSendThe": "Tidak bisa mengirim kode. Silakan coba lagi.",
+  "thatCodeDidNot": "Kode itu tidak berhasil. Silakan coba lagi.",
+  "weSendACodeLinking": "Kami mengirim kode lewat SMS. Setelah terverifikasi, {{ many }} yang menambahkan nomormu bisa menemukanmu.",
+  "weSendACodeNoPassword": "Kami mengirim kode lewat SMS. Tanpa kata sandi."
+}

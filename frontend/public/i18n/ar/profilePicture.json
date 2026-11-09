@@ -1,0 +1,19 @@
+{
+  "yourPicture": "صورتك",
+  "chooseAPhotoAnd": "اختر صورة وضعها في الدائرة. تُصغَّر (256 بكسل) قبل حفظها، فلا مشكلة في الصور الكبيرة.",
+  "chooseAPhoto": "اختيار صورة",
+  "removeMyPicture": "إزالة صورتي",
+  "cancel": "إلغاء",
+  "yourPhotoDragTo": "صورتك: اسحبها لتحريكها",
+  "dragThePhotoTo": "اسحب الصورة لتحريكها. اضغط بإصبعين أو مرّر أو استخدم المنزلق للتكبير.",
+  "zoom": "تكبير",
+  "saving": "جارٍ الحفظ…",
+  "useThisPicture": "استخدام هذه الصورة",
+  "chooseAnotherPhoto": "اختيار صورة أخرى",
+  "chooseAnImageFile": "اختر ملف صورة (صورة فوتوغرافية).",
+  "thatImageIsVery": "هذه الصورة كبيرة جدًا. اختر صورة أقل من 20 MB.",
+  "thisImageCannotBe": "تعذّر فتح هذه الصورة. جرّب صورة أخرى (JPEG أو PNG أو WebP).",
+  "couldNotSaveThe": "تعذّر حفظ الصورة. حاول مرة أخرى.",
+  "couldNotRemoveThe": "تعذّرت إزالة الصورة. حاول مرة أخرى.",
+  "thePictureIsToo": "الصورة كبيرة جدًا للحفظ."
+}

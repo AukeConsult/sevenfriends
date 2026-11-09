@@ -1,0 +1,17 @@
+{
+  "share": "Del",
+  "allYourSevenSeats": "Alle dine syv pladser er optaget. Dit link virker stadig, hvis du skaffer plads.",
+  "installTheApp": "Installér appen",
+  "strongInviteFriendsWith": "<strong>Inviter venner med et link</strong>",
+  "sendThisLinkTo": "Send dette link til de venner, du gerne vil have med. Når de åbner det, logger ind (eller opretter en konto) og bekræfter, sendes der en venneanmodning til dig.",
+  "shareLink": "Del link",
+  "copyLink": "Kopiér link",
+  "seat": "ledig plads",
+  "seats": "ledige pladser",
+  "youHaveFreeseatsFree": "Du har {{ freeSeats }} {{ seats }}. Inviter de {{ many }}, der betyder noget for dig.",
+  "inviteFriendsWithA": "Inviter venner med et link",
+  "yourOneLink": "Dit link til {{ one }}",
+  "emailAddress": "din e-mailadresse",
+  "phoneNumber": "dit telefonnummer",
+  "theLinkContainsYour": "Linket indeholder {{ number }}."
+}

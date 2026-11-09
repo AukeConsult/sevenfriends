@@ -72,7 +72,7 @@
 
       @if (unverified().length) {
         <div class="alert alert-warning" role="status">
-          {{ t('notifications.yourAndIsNot', { and: unverified().join(' and '), one: w.one }) || 'Your ' + unverified().join(' and ') + ' is not verified yet: confirm it (in Settings) so ' + w.one + ' requests can reach you.' }}
+          {{ t('notifications.yourAndIsNot', { and: unverified().length === 2 ? (t('notifications.unverifiedAnd', { a: t('notifications.unverifiedEmail') || 'email', b: t('notifications.unverifiedPhone') || 'phone number' }) || 'email and phone number') : (unverified()[0] === 'email' ? (t('notifications.unverifiedEmail') || 'email') : (t('notifications.unverifiedPhone') || 'phone number')), one: w.one }) || 'Your ' + unverified().join(' and ') + ' is not verified yet: confirm it (in Settings) so ' + w.one + ' requests can reach you.' }}
         </div>
       }
       </div>

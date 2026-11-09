@@ -1,0 +1,14 @@
+{
+  "title": "Send mig et loginlink på e-mail",
+  "checkTitle": "Tjek din e-mail.",
+  "sentTo": "Vi sendte et loginlink til",
+  "openHere": "Åbn det på denne enhed for at logge ind.",
+  "noEmail": "Ingen e-mail? Kig i din spam-mappe, eller prøv igen.",
+  "another": "Brug en anden e-mailadresse",
+  "intro": "Ingen adgangskode nødvendig. Vi sender dig et link på e-mail, og når du åbner det, er du logget ind. Det beviser også, at adressen er din, så {{ many }}, der tilføjer dig via e-mail, kan finde dig.",
+  "yourEmail": "Din e-mailadresse",
+  "sending": "Sender…",
+  "send": "Send link",
+  "writeEmail": "Skriv først din e-mailadresse.",
+  "sendFailed": "Kunne ikke sende linket. Prøv igen."
+}

@@ -1,0 +1,19 @@
+{
+  "yourPicture": "내 사진",
+  "chooseAPhotoAnd": "사진을 고르고 원 안에 맞춰 주세요. 저장하기 전에 작게(256픽셀) 줄어들어서 큰 사진도 괜찮아요.",
+  "chooseAPhoto": "사진 선택",
+  "removeMyPicture": "내 사진 삭제",
+  "cancel": "취소",
+  "yourPhotoDragTo": "내 사진: 끌어서 옮기세요",
+  "dragThePhotoTo": "사진을 끌어서 옮기세요. 두 손가락으로 모으거나, 스크롤하거나, 슬라이더로 확대·축소할 수 있어요.",
+  "zoom": "확대/축소",
+  "saving": "저장하는 중…",
+  "useThisPicture": "이 사진 사용",
+  "chooseAnotherPhoto": "다른 사진 선택",
+  "chooseAnImageFile": "이미지 파일(사진)을 선택해 주세요.",
+  "thatImageIsVery": "이미지가 매우 커요. 20 MB 미만인 파일을 선택하세요.",
+  "thisImageCannotBe": "이 이미지를 열 수 없어요. 다른 파일을 시도해 주세요 (JPEG, PNG 또는 WebP).",
+  "couldNotSaveThe": "사진을 저장할 수 없어요. 다시 해 주세요.",
+  "couldNotRemoveThe": "사진을 삭제할 수 없어요. 다시 해 주세요.",
+  "thePictureIsToo": "사진이 너무 커서 저장할 수 없어요."
+}

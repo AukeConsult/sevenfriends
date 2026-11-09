@@ -1,0 +1,16 @@
+{
+  "backToHome": "Torna alla Home",
+  "back": "‹ Indietro",
+  "waitingForASeat": "In attesa di un posto",
+  "theseManyWantTo": "Ci sono {{ many }} che vogliono unirsi a te, ma tutti i tuoi posti sono occupati. Possono vedere di essere nella tua lista d'attesa. Restano qui finché non liberi un posto o finché non ritirano la richiesta.",
+  "retry": "Riprova",
+  "checking": "Controllo…",
+  "nobodyIsWaitingFor": "Nessuno è in attesa di un posto.",
+  "strongFromnameStrong": "<strong>{{ fromName }}</strong>",
+  "hasNotVerifiedTheir": "Non ha verificato la sua email o il suo telefono: non possiamo essere certi che sia davvero lui.",
+  "pending": "In sospeso",
+  "reject": "Rifiuta",
+  "requestFromname": "' + request.fromName + '",
+  "mediumdate": "mediumDate",
+  "sinceMediumdate": "dal {{ mediumDate }}"
+}

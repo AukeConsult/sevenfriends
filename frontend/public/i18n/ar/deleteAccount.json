@@ -1,0 +1,17 @@
+{
+  "deleteMyAccount": "حذف حسابي",
+  "strongThisCannotBe": "<strong>لا يمكن التراجع عن هذا.</strong> ستُمحى من Seven Friends تمامًا.",
+  "everythingAboutYouIs": "كل ما يخصك سيُحذف:",
+  "yourAccountYourProfile": "حسابك وملفك الشخصي وبيانات دخولك",
+  "allYourFriendsAnd": "كل أصدقائك وكل الطلبات، المرسلة أو المستلمة",
+  "everyMessageYouSent": "كل رسالة أرسلتها أو استلمتها. سيفقد أصدقاؤك المحادثة أيضًا",
+  "yourNameAndContact": "اسمك وبيانات الاتصال بك في قوائم الأصدقاء الآخرين",
+  "yourFriendsAreNot": "لن يُبلَّغ أصدقاؤك. ببساطة لن تكون بعد الآن بين أصدقائهم.",
+  "typeWordToConfirm": "اكتب {{ word }} للتأكيد",
+  "cancel": "إلغاء",
+  "deleting": "جارٍ الحذف…",
+  "deleteEverything": "حذف كل شيء",
+  "couldNotDeleteYour": "تعذّر حذف حسابك. لم يتغير شيء، حاول مرة أخرى.",
+  "thisCannotBeUndone": "لا يمكن التراجع عن هذا.",
+  "youWillBeErased": "ستُمحى من Seven Friends تمامًا.'\">"
+}

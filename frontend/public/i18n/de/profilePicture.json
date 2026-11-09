@@ -1,0 +1,19 @@
+{
+  "yourPicture": "Dein Bild",
+  "chooseAPhotoAnd": "Wähl ein Foto und platzier es im Kreis. Es wird vor dem Speichern verkleinert (256 Pixel), ein großes Foto ist also kein Problem.",
+  "chooseAPhoto": "Foto auswählen",
+  "removeMyPicture": "Mein Bild entfernen",
+  "cancel": "Abbrechen",
+  "yourPhotoDragTo": "Dein Foto: zum Verschieben ziehen",
+  "dragThePhotoTo": "Zieh das Foto, um es zu verschieben. Zoome mit zwei Fingern, per Scrollen oder mit dem Regler.",
+  "zoom": "Zoom",
+  "saving": "Wird gespeichert …",
+  "useThisPicture": "Dieses Bild verwenden",
+  "chooseAnotherPhoto": "Anderes Foto auswählen",
+  "chooseAnImageFile": "Wähl eine Bilddatei (ein Foto).",
+  "thatImageIsVery": "Dieses Bild ist sehr groß. Wähl eines unter 20 MB.",
+  "thisImageCannotBe": "Dieses Bild lässt sich nicht öffnen. Versuch ein anderes (JPEG, PNG oder WebP).",
+  "couldNotSaveThe": "Das Bild konnte nicht gespeichert werden. Bitte versuch es noch einmal.",
+  "couldNotRemoveThe": "Das Bild konnte nicht entfernt werden. Bitte versuch es noch einmal.",
+  "thePictureIsToo": "Das Bild ist zu groß zum Speichern."
+}

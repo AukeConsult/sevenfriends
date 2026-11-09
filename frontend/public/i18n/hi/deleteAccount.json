@@ -1,0 +1,17 @@
+{
+  "deleteMyAccount": "मेरा खाता हटाएँ",
+  "strongThisCannotBe": "<strong>इसे वापस नहीं किया जा सकता।</strong> आप Seven Friends से पूरी तरह मिटा दिए जाएँगे।",
+  "everythingAboutYouIs": "आपसे जुड़ा सब कुछ हटा दिया जाता है:",
+  "yourAccountYourProfile": "आपका खाता, आपकी प्रोफ़ाइल और आपका लॉगिन",
+  "allYourFriendsAnd": "आपके सभी दोस्त और भेजा या मिला हर अनुरोध",
+  "everyMessageYouSent": "आपका भेजा या मिला हर संदेश। आपके दोस्त भी बातचीत खो देते हैं",
+  "yourNameAndContact": "दूसरे दोस्तों की सूचियों में आपका नाम और संपर्क विवरण",
+  "yourFriendsAreNot": "आपके दोस्तों को बताया नहीं जाता। बस आप उनके दोस्त नहीं रहते।",
+  "typeWordToConfirm": "पुष्टि के लिए {{ word }} लिखें",
+  "cancel": "रद्द करें",
+  "deleting": "हटा रहे हैं…",
+  "deleteEverything": "सब कुछ हटाएँ",
+  "couldNotDeleteYour": "आपका खाता हटाया नहीं जा सका। कुछ भी नहीं बदला, कृपया फिर कोशिश करें।",
+  "thisCannotBeUndone": "इसे वापस नहीं किया जा सकता।",
+  "youWillBeErased": "आप Seven Friends से पूरी तरह मिटा दिए जाएँगे।'\">"
+}

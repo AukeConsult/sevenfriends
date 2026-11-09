@@ -1,0 +1,11 @@
+{
+  "backToSounds": "Kembali ke suara",
+  "back": "‹ Kembali",
+  "hintTapASound": "{{ hint }}. Ketuk suara untuk memilih dan mendengarnya.",
+  "sevenFriendsJingles": "Jingle Seven Friends",
+  "otherSounds": "Suara lainnya",
+  "stop": "■ Berhenti",
+  "play": "▶ Putar",
+  "done": "Selesai",
+  "soundForLabel": "Suara untuk {{ label }}"
+}

@@ -1,0 +1,16 @@
+{
+  "backToHome": "홈으로 돌아가기",
+  "back": "‹ 뒤로",
+  "waitingForASeat": "자리를 기다리는 중",
+  "theseManyWantTo": "합류를 원하는 사람({{ many }})이 있지만 모든 자리가 찼어요. 상대도 대기 목록에 있다는 것을 볼 수 있어요. 자리를 비우거나 상대가 요청을 철회할 때까지 여기에 남아 있어요.",
+  "retry": "다시 시도",
+  "checking": "확인하는 중…",
+  "nobodyIsWaitingFor": "자리를 기다리는 사람이 없어요.",
+  "strongFromnameStrong": "<strong>{{ fromName }}</strong>",
+  "hasNotVerifiedTheir": "이메일이나 전화번호를 인증하지 않았어요. 정말 본인인지 확신할 수 없어요.",
+  "pending": "대기 중",
+  "reject": "거절",
+  "requestFromname": "' + request.fromName + '",
+  "mediumdate": "mediumDate",
+  "sinceMediumdate": "{{ mediumDate }}부터"
+}

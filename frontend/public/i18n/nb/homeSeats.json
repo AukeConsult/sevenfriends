@@ -1,0 +1,17 @@
+{
+  "yourSevenSeats": "Dine syv plasser",
+  "yourSeven": "Dine syv",
+  "waiting": "Venter",
+  "pending": "Ventende",
+  "addAOne": "Legg til {{ one }}",
+  "silent": "Stille",
+  "dropHere": "Slipp her",
+  "sleepList": "Sovelisten",
+  "couldNotMoveThe": "Kunne ikke flytte ",
+  "openTheConversationWith": "Åpne samtalen med {{ friendName }}. Trykk og hold for å flytte.",
+  "countUnread": "{{ count }} uleste",
+  "seatPositionIsFree": "Plass {{ position }} er ledig: legg til {{ one }}",
+  "dropOnASeat": "Slipp på en plass eller i Stille-kretsen",
+  "dropOnASeat2": "Slipp på en plass",
+  "pressAndHoldA": "Trykk og hold på {{ one }} for å flytte"
+}

@@ -1,0 +1,17 @@
+{
+  "deleteMyAccount": "Mein Konto löschen",
+  "strongThisCannotBe": "<strong>Das lässt sich nicht rückgängig machen.</strong> Du wirst vollständig aus Seven Friends gelöscht.",
+  "everythingAboutYouIs": "Alles über dich wird gelöscht:",
+  "yourAccountYourProfile": "dein Konto, dein Profil und deine Anmeldung",
+  "allYourFriendsAnd": "alle deine Freunde und jede Anfrage, gesendet oder erhalten",
+  "everyMessageYouSent": "jede Nachricht, die du gesendet oder erhalten hast. Auch deine Freunde verlieren die Unterhaltung",
+  "yourNameAndContact": "dein Name und deine Kontaktdaten in den Listen anderer Freunde",
+  "yourFriendsAreNot": "Deine Freunde werden nicht benachrichtigt. Sie haben dich einfach nicht mehr als Freund.",
+  "typeWordToConfirm": "Gib zur Bestätigung {{ word }} ein",
+  "cancel": "Abbrechen",
+  "deleting": "Wird gelöscht …",
+  "deleteEverything": "Alles löschen",
+  "couldNotDeleteYour": "Dein Konto konnte nicht gelöscht werden. Es wurde nichts geändert, bitte versuch es noch einmal.",
+  "thisCannotBeUndone": "Das lässt sich nicht rückgängig machen.",
+  "youWillBeErased": "Du wirst vollständig aus Seven Friends gelöscht.'\">"
+}

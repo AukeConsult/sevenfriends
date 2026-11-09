@@ -1,0 +1,17 @@
+{
+  "yourSevenSeats": "내 일곱 자리",
+  "yourSeven": "내 일곱 명",
+  "waiting": "대기 중",
+  "pending": "대기 중",
+  "addAOne": "{{ one }} 추가",
+  "silent": "조용히",
+  "dropHere": "여기에 놓기",
+  "sleepList": "수면 목록",
+  "couldNotMoveThe": "옮길 수 없어요: ",
+  "openTheConversationWith": "{{ friendName }}님과의 대화를 열어요. 길게 누르면 옮길 수 있어요.",
+  "countUnread": "읽지 않음 {{ count }}",
+  "seatPositionIsFree": "{{ position }}번 자리가 비어 있어요: {{ one }} 추가",
+  "dropOnASeat": "자리 또는 조용히 서클에 놓으세요",
+  "dropOnASeat2": "자리에 놓으세요",
+  "pressAndHoldA": "길게 눌러 옮기기 ({{ one }})"
+}

@@ -1,0 +1,14 @@
+{
+  "title": "Enviarme un enlace de acceso por correo",
+  "checkTitle": "Revisa tu correo.",
+  "sentTo": "Enviamos un enlace de acceso a",
+  "openHere": "Ábrelo en este dispositivo para iniciar sesión.",
+  "noEmail": "¿No llega? Mira en la carpeta de spam o inténtalo de nuevo.",
+  "another": "Usar otro correo",
+  "intro": "No necesitas contraseña. Te enviamos un enlace por correo y, al abrirlo, inicias sesión. También demuestra que la dirección es tuya, así los {{ many }} que te añadan por correo podrán encontrarte.",
+  "yourEmail": "Tu dirección de correo",
+  "sending": "Enviando…",
+  "send": "Enviar enlace",
+  "writeEmail": "Escribe primero tu dirección de correo.",
+  "sendFailed": "No se pudo enviar el enlace. Inténtalo de nuevo."
+}

@@ -1,0 +1,10 @@
+{
+  "back": "Takaisin",
+  "imageVideoOrAudio": "Kuva, video tai ääni",
+  "download": "Lataa",
+  "loading": "Ladataan…",
+  "couldNotLoadThe": "Tiedostoa ei voitu ladata",
+  "audio": "Ääni",
+  "video": "Video",
+  "image": "Kuva"
+}

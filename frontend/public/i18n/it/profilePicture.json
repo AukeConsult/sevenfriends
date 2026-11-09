@@ -1,0 +1,19 @@
+{
+  "yourPicture": "La tua foto",
+  "chooseAPhotoAnd": "Scegli una foto e mettila nel cerchio. Viene rimpicciolita (256 pixel) prima di essere salvata, quindi una foto grande va bene.",
+  "chooseAPhoto": "Scegli una foto",
+  "removeMyPicture": "Rimuovi la mia foto",
+  "cancel": "Annulla",
+  "yourPhotoDragTo": "La tua foto: trascinala per spostarla",
+  "dragThePhotoTo": "Trascina la foto per spostarla. Pizzica, scorri o usa il cursore per ingrandire.",
+  "zoom": "Zoom",
+  "saving": "Salvataggio…",
+  "useThisPicture": "Usa questa foto",
+  "chooseAnotherPhoto": "Scegli un'altra foto",
+  "chooseAnImageFile": "Scegli un file immagine (una foto).",
+  "thatImageIsVery": "Questa immagine è molto grande. Scegline una sotto i 20 MB.",
+  "thisImageCannotBe": "Non è possibile aprire questa immagine. Provane un'altra (JPEG, PNG o WebP).",
+  "couldNotSaveThe": "Impossibile salvare la foto. Riprova.",
+  "couldNotRemoveThe": "Impossibile rimuovere la foto. Riprova.",
+  "thePictureIsToo": "La foto è troppo grande per essere salvata."
+}

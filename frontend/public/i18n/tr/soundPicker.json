@@ -1,0 +1,11 @@
+{
+  "backToSounds": "Seslere dön",
+  "back": "‹ Geri",
+  "hintTapASound": "{{ hint }}. Seçmek ve dinlemek için bir sese dokun.",
+  "sevenFriendsJingles": "Seven Friends melodileri",
+  "otherSounds": "Diğer sesler",
+  "stop": "■ Durdur",
+  "play": "▶ Oynat",
+  "done": "Bitti",
+  "soundForLabel": "Ses: {{ label }}"
+}

@@ -1,0 +1,17 @@
+{
+  "share": "Compartilhar",
+  "allYourSevenSeats": "Todos os seus sete lugares estão ocupados. Seu link continua funcionando se você abrir espaço.",
+  "installTheApp": "Instalar o app",
+  "strongInviteFriendsWith": "<strong>Convide amigos com um link</strong>",
+  "sendThisLinkTo": "Envie este link aos amigos que você gostaria de ter por perto. Quando eles abrirem, entrarem (ou criarem uma conta) e confirmarem, um pedido de amizade é enviado a você.",
+  "shareLink": "Compartilhar link",
+  "copyLink": "Copiar link",
+  "seat": "lugar livre",
+  "seats": "lugares livres",
+  "youHaveFreeseatsFree": "Você tem {{ freeSeats }} {{ seats }}. Convide os {{ many }} que importam para você.",
+  "inviteFriendsWithA": "Convide amigos com um link",
+  "yourOneLink": "Seu link de {{ one }}",
+  "emailAddress": "endereço de e-mail",
+  "phoneNumber": "número de telefone",
+  "theLinkContainsYour": "O link contém o seu {{ number }}."
+}

@@ -1,0 +1,16 @@
+{
+  "backToHome": "होम पर वापस",
+  "back": "‹ वापस",
+  "waitingForASeat": "सीट का इंतज़ार",
+  "theseManyWantTo": "ये {{ many }} आपसे जुड़ना चाहते हैं, पर आपकी सारी सीटें भरी हैं। उन्हें दिखता है कि वे आपकी प्रतीक्षा सूची में हैं। जब तक आप सीट खाली न करें, या वे अनुरोध वापस न ले लें, वे यहीं रहते हैं।",
+  "retry": "फिर कोशिश करें",
+  "checking": "जाँच हो रही है…",
+  "nobodyIsWaitingFor": "सीट के लिए कोई इंतज़ार नहीं कर रहा।",
+  "strongFromnameStrong": "<strong>{{ fromName }}</strong>",
+  "hasNotVerifiedTheir": "अपना ईमेल या फ़ोन सत्यापित नहीं किया है: हम पक्का नहीं कह सकते कि यह सच में वही हैं।",
+  "pending": "लंबित",
+  "reject": "ठुकराएँ",
+  "requestFromname": "' + request.fromName + '",
+  "mediumdate": "mediumDate",
+  "sinceMediumdate": "{{ mediumDate }} से"
+}

@@ -1,0 +1,16 @@
+{
+  "backToHome": "ホームに戻る",
+  "back": "‹ 戻る",
+  "waitingForASeat": "席の空きを待っています",
+  "theseManyWantTo": "これらの{{ many }}があなたの仲間に加わりたがっていますが、席がすべて埋まっています。相手には、順番待ちリストに入っていることが表示されます。席を空けるか、相手がリクエストを取り下げるまで、ここに残ります。",
+  "retry": "再試行",
+  "checking": "確認中…",
+  "nobodyIsWaitingFor": "席の空きを待っている人はいません。",
+  "strongFromnameStrong": "<strong>{{ fromName }}</strong>",
+  "hasNotVerifiedTheir": "メールアドレスまたは電話番号が確認されていません。本人かどうか確実ではありません。",
+  "pending": "保留中",
+  "reject": "断る",
+  "requestFromname": "' + request.fromName + '",
+  "mediumdate": "mediumDate",
+  "sinceMediumdate": "{{ mediumDate }}から"
+}

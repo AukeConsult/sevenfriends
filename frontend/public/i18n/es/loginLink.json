@@ -1,0 +1,8 @@
+{
+  "title": "Iniciando tu sesión",
+  "invalid": "Este enlace no es válido o ha caducado. Pide uno nuevo.",
+  "newLink": "Enviarme un enlace nuevo",
+  "busy": "Iniciando tu sesión…",
+  "confirm": "Para terminar, confirma la dirección de correo a la que se envió este enlace.",
+  "failed": "No se pudo iniciar tu sesión con este enlace. Pide uno nuevo."
+}

@@ -1,0 +1,17 @@
+{
+  "deleteMyAccount": "Видалити мій обліковий запис",
+  "strongThisCannotBe": "<strong>Це не можна скасувати.</strong> Тебе буде повністю видалено з Seven Friends.",
+  "everythingAboutYouIs": "Буде видалено все про тебе:",
+  "yourAccountYourProfile": "твій обліковий запис, профіль і вхід",
+  "allYourFriendsAnd": "усіх твоїх друзів і кожен запит, надісланий чи отриманий",
+  "everyMessageYouSent": "кожне повідомлення, яке ти надіслав(ла) чи отримав(ла). Твої друзі теж втратять розмову",
+  "yourNameAndContact": "твоє ім’я та контактні дані у списках інших друзів",
+  "yourFriendsAreNot": "Друзям про це не повідомляють. Вони просто більше не матимуть тебе серед друзів.",
+  "typeWordToConfirm": "Введи {{ word }}, щоб підтвердити",
+  "cancel": "Скасувати",
+  "deleting": "Видаляю…",
+  "deleteEverything": "Видалити все",
+  "couldNotDeleteYour": "Не вдалося видалити обліковий запис. Нічого не змінено, спробуй ще раз.",
+  "thisCannotBeUndone": "Це не можна скасувати.",
+  "youWillBeErased": "Тебе буде повністю видалено з Seven Friends.'\">"
+}

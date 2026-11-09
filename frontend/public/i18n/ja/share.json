@@ -1,0 +1,17 @@
+{
+  "share": "共有",
+  "allYourSevenSeats": "7つの席がすべて埋まっています。席を空ければ、リンクはそのまま使えます。",
+  "installTheApp": "アプリをインストール",
+  "strongInviteFriendsWith": "<strong>リンクで友だちを招待</strong>",
+  "sendThisLinkTo": "参加してほしい友だちに、このリンクを送りましょう。相手がリンクを開いてログイン（またはアカウント作成）し、確認すると、あなたに友だちリクエストが届きます。",
+  "shareLink": "リンクを共有",
+  "copyLink": "リンクをコピー",
+  "seat": "席",
+  "seats": "席",
+  "youHaveFreeseatsFree": "空いている{{ seats }}が {{ freeSeats }} つあります。大切な{{ many }}を招待しましょう。",
+  "inviteFriendsWithA": "リンクで友だちを招待",
+  "yourOneLink": "あなたの{{ one }}リンク",
+  "emailAddress": "メールアドレス",
+  "phoneNumber": "電話番号",
+  "theLinkContainsYour": "リンクにはあなたの{{ number }}が含まれています。"
+}

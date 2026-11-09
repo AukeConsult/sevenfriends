@@ -37,7 +37,6 @@
         } @else {
           <button type="button" class="sf-hs-friend sf-hs-free" [attr.aria-label]="(t('homeSeats.seatPositionIsFree', { position: slot.position, one: w.one }) || 'Seat ' + slot.position + ' is free: add a ' + w.one)" (click)="add.emit()">
             <span class="sf-hs-ring"><span class="sf-hs-plus" aria-hidden="true">+</span></span>
-            <span class="sf-hs-name">{{ t('homeSeats.freeSeat') || 'Free seat' }}</span>
             <span class="sf-hs-sub">{{ t('homeSeats.addAOne', { one: w.one }) || 'Add a ' + w.one }}</span>
           </button>
         }

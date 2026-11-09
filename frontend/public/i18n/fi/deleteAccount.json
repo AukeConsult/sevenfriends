@@ -1,0 +1,17 @@
+{
+  "deleteMyAccount": "Poista tilini",
+  "strongThisCannotBe": "<strong>Tätä ei voi perua.</strong> Sinut poistetaan Seven Friendsistä kokonaan.",
+  "everythingAboutYouIs": "Kaikki sinusta poistetaan:",
+  "yourAccountYourProfile": "tilisi, profiilisi ja kirjautumisesi",
+  "allYourFriendsAnd": "kaikki ystäväsi ja jokainen pyyntö, lähetetty tai vastaanotettu",
+  "everyMessageYouSent": "jokainen lähettämäsi tai vastaanottamasi viesti. Myös ystäväsi menettävät keskustelun",
+  "yourNameAndContact": "nimesi ja yhteystietosi muiden ystävien listoilta",
+  "yourFriendsAreNot": "Ystävillesi ei kerrota. Heillä ei yksinkertaisesti ole sinua enää ystävänä.",
+  "typeWordToConfirm": "Kirjoita {{ word }} vahvistaaksesi",
+  "cancel": "Peruuta",
+  "deleting": "Poistetaan…",
+  "deleteEverything": "Poista kaikki",
+  "couldNotDeleteYour": "Tiliäsi ei voitu poistaa. Mitään ei muutettu, yritä uudelleen.",
+  "thisCannotBeUndone": "Tätä ei voi perua.",
+  "youWillBeErased": "Sinut poistetaan Seven Friendsistä kokonaan.'\">"
+}

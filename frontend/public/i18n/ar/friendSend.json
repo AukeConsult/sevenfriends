@@ -1,0 +1,21 @@
+{
+  "emojiGroups": "مجموعات الإيموجي",
+  "addAnEmoji": "إضافة إيموجي",
+  "sendAnImage": "إرسال صورة",
+  "sendAVideo": "إرسال فيديو",
+  "sendAVoiceMessage": "إرسال رسالة صوتية",
+  "send": "إرسال",
+  "add": "+ إضافة",
+  "messagesForFriendnameOnly": "رسائل لـ {{ friendName }} فقط. تُحفظ على هذا الجهاز، وتُحفظ أثناء الكتابة.",
+  "forExampleIM": "مثلًا: أنا في الطريق",
+  "addAMessage": "+ إضافة رسالة",
+  "couldNotSendThe": "تعذّر إرسال الرسالة",
+  "addEmoji": "إضافة {{ emoji }}",
+  "addATextOptional": "أضِف نصًا (اختياري)…",
+  "writeToFriendname": "اكتب إلى {{ friendName }}…",
+  "messageToFriendname": "رسالة إلى {{ friendName }}",
+  "addAMessageFor": "أضِف رسالة لـ {{ friendName }} فقط",
+  "messageForFriendnameIndex": "رسالة لـ {{ friendName }} {{ index }}",
+  "removeMessageIndex": "إزالة الرسالة {{ index }}",
+  "messagesForOnly": "رسائل لـ {{ friendName }} فقط"
+}

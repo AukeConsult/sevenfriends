@@ -1,0 +1,21 @@
+{
+  "back": "رجوع",
+  "back2": "‹ رجوع",
+  "verifyYourPhone": "وثّق هاتفك",
+  "signInWithPhone": "تسجيل الدخول بالهاتف",
+  "standardMessageRatesFrom": "قد تُطبَّق أسعار الرسائل المعتادة من شركة اتصالاتك.",
+  "phoneNumberWithCountry": "رقم الهاتف مع رمز الدولة",
+  "sending": "جارٍ الإرسال…",
+  "sendCode": "إرسال الرمز",
+  "weSentACode": "أرسلنا رمزًا إلى <strong>{{ phone }}</strong>.",
+  "code": "الرمز",
+  "changeNumber": "تغيير الرقم",
+  "checking": "جارٍ الفحص…",
+  "confirm": "تأكيد",
+  "writeTheNumberWith": "اكتب الرقم مع رمز الدولة، مثلًا +47 900 00 000.",
+  "writeTheCodeFrom": "اكتب الرمز من الرسالة النصية.",
+  "couldNotSendThe": "تعذّر إرسال الرمز. حاول مرة أخرى.",
+  "thatCodeDidNot": "هذا الرمز لم ينجح. حاول مرة أخرى.",
+  "weSendACodeLinking": "نرسل رمزًا برسالة نصية. بعد التوثيق، يستطيع {{ many }} الذين يضيفون رقمك العثور عليك.",
+  "weSendACodeNoPassword": "نرسل رمزًا برسالة نصية. لا حاجة لكلمة مرور."
+}

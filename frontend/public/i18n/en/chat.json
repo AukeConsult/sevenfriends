@@ -74,5 +74,8 @@
   "olderThanAMonth": "Older than a month",
   "allOfThem": "All of them",
   "myMessages": "My messages",
-  "couldNotSaveThe": "Could not save the message"
+  "couldNotSaveThe": "Could not save the message",
+  "messageOne": "message",
+  "messageMany": "messages",
+  "alsoWhose": ", also {{ name }}'s,"
 }

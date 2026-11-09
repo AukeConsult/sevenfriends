@@ -1,0 +1,14 @@
+{
+  "cancel": "取消",
+  "takeThePhoto": "拍照",
+  "startRecording": "开始录制",
+  "stop": "停止",
+  "useAnotherCamera": "换一个摄像头",
+  "theCamera": "摄像头",
+  "theCameraIsBlocked": "摄像头被屏蔽了。请在浏览器设置里允许这个网站使用，或者改为选择文件。",
+  "noCameraWasFound": "没有找到摄像头。请改为选择文件。",
+  "theCameraIsIn": "摄像头正被其他程序使用。请关闭它后再试，或者改为选择文件。",
+  "theCameraCouldNot": "无法启动摄像头。请改为选择文件。",
+  "thePhotoCouldNot": "无法拍照。请再试一次。",
+  "thisBrowserCannotRecord": "这个浏览器无法录制视频。请改为选择文件。"
+}

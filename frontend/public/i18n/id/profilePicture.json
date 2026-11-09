@@ -1,0 +1,19 @@
+{
+  "yourPicture": "Fotomu",
+  "chooseAPhotoAnd": "Pilih foto dan letakkan di dalam lingkaran. Ukurannya diperkecil (256 piksel) sebelum disimpan, jadi foto besar tidak masalah.",
+  "chooseAPhoto": "Pilih foto",
+  "removeMyPicture": "Hapus fotoku",
+  "cancel": "Batal",
+  "yourPhotoDragTo": "Fotomu: seret untuk menggeser",
+  "dragThePhotoTo": "Seret foto untuk menggesernya. Cubit, gulir, atau pakai penggeser untuk zoom.",
+  "zoom": "Zoom",
+  "saving": "Menyimpan…",
+  "useThisPicture": "Pakai foto ini",
+  "chooseAnotherPhoto": "Pilih foto lain",
+  "chooseAnImageFile": "Pilih file gambar (foto).",
+  "thatImageIsVery": "Gambar itu sangat besar. Pilih yang di bawah 20 MB.",
+  "thisImageCannotBe": "Gambar ini tidak bisa dibuka. Coba yang lain (JPEG, PNG atau WebP).",
+  "couldNotSaveThe": "Tidak bisa menyimpan foto. Silakan coba lagi.",
+  "couldNotRemoveThe": "Tidak bisa menghapus foto. Silakan coba lagi.",
+  "thePictureIsToo": "Foto terlalu besar untuk disimpan."
+}

@@ -1,0 +1,17 @@
+{
+  "share": "مشاركة",
+  "allYourSevenSeats": "كل مقاعدك السبعة مشغولة. رابطك ما زال يعمل إذا أفسحت المجال.",
+  "installTheApp": "تثبيت التطبيق",
+  "strongInviteFriendsWith": "<strong>ادعُ أصدقاءك برابط</strong>",
+  "sendThisLinkTo": "أرسل هذا الرابط إلى الأصدقاء الذين تريد مشاركتهم. عندما يفتحونه ويسجّلون الدخول (أو ينشئون حسابًا) ويؤكدون، يصلك طلب صداقة.",
+  "shareLink": "مشاركة الرابط",
+  "copyLink": "نسخ الرابط",
+  "seat": "مقعد",
+  "seats": "مقاعد",
+  "youHaveFreeseatsFree": "{{ freeSeats }} {{ seats }} شاغرة لديك. ادعُ من يهمك من {{ many }}.",
+  "inviteFriendsWithA": "ادعُ أصدقاءك برابط",
+  "yourOneLink": "رابط {{ one }} الخاص بك",
+  "emailAddress": "عنوان البريد الإلكتروني",
+  "phoneNumber": "رقم الهاتف",
+  "theLinkContainsYour": "يحتوي الرابط على {{ number }} الخاص بك."
+}

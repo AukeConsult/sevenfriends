@@ -1,0 +1,17 @@
+{
+  "yourSevenSeats": "Твої сім місць",
+  "yourSeven": "Твоя сімка",
+  "waiting": "Очікують",
+  "pending": "У черзі",
+  "addAOne": "Додати: {{ one }}",
+  "silent": "Тихі",
+  "dropHere": "Кинь сюди",
+  "sleepList": "Список сну",
+  "couldNotMoveThe": "Не вдалося перемістити ",
+  "openTheConversationWith": "Відкрити розмову з {{ friendName }}. Натисни й утримуй, щоб перемістити.",
+  "countUnread": "Непрочитаних: {{ count }}",
+  "seatPositionIsFree": "Місце {{ position }} вільне: додати ({{ one }})",
+  "dropOnASeat": "Кинь на місце або в коло «Тихі»",
+  "dropOnASeat2": "Кинь на місце",
+  "pressAndHoldA": "Натисни й утримуй, щоб перемістити ({{ one }})"
+}

@@ -1,0 +1,19 @@
+{
+  "yourPicture": "你的头像",
+  "chooseAPhotoAnd": "选择一张照片，并把它放进圆圈里。保存之前会缩小（256 像素），所以大照片也没问题。",
+  "chooseAPhoto": "选择照片",
+  "removeMyPicture": "移除我的头像",
+  "cancel": "取消",
+  "yourPhotoDragTo": "你的照片：拖动可移动",
+  "dragThePhotoTo": "拖动照片来移动它。双指捏合、滚动或用滑块来缩放。",
+  "zoom": "缩放",
+  "saving": "保存中…",
+  "useThisPicture": "使用这张图片",
+  "chooseAnotherPhoto": "选择另一张照片",
+  "chooseAnImageFile": "请选择一个图片文件（照片）。",
+  "thatImageIsVery": "这张图片太大了。请选择 20 MB 以内的。",
+  "thisImageCannotBe": "无法打开这张图片。请换一张试试（JPEG、PNG 或 WebP）。",
+  "couldNotSaveThe": "无法保存头像。请再试一次。",
+  "couldNotRemoveThe": "无法移除头像。请再试一次。",
+  "thePictureIsToo": "图片太大，无法保存。"
+}

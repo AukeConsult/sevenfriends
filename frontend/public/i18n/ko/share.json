@@ -1,0 +1,17 @@
+{
+  "share": "공유",
+  "allYourSevenSeats": "일곱 자리가 모두 찼어요. 자리를 비우면 내 링크는 그대로 작동해요.",
+  "installTheApp": "앱 설치",
+  "strongInviteFriendsWith": "<strong>링크로 친구 초대하기</strong>",
+  "sendThisLinkTo": "함께하고 싶은 친구들에게 이 링크를 보내세요. 친구가 링크를 열고 로그인(또는 계정 만들기)한 후 수락하면 나에게 친구 요청이 도착해요.",
+  "shareLink": "링크 공유",
+  "copyLink": "링크 복사",
+  "seat": "자리",
+  "seats": "자리",
+  "youHaveFreeseatsFree": "빈 {{ seats }}: {{ freeSeats }}개. 소중한 사람({{ many }})을 초대하세요.",
+  "inviteFriendsWithA": "링크로 친구 초대하기",
+  "yourOneLink": "내 {{ one }} 링크",
+  "emailAddress": "이메일 주소",
+  "phoneNumber": "전화번호",
+  "theLinkContainsYour": "링크에 포함된 정보: 내 {{ number }}"
+}

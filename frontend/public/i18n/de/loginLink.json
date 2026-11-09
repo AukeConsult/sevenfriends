@@ -1,0 +1,8 @@
+{
+  "title": "Du wirst angemeldet",
+  "invalid": "Dieser Link ist ungültig oder abgelaufen. Fordere einen neuen an.",
+  "newLink": "Neuen Link schicken",
+  "busy": "Du wirst angemeldet …",
+  "confirm": "Bestätige zum Abschluss die E-Mail-Adresse, an die dieser Link geschickt wurde.",
+  "failed": "Die Anmeldung mit diesem Link hat nicht geklappt. Fordere einen neuen an."
+}

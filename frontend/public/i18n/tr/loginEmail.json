@@ -1,0 +1,14 @@
+{
+  "title": "Bana giriş bağlantısı e-postala",
+  "checkTitle": "E-postanı kontrol et.",
+  "sentTo": "Giriş bağlantısını şuraya gönderdik:",
+  "openHere": "Giriş yapmak için bu cihazda aç.",
+  "noEmail": "E-posta yok mu? Spam klasörüne bak ya da tekrar dene.",
+  "another": "Başka bir e-posta adresi kullan",
+  "intro": "Şifre gerekmez. Sana bir bağlantı e-postalarız, açınca giriş yaparsın. Bu aynı zamanda adresin senin olduğunu kanıtlar, böylece seni e-postayla ekleyen {{ many }} seni bulabilir.",
+  "yourEmail": "E-posta adresin",
+  "sending": "Gönderiliyor…",
+  "send": "Bağlantıyı gönder",
+  "writeEmail": "Önce e-posta adresini yaz.",
+  "sendFailed": "Bağlantı gönderilemedi. Lütfen tekrar dene."
+}

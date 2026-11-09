@@ -1,0 +1,17 @@
+{
+  "deleteMyAccount": "アカウントを削除",
+  "strongThisCannotBe": "<strong>この操作は元に戻せません。</strong>あなたは Seven Friends から完全に消去されます。",
+  "everythingAboutYouIs": "あなたに関するすべてが削除されます:",
+  "yourAccountYourProfile": "アカウント、プロフィール、ログイン情報",
+  "allYourFriendsAnd": "すべての友だちと、送受信したすべてのリクエスト",
+  "everyMessageYouSent": "送受信したすべてのメッセージ（友だちの側からも会話が消えます）",
+  "yourNameAndContact": "他の友だちのリストにある、あなたの名前と連絡先",
+  "yourFriendsAreNot": "友だちには通知されません。ただ、あなたが友だちではなくなります。",
+  "typeWordToConfirm": "確認のため {{ word }} と入力してください",
+  "cancel": "キャンセル",
+  "deleting": "削除中…",
+  "deleteEverything": "すべて削除する",
+  "couldNotDeleteYour": "アカウントを削除できませんでした。何も変更されていません。もう一度お試しください。",
+  "thisCannotBeUndone": "この操作は元に戻せません。",
+  "youWillBeErased": "あなたは Seven Friends から完全に消去されます。'\">"
+}

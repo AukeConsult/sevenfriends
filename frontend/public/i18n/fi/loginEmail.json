@@ -1,0 +1,14 @@
+{
+  "title": "Lähetä minulle kirjautumislinkki sähköpostilla",
+  "checkTitle": "Tarkista sähköpostisi.",
+  "sentTo": "Lähetimme kirjautumislinkin osoitteeseen",
+  "openHere": "Avaa se tällä laitteella kirjautuaksesi sisään.",
+  "noEmail": "Ei sähköpostia? Katso roskapostikansiosta tai yritä uudelleen.",
+  "another": "Käytä toista sähköpostiosoitetta",
+  "intro": "Salasanaa ei tarvita. Lähetämme sinulle linkin, ja sen avaaminen kirjaa sinut sisään. Se myös todistaa osoitteen olevan sinun, joten sinut löytävät {{ many }}, jotka lisäävät sinut sähköpostilla.",
+  "yourEmail": "Sähköpostiosoitteesi",
+  "sending": "Lähetetään…",
+  "send": "Lähetä linkki",
+  "writeEmail": "Kirjoita ensin sähköpostiosoitteesi.",
+  "sendFailed": "Linkkiä ei voitu lähettää. Yritä uudelleen."
+}

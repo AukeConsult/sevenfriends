@@ -1,0 +1,14 @@
+{
+  "title": "Enviar um link de login por e-mail",
+  "checkTitle": "Confira seu e-mail.",
+  "sentTo": "Enviamos um link de login para",
+  "openHere": "Abra-o neste dispositivo para entrar.",
+  "noEmail": "Sem e-mail? Olhe na pasta de spam, ou tente de novo.",
+  "another": "Usar outro endereço de e-mail",
+  "intro": "Sem senha. Enviamos um link por e-mail e, ao abri-lo, você entra. Isso também prova que o endereço é seu, para que os {{ many }} que adicionarem você por e-mail consigam encontrá-lo.",
+  "yourEmail": "Seu endereço de e-mail",
+  "sending": "Enviando…",
+  "send": "Enviar link",
+  "writeEmail": "Escreva primeiro o seu endereço de e-mail.",
+  "sendFailed": "Não foi possível enviar o link. Tente de novo."
+}

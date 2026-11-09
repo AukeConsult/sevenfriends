@@ -1,0 +1,17 @@
+{
+  "deleteMyAccount": "Удалить мой аккаунт",
+  "strongThisCannotBe": "<strong>Это нельзя отменить.</strong> Тебя полностью сотрут из Seven Friends.",
+  "everythingAboutYouIs": "Будет удалено всё о тебе:",
+  "yourAccountYourProfile": "твой аккаунт, профиль и вход",
+  "allYourFriendsAnd": "все твои друзья и все запросы, отправленные и полученные",
+  "everyMessageYouSent": "все сообщения, которые ты отправил(а) или получил(а). Твои друзья тоже потеряют разговор",
+  "yourNameAndContact": "твоё имя и контактные данные в списках других друзей",
+  "yourFriendsAreNot": "Друзьям об этом не сообщат. Просто тебя больше не будет у них в друзьях.",
+  "typeWordToConfirm": "Для подтверждения введи: {{ word }}",
+  "cancel": "Отмена",
+  "deleting": "Удаляем…",
+  "deleteEverything": "Удалить всё",
+  "couldNotDeleteYour": "Не удалось удалить аккаунт. Ничего не изменилось, попробуй ещё раз.",
+  "thisCannotBeUndone": "Это нельзя отменить.",
+  "youWillBeErased": "Тебя полностью сотрут из Seven Friends.'\">"
+}

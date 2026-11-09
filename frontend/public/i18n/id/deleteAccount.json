@@ -1,0 +1,17 @@
+{
+  "deleteMyAccount": "Hapus akunku",
+  "strongThisCannotBe": "<strong>Ini tidak bisa dibatalkan.</strong> Kamu akan dihapus sepenuhnya dari Seven Friends.",
+  "everythingAboutYouIs": "Semua tentangmu akan dihapus:",
+  "yourAccountYourProfile": "akunmu, profilmu, dan loginmu",
+  "allYourFriendsAnd": "semua temanmu dan setiap permintaan, yang dikirim maupun diterima",
+  "everyMessageYouSent": "setiap pesan yang kamu kirim atau terima. Temanmu juga kehilangan percakapannya",
+  "yourNameAndContact": "namamu dan info kontakmu di daftar teman-teman lain",
+  "yourFriendsAreNot": "Temanmu tidak diberi tahu. Mereka hanya tidak lagi punya kamu sebagai teman.",
+  "typeWordToConfirm": "Ketik {{ word }} untuk mengonfirmasi",
+  "cancel": "Batal",
+  "deleting": "Menghapus…",
+  "deleteEverything": "Hapus semuanya",
+  "couldNotDeleteYour": "Tidak bisa menghapus akunmu. Tidak ada yang berubah, silakan coba lagi.",
+  "thisCannotBeUndone": "Ini tidak bisa dibatalkan.",
+  "youWillBeErased": "Kamu akan dihapus sepenuhnya dari Seven Friends.'\">"
+}

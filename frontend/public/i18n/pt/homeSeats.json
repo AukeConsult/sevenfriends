@@ -1,0 +1,17 @@
+{
+  "yourSevenSeats": "Seus sete lugares",
+  "yourSeven": "Seus sete",
+  "waiting": "Aguardando",
+  "pending": "Pendentes",
+  "addAOne": "Adicionar um {{ one }}",
+  "silent": "Silenciados",
+  "dropHere": "Solte aqui",
+  "sleepList": "Lista do sono",
+  "couldNotMoveThe": "Não foi possível mover o ",
+  "openTheConversationWith": "Abrir a conversa com {{ friendName }}. Mantenha pressionado para mover.",
+  "countUnread": "{{ count }} não lidas",
+  "seatPositionIsFree": "O lugar {{ position }} está livre: adicione um {{ one }}",
+  "dropOnASeat": "Solte em um lugar ou no círculo Silenciados",
+  "dropOnASeat2": "Solte em um lugar",
+  "pressAndHoldA": "Mantenha pressionado um {{ one }} para mover"
+}

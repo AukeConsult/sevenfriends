@@ -1,0 +1,21 @@
+{
+  "back": "Geri",
+  "back2": "‹ Geri",
+  "verifyYourPhone": "Telefonunu doğrula",
+  "signInWithPhone": "Telefonla giriş yap",
+  "standardMessageRatesFrom": "Operatörünün standart mesaj ücretleri uygulanabilir.",
+  "phoneNumberWithCountry": "Ülke koduyla telefon numarası",
+  "sending": "Gönderiliyor…",
+  "sendCode": "Kod gönder",
+  "weSentACode": "<strong>{{ phone }}</strong> numarasına bir kod gönderdik.",
+  "code": "Kod",
+  "changeNumber": "Numarayı değiştir",
+  "checking": "Kontrol ediliyor…",
+  "confirm": "Onayla",
+  "writeTheNumberWith": "Numarayı ülke koduyla yaz, örneğin +47 900 00 000.",
+  "writeTheCodeFrom": "Kısa mesajdaki kodu yaz.",
+  "couldNotSendThe": "Kod gönderilemedi. Lütfen tekrar dene.",
+  "thatCodeDidNot": "Bu kod işe yaramadı. Lütfen tekrar dene.",
+  "weSendACodeLinking": "Kısa mesajla bir kod gönderiyoruz. Doğrulandıktan sonra numaranı ekleyen {{ many }} seni bulabilir.",
+  "weSendACodeNoPassword": "Kısa mesajla bir kod gönderiyoruz. Şifre gerekmez."
+}

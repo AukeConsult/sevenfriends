@@ -1,0 +1,17 @@
+{
+  "share": "शेयर करें",
+  "allYourSevenSeats": "आपकी सातों सीटें भरी हैं। जगह बनाने पर आपका लिंक फिर भी काम करता है।",
+  "installTheApp": "ऐप इंस्टॉल करें",
+  "strongInviteFriendsWith": "<strong>लिंक से दोस्तों को बुलाएँ</strong>",
+  "sendThisLinkTo": "यह लिंक उन दोस्तों को भेजें जिन्हें आप जोड़ना चाहते हैं। जब वे इसे खोलकर साइन इन (या खाता) करके पुष्टि करेंगे, तो आपको दोस्ती का अनुरोध मिलेगा।",
+  "shareLink": "लिंक शेयर करें",
+  "copyLink": "लिंक कॉपी करें",
+  "seat": "सीट",
+  "seats": "सीटें",
+  "youHaveFreeseatsFree": "आपके पास {{ freeSeats }} {{ seats }} खाली हैं। जो {{ many }} आपके लिए ख़ास हैं, उन्हें बुलाएँ।",
+  "inviteFriendsWithA": "लिंक से दोस्तों को बुलाएँ",
+  "yourOneLink": "आपका {{ one }} लिंक",
+  "emailAddress": "ईमेल पता",
+  "phoneNumber": "फ़ोन नंबर",
+  "theLinkContainsYour": "लिंक में आपका {{ number }} होता है।"
+}

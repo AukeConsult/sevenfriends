@@ -1,0 +1,17 @@
+{
+  "yourSevenSeats": "あなたの7つの席",
+  "yourSeven": "あなたの7人",
+  "waiting": "待機中",
+  "pending": "保留中",
+  "addAOne": "{{ one }}を追加",
+  "silent": "サイレント",
+  "dropHere": "ここにドロップ",
+  "sleepList": "スリープリスト",
+  "couldNotMoveThe": "移動できませんでした: ",
+  "openTheConversationWith": "{{ friendName }}さんとの会話を開きます。長押しで移動できます。",
+  "countUnread": "未読 {{ count }} 件",
+  "seatPositionIsFree": "{{ position }}番目の席が空いています。{{ one }}を追加",
+  "dropOnASeat": "席かサイレントサークルにドロップ",
+  "dropOnASeat2": "席にドロップ",
+  "pressAndHoldA": "{{ one }}を長押しして移動"
+}

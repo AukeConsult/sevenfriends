@@ -1,0 +1,21 @@
+{
+  "back": "뒤로",
+  "back2": "‹ 뒤로",
+  "verifyYourPhone": "전화번호 인증",
+  "signInWithPhone": "전화번호로 로그인",
+  "standardMessageRatesFrom": "통신사의 문자 요금이 부과될 수 있어요.",
+  "phoneNumberWithCountry": "국가 번호를 포함한 전화번호",
+  "sending": "보내는 중…",
+  "sendCode": "코드 보내기",
+  "weSentACode": "<strong>{{ phone }}</strong>(으)로 코드를 보냈어요.",
+  "code": "코드",
+  "changeNumber": "번호 바꾸기",
+  "checking": "확인하는 중…",
+  "confirm": "확인",
+  "writeTheNumberWith": "국가 번호를 포함해 입력하세요. 예: +47 900 00 000.",
+  "writeTheCodeFrom": "문자 메시지의 코드를 입력하세요.",
+  "couldNotSendThe": "코드를 보낼 수 없어요. 다시 해 주세요.",
+  "thatCodeDidNot": "코드가 맞지 않아요. 다시 해 주세요.",
+  "weSendACodeLinking": "문자 메시지로 코드를 보내요. 인증하면 내 번호를 추가한 사람({{ many }})이 나를 찾을 수 있어요.",
+  "weSendACodeNoPassword": "문자 메시지로 코드를 보내요. 비밀번호는 필요 없어요."
+}

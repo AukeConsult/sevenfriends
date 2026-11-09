@@ -1,0 +1,9 @@
+{
+  "tapToSayHow": "Dotknij, żeby powiedzieć, jak się masz",
+  "yourMood": "Twój nastrój",
+  "noMood": "Bez nastroju",
+  "aFewWordsAbout": "Kilka słów o tym, jak się masz (opcjonalnie)",
+  "moodMessage": "Opis nastroju",
+  "couldNotLoadYour": "Nie udało się wczytać Twojego nastroju",
+  "couldNotSaveYour": "Nie udało się zapisać Twojego nastroju"
+}

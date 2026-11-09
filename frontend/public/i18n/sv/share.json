@@ -1,0 +1,17 @@
+{
+  "share": "Dela",
+  "allYourSevenSeats": "Alla dina sju platser är upptagna. Din länk fungerar fortfarande om du gör plats.",
+  "installTheApp": "Installera appen",
+  "strongInviteFriendsWith": "<strong>Bjud in vänner med en länk</strong>",
+  "sendThisLinkTo": "Skicka den här länken till vännerna du vill ska vara med. När de öppnar den, loggar in (eller skapar ett konto) och bekräftar, skickas en vänförfrågan till dig.",
+  "shareLink": "Dela länk",
+  "copyLink": "Kopiera länk",
+  "seat": "plats",
+  "seats": "platser",
+  "youHaveFreeseatsFree": "Du har {{ freeSeats }} {{ seats }} kvar. Bjud in {{ many }} som betyder något för dig.",
+  "inviteFriendsWithA": "Bjud in vänner med en länk",
+  "yourOneLink": "Din inbjudningslänk ({{ one }})",
+  "emailAddress": "din e-postadress",
+  "phoneNumber": "ditt telefonnummer",
+  "theLinkContainsYour": "Länken innehåller {{ number }}."
+}

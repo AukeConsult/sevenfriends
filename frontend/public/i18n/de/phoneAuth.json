@@ -1,0 +1,21 @@
+{
+  "back": "Zurück",
+  "back2": "‹ Zurück",
+  "verifyYourPhone": "Telefon bestätigen",
+  "signInWithPhone": "Mit Telefon anmelden",
+  "standardMessageRatesFrom": "Es können die üblichen SMS-Gebühren deines Mobilfunkanbieters anfallen.",
+  "phoneNumberWithCountry": "Telefonnummer mit Ländervorwahl",
+  "sending": "Wird gesendet …",
+  "sendCode": "Code senden",
+  "weSentACode": "Wir haben einen Code an <strong>{{ phone }}</strong> geschickt.",
+  "code": "Code",
+  "changeNumber": "Nummer ändern",
+  "checking": "Wird geprüft …",
+  "confirm": "Bestätigen",
+  "writeTheNumberWith": "Schreib die Nummer mit Ländervorwahl, zum Beispiel +47 900 00 000.",
+  "writeTheCodeFrom": "Gib den Code aus der SMS ein.",
+  "couldNotSendThe": "Der Code konnte nicht gesendet werden. Bitte versuch es noch einmal.",
+  "thatCodeDidNot": "Dieser Code hat nicht funktioniert. Bitte versuch es noch einmal.",
+  "weSendACodeLinking": "Wir schicken dir einen Code per SMS. Sobald die Nummer bestätigt ist, finden dich deine {{ many }}, wenn sie deine Nummer hinzufügen.",
+  "weSendACodeNoPassword": "Wir schicken dir einen Code per SMS. Kein Passwort nötig."
+}

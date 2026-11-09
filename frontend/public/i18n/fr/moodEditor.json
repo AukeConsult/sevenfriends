@@ -1,0 +1,9 @@
+{
+  "tapToSayHow": "Appuie pour dire comment tu vas",
+  "yourMood": "Ton humeur",
+  "noMood": "Pas d'humeur",
+  "aFewWordsAbout": "Quelques mots sur comment tu vas (facultatif)",
+  "moodMessage": "Message d'humeur",
+  "couldNotLoadYour": "Impossible de charger ton humeur",
+  "couldNotSaveYour": "Impossible d'enregistrer ton humeur"
+}

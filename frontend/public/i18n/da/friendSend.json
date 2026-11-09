@@ -1,0 +1,21 @@
+{
+  "emojiGroups": "Emoji-grupper",
+  "addAnEmoji": "Tilføj en emoji",
+  "sendAnImage": "Send et billede",
+  "sendAVideo": "Send en video",
+  "sendAVoiceMessage": "Send en talebesked",
+  "send": "Send",
+  "add": "+ Tilføj",
+  "messagesForFriendnameOnly": "Beskeder kun til {{ friendName }}. De gemmes på denne enhed og bliver gemt, mens du skriver.",
+  "forExampleIM": "For eksempel: Jeg er på vej",
+  "addAMessage": "+ Tilføj en besked",
+  "couldNotSendThe": "Beskeden kunne ikke sendes",
+  "addEmoji": "Tilføj {{ emoji }}",
+  "addATextOptional": "Tilføj en tekst (valgfrit)…",
+  "writeToFriendname": "Skriv til {{ friendName }}…",
+  "messageToFriendname": "Besked til {{ friendName }}",
+  "addAMessageFor": "Tilføj en besked kun til {{ friendName }}",
+  "messageForFriendnameIndex": "Besked til {{ friendName }} {{ index }}",
+  "removeMessageIndex": "Fjern besked {{ index }}",
+  "messagesForOnly": "Beskeder kun til {{ friendName }}"
+}

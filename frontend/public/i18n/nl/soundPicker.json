@@ -1,0 +1,11 @@
+{
+  "backToSounds": "Terug naar geluiden",
+  "back": "‹ Terug",
+  "hintTapASound": "{{ hint }}. Tik op een geluid om het te kiezen en te horen.",
+  "sevenFriendsJingles": "Seven Friends-jingles",
+  "otherSounds": "Andere geluiden",
+  "stop": "■ Stop",
+  "play": "▶ Afspelen",
+  "done": "Klaar",
+  "soundForLabel": "Geluid voor {{ label }}"
+}

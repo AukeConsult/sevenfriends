@@ -1,0 +1,19 @@
+{
+  "yourPicture": "Dit billede",
+  "chooseAPhotoAnd": "Vælg et foto, og placér det i cirklen. Det gøres lille (256 pixels), før det gemmes, så et stort foto er fint.",
+  "chooseAPhoto": "Vælg et foto",
+  "removeMyPicture": "Fjern mit billede",
+  "cancel": "Annullér",
+  "yourPhotoDragTo": "Dit foto: træk for at flytte det",
+  "dragThePhotoTo": "Træk i fotoet for at flytte det. Knib, rul eller brug skyderen for at zoome.",
+  "zoom": "Zoom",
+  "saving": "Gemmer…",
+  "useThisPicture": "Brug dette billede",
+  "chooseAnotherPhoto": "Vælg et andet foto",
+  "chooseAnImageFile": "Vælg en billedfil (et foto).",
+  "thatImageIsVery": "Det billede er meget stort. Vælg et under 20 MB.",
+  "thisImageCannotBe": "Dette billede kan ikke åbnes. Prøv et andet (JPEG, PNG eller WebP).",
+  "couldNotSaveThe": "Billedet kunne ikke gemmes. Prøv igen.",
+  "couldNotRemoveThe": "Billedet kunne ikke fjernes. Prøv igen.",
+  "thePictureIsToo": "Billedet er for stort til at blive gemt."
+}

@@ -1,0 +1,19 @@
+{
+  "yourPicture": "Ta photo",
+  "chooseAPhotoAnd": "Choisis une photo et place-la dans le cercle. Elle est réduite (256 pixels) avant d'être enregistrée, donc une grande photo, pas de souci.",
+  "chooseAPhoto": "Choisir une photo",
+  "removeMyPicture": "Supprimer ma photo",
+  "cancel": "Annuler",
+  "yourPhotoDragTo": "Ta photo : fais-la glisser pour la déplacer",
+  "dragThePhotoTo": "Fais glisser la photo pour la déplacer. Pince, fais défiler ou utilise le curseur pour zoomer.",
+  "zoom": "Zoom",
+  "saving": "Enregistrement…",
+  "useThisPicture": "Utiliser cette photo",
+  "chooseAnotherPhoto": "Choisir une autre photo",
+  "chooseAnImageFile": "Choisis un fichier image (une photo).",
+  "thatImageIsVery": "Cette image est très grande. Choisis-en une de moins de 20 Mo.",
+  "thisImageCannotBe": "Impossible d'ouvrir cette image. Essaie-en une autre (JPEG, PNG ou WebP).",
+  "couldNotSaveThe": "Impossible d'enregistrer la photo. Réessaie.",
+  "couldNotRemoveThe": "Impossible de supprimer la photo. Réessaie.",
+  "thePictureIsToo": "La photo est trop grande pour être enregistrée."
+}

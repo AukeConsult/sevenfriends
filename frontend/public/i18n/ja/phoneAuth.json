@@ -1,0 +1,21 @@
+{
+  "back": "戻る",
+  "back2": "‹ 戻る",
+  "verifyYourPhone": "電話番号を確認",
+  "signInWithPhone": "電話でログイン",
+  "standardMessageRatesFrom": "携帯電話会社の通常のメッセージ料金がかかる場合があります。",
+  "phoneNumberWithCountry": "国番号つきの電話番号",
+  "sending": "送信中…",
+  "sendCode": "コードを送る",
+  "weSentACode": "<strong>{{ phone }}</strong> にコードを送りました。",
+  "code": "コード",
+  "changeNumber": "番号を変更",
+  "checking": "確認中…",
+  "confirm": "確認",
+  "writeTheNumberWith": "国番号を付けて入力してください（例: +47 900 00 000）。",
+  "writeTheCodeFrom": "SMSのコードを入力してください。",
+  "couldNotSendThe": "コードを送れませんでした。もう一度お試しください。",
+  "thatCodeDidNot": "そのコードは使えませんでした。もう一度お試しください。",
+  "weSendACodeLinking": "コードをSMSで送ります。確認が済むと、あなたの番号を追加した{{ many }}があなたを見つけられます。",
+  "weSendACodeNoPassword": "コードをSMSで送ります。パスワードは不要です。"
+}

@@ -1,0 +1,9 @@
+{
+  "tapToSayHow": "Napauta kertoaksesi, miltä sinusta tuntuu",
+  "yourMood": "Mielialasi",
+  "noMood": "Ei mielialaa",
+  "aFewWordsAbout": "Muutama sana siitä, miltä sinusta tuntuu (valinnainen)",
+  "moodMessage": "Mielialaviesti",
+  "couldNotLoadYour": "Mielialaasi ei voitu ladata",
+  "couldNotSaveYour": "Mielialaasi ei voitu tallentaa"
+}

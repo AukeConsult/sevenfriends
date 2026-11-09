@@ -1,0 +1,14 @@
+{
+  "cancel": "Vazgeç",
+  "takeThePhoto": "Fotoğrafı çek",
+  "startRecording": "Kaydı başlat",
+  "stop": "Durdur",
+  "useAnotherCamera": "Başka kamera kullan",
+  "theCamera": "Kamera",
+  "theCameraIsBlocked": "Kamera engelli. Tarayıcı ayarlarından bu site için izin ver ya da bunun yerine bir dosya seç.",
+  "noCameraWasFound": "Kamera bulunamadı. Bunun yerine bir dosya seç.",
+  "theCameraIsIn": "Kamera başka bir program tarafından kullanılıyor. Onu kapatıp tekrar dene ya da bunun yerine bir dosya seç.",
+  "theCameraCouldNot": "Kamera başlatılamadı. Bunun yerine bir dosya seç.",
+  "thePhotoCouldNot": "Fotoğraf çekilemedi. Tekrar dene.",
+  "thisBrowserCannotRecord": "Bu tarayıcı video kaydedemiyor. Bunun yerine bir dosya seç."
+}

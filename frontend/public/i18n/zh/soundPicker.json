@@ -1,0 +1,11 @@
+{
+  "backToSounds": "返回提示音",
+  "back": "‹ 返回",
+  "hintTapASound": "{{ hint }}。点一个提示音即可选择并试听。",
+  "sevenFriendsJingles": "Seven Friends 旋律",
+  "otherSounds": "其他提示音",
+  "stop": "■ 停止",
+  "play": "▶ 播放",
+  "done": "完成",
+  "soundForLabel": "“{{ label }}”的提示音"
+}

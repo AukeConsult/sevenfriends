@@ -1,0 +1,17 @@
+{
+  "deleteMyAccount": "Slet min konto",
+  "strongThisCannotBe": "<strong>Det kan ikke fortrydes.</strong> Du bliver slettet helt fra Seven Friends.",
+  "everythingAboutYouIs": "Alt om dig bliver slettet:",
+  "yourAccountYourProfile": "din konto, din profil og dit login",
+  "allYourFriendsAnd": "alle dine venner og alle anmodninger, sendt eller modtaget",
+  "everyMessageYouSent": "alle beskeder, du har sendt eller modtaget. Dine venner mister også samtalen",
+  "yourNameAndContact": "dit navn og dine kontaktoplysninger på andre venners lister",
+  "yourFriendsAreNot": "Dine venner får ikke besked. De har bare ikke dig som ven længere.",
+  "typeWordToConfirm": "Skriv {{ word }} for at bekræfte",
+  "cancel": "Annullér",
+  "deleting": "Sletter…",
+  "deleteEverything": "Slet alt",
+  "couldNotDeleteYour": "Din konto kunne ikke slettes. Intet er ændret, prøv igen.",
+  "thisCannotBeUndone": "Det kan ikke fortrydes.",
+  "youWillBeErased": "Du bliver slettet helt fra Seven Friends.'\">"
+}

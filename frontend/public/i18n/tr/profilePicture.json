@@ -1,0 +1,19 @@
+{
+  "yourPicture": "Resmin",
+  "chooseAPhotoAnd": "Bir fotoğraf seç ve daireye yerleştir. Kaydedilmeden önce küçültülür (256 piksel), yani büyük fotoğraf sorun değil.",
+  "chooseAPhoto": "Fotoğraf seç",
+  "removeMyPicture": "Resmimi kaldır",
+  "cancel": "Vazgeç",
+  "yourPhotoDragTo": "Fotoğrafın: taşımak için sürükle",
+  "dragThePhotoTo": "Taşımak için fotoğrafı sürükle. Yakınlaştırmak için çimdikle, kaydır ya da çubuğu kullan.",
+  "zoom": "Yakınlaştır",
+  "saving": "Kaydediliyor…",
+  "useThisPicture": "Bu resmi kullan",
+  "chooseAnotherPhoto": "Başka fotoğraf seç",
+  "chooseAnImageFile": "Bir resim dosyası (fotoğraf) seç.",
+  "thatImageIsVery": "Bu resim çok büyük. 20 MB altında bir tane seç.",
+  "thisImageCannotBe": "Bu resim açılamıyor. Başka birini dene (JPEG, PNG veya WebP).",
+  "couldNotSaveThe": "Resim kaydedilemedi. Lütfen tekrar dene.",
+  "couldNotRemoveThe": "Resim kaldırılamadı. Lütfen tekrar dene.",
+  "thePictureIsToo": "Resim kaydedilemeyecek kadar büyük."
+}

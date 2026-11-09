@@ -1,0 +1,17 @@
+{
+  "deleteMyAccount": "Eliminar mi cuenta",
+  "strongThisCannotBe": "<strong>Esto no se puede deshacer.</strong> Se te borrará de Seven Friends por completo.",
+  "everythingAboutYouIs": "Se borra todo lo tuyo:",
+  "yourAccountYourProfile": "tu cuenta, tu perfil y tu inicio de sesión",
+  "allYourFriendsAnd": "todos tus amigos y todas las solicitudes, enviadas o recibidas",
+  "everyMessageYouSent": "todos los mensajes que enviaste o recibiste. Tus amigos también pierden la conversación",
+  "yourNameAndContact": "tu nombre y tus datos de contacto en las listas de otros amigos",
+  "yourFriendsAreNot": "No se avisa a tus amigos. Simplemente dejarán de tenerte como amigo.",
+  "typeWordToConfirm": "Escribe {{ word }} para confirmar",
+  "cancel": "Cancelar",
+  "deleting": "Eliminando…",
+  "deleteEverything": "Eliminar todo",
+  "couldNotDeleteYour": "No se pudo eliminar tu cuenta. No se cambió nada, inténtalo de nuevo.",
+  "thisCannotBeUndone": "Esto no se puede deshacer.",
+  "youWillBeErased": "Se te borrará de Seven Friends por completo.'\">"
+}

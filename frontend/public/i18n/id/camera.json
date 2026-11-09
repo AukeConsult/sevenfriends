@@ -1,0 +1,14 @@
+{
+  "cancel": "Batal",
+  "takeThePhoto": "Ambil foto",
+  "startRecording": "Mulai merekam",
+  "stop": "Berhenti",
+  "useAnotherCamera": "Pakai kamera lain",
+  "theCamera": "Kamera",
+  "theCameraIsBlocked": "Kamera diblokir. Izinkan untuk situs ini di pengaturan browser, atau pilih file saja.",
+  "noCameraWasFound": "Kamera tidak ditemukan. Pilih file saja.",
+  "theCameraIsIn": "Kamera sedang dipakai program lain. Tutup programnya lalu coba lagi, atau pilih file saja.",
+  "theCameraCouldNot": "Kamera tidak bisa dihidupkan. Pilih file saja.",
+  "thePhotoCouldNot": "Foto tidak bisa diambil. Coba lagi.",
+  "thisBrowserCannotRecord": "Browser ini tidak bisa merekam video. Pilih file saja."
+}

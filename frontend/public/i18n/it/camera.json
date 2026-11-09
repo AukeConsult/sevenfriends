@@ -1,0 +1,14 @@
+{
+  "cancel": "Annulla",
+  "takeThePhoto": "Scatta la foto",
+  "startRecording": "Inizia a registrare",
+  "stop": "Stop",
+  "useAnotherCamera": "Usa un'altra fotocamera",
+  "theCamera": "La fotocamera",
+  "theCameraIsBlocked": "La fotocamera è bloccata. Consentila per questo sito nelle impostazioni del browser, oppure scegli un file.",
+  "noCameraWasFound": "Nessuna fotocamera trovata. Scegli un file.",
+  "theCameraIsIn": "La fotocamera è usata da un altro programma. Chiudilo e riprova, oppure scegli un file.",
+  "theCameraCouldNot": "Non è stato possibile avviare la fotocamera. Scegli un file.",
+  "thePhotoCouldNot": "Non è stato possibile scattare la foto. Riprova.",
+  "thisBrowserCannotRecord": "Questo browser non può registrare video. Scegli un file."
+}

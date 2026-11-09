@@ -1,0 +1,19 @@
+{
+  "yourPicture": "Din bild",
+  "chooseAPhotoAnd": "Välj ett foto och placera det i cirkeln. Det görs litet (256 pixlar) innan det sparas, så ett stort foto går bra.",
+  "chooseAPhoto": "Välj ett foto",
+  "removeMyPicture": "Ta bort min bild",
+  "cancel": "Avbryt",
+  "yourPhotoDragTo": "Ditt foto: dra för att flytta det",
+  "dragThePhotoTo": "Dra i fotot för att flytta det. Nyp, scrolla eller använd reglaget för att zooma.",
+  "zoom": "Zoom",
+  "saving": "Sparar…",
+  "useThisPicture": "Använd den här bilden",
+  "chooseAnotherPhoto": "Välj ett annat foto",
+  "chooseAnImageFile": "Välj en bildfil (ett foto).",
+  "thatImageIsVery": "Bilden är mycket stor. Välj en under 20 MB.",
+  "thisImageCannotBe": "Bilden kan inte öppnas. Prova en annan (JPEG, PNG eller WebP).",
+  "couldNotSaveThe": "Kunde inte spara bilden. Försök igen.",
+  "couldNotRemoveThe": "Kunde inte ta bort bilden. Försök igen.",
+  "thePictureIsToo": "Bilden är för stor för att sparas."
+}

@@ -1,0 +1,8 @@
+{
+  "title": "Kirjataan sisään",
+  "invalid": "Tämä linkki ei ole voimassa tai se on vanhentunut. Pyydä uusi.",
+  "newLink": "Lähetä minulle uusi linkki",
+  "busy": "Kirjataan sisään…",
+  "confirm": "Viimeistele vahvistamalla sähköpostiosoite, johon tämä linkki lähetettiin.",
+  "failed": "Kirjautuminen tällä linkillä epäonnistui. Pyydä uusi."
+}

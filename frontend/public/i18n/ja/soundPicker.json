@@ -1,0 +1,11 @@
+{
+  "backToSounds": "サウンドに戻る",
+  "back": "‹ 戻る",
+  "hintTapASound": "{{ hint }}。音をタップすると、選択して聞けます。",
+  "sevenFriendsJingles": "Seven Friends のジングル",
+  "otherSounds": "そのほかの音",
+  "stop": "■ 停止",
+  "play": "▶ 再生",
+  "done": "完了",
+  "soundForLabel": "{{ label }}の音"
+}

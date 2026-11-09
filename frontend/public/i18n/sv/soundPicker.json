@@ -1,0 +1,11 @@
+{
+  "backToSounds": "Tillbaka till ljud",
+  "back": "‹ Tillbaka",
+  "hintTapASound": "{{ hint }}. Tryck på ett ljud för att välja och höra det.",
+  "sevenFriendsJingles": "Seven Friends-jinglar",
+  "otherSounds": "Andra ljud",
+  "stop": "■ Stopp",
+  "play": "▶ Spela",
+  "done": "Klar",
+  "soundForLabel": "Ljud för {{ label }}"
+}

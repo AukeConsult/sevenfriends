@@ -1,0 +1,19 @@
+{
+  "yourPicture": "あなたの写真",
+  "chooseAPhotoAnd": "写真を選んで、円の中に配置します。保存する前に小さく（256ピクセルに）するので、大きな写真でも大丈夫です。",
+  "chooseAPhoto": "写真を選ぶ",
+  "removeMyPicture": "写真を削除",
+  "cancel": "キャンセル",
+  "yourPhotoDragTo": "あなたの写真: ドラッグして動かせます",
+  "dragThePhotoTo": "写真をドラッグして動かします。ピンチ、スクロール、スライダーで拡大縮小できます。",
+  "zoom": "ズーム",
+  "saving": "保存中…",
+  "useThisPicture": "この写真を使う",
+  "chooseAnotherPhoto": "別の写真を選ぶ",
+  "chooseAnImageFile": "画像ファイル（写真）を選んでください。",
+  "thatImageIsVery": "この画像は大きすぎます。20 MB未満のものを選んでください。",
+  "thisImageCannotBe": "この画像を開けません。別の画像をお試しください（JPEG、PNG、WebP）。",
+  "couldNotSaveThe": "写真を保存できませんでした。もう一度お試しください。",
+  "couldNotRemoveThe": "写真を削除できませんでした。もう一度お試しください。",
+  "thePictureIsToo": "写真が大きすぎて保存できません。"
+}

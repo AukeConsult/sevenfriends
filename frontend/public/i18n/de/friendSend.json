@@ -1,0 +1,21 @@
+{
+  "emojiGroups": "Emoji-Gruppen",
+  "addAnEmoji": "Emoji hinzufügen",
+  "sendAnImage": "Bild senden",
+  "sendAVideo": "Video senden",
+  "sendAVoiceMessage": "Sprachnachricht senden",
+  "send": "Senden",
+  "add": "+ Hinzufügen",
+  "messagesForFriendnameOnly": "Nachrichten nur für {{ friendName }}. Sie bleiben auf diesem Gerät und werden beim Tippen gespeichert.",
+  "forExampleIM": "Zum Beispiel: Ich bin unterwegs",
+  "addAMessage": "+ Nachricht hinzufügen",
+  "couldNotSendThe": "Die Nachricht konnte nicht gesendet werden",
+  "addEmoji": "{{ emoji }} hinzufügen",
+  "addATextOptional": "Text hinzufügen (optional) …",
+  "writeToFriendname": "An {{ friendName }} schreiben …",
+  "messageToFriendname": "Nachricht an {{ friendName }}",
+  "addAMessageFor": "Nachricht nur für {{ friendName }} hinzufügen",
+  "messageForFriendnameIndex": "Nachricht für {{ friendName }} {{ index }}",
+  "removeMessageIndex": "Nachricht {{ index }} entfernen",
+  "messagesForOnly": "Nachrichten nur für {{ friendName }}"
+}

@@ -1,0 +1,14 @@
+{
+  "title": "Stuur me een inloglink",
+  "checkTitle": "Check je e-mail.",
+  "sentTo": "We hebben een inloglink gestuurd naar",
+  "openHere": "Open hem op dit apparaat om in te loggen.",
+  "noEmail": "Geen e-mail? Kijk in je spammap, of probeer het opnieuw.",
+  "another": "Een ander e-mailadres gebruiken",
+  "intro": "Geen wachtwoord nodig. We mailen je een link en als je die opent, ben je ingelogd. Zo bewijs je ook dat het adres van jou is, zodat {{ many }} die je via e-mail toevoegen je kunnen vinden.",
+  "yourEmail": "Je e-mailadres",
+  "sending": "Versturen…",
+  "send": "Link versturen",
+  "writeEmail": "Vul eerst je e-mailadres in.",
+  "sendFailed": "Kon de link niet versturen. Probeer het opnieuw."
+}

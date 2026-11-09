@@ -1,0 +1,14 @@
+{
+  "title": "Anmeldelink per E-Mail schicken",
+  "checkTitle": "Schau in dein Postfach.",
+  "sentTo": "Wir haben einen Anmeldelink geschickt an",
+  "openHere": "Öffne ihn auf diesem Gerät, um dich anzumelden.",
+  "noEmail": "Keine E-Mail? Schau im Spam-Ordner nach oder versuch es noch einmal.",
+  "another": "Andere E-Mail-Adresse verwenden",
+  "intro": "Kein Passwort nötig. Wir schicken dir einen Link, und mit dem Öffnen bist du angemeldet. So wird auch bestätigt, dass die Adresse dir gehört, damit dich deine {{ many }} finden, wenn sie dich per E-Mail hinzufügen.",
+  "yourEmail": "Deine E-Mail-Adresse",
+  "sending": "Wird gesendet …",
+  "send": "Link senden",
+  "writeEmail": "Gib zuerst deine E-Mail-Adresse ein.",
+  "sendFailed": "Der Link konnte nicht gesendet werden. Bitte versuch es noch einmal."
+}

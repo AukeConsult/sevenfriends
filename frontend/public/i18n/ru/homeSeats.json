@@ -1,0 +1,17 @@
+{
+  "yourSevenSeats": "Твои семь мест",
+  "yourSeven": "Твоя семёрка",
+  "waiting": "Ожидание",
+  "pending": "В ожидании",
+  "addAOne": "Добавить: {{ one }}",
+  "silent": "Тихие",
+  "dropHere": "Перетащи сюда",
+  "sleepList": "Список сна",
+  "couldNotMoveThe": "Не удалось переместить: ",
+  "openTheConversationWith": "Открыть разговор: {{ friendName }}. Нажми и удерживай, чтобы переместить.",
+  "countUnread": "Непрочитанных: {{ count }}",
+  "seatPositionIsFree": "Место {{ position }} свободно: добавь ({{ one }})",
+  "dropOnASeat": "Перетащи на место или в круг «Тихие»",
+  "dropOnASeat2": "Перетащи на место",
+  "pressAndHoldA": "Нажми и удерживай, чтобы переместить: {{ one }}"
+}

@@ -1,0 +1,8 @@
+{
+  "title": "Accesso in corso",
+  "invalid": "Questo link non è valido oppure è scaduto. Richiedine uno nuovo.",
+  "newLink": "Mandami un nuovo link",
+  "busy": "Accesso in corso…",
+  "confirm": "Per finire, conferma l'indirizzo email a cui è stato inviato questo link.",
+  "failed": "Impossibile accedere con questo link. Richiedine uno nuovo."
+}

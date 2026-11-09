@@ -1,0 +1,11 @@
+{
+  "openTheVideoTo": "動画を開いてダウンロード",
+  "positionInTheVideo": "動画の再生位置",
+  "videoPreview": "動画のプレビュー",
+  "playTheVideo": "動画を再生",
+  "couldNotLoadThe": "動画を読み込めませんでした",
+  "pause": "一時停止",
+  "play": "再生",
+  "soundOn": "音あり",
+  "soundOff": "音なし"
+}

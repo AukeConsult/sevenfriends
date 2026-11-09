@@ -1,0 +1,14 @@
+{
+  "title": "Wyślij mi link do logowania",
+  "checkTitle": "Sprawdź skrzynkę.",
+  "sentTo": "Wysłaliśmy link do logowania na adres",
+  "openHere": "Otwórz go na tym urządzeniu, żeby się zalogować.",
+  "noEmail": "Brak e-maila? Zajrzyj do spamu albo spróbuj ponownie.",
+  "another": "Użyj innego adresu e-mail",
+  "intro": "Hasło nie jest potrzebne. Wysyłamy Ci link, a jego otwarcie loguje Cię. Dowodzi też, że adres jest Twój, więc osoby dodające Cię po e-mailu (kategoria: {{ many }}) mogą Cię znaleźć.",
+  "yourEmail": "Twój adres e-mail",
+  "sending": "Wysyłam…",
+  "send": "Wyślij link",
+  "writeEmail": "Najpierw wpisz swój adres e-mail.",
+  "sendFailed": "Nie udało się wysłać linku. Spróbuj ponownie."
+}
