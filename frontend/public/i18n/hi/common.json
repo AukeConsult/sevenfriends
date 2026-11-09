@@ -276,6 +276,7 @@
     "rose": "गुलाबी",
     "hasYouOnSleep": "आपको स्लीप लिस्ट में रखा है।",
     "pokeAnyway": "फिर भी पोक करें",
-    "makesASound": "आवाज़ करता है"
+    "makesASound": "आवाज़ करता है",
+    "activityIn": "{{ circle }} में गतिविधि"
   }
 }

@@ -4,7 +4,8 @@ import type { DocumentData, Query, QuerySnapshot } from 'firebase/firestore'; //
 import { LiveMessage } from '../models';
 import { AuthService } from './auth.service';
 import { DesktopNoticeService } from './desktop-notice.service';
-import { ActiveCircleService } from './active-circle.service';
+import { ActiveCircleService, circleLabel, circleType } from './active-circle.service';
+import { CircleActivityService } from './circle-activity.service';
 import { FriendsService } from './friends.service';
 import { LiveChanges } from './live-changes';
 import { NotificationsService } from './notifications.service';
@@ -14,6 +15,11 @@ import { tr } from './i18n';
 
 type FirestoreSdk = typeof import('firebase/firestore');
 type Added = { id: string; data: DocumentData };
+/** Something that happened in a circle: the circle and a unique id of the event */
+type Happening = { circle: string; id: string };
+
+/** The circle a ping, message or entry belongs to (`default` for what was stored before circles were written down). */
+const circleOf = (data: DocumentData): string => String(data['circleId'] ?? 'default');
 
 /** How long to wait before a broken live listener is started again. */
 const RETRY_MS = 5000;
@@ -41,6 +47,7 @@ export class RealtimeService {
   private readonly notifications = inject(NotificationsService);
   private readonly friends = inject(FriendsService);
   private readonly active = inject(ActiveCircleService);
+  private readonly activity = inject(CircleActivityService);
   private readonly sound = inject(SoundService);
   private readonly desktop = inject(DesktopNoticeService);
   private readonly push = inject(PushService);
@@ -55,8 +62,11 @@ export class RealtimeService {
   private syncStamps = new Map<string, number>();
   private stops: (() => void)[] = [];
   private messagesChangedAt = new Map<string, number>();
+  /** what each friend entry of ANY circle said the last time (`circle/id`): to tell an answer or a sleeper in a circle that is not in use */
+  private seen = new Map<string, { status: string; incoming: boolean; asleep: boolean }>();
   private friendsTimer: ReturnType<typeof setTimeout> | undefined;
-  private listeningFor: string | null = null;
+  /** counts the times listening was (re)started: a start that is overtaken while the SDK loads gives up */
+  private run = 0;
   private seq = 0;
 
   constructor() {
@@ -65,23 +75,35 @@ export class RealtimeService {
       const uid = this.auth.user()?.uid ?? null;
       untracked(() => void this.follow(uid));
     });
+    // another circle: the listeners go on (they hear every circle), what belongs to the old circle's open page is let go, and the new circle is looked at at once
+    this.active.onSwitch(() => {
+      this.openFeed.set(null);
+      this.latestMessage.set(null);
+      if (this.auth.user()) void this.refreshEverything();
+    });
   }
 
   private async follow(uid: string | null): Promise<void> {
     this.stopAll();
-    this.listeningFor = uid;
-    if (!uid) return;
+    const run = ++this.run;
+    this.seen.clear();
+    this.messagesChangedAt.clear();
+    if (!uid) {
+      this.activity.clearAll();
+      return;
+    }
 
     try {
       const [sdk, { db }] = await Promise.all([import('firebase/firestore'), import('./firestore')]);
-      if (this.listeningFor !== uid) return; // signed out (or another user) while it was loading
+      if (run !== this.run) return; // signed out, another user or another circle while it was loading
 
       const mine = (collectionName: string) => sdk.collection(db, 'user-account', uid, collectionName);
       this.stops = [
         // 1. pings: somebody added me
         this.watch(sdk, mine('incoming-signal'), (all, first) => {
-          // a ping says which circle was asked: an app in another circle does not react (no sound, no check) and leaves it for the app of that circle
-          if (!first && !all.some((s) => String(s.data['circleId'] ?? 'default') === this.active.id)) return;
+          // a ping says which circle was asked: one for another circle only makes a note ("Activity in ..."), the check of that circle shows the request when it is opened
+          this.elsewhere(all.filter((s) => circleOf(s.data) !== this.active.id).map((s) => ({ circle: circleOf(s.data), id: `request-${s.id}` })), !first);
+          if (!first && !all.some((s) => circleOf(s.data) === this.active.id)) return;
           const known = new Set(this.friends.requests().map((r) => r.id));
           if (!first) this.ring('request'); // somebody just added me (what was there already is not announced)
           void this.refreshEverything().then(() => {
@@ -92,8 +114,8 @@ export class RealtimeService {
             }
           });
         }),
-        // 2. my own friend list: a change means an answer, a deletion or a new link
-        this.watchFriends(sdk, sdk.collection(db, 'user-account', uid, 'friend-circle', this.active.id, 'friends')),
+        // 2. my own friend lists, all circles in one query (every entry carries ownerUid, see firestore.rules): a change means an answer, a deletion or a new link
+        this.watchFriends(sdk, sdk.query(sdk.collectionGroup(db, 'friends'), sdk.where('ownerUid', '==', uid))),
         // 2b. my other devices: a changed profile or sounds (times only, written by the backend)
         this.watchSync(sdk, mine('sync')),
         // 3. messages: only the unread ones (what I wrote is already read), so a new document is a new message for me
@@ -163,12 +185,14 @@ export class RealtimeService {
       source,
       (snapshot, first) => {
         for (const change of snapshot.docChanges()) {
-          for (const field of ['profileAt', 'preferencesAt']) {
+          for (const field of ['profileAt', 'preferencesAt', 'requestsAt']) {
             const stamp = change.doc.data()[field]?.toMillis?.() as number | undefined;
             if (stamp === undefined || this.syncStamps.get(field) === stamp) continue;
             this.syncStamps.set(field, stamp);
             if (first) continue; // what was already there is loaded by the pages themselves
-            this.live.emit({ type: field === 'profileAt' ? 'profile' : 'sounds' });
+            // the person who asked took the request back, or I answered it on another device: the search is run again, so the request goes from Home and the seats
+            if (field === 'requestsAt') void this.refreshEverything();
+            else this.live.emit({ type: field === 'profileAt' ? 'profile' : 'sounds' });
           }
         }
       },
@@ -176,29 +200,69 @@ export class RealtimeService {
     );
   }
 
-  /** Listens to the friend list: every change after the first snapshot reloads the list (changes that come together are one reload). */
+  /**
+   * Listens to the friend lists of ALL circles. A change in the circle in use reloads the list (changes that come together are one reload). A change in
+   * another circle is not looked at beyond what matters: an answer to my request or the end of a friendship makes a note ("Activity in ..."); moods,
+   * presence, seats and the like do not.
+   */
   private watchFriends(sdk: FirestoreSdk, source: Query<DocumentData>): () => void {
     const stop = this.listen(
       sdk,
       source,
       (snapshot, first) => {
-        // the friend edited or deleted a message: the friendship was touched with a new `messagesChangedAt`
+        const elsewhere: Happening[] = [];
+        let here = false;
         for (const change of snapshot.docChanges()) {
-          const stamp = change.doc.data()['messagesChangedAt']?.toMillis?.() as number | undefined;
+          const circle = change.doc.ref.parent.parent?.id ?? 'default';
+          const data = change.doc.data();
+          const key = `${circle}/${change.doc.id}`;
+          const before = this.seen.get(key);
+          const status = String(data['status'] ?? 'pending');
+          if (change.type === 'removed') this.seen.delete(key);
+          else this.seen.set(key, { status, incoming: Boolean(data['incomingRequestId']), asleep: data['asleep'] === true });
+
+          if (circle !== this.active.id) {
+            const answered = change.type === 'modified' && before?.status === 'pending' && !before.incoming && (status === 'confirmed' || status === 'rejected');
+            if (!first && (change.type === 'removed' || answered)) elsewhere.push({ circle, id: `${change.type}-${change.doc.id}-${status}` });
+            continue;
+          }
+          here = true;
+          // the friend edited or deleted a message: the friendship was touched with a new `messagesChangedAt`
+          const stamp = data['messagesChangedAt']?.toMillis?.() as number | undefined;
           if (stamp === undefined) continue;
           if (!first && this.messagesChangedAt.get(change.doc.id) !== stamp) this.live.emit({ type: 'feed', connectionId: change.doc.id });
           this.messagesChangedAt.set(change.doc.id, stamp);
         }
-        if (first || !snapshot.docChanges().length) return;
+        this.elsewhere(elsewhere, true);
+        if (first || !here) return;
         clearTimeout(this.friendsTimer);
         this.friendsTimer = setTimeout(() => void this.onFriendsChanged(), 250);
       },
-      'the friend list',
+      'the friend lists',
     );
     return () => {
       clearTimeout(this.friendsTimer);
       stop();
     };
+  }
+
+  /**
+   * Something happened in a circle that is not in use: the circle gets its note ("Activity in ...", see CircleActivityService) and, when it is new (`announce`:
+   * not what was waiting at the start), the default message sound plays and a desktop notice says it. Never what it is about.
+   */
+  private elsewhere(events: Happening[], announce: boolean): void {
+    if (!events.length) return;
+    for (const e of events) this.activity.mark(e.circle);
+    if (!announce) return;
+    if (!this.pushCovers()) this.sound.playDefault('message');
+    for (const e of events) {
+      this.notify('message', {
+        title: tr('core.activityIn', 'Activity in {{ circle }}', { circle: circleLabel(e.circle) }),
+        body: '',
+        id: `activity-${e.id}`,
+        go: `/?opencircle=${circleType(e.circle)}`, // a tap on the notice opens that circle
+      });
+    }
   }
 
   /** Reload the friends and tell what happened: an answer to a request I sent, or a friend who removed me. */
@@ -223,7 +287,12 @@ export class RealtimeService {
     }
     // gone from my list although I did not delete it (my own deletes are removed from the list at once): they ended it
     for (const [id, was] of before) {
-      if (!now.has(id)) {
+      if (now.has(id)) continue;
+      if (was.status === 'pending' && !was.incoming) {
+        // my own request, still waiting, is gone: they rejected it (a rejection deletes my entry; the push has the same id)
+        this.ring('answer');
+        this.notify('answer', { title: tr('core.rejectedYourFriendRequest', '{{ friendName }} rejected your friend request', { friendName: was.name }), body: '', id: `answer-${id}-rejected`, go: '/' });
+      } else {
         this.notify('answer', { title: tr('core.removedTheFriendship', '{{ wasName }} removed the friendship', { wasName: was.name }), body: tr('core.theConversationIsDeleted', 'The conversation is deleted for both of you.'), id: `removed-${id}`, go: '/' });
       }
     }
@@ -256,7 +325,16 @@ export class RealtimeService {
   }
 
   private onMessages(all: Added[], first: boolean): void {
-    const added = all.filter((m) => String(m.data['circleId'] ?? 'default') === this.active.id); // blind to the other circles: no sound, no notice, no open feed update
+    // a message of another circle: a note only (no sound of its own kind, no notice of what it says, no open feed). A friend on that circle's sleep list is silent, as in the circle in use.
+    const elsewhere = all.filter((m) => circleOf(m.data) !== this.active.id);
+    for (const m of elsewhere) this.activity.mark(circleOf(m.data));
+    this.elsewhere(
+      elsewhere
+        .filter((m) => m.data['poke'] === true || !this.seen.get(`${circleOf(m.data)}/${String(m.data['connectionId'])}`)?.asleep)
+        .map((m) => ({ circle: circleOf(m.data), id: `message-${m.id}` })),
+      !first,
+    );
+    const added = all.filter((m) => circleOf(m.data) === this.active.id);
     if (!first) {
       // tell the open feed (the Chat page checks that the message is for its connection)
       for (const m of added) {

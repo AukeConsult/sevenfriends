@@ -143,26 +143,51 @@ describe("confirming", () => {
   });
 });
 
+describe("telling the other person's devices", () => {
+  const stamp = async (n: number) => (await getFirestore().collection("user-account").doc(u(n).p.uid).collection("sync").doc("state").get()).data()?.requestsAt;
+
+  it("stamps requestsAt on the person who was asked when the asker deletes the request, so their Home drops it at once", async () => {
+    const mine = await u(0).add(u(1).p);
+    await u(1).check();
+    expect(await stamp(1)).toBeUndefined();
+    expect((await u(0).remove(mine.id)).status).toBe(204);
+    expect(await stamp(1)).toBeDefined();
+    expect((await u(1).check()).requests).toEqual([]);
+  });
+
+  it("stamps the person's own account when they reject or confirm (their other devices drop the request)", async () => {
+    const a = await u(0).add(u(1).p);
+    const b = await u(2).add(u(1).p);
+    await u(1).check();
+    await u(1).reject(a.id);
+    const afterReject = await stamp(1);
+    expect(afterReject).toBeDefined();
+    await new Promise((r) => setTimeout(r, 5));
+    await u(1).confirm(b.id);
+    expect((await stamp(1))?.toMillis()).toBeGreaterThanOrEqual(afterReject.toMillis());
+  });
+});
+
 describe("rejecting", () => {
-  it("tells the requester (Rejected), frees my seat, and is never recreated", async () => {
+  it("deletes the requester's entry (gone from their list), frees my seat, and is never recreated", async () => {
     const mine = await u(0).add(u(1).p);
     await u(1).check();
 
     expect((await u(1).reject(mine.id)).status).toBe(200);
     expect(await u(1).friends()).toEqual([]); // seat freed
-    expect((await u(0).friends())[0]).toMatchObject({ id: mine.id, status: "rejected", waiting: false });
+    expect(await u(0).friends()).toEqual([]); // the asking person's entry is gone, not marked
+    expect((await assertConsistent()).requests).toBe(0); // the request and its pings too
 
     for (let i = 0; i < 3; i++) expect((await u(1).check()).requests).toEqual([]); // not recreated
     expect(await u(1).friends()).toEqual([]);
     await assertConsistent();
   });
 
-  it("lets the requester delete a rejected request; then it is gone everywhere, and can be asked again", async () => {
+  it("leaves nothing behind, so the person can be asked again at once", async () => {
     const first = await u(0).add(u(1).p);
     await u(1).check();
     await u(1).reject(first.id);
 
-    expect((await u(0).remove(first.id)).status).toBe(204);
     expect(await u(0).friends()).toEqual([]);
     expect((await assertConsistent()).requests).toBe(0);
 
@@ -290,12 +315,12 @@ describe("no free seat: the waiting list", () => {
     expect(summary.requests).toBe(0);
   });
 
-  it("can be rejected from the waiting list, and the requester sees Rejected", async () => {
+  it("can be rejected from the waiting list, and the requester's entry is deleted", async () => {
     const mine = await fullRecipientAskedBy();
     await u(1).check();
     expect((await u(1).reject(mine.id)).status).toBe(200);
 
-    expect((await u(0).friends())[0]).toMatchObject({ status: "rejected", waiting: false });
+    expect(await u(0).friends()).toEqual([]);
     expect((await u(1).check()).requests).toEqual([]);
     expect(await u(1).friends()).toHaveLength(MAX_FRIENDS);
     await assertConsistent();
@@ -440,26 +465,23 @@ describe("one connection per pair of people", () => {
     await assertConsistent();
   });
 
-  it("asking again after a rejection needs a delete first", async () => {
+  it("asking again after a rejection is a new request (nothing was kept)", async () => {
     const first = await u(0).add(u(1).p);
     await u(1).check();
     await u(1).reject(first.id);
+    expect(await u(0).friends()).toEqual([]);
 
-    await u(0).add(u(1).p, "phone"); // asks again without deleting the rejected entry
-    expect((await u(1).check()).requests).toEqual([]);
-    expect((await u(0).friends()).map((f) => [f.id, f.status])).toEqual([[first.id, "rejected"]]);
-
-    await u(0).remove(first.id); // delete, then ask again
-    const again = await u(0).add(u(1).p);
+    const again = await u(0).add(u(1).p, "phone");
+    expect(again.id).not.toBe(first.id);
     expect((await u(1).check()).requests.map((r) => r.id)).toEqual([again.id]);
     await assertConsistent();
   });
 
-  it("when they rejected me and now add me, their new request replaces the old rejection", async () => {
+  it("when they rejected me and now add me, it is an ordinary new request", async () => {
     const mine = await u(0).add(u(1).p);
     await u(1).check();
     await u(1).reject(mine.id);
-    expect((await u(0).friends())[0].status).toBe("rejected");
+    expect(await u(0).friends()).toEqual([]);
 
     const theirs = await u(1).add(u(0).p); // person 1 changed their mind
     const { requests } = await u(0).check();

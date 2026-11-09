@@ -8,6 +8,8 @@ import { activeCircleOf, circleProfileOf } from "./circle-profile";
 import { AcceptOutcome, FriendRequest } from "./models";
 import { circleCol, friendRequestCol, readFields, userDoc, userFields } from "./paths";
 import { assignMissingSeats, ensureSeat } from "./seats";
+import { signalRefsOf } from "./signals";
+import { touchSync } from "./sync";
 import { nameOf, sendPush } from "./push";
 import { unverifiedDetails } from "./validation";
 
@@ -117,13 +119,14 @@ friendRequestsRouter.post(
       const name = await nameOf(uid, res.locals.token as DecodedIdToken, circleId);
       await sendPush(to, { circleId, id: `answer-${friendId}-confirmed`, title: `${name} accepted your friend request`, body: "", url: "/", kind: "answer" });
     }
+    if (result === "confirmed") await touchSync(uid, "requestsAt"); // my other devices drop the request
     res.json({ ok: true, result });
   }),
 );
 
 /**
- * Reject a request. The requester sees their entry as "rejected" and can delete it
- * (deleting removes the connection from both lists). My pending seat is freed.
+ * Reject a request. The requester's entry is DELETED (it goes from their list at once, on all their devices, and they are told "X rejected your
+ * friend request"), and so are the request and its pings; my pending seat is freed. Nothing is kept, so the person can be asked again.
  */
 friendRequestsRouter.post(
   "/:id/reject",
@@ -155,13 +158,10 @@ friendRequestsRouter.post(
 
       if (requesterFriendSnap.exists) {
         requester = { uid: request.fromUid as string, friendId: request.friendId as string };
-        tx.update(requesterFriendRef, {
-          status: "rejected",
-          waitingForSeat: false,
-          rejectedAt: FieldValue.serverTimestamp(),
-        });
-        }
-      tx.update(requestRef, { status: "rejected", rejectedAt: FieldValue.serverTimestamp() });
+        tx.delete(requesterFriendRef);
+        signalRefsOf(request.friendId as string, requesterFriendSnap.data()?.signaledUids).forEach((ref) => tx.delete(ref)); // pings that were not handled yet
+      }
+      tx.delete(requestRef);
       const seat = seatSnap.data();
       if (seat && seat.incomingRequestId === requestRef.id && seat.status !== "confirmed") {
         tx.delete(mySeatRef); // frees the seat
@@ -182,6 +182,7 @@ friendRequestsRouter.post(
       const name = await nameOf(uid, res.locals.token as DecodedIdToken, circleId);
       await sendPush(to, { circleId, id: `answer-${friendId}-rejected`, title: `${name} rejected your friend request`, body: "", url: "/", kind: "answer" });
     }
+    await touchSync(uid, "requestsAt"); // my other devices drop the request
     res.json({ ok: true });
   }),
 );

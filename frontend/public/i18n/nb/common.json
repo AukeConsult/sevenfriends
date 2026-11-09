@@ -276,6 +276,7 @@
     "rose": "Rose",
     "hasYouOnSleep": "Har deg på sovelisten.",
     "pokeAnyway": "Dult likevel",
-    "makesASound": "lager en lyd"
+    "makesASound": "lager en lyd",
+    "activityIn": "Aktivitet i {{ circle }}"
   }
 }

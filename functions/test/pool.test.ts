@@ -128,13 +128,13 @@ describe("one very popular person (49 people ask the same person)", () => {
     for (const r of seated) expect((await star.confirm(r.id)).body.result).toBe("confirmed");
     expect((await assertConsistent()).confirmed).toBe(14);
 
-    // the star rejects 5 of the waiting ones: they see Rejected, no longer waiting
+    // the star rejects 5 of the waiting ones: their entries are deleted (they are told by a notice), nobody waits for them any more
     const rejected = waiting.slice(0, 5);
     for (const r of rejected) expect((await star.reject(r.id)).status).toBe(200);
     expect((await star.check()).requests.filter((r) => !r.seated)).toHaveLength(37);
-    const rejectedEntries = (await Promise.all(fans.map((f) => f.friends()))).flat().filter((e) => e.status === "rejected");
-    expect(rejectedEntries).toHaveLength(5);
-    expect(rejectedEntries.every((e) => !e.waiting)).toBe(true);
+    const fansEntries = (await Promise.all(fans.map((f) => f.friends()))).flat();
+    expect(fansEntries.filter((e) => e.status === "rejected")).toEqual([]); // a rejection leaves no entry
+    for (const r of rejected) expect(fansEntries.some((e) => e.id === r.id)).toBe(false);
     expect(await waitingFans()).toBe(37);
     await assertConsistent();
 
@@ -157,9 +157,9 @@ describe("one very popular person (49 people ask the same person)", () => {
     expect((await star.check()).requests.filter((r) => !r.seated)).toEqual([]);
     expect(await star.friends()).toHaveLength(MAX_FRIENDS);
 
-    // what is left: 5 confirmed + 2 pending seats for the star, plus the 5 rejected entries of the fans
+    // what is left: 5 confirmed + 2 pending seats for the star (a rejection leaves nothing behind)
     const summary = await assertConsistent();
-    expect(summary.requests).toBe(7 + 5); // 5 accepted + 2 pending + 5 rejected
+    expect(summary.requests).toBe(7); // 5 accepted + 2 pending
   });
 });
 

@@ -276,6 +276,7 @@
     "rose": "Mawar",
     "hasYouOnSleep": "Menaruhmu di daftar tidur.",
     "pokeAnyway": "Colek saja",
-    "makesASound": "mengeluarkan suara"
+    "makesASound": "mengeluarkan suara",
+    "activityIn": "Aktivitas di {{ circle }}"
   }
 }

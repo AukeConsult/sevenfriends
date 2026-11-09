@@ -40,7 +40,7 @@
   "ofYourSevenIs": "1 van je zeven is nu in de buurt",
   "ofYourSevenAre": "{{ n }} van je zeven zijn nu in de buurt",
   "youHaveNoFree": "Je hebt geen vrije plekken. Het verzoek van {{ fromName }} blijft in behandeling: haal een vriend weg om ruimte te maken en bevestig het dan.",
-  "youRejectedTheRequest": "Je hebt het verzoek van {{ fromName }} afgewezen. Ze kunnen zien dat het is afgewezen.",
+  "youRejectedTheRequest": "Je hebt het verzoek van {{ fromName }} geweigerd.",
   "youHavenTTalked": "Je hebt {{ friendName }} nog niet gesproken",
   "youHavenTTalked2": "Je hebt {{ friendName }} al {{ span }} niet gesproken",
   "youSpokeToday": "Jullie spraken elkaar vandaag",

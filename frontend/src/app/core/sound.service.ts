@@ -318,6 +318,15 @@ export class SoundService {
     if (this.start(this.choices()[event])) this.alerting = true; // does not cut off a sound that is already playing
   }
 
+  /**
+   * Plays the built-in sound of this event, whatever was chosen for it: the signal for something in ANOTHER circle, which has no sound of its own.
+   * Silent when the person switched this event's sound off (No sound): sounds that are off stay off.
+   */
+  playDefault(event: SoundEvent): void {
+    if (this.choices()[event] === 'none') return;
+    if (this.start(DEFAULTS[event])) this.alerting = true;
+  }
+
   /** Plays one sound to try it out on the Settings page: it replaces the one that is playing. Never throws. */
   preview(sound: SoundId, key: string | null = null): void {
     this.stop();

@@ -40,7 +40,7 @@
   "ofYourSevenIs": "1 de tes sept est là en ce moment",
   "ofYourSevenAre": "{{ n }} de tes sept sont là en ce moment",
   "youHaveNoFree": "Tu n'as plus de place libre. La demande de {{ fromName }} reste en attente : retire un ami pour faire de la place, puis confirme.",
-  "youRejectedTheRequest": "Tu as refusé la demande de {{ fromName }}. Il peut voir qu'elle a été refusée.",
+  "youRejectedTheRequest": "Vous avez refusé la demande de {{ fromName }}.",
   "youHavenTTalked": "Tu n'as pas encore parlé à {{ friendName }}",
   "youHavenTTalked2": "Tu n'as pas parlé à {{ friendName }} depuis {{ span }}",
   "youSpokeToday": "Vous avez parlé aujourd'hui",

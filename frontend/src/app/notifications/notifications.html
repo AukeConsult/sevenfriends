@@ -26,7 +26,7 @@
   }
 
   @if (notice(); as n) {
-    <div class="alert" [class.alert-success]="n.kind === 'success'" [class.alert-warning]="n.kind === 'warning'" role="status">
+    <div class="alert" [class.alert-success]="n.kind === 'success'" [class.alert-warning]="n.kind === 'warning'" [class.sf-fade]="n.fade" role="status">
       {{ n.text }}
     </div>
   }
@@ -84,6 +84,9 @@
     <section [attr.aria-label]="t('notifications.needsYou') || 'Needs you'">
       <h2 class="sf-section">{{ t('notifications.needsYou') || 'Needs you' }}</h2>
 
+      <!-- other circles with something waiting: one note each, tap to open that circle -->
+      <app-circle-activity />
+
       @if (seated().length) {
         <ul class="sf-list sf-home-cards">
           @for (request of seated(); track request.id) {
@@ -125,10 +128,7 @@
                   <button type="button" class="btn btn-outline-secondary btn-sm" (click)="markGroupRead(group)">{{ t('notifications.markRead') || 'Mark read' }}</button>
                 </span>
               </div>
-              <span class="sf-wrap">{{ group.last.text }}</span>
-              @if (group.last.time) {
-                <small class="sf-message-time">{{ group.last.time | appDate: 'short' }}</small>
-              }
+              <span class="sf-wrap">{{ group.last.text }}@if (group.last.time) { <small class="sf-message-time ms-2">{{ group.last.time | appDate: 'short' }}</small> }</span>
               @if (group.connectionId) {
                 <form class="input-group input-group-sm mt-2" (submit)="$event.preventDefault(); sendReply(group)">
                   <input type="text" class="form-control" [attr.placeholder]="t('notifications.quickReply') || 'Quick reply'" [attr.aria-label]="(t('notifications.replyToGroupname', { groupName: group.name }) || 'Reply to ' + group.name)"

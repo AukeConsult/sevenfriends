@@ -5,9 +5,10 @@ import { AuthService } from '../core/auth.service';
 import { tr } from '../core/i18n';
 
 /**
- * A push or a link can be about another circle than the one this app is in: its address says so (`?incircle=work`). The app never switches by itself:
- * it asks first (Switch to that circle / Stay here), because the person may be in the middle of something. When the address names the circle the app
- * is in already, the mark is just taken out of the address.
+ * A link can be about another circle than the one the app is in: its address says so (`?incircle=work`). The app never switches by itself for a link:
+ * it asks first (Switch to that circle / Stay here), because the person may be in the middle of something. A tap on a notification about another circle
+ * (`?opencircle=work`) is a clear wish: the app switches at once and opens the page. When the address names the circle the app is in already, the mark is
+ * just taken out of the address.
  */
 @Component({
   selector: 'app-circle-switch',
@@ -29,7 +30,7 @@ export class CircleSwitch {
   private readonly router = inject(Router);
   private readonly auth = inject(AuthService);
   private readonly active = inject(ActiveCircleService);
-  protected readonly here = this.active.words.app;
+  protected get here(): string { return this.active.words.app; }
   /** the circle that was asked for (when it is another one), and the page without the mark */
   protected readonly ask = signal<{ id: string; label: string; app: string; path: string } | null>(null);
 
@@ -42,9 +43,12 @@ export class CircleSwitch {
   private async check(url: string): Promise<void> {
     const [path, query = ''] = url.split('?');
     const params = new URLSearchParams(query.split('#')[0]);
-    const wanted = params.get('incircle');
+    // `opencircle` (a tap on a notification about another circle) switches at once; `incircle` (a link) asks first
+    const openNow = params.get('opencircle');
+    const wanted = openNow ?? params.get('incircle');
     if (!wanted) return;
     params.delete('incircle');
+    params.delete('opencircle');
     const rest = params.toString();
     const clean = path + (rest ? `?${rest}` : '');
     const choice = CIRCLE_CHOICES.find((c) => c.type === wanted);
@@ -53,12 +57,19 @@ export class CircleSwitch {
       void this.router.navigateByUrl(clean, { replaceUrl: true }); // nothing to ask: the mark goes
       return;
     }
+    if (openNow) {
+      this.active.choose(choice.id, clean); // the person tapped a notification about that circle: the app is there and opens the page
+      return;
+    }
     this.ask.set({ id: choice.id, label: choice.label, app: circleWords(choice.id).app, path: clean });
   }
 
   protected switchNow(): void {
     const a = this.ask();
-    if (a) this.active.choose(a.id, a.path); // the app starts again in that circle, on that page
+    if (a) {
+      this.ask.set(null);
+      this.active.choose(a.id, a.path); // the app shows that circle, on that page
+    }
   }
 
   protected stay(): void {

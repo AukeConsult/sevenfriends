@@ -276,6 +276,7 @@
     "rose": "Ruusu",
     "hasYouOnSleep": "Sinut on hänen unilistallaan.",
     "pokeAnyway": "Töni silti",
-    "makesASound": "päästää äänen"
+    "makesASound": "päästää äänen",
+    "activityIn": "Toimintaa: {{ circle }}"
   }
 }

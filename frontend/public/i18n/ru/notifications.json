@@ -40,7 +40,7 @@
   "ofYourSevenIs": "Сейчас на связи: 1 из твоих семи",
   "ofYourSevenAre": "Сейчас на связи: {{ n }} из твоих семи",
   "youHaveNoFree": "Свободных мест нет. Запрос от {{ fromName }} остаётся в ожидании: удали кого-нибудь из друзей, чтобы освободить место, и подтверди.",
-  "youRejectedTheRequest": "Ты отклонил(а) запрос от {{ fromName }}. Он(а) видит, что запрос отклонён.",
+  "youRejectedTheRequest": "Вы отклонили запрос от {{ fromName }}.",
   "youHavenTTalked": "Ты ещё не общался с {{ friendName }}",
   "youHavenTTalked2": "Ты не общался с {{ friendName }}: {{ span }}",
   "youSpokeToday": "Вы общались сегодня",

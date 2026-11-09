@@ -19,17 +19,30 @@ export class FriendsService {
   readonly sleeping = computed(() => this.friends().filter((f) => f.asleep));
   readonly requests = signal<FriendRequest[]>([]);
 
+  constructor() {
+    // another circle: nothing of the old one stays (an answer still on its way from the old circle is dropped, see `load`)
+    this.active.onSwitch(() => {
+      this.circle.set(null);
+      this.friends.set([]);
+      this.requests.set([]);
+    });
+  }
+
   /** Loads the circle this app is bound to (the default one unless another was chosen; it is made when it does not exist yet) and its friends. Other circles are not looked at. */
   async load(): Promise<void> {
+    const generation = this.active.generation;
+    const id = this.active.id;
     const { circles } = await this.api.request<{ circles: Circle[] }>('/circles');
-    let circle = circles.find((c) => c.id === this.active.id) ?? null;
-    if (!circle && this.active.id !== 'default') circle = await this.makeCircle(this.active.id);
+    let circle = circles.find((c) => c.id === id) ?? null;
+    if (!circle && id !== 'default') circle = await this.makeCircle(id);
+    if (generation !== this.active.generation) return; // the circle was changed meanwhile: this answer is about the old one
     this.circle.set(circle);
     if (!circle) {
       this.friends.set([]);
       return;
     }
     const res = await this.api.request<{ friends: Friend[] }>(`/circles/${circle.id}/friends`);
+    if (generation !== this.active.generation) return;
     this.friends.set(res.friends);
     this.forgetOldFriends(res.friends);
   }

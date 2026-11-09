@@ -276,6 +276,7 @@
     "rose": "玫瑰",
     "hasYouOnSleep": "你在对方的睡眠名单里。",
     "pokeAnyway": "还是戳一下",
-    "makesASound": "会发出声音"
+    "makesASound": "会发出声音",
+    "activityIn": "{{ circle }} 中有动态"
   }
 }

@@ -1,5 +1,6 @@
 import { getFirestore } from "firebase-admin/firestore";
 import { beforeEach, describe, expect, it } from "vitest";
+import { sendPush } from "../src/push";
 import { User, assertConsistent, connect, person, seedPool, server } from "./helpers";
 import { deadPushTokens, pushBreaks, sentPushes } from "./setup";
 
@@ -85,7 +86,7 @@ describe("which devices are woken for a circle", () => {
   });
 
   it("a device from before there was a choice counts as the app of every circle, and an unknown app too", async () => {
-    await getFirestore().collection("user-account").doc("uid01").collection("push-device").doc("old").set({ token: token(1, "old"), circleId: "buddies" });
+    await getFirestore().collection("user-account").doc("uid01").collection("push-device").doc("old").set({ token: token(1, "old") });
     await registerAs(u(1), token(1, "odd"), "something-else");
     await testIn(u(1), "work");
     expect(lastPush().tokens.sort()).toEqual([token(1, "odd"), token(1, "old")].sort());
@@ -98,6 +99,57 @@ describe("which devices are woken for a circle", () => {
     expect(docs).toHaveLength(1);
     expect(docs[0].app).toBe("family");
     expect("circleId" in docs[0]).toBe(false);
+  });
+});
+
+describe("a device in another circle than the push is about", () => {
+  const registerIn = (user: User, t: string, circle?: string) => user.raw("post", "/push/devices", { token: t, ...(circle ? { circle } : {}) }).expect(204);
+  const circleOfDevice = async (uid: string, t: string) => (await getFirestore().collection("user-account").doc(uid).collection("push-device").get()).docs.map((d) => d.data()).find((d) => d.token === t)?.circleId;
+  const notices = (user: User, changes: object) =>
+    user.raw("put", "/preferences/notices", { message: true, request: true, answer: true, removed: true, hideText: false, ...changes }).expect(200);
+  const sounds = (user: User, changes: object) =>
+    user.raw("put", "/preferences/sounds", { message: "ding", request: "ding", answer: "ding", volume: 50, ...changes }).expect(200);
+  const aboutWork = (text = "a secret") => sendPush("uid01", { id: "message-m1", title: "Person 00", body: text, url: "/friends/c1", kind: "message", circleId: "work" });
+
+  it("the app tells which circle it is in, when it registers and when it changes (an unknown circle is refused)", async () => {
+    await registerIn(u(1), token(1), "buddies");
+    expect(await circleOfDevice("uid01", token(1))).toBe("buddies");
+    await u(1).raw("put", "/push/devices/circle", { token: token(1), circle: "family" }).expect(204);
+    expect(await circleOfDevice("uid01", token(1))).toBe("family");
+    await u(1).raw("put", "/push/devices/circle", { token: token(1), circle: "nowhere" }).expect(400);
+    await u(1).raw("put", "/push/devices/circle", { circle: "work" }).expect(400);
+    await u(1).raw("put", "/push/devices/circle", { token: token(1, "unknown"), circle: "work" }).expect(204); // not registered: nothing happens
+    expect(await devices("uid01")).toEqual([token(1)]);
+    await registerIn(u(1), token(1)); // registering again without a circle keeps what it was
+    expect(await circleOfDevice("uid01", token(1))).toBe("family");
+  });
+
+  it("a device in the circle gets the push as it is, a device in another circle only 'Activity in <circle>' (no text, default message sound, opens that circle)", async () => {
+    await registerIn(u(1), token(1, "here"), "work");
+    await registerIn(u(1), token(1, "away"), "default");
+    await registerIn(u(1), token(1, "unknown")); // never told: as it is
+    sentPushes.length = 0;
+    expect(await aboutWork()).toEqual({ devices: 3, delivered: 3 });
+    const full = sentPushes.find((p) => p.tokens.includes(token(1, "here")))!;
+    expect(full.tokens.sort()).toEqual([token(1, "here"), token(1, "unknown")].sort());
+    expect(full.data).toMatchObject({ title: "Person 00", body: "a secret", url: "/friends/c1?incircle=work", circle: "work" });
+    const away = sentPushes.find((p) => p.tokens.includes(token(1, "away")))!;
+    expect(away.tokens).toEqual([token(1, "away")]);
+    expect(away.data).toEqual({ id: "message-m1", title: "Activity in Work", body: "", url: "/friends/c1?opencircle=work", circle: "work" });
+    expect(JSON.stringify(away)).not.toContain("a secret");
+    expect((away.android as { notification: { channelId: string } }).notification.channelId).toBe("friends_message_default");
+  });
+
+  it("the Android channels are the one set (friends_...) whatever the circle, and the switches still decide what is sent", async () => {
+    await registerIn(u(1), token(1), "work");
+    await sounds(u(1), { message: "file:SevenFriends_raw2_Hyper.mp3" });
+    sentPushes.length = 0;
+    await aboutWork();
+    expect((lastPush().android as { notification: { channelId: string } }).notification.channelId).toBe("friends_message_hyper");
+    await notices(u(1), { message: false });
+    sentPushes.length = 0;
+    expect(await aboutWork()).toEqual({ devices: 0, delivered: 0, off: true });
+    expect(sentPushes).toEqual([]);
   });
 });
 

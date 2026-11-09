@@ -1,4 +1,7 @@
-<router-outlet />
+<!-- the pages are made again when the circle changes (the track value is the switch count), so no page keeps anything of the old circle -->
+@for (switched of [active.epoch()]; track switched) {
+  <router-outlet />
+}
 @if (auth.user()) {
   <app-bottom-nav />
 }

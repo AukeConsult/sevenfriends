@@ -19,6 +19,13 @@ export class FriendPictureService {
   private readonly pictures = signal<Record<string, string>>({});
   private readonly asked = new Set<string>();
 
+  constructor() {
+    this.active.onSwitch(() => {
+      this.pictures.set({});
+      this.asked.clear();
+    });
+  }
+
   /** The picture of this friend once it is here (asks for it the first time); null while it is on its way, or when there is none. */
   src(friendId: string, pictureAt: string | null): string | null {
     if (!pictureAt) return null;
@@ -32,8 +39,9 @@ export class FriendPictureService {
 
   private async load(friendId: string, key: string): Promise<void> {
     try {
+      const generation = this.active.generation;
       const { image } = await this.api.request<ProfilePicture>(`/circles/${this.friends.circle()?.id ?? this.active.id}/friends/${friendId}/picture`);
-      if (image) this.pictures.update((all) => ({ ...all, [key]: image }));
+      if (image && generation === this.active.generation) this.pictures.update((all) => ({ ...all, [key]: image }));
     } catch {
       this.asked.delete(key); // the next time it is asked for, it tries again
     }

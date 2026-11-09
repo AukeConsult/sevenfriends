@@ -276,6 +276,7 @@
     "rose": "장미",
     "hasYouOnSleep": "나를 수면 목록에 두었어요.",
     "pokeAnyway": "그래도 콕 찌르기",
-    "makesASound": "소리가 나요"
+    "makesASound": "소리가 나요",
+    "activityIn": "{{ circle }}에 새 활동"
   }
 }

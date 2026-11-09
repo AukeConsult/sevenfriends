@@ -8,6 +8,8 @@ import { Router, RouterLink } from '@angular/router';
 import { ChatService } from '../core/chat.service';
 import { ApiService } from '../core/api.service';
 import { MoodEditor } from '../mood-editor/mood-editor';
+import { CircleActivity } from '../circle-activity/circle-activity';
+import { CircleActivityService } from '../core/circle-activity.service';
 import { FriendAvatar } from '../friend-avatar/friend-avatar';
 import { HomeSeats } from '../home-seats/home-seats';
 import { HomeTop } from '../home-top/home-top';
@@ -23,6 +25,9 @@ import { Friend, FriendRequest, Message, Notice, ProfileDetails } from '../model
 import { AndroidChannelsService } from '../core/android-channels.service';
 import { KeysService } from '../core/keys.service';
 import { PushService } from '../core/push.service';
+
+/** How long a note that fades out stays: it is gone when the fade ends (see `.sf-fade` in styles.scss, same time). */
+const NOTICE_FADE_MS = 5000;
 
 /** Without a word for this many days, a friend gets a gentle "Say hi". */
 const SAY_HI_AFTER_DAYS = 14;
@@ -43,7 +48,7 @@ interface MessageGroup {
  */
 @Component({
   selector: 'app-notifications',
-  imports: [AppDatePipe, FriendAvatar, HomeSeats, HomeTop, RouterLink, MoodEditor, Sleeping, AddFriend, TranslocoDirective],
+  imports: [AppDatePipe, CircleActivity, FriendAvatar, HomeSeats, HomeTop, RouterLink, MoodEditor, Sleeping, AddFriend, TranslocoDirective],
   templateUrl: './notifications.html',
   providers: [provideTranslocoScope('notifications')],
   host: { '(click)': 'emptySpaceClicked($event)' },
@@ -81,6 +86,7 @@ export class Notifications {
   private readonly push = inject(PushService);
   private readonly prefs = inject(UiPreferencesService);
   private readonly keys = inject(KeysService);
+  private readonly otherCircles = inject(CircleActivityService).circles;
   /** the first-time setup was left for later: Home offers it again */
   protected readonly setupLeft = computed(() => this.prefs.value('setup')() === 'skipped');
 
@@ -194,8 +200,8 @@ export class Notifications {
   /** the setup notes: sound and notifications not set up, the phone's notification switch, details not verified (folded into one line on Home) */
   protected readonly checkCount = computed(() => [this.setupLeft(), this.androidOff() !== null, this.pushOff() !== null, this.unverified().length > 0].filter(Boolean).length);
 
-  /** what needs me from people: requests, a request waiting for a seat, unread messages */
-  protected readonly needsYou = computed(() => this.seated().length > 0 || this.waitingCount() > 0 || this.groups().length > 0);
+  /** what needs me from people: requests, a request waiting for a seat, unread messages, activity in another circle */
+  protected readonly needsYou = computed(() => this.seated().length > 0 || this.waitingCount() > 0 || this.groups().length > 0 || this.otherCircles().length > 0);
 
   /** "Good evening, Leif" */
   protected readonly greeting = computed(() => {
@@ -217,6 +223,7 @@ export class Notifications {
 
   /** Result of the last Confirm, shown above the lists. */
   protected readonly notice = signal<Notice | null>(null);
+  private noticeTimer: ReturnType<typeof setTimeout> | undefined;
 
   protected readonly loaded = this.notifications.loaded;
   protected readonly error = this.notifications.error;
@@ -270,7 +277,7 @@ export class Notifications {
         text: tr('notifications.youHaveNoFree', 'You have no free seats. The request from {{ fromName }} stays pending: remove a friend to make room, then confirm.', { fromName: request.fromName }),
       });
     } catch (err: any) {
-      this.error.set(err.message);
+      await this.failed(err);
     }
   }
 
@@ -278,10 +285,19 @@ export class Notifications {
     this.notice.set(null);
     try {
       await this.friendsService.rejectRequest(request.id);
-      this.notice.set({ kind: 'warning', text: tr('notifications.youRejectedTheRequest', 'You rejected the request from {{ fromName }}. They can see that it was rejected.', { fromName: request.fromName }) });
+      const note: Notice = { kind: 'warning', fade: true, text: tr('notifications.youRejectedTheRequest', 'You rejected the request from {{ fromName }}.', { fromName: request.fromName }) };
+      this.notice.set(note);
+      clearTimeout(this.noticeTimer);
+      this.noticeTimer = setTimeout(() => { if (this.notice() === note) this.notice.set(null); }, NOTICE_FADE_MS);
     } catch (err: any) {
-      this.error.set(err.message);
+      await this.failed(err);
     }
+  }
+
+  /** An answer that failed: when the request is not there any more (the person took it back) the list is checked again and the request goes; any other failure is shown. */
+  private async failed(err: { status?: number; message: string }): Promise<void> {
+    if (err.status === 404) await this.notifications.refresh();
+    else this.error.set(err.message);
   }
 
   /** "You haven't talked to Anna for 3 weeks" */

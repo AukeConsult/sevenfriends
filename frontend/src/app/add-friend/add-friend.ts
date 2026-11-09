@@ -25,7 +25,7 @@ const emptyDraft = (): FriendDraft => ({ name: '', email: '', phone: '', message
 export class AddFriend {
   private readonly circle = inject(ActiveCircleService);
   protected readonly w = this.circle.words;
-  private readonly circleType = this.circle.type;
+  private get circleType(): string { return this.circle.type; }
   /** shown inside Home (under its top, in place of everything else) instead of as a page of its own: Cancel and Done tell Home to close it */
   readonly embedded = input(false);
   readonly closed = output<void>();

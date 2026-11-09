@@ -22,8 +22,7 @@ self.addEventListener('push', (event) => {
 
   event.waitUntil(
     (async () => {
-      // somebody is looking at the app right now: the page shows it itself (sound, list), no notification. The page only knows its own circle, so it is
-      // told about the push: when it is about ANOTHER circle, the page shows the notification (see desktop-notice.service.ts)
+      // somebody is looking at the app right now: the page shows it itself (sound, the list, the note for another circle: it hears every circle), no notification
       const windows = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
       const looking = windows.filter((client) => client.visibilityState === 'visible' && client.focused);
       if (looking.length) {

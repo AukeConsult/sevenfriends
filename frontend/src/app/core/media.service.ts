@@ -1,3 +1,4 @@
+import { ActiveCircleService } from './active-circle.service';
 import { Injectable, inject } from '@angular/core';
 import { MediaUpload, MessageEnc, MessageEncMedia } from '../models';
 import { ApiError, ApiService } from './api.service';
@@ -40,6 +41,15 @@ export class MediaService {
   /** the files that are locked (by `ownerId/objectId`), told by the conversation when it opens the messages; kept for this tab so the full-size page can open them after a reload */
   private locked: Map<string, LockedEntry> | null = null;
   private storing = false;
+
+  constructor() {
+    // another circle: the files that were read, and the list of locked files, belong to the old circle
+    inject(ActiveCircleService).onSwitch(() => {
+      this.files.clear();
+      this.locked = new Map();
+      try { sessionStorage.removeItem(LOCKED_STORE); } catch { /* no storage */ }
+    });
+  }
 
   /** Sends the image and its small preview to the server, which stores them in the cache. The answer says where (owner and object id). */
   async uploadImage(image: PreparedImage, progress?: Progress): Promise<MediaUpload> {

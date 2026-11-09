@@ -13,20 +13,23 @@ import org.json.JSONObject;
 
 /**
  * The notification channels, so Android's own settings show exactly what the app's settings show: ONE channel per kind of
- * notification (new messages, friend requests, answers, removed friendships) IN EACH CIRCLE (Friends, Buddies, Work, Family: a group
- * of channels each), with the sound the person chose for it in the app.
+ * notification (new messages, friend requests, answers, removed friendships), with the sound the person chose for it in the app. The app is ONE app for
+ * all circles, so there is ONE set of channels, in one group ("Friends", the first circle's); a push about any circle uses it. The groups the app had
+ * for the other circles in earlier versions are deleted (with their channels).
  * <p>
- * The channel is called "<circle>_<kind>_<sound>" (functions/src/push.ts, channelFor, names it in every push: the ids must match). Android
+ * The channel is called "friends_<kind>_<sound>" (functions/src/push.ts, channelFor, names it in every push: the ids must match). Android
  * never changes the sound of a channel that exists, so when the sound of a kind changes, the channel of the old sound is replaced
  * by the one of the new sound (sync()). If the kind was switched off in Android's settings, the new channel is switched off too.
  */
 final class Channels {
     /** the kinds of push, with the name Android's settings show (push.ts: PushMessage.kind) */
     static final String[] KINDS = {"message", "request", "answer", "removed"};
-    /** the circles, as the server names them in a push (circleTypeOf), with the name of the group Android's settings show */
-    static final String[] CIRCLES = {"friends", "buddies", "work", "family"};
-    private static final String[] CIRCLE_NAMES = {"Friends", "Buddies", "Work", "Family"};
+    /** the one group of channels, as the server names it in a push (channelFor), with the name Android's settings show */
+    static final String[] CIRCLES = {"friends"};
+    private static final String[] CIRCLE_NAMES = {"Friends"};
     static final String FIRST_CIRCLE = "friends";
+    /** the groups of the versions that had a set of channels for each circle: deleted at start */
+    private static final String[] OLD_CIRCLE_GROUPS = {"buddies", "work", "family"};
     /** the name of each kind in the language of the phone (the strings.xml files in res) */
     private static final int[] KIND_NAME_IDS = {R.string.kind_message, R.string.kind_request, R.string.kind_answer, R.string.kind_removed};
     /** "default" is the phone's own sound; "silent" is "No sound" */
@@ -90,6 +93,7 @@ final class Channels {
         nm.deleteNotificationChannel(SILENT);
         for (String jingle : JINGLES) nm.deleteNotificationChannel("sound_" + jingle);
         for (String kind : KINDS) nm.deleteNotificationChannelGroup("group_" + kind);
+        for (String old : OLD_CIRCLE_GROUPS) nm.deleteNotificationChannelGroup(old); // the channels of the other circles go with their group
 
         for (int c = 0; c < CIRCLES.length; c++) {
             nm.createNotificationChannelGroup(new NotificationChannelGroup(CIRCLES[c], CIRCLE_NAMES[c]));
@@ -118,8 +122,8 @@ final class Channels {
     }
 
     /**
-     * The sound the person chose for each kind (the app's sound settings as JSON: {"message": "file:...", "request": ..., "answer": ..., "circle": "buddies"}):
-     * each kind gets the channel of its sound, in the circle the app is in (`circle`; the first circle when it is left out).
+     * The sound the person chose for each kind (the app's sound settings as JSON: {"message": "file:...", "request": ..., "answer": ...}):
+     * each kind gets the channel of its sound. (An older page may still send "circle": only the first circle's set exists, so it is ignored.)
      */
     static void sync(Context context, JSONObject sounds) {
         // what the page told, and when: NativeCheck shows it, so a bridge call that never arrives can be seen

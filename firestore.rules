@@ -12,7 +12,7 @@ service cloud.firestore {
     // signed-in user's OWN account, to know when something new arrived:
     //   incoming-signal  pings that somebody added me
     //   messages         my messages (the app listens to the unread ones)
-    //   friends          my own friend list (the app listens, so an answer to my request shows at once)
+    //   friends          my own friend lists, all circles (the app listens, so an answer to my request shows at once)
     //   sync             times of my last profile / sounds change, so my other devices follow
     // Nobody writes from the client, and nobody can read somebody else's data.
     //
@@ -35,9 +35,17 @@ service cloud.firestore {
       allow get, write: if false;
     }
 
-    // the friend list of each of my circles (an app is in one circle and listens to that one: friends, buddies, work or family)
+    // the friend list of each of my circles, by its path
     match /user-account/{uid}/friend-circle/{circleId}/friends/{friendId} {
       allow list: if isOwner(uid);
+      allow get, write: if false;
+    }
+
+    // ALL my friend lists at once: the one app listens to every circle (friends, buddies, work, family) with one collection group query,
+    // `collectionGroup('friends').where('ownerUid', '==', my uid)`. Every entry carries `ownerUid` (written by the backend), so the query
+    // can only ever return my own entries: a query without that condition, or with somebody else's uid, is refused.
+    match /{path=**}/friends/{friendId} {
+      allow list: if request.auth != null && resource.data.ownerUid == request.auth.uid;
       allow get, write: if false;
     }
 

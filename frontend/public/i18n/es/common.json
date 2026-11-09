@@ -276,6 +276,7 @@
     "rose": "Rosa",
     "hasYouOnSleep": "Te tiene en su lista de descanso.",
     "pokeAnyway": "Avisar de todos modos",
-    "makesASound": "hace un sonido"
+    "makesASound": "hace un sonido",
+    "activityIn": "Actividad en {{ circle }}"
   }
 }

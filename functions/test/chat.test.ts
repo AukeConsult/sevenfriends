@@ -22,11 +22,11 @@ describe("who can message", () => {
     await u(1).check();
     expect((await u(1).send(pending.id, "hi")).status).toBe(403);
 
-    // rejected
+    // rejected: the connection is gone for both, there is nothing to send to
     const rejected = await u(2).add(u(3).p);
     await u(3).check();
     await u(3).reject(rejected.id);
-    expect((await u(2).send(rejected.id, "hi")).status).toBe(403);
+    expect((await u(2).send(rejected.id, "hi")).status).toBe(404);
 
     // waiting for a seat
     await fillCircle(u(5), MAX_FRIENDS);

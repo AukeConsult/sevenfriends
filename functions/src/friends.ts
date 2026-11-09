@@ -21,10 +21,10 @@ import { circleProfileOf, friendNameOf } from "./circle-profile";
 import { circleCol, friendRequestCol, messageCol, missingIndex, userFields } from "./paths";
 import { avatarOf, readAvatar } from "./avatar";
 import { deleteObjects } from "./sf-cache";
-import { tellFriendAsleep } from "./sync";
+import { tellFriendAsleep, touchSync } from "./sync";
 import { nameOf, sendPush } from "./push";
 import { findAccounts, signalRefsOf, writeSignal } from "./signals";
-import { assignMissingSeats, freeSeat, seatOf } from "./seats";
+import { assignMissingSeats, freeSeat, seatOf, stampOwner } from "./seats";
 import {
   EMAIL_RE,
   PHONE_RE,
@@ -164,6 +164,7 @@ friendsRouter.get(
   "/",
   asyncHandler(async (_req, res) => {
     const snap = await friendCol(res).orderBy("createdAt", "asc").get();
+    await stampOwner(snap.docs, uidOfRequest(res));
     // every friend in a seat has a seat number: older entries get theirs now (and keep it)
     const seats = await assignMissingSeats(friendCol(res));
     const friends = await Promise.all(
@@ -223,6 +224,7 @@ friendsRouter.post(
       tx.set(ref, {
         ...data,
         ...keys,
+        ownerUid: uidOfRequest(res), // whose list this entry is in: the app listens to all its own entries across the circles with this field
         circleId: (res.locals.circleRef as DocumentReference).id, // my circle
         connectionId: ref.id, // one id for the whole connection: both lists and the request use it
         peerCircleId: (res.locals.circleRef as DocumentReference).id, // where the other person's entry will live: the circle of the same kind
@@ -480,6 +482,8 @@ friendsRouter.delete(
     });
     await deleteObjects(files);
     await deleteBox(id); // the files the two shared in their safebox go too
+    // the other person may have my request on their Home: their devices drop it at once (a request I received is gone from my own devices too)
+    await Promise.all([before?.linkedUid ? touchSync(before.linkedUid as string, "requestsAt") : undefined, touchSync(uid, "requestsAt")]);
     if (endedWith) {
       const name = await nameOf(uid, res.locals.token as DecodedIdToken, circleIdOf(before));
       await sendPush(endedWith, { circleId: (before?.peerCircleId as string | undefined) ?? DEFAULT_CIRCLE_ID, id: `removed-${id}`, title: `${name} removed the friendship`, body: "The conversation is deleted for both of you.", url: "/friends", kind: "removed" });

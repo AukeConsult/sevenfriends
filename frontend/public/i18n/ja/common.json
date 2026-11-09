@@ -276,6 +276,7 @@
     "rose": "ローズ",
     "hasYouOnSleep": "あなたをスリープリストに入れています。",
     "pokeAnyway": "それでも送る",
-    "makesASound": "音が鳴ります"
+    "makesASound": "音が鳴ります",
+    "activityIn": "{{ circle }} にアクティビティがあります"
   }
 }

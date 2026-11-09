@@ -29,6 +29,16 @@ export class SafeboxService {
   /** the previews that were read (a file never changes under its id): kept while the app is open */
   private readonly previews = new Map<string, Promise<BoxFile>>();
 
+  constructor() {
+    // another circle: the files, the opened keys and the previews of the old circle are let go (the object URLs too)
+    this.active.onSwitch(() => {
+      this.raw.clear();
+      this.fileKeys.clear();
+      for (const preview of this.previews.values()) void preview.then((file) => URL.revokeObjectURL(file.url), () => undefined);
+      this.previews.clear();
+    });
+  }
+
   private base(friendId: string): string {
     return `/circles/${this.friends.circle()?.id ?? this.active.id}/friends/${friendId}/safebox`;
   }

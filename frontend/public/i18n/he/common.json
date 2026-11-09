@@ -276,6 +276,7 @@
     "rose": "ורד",
     "hasYouOnSleep": "יש אותך ברשימת השינה.",
     "pokeAnyway": "לשלוח דחיפה בכל זאת",
-    "makesASound": "משמיע צליל"
+    "makesASound": "משמיע צליל",
+    "activityIn": "פעילות ב{{ circle }}"
   }
 }

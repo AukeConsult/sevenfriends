@@ -40,7 +40,7 @@
   "ofYourSevenIs": "आपके सात में से 1 अभी आसपास है",
   "ofYourSevenAre": "आपके सात में से {{ n }} अभी आसपास हैं",
   "youHaveNoFree": "आपकी कोई सीट खाली नहीं है। {{ fromName }} का अनुरोध लंबित रहेगा: जगह बनाने के लिए किसी दोस्त को हटाएँ, फिर उसे मानें।",
-  "youRejectedTheRequest": "आपने {{ fromName }} का अनुरोध ठुकरा दिया। उन्हें दिखता है कि वह ठुकराया गया।",
+  "youRejectedTheRequest": "आपने {{ fromName }} का अनुरोध अस्वीकार कर दिया।",
   "youHavenTTalked": "आपने अभी तक {{ friendName }} से बात नहीं की",
   "youHavenTTalked2": "आपने {{ span }} से {{ friendName }} से बात नहीं की",
   "youSpokeToday": "आज बात हुई",

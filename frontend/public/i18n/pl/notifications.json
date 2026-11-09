@@ -40,7 +40,7 @@
   "ofYourSevenIs": "Teraz w pobliżu z Twojej siódemki: 1",
   "ofYourSevenAre": "Teraz w pobliżu z Twojej siódemki: {{ n }}",
   "youHaveNoFree": "Nie masz wolnych miejsc. Zaproszenie od: {{ fromName }} czeka: usuń przyjaciela, żeby zrobić miejsce, potem potwierdź.",
-  "youRejectedTheRequest": "Odrzuciłeś zaproszenie od: {{ fromName }}. Ta osoba widzi, że zostało odrzucone.",
+  "youRejectedTheRequest": "Prośba od {{ fromName }} została odrzucona.",
   "youHavenTTalked": "{{ friendName }}: jeszcze nie rozmawialiście",
   "youHavenTTalked2": "{{ friendName }}: brak rozmowy od {{ span }}",
   "youSpokeToday": "Rozmawialiście dziś",

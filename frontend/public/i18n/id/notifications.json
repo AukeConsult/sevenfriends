@@ -40,7 +40,7 @@
   "ofYourSevenIs": "1 dari tujuh orangmu sedang online",
   "ofYourSevenAre": "{{ n }} dari tujuh orangmu sedang online",
   "youHaveNoFree": "Kamu tidak punya kursi kosong. Permintaan dari {{ fromName }} tetap menunggu: hapus seorang teman untuk memberi ruang, lalu konfirmasi.",
-  "youRejectedTheRequest": "Kamu menolak permintaan dari {{ fromName }}. Mereka bisa melihat bahwa permintaannya ditolak.",
+  "youRejectedTheRequest": "Kamu menolak permintaan dari {{ fromName }}.",
   "youHavenTTalked": "Kamu belum ngobrol dengan {{ friendName }}",
   "youHavenTTalked2": "Kamu sudah {{ span }} tidak ngobrol dengan {{ friendName }}",
   "youSpokeToday": "Kalian ngobrol hari ini",

@@ -18,12 +18,13 @@ export class BottomNav {
   protected readonly circlesOpen = signal(false);
 
   private readonly notifications = inject(NotificationsService);
-  /** the name of the circle this app is in: it is what the Home tab says */
-  private readonly circle = CIRCLE_CHOICES.find((c) => c.id === inject(ActiveCircleService).id);
+  /** the circle in use (it changes when the person picks another one) */
+  private get circle() { return CIRCLE_CHOICES.find((c) => c.id === this.active.id); }
+  /** the name of the circle in use: it is what the Home tab says */
   protected get circleName(): string { return tr(`circle.${this.circle?.id ?? 'default'}.label`, this.circle?.label ?? 'Home'); }
   protected circleLabel(c: { id: string; label: string }): string { return tr(`circle.${c.id}.label`, c.label); }
   /** the kind of circle: the tab has an icon for each (people, a chat bubble, a briefcase, a house with a heart) */
-  protected readonly circleType = this.circle?.type ?? 'friends';
+  protected get circleType(): string { return this.circle?.type ?? 'friends'; }
 
   /** Clicking Home runs the invite + message check (also when already on Home). */
   protected onHome(): void {
@@ -36,7 +37,7 @@ export class BottomNav {
     if (this.circlesOpen() && !(event.target as HTMLElement).closest('.sf-circle-wrap')) this.circlesOpen.set(false);
   }
 
-  /** Tick a circle: the app starts again in it (the live updates too), as on the test page. */
+  /** Tick a circle: the app forgets the old circle and shows the new one (the live updates too), without starting again. */
   protected pick(id: string): void {
     this.circlesOpen.set(false);
     if (id !== this.active.id) this.active.choose(id);

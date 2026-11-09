@@ -1,9 +1,24 @@
-import { CollectionReference, DocumentData, FieldValue, Timestamp, Transaction, getFirestore } from "firebase-admin/firestore";
+import { CollectionReference, DocumentData, FieldValue, QueryDocumentSnapshot, Timestamp, Transaction, getFirestore } from "firebase-admin/firestore";
 import { ensureCircle } from "./circles";
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAX_FRIENDS, circleIdOf } from "./constants";
 import { EnsureSeatArgs } from "./models";
 import { circleCol, friendRequestCol, userDoc } from "./paths";
 import { signalRefsOf } from "./signals";
+
+/** The account a friend list belongs to: user-account/{uid}/friend-circle/{circleId}/friends -> uid. Written on every entry as `ownerUid`. */
+export const ownerOf = (friends: CollectionReference): string => friends.parent?.parent?.parent?.id ?? "";
+
+/**
+ * Entries made before `ownerUid` existed get it now (the app listens to all of a person's entries with one query on that field).
+ * Called whenever a list is read, so an old entry is stamped the first time its owner looks; nothing else about it changes.
+ */
+export async function stampOwner(docs: QueryDocumentSnapshot[], uid: string): Promise<void> {
+  const missing = docs.filter((d) => d.data().ownerUid !== uid);
+  if (!missing.length) return;
+  const batch = getFirestore().batch();
+  missing.forEach((d) => batch.update(d.ref, { ownerUid: uid }));
+  await batch.commit();
+}
 
 /** Friend entry data built from the requester's profile (name + contact details). */
 export function entryFromRequester(requester: DocumentData, request: DocumentData) {
@@ -104,6 +119,7 @@ export function ensureSeat(
       status: "pending",
       waitingForSeat: false,
       linkedUid: request.fromUid,
+      ownerUid: ownerOf(myFriends),
       circleId: myFriends.parent?.id ?? DEFAULT_CIRCLE_ID, // my circle
       connectionId: requestId,
       incomingRequestId: requestId,
@@ -123,6 +139,7 @@ export function ensureSeat(
 
   tx.set(myFriends.doc(requestId), {
     ...entryFromRequester(requester, request),
+    ownerUid: ownerOf(myFriends),
     circleId: myFriends.parent?.id ?? DEFAULT_CIRCLE_ID, // my circle
     connectionId: requestId,
     peerCircleId: request.circleId,

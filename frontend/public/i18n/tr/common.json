@@ -276,6 +276,7 @@
     "rose": "Gül",
     "hasYouOnSleep": "Seni uyku listesine almış.",
     "pokeAnyway": "Yine de dürt",
-    "makesASound": "ses çıkarır"
+    "makesASound": "ses çıkarır",
+    "activityIn": "{{ circle }} içinde etkinlik"
   }
 }

@@ -12,12 +12,9 @@ import { tr } from './i18n';
 export class InviteLinkService {
   private readonly api = inject(ApiService);
   private readonly active = inject(ActiveCircleService);
-  /** the kind of circle I am in: the link invites into it, and its welcome page is the one that is shown */
-  private readonly circle = this.active.type;
-
   private readonly code = signal<string | null>(null);
   /** the link to give away; null until the code is loaded */
-  readonly link = computed(() => (this.code() ? circleLink(this.circle, `invite=${this.code()}`) : null));
+  readonly link = computed(() => (this.code() ? circleLink(this.active.type, `invite=${this.code()}`) : null));
   /** why the link could not be loaded (null = no problem); shown instead of the link, with a way to try again */
   readonly problem = signal<string | null>(null);
   /** what a button just did ("Link copied"), shown for a moment */

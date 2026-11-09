@@ -40,7 +40,7 @@
   "ofYourSevenIs": "אחד משבעת הקרובים שלך זמין כרגע",
   "ofYourSevenAre": "{{ n }} משבעת הקרובים שלך זמינים כרגע",
   "youHaveNoFree": "אין לך מקומות פנויים. הבקשה מאת {{ fromName }} נשארת בהמתנה: אפשר להסיר חבר כדי לפנות מקום, ואז לאשר.",
-  "youRejectedTheRequest": "דחית את הבקשה מאת {{ fromName }}. הם יכולים לראות שנדחתה.",
+  "youRejectedTheRequest": "דחית את הבקשה של {{ fromName }}.",
   "youHavenTTalked": "עדיין לא דיברת עם {{ friendName }}",
   "youHavenTTalked2": "לא דיברת עם {{ friendName }} כבר {{ span }}",
   "youSpokeToday": "דיברתם היום",

@@ -40,7 +40,7 @@
   "ofYourSevenIs": "1 av dine syv er i nærheten akkurat nå",
   "ofYourSevenAre": "{{ n }} av dine syv er i nærheten akkurat nå",
   "youHaveNoFree": "Du har ingen ledige plasser. Forespørselen fra {{ fromName }} blir stående ventende: fjern en venn for å få plass, og bekreft den deretter.",
-  "youRejectedTheRequest": "Du avslo forespørselen fra {{ fromName }}. De kan se at den ble avslått.",
+  "youRejectedTheRequest": "Du avslo forespørselen fra {{ fromName }}.",
   "youHavenTTalked": "Du har ikke snakket med {{ friendName }} ennå",
   "youHavenTTalked2": "Du har ikke snakket med {{ friendName }} på {{ span }}",
   "youSpokeToday": "Dere snakket sammen i dag",

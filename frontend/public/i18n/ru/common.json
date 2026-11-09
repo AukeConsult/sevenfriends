@@ -276,6 +276,7 @@
     "rose": "Роза",
     "hasYouOnSleep": "Держит тебя в списке сна.",
     "pokeAnyway": "Всё равно потревожить",
-    "makesASound": "издаёт звук"
+    "makesASound": "издаёт звук",
+    "activityIn": "Активность: {{ circle }}"
   }
 }

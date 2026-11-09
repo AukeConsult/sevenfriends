@@ -40,7 +40,7 @@
   "ofYourSevenIs": "일곱 명 중 1명이 지금 활동 중이에요",
   "ofYourSevenAre": "일곱 명 중 {{ n }}명이 지금 활동 중이에요",
   "youHaveNoFree": "빈자리가 없어요. {{ fromName }}님의 요청은 대기 중이에요. 친구를 한 명 삭제해 자리를 만든 다음 수락하세요.",
-  "youRejectedTheRequest": "{{ fromName }}님의 요청을 거절했어요. 상대도 거절된 것을 볼 수 있어요.",
+  "youRejectedTheRequest": "{{ fromName }}님의 요청을 거절했습니다.",
   "youHavenTTalked": "아직 {{ friendName }}님과 대화하지 않았어요",
   "youHavenTTalked2": "{{ span }} 동안 {{ friendName }}님과 대화하지 않았어요",
   "youSpokeToday": "오늘 대화했어요",

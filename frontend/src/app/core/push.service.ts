@@ -1,6 +1,7 @@
 import { Injectable, effect, inject, signal, untracked } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { environment } from '../../environments/environment';
+import { ActiveCircleService } from './active-circle.service';
 import { ApiService } from './api.service';
 import { APP_KIND } from './app-kind';
 import { AuthService } from './auth.service';
@@ -25,6 +26,7 @@ export class PushService {
   private readonly api = inject(ApiService);
   private readonly auth = inject(AuthService);
   private readonly desktop = inject(DesktopNoticeService);
+  private readonly active = inject(ActiveCircleService);
 
   /**
    * true inside the Android app (Capacitor): there push goes through the phone's own Firebase service
@@ -49,6 +51,13 @@ export class PushService {
 
   constructor() {
     void this.checkSupport();
+    // the person changes circle: the server is told, so a push about another circle says only "Activity in ..." on this device (see sendPush)
+    this.active.onSwitch((id) => {
+      const token = this.read(TOKEN_KEY);
+      if (token && this.enabled() && this.auth.user()) {
+        void this.api.request<void>('/push/devices/circle', { method: 'PUT', body: JSON.stringify({ token, circle: id }) }).catch(() => undefined);
+      }
+    });
     // signed in again with push on: make sure this device is registered for the person who is signed in now
     effect(() => {
       const user = this.auth.user();
@@ -128,7 +137,7 @@ export class PushService {
   private async refresh(): Promise<void> {
     const token = await this.currentToken();
     if (!token) throw new Error(tr('core.thisBrowserDidNot', 'This browser did not give a push token.'));
-    await this.api.request<void>('/push/devices', { method: 'POST', body: JSON.stringify({ token, app: APP_KIND }) });
+    await this.api.request<void>('/push/devices', { method: 'POST', body: JSON.stringify({ token, app: APP_KIND, circle: this.active.id }) });
     this.write(TOKEN_KEY, token);
   }
 

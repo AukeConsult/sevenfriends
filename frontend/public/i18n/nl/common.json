@@ -276,6 +276,7 @@
     "rose": "Roze",
     "hasYouOnSleep": "Heeft je op de slaaplijst.",
     "pokeAnyway": "Toch aanstoten",
-    "makesASound": "maakt geluid"
+    "makesASound": "maakt geluid",
+    "activityIn": "Activiteit in {{ circle }}"
   }
 }

@@ -40,7 +40,7 @@
   "ofYourSevenIs": "你的七位中有 1 位现在在线",
   "ofYourSevenAre": "你的七位中有 {{ n }} 位现在在线",
   "youHaveNoFree": "你没有空位了。{{ fromName }} 的请求会保持待处理：请移除一位朋友来腾出位置，然后确认。",
-  "youRejectedTheRequest": "你拒绝了 {{ fromName }} 的请求。对方能看到请求已被拒绝。",
+  "youRejectedTheRequest": "你拒绝了 {{ fromName }} 的请求。",
   "youHavenTTalked": "你还没有和 {{ friendName }} 聊过",
   "youHavenTTalked2": "你已经 {{ span }} 没有和 {{ friendName }} 聊过了",
   "youSpokeToday": "你们今天聊过了",

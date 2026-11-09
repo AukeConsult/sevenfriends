@@ -40,7 +40,7 @@
   "ofYourSevenIs": "Зараз поруч 1 із твоєї сімки",
   "ofYourSevenAre": "Зараз поруч {{ n }} із твоєї сімки",
   "youHaveNoFree": "Вільних місць немає. Запит від {{ fromName }} залишається в очікуванні: прибери одного з друзів, щоб звільнити місце, а тоді підтверди.",
-  "youRejectedTheRequest": "Ти відхилив(ла) запит від {{ fromName }}. Ця людина бачить, що його відхилено.",
+  "youRejectedTheRequest": "Ви відхилили запит від {{ fromName }}.",
   "youHavenTTalked": "Ти ще не розмовляв(ла) з {{ friendName }}",
   "youHavenTTalked2": "Ти не розмовляв(ла) з {{ friendName }} уже {{ span }}",
   "youSpokeToday": "Ви розмовляли сьогодні",

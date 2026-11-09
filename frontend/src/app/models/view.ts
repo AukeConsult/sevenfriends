@@ -29,6 +29,8 @@ export interface LiveMessage {
 export interface Notice {
   kind: 'success' | 'warning';
   text: string;
+  /** fades out and goes by itself after a few seconds (a note that only confirms what the person just did) */
+  fade?: boolean;
 }
 
 /** The phone page has two steps: write the number, then the code from the SMS. */

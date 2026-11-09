@@ -1,3 +1,4 @@
+import { ActiveCircleService } from './active-circle.service';
 import { Injectable, inject } from '@angular/core';
 import { ChatMessage, MediaRef, MessageEnc, MessageEncMedia } from '../models';
 import { AuthService } from './auth.service';
@@ -32,6 +33,11 @@ export class MessageLockService {
   private readonly plain = this.prefs.value('boxPlain');
   /** the texts that were opened, by friend, message and iv (a new edit has a new iv): the feed is read again after every new message, a key is not used again for what is known */
   private readonly opened = new Map<string, { text: string; media: MediaRef | null }>();
+
+  constructor() {
+    // another circle: the opened texts of the old circle are let go
+    inject(ActiveCircleService).onSwitch(() => this.opened.clear());
+  }
 
   /** The key of this person on this device with its id, or null when there is none. */
   private myKey(): Promise<{ uid: string; keyId: string; privateKey: CryptoKey } | null> {

@@ -6,6 +6,7 @@ import { CircleSwitch } from './circle-switch/circle-switch';
 import { OwnKeyPrompt } from './own-key-prompt/own-key-prompt';
 import { AndroidChannelsService } from './core/android-channels.service';
 import { AppUpdateService } from './core/app-update.service';
+import { ActiveCircleService } from './core/active-circle.service';
 import { AuthService } from './core/auth.service';
 import { FriendLinkService } from './core/friend-link.service';
 import { InstallService } from './core/install.service';
@@ -50,6 +51,7 @@ export class App {
   private readonly router = inject(Router);
   private readonly prefs = inject(UiPreferencesService);
   private readonly friendLink = inject(FriendLinkService);
+  protected readonly active = inject(ActiveCircleService);
 
   constructor() {
     inject(LanguageService); // the texts follow the language of the account (or the country, or the browser)

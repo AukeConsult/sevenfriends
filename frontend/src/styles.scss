@@ -1582,3 +1582,29 @@ img { -webkit-user-drag: none; }
 .sf-hs-friend img, .sf-hs-friend svg, .sf-slot img, .sf-slot-empty img { pointer-events: none; -webkit-user-drag: none; }
 .sf-hs-friend { touch-action: pan-y; } // a vertical swipe still scrolls the page; the hold that picks the friend up takes over (touch-action: none, see .sf-hs-lift)
 .sf-hs-friend.sf-hs-lift { touch-action: none; }
+
+/* The note for another circle with activity ("Activity in Family"): one row, tap to open that circle */
+.sf-activity {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  min-height: var(--sf-touch);
+  margin-block-start: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--sf-border);
+  border-radius: var(--sf-radius);
+  background: #fff;
+  color: var(--sf-text);
+  text-align: start;
+  font-size: var(--sf-fs-text);
+}
+.sf-activity:active { transform: scale(0.98); }
+.sf-activity-dot { flex: none; inline-size: 0.6rem; block-size: 0.6rem; border-radius: 50%; background: var(--sf-red); }
+.sf-activity-text { flex: 1 1 auto; font-weight: 600; }
+.sf-activity-go { flex: none; color: var(--sf-primary); }
+html[dir='rtl'] .sf-activity-go { transform: scaleX(-1); }
+
+/* A note that confirms what was just done: it stays, then fades out (the page removes it when the fade ends: NOTICE_FADE_MS in notifications.ts) */
+.sf-fade { animation: sf-fade-out 5s ease forwards; }
+@keyframes sf-fade-out { 0%, 65% { opacity: 1; } 100% { opacity: 0; } }

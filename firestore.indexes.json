@@ -60,6 +60,20 @@
     },
     {
       "collectionGroup": "friends",
+      "fieldPath": "ownerUid",
+      "indexes": [
+        {
+          "order": "ASCENDING",
+          "queryScope": "COLLECTION"
+        },
+        {
+          "order": "ASCENDING",
+          "queryScope": "COLLECTION_GROUP"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "friends",
       "fieldPath": "linkedUid",
       "indexes": [
         {

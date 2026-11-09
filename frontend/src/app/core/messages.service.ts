@@ -11,9 +11,14 @@ export class MessagesService {
   /** Unread incoming messages, newest first. */
   readonly messages = signal<Message[]>([]);
 
+  constructor() {
+    this.active.onSwitch(() => this.messages.set([]));
+  }
+
   async load(): Promise<void> {
+    const generation = this.active.generation;
     const res = await this.api.request<{ messages: Message[] }>('/messages');
-    this.replace(res.messages);
+    if (generation === this.active.generation) this.replace(res.messages);
   }
 
   /** The unread list, from the server: only the messages of the circle this app is in (an app is blind to the other circles). */

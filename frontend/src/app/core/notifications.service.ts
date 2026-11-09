@@ -24,29 +24,44 @@ export class NotificationsService {
 
   private inflight: Promise<void> | null = null;
 
+  constructor() {
+    // another circle: a check that is still running was asked in the old one, so a new one is made for the new circle
+    this.active.onSwitch(() => {
+      this.inflight = null;
+      this.loading.set(false);
+      this.loaded.set(false);
+      this.error.set(null);
+    });
+  }
+
   /** Safe to call often: a check that is already running is reused. */
   refresh(): Promise<void> {
     if (this.inflight) return this.inflight;
 
     this.loading.set(true);
     this.error.set(null);
-    this.inflight = (async () => {
+    const generation = this.active.generation;
+    const run: Promise<void> = (async () => {
       try {
         const res = await this.api.request<CheckResult>(
           '/notifications/check',
           { method: 'POST' },
         );
         // blind to the other circles: the messages are the ones of this circle; a request still always lands in the friends circle, so only that app shows them (until a request carries its circle)
+        if (generation !== this.active.generation) return; // the circle was changed meanwhile: this answer is about the old one
         this.friends.requests.set(res.requests); // the server answers with the requests of the circle this app is in only
         this.messages.replace(res.messages);
       } catch (err: any) {
-        this.error.set(err.message ?? tr('core.couldNotLoadNotifications', 'Could not load notifications'));
+        if (generation === this.active.generation) this.error.set(err.message ?? tr('core.couldNotLoadNotifications', 'Could not load notifications'));
       } finally {
-        this.loading.set(false);
-        this.loaded.set(true);
-        this.inflight = null;
+        if (generation === this.active.generation) {
+          this.loading.set(false);
+          this.loaded.set(true);
+          this.inflight = null;
+        }
       }
     })();
-    return this.inflight;
+    this.inflight = run;
+    return run;
   }
 }

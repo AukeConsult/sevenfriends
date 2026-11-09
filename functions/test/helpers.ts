@@ -239,6 +239,7 @@ export async function assertConsistent() {
     }
     for (const e of group) {
       if (e.data.connectionId !== id) fail(`entry ${e.uid}/${id} has connectionId ${e.data.connectionId}`);
+      if (e.data.ownerUid !== e.uid) fail(`entry ${e.uid}/${id} has ownerUid ${e.data.ownerUid} (the app listens to all its entries with it)`);
       // 3. confirmed means both sides have it
       if (e.data.status === "confirmed" && group.length !== 2) fail(`confirmed entry ${e.uid}/${id} has no other side`);
       // rejected: only the requester keeps it

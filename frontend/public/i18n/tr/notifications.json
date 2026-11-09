@@ -40,7 +40,7 @@
   "ofYourSevenIs": "Yedi kişinden 1'i şu an yakınlarda",
   "ofYourSevenAre": "Yedi kişinden {{ n }} tanesi şu an yakınlarda",
   "youHaveNoFree": "Boş yerin yok. {{ fromName }} kişisinin isteği beklemede: yer açmak için bir arkadaşı çıkar, sonra onayla.",
-  "youRejectedTheRequest": "{{ fromName }} kişisinin isteğini reddettin. Reddedildiğini görebilir.",
+  "youRejectedTheRequest": "{{ fromName }} kişisinin isteğini reddettin.",
   "youHavenTTalked": "{{ friendName }} ile henüz konuşmadın",
   "youHavenTTalked2": "{{ friendName }} ile konuşmayalı: {{ span }}",
   "youSpokeToday": "Bugün konuştunuz",

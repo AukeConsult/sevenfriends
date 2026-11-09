@@ -35,6 +35,13 @@ export class LookSyncService {
         if (user) void this.pull();
       });
     });
+    // another circle: its choices are its own, so this screen starts from the defaults and shows what the new circle has (nothing is saved before that)
+    this.active.onSwitch(() => {
+      this.known = null;
+      this.circleId = null;
+      for (const key of SYNCED) (this.prefs.set as (k: string, v: unknown) => void)(key, DEFAULTS[key]);
+      if (this.auth.user()) void this.pull();
+    });
     // a change made on this device is saved to the account
     effect(() => {
       const current = Object.fromEntries(this.signals.map(([key, value]) => [key, value()]));
@@ -46,9 +53,11 @@ export class LookSyncService {
 
   /** Reads the choices of the circle and shows them; what the circle lacks is filled from this device. */
   private async pull(): Promise<void> {
+    const generation = this.active.generation;
     try {
       const { circles } = await this.api.request<{ circles: Circle[] }>('/circles');
-      const circle = circles.find((c) => c.id === this.active.id); // the circle this app is bound to
+      if (generation !== this.active.generation) return; // the circle was changed meanwhile
+      const circle = circles.find((c) => c.id === this.active.id); // the circle in use
       if (!circle) return;
       this.circleId = circle.id;
       const stored = circle.settings ?? {};

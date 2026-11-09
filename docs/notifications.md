@@ -14,13 +14,18 @@
 - A kind switched off is not sent (the test notification ignores this).
 - `hideText` replaces a message body with "New message".
 - Sound choice "none" uses the Android channel `silent` and sends `silent:"1"` for the web service worker.
-- Android: a push is shown in channel `<kind>_<sound>` (`message_drill`, `request_silent`, `removed_default`...). There is ONE channel per kind, with the sound chosen in the app, so Android's own settings show the same four entries. `push.ts` `channelFor` and `Channels.java` must match. Android never changes the sound of an existing channel, so when a sound changes, `Channels.sync` replaces the kind's channel by the one of the new sound (a kind switched off in Android stays off). The page tells the app the sounds at start, on change and on return (`android-channels.service.ts`). A push for a channel the phone does not have yet (sound changed on another device) lands in the `default` channel until the app is opened.
+- Android: a push is shown in channel `friends_<kind>_<sound>` (`friends_message_drill`, `friends_request_silent`, `friends_removed_default`...). There is ONE set of channels for the ONE app, whichever circle a push is about: one channel per kind, with the sound chosen in the app, so Android's own settings show the same four entries in one group. `push.ts` `channelFor` and `Channels.java` must match. `Channels.ensure` deletes the groups of the other circles that earlier versions made. Android never changes the sound of an existing channel, so when a sound changes, `Channels.sync` replaces the kind's channel by the one of the new sound (a kind switched off in Android stays off). The page tells the app the sounds at start, on change and on return (`android-channels.service.ts`). A push for a channel the phone does not have yet (sound changed on another device) lands in the `default` channel until the app is opened.
 
 ## Test
 Settings -> "Send me a test notification" calls `POST /push/test` and shows how many devices were reached.
 
+## Several circles
+- The device tells the server which circle the app is in (`POST /push/devices { token, app, circle }` when it registers, `PUT /push/devices/circle { token, circle }` at every switch of circle: `PushService`). The server keeps it as `circleId` on the device.
+- `sendPush` (push.ts): a device in the circle the push is about (or one that never told) gets the push as it is: the text, the sound the person chose for that kind, url with `?incircle=<type>` (if the app is not in that circle after all, it asks before switching). A device in ANOTHER circle gets only "Activity in <Circle>": no text, the default message sound (`friends_message_default`), url with `?opencircle=<type>`. A tap on it switches the app to that circle at once and opens the page (`CircleSwitch`). The switches (message / request / answer / removed) decide for both. The web app shows nothing for a push while it is in front (it hears every circle itself).
+- The push text is still English: the backend texts are translated in the last step.
+
 ## Badge
-`AttentionService` sets the app icon count (`navigator.setAppBadge`) from unread messages + waiting requests.
+`AttentionService` sets the app icon count (`navigator.setAppBadge`) from unread messages + waiting requests in the circle in use, plus one for each other circle with activity (the total across circles). The Android launcher shows its own dot for the notifications it has.
 
 ## Not done
 Sleep / quiet hours handling (postponed); Windows WNS.

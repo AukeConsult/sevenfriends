@@ -40,7 +40,7 @@
   "ofYourSevenIs": "1 seitsemästäsi on paikalla juuri nyt",
   "ofYourSevenAre": "{{ n }} seitsemästäsi on paikalla juuri nyt",
   "youHaveNoFree": "Sinulla ei ole vapaita paikkoja. Käyttäjän {{ fromName }} pyyntö odottaa: poista ystävä tehdäksesi tilaa ja hyväksy sitten.",
-  "youRejectedTheRequest": "Hylkäsit käyttäjän {{ fromName }} pyynnön. Hän näkee, että se hylättiin.",
+  "youRejectedTheRequest": "Hylkäsit henkilön {{ fromName }} pyynnön.",
   "youHavenTTalked": "Et ole vielä jutellut käyttäjän {{ friendName }} kanssa",
   "youHavenTTalked2": "Et ole jutellut käyttäjän {{ friendName }} kanssa aikoihin ({{ span }})",
   "youSpokeToday": "Juttelitte tänään",

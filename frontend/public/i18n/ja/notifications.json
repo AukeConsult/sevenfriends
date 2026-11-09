@@ -40,7 +40,7 @@
   "ofYourSevenIs": "7人のうち1人が今いますよ",
   "ofYourSevenAre": "7人のうち {{ n }} 人が今いますよ",
   "youHaveNoFree": "空いている席がありません。{{ fromName }}さんからのリクエストは保留のままです。友だちを外して席を空けてから、承認してください。",
-  "youRejectedTheRequest": "{{ fromName }}さんからのリクエストを断りました。断られたことは相手にも表示されます。",
+  "youRejectedTheRequest": "{{ fromName }} さんのリクエストを拒否しました。",
   "youHavenTTalked": "{{ friendName }}さんとは、まだ話していません",
   "youHavenTTalked2": "{{ friendName }}さんとは、{{ span }}話していません",
   "youSpokeToday": "今日話しました",

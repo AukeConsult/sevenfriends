@@ -88,3 +88,20 @@ describe("the seat numbers", () => {
     expect((await pool[0].friends()).find((f) => f.id === entry.id)).toMatchObject({ status: "confirmed", theyAsleep: true });
   });
 });
+
+describe("ownerUid on the entries (the app listens to all of a person's circles with one query on it)", () => {
+  it("is on the entries of both sides, and an old entry without it gets it when its owner reads the list", async () => {
+    const a = await pool[0].add(pool[1].p);
+    await pool[1].check(); // the other side finds the request
+    const entryOf = (uid: string) => getFirestore().collection("user-account").doc(uid).collection("friend-circle").doc("default").collection("friends").doc(a.id);
+    const mine = entryOf(pool[0].p.uid);
+    expect((await mine.get()).data()?.ownerUid).toBe(pool[0].p.uid);
+    const theirs = entryOf(pool[1].p.uid);
+    await pool[1].confirm(a.id);
+    expect((await theirs.get()).data()?.ownerUid).toBe(pool[1].p.uid);
+
+    await mine.update({ ownerUid: FieldValue.delete() }); // an entry made before the field existed
+    await pool[0].friends();
+    expect((await mine.get()).data()?.ownerUid).toBe(pool[0].p.uid);
+  });
+});

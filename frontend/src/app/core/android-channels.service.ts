@@ -1,7 +1,6 @@
 import { effect, inject, Injectable, signal } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { NoticePreferences } from '../models';
-import { ActiveCircleService, CIRCLE_CHOICES } from './active-circle.service';
 import { NoticesService } from './notices.service';
 import { PushService } from './push.service';
 import { SoundService } from './sound.service';
@@ -30,9 +29,6 @@ export class AndroidChannelsService {
   private readonly sounds = inject(SoundService);
   private readonly notices = inject(NoticesService);
   private readonly push = inject(PushService);
-  private readonly active = inject(ActiveCircleService);
-  /** the circle this app is in, as Android and the server name it (friends, buddies, work, family): Android has a group of channels for each */
-  private readonly circle = CIRCLE_CHOICES.find((c) => c.id === this.active.id)?.type ?? 'friends';
 
   /** The phone's notification volume in percent, as the Android app last sent it (null = not sent yet). The app's own volume follows it. */
   readonly phoneVolume = signal<number | null>(null);
@@ -96,9 +92,9 @@ export class AndroidChannelsService {
     return window as unknown as AndroidHost;
   }
 
-  /** the sounds of each kind, and the circle they are for */
+  /** the sounds of each kind (one set of Android channels serves every circle) */
   private soundsJson(): string {
-    return JSON.stringify({ ...this.sounds.choices(), circle: this.circle });
+    return JSON.stringify(this.sounds.choices());
   }
 
   private tell(sounds: string): void {

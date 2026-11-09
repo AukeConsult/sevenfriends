@@ -276,6 +276,7 @@
     "rose": "Róża",
     "hasYouOnSleep": "Ma Cię na liście uśpionych.",
     "pokeAnyway": "Szturchnij mimo to",
-    "makesASound": "wydaje dźwięk"
+    "makesASound": "wydaje dźwięk",
+    "activityIn": "Aktywność: {{ circle }}"
   }
 }

@@ -32,7 +32,8 @@ describe.skipIf(!USING_EMULATOR)("firestore security rules: every user controls 
         const base = `user-account/${uid}`;
         await db.doc(base).set({ uid, email: `${uid}@test.dev` });
         await db.doc(`${base}/friend-circle/default`).set({ name: "My friends", type: "friends" });
-        await db.doc(`${base}/friend-circle/default/friends/f1`).set({ name: "A friend", status: "pending" });
+        await db.doc(`${base}/friend-circle/default/friends/f1`).set({ name: "A friend", status: "pending", ownerUid: uid });
+        await db.doc(`${base}/friend-circle/buddies/friends/b1`).set({ name: "A buddy", status: "pending", ownerUid: uid });
         await db.doc(`${base}/friend-request/r1`).set({ fromUid: "x", status: "pending" });
         await db.doc(`${base}/incoming-signal/s1`).set({ connectionId: "c1" });
         await db.doc(`${base}/messages/m1`).set({ connectionId: "c1", text: "hello", read: false });
@@ -66,6 +67,23 @@ describe.skipIf(!USING_EMULATOR)("firestore security rules: every user controls 
       for (const circle of ["buddies", "work", "family"]) {
         await assertSucceeds(me().collection(`user-account/uid01/friend-circle/${circle}/friends`).get());
       }
+    });
+  });
+
+  describe("all my friend lists at once (one collection group query on ownerUid: the app listens to every circle)", () => {
+    it("my entries of every circle", async () => {
+      const snap = await assertSucceeds(me().collectionGroup("friends").where("ownerUid", "==", "uid01").get());
+      const ids = snap.docs.map((d) => d.ref.path).sort();
+      if (ids.join() !== "user-account/uid01/friend-circle/buddies/friends/b1,user-account/uid01/friend-circle/default/friends/f1") throw new Error(`wrong entries: ${ids.join()}`);
+    });
+
+    it.each([
+      ["the query without the owner condition (it would reach everybody's entries)", () => me().collectionGroup("friends").get()],
+      ["somebody else's entries", () => me().collectionGroup("friends").where("ownerUid", "==", "uid02").get()],
+      ["a stranger asking for my entries", () => stranger().collectionGroup("friends").where("ownerUid", "==", "uid01").get()],
+      ["somebody not signed in", () => anonymous().collectionGroup("friends").where("ownerUid", "==", "uid01").get()],
+    ])("cannot read %s", async (_label, read) => {
+      await assertFails(read());
     });
   });
 
@@ -140,7 +158,7 @@ describe.skipIf(!USING_EMULATOR)("firestore security rules: every user controls 
 
     it("cannot list the user accounts or read friend lists with a collection group query", async () => {
       await assertFails(me().collection("user-account").get());
-      await assertFails(me().collectionGroup("friends").get()); // my own list is read by its path, never by a group query
+      await assertFails(me().collectionGroup("friends").get()); // the group query needs the owner condition, see above
       await assertFails(me().collectionGroup("friend-request").get());
     });
   });

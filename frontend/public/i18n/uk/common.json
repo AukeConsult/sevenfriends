@@ -276,6 +276,7 @@
     "rose": "Троянда",
     "hasYouOnSleep": "Тебе додано до списку сну.",
     "pokeAnyway": "Все одно штовхнути",
-    "makesASound": "лунає звук"
+    "makesASound": "лунає звук",
+    "activityIn": "Активність: {{ circle }}"
   }
 }

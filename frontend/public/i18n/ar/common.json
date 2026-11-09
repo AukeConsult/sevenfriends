@@ -276,6 +276,7 @@
     "rose": "وردي",
     "hasYouOnSleep": "لديه اسمك في قائمة النوم.",
     "pokeAnyway": "انكزه رغم ذلك",
-    "makesASound": "يُصدر صوتًا"
+    "makesASound": "يُصدر صوتًا",
+    "activityIn": "نشاط في {{ circle }}"
   }
 }

@@ -6,14 +6,18 @@ import { userDoc } from "./paths";
  * data (realtime.service.ts), so a change is announced by writing a stamp that the app can see change:
  *
  *   my profile / my sounds changed   user-account/<uid>/sync/state   (touchSync)
+ *   my friend requests changed       user-account/<uid>/sync/state   (touchSync, `requestsAt`: a request that reached me is gone or was answered)
  *   a message feed changed           `messagesChangedAt` on the friendship entry (touchFeed, touchFeedIfExists)
  *   a friend put me to sleep         `theyAsleep` on my entry of the friendship (tellFriendAsleep)
  *
  * A new feature that must show on another device calls one of these, it never writes a stamp by hand.
  */
 
-/** The same person is signed in on several devices: my profile (`profileAt`) or my sounds (`preferencesAt`) changed. */
-export async function touchSync(uid: string, field: "profileAt" | "preferencesAt"): Promise<void> {
+/**
+ * The same person is signed in on several devices, or somebody else changed what I see: my profile (`profileAt`) or my sounds (`preferencesAt`) changed,
+ * or the requests that reached me did (`requestsAt`: the person who asked deleted the request, or I answered it on another device).
+ */
+export async function touchSync(uid: string, field: "profileAt" | "preferencesAt" | "requestsAt"): Promise<void> {
   try {
     await userDoc(uid).collection("sync").doc("state").set({ [field]: FieldValue.serverTimestamp() }, { merge: true });
   } catch (err) {
