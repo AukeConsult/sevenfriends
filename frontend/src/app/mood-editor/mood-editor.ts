@@ -1,3 +1,5 @@
+import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
+import { tr } from '../core/i18n';
 import { Clearable } from '../core/clearable';
 import { Component, DestroyRef, ElementRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -15,8 +17,9 @@ const SAVE_MESSAGE_MS = 800;
  */
 @Component({
   selector: 'app-mood-editor',
-  imports: [Clearable],
+  imports: [Clearable, TranslocoDirective],
   templateUrl: './mood-editor.html',
+  providers: [provideTranslocoScope('moodEditor')],
 })
 export class MoodEditor {
   private readonly api = inject(ApiService);
@@ -63,7 +66,7 @@ export class MoodEditor {
       this.mood.set(profile.mood);
       this.message.set(profile.moodMessage ?? '');
     } catch (err: any) {
-      this.error.set(err.message ?? 'Could not load your mood');
+      this.error.set(err.message ?? tr('moodEditor.couldNotLoadYour', 'Could not load your mood'));
     } finally {
       this.loaded.set(true);
     }
@@ -108,7 +111,7 @@ export class MoodEditor {
     try {
       await this.api.request<ProfileDetails>('/profile/mood', { method: 'PUT', body: JSON.stringify(body), keepalive });
     } catch (err: any) {
-      this.error.set(err.message ?? 'Could not save your mood');
+      this.error.set(err.message ?? tr('moodEditor.couldNotSaveYour', 'Could not save your mood'));
     }
   }
 }

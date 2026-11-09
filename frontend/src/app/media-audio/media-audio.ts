@@ -1,3 +1,4 @@
+import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { Component, inject, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { formatBytes } from '../core/image';
@@ -7,8 +8,9 @@ import { MediaRef } from '../models';
 /** An audio message: a play button (with the length and size); the audio is read from the server (`getObject`) only when it is played. */
 @Component({
   selector: 'app-media-audio',
-  imports: [RouterLink],
+  imports: [RouterLink, TranslocoDirective],
   templateUrl: './media-audio.html',
+  providers: [provideTranslocoScope('mediaAudio')],
 })
 export class MediaAudio {
   private readonly service = inject(MediaService);

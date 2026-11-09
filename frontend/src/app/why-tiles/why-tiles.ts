@@ -1,12 +1,13 @@
 import { Component, computed, input } from '@angular/core';
+import { tr } from '../core/i18n';
 import { circleWords } from '../core/active-circle.service';
 
 /** The one argument of each circle (its own line on every welcome page of that circle). */
 const LEAD: Record<string, string> = {
-  default: 'The friends who matter, in one calm place.',
-  buddies: 'Your real buddies, away from the feed.',
-  work: 'The few contacts your work depends on.',
-  family: 'Your family, close even when far apart.',
+  get default() { return tr('core.theFriendsWhoMatter', 'The friends who matter, in one calm place.'); },
+  get buddies() { return tr('core.yourRealBuddiesAway', 'Your real buddies, away from the feed.'); },
+  get work() { return tr('core.theFewContactsYour', 'The few contacts your work depends on.'); },
+  get family() { return tr('core.yourFamilyCloseEven', 'Your family, close even when far apart.'); },
 };
 
 /**
@@ -18,13 +19,14 @@ const LEAD: Record<string, string> = {
   template: `
     <p class="sf-why-lead">{{ lead() }}</p>
     <div class="sf-why">
-      <div><b>Seven seats</b>Your seven closest {{ words().many }}. No one gets lost.</div>
-      <div><b>Quiet</b>Only your seven get through. No feeds, no ads.</div>
-      <div><b>Private</b>A locked room for each {{ words().one }}. Only you two.</div>
+      <div><b>{{ tr('core.sevenSeats', 'Seven seats') }}</b>{{ tr('core.yourSevenClosestNo', 'Your seven closest ' + (words().many) + '. No one gets lost.', { many: words().many }) }}</div>
+      <div><b>{{ tr('core.quiet', 'Quiet') }}</b>{{ tr('core.onlyYourSevenGet', 'Only your seven get through. No feeds, no ads.') }}</div>
+      <div><b>{{ tr('core.private', 'Private') }}</b>{{ tr('core.aLockedRoomFor', 'A locked room for each ' + (words().one) + '. Only you two.', { one: words().one }) }}</div>
     </div>
   `,
 })
 export class WhyTiles {
+  protected readonly tr = tr;
   /** the id of the circle of the page */
   readonly circle = input.required<string>();
   protected readonly words = computed(() => circleWords(this.circle()));

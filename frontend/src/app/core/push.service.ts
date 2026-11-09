@@ -5,6 +5,7 @@ import { ApiService } from './api.service';
 import { APP_KIND } from './app-kind';
 import { AuthService } from './auth.service';
 import { DesktopNoticeService } from './desktop-notice.service';
+import { tr } from './i18n';
 
 const ENABLED_KEY = 'sf-push';
 const TOKEN_KEY = 'sf-push-token';
@@ -87,18 +88,18 @@ export class PushService {
         return false;
       }
       if (!this.supported()) {
-        this.problem.set(this.configured ? 'This browser cannot receive push notifications. On iPhone, add the app to the Home Screen first.' : 'Push notifications only work on the deployed site, not in the local setup.');
+        this.problem.set(this.configured ? tr('core.thisBrowserCannotReceive', 'This browser cannot receive push notifications. On iPhone, add the app to the Home Screen first.') : tr('core.pushNotificationsOnlyWork', 'Push notifications only work on the deployed site, not in the local setup.'));
         return false;
       }
       if (this.native) {
         if (!(await this.allowNative())) {
-          this.problem.set('Notifications are blocked for the app. Allow them in the phone settings (Apps, Seven Friends, Notifications), then try again.');
+          this.problem.set(tr('core.notificationsAreBlockedFor', 'Notifications are blocked for the app. Allow them in the phone settings (Apps, Seven Friends, Notifications), then try again.'));
           return false;
         }
       } else {
         if (Notification.permission === 'default') await Notification.requestPermission();
         if (Notification.permission !== 'granted') {
-          this.problem.set('Notifications are blocked for this site. Allow them in the browser settings, then try again.');
+          this.problem.set(tr('core.notificationsAreBlockedFor2', 'Notifications are blocked for this site. Allow them in the browser settings, then try again.'));
           return false;
         }
       }
@@ -107,7 +108,7 @@ export class PushService {
       this.enabled.set(true);
       return true;
     } catch (error) {
-      this.problem.set((error as Error).message || 'Could not turn push on. Please try again.');
+      this.problem.set((error as Error).message || tr('core.couldNotTurnPush', 'Could not turn push on. Please try again.'));
       return false;
     }
   }
@@ -126,7 +127,7 @@ export class PushService {
   /** Gets the device's push token (it can change) and registers it for the signed-in person. */
   private async refresh(): Promise<void> {
     const token = await this.currentToken();
-    if (!token) throw new Error('This browser did not give a push token.');
+    if (!token) throw new Error(tr('core.thisBrowserDidNot', 'This browser did not give a push token.'));
     await this.api.request<void>('/push/devices', { method: 'POST', body: JSON.stringify({ token, app: APP_KIND }) });
     this.write(TOKEN_KEY, token);
   }
@@ -155,14 +156,14 @@ export class PushService {
     const handles: { remove: () => Promise<void> }[] = [];
     try {
       return await new Promise<string | null>((resolve, reject) => {
-        const timer = setTimeout(() => reject(new Error('The phone did not give a push token. Check the internet connection and try again.')), 20000);
+        const timer = setTimeout(() => reject(new Error(tr('core.thePhoneDidNot', 'The phone did not give a push token. Check the internet connection and try again.'))), 20000);
         const done = (fn: () => void) => {
           clearTimeout(timer);
           fn();
         };
         void (async () => {
           handles.push(await PushNotifications.addListener('registration', (token) => done(() => resolve(token.value))));
-          handles.push(await PushNotifications.addListener('registrationError', (e) => done(() => reject(new Error(e.error || 'The phone could not register for push.')))));
+          handles.push(await PushNotifications.addListener('registrationError', (e) => done(() => reject(new Error(e.error || tr('core.thePhoneCouldNot', 'The phone could not register for push.'))))));
           await PushNotifications.register();
         })().catch((error) => done(() => reject(error)));
       });

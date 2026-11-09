@@ -1,3 +1,4 @@
+import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../core/auth.service';
@@ -12,8 +13,9 @@ import { WelcomeService } from '../core/welcome.service';
  */
 @Component({
   selector: 'app-install-device',
-  imports: [RouterLink],
+  imports: [RouterLink, TranslocoDirective],
   templateUrl: './install-device.html',
+  providers: [provideTranslocoScope('installDevice')],
 })
 export class InstallDevice implements OnInit {
   protected readonly app = inject(InstallService);

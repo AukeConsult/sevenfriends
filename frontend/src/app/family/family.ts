@@ -1,3 +1,4 @@
+import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { NgTemplateOutlet } from '@angular/common';
 import { WhyTiles } from '../why-tiles/why-tiles';
 import { NextStep } from '../next-step/next-step';
@@ -10,8 +11,9 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
  */
 @Component({
   selector: 'app-family',
-  imports: [NgTemplateOutlet, RouterLink, NextStep, WhyTiles],
+  imports: [NgTemplateOutlet, RouterLink, NextStep, WhyTiles, TranslocoDirective],
   templateUrl: './family.html',
+  providers: [provideTranslocoScope('family')],
 })
 export class Family {
   protected readonly variant: 1 | 2 | 3 = (inject(ActivatedRoute).snapshot.data['variant'] ?? 1) as 1 | 2 | 3;

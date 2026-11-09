@@ -1,6 +1,7 @@
-<section class="sf-hs" aria-label="Your seven seats">
+<ng-container *transloco="let t">
+<section class="sf-hs" [attr.aria-label]="t('homeSeats.yourSevenSeats') || 'Your seven seats'">
   <div class="sf-hs-head">
-    <h2 class="sf-section m-0">Your seven</h2>
+    <h2 class="sf-section m-0">{{ t('homeSeats.yourSeven') || 'Your seven' }}</h2>
   </div>
   @if (error()) { <p class="text-danger small mb-2" role="alert">{{ error() }}</p> }
 
@@ -10,7 +11,7 @@
         @if (slot.friend; as friend) {
           <div class="sf-hs-friend" [class.sf-dragging]="dragging()?.from === slot.position" [class.sf-hs-press]="pressing() === slot.position" [class.sf-hs-lift]="dragging()?.from === slot.position" [class.sf-hs-dim]="friend.status !== 'confirmed'"
                [style.--sf-friend]="colorOf(friend.color)" [style.transform]="dragging()?.from === slot.position ? 'translate(' + dragDx() + 'px, ' + dragDy() + 'px)' : null"
-               role="button" tabindex="0" [attr.aria-label]="'Open the conversation with ' + friend.name + '. Press and hold to move.'"
+               role="button" tabindex="0" [attr.aria-label]="(t('homeSeats.openTheConversationWith', { friendName: friend.name }) || 'Open the conversation with ' + friend.name + '. Press and hold to move.')"
                (click)="open(friend)" (keydown.enter)="open(friend)" (keydown)="seatKey($event, slot.position)" (contextmenu)="$event.preventDefault()"
                (pointerdown)="dragStart($event, slot.position)" (pointermove)="dragMove($event)" (pointerup)="dragEnd($event)" (pointercancel)="dragEnd($event, true)">
             <span class="sf-hs-ring">
@@ -19,13 +20,13 @@
                 <span class="sf-dot" [class]="'sf-dot-' + friend.presence" [title]="presenceLabel(friend.presence)" role="img" [attr.aria-label]="presenceLabel(friend.presence)"></span>
               }
               @if (unread().get(friend.id); as count) {
-                <span class="sf-hs-unread" [attr.aria-label]="count + ' unread'">{{ count }}</span>
+                <span class="sf-hs-unread" [attr.aria-label]="(t('homeSeats.countUnread', { count: count }) || count + ' unread')">{{ count }}</span>
               }
             </span>
             <span class="sf-hs-name">{{ friend.name }}</span>
             <span class="sf-hs-sub">
               @if (friend.status !== 'confirmed') {
-                {{ friend.waiting ? 'Waiting' : 'Pending' }}
+                {{ friend.waiting ? (t('homeSeats.waiting') || 'Waiting') : (t('homeSeats.pending') || 'Pending') }}
               } @else if (friend.mood; as mood) {
                 <img [src]="moodIcon(mood)" alt="" width="14" height="14" />{{ moodLabel(mood) }}
               } @else {
@@ -34,10 +35,10 @@
             </span>
           </div>
         } @else {
-          <button type="button" class="sf-hs-friend sf-hs-free" [attr.aria-label]="'Seat ' + slot.position + ' is free: add a ' + w.one" (click)="add.emit()">
+          <button type="button" class="sf-hs-friend sf-hs-free" [attr.aria-label]="(t('homeSeats.seatPositionIsFree', { position: slot.position, one: w.one }) || 'Seat ' + slot.position + ' is free: add a ' + w.one)" (click)="add.emit()">
             <span class="sf-hs-ring"><span class="sf-hs-plus" aria-hidden="true">+</span></span>
-            <span class="sf-hs-name">Free seat</span>
-            <span class="sf-hs-sub">Add a {{ w.one }}</span>
+            <span class="sf-hs-name">{{ t('homeSeats.freeSeat') || 'Free seat' }}</span>
+            <span class="sf-hs-sub">{{ t('homeSeats.addAOne', { one: w.one }) || 'Add a ' + w.one }}</span>
           </button>
         }
       </li>
@@ -50,12 +51,13 @@
             <span class="sf-hs-moon" aria-hidden="true">😴</span>
             @if (sleeping() > 0) { <span class="sf-hs-unread" aria-hidden="true">{{ sleeping() }}</span> }
           </span>
-          <span class="sf-hs-name">Silent</span>
-          <span class="sf-hs-sub">{{ dragging() ? 'Drop here' : 'Sleep list' }}</span>
+          <span class="sf-hs-name">{{ t('homeSeats.silent') || 'Silent' }}</span>
+          <span class="sf-hs-sub">{{ dragging() ? (t('homeSeats.dropHere') || 'Drop here') : (t('homeSeats.sleepList') || 'Sleep list') }}</span>
         </button>
       </li>
     }
   </ul>
-  <p class="sf-hs-tip">{{ dragging() ? (showBucket() ? 'Drop on a seat or the Silent circle' : 'Drop on a seat') : 'Press and hold a ' + w.one + ' to move' }}</p>
+  <p class="sf-hs-tip">{{ dragging() ? (showBucket() ? (t('homeSeats.dropOnASeat') || 'Drop on a seat or the Silent circle') : (t('homeSeats.dropOnASeat2') || 'Drop on a seat')) : (t('homeSeats.pressAndHoldA', { one: w.one }) || 'Press and hold a ' + w.one + ' to move') }}</p>
 
 </section>
+</ng-container>

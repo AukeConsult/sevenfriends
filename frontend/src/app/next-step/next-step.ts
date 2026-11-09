@@ -4,6 +4,7 @@ import { ActiveCircleService } from '../core/active-circle.service';
 import { AuthService } from '../core/auth.service';
 import { InstallService } from '../core/install.service';
 import { WelcomeService } from '../core/welcome.service';
+import { tr } from '../core/i18n';
 
 /**
  * The end of every welcome page: it knows the device and offers the right next move. Signed in: on to Home (and, in a browser tab, the install step of this device, quieter). Already the installed app: on to sign-in.
@@ -25,12 +26,13 @@ import { WelcomeService } from '../core/welcome.service';
       <button type="button" [class]="ctaClass()" [style.background]="bg()" [style.color]="fg()" (click)="signIn()">{{ cta() }}</button>
     } @else {
       <button type="button" [class]="ctaClass()" [style.background]="bg()" [style.color]="fg()" (click)="open(installPage)">{{ installLabel }}</button>
-      <button type="button" [class]="ctaClass()" style="background:transparent;margin-top:8px" [style.color]="bg()" [style.border]="'1.5px solid ' + bg()" (click)="signIn()">Continue in the browser</button>
+      <button type="button" [class]="ctaClass()" style="background:transparent;margin-top:8px" [style.color]="bg()" [style.border]="'1.5px solid ' + bg()" (click)="signIn()">{{ tr('core.continueInTheBrowser', 'Continue in the browser') }}</button>
       <p style="font-size:12px;opacity:.75;margin:8px 0 0;text-align:center">{{ note }}</p>
     }
   `,
 })
 export class NextStep {
+  protected readonly tr = tr;
   protected readonly auth = inject(AuthService);
   protected readonly install = inject(InstallService);
   private readonly active = inject(ActiveCircleService);
@@ -49,15 +51,15 @@ export class NextStep {
 
   private readonly kind: 'android' | 'ios' | 'windows' | 'other' = this.install.androidDevice ? 'android' : this.install.ios ? 'ios' : this.install.windows ? 'windows' : 'other';
   protected readonly installPage = `/install/${this.kind === 'android' ? 'android' : this.kind === 'ios' ? 'iphone' : 'windows'}`;
-  protected readonly installLabel = this.kind === 'android' ? 'Get the Android app' : this.kind === 'ios' ? 'Add it to your home screen' : 'Install it on your computer';
+  protected readonly installLabel = this.kind === 'android' ? tr('core.getTheAndroidApp', 'Get the Android app') : this.kind === 'ios' ? tr('core.addItToYour', 'Add it to your home screen') : tr('core.installItOnYour', 'Install it on your computer');
   protected readonly note =
     this.kind === 'android'
-      ? 'The app gives you alerts and sounds.'
+      ? tr('core.theAppGivesYou', 'The app gives you alerts and sounds.')
       : this.kind === 'ios'
         ? 'iPhone needs the home-screen app for alerts.'
         : this.kind === 'windows'
-          ? 'Opens in its own window, with alerts.'
-          : 'Chrome and Edge offer an install button in the address bar.';
+          ? tr('core.opensInItsOwn', 'Opens in its own window, with alerts.')
+          : tr('core.chromeAndEdgeOffer', 'Chrome and Edge offer an install button in the address bar.');
 
   /** opens a page; an app that has no circle yet is bound to this page's circle first (and starts again on that page) */
   protected open(path: string): void {

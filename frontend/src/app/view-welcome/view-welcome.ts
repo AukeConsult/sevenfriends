@@ -1,7 +1,9 @@
+import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { Component, computed, HostListener, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActiveCircleService, CIRCLE_CHOICES } from '../core/active-circle.service';
+import { tr } from '../core/i18n';
 
 const PHONE_WIDTH = 390; // the width the pages are laid out for
 
@@ -11,27 +13,28 @@ const PHONE_WIDTH = 390; // the width the pages are laid out for
  */
 @Component({
   selector: 'app-view-welcome',
-  imports: [RouterLink],
+  imports: [RouterLink, TranslocoDirective],
   templateUrl: './view-welcome.html',
+  providers: [provideTranslocoScope('viewWelcome')],
 })
 export class ViewWelcome {
   private readonly sanitizer = inject(DomSanitizer);
   protected readonly active = inject(ActiveCircleService);
   protected readonly circles = CIRCLE_CHOICES;
   protected readonly pages: { circle: string; path: string; title: string; note: string; src: SafeResourceUrl }[] = [
-    { circle: 'default', path: '/welcome', title: 'Welcome', note: 'The normal first page' },
-    { circle: 'default', path: '/friends1', title: 'Friends 1', note: 'Seven people around you' },
-    { circle: 'default', path: '/friends2', title: 'Friends 2', note: 'Quiet, until it matters' },
-    { circle: 'default', path: '/friends3', title: 'Friends 3', note: 'A private room per friend' },
-    { circle: 'buddies', path: '/buddy1', title: 'Buddies 1', note: 'Close buddies only, seats in a row' },
-    { circle: 'buddies', path: '/buddy2', title: 'Buddies 2', note: 'Your people, stack and chat' },
-    { circle: 'buddies', path: '/buddy3', title: 'Buddies 3', note: 'Your inner circle' },
-    { circle: 'work', path: '/work1', title: 'Work 1', note: 'Seven key business contacts' },
-    { circle: 'work', path: '/work2', title: 'Work 2', note: 'Stay close to the people your work needs' },
-    { circle: 'work', path: '/work3', title: 'Work 3', note: 'A private space per business relation' },
-    { circle: 'family', path: '/family1', title: 'Family 1', note: 'Your seven closest' },
-    { circle: 'family', path: '/family2', title: 'Family 2', note: 'A safe place for your family' },
-    { circle: 'family', path: '/family3', title: 'Family 3', note: 'Close, even when far apart' },
+    { circle: 'default', path: '/welcome', title: tr('viewWelcome.welcome', 'Welcome'), note: tr('viewWelcome.theNormalFirstPage', 'The normal first page') },
+    { circle: 'default', path: '/friends1', title: 'Friends 1', note: tr('viewWelcome.sevenPeopleAroundYou', 'Seven people around you') },
+    { circle: 'default', path: '/friends2', title: 'Friends 2', note: tr('viewWelcome.quietUntilItMatters', 'Quiet, until it matters') },
+    { circle: 'default', path: '/friends3', title: 'Friends 3', note: tr('viewWelcome.aPrivateRoomPer', 'A private room per friend') },
+    { circle: 'buddies', path: '/buddy1', title: 'Buddies 1', note: tr('viewWelcome.closeBuddiesOnlySeats', 'Close buddies only, seats in a row') },
+    { circle: 'buddies', path: '/buddy2', title: 'Buddies 2', note: tr('viewWelcome.yourPeopleStackAnd', 'Your people, stack and chat') },
+    { circle: 'buddies', path: '/buddy3', title: 'Buddies 3', note: tr('viewWelcome.yourInnerCircle', 'Your inner circle') },
+    { circle: 'work', path: '/work1', title: 'Work 1', note: tr('viewWelcome.sevenKeyBusinessContacts', 'Seven key business contacts') },
+    { circle: 'work', path: '/work2', title: 'Work 2', note: tr('viewWelcome.stayCloseToThe', 'Stay close to the people your work needs') },
+    { circle: 'work', path: '/work3', title: 'Work 3', note: tr('viewWelcome.aPrivateSpacePer', 'A private space per business relation') },
+    { circle: 'family', path: '/family1', title: 'Family 1', note: tr('viewWelcome.yourSevenClosest', 'Your seven closest') },
+    { circle: 'family', path: '/family2', title: 'Family 2', note: tr('viewWelcome.aSafePlaceFor', 'A safe place for your family') },
+    { circle: 'family', path: '/family3', title: 'Family 3', note: tr('viewWelcome.closeEvenWhenFar', 'Close, even when far apart') },
   ].map((p) => ({ ...p, src: this.sanitizer.bypassSecurityTrustResourceUrl(p.path) }));
 
   /** by default only what belongs to the circle this app is in (its welcome pages and its Home); "Show all circles" shows everything, to compare */

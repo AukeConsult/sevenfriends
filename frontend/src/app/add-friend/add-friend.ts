@@ -1,3 +1,5 @@
+import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
+import { tr } from '../core/i18n';
 import { circleLink } from '../core/friend-link.service';
 import { Clearable } from '../core/clearable';
 import { ActiveCircleService } from '../core/active-circle.service';
@@ -16,8 +18,9 @@ const emptyDraft = (): FriendDraft => ({ name: '', email: '', phone: '', message
  */
 @Component({
   selector: 'app-add-friend',
-  imports: [RouterLink, Clearable],
+  imports: [RouterLink, Clearable, TranslocoDirective],
   templateUrl: './add-friend.html',
+  providers: [provideTranslocoScope('addFriend')],
 })
 export class AddFriend {
   private readonly circle = inject(ActiveCircleService);
@@ -70,12 +73,12 @@ export class AddFriend {
 
     const hasContact = [d.email, d.phone].some((v) => v.trim());
     if (!hasContact) {
-      this.error.set('Add an email or a phone number, so your ' + this.w.one + ' can be found.');
+      this.error.set(tr('addFriend.addAnEmailOr', 'Add an email or a phone number, so your {{ one }} can be found.', { one: this.w.one }));
       return;
     }
 
     if (this.isMe(d.email, d.phone)) {
-      this.error.set('That is you. Add the email or phone number of a ' + this.w.one + '.'); // the server refuses it too
+      this.error.set(tr('addFriend.thatIsYouAdd', 'That is you. Add the email or phone number of a {{ one }}.', { one: this.w.one })); // the server refuses it too
       return;
     }
 
@@ -85,7 +88,7 @@ export class AddFriend {
       (f) => f.status !== 'rejected' && ((d.email.trim() && f.email?.toLowerCase() === d.email.trim().toLowerCase()) || (digits(d.phone).length >= 8 && digits(f.phone) === digits(d.phone))),
     );
     if (same) {
-      this.error.set(same.status === 'confirmed' ? `${same.name} is already your ${this.w.one}.` : `You have already added ${same.name}: the request waits for them.`);
+      this.error.set(same.status === 'confirmed' ? tr('addFriend.isAlreadyYour', '{{ sameName }} is already your {{ one }}.', { sameName: same.name, one: this.w.one }) : tr('addFriend.youHaveAlreadyAdded', 'You have already added {{ sameName }}: the request waits for them.', { sameName: same.name }));
       return;
     }
 
@@ -103,10 +106,10 @@ export class AddFriend {
         else await this.router.navigate([this.backTo], { queryParams: this.backParams });
       } else {
         await this.invite.load();
-        this.result.set({ to: created.name || created.email || created.phone || 'This person', link: this.link() });
+        this.result.set({ to: created.name || created.email || created.phone || tr('addFriend.thisPerson', 'This person'), link: this.link() });
       }
     } catch (err: any) {
-      this.error.set(err.message ?? 'Could not send the ' + this.w.one + ' request');
+      this.error.set(err.message ?? tr('addFriend.couldNotSendThe', 'Could not send the ') + this.w.one + ' request');
     } finally {
       this.sending.set(false);
     }

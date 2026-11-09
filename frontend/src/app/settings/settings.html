@@ -1,3 +1,4 @@
+<ng-container *transloco="let tx">
 <div class="sf-page-head">
   <h1>{{ title }}</h1>
 </div>
@@ -6,54 +7,54 @@
 @if (section === 'preferences') {
   <div class="card">
     <div class="card-body d-flex flex-wrap align-items-center justify-content-between gap-2">
-      <span>Setup wizard: the most important settings for a first start, step by step.</span>
-      <a routerLink="/setup" class="btn btn-outline-primary btn-sm">Open the setup wizard</a>
+      <span>{{ tx('settings.setupWizardTheMost') || 'Setup wizard: the most important settings for a first start, step by step.' }}</span>
+      <a routerLink="/setup" class="btn btn-outline-primary btn-sm">{{ tx('settings.openTheSetupWizard') || 'Open the setup wizard' }}</a>
     </div>
   </div>
-  <p class="small text-secondary m-0">These choices are saved with your circle, so every device you sign in on shows the same.</p>
-  <h2 class="sf-section-title m-0 mt-2">Display</h2>
+  <p class="small text-secondary m-0">{{ tx('settings.theseChoicesAreSaved') || 'These choices are saved with your circle, so every device you sign in on shows the same.' }}</p>
+  <h2 class="sf-section-title m-0 mt-2">{{ tx('settings.display') || 'Display' }}</h2>
   <div class="card">
     <div class="card-body row g-2">
-      <label class="col-6 d-grid gap-1 align-content-start" for="pref-theme"><span>Theme</span>
+      <label class="col-6 d-grid gap-1 align-content-start" for="pref-theme"><span>{{ tx('settings.theme') || 'Theme' }}</span>
         <select id="pref-theme" class="form-select" [value]="prefs.get('theme')" (change)="prefs.set('theme', $any($event.target).value)">
           @for (t of themes; track t.key) { <option [value]="t.key" [selected]="t.key === prefs.get('theme')">{{ t.label }}</option> }
         </select>
       </label>
-      <label class="col-6 d-grid gap-1 align-content-start" for="pref-text-size"><span>Text size</span>
+      <label class="col-6 d-grid gap-1 align-content-start" for="pref-text-size"><span>{{ tx('settings.textSize') || 'Text size' }}</span>
         <select id="pref-text-size" class="form-select" [value]="prefs.get('textSize')" (change)="prefs.set('textSize', $any($event.target).value)">
-          <option value="tiny" [selected]="prefs.get('textSize') === 'tiny'">Tiny</option>
-          <option value="small" [selected]="prefs.get('textSize') === 'small'">Small</option>
-          <option value="normal" [selected]="prefs.get('textSize') === 'normal'">Normal</option>
-          <option value="big" [selected]="prefs.get('textSize') === 'big'">Big</option>
-          <option value="huge" [selected]="prefs.get('textSize') === 'huge'">Huge</option>
+          <option value="tiny" [selected]="prefs.get('textSize') === 'tiny'">{{ tx('settings.tiny') || 'Tiny' }}</option>
+          <option value="small" [selected]="prefs.get('textSize') === 'small'">{{ tx('settings.small') || 'Small' }}</option>
+          <option value="normal" [selected]="prefs.get('textSize') === 'normal'">{{ tx('settings.normal') || 'Normal' }}</option>
+          <option value="big" [selected]="prefs.get('textSize') === 'big'">{{ tx('settings.big') || 'Big' }}</option>
+          <option value="huge" [selected]="prefs.get('textSize') === 'huge'">{{ tx('settings.huge') || 'Huge' }}</option>
         </select>
       </label>
     </div>
   </div>
-  <h2 class="sf-section-title m-0 mt-2">Conversation</h2>
+  <h2 class="sf-section-title m-0 mt-2">{{ tx('settings.conversation') || 'Conversation' }}</h2>
   <div class="card">
     <div class="card-body vstack gap-2">
       <div class="form-check form-switch m-0">
         <input class="form-check-input" type="checkbox" role="switch" id="pref-icons" [checked]="prefs.get('feedIcons')" (change)="prefs.set('feedIcons', $any($event.target).checked)" />
-        <label class="form-check-label" for="pref-icons">Show a picture next to each message</label>
+        <label class="form-check-label" for="pref-icons">{{ tx('settings.showAPictureNext') || 'Show a picture next to each message' }}</label>
       </div>
-      <span class="small text-secondary">Your {{ w.one }}'s picture and yours, in a conversation.</span>
+      <span class="small text-secondary">{{ tx('settings.yourOneSPicture', { one: w.one }) || 'Your ' + w.one + '\'s picture and yours, in a conversation.' }}</span>
       <div class="form-check form-switch m-0">
         <input class="form-check-input" type="checkbox" role="switch" id="pref-enter" [checked]="prefs.get('enterSends')" (change)="prefs.set('enterSends', $any($event.target).checked)" />
-        <label class="form-check-label" for="pref-enter">Enter sends the message</label>
+        <label class="form-check-label" for="pref-enter">{{ tx('settings.enterSendsTheMessage') || 'Enter sends the message' }}</label>
       </div>
-      <span class="small text-secondary">Shift + Enter makes a new line. Off: Enter makes a new line and Ctrl + Enter sends.</span>
-      <strong class="mt-2">Ready-made messages</strong>
-      <span class="small text-secondary">They are listed under the smiley in a conversation, and one tap sends it.</span>
+      <span class="small text-secondary">{{ tx('settings.shiftEnterMakesA') || 'Shift + Enter makes a new line. Off: Enter makes a new line and Ctrl + Enter sends.' }}</span>
+      <strong class="mt-2">{{ tx('settings.readyMadeMessages') || 'Ready-made messages' }}</strong>
+      <span class="small text-secondary">{{ tx('settings.theyAreListedUnder') || 'They are listed under the smiley in a conversation, and one tap sends it.' }}</span>
       @for (text of quick(); track $index) {
         <div class="input-group">
-          <input type="text" class="form-control" [value]="text" [maxLength]="quickLength" placeholder="For example: I'm on my way"
-                 (change)="setQuick($index, $any($event.target).value)" [attr.aria-label]="'Ready-made message ' + ($index + 1)" autocomplete="off" />
-          <button type="button" class="btn btn-outline-secondary" (click)="removeQuick($index)" [attr.aria-label]="'Remove message ' + ($index + 1)">✕</button>
+          <input type="text" class="form-control" [value]="text" [maxLength]="quickLength" [attr.placeholder]="tx('settings.forExampleIM') || 'For example: I\'m on my way'"
+                 (change)="setQuick($index, $any($event.target).value)" [attr.aria-label]="(tx('settings.readyMadeMessageIndex', { index: $index + 1 }) || 'Ready-made message ' + ($index + 1))" autocomplete="off" />
+          <button type="button" class="btn btn-outline-secondary" (click)="removeQuick($index)" [attr.aria-label]="(tx('settings.removeMessageIndex', { index: $index + 1 }) || 'Remove message ' + ($index + 1))">✕</button>
         </div>
       }
       @if (quick().length < quickMax) {
-        <button type="button" class="btn btn-light btn-sm align-self-start" (click)="addQuick()">+ Add a message</button>
+        <button type="button" class="btn btn-light btn-sm align-self-start" (click)="addQuick()">{{ tx('settings.addAMessage') || '+ Add a message' }}</button>
       }
     </div>
   </div>
@@ -62,12 +63,13 @@
     <div class="card-body vstack gap-2">
       <div class="form-check form-switch m-0">
         <input class="form-check-input" type="checkbox" role="switch" id="pref-sleep" [checked]="prefs.get('sleepList')" (change)="prefs.set('sleepList', $any($event.target).checked)" />
-        <label class="form-check-label" for="pref-sleep">Use a sleep list</label>
+        <label class="form-check-label" for="pref-sleep">{{ tx('settings.useASleepList') || 'Use a sleep list' }}</label>
       </div>
-      <span class="small text-secondary">Off: a {{ w.one }} you remove is deleted, and the sleep list row is hidden while it is empty.</span>
+      <span class="small text-secondary">{{ tx('settings.offAOneYou', { one: w.one }) || 'Off: a ' + w.one + ' you remove is deleted, and the sleep list row is hidden while it is empty.' }}</span>
     </div>
   </div>
 } @else {
   <app-notice-controls />
 }
 </main>
+</ng-container>

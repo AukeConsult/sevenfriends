@@ -1,16 +1,19 @@
-import { DatePipe } from '@angular/common';
+import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
+import { AppDatePipe } from '../core/app-date.pipe';
 import { Component, computed, inject, signal, viewChild } from '@angular/core';
 import { OwnRecoveryService } from '../core/own-recovery.service';
 import { KeySetup } from '../key-setup/key-setup';
 import { KeysService, RestoreResult } from '../core/keys.service';
 import { wordsFromText } from '../core/recovery-code';
 import { PublishedKey } from '../models';
+import { tr } from '../core/i18n';
 
 /** Settings → Keys: the encryption key of this device (make it, see it), the keys of my other devices, a new key, and restoring a key from the 24 words. */
 @Component({
   selector: 'app-encryption',
-  imports: [DatePipe, KeySetup],
+  imports: [AppDatePipe, KeySetup, TranslocoDirective],
   templateUrl: './encryption.html',
+  providers: [provideTranslocoScope('encryption')],
 })
 export class Encryption {
   /** the page shows the key status and the way to make or restore a key; the devices, the details and a new key are behind the Advanced button */
@@ -58,7 +61,7 @@ export class Encryption {
     try {
       this.locked.set(await this.own.status(id));
     } catch (err: any) {
-      this.allowNote.set(err?.message || 'That did not work. Try again.');
+      this.allowNote.set(err?.message || tr('encryption.thatDidNotWork', 'That did not work. Try again.'));
     }
   }
 
@@ -67,7 +70,7 @@ export class Encryption {
     try {
       await this.own.trustThisDevice();
     } catch (err: any) {
-      this.allowNote.set(err?.message || 'That did not work. Try again.');
+      this.allowNote.set(err?.message || tr('encryption.thatDidNotWork', 'That did not work. Try again.'));
     }
   }
 
@@ -81,9 +84,9 @@ export class Encryption {
     this.allowNote.set(null);
     try {
       const result = await this.own.allow(key, (n) => this.allowed.set(n));
-      this.allowNote.set(result.skipped ? `${result.skipped} could not be opened on this device. Try again on the device where that key lives.` : 'Done. The other device can now open your old messages and files.');
+      this.allowNote.set(result.skipped ? tr('encryption.couldNotBeOpened', '{{ skipped }} could not be opened on this device. Try again on the device where that key lives.', { skipped: result.skipped }) : tr('encryption.doneTheOtherDevice', 'Done. The other device can now open your old messages and files.'));
     } catch (err: any) {
-      this.allowNote.set(err?.message || 'That did not work. Try again.');
+      this.allowNote.set(err?.message || tr('encryption.thatDidNotWork', 'That did not work. Try again.'));
     } finally {
       this.allowing.set(null);
     }
@@ -100,7 +103,7 @@ export class Encryption {
       await this.keys.revoke(key.id);
       this.removing.set(null);
     } catch (err: any) {
-      this.problem.set(err?.message || 'The key could not be removed.');
+      this.problem.set(err?.message || tr('encryption.theKeyCouldNot', 'The key could not be removed.'));
     } finally {
       this.busy.set(false);
     }
@@ -119,7 +122,7 @@ export class Encryption {
       if (result === 'ok') this.typed.set('');
       else this.restoreText.set(MESSAGES[result]);
     } catch (err: any) {
-      this.restoreText.set(err?.message || 'The key could not be restored.');
+      this.restoreText.set(err?.message || tr('encryption.theKeyCouldNot2', 'The key could not be restored.'));
     } finally {
       this.busy.set(false);
     }
@@ -127,8 +130,8 @@ export class Encryption {
 }
 
 const MESSAGES: Record<Exclude<RestoreResult, 'ok'>, string> = {
-  'bad-words': 'That is not a valid recovery code. It is 24 words; check each word, and that none is missing.',
-  'no-backup': 'There is no backup of a key on your account. Make a new key instead.',
-  'wrong-code': 'Those words do not open the backup. Check them against your copy.',
-  'no-key': 'The backup opened, but the key it belongs to has been removed. Make a new key instead.',
+  get 'bad-words'() { return tr('core.thatIsNotA', 'That is not a valid recovery code. It is 24 words; check each word, and that none is missing.'); },
+  get 'no-backup'() { return tr('core.thereIsNoBackup', 'There is no backup of a key on your account. Make a new key instead.'); },
+  get 'wrong-code'() { return tr('core.thoseWordsDoNot', 'Those words do not open the backup. Check them against your copy.'); },
+  get 'no-key'() { return tr('core.theBackupOpenedBut', 'The backup opened, but the key it belongs to has been removed. Make a new key instead.'); },
 };

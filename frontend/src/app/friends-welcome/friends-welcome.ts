@@ -1,3 +1,4 @@
+import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { Component, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { WhyTiles } from '../why-tiles/why-tiles';
@@ -9,8 +10,9 @@ import { NextStep } from '../next-step/next-step';
  */
 @Component({
   selector: 'app-friends-welcome',
-  imports: [RouterLink, NextStep, WhyTiles],
+  imports: [RouterLink, NextStep, WhyTiles, TranslocoDirective],
   templateUrl: './friends-welcome.html',
+  providers: [provideTranslocoScope('friendsWelcome')],
 })
 export class FriendsWelcome {
   protected readonly variant: 1 | 2 | 3 = (inject(ActivatedRoute).snapshot.data['variant'] ?? 1) as 1 | 2 | 3;

@@ -1,43 +1,44 @@
+<ng-container *transloco="let t">
 <!-- signed out (the link "Get the app" on the sign-in page): no menu, so a way back to the sign-in page -->
 @if (!auth.user()) {
   <div class="sf-back-row">
-    <a routerLink="/login" class="btn btn-light" aria-label="Back to sign in">‹ Back</a>
+    <a routerLink="/login" class="btn btn-light" [attr.aria-label]="t('installApp.backToSignIn') || 'Back to sign in'">{{ t('installApp.back') || '‹ Back' }}</a>
   </div>
 }
 <div class="sf-page-head">
-  <h1>Install the app</h1>
+  <h1>{{ t('installApp.installTheApp') || 'Install the app' }}</h1>
 </div>
 
 <main class="sf-narrow vstack gap-3">
   @if (app.installed()) {
-    <div class="alert alert-success m-0" role="status">✓ You are using the installed app. Nothing more to do.</div>
-    <a routerLink="/" class="btn btn-primary">Continue to the home page</a>
+    <div class="alert alert-success m-0" role="status">{{ t('installApp.youAreUsingThe') || '✓ You are using the installed app. Nothing more to do.' }}</div>
+    <a routerLink="/" class="btn btn-primary">{{ t('installApp.continueToTheHome') || 'Continue to the home page' }}</a>
   } @else if (!app.androidDevice) {
-    <h2 class="sf-section-title m-0">1. Allow the microphone</h2>
+    <h2 class="sf-section-title m-0">{{ t('installApp.allowTheMicrophone') || '1. Allow the microphone' }}</h2>
     @if (mic() === 'granted') {
-      <div class="alert alert-success m-0" role="status">✓ The microphone is allowed.</div>
+      <div class="alert alert-success m-0" role="status">{{ t('installApp.theMicrophoneIsAllowed') || '✓ The microphone is allowed.' }}</div>
     } @else {
-      <p class="m-0">So you can send voice messages. Tap the button and choose <strong>Allow</strong>.</p>
-      <button type="button" class="btn btn-primary w-100" (click)="allowMic()">Allow the microphone</button>
+      <p class="m-0"><span [innerHTML]="t('installApp.soYouCanSend') || 'So you can send voice messages. Tap the button and choose <strong>Allow</strong>.'"></span></p>
+      <button type="button" class="btn btn-primary w-100" (click)="allowMic()">{{ t('installApp.allowTheMicrophone2') || 'Allow the microphone' }}</button>
       @if (mic() === 'denied') {
-        <div class="alert alert-warning m-0" role="alert">The microphone is switched off. Tap the <strong>lock or sliders icon</strong> at the left of the web address, then <strong>Permissions</strong>, and allow the <strong>Microphone</strong>. No icon? Tap the three dots, then <strong>Settings</strong>, <strong>Site settings</strong>, <strong>Microphone</strong>. Then tap the button again.</div>
+        <div class="alert alert-warning m-0" role="alert"><span [innerHTML]="t('installApp.theMicrophoneIsSwitched') || 'The microphone is switched off. Tap the <strong>lock or sliders icon</strong> at the left of the web address, then <strong>Permissions</strong>, and allow the <strong>Microphone</strong>. No icon? Tap the three dots, then <strong>Settings</strong>, <strong>Site settings</strong>, <strong>Microphone</strong>. Then tap the button again.'"></span></div>
       }
     }
-    <h2 class="sf-section-title m-0">2. Install the app</h2>
-    <button type="button" class="btn btn-primary w-100" (click)="press()">Install the app</button>
+    <h2 class="sf-section-title m-0">{{ t('installApp.installTheApp2') || '2. Install the app' }}</h2>
+    <button type="button" class="btn btn-primary w-100" (click)="press()">{{ t('installApp.installTheApp') || 'Install the app' }}</button>
     @if (warned() && mic() === 'ask') {
-      <div class="alert alert-warning m-0" role="alert">The microphone is not allowed yet. Do step 1 first, or tap <strong>Install the app</strong> again to install without it.</div>
+      <div class="alert alert-warning m-0" role="alert"><span [innerHTML]="t('installApp.theMicrophoneIsNot') || 'The microphone is not allowed yet. Do step 1 first, or tap <strong>Install the app</strong> again to install without it.'"></span></div>
     }
-    <p class="small text-secondary m-0">It puts Seven Friends on your home screen like any other app. It is free, needs no app store, and you can remove it any time.</p>
+    <p class="small text-secondary m-0">{{ t('installApp.itPutsSevenFriends') || 'It puts Seven Friends on your home screen like any other app. It is free, needs no app store, and you can remove it any time.' }}</p>
   }
 
   @if (windowsFile() && !app.runsAsApp()) {
     <details class="sf-how" [open]="!app.mobile">
-      <summary>The Windows app</summary>
+      <summary>{{ t('installApp.theWindowsApp') || 'The Windows app' }}</summary>
       <div class="vstack gap-2">
-      <p class="m-0">An app for your Windows computer: it runs next to the clock, so new messages arrive as notifications even when the window is closed.</p>
-      <a class="btn btn-outline-primary" href="/downloads/SevenFriendsSetup.exe" download>Download for Windows</a>
-      <p class="small text-secondary m-0">Open the downloaded file to install it. If Windows says it protected your PC, choose <em>More info</em>, then <em>Run anyway</em>.</p>
+      <p class="m-0">{{ t('installApp.anAppForYour') || 'An app for your Windows computer: it runs next to the clock, so new messages arrive as notifications even when the window is closed.' }}</p>
+      <a class="btn btn-outline-primary" href="/downloads/SevenFriendsSetup.exe" download>{{ t('installApp.downloadForWindows') || 'Download for Windows' }}</a>
+      <p class="small text-secondary m-0"><span [innerHTML]="t('installApp.openTheDownloadedFile') || 'Open the downloaded file to install it. If Windows says it protected your PC, choose <em>More info</em>, then <em>Run anyway</em>.'"></span></p>
       </div>
     </details>
   }
@@ -45,62 +46,62 @@
   @if (app.androidDevice && !app.installed()) {
     <!-- On Android only the Seven Friends app is offered, never the install of the web app through Chrome -->
     <section class="vstack gap-2">
-      <h2 class="sf-section-title m-0">The Android app</h2>
+      <h2 class="sf-section-title m-0">{{ t('installApp.theAndroidApp') || 'The Android app' }}</h2>
       @if (androidFile()) {
-        <p class="m-0">The Seven Friends app for your phone.</p>
-        <a class="btn btn-primary" href="/downloads/SevenFriends.apk" download>Download the Android app</a>
-        <p class="small text-secondary m-0">Open the downloaded file. If Android asks, allow your browser to install apps from this source, then tap <em>Install</em>. Then open Seven Friends from its icon and tap <em>Allow</em> when it asks for notifications and the microphone.</p>
+        <p class="m-0">{{ t('installApp.theSevenFriendsApp') || 'The Seven Friends app for your phone.' }}</p>
+        <a class="btn btn-primary" href="/downloads/SevenFriends.apk" download>{{ t('installApp.downloadTheAndroidApp') || 'Download the Android app' }}</a>
+        <p class="small text-secondary m-0"><span [innerHTML]="t('installApp.openTheDownloadedFile2') || 'Open the downloaded file. If Android asks, allow your browser to install apps from this source, then tap <em>Install</em>. Then open Seven Friends from its icon and tap <em>Allow</em> when it asks for notifications and the microphone.'"></span></p>
       } @else {
-        <p class="m-0">The Android app is not ready to download yet. Please try again later.</p>
+        <p class="m-0">{{ t('installApp.theAndroidAppIs') || 'The Android app is not ready to download yet. Please try again later.' }}</p>
       }
     </section>
   }
 
   @if (!app.installed() && steps()) {
-    <p class="m-0">This device needs a few steps. Follow the ones for your device:</p>
+    <p class="m-0">{{ t('installApp.thisDeviceNeedsA') || 'This device needs a few steps. Follow the ones for your device:' }}</p>
     <details class="sf-how" [open]="app.ios">
-      <summary>iPhone or iPad (Safari)</summary>
+      <summary>{{ t('installApp.iphoneOrIpadSafari') || 'iPhone or iPad (Safari)' }}</summary>
       <div class="vstack gap-2">
-        <p class="m-0">An iPhone has no "Install" button, so you put the app on your home screen yourself. It takes less than a minute.</p>
+        <p class="m-0">{{ t('installApp.anIphoneHasNo') || 'An iPhone has no "Install" button, so you put the app on your home screen yourself. It takes less than a minute.' }}</p>
         <ol class="m-0">
-          <li>Open <strong>Seven Friends in Safari</strong>, the blue compass app. This does not work from inside another app's browser (Facebook, Instagram, mail), so if you got a link there, copy it and paste it in Safari.</li>
-          <li>Tap the <strong>Share button</strong>: a square with an arrow pointing up. It is at the bottom of the screen on an iPhone, and at the top right on an iPad.</li>
-          <li>Scroll down in the list that opens and tap <strong>Add to Home Screen</strong>. If you do not see it, scroll further, or tap <em>More</em> or <em>View More</em> first.</li>
-          <li>You can keep the name <em>Seven Friends</em>. If you are asked, leave <em>Open as Web App</em> switched on. Tap <strong>Add</strong> in the top right corner.</li>
-          <li>Go to your home screen: the Seven Friends icon is there, like any other app. <strong>Open it from that icon</strong>, not from Safari. Only the icon opens it as an app.</li>
-          <li>Sign in again the first time. The app on the home screen keeps its own login, separate from Safari.</li>
-          <li>When it asks to send you <strong>notifications</strong>, tap <em>Allow</em>, or your friends cannot reach you when the app is closed.</li>
+          <li><span [innerHTML]="t('installApp.openStrongSevenFriends') || 'Open <strong>Seven Friends in Safari</strong>, the blue compass app. This does not work from inside another app\'s browser (Facebook, Instagram, mail), so if you got a link there, copy it and paste it in Safari.'"></span></li>
+          <li><span [innerHTML]="t('installApp.tapTheStrongShare') || 'Tap the <strong>Share button</strong>: a square with an arrow pointing up. It is at the bottom of the screen on an iPhone, and at the top right on an iPad.'"></span></li>
+          <li><span [innerHTML]="t('installApp.scrollDownInThe') || 'Scroll down in the list that opens and tap <strong>Add to Home Screen</strong>. If you do not see it, scroll further, or tap <em>More</em> or <em>View More</em> first.'"></span></li>
+          <li><span [innerHTML]="t('installApp.youCanKeepThe') || 'You can keep the name <em>Seven Friends</em>. If you are asked, leave <em>Open as Web App</em> switched on. Tap <strong>Add</strong> in the top right corner.'"></span></li>
+          <li><span [innerHTML]="t('installApp.goToYourHome') || 'Go to your home screen: the Seven Friends icon is there, like any other app. <strong>Open it from that icon</strong>, not from Safari. Only the icon opens it as an app.'"></span></li>
+          <li>{{ t('installApp.signInAgainThe') || 'Sign in again the first time. The app on the home screen keeps its own login, separate from Safari.' }}</li>
+          <li><span [innerHTML]="t('installApp.whenItAsksTo') || 'When it asks to send you <strong>notifications</strong>, tap <em>Allow</em>, or your friends cannot reach you when the app is closed.'"></span></li>
         </ol>
         <p class="small text-secondary m-0">
-          Notifications on an iPhone need iOS 16.4 or newer (Settings → General → Software Update shows your version).
-          To change them later: Settings → Notifications → Seven Friends. To remove the app: press and hold the icon and choose Remove App.
+          {{ t('installApp.notificationsOnAnIphone') || 'Notifications on an iPhone need iOS 16.4 or newer (Settings → General → Software Update shows your version). To change them later: Settings → Notifications → Seven Friends. To remove the app: press and hold the icon and choose Remove App.' }}
         </p>
       </div>
     </details>
 
     <details class="sf-how" [open]="!app.mobile">
-      <summary>Computer (Chrome, Edge or Safari)</summary>
+      <summary>{{ t('installApp.computerChromeEdgeOr') || 'Computer (Chrome, Edge or Safari)' }}</summary>
       <div class="vstack gap-2">
         <ol class="m-0">
-          <li>Open <strong>Seven Friends in Chrome or Edge</strong>.</li>
-          <li>Click the <strong>install icon</strong> at the right end of the address bar (a screen with a small arrow), or open the browser menu and choose <strong>Install Seven Friends</strong> (Chrome: under <em>Cast, save and share</em>).</li>
-          <li>Click <strong>Install</strong>. The app opens in its own window and gets an icon in your app list.</li>
+          <li><span [innerHTML]="t('installApp.openStrongSevenFriends2') || 'Open <strong>Seven Friends in Chrome or Edge</strong>.'"></span></li>
+          <li><span [innerHTML]="t('installApp.clickTheStrongInstall') || 'Click the <strong>install icon</strong> at the right end of the address bar (a screen with a small arrow), or open the browser menu and choose <strong>Install Seven Friends</strong> (Chrome: under <em>Cast, save and share</em>).'"></span></li>
+          <li><span [innerHTML]="t('installApp.clickStrongInstallStrong') || 'Click <strong>Install</strong>. The app opens in its own window and gets an icon in your app list.'"></span></li>
         </ol>
-        <p class="small text-secondary m-0">Safari on a Mac: choose File → <em>Add to Dock</em>.</p>
+        <p class="small text-secondary m-0"><span [innerHTML]="t('installApp.safariOnAMac') || 'Safari on a Mac: choose File → <em>Add to Dock</em>.'"></span></p>
       </div>
     </details>
   }
 
   @if (!app.mobile) {
     <details class="sf-how">
-      <summary>Start it when you sign in to your computer</summary>
+      <summary>{{ t('installApp.startItWhenYou') || 'Start it when you sign in to your computer' }}</summary>
       <div class="vstack gap-2">
-      <p class="m-0">After installing, you can let the app start by itself so that notifications arrive without opening the browser.</p>
+      <p class="m-0">{{ t('installApp.afterInstallingYouCan') || 'After installing, you can let the app start by itself so that notifications arrive without opening the browser.' }}</p>
       <ul class="m-0 ps-3">
-        <li><strong>Edge:</strong> open <code>edge://apps</code>, press ⋯ on Seven Friends and choose <em>Auto-start on device login</em>.</li>
-        <li><strong>Chrome:</strong> open <code>chrome://apps</code>, right-click Seven Friends and choose <em>Start app when you sign in</em>.</li>
+        <li><span [innerHTML]="t('installApp.strongEdgeStrongOpen') || '<strong>Edge:</strong> open <code>edge://apps</code>, press ⋯ on Seven Friends and choose <em>Auto-start on device login</em>.'"></span></li>
+        <li><span [innerHTML]="t('installApp.strongChromeStrongOpen') || '<strong>Chrome:</strong> open <code>chrome://apps</code>, right-click Seven Friends and choose <em>Start app when you sign in</em>.'"></span></li>
       </ul>
       </div>
     </details>
   }
 </main>
+</ng-container>

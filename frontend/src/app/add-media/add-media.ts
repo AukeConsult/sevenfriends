@@ -1,3 +1,5 @@
+import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
+import { tr } from '../core/i18n';
 import { Capacitor } from '@capacitor/core';
 import { FriendContext } from '../friend-page/friend-context';
 import { Component, OnDestroy, OnInit, computed, inject, input, output, signal } from '@angular/core';
@@ -18,11 +20,11 @@ import { Voice } from '../voice/voice';
 type Prepared = PreparedImage | PreparedVideo | PreparedAudio;
 
 /** The words of each kind: the title, the buttons and what is said when the chosen file is not of the kind. */
-const TEXT = {
-  image: { title: 'Send an image', recording: 'Take a photo', take: 'Take a photo', choose: 'Choose an image', another: 'Take or choose another', wrong: 'Choose an image file (a photo).' },
-  video: { title: 'Send a video', recording: 'Record a video', take: 'Record a video', choose: 'Choose a video', another: 'Record or choose another', wrong: 'Choose a video file.' },
-  audio: { title: 'Send a voice message', recording: 'Record a voice message', take: 'Record a voice message', choose: 'Choose an audio file', another: 'Record or choose another', wrong: 'Choose an audio file.' },
-};
+const textOf = (kind: 'image' | 'video' | 'audio') => ({
+  image: { title: tr('core.sendAnImage', 'Send an image'), recording: tr('core.takeAPhoto', 'Take a photo'), take: tr('core.takeAPhoto', 'Take a photo'), choose: tr('core.chooseAnImage', 'Choose an image'), another: tr('core.takeOrChooseAnother', 'Take or choose another'), wrong: tr('core.chooseAnImageFile', 'Choose an image file (a photo).') },
+  video: { title: tr('core.sendAVideo', 'Send a video'), recording: tr('core.recordAVideo', 'Record a video'), take: tr('core.recordAVideo', 'Record a video'), choose: tr('core.chooseAVideo', 'Choose a video'), another: tr('core.recordOrChooseAnother', 'Record or choose another'), wrong: tr('core.chooseAVideoFile', 'Choose a video file.') },
+  audio: { title: tr('core.sendAVoiceMessage', 'Send a voice message'), recording: tr('core.recordAVoiceMessage', 'Record a voice message'), take: tr('core.recordAVoiceMessage', 'Record a voice message'), choose: tr('core.chooseAnAudioFile', 'Choose an audio file'), another: tr('core.recordOrChooseAnother', 'Record or choose another'), wrong: tr('core.chooseAnAudioFile2', 'Choose an audio file.') },
+})[kind];
 
 /**
  * Sends an image, a video or a voice message to a friend. It opens inside the feed, above the message field (`<app-add-media [kind] [friendId]>` in the chat; it tells
@@ -40,8 +42,9 @@ const TEXT = {
  */
 @Component({
   selector: 'app-add-media',
-  imports: [Clearable, Camera, Voice],
+  imports: [Clearable, Camera, Voice, TranslocoDirective],
   templateUrl: './add-media.html',
+  providers: [provideTranslocoScope('addMedia')],
 })
 export class AddMedia implements OnInit, OnDestroy {
   private readonly media = inject(MediaService);
@@ -64,7 +67,7 @@ export class AddMedia implements OnInit, OnDestroy {
   protected embedded = false;
   protected friendId = '';
   protected kind: 'image' | 'video' | 'audio' = 'image';
-  protected text = TEXT.image;
+  protected text = textOf('image');
   protected readonly maxSeconds = MAX_VIDEO_SECONDS;
   protected readonly maxMinutes = MAX_AUDIO_SECONDS / 60;
   protected readonly file = signal<Prepared | null>(null);
@@ -110,7 +113,7 @@ export class AddMedia implements OnInit, OnDestroy {
     this.embedded = this.kindIn() !== null;
     this.kind = this.kindIn() ?? this.route.snapshot.data['kind'];
     this.friendId = this.friendIn() ?? this.route.snapshot.paramMap.get('id') ?? '';
-    this.text = TEXT[this.kind];
+    this.text = textOf(this.kind);
     this.appPhoto = Capacitor.isNativePlatform() && this.kind === 'image';
     this.appVideo = Capacitor.isNativePlatform() && this.kind === 'video';
     this.nativeCapture = this.phoneCamera && this.kind !== 'audio' && !this.appPhoto && !this.appVideo;
@@ -145,20 +148,20 @@ export class AddMedia implements OnInit, OnDestroy {
       return;
     }
     if (file.type === 'image/gif' && file.size > MAX_IMAGE_BYTES) {
-      this.error.set('That GIF is too big. Choose one under 10 MB.');
+      this.error.set(tr('addMedia.thatGifIsToo', 'That GIF is too big. Choose one under 10 MB.'));
       return;
     }
-    this.working.set(this.kind === 'video' ? 'Preparing the video… keep this page open' : 'Preparing…');
+    this.working.set(this.kind === 'video' ? tr('addMedia.preparingTheVideoKeep', 'Preparing the video… keep this page open') : tr('addMedia.preparing', 'Preparing…'));
     try {
       this.show(
         this.kind === 'image'
           ? await prepareImage(file)
           : this.kind === 'audio'
             ? await prepareAudioFile(file)
-            : await prepareVideo(file, (done) => this.working.set(`Preparing the video… ${Math.round(done * 100)} % (keep this page open)`)),
+            : await prepareVideo(file, (done) => this.working.set(tr('addMedia.preparingTheVideoKeep2', 'Preparing the video… {{ done }} % (keep this page open)', { done: Math.round(done * 100) }))),
       );
     } catch (err: any) {
-      this.error.set(this.kind === 'image' ? 'This image could not be prepared (it may be too big for the memory of this phone). Close other apps and try again, take the photo at a lower resolution, or choose another one (JPEG, PNG, WebP or GIF).' : err.message ?? 'This file cannot be opened. Try another one.');
+      this.error.set(this.kind === 'image' ? 'This image could not be prepared (it may be too big for the memory of this phone). Close other apps and try again, take the photo at a lower resolution, or choose another one (JPEG, PNG, WebP or GIF).' : err.message ?? tr('addMedia.thisFileCannotBe', 'This file cannot be opened. Try another one.'));
     } finally {
       this.working.set(null);
     }
@@ -196,11 +199,11 @@ export class AddMedia implements OnInit, OnDestroy {
   protected async filmed(film: { blob: Blob; durationMs: number }): Promise<void> {
     this.cameraOpen.set(false);
     this.error.set(null);
-    this.working.set('Preparing the video…');
+    this.working.set(tr('addMedia.preparingTheVideo', 'Preparing the video…'));
     try {
       this.show(await prepareRecorded(film.blob, film.durationMs));
     } catch (err: any) {
-      this.error.set(err.message ?? 'The video could not be saved. Try again.');
+      this.error.set(err.message ?? tr('addMedia.theVideoCouldNot', 'The video could not be saved. Try again.'));
     } finally {
       this.working.set(null);
     }
@@ -220,12 +223,12 @@ export class AddMedia implements OnInit, OnDestroy {
   protected async rotate(clockwise: boolean): Promise<void> {
     const file = this.file();
     if (!file || this.working() || this.kind !== 'image') return;
-    this.working.set('Turning…');
+    this.working.set(tr('addMedia.turning', 'Turning…'));
     this.error.set(null);
     try {
       this.show(await rotateImage(file as PreparedImage, clockwise));
     } catch (err: any) {
-      this.error.set(err.message ?? 'The image could not be turned');
+      this.error.set(err.message ?? tr('addMedia.theImageCouldNot', 'The image could not be turned'));
     } finally {
       this.working.set(null);
     }
@@ -244,11 +247,11 @@ export class AddMedia implements OnInit, OnDestroy {
   async send(): Promise<void> {
     const file = this.file();
     if (!file || this.working()) return;
-    this.working.set('Sending…');
+    this.working.set(tr('addMedia.sending', 'Sending…'));
     this.error.set(null);
     let sending = false; // false = the file is still being uploaded
     try {
-      const progress = (done: number, total: number) => this.working.set(`Sending… ${done} of ${total}`);
+      const progress = (done: number, total: number) => this.working.set(tr('addMedia.sendingOf', 'Sending… {{ done }} of {{ total }}', { done, total }));
       if (!this.stored) {
         // both of us have a key and locking is on: the file is locked here with the key of its message, and only the locked file leaves the device
         const key = await this.lock.mediaKey(this.friendId);
@@ -260,7 +263,7 @@ export class AddMedia implements OnInit, OnDestroy {
           this.stored = this.kind === 'image' ? await this.media.uploadImage(file as PreparedImage, progress) : this.kind === 'audio' ? await this.media.uploadAudio(file as PreparedAudio, progress) : await this.media.uploadVideo(file as PreparedVideo, progress);
         }
       }
-      this.working.set('Sending…');
+      this.working.set(tr('addMedia.sending', 'Sending…'));
       const size = 'width' in file && !this.sealed ? { width: file.width, height: file.height } : {}; // a locked file's size is inside the lock
       sending = true;
       const message = await this.chat.sendMedia(this.friendId, (this.hosted() ? this.captionIn() : this.caption()).trim(), { objectId: this.stored.objectId, ...size, durationMs: this.sealed ? undefined : (this.durationMs() ?? undefined) }, this.sealed ?? undefined, this.ctx?.pokes() ?? false);
@@ -268,7 +271,7 @@ export class AddMedia implements OnInit, OnDestroy {
       if (this.embedded) this.sent.emit(message); // the feed adds it and closes this panel
       else await this.router.navigate(['/friends', this.friendId]); // the conversation loads the message, and the file, from the server
     } catch (err: any) {
-      this.error.set(err instanceof ApiError && err.status >= 500 && sending ? `${err.message} (sending the message)` : (err.message ?? 'Could not send it'));
+      this.error.set(err instanceof ApiError && err.status >= 500 && sending ? `${err.message} (sending the message)` : (err.message ?? tr('addMedia.couldNotSendIt', 'Could not send it')));
     } finally {
       this.working.set(null);
     }

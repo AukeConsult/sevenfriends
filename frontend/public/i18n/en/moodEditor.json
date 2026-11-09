@@ -1,0 +1,9 @@
+{
+  "tapToSayHow": "Tap to say how you are",
+  "yourMood": "Your mood",
+  "noMood": "No mood",
+  "aFewWordsAbout": "A few words about how you are (optional)",
+  "moodMessage": "Mood message",
+  "couldNotLoadYour": "Could not load your mood",
+  "couldNotSaveYour": "Could not save your mood"
+}

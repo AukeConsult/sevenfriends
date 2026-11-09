@@ -1,0 +1,14 @@
+{
+  "title": "Email me a sign-in link",
+  "checkTitle": "Check your email.",
+  "sentTo": "We sent a sign-in link to",
+  "openHere": "Open it on this device to sign in.",
+  "noEmail": "No email? Look in your spam folder, or try again.",
+  "another": "Use another email address",
+  "intro": "No password needed. We email you a link, and opening it signs you in. It also proves that the address is yours, so {{ many }} who add you by email can find you.",
+  "yourEmail": "Your email address",
+  "sending": "Sending…",
+  "send": "Send link",
+  "writeEmail": "Write your email address first.",
+  "sendFailed": "Could not send the link. Please try again."
+}

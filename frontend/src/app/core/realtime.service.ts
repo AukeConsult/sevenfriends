@@ -10,6 +10,7 @@ import { LiveChanges } from './live-changes';
 import { NotificationsService } from './notifications.service';
 import { PushService } from './push.service';
 import { SoundService } from './sound.service';
+import { tr } from './i18n';
 
 type FirestoreSdk = typeof import('firebase/firestore');
 type Added = { id: string; data: DocumentData };
@@ -87,7 +88,7 @@ export class RealtimeService {
             if (first) return;
             for (const request of this.friends.requests()) {
               if (known.has(request.id)) continue;
-              this.notify('request', { title: `${request.fromName} wants to be your ${this.active.words.one}`, body: request.message ?? `Open ${this.active.words.app} to answer.`, id: `request-${request.id}`, go: '/' });
+              this.notify('request', { title: tr('core.wantsToBeYour', '{{ fromName }} wants to be your {{ one }}', { fromName: request.fromName, one: this.active.words.one }), body: request.message ?? tr('core.openToAnswer', 'Open {{ app }} to answer.', { app: this.active.words.app }), id: `request-${request.id}`, go: '/' });
             }
           });
         }),
@@ -214,7 +215,7 @@ export class RealtimeService {
       if (was?.status !== 'pending' || friend.incoming) continue; // only answers to MY requests
       this.ring('answer');
       this.notify('answer', {
-        title: friend.status === 'confirmed' ? `${friend.name} accepted your friend request` : `${friend.name} rejected your friend request`,
+        title: friend.status === 'confirmed' ? tr('core.acceptedYourFriendRequest', '{{ friendName }} accepted your friend request', { friendName: friend.name }) : tr('core.rejectedYourFriendRequest', '{{ friendName }} rejected your friend request', { friendName: friend.name }),
         body: '',
         id: `answer-${friend.id}-${friend.status}`, // one per answer
         go: '/',
@@ -223,7 +224,7 @@ export class RealtimeService {
     // gone from my list although I did not delete it (my own deletes are removed from the list at once): they ended it
     for (const [id, was] of before) {
       if (!now.has(id)) {
-        this.notify('answer', { title: `${was.name} removed the friendship`, body: 'The conversation is deleted for both of you.', id: `removed-${id}`, go: '/' });
+        this.notify('answer', { title: tr('core.removedTheFriendship', '{{ wasName }} removed the friendship', { wasName: was.name }), body: tr('core.theConversationIsDeleted', 'The conversation is deleted for both of you.'), id: `removed-${id}`, go: '/' });
       }
     }
   }
@@ -271,7 +272,7 @@ export class RealtimeService {
         const connectionId = m.data['connectionId'] as string | undefined;
         const text = m.data['enc'] ? '🔒 New message' : String(m.data['text'] ?? ''); // a locked text is unreadable here: only the sender is named
         this.notify('message', {
-          title: String(m.data['fromName'] ?? 'New message'),
+          title: String(m.data['fromName'] ?? tr('core.newMessage', 'New message')),
           body: text.length > 120 ? `${text.slice(0, 120)}…` : text,
           id: `message-${m.id}`, // one per message
           go: connectionId ? `/friends/${connectionId}` : '/',

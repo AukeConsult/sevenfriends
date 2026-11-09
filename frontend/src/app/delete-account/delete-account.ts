@@ -1,3 +1,5 @@
+import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
+import { tr } from '../core/i18n';
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ApiService } from '../core/api.service';
@@ -9,8 +11,9 @@ const CONFIRM_WORD = 'DELETE';
 /** A full page to erase yourself from the system, for good. */
 @Component({
   selector: 'app-delete-account',
-  imports: [RouterLink],
+  imports: [RouterLink, TranslocoDirective],
   templateUrl: './delete-account.html',
+  providers: [provideTranslocoScope('deleteAccount')],
 })
 export class DeleteAccount {
   private readonly api = inject(ApiService);
@@ -30,7 +33,7 @@ export class DeleteAccount {
     try {
       await this.api.request<void>('/users/me', { method: 'DELETE', body: JSON.stringify({ confirm: CONFIRM_WORD }) });
     } catch (err: any) {
-      this.error.set(err.message ?? 'Could not delete your account. Nothing was changed, please try again.');
+      this.error.set(err.message ?? tr('deleteAccount.couldNotDeleteYour', 'Could not delete your account. Nothing was changed, please try again.'));
       this.busy.set(false);
       return;
     }

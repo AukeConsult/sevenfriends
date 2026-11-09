@@ -1,6 +1,8 @@
+import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
+import { tr } from '../core/i18n';
 import { ActiveCircleService } from '../core/active-circle.service';
 import { Capacitor } from '@capacitor/core';
-import { DatePipe } from '@angular/common';
+import { AppDatePipe } from '../core/app-date.pipe';
 import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { ChatService } from '../core/chat.service';
@@ -41,8 +43,9 @@ interface MessageGroup {
  */
 @Component({
   selector: 'app-notifications',
-  imports: [DatePipe, FriendAvatar, HomeSeats, HomeTop, RouterLink, MoodEditor, Sleeping, AddFriend],
+  imports: [AppDatePipe, FriendAvatar, HomeSeats, HomeTop, RouterLink, MoodEditor, Sleeping, AddFriend, TranslocoDirective],
   templateUrl: './notifications.html',
+  providers: [provideTranslocoScope('notifications')],
   host: { '(click)': 'emptySpaceClicked($event)' },
 })
 export class Notifications {
@@ -133,7 +136,7 @@ export class Notifications {
   protected readonly androidOff = computed(() => {
     const blocked = this.android.blocked();
     if (!blocked || this.androidLater()) return null;
-    if (blocked.appOff) return `Notifications are switched off for ${this.w.app} in Android, so you will not hear about new messages or ${this.w.one} requests.`;
+    if (blocked.appOff) return tr('notifications.notificationsAreSwitchedOff', 'Notifications are switched off for {{ app }} in Android, so you will not hear about new messages or {{ one }} requests.', { app: this.w.app, one: this.w.one });
     const names: Record<string, string> = { message: 'new messages', request: `${this.w.one} requests`, answer: 'answers to your requests', removed: 'removed connections' };
     const off = blocked.off.map((kind) => names[kind] ?? kind);
     return off.length ? `In Android these notifications are switched off: ${off.join(', ')}.` : null;
@@ -152,8 +155,8 @@ export class Notifications {
     if (Capacitor.isNativePlatform() || this.pushLater() || !this.push.checked() || !this.push.supported()) return null;
     if (this.push.enabled() && this.permission() === 'granted') return null;
     return this.permission() === 'denied'
-      ? { canTurnOn: false, text: 'Notifications are blocked for this site in your browser, so you will not hear about new messages when this page is closed. Allow them in the browser settings (the lock icon by the address).' }
-      : { canTurnOn: true, text: 'Notifications are off on this device, so you will not hear about new messages when this page is closed.' };
+      ? { canTurnOn: false, text: tr('notifications.notificationsAreBlockedFor', 'Notifications are blocked for this site in your browser, so you will not hear about new messages when this page is closed. Allow them in the browser settings (the lock icon by the address).') }
+      : { canTurnOn: true, text: tr('notifications.notificationsAreOffOn', 'Notifications are off on this device, so you will not hear about new messages when this page is closed.') };
   });
 
   protected async turnOnPush(): Promise<void> {
@@ -197,7 +200,7 @@ export class Notifications {
   /** "Good evening, Leif" */
   protected readonly greeting = computed(() => {
     const hour = new Date().getHours();
-    const part = hour < 5 ? 'Good night' : hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+    const part = hour < 5 ? tr('notifications.goodNight', 'Good night') : hour < 12 ? tr('notifications.goodMorning', 'Good morning') : hour < 18 ? tr('notifications.goodAfternoon', 'Good afternoon') : tr('notifications.goodEvening', 'Good evening');
     const first = (this.user()?.displayName ?? '').trim().split(/\s+/)[0];
     return first ? `${part}, ${first}` : part;
   });
@@ -205,7 +208,7 @@ export class Notifications {
   /** how many of my friends are active right now */
   protected readonly around = computed(() => {
     const n = this.friendsService.awake().filter((f) => f.status === 'confirmed' && f.presence === 'active').length;
-    return n === 0 ? 'Nobody is around right now' : n === 1 ? '1 of your seven is around right now' : `${n} of your seven are around right now`;
+    return n === 0 ? tr('notifications.nobodyIsAroundRight', 'Nobody is around right now') : n === 1 ? tr('notifications.ofYourSevenIs', '1 of your seven is around right now') : tr('notifications.ofYourSevenAre', '{{ n }} of your seven are around right now', { n });
   });
 
   /** the quick replies being typed, by friend */
@@ -264,7 +267,7 @@ export class Notifications {
       }
       this.notice.set({
         kind: 'warning',
-        text: `You have no free seats. The request from ${request.fromName} stays pending: remove a friend to make room, then confirm.`,
+        text: tr('notifications.youHaveNoFree', 'You have no free seats. The request from {{ fromName }} stays pending: remove a friend to make room, then confirm.', { fromName: request.fromName }),
       });
     } catch (err: any) {
       this.error.set(err.message);
@@ -275,7 +278,7 @@ export class Notifications {
     this.notice.set(null);
     try {
       await this.friendsService.rejectRequest(request.id);
-      this.notice.set({ kind: 'warning', text: `You rejected the request from ${request.fromName}. They can see that it was rejected.` });
+      this.notice.set({ kind: 'warning', text: tr('notifications.youRejectedTheRequest', 'You rejected the request from {{ fromName }}. They can see that it was rejected.', { fromName: request.fromName }) });
     } catch (err: any) {
       this.error.set(err.message);
     }
@@ -283,10 +286,10 @@ export class Notifications {
 
   /** "You haven't talked to Anna for 3 weeks" */
   protected quietText(friend: Friend): string {
-    if (!friend.lastSpokenAt) return `You haven't talked to ${friend.name} yet`;
+    if (!friend.lastSpokenAt) return tr('notifications.youHavenTTalked', 'You haven\'t talked to {{ friendName }} yet', { friendName: friend.name });
     const days = Math.floor((this.now - new Date(friend.lastSpokenAt).getTime()) / 86_400_000);
     const span = days < 60 ? `${Math.max(2, Math.round(days / 7))} weeks` : `${Math.round(days / 30)} months`;
-    return `You haven't talked to ${friend.name} for ${span}`;
+    return tr('notifications.youHavenTTalked2', 'You haven\'t talked to {{ friendName }} for {{ span }}', { friendName: friend.name, span });
   }
 
   /** seats still free */
@@ -303,9 +306,9 @@ export class Notifications {
 
   /** "You last spoke 3 days ago" */
   protected lastTalk(friend: Friend): string {
-    if (!friend.lastSpokenAt) return `You haven't talked to ${friend.name} yet`;
+    if (!friend.lastSpokenAt) return tr('notifications.youHavenTTalked', 'You haven\'t talked to {{ friendName }} yet', { friendName: friend.name });
     const days = Math.floor((this.now - new Date(friend.lastSpokenAt).getTime()) / 86_400_000);
-    return days < 1 ? 'You spoke today' : days === 1 ? 'You last spoke yesterday' : `You last spoke ${days} days ago`;
+    return days < 1 ? tr('notifications.youSpokeToday', 'You spoke today') : days === 1 ? tr('notifications.youLastSpokeYesterday', 'You last spoke yesterday') : tr('notifications.youLastSpokeDays', 'You last spoke {{ days }} days ago', { days });
   }
 
   /** a friend I have not talked to for a while (or never): a gentle nudge */
@@ -328,7 +331,7 @@ export class Notifications {
       await this.chat.markRead(group.connectionId);
       this.setReply(group.key, '');
     } catch (err: any) {
-      this.error.set(err.message ?? 'Could not send the reply');
+      this.error.set(err.message ?? tr('notifications.couldNotSendThe', 'Could not send the reply'));
     } finally {
       this.replying.set(null);
     }
@@ -340,7 +343,7 @@ export class Notifications {
       if (group.connectionId) await this.chat.markRead(group.connectionId);
       else await this.messagesService.markRead(group.last.id);
     } catch (err: any) {
-      this.error.set(err.message ?? 'Could not mark the messages as read');
+      this.error.set(err.message ?? tr('notifications.couldNotMarkThe', 'Could not mark the messages as read'));
     }
   }
 

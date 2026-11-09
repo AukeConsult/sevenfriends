@@ -1,12 +1,15 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
+import { tr } from '../core/i18n';
 import { authMessage } from '../core/auth-errors';
 import { AuthService } from '../core/auth.service';
 
 /** The page the emailed link opens: it finishes the sign-in. */
 @Component({
   selector: 'app-login-link',
-  imports: [RouterLink],
+  imports: [RouterLink, TranslocoDirective],
+  providers: [provideTranslocoScope('loginLink', 'loginEmail', 'login')],
   templateUrl: './login-link.html',
 })
 export class LoginLink {
@@ -39,7 +42,7 @@ export class LoginLink {
       await this.auth.completeSignInLink(email);
       await this.router.navigateByUrl(this.auth.landingPath());
     } catch (err) {
-      this.error.set(authMessage(err, 'Could not sign you in with this link. Ask for a new one.'));
+      this.error.set(authMessage(err, tr('loginLink.failed', 'Could not sign you in with this link. Ask for a new one.')));
       this.needEmail.set(true);
     } finally {
       this.busy.set(false);

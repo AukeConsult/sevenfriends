@@ -1,3 +1,4 @@
+import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { Component, computed, DestroyRef, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { SOUND_CHOICES, SOUND_EVENTS, SoundEvent, SoundId, SoundService } from '../core/sound.service';
@@ -5,8 +6,9 @@ import { SOUND_CHOICES, SOUND_EVENTS, SoundEvent, SoundId, SoundService } from '
 /** A full page to pick the sound for one event (no drop-down that would open outside the screen). */
 @Component({
   selector: 'app-sound-picker',
-  imports: [RouterLink],
+  imports: [RouterLink, TranslocoDirective],
   templateUrl: './sound-picker.html',
+  providers: [provideTranslocoScope('soundPicker')],
 })
 export class SoundPicker {
   protected readonly sounds = inject(SoundService);

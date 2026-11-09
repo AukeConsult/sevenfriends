@@ -1,3 +1,4 @@
+import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { Component, computed, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../core/auth.service';
@@ -16,8 +17,9 @@ import { CIRCLE_PAGES } from '../circle-entry/circle-entry';
  */
 @Component({
   selector: 'app-welcome',
-  imports: [RouterLink, SeatDots, WhyTiles],
+  imports: [RouterLink, SeatDots, WhyTiles, TranslocoDirective],
   templateUrl: './welcome.html',
+  providers: [provideTranslocoScope('welcome')],
 })
 export class Welcome {
   private readonly app = inject(InstallService);

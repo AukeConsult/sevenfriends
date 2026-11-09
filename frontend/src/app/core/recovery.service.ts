@@ -7,6 +7,7 @@ import { rewrapKey } from './box-crypto';
 import { FriendsService } from './friends.service';
 import { myDeviceKey } from './my-key';
 import { SafeboxService } from './safebox.service';
+import { tr } from './i18n';
 
 export interface HelpResult {
   /** new copies of keys filed on the server */
@@ -55,8 +56,8 @@ export class RecoveryService {
    */
   async help(friendId: string, request: RecoveryState, progress: (done: number) => void): Promise<HelpResult> {
     const [mine, keys] = await Promise.all([myDeviceKey(this.auth.user()?.uid), this.safebox.keys(friendId)]);
-    if (!mine) throw new Error('This device has no key, so it cannot open your friend’s messages. Bring your key back in Settings, Keys.');
-    if (!keys.friend.length) throw new Error('Your friend has no key in use any more. Ask them to ask again.');
+    if (!mine) throw new Error(tr('core.thisDeviceHasNo2', 'This device has no key, so it cannot open your friend’s messages. Bring your key back in Settings, Keys.'));
+    if (!keys.friend.length) throw new Error(tr('core.yourFriendHasNo', 'Your friend has no key in use any more. Ask them to ask again.'));
     const result: HelpResult = { done: 0, skipped: 0 };
 
     for (const part of ['messages', 'box'] as const) {

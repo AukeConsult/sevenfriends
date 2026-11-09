@@ -1,0 +1,21 @@
+{
+  "emojiGroups": "Emoji groups",
+  "addAnEmoji": "Add an emoji",
+  "sendAnImage": "Send an image",
+  "sendAVideo": "Send a video",
+  "sendAVoiceMessage": "Send a voice message",
+  "send": "Send",
+  "add": "+ Add",
+  "messagesForFriendnameOnly": "Messages for {{ friendName }} only. They are kept on this device, and saved as you type.",
+  "forExampleIM": "For example: I'm on my way",
+  "addAMessage": "+ Add a message",
+  "couldNotSendThe": "Could not send the message",
+  "addEmoji": "Add {{ emoji }}",
+  "addATextOptional": "Add a text (optional)…",
+  "writeToFriendname": "Write to {{ friendName }}…",
+  "messageToFriendname": "Message to {{ friendName }}",
+  "addAMessageFor": "Add a message for {{ friendName }} only",
+  "messageForFriendnameIndex": "Message for {{ friendName }} {{ index }}",
+  "removeMessageIndex": "Remove message {{ index }}",
+  "messagesForOnly": "Messages for {{ friendName }} only"
+}

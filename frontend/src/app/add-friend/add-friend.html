@@ -1,10 +1,11 @@
+<ng-container *transloco="let t">
 <div class="sf-page-head">
   <h1 [class.d-flex]="embedded()" [class.align-items-center]="embedded()" [class.justify-content-center]="embedded()" [class.gap-1]="embedded()">
     @if (embedded()) {
-      <button type="button" class="sf-back-inline" aria-label="Back to home" (click)="closed.emit()"></button>
-      <span>Add a {{ w.one }}</span>
+      <button type="button" class="sf-back-inline" [attr.aria-label]="t('addFriend.backToHome') || 'Back to home'" (click)="closed.emit()"></button>
+      <span>{{ t('addFriend.addAOne', { one: w.one }) || 'Add a ' + w.one }}</span>
     } @else {
-      <span class="sf-title-dot" aria-hidden="true"></span>Add a {{ w.one }}
+      <span class="sf-title-dot" aria-hidden="true"></span>{{ t('addFriend.addAOne', { one: w.one }) || 'Add a ' + w.one }}
     }
   </h1>
 </div>
@@ -13,44 +14,44 @@
   <!-- the person has no account yet: the request is saved, and this is the link to send -->
   <main class="sf-narrow">
     <div class="alert alert-success m-0" role="status">
-      <strong>Saved.</strong> {{ done.to }} is not on {{ w.app }} yet. Your request waits for them.
+      <span [innerHTML]="t('addFriend.strongSavedStrongTo', { to: done.to, app: w.app }) || '<strong>Saved.</strong> {{ to }} is not on {{ app }} yet. Your request waits for them.'"></span>
     </div>
-    <h2 class="sf-section">Send them this link</h2>
+    <h2 class="sf-section">{{ t('addFriend.sendThemThisLink') || 'Send them this link' }}</h2>
     <div class="card">
       <div class="card-body vstack gap-2">
         @if (!invite.canShare) {
-          <input type="text" class="form-control" [value]="done.link" readonly aria-label="The link to send" (focus)="$any($event.target).select()" />
+          <input type="text" class="form-control" [value]="done.link" readonly [attr.aria-label]="t('addFriend.theLinkToSend') || 'The link to send'" (focus)="$any($event.target).select()" />
         }
         <div class="d-flex flex-wrap gap-2">
-          <button type="button" class="btn btn-primary" (click)="invite.share(done.link)">Share link</button>
-          @if (!invite.canShare) { <button type="button" class="btn btn-light" (click)="invite.copy(done.link)">Copy link</button> }
+          <button type="button" class="btn btn-primary" (click)="invite.share(done.link)">{{ t('addFriend.shareLink') || 'Share link' }}</button>
+          @if (!invite.canShare) { <button type="button" class="btn btn-light" (click)="invite.copy(done.link)">{{ t('addFriend.copyLink') || 'Copy link' }}</button> }
         </div>
         @if (invite.note(); as note) { <p class="small m-0" role="status">{{ note }}</p> }
       </div>
     </div>
     <div class="sf-actions">
-      @if (embedded()) { <button type="button" class="btn btn-light flex-fill" (click)="closed.emit()">Done</button> }
-      @else { <a [routerLink]="backTo" [queryParams]="backParams" class="btn btn-light flex-fill">Done</a> }
-      <button type="button" class="btn btn-light flex-fill" (click)="another()">Add another</button>
+      @if (embedded()) { <button type="button" class="btn btn-light flex-fill" (click)="closed.emit()">{{ t('addFriend.done') || 'Done' }}</button> }
+      @else { <a [routerLink]="backTo" [queryParams]="backParams" class="btn btn-light flex-fill">{{ t('addFriend.done') || 'Done' }}</a> }
+      <button type="button" class="btn btn-light flex-fill" (click)="another()">{{ t('addFriend.addAnother') || 'Add another' }}</button>
     </div>
   </main>
 } @else {
-  <form class="sf-narrow" (submit)="$event.preventDefault(); send()" [attr.aria-label]="'Add a ' + w.one">
-    <p class="small text-secondary m-0">Their email or phone number is how they are found.</p>
+  <form class="sf-narrow" (submit)="$event.preventDefault(); send()" [attr.aria-label]="(t('addFriend.addAOne', { one: w.one }) || 'Add a ' + w.one)">
+    <p class="small text-secondary m-0">{{ t('addFriend.theirEmailOrPhone') || 'Their email or phone number is how they are found.' }}</p>
 
-    <label class="sf-field"><span class="form-label small text-secondary m-0">Email</span>
+    <label class="sf-field"><span class="form-label small text-secondary m-0">{{ t('addFriend.email') || 'Email' }}</span>
       <input appClear type="email" class="form-control" [value]="draft().email" (input)="setField('email', $any($event.target).value)"
              inputmode="email" autocomplete="off" />
     </label>
-    <label class="sf-field"><span class="form-label small text-secondary m-0">Phone</span>
+    <label class="sf-field"><span class="form-label small text-secondary m-0">{{ t('addFriend.phone') || 'Phone' }}</span>
       <input appClear type="tel" class="form-control" [value]="draft().phone" (input)="setField('phone', $any($event.target).value)"
              inputmode="tel" autocomplete="off" />
     </label>
-    <label class="sf-field"><span class="form-label small text-secondary m-0">Name (optional)</span>
+    <label class="sf-field"><span class="form-label small text-secondary m-0">{{ t('addFriend.nameOptional') || 'Name (optional)' }}</span>
       <input appClear type="text" class="form-control" [value]="draft().name" (input)="setField('name', $any($event.target).value)"
              autocomplete="off" maxlength="100" />
     </label>
-    <label class="sf-field"><span class="form-label small text-secondary m-0">Message (optional)</span>
+    <label class="sf-field"><span class="form-label small text-secondary m-0">{{ t('addFriend.messageOptional') || 'Message (optional)' }}</span>
       <textarea appClear class="form-control" rows="2" maxlength="500" [value]="draft().message"
                 (input)="setField('message', $any($event.target).value)"
                 [placeholder]="w.hello"></textarea>
@@ -61,11 +62,12 @@
     }
 
     <div class="sf-actions">
-      @if (embedded()) { <button type="button" class="btn btn-light flex-fill" (click)="closed.emit()" [disabled]="sending()">Cancel</button> }
-      @else { <a [routerLink]="backTo" [queryParams]="backParams" class="btn btn-light flex-fill" [class.disabled]="sending()">Cancel</a> }
+      @if (embedded()) { <button type="button" class="btn btn-light flex-fill" (click)="closed.emit()" [disabled]="sending()">{{ t('addFriend.cancel') || 'Cancel' }}</button> }
+      @else { <a [routerLink]="backTo" [queryParams]="backParams" class="btn btn-light flex-fill" [class.disabled]="sending()">{{ t('addFriend.cancel') || 'Cancel' }}</a> }
       <button type="submit" class="btn btn-primary flex-fill" [disabled]="sending()">
-        {{ sending() ? 'Sending…' : 'Add ' + w.one }}
+        {{ sending() ? (t('addFriend.sending') || 'Sending…') : (t('addFriend.addOne', { one: w.one }) || 'Add ' + w.one) }}
       </button>
     </div>
   </form>
 }
+</ng-container>

@@ -1,3 +1,4 @@
+import { tr } from './i18n';
 /**
  * Shows files in the page: PDF, Word (.docx), Excel (.xlsx) and PowerPoint (.pptx). The libraries are big, so each one is loaded
  * only when a file of its kind is opened (they are separate downloads, never part of the app's first load). The files come from a
@@ -38,7 +39,7 @@ export async function renderPdf(blob: Blob, host: HTMLElement): Promise<number> 
     canvas.className = 'sf-pdf-page';
     canvas.style.width = `${Math.floor(viewport.width / ratio)}px`;
     canvas.setAttribute('role', 'img');
-    canvas.setAttribute('aria-label', `Page ${n} of ${doc.numPages}`);
+    canvas.setAttribute('aria-label', tr('core.pageOf', 'Page {{ n }} of {{ numPages }}', { n, numPages: doc.numPages }));
     host.append(canvas);
     await page.render({ canvas, canvasContext: canvas.getContext('2d')!, viewport }).promise;
   }
@@ -104,7 +105,7 @@ export async function readSheets(blob: Blob): Promise<SheetView[]> {
   const xml = (name: string) => (files[name] ? new DOMParser().parseFromString(strFromU8(files[name]), 'application/xml') : null);
 
   const workbook = xml('xl/workbook.xml');
-  if (!workbook) throw new Error('Not an Excel file');
+  if (!workbook) throw new Error(tr('core.notAnExcelFile', 'Not an Excel file'));
   const targets = new Map<string, string>();
   xml('xl/_rels/workbook.xml.rels')
     ?.querySelectorAll('Relationship')

@@ -1,27 +1,27 @@
+<ng-container *transloco="let t">
 <div class="sf-back-row">
-  <a routerLink="/login" class="btn btn-light" aria-label="Back to sign in">‹ Back</a>
+  <a routerLink="/login" class="btn btn-light" [attr.aria-label]="t('login.backToSignIn') || 'Back to sign in'">‹ {{ t('common.back') || 'Back' }}</a>
 </div>
 <div class="sf-page-head">
-  <h1>Email me a sign-in link</h1>
+  <h1>{{ t('loginEmail.title') || 'Email me a sign-in link' }}</h1>
 </div>
 
 <main class="sf-narrow">
   @if (sentTo(); as address) {
     <div class="alert alert-success" role="status">
-      <strong>Check your email.</strong>
-      We sent a sign-in link to <strong>{{ address }}</strong>. Open it on this device to sign in.
+      <strong>{{ t('loginEmail.checkTitle') || 'Check your email.' }}</strong>
+      {{ t('loginEmail.sentTo') || 'We sent a sign-in link to' }} <strong>{{ address }}</strong>. {{ t('loginEmail.openHere') || 'Open it on this device to sign in.' }}
     </div>
-    <p class="small text-secondary m-0">No email? Look in your spam folder, or try again.</p>
-    <button type="button" class="btn btn-light" (click)="useAnother()">Use another email address</button>
-    <a routerLink="/login" class="btn btn-link">Back to sign in</a>
+    <p class="small text-secondary m-0">{{ t('loginEmail.noEmail') || 'No email? Look in your spam folder, or try again.' }}</p>
+    <button type="button" class="btn btn-light" (click)="useAnother()">{{ t('loginEmail.another') || 'Use another email address' }}</button>
+    <a routerLink="/login" class="btn btn-link">{{ t('login.backToSignIn') || 'Back to sign in' }}</a>
   } @else {
     <p class="text-secondary m-0">
-      No password needed. We email you a link, and opening it signs you in. It also proves that the address is yours,
-      so {{ w.many }} who add you by email can find you.
+      {{ t('loginEmail.intro', { many: w.many }) || 'No password needed. We email you a link, and opening it signs you in. It also proves that the address is yours, so ' + w.many + ' who add you by email can find you.' }}
     </p>
 
     <form class="vstack gap-2" (submit)="$event.preventDefault(); send()">
-      <label class="d-grid gap-1"><span class="form-label small text-secondary m-0">Your email address</span>
+      <label class="d-grid gap-1"><span class="form-label small text-secondary m-0">{{ t('loginEmail.yourEmail') || 'Your email address' }}</span>
         <input type="email" class="form-control" [value]="email()" (input)="email.set($any($event.target).value)"
                autocomplete="email" inputmode="email" required />
       </label>
@@ -31,8 +31,9 @@
       }
 
       <div class="d-flex gap-2">
-        <button type="submit" class="btn btn-primary flex-fill" [disabled]="busy()">{{ busy() ? 'Sending…' : 'Send link' }}</button>
+        <button type="submit" class="btn btn-primary flex-fill" [disabled]="busy()">{{ busy() ? (t('loginEmail.sending') || 'Sending…') : (t('loginEmail.send') || 'Send link') }}</button>
       </div>
     </form>
   }
 </main>
+</ng-container>

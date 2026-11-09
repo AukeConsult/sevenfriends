@@ -1,9 +1,11 @@
+<ng-container *transloco="let t">
 <span class="sf-media" [style.--sf-ratio]="ratio()">
   @if (src(); as url) {
-    <img [src]="url" [alt]="media().name ?? 'Image'" />
+    <img [src]="url" [alt]="media().name ?? (t('mediaImage.image') || 'Image')" />
   } @else if (failed()) {
-    <span class="sf-hint">Could not load the image</span>
+    <span class="sf-hint">{{ t('mediaImage.couldNotLoadThe') || 'Could not load the image' }}</span>
   } @else {
-    <span class="sf-hint">Loading…</span>
+    <span class="sf-hint">{{ t('mediaImage.loading') || 'Loading…' }}</span>
   }
 </span>
+</ng-container>

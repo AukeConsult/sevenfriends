@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ActiveCircleService, CIRCLE_CHOICES } from '../core/active-circle.service';
 import { AuthService } from '../core/auth.service';
+import { tr } from '../core/i18n';
 
 /** The welcome pages of each circle; a visit to /welcome/<circle> opens one of them, picked by chance . */
 export const CIRCLE_PAGES: Record<string, string[]> = {
@@ -21,14 +22,15 @@ export const CIRCLE_PAGES: Record<string, string[]> = {
   template: `
     @if (other(); as o) {
       <main class="sf-landing text-center vstack gap-3 align-items-center">
-        <p class="m-0">This app is {{ o.app }}.</p>
-        <button type="button" class="btn btn-primary" (click)="stay()">Open {{ o.app }}</button>
-        <button type="button" class="btn btn-outline-secondary" (click)="switchTo()">Switch to {{ wanted.label }}</button>
+        <p class="m-0">{{ tr('core.thisAppIs', 'This app is ' + (o.app) + '.', { app: o.app }) }}</p>
+        <button type="button" class="btn btn-primary" (click)="stay()">{{ tr('core.open', 'Open ' + (o.app), { app: o.app }) }}</button>
+        <button type="button" class="btn btn-outline-secondary" (click)="switchTo()">{{ tr('core.switchTo', 'Switch to ' + (wanted.label), { label: wanted.label }) }}</button>
       </main>
     }
   `,
 })
 export class CircleEntry {
+  protected readonly tr = tr;
   private readonly router = inject(Router);
   private readonly auth = inject(AuthService);
   private readonly active = inject(ActiveCircleService);

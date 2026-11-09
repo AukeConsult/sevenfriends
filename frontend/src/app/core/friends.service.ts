@@ -3,6 +3,7 @@ import { ApiError, ApiService } from './api.service';
 import { AcceptResult, Circle, Friend, FriendRequest, NewFriend } from '../models';
 import { UiPreferencesService } from './ui-preferences';
 import { ActiveCircleService } from './active-circle.service';
+import { tr } from './i18n';
 
 @Injectable({ providedIn: 'root' })
 export class FriendsService {
@@ -42,7 +43,7 @@ export class FriendsService {
       const found = circles.find((c) => c.id === type);
       if (found) return found;
       // it could not be made: say why (most often the server is an older version that cannot make more circles yet)
-      throw new ApiError(`Could not make the ${type} circle: ${(err as Error).message}. Is the newest version of the backend deployed?`, 503);
+      throw new ApiError(tr('core.couldNotMakeThe', 'Could not make the {{ type }} circle: {{ ErrorMessage }}. Is the newest version of the backend deployed?', { type, ErrorMessage: (err as Error).message }), 503);
     }
   }
 
@@ -77,7 +78,7 @@ export class FriendsService {
 
   async add(friend: NewFriend): Promise<Friend> {
     if (!this.circle()) await this.load(); // the first load may have failed: try again
-    if (!this.circle()) throw new ApiError('Could not load your circle. Is the backend running?', 503);
+    if (!this.circle()) throw new ApiError(tr('core.couldNotLoadYour', 'Could not load your circle. Is the backend running?'), 503);
     const created = await this.api.request<Friend>(`${this.friendsPath()}`, {
       method: 'POST',
       body: JSON.stringify(friend),
@@ -122,7 +123,7 @@ export class FriendsService {
 
   private friendsPath(): string {
     const circle = this.circle();
-    if (!circle) throw new ApiError('No circle loaded', 400);
+    if (!circle) throw new ApiError(tr('core.noCircleLoaded', 'No circle loaded'), 400);
     return `/circles/${circle.id}/friends`;
   }
 }

@@ -1,3 +1,5 @@
+import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
+import { tr } from '../core/i18n';
 import { Component, computed, inject, output, signal } from '@angular/core';
 import { ActiveCircleService } from '../core/active-circle.service';
 import { Router } from '@angular/router';
@@ -19,8 +21,9 @@ const MAX_FRIENDS = 7;
  */
 @Component({
   selector: 'app-home-seats',
-  imports: [FriendAvatar],
+  imports: [FriendAvatar, TranslocoDirective],
   templateUrl: './home-seats.html',
+  providers: [provideTranslocoScope('homeSeats')],
 })
 export class HomeSeats {
   protected readonly w = inject(ActiveCircleService).words;
@@ -159,7 +162,7 @@ export class HomeSeats {
         await this.friendsService.moveToSeat(mover.id, to);
       }
     } catch (err: any) {
-      this.error.set(err.message ?? 'Could not move the ' + this.w.one);
+      this.error.set(err.message ?? tr('homeSeats.couldNotMoveThe', 'Could not move the ') + this.w.one);
     }
   }
 
@@ -172,7 +175,7 @@ export class HomeSeats {
     try {
       await this.friendsService.moveToSeat(mover.id, to);
     } catch (err: any) {
-      this.error.set(err.message ?? 'Could not move the ' + this.w.one);
+      this.error.set(err.message ?? tr('homeSeats.couldNotMoveThe', 'Could not move the ') + this.w.one);
     }
   }
 }

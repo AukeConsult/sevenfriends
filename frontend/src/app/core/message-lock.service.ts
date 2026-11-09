@@ -7,6 +7,7 @@ import { MediaService } from './media.service';
 import { myDeviceKey } from './my-key';
 import { SafeboxService } from './safebox.service';
 import { UiPreferencesService } from './ui-preferences';
+import { tr } from './i18n';
 
 /**
  * A message as the feed shows it. `locked` is set for a message that was sent locked (design: docs/design/message-encryption.md):
@@ -45,7 +46,7 @@ export class MessageLockService {
     if (!text || (!force && this.plain())) return null;
     const [keys, mine] = await Promise.all([this.safebox.keys(friendId), this.myKey()]);
     if (!mine || !keys.mine.some((k) => k.id === mine.keyId) || !keys.friend.length) {
-      if (force) throw new Error('This message is locked, so the new text must be locked too. It needs a key for you and for your friend.');
+      if (force) throw new Error(tr('core.thisMessageIsLocked', 'This message is locked, so the new text must be locked too. It needs a key for you and for your friend.'));
       return null;
     }
     return sealText(friendId, text, [{ uid: mine.uid, keys: keys.mine }, { uid: keys.friendUid, keys: keys.friend }]);
@@ -64,14 +65,14 @@ export class MessageLockService {
   /** The caption (may be empty) locked with the key the file was locked with, and the copies of the key for the keys in use now. Throws when a key is missing now. */
   async sealWith(friendId: string, key: CryptoKey, text: string, media: MessageEncMedia): Promise<SealedText> {
     const [keys, mine] = await Promise.all([this.safebox.keys(friendId), this.myKey()]);
-    if (!mine || !keys.mine.some((k) => k.id === mine.keyId) || !keys.friend.length) throw new Error('This message is locked, so it needs a key for you and for your friend. Try again.');
+    if (!mine || !keys.mine.some((k) => k.id === mine.keyId) || !keys.friend.length) throw new Error(tr('core.thisMessageIsLocked2', 'This message is locked, so it needs a key for you and for your friend. Try again.'));
     return sealTextWith(friendId, key, text, [{ uid: mine.uid, keys: keys.mine }, { uid: keys.friendUid, keys: keys.friend }], media);
   }
 
   /** A new text for a message that is locked: locked with the key the message already has, so the same keys (and nobody else) can read it. Throws when this device cannot open the message. */
   async reseal(friendId: string, message: ChatItem, text: string): Promise<{ text: string; iv: string }> {
     const mine = await this.myKey();
-    if (!message.enc || !mine) throw new Error('This message is locked, and this device has no key to change it with.');
+    if (!message.enc || !mine) throw new Error(tr('core.thisMessageIsLocked3', 'This message is locked, and this device has no key to change it with.'));
     return resealText(friendId, message.enc, text, mine.keyId, mine.privateKey);
   }
 

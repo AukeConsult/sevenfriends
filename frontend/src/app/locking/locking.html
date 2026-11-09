@@ -1,10 +1,11 @@
+<ng-container *transloco="let t">
 @if (!auth.user()) {
   <div class="sf-back-row">
-    <a routerLink="/login" class="btn btn-light" aria-label="Back to sign in">‹ Back</a>
+    <a routerLink="/login" class="btn btn-light" [attr.aria-label]="t('locking.backToSignIn') || 'Back to sign in'">{{ t('locking.back') || '‹ Back' }}</a>
   </div>
 }
 <div class="sf-page-head">
-  <h1>Locking: how your messages stay private</h1>
+  <h1>{{ t('locking.lockingHowYourMessages') || 'Locking: how your messages stay private' }}</h1>
 </div>
 
 <main class="sf-narrow sf-reading vstack gap-3">
@@ -12,130 +13,123 @@
     <app-info-nav />
   }
   <p class="m-0 text-center">
-    When you and your friend both have a key, your messages are locked. Only the two of you can read them. Not even we can.
+    {{ t('locking.whenYouAndYour') || 'When you and your friend both have a key, your messages are locked. Only the two of you can read them. Not even we can.' }}
   </p>
 
   <section class="vstack gap-2">
-    <h2 class="sf-section-title m-0">What does “locked” mean?</h2>
+    <h2 class="sf-section-title m-0">{{ t('locking.whatDoesLockedMean') || 'What does “locked” mean?' }}</h2>
     <p class="m-0">
-      Think of a letter in a small box with a padlock. Only you and your friend have a key to that padlock. Anyone who picks up the box on the way,
-      even the postman, sees a closed box and nothing more.
+      {{ t('locking.thinkOfALetter') || 'Think of a letter in a small box with a padlock. Only you and your friend have a key to that padlock. Anyone who picks up the box on the way, even the postman, sees a closed box and nothing more.' }}
     </p>
     <p class="m-0">
-      That is how a locked message works. Your text is scrambled into something that looks like nonsense. Only your friend’s key can turn it back into your words.
+      {{ t('locking.thatIsHowA') || 'That is how a locked message works. Your text is scrambled into something that looks like nonsense. Only your friend’s key can turn it back into your words.' }}
     </p>
   </section>
 
   <section class="vstack gap-2">
-    <h2 class="sf-section-title m-0">The lock is made on your device, not on our server</h2>
+    <h2 class="sf-section-title m-0">{{ t('locking.theLockIsMade') || 'The lock is made on your device, not on our server' }}</h2>
     <p class="m-0">
-      This is the important part. Your message is locked on your own phone or computer, before it is sent. Our server only receives the scrambled version.
-      The server never has a key, so it cannot open it. It could not do it even if we wanted to, and nobody who got into our server could either.
+      {{ t('locking.thisIsTheImportant') || 'This is the important part. Your message is locked on your own phone or computer, before it is sent. Our server only receives the scrambled version. The server never has a key, so it cannot open it. It could not do it even if we wanted to, and nobody who got into our server could either.' }}
     </p>
-    <div class="sf-lock-figure" role="img" aria-label="Your message is readable on your device and on your friend's device. The server holds only unreadable text and has no key.">
+    <div class="sf-lock-figure" role="img" [attr.aria-label]="t('locking.yourMessageIsReadable') || 'Your message is readable on your device and on your friend\'s device. The server holds only unreadable text and has no key.'">
       <div class="sf-lock-zone sf-lock-readable">
-        <strong>Your device</strong>
-        <span class="sf-lock-badge">Readable here</span>
-        <code>See you at 7</code>
-        <small>1. You write it<br />2. Your device locks it</small>
-        <span class="sf-lock-key sf-lock-has">🔑 Key stays here</span>
+        <span [innerHTML]="t('locking.strongYourDeviceStrong') || '<strong>Your device</strong>'"></span>
+        <span class="sf-lock-badge">{{ t('locking.readableHere') || 'Readable here' }}</span>
+        <span [innerHTML]="t('locking.codeSeeYouAt') || '<code>See you at 7</code>'"></span>
+        <small><span [innerHTML]="t('locking.youWriteItBr') || '1. You write it<br />2. Your device locks it'"></span></small>
+        <span class="sf-lock-key sf-lock-has">{{ t('locking.keyStaysHere') || '🔑 Key stays here' }}</span>
       </div>
       <div class="sf-lock-arrow" aria-hidden="true">›</div>
       <div class="sf-lock-zone sf-lock-server">
-        <strong>Our server</strong>
-        <span class="sf-lock-badge">Never readable here</span>
-        <code>Xq9#vT2k8…</code>
-        <small>Stores and passes on<br />unreadable text only</small>
-        <span class="sf-lock-key sf-lock-none">No key. Ever.</span>
+        <span [innerHTML]="t('locking.strongOurServerStrong') || '<strong>Our server</strong>'"></span>
+        <span class="sf-lock-badge">{{ t('locking.neverReadableHere') || 'Never readable here' }}</span>
+        <span [innerHTML]="t('locking.codeXqVtK') || '<code>Xq9#vT2k8…</code>'"></span>
+        <small><span [innerHTML]="t('locking.storesAndPassesOn') || 'Stores and passes on<br />unreadable text only'"></span></small>
+        <span class="sf-lock-key sf-lock-none">{{ t('locking.noKeyEver') || 'No key. Ever.' }}</span>
       </div>
       <div class="sf-lock-arrow" aria-hidden="true">›</div>
       <div class="sf-lock-zone sf-lock-readable">
-        <strong>Friend’s device</strong>
-        <span class="sf-lock-badge">Readable here</span>
-        <code>See you at 7</code>
-        <small>3. Their device unlocks it<br />4. They read it</small>
-        <span class="sf-lock-key sf-lock-has">🔑 Key stays here</span>
+        <span [innerHTML]="t('locking.strongFriendSDevice') || '<strong>Friend’s device</strong>'"></span>
+        <span class="sf-lock-badge">{{ t('locking.readableHere') || 'Readable here' }}</span>
+        <span [innerHTML]="t('locking.codeSeeYouAt') || '<code>See you at 7</code>'"></span>
+        <small><span [innerHTML]="t('locking.theirDeviceUnlocksIt') || '3. Their device unlocks it<br />4. They read it'"></span></small>
+        <span class="sf-lock-key sf-lock-has">{{ t('locking.keyStaysHere') || '🔑 Key stays here' }}</span>
       </div>
     </div>
   </section>
 
   <section class="vstack gap-2">
-    <h2 class="sf-section-title m-0">What is locked, and what is not</h2>
+    <h2 class="sf-section-title m-0">{{ t('locking.whatIsLockedAnd') || 'What is locked, and what is not' }}</h2>
     <p class="m-0">
-      A locked message hides everything you wrote: the text, and also any picture, video or voice message you send. Files in your safebox are locked in the same way.
+      {{ t('locking.aLockedMessageHides') || 'A locked message hides everything you wrote: the text, and also any picture, video or voice message you send. Files in your safebox are locked in the same way.' }}
     </p>
-    <div class="sf-lock-table" role="table" aria-label="What is locked and what is not">
-      <div class="sf-lock-head" role="row"><span role="columnheader">What</span><span role="columnheader">Not locked</span><span role="columnheader">Locked</span></div>
-      <div role="row"><span>The text you write</span><span class="sf-lock-bad">We can read it</span><span class="sf-lock-good">Only you two</span></div>
-      <div role="row"><span>Pictures, video, voice</span><span class="sf-lock-bad">We can see them</span><span class="sf-lock-good">Only you two</span></div>
-      <div role="row"><span>File names in the safebox</span><span class="sf-lock-bad">We can read them</span><span class="sf-lock-good">Only you two</span></div>
-      <div role="row"><span>Who writes to whom, and when</span><span>We know this</span><span>We know this</span></div>
-      <div role="row"><span>Notification on the phone</span><span>Shows the text</span><span>Says “New message”</span></div>
+    <div class="sf-lock-table" role="table" [attr.aria-label]="t('locking.whatIsLockedAnd2') || 'What is locked and what is not'">
+      <div class="sf-lock-head" role="row"><span role="columnheader">{{ t('locking.what') || 'What' }}</span><span role="columnheader">{{ t('locking.notLocked') || 'Not locked' }}</span><span role="columnheader">{{ t('locking.locked') || 'Locked' }}</span></div>
+      <div role="row"><span>{{ t('locking.theTextYouWrite') || 'The text you write' }}</span><span class="sf-lock-bad">{{ t('locking.weCanReadIt') || 'We can read it' }}</span><span class="sf-lock-good">{{ t('locking.onlyYouTwo') || 'Only you two' }}</span></div>
+      <div role="row"><span>{{ t('locking.picturesVideoVoice') || 'Pictures, video, voice' }}</span><span class="sf-lock-bad">{{ t('locking.weCanSeeThem') || 'We can see them' }}</span><span class="sf-lock-good">{{ t('locking.onlyYouTwo') || 'Only you two' }}</span></div>
+      <div role="row"><span>{{ t('locking.fileNamesInThe') || 'File names in the safebox' }}</span><span class="sf-lock-bad">{{ t('locking.weCanReadThem') || 'We can read them' }}</span><span class="sf-lock-good">{{ t('locking.onlyYouTwo') || 'Only you two' }}</span></div>
+      <div role="row"><span>{{ t('locking.whoWritesToWhom') || 'Who writes to whom, and when' }}</span><span>{{ t('locking.weKnowThis') || 'We know this' }}</span><span>{{ t('locking.weKnowThis') || 'We know this' }}</span></div>
+      <div role="row"><span>{{ t('locking.notificationOnThePhone') || 'Notification on the phone' }}</span><span>{{ t('locking.showsTheText') || 'Shows the text' }}</span><span>{{ t('locking.saysNewMessage') || 'Says “New message”' }}</span></div>
     </div>
     <p class="m-0">
-      We still need to know who is writing to whom, and when, so we can deliver the message and tell your friend it has arrived.
+      {{ t('locking.weStillNeedTo') || 'We still need to know who is writing to whom, and when, so we can deliver the message and tell your friend it has arrived.' }}
     </p>
   </section>
 
   <section class="vstack gap-2">
-    <h2 class="sf-section-title m-0">Even what is not locked is kept safe</h2>
+    <h2 class="sf-section-title m-0">{{ t('locking.evenWhatIsNot') || 'Even what is not locked is kept safe' }}</h2>
     <p class="m-0">
-      Messages that are not locked are not open to the world either. They are kept on protected servers (Google Firebase, which we use as our service provider and
-      which stores the data on our behalf). Nobody else gets access to them. We do not sell your data, we do not share it, and there are no advertisements.
+      {{ t('locking.messagesThatAreNot') || 'Messages that are not locked are not open to the world either. They are kept on protected servers (Google Firebase, which we use as our service provider and which stores the data on our behalf). Nobody else gets access to them. We do not sell your data, we do not share it, and there are no advertisements.' }}
     </p>
     <p class="m-0">
-      The difference is this: what is not locked can be read by us, because we hold the data. What is locked cannot, because we never have the key. Locking is the extra step for anything
-      you want to keep between the two of you only.
+      {{ t('locking.theDifferenceIsThis') || 'The difference is this: what is not locked can be read by us, because we hold the data. What is locked cannot, because we never have the key. Locking is the extra step for anything you want to keep between the two of you only.' }}
     </p>
   </section>
 
   <section class="vstack gap-2">
-    <h2 class="sf-section-title m-0">When is a message locked?</h2>
+    <h2 class="sf-section-title m-0">{{ t('locking.whenIsAMessage') || 'When is a message locked?' }}</h2>
     <p class="m-0">
-      A message is locked only when both you and your friend have set up a key. You set up yours when you first start the app. If your friend has no key yet,
-      the message is sent as normal text.
+      {{ t('locking.aMessageIsLocked') || 'A message is locked only when both you and your friend have set up a key. You set up yours when you first start the app. If your friend has no key yet, the message is sent as normal text.' }}
     </p>
-    <p class="m-0">The padlock in the header of every conversation shows what will happen:</p>
+    <p class="m-0">{{ t('locking.thePadlockInThe') || 'The padlock in the header of every conversation shows what will happen:' }}</p>
     <ul class="m-0">
-      <li><strong>Locked:</strong> both of you have a key, and your new messages are locked.</li>
-      <li><strong>Not locked:</strong> one of you has no key yet, or you have switched locking off.</li>
+      <li><span [innerHTML]="t('locking.strongLockedStrongBoth') || '<strong>Locked:</strong> both of you have a key, and your new messages are locked.'"></span></li>
+      <li><span [innerHTML]="t('locking.strongNotLockedStrong') || '<strong>Not locked:</strong> one of you has no key yet, or you have switched locking off.'"></span></li>
     </ul>
-    <p class="m-0">Messages sent before locking was on stay as they were. They are not locked afterwards.</p>
+    <p class="m-0">{{ t('locking.messagesSentBeforeLocking') || 'Messages sent before locking was on stay as they were. They are not locked afterwards.' }}</p>
   </section>
 
   <section class="vstack gap-2">
-    <h2 class="sf-section-title m-0">The numbers, in plain words</h2>
+    <h2 class="sf-section-title m-0">{{ t('locking.theNumbersInPlain') || 'The numbers, in plain words' }}</h2>
     <div class="sf-lock-nums">
-      <div><b>256-bit</b><span>a new key for every single message</span></div>
-      <div><b>3072-bit</b><span>the strength of the lock on each key copy</span></div>
-      <div><b>2 copies</b><span>of each message key: yours and your friend’s</span></div>
-      <div><b>24 words</b><span>that let you restore your key on a new device</span></div>
+      <div><span [innerHTML]="t('locking.bBitB') || '<b>256-bit</b>'"></span><span>{{ t('locking.aNewKeyFor') || 'a new key for every single message' }}</span></div>
+      <div><span [innerHTML]="t('locking.bBitB2') || '<b>3072-bit</b>'"></span><span>{{ t('locking.theStrengthOfThe') || 'the strength of the lock on each key copy' }}</span></div>
+      <div><span [innerHTML]="t('locking.bCopiesB') || '<b>2 copies</b>'"></span><span>{{ t('locking.ofEachMessageKey') || 'of each message key: yours and your friend’s' }}</span></div>
+      <div><span [innerHTML]="t('locking.bWordsB') || '<b>24 words</b>'"></span><span>{{ t('locking.thatLetYouRestore') || 'that let you restore your key on a new device' }}</span></div>
     </div>
     <p class="m-0">
-      Every message gets its own brand new key, so opening one message never opens another. A copy of that key is then locked once for you and once for your friend,
-      so you can both read it. These are the kind of locks that banks and governments use. Guessing such a key would take longer than the age of the universe.
+      {{ t('locking.everyMessageGetsIts') || 'Every message gets its own brand new key, so opening one message never opens another. A copy of that key is then locked once for you and once for your friend, so you can both read it. These are the kind of locks that banks and governments use. Guessing such a key would take longer than the age of the universe.' }}
     </p>
   </section>
 
   <section class="vstack gap-2">
-    <h2 class="sf-section-title m-0">Your 24 recovery words</h2>
+    <h2 class="sf-section-title m-0">{{ t('locking.yourRecoveryWords') || 'Your 24 recovery words' }}</h2>
     <p class="m-0">
-      When you set up your key, the app shows you 24 words, once. Write them on paper and keep them somewhere safe. If you lose your phone, or get a new one,
-      these words let you get your key back and read your locked messages again.
+      {{ t('locking.whenYouSetUp') || 'When you set up your key, the app shows you 24 words, once. Write them on paper and keep them somewhere safe. If you lose your phone, or get a new one, these words let you get your key back and read your locked messages again.' }}
     </p>
     <div class="sf-lock-warn">
-      <strong>Important:</strong> we do not keep your words and cannot send them to you. If you lose both your device and your 24 words, your locked messages and files
-      can never be opened again, by anyone.
+      <span [innerHTML]="t('locking.strongImportantStrongWe') || '<strong>Important:</strong> we do not keep your words and cannot send them to you. If you lose both your device and your 24 words, your locked messages and files can never be opened again, by anyone.'"></span>
     </div>
   </section>
 
   <section class="vstack gap-2">
-    <h2 class="sf-section-title m-0">Good to know</h2>
+    <h2 class="sf-section-title m-0">{{ t('locking.goodToKnow') || 'Good to know' }}</h2>
     <ul class="m-0">
-      <li>On a new device, messages locked earlier show “locked for another device” until you restore your key with the 24 words.</li>
-      <li>Searching in locked messages works only on this device, among the messages already loaded.</li>
-      <li>Link previews are not made for locked messages.</li>
-      <li>You manage your keys under Settings → Keys.</li>
+      <li>{{ t('locking.onANewDevice') || 'On a new device, messages locked earlier show “locked for another device” until you restore your key with the 24 words.' }}</li>
+      <li>{{ t('locking.searchingInLockedMessages') || 'Searching in locked messages works only on this device, among the messages already loaded.' }}</li>
+      <li>{{ t('locking.linkPreviewsAreNot') || 'Link previews are not made for locked messages.' }}</li>
+      <li>{{ t('locking.youManageYourKeys') || 'You manage your keys under Settings → Keys.' }}</li>
     </ul>
   </section>
 </main>
+</ng-container>

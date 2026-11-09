@@ -1,3 +1,4 @@
+import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { Component, inject, input, signal } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { RouterLink } from '@angular/router';
@@ -6,6 +7,7 @@ import { NoticePreferences } from '../models';
 import { NoticesService } from '../core/notices.service';
 import { PushService } from '../core/push.service';
 import { SOUND_CHOICES, SOUND_EVENTS, SoundEvent, SoundService } from '../core/sound.service';
+import { tr } from '../core/i18n';
 
 /**
  * The notification and sound controls, used by Settings → Notifications and by the setup wizard, so both treat every kind of device the same way:
@@ -15,8 +17,9 @@ import { SOUND_CHOICES, SOUND_EVENTS, SoundEvent, SoundService } from '../core/s
  */
 @Component({
   selector: 'app-notice-controls',
-  imports: [RouterLink],
+  imports: [RouterLink, TranslocoDirective],
   templateUrl: './notice-controls.html',
+  providers: [provideTranslocoScope('noticeControls')],
   host: { class: 'd-flex flex-column', style: 'gap: 0.75rem' }, // the cards and headings have room between them, as on the page around it
 })
 export class NoticeControls {
@@ -49,10 +52,10 @@ export class NoticeControls {
     }
   }
   protected readonly kinds: { key: 'message' | 'request' | 'answer' | 'removed'; label: string }[] = [
-    { key: 'message', label: 'New messages' },
-    { key: 'request', label: 'Friend requests' },
-    { key: 'answer', label: 'Answers to my requests' },
-    { key: 'removed', label: 'A friend removed the friendship' },
+    { key: 'message', label: tr('noticeControls.newMessages', 'New messages') },
+    { key: 'request', label: tr('noticeControls.friendRequests', 'Friend requests') },
+    { key: 'answer', label: tr('noticeControls.answersToMyRequests', 'Answers to my requests') },
+    { key: 'removed', label: tr('noticeControls.aFriendRemovedThe', 'A friend removed the friendship') },
   ];
   /** inside the Android app: the browser-only parts (pop-ups, browser help) are hidden */
   protected readonly native = Capacitor.isNativePlatform();
@@ -92,8 +95,8 @@ export class NoticeControls {
     if (on && !allowed) {
       this.noticeProblem.set(
         this.desktop.supported
-          ? 'Notifications are blocked for this site. Allow them in the browser settings (the lock or sliders icon at the left of the address), then try again.'
-          : 'This browser cannot show desktop notifications.',
+          ? tr('noticeControls.notificationsAreBlockedFor2', 'Notifications are blocked for this site. Allow them in the browser settings (the lock or sliders icon at the left of the address), then try again.')
+          : tr('noticeControls.thisBrowserCannotShow', 'This browser cannot show desktop notifications.'),
       );
     }
   }
@@ -115,7 +118,7 @@ export class NoticeControls {
       if (!this.desktop.wanted()) return; // not allowed: the reason is shown
     }
     await this.desktop.show(
-      { title: 'Seven Friends', body: 'This is how a notification looks.', id: `test-${Date.now()}`, silent: false, go: this.setup() ? '/setup' : '/settings/notifications' },
+      { title: 'Seven Friends', body: tr('noticeControls.thisIsHowA', 'This is how a notification looks.'), id: `test-${Date.now()}`, silent: false, go: this.setup() ? '/setup' : '/settings/notifications' },
       true,
     );
   }

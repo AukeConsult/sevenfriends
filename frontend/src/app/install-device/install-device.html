@@ -1,69 +1,71 @@
+<ng-container *transloco="let t">
 <!-- signed out: no menu, so a way back to the welcome page -->
 @if (!auth.user()) {
   <div class="sf-back-row">
-    <a routerLink="/welcome" class="btn btn-light" aria-label="Back">‹ Back</a>
+    <a routerLink="/welcome" class="btn btn-light" [attr.aria-label]="t('installDevice.back') || 'Back'">{{ t('installDevice.back2') || '‹ Back' }}</a>
   </div>
 }
 
 <div class="sf-page-head">
   @switch (device) {
-    @case ('android') { <h1>Get the Android app</h1> }
-    @case ('iphone') { <h1>Add it to your home screen</h1> }
-    @default { <h1>Install it as a browser app</h1> }
+    @case ('android') { <h1>{{ t('installDevice.getTheAndroidApp') || 'Get the Android app' }}</h1> }
+    @case ('iphone') { <h1>{{ t('installDevice.addItToYour') || 'Add it to your home screen' }}</h1> }
+    @default { <h1>{{ t('installDevice.installItAsA') || 'Install it as a browser app' }}</h1> }
   }
 </div>
 
 <main class="sf-narrow vstack gap-3">
   @if (app.installed()) {
-    <div class="alert alert-success m-0" role="status">✓ You are using the installed app. Nothing more to do.</div>
-    <a routerLink="/" class="btn btn-primary btn-lg">Continue to the home page</a>
+    <div class="alert alert-success m-0" role="status">{{ t('installDevice.youAreUsingThe') || '✓ You are using the installed app. Nothing more to do.' }}</div>
+    <a routerLink="/" class="btn btn-primary btn-lg">{{ t('installDevice.continueToTheHome') || 'Continue to the home page' }}</a>
   }
 
   @if (copied()) {
-    <div class="alert alert-success m-0" role="status">Your invitation is copied. After installing, open the app, tap <strong>I have an invitation</strong> and paste it.</div>
+    <div class="alert alert-success m-0" role="status"><span [innerHTML]="t('installDevice.yourInvitationIsCopied') || 'Your invitation is copied. After installing, open the app, tap <strong>I have an invitation</strong> and paste it.'"></span></div>
   } @else if (invited()) {
-    <div class="alert alert-info m-0" role="status">You have been invited: your invitation is kept and waits for you.</div>
+    <div class="alert alert-info m-0" role="status">{{ t('installDevice.youHaveBeenInvited') || 'You have been invited: your invitation is kept and waits for you.' }}</div>
   }
 
   @switch (device) {
     @case ('android') {
-      <p class="m-0">Installed by download. It is free and needs no app store.</p>
+      <p class="m-0">{{ t('installDevice.installedByDownloadIt') || 'Installed by download. It is free and needs no app store.' }}</p>
       @if (fileReady()) {
-        <a class="btn btn-primary btn-lg" href="/downloads/SevenFriends.apk" download (click)="copyInvitation()">Download the Android app</a>
+        <a class="btn btn-primary btn-lg" href="/downloads/SevenFriends.apk" download (click)="copyInvitation()">{{ t('installDevice.downloadTheAndroidApp') || 'Download the Android app' }}</a>
       } @else if (fileReady() === false) {
-        <p class="m-0">The Android app is not ready to download yet. Please try again later.</p>
+        <p class="m-0">{{ t('installDevice.theAndroidAppIs') || 'The Android app is not ready to download yet. Please try again later.' }}</p>
       }
       <ol class="m-0">
-        <li><strong>Download</strong> the file with the button above.</li>
-        <li><strong>Open the downloaded file.</strong> If Android asks, allow your browser to install apps from this source, then tap <strong>Install</strong>.</li>
-        <li><strong>Open Seven Friends</strong> from its icon and sign in.</li>
+        <li><span [innerHTML]="t('installDevice.strongDownloadStrongThe') || '<strong>Download</strong> the file with the button above.'"></span></li>
+        <li><span [innerHTML]="t('installDevice.strongOpenTheDownloaded') || '<strong>Open the downloaded file.</strong> If Android asks, allow your browser to install apps from this source, then tap <strong>Install</strong>.'"></span></li>
+        <li><span [innerHTML]="t('installDevice.strongOpenSevenFriends') || '<strong>Open Seven Friends</strong> from its icon and sign in.'"></span></li>
       </ol>
     }
     @case ('iphone') {
-      <p class="m-0">An iPhone has no Install button, so you add it yourself. It takes a minute.</p>
+      <p class="m-0">{{ t('installDevice.anIphoneHasNo') || 'An iPhone has no Install button, so you add it yourself. It takes a minute.' }}</p>
       <ol class="m-0">
-        <li>Open Seven Friends in <strong>Safari</strong>, the blue compass app. This does not work from inside another app's browser (Facebook, Instagram, mail): copy the link and paste it in Safari.</li>
-        <li>Tap the <strong>Share</strong> button: a square with an arrow pointing up. It is at the bottom of the screen on an iPhone, and at the top right on an iPad.</li>
-        <li>Choose <strong>Add to Home Screen</strong> (scroll down, or tap <em>More</em> first), then tap <strong>Add</strong>.</li>
-        <li><strong>Open it from the new icon</strong>, not from Safari. Sign in, and tap <strong>Allow</strong> when it asks to send you notifications.</li>
+        <li><span [innerHTML]="t('installDevice.openSevenFriendsIn') || 'Open Seven Friends in <strong>Safari</strong>, the blue compass app. This does not work from inside another app\'s browser (Facebook, Instagram, mail): copy the link and paste it in Safari.'"></span></li>
+        <li><span [innerHTML]="t('installDevice.tapTheStrongShare') || 'Tap the <strong>Share</strong> button: a square with an arrow pointing up. It is at the bottom of the screen on an iPhone, and at the top right on an iPad.'"></span></li>
+        <li><span [innerHTML]="t('installDevice.chooseStrongAddTo') || 'Choose <strong>Add to Home Screen</strong> (scroll down, or tap <em>More</em> first), then tap <strong>Add</strong>.'"></span></li>
+        <li><span [innerHTML]="t('installDevice.strongOpenItFrom') || '<strong>Open it from the new icon</strong>, not from Safari. Sign in, and tap <strong>Allow</strong> when it asks to send you notifications.'"></span></li>
       </ol>
-      <p class="small text-secondary m-0">Notifications need iOS 16.4 or newer, and only work from the home-screen icon. To remove the app: press and hold the icon and choose Remove App.</p>
+      <p class="small text-secondary m-0">{{ t('installDevice.notificationsNeedIosOr') || 'Notifications need iOS 16.4 or newer, and only work from the home-screen icon. To remove the app: press and hold the icon and choose Remove App.' }}</p>
     }
     @default {
-      <p class="m-0">It opens in its own window, with an icon in your {{ app.windows ? 'Start menu' : 'app list' }}.</p>
+      <p class="m-0">{{ t('installDevice.itOpensInIts', { list: app.windows ? (t('installDevice.startMenu') || 'Start menu') : (t('installDevice.appList') || 'app list') }) || 'It opens in its own window, with an icon in your ' + (app.windows ? (t('installDevice.startMenu') || 'Start menu') : (t('installDevice.appList') || 'app list')) + '.' }}</p>
       @if (app.canInstall()) {
-        <button type="button" class="btn btn-primary btn-lg" (click)="install()">Install the app</button>
+        <button type="button" class="btn btn-primary btn-lg" (click)="install()">{{ t('installDevice.installTheApp') || 'Install the app' }}</button>
       }
       <ol class="m-0">
-        <li>Open Seven Friends in <strong>Chrome or Edge</strong>.</li>
-        <li>Click the <strong>install icon</strong> at the right end of the address bar (a screen with a small arrow), or open the browser menu and choose <strong>Install Seven Friends</strong>.</li>
-        <li>Click <strong>Install</strong>. {{ app.windows ? 'Open it from the Start menu next time.' : 'The app opens in its own window.' }}</li>
+        <li><span [innerHTML]="t('installDevice.openSevenFriendsIn2') || 'Open Seven Friends in <strong>Chrome or Edge</strong>.'"></span></li>
+        <li><span [innerHTML]="t('installDevice.clickTheStrongInstall') || 'Click the <strong>install icon</strong> at the right end of the address bar (a screen with a small arrow), or open the browser menu and choose <strong>Install Seven Friends</strong>.'"></span></li>
+        <li><span [innerHTML]="t('installDevice.clickStrongInstallStrong', { window: app.windows ? (t('installDevice.openItFromThe2') || 'Open it from the Start menu next time.') : (t('installDevice.theAppOpensIn') || 'The app opens in its own window.') }) || 'Click <strong>Install</strong>. ' + (app.windows ? (t('installDevice.openItFromThe2') || 'Open it from the Start menu next time.') : (t('installDevice.theAppOpensIn') || 'The app opens in its own window.'))"></span></li>
       </ol>
-      <p class="small text-secondary m-0">Firefox cannot install it: use the browser instead. Safari on a Mac: choose File, then <em>Add to Dock</em>.</p>
-      <p class="small text-secondary m-0">Edge can also start it when you sign in to your computer: open <code>edge://apps</code>, press ⋯ on Seven Friends and choose <em>Auto-start on device login</em>.</p>
+      <p class="small text-secondary m-0"><span [innerHTML]="t('installDevice.firefoxCannotInstallIt') || 'Firefox cannot install it: use the browser instead. Safari on a Mac: choose File, then <em>Add to Dock</em>.'"></span></p>
+      <p class="small text-secondary m-0"><span [innerHTML]="t('installDevice.edgeCanAlsoStart') || 'Edge can also start it when you sign in to your computer: open <code>edge://apps</code>, press ⋯ on Seven Friends and choose <em>Auto-start on device login</em>.'"></span></p>
     }
   }
 
-  <div class="sf-divider"><span>or</span></div>
-  <button type="button" class="btn btn-outline-secondary w-100" (click)="continueInBrowser()">Continue in the browser</button>
+  <div class="sf-divider"><span>{{ t('installDevice.or') || 'or' }}</span></div>
+  <button type="button" class="btn btn-outline-secondary w-100" (click)="continueInBrowser()">{{ t('installDevice.continueInTheBrowser') || 'Continue in the browser' }}</button>
 </main>
+</ng-container>

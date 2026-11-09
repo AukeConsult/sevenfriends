@@ -37,6 +37,7 @@
     "windows:release": "node scripts/publish-download.mjs windows/installer/output/SevenFriendsSetup.exe SevenFriendsSetup.exe",
     "sync:models": "node scripts/sync-models.mjs",
     "sync:sounds": "node scripts/sounds-manifest.mjs",
-    "check:models": "node scripts/sync-models.mjs --check"
+    "check:models": "node scripts/sync-models.mjs --check",
+    "check:i18n": "node scripts/check-i18n.mjs"
   }
 }

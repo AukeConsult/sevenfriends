@@ -1,0 +1,18 @@
+{
+  "yourSevenSeats": "Your seven seats",
+  "yourSeven": "Your seven",
+  "waiting": "Waiting",
+  "pending": "Pending",
+  "freeSeat": "Free seat",
+  "addAOne": "Add a {{ one }}",
+  "silent": "Silent",
+  "dropHere": "Drop here",
+  "sleepList": "Sleep list",
+  "couldNotMoveThe": "Could not move the ",
+  "openTheConversationWith": "Open the conversation with {{ friendName }}. Press and hold to move.",
+  "countUnread": "{{ count }} unread",
+  "seatPositionIsFree": "Seat {{ position }} is free: add a {{ one }}",
+  "dropOnASeat": "Drop on a seat or the Silent circle",
+  "dropOnASeat2": "Drop on a seat",
+  "pressAndHoldA": "Press and hold a {{ one }} to move"
+}

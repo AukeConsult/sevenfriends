@@ -1,11 +1,12 @@
+<ng-container *transloco="let t">
 <!-- signed out: no menu, so a way back to the sign-in page -->
 @if (!auth.user()) {
   <div class="sf-back-row">
-    <a routerLink="/login" class="btn btn-light" aria-label="Back to sign in">‹ Back</a>
+    <a routerLink="/login" class="btn btn-light" [attr.aria-label]="t('about.backToSignIn') || 'Back to sign in'">{{ t('about.back') || '‹ Back' }}</a>
   </div>
 }
 <div class="sf-page-head">
-  <h1>About Seven Friends</h1>
+  <h1>{{ t('about.aboutSevenFriends') || 'About Seven Friends' }}</h1>
 </div>
 
 <main class="sf-narrow sf-reading vstack gap-3">
@@ -13,32 +14,32 @@
     <app-info-nav />
   }
   <section class="vstack gap-2">
-    <h2 class="sf-section-title m-0">A place for your closest friends</h2>
+    <h2 class="sf-section-title m-0">{{ t('about.aPlaceForYour') || 'A place for your closest friends' }}</h2>
     <p class="m-0">
-      Seven Friends is a calm, simple app for staying in touch with the seven friends who matter most to you. Seven seats, no feed,
-      no noise: you notice your friends, and they notice you.
+      {{ t('about.sevenFriendsIsA') || 'Seven Friends is a calm, simple app for staying in touch with the seven friends who matter most to you. Seven seats, no feed, no noise: you notice your friends, and they notice you.' }}
     </p>
   </section>
 
   <section class="vstack gap-2">
-    <h2 class="sf-section-title m-0">Made for free use</h2>
+    <h2 class="sf-section-title m-0">{{ t('about.madeForFreeUse') || 'Made for free use' }}</h2>
     <p class="m-0">
-      Seven Friends is made for free use. There is nothing to pay, there are no advertisements, and your data is not sold.
+      {{ t('about.sevenFriendsIsMade') || 'Seven Friends is made for free use. There is nothing to pay, there are no advertisements, and your data is not sold.' }}
     </p>
   </section>
 
   <section class="vstack gap-2">
-    <h2 class="sf-section-title m-0">Who made it</h2>
+    <h2 class="sf-section-title m-0">{{ t('about.whoMadeIt') || 'Who made it' }}</h2>
     <p class="m-0">
-      Seven Friends is made by <strong>Blueboot R&amp;D AS</strong>, Norway.
+      <span [innerHTML]="t('about.sevenFriendsIsMade2') || 'Seven Friends is made by <strong>Blueboot R&amp;D AS</strong>, Norway.'"></span>
     </p>
     <p class="m-0">
-      Questions, ideas, problems or requests about your data: write to
-      <a href="mailto:hey@blueboot.ai">hey&#64;blueboot.ai</a>.
+      {{ t('about.questionsIdeasProblemsOr') || 'Questions, ideas, problems or requests about your data: write to' }}
+      <a href="mailto:hey@blueboot.ai">{{ t('about.heyBluebootAi') || 'hey@blueboot.ai' }}</a>.
     </p>
   </section>
 
   <p class="small text-secondary m-0">
-    Read the <a routerLink="/terms">Terms of use</a> and how your data is handled under <a routerLink="/privacy">Data and privacy</a>.
+    {{ t('about.readThe') || 'Read the' }} <a routerLink="/terms">{{ t('about.termsOfUse') || 'Terms of use' }}</a> {{ t('about.andHowYourData') || 'and how your data is handled under' }} <a routerLink="/privacy">{{ t('about.dataAndPrivacy') || 'Data and privacy' }}</a>.
   </p>
 </main>
+</ng-container>

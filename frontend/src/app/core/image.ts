@@ -1,3 +1,4 @@
+import { tr } from './i18n';
 export type Decoded = ImageBitmap | HTMLImageElement;
 
 /**
@@ -142,7 +143,7 @@ function drawn(source: Decoded | HTMLVideoElement | HTMLCanvasElement, longestSi
   canvas.width = Math.max(1, Math.round(size.width * k));
   canvas.height = Math.max(1, Math.round(size.height * k));
   const context = canvas.getContext('2d');
-  if (!context) throw new Error('This browser cannot prepare images');
+  if (!context) throw new Error(tr('core.thisBrowserCannotPrepare', 'This browser cannot prepare images'));
   context.fillStyle = '#ffffff'; // a transparent picture gets a white background
   context.fillRect(0, 0, canvas.width, canvas.height);
   context.imageSmoothingQuality = 'high';
@@ -152,7 +153,7 @@ function drawn(source: Decoded | HTMLVideoElement | HTMLCanvasElement, longestSi
 
 async function jpeg(canvas: HTMLCanvasElement, quality: number): Promise<Blob> {
   const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/jpeg', quality));
-  if (!blob) throw new Error('This image cannot be prepared');
+  if (!blob) throw new Error(tr('core.thisImageCannotBe', 'This image cannot be prepared'));
   return blob;
 }
 
@@ -184,7 +185,7 @@ export async function rotateImage(image: PreparedImage, clockwise: boolean): Pro
     turned.width = height;
     turned.height = width;
     const context = turned.getContext('2d');
-    if (!context) throw new Error('This browser cannot turn images');
+    if (!context) throw new Error(tr('core.thisBrowserCannotTurn', 'This browser cannot turn images'));
     context.fillStyle = '#ffffff';
     context.fillRect(0, 0, turned.width, turned.height);
     context.imageSmoothingQuality = 'high';

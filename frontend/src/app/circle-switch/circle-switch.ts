@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { ActiveCircleService, CIRCLE_CHOICES, circleWords } from '../core/active-circle.service';
 import { AuthService } from '../core/auth.service';
+import { tr } from '../core/i18n';
 
 /**
  * A push or a link can be about another circle than the one this app is in: its address says so (`?incircle=work`). The app never switches by itself:
@@ -14,16 +15,17 @@ import { AuthService } from '../core/auth.service';
     @if (ask(); as a) {
       <div class="sf-circle-ask" role="dialog" aria-modal="true" aria-labelledby="sf-circle-ask-title">
         <div class="sf-circle-ask-card">
-          <h2 id="sf-circle-ask-title">This is about {{ a.app }}</h2>
-          <p>You are in {{ here }} now. Switch to open it?</p>
-          <button type="button" class="btn btn-primary w-100" (click)="switchNow()">Switch to {{ a.label }}</button>
-          <button type="button" class="btn btn-outline-secondary w-100" (click)="stay()">Stay in {{ here }}</button>
+          <h2 id="sf-circle-ask-title">{{ tr('core.thisIsAbout', 'This is about ' + (a.app), { app: a.app }) }}</h2>
+          <p>{{ tr('core.youAreInNow', 'You are in ' + (here) + ' now. Switch to open it?', { here: here }) }}</p>
+          <button type="button" class="btn btn-primary w-100" (click)="switchNow()">{{ tr('core.switchTo', 'Switch to ' + (a.label), { label: a.label }) }}</button>
+          <button type="button" class="btn btn-outline-secondary w-100" (click)="stay()">{{ tr('core.stayIn', 'Stay in ' + (here), { here: here }) }}</button>
         </div>
       </div>
     }
   `,
 })
 export class CircleSwitch {
+  protected readonly tr = tr;
   private readonly router = inject(Router);
   private readonly auth = inject(AuthService);
   private readonly active = inject(ActiveCircleService);

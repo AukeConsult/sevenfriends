@@ -1,3 +1,5 @@
+import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
+import { tr } from '../core/i18n';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Component, ElementRef, computed, effect, inject, signal, untracked, viewChild } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -31,8 +33,9 @@ const ENDINGS: Record<string, DocType> = {
  */
 @Component({
   selector: 'app-safebox-view',
-  imports: [RouterLink, MediaVideo, MediaAudio],
+  imports: [RouterLink, MediaVideo, MediaAudio, TranslocoDirective],
   templateUrl: './safebox-view.html',
+  providers: [provideTranslocoScope('safeboxView')],
 })
 export class SafeboxView {
   private readonly service = inject(SafeboxService);
@@ -41,7 +44,7 @@ export class SafeboxView {
 
   protected readonly friendId = this.route.snapshot.paramMap.get('id') ?? '';
   private readonly friends = inject(FriendsService);
-  protected readonly friendName = computed(() => this.friends.friends().find((f) => f.id === this.friendId)?.name ?? 'Your friend');
+  protected readonly friendName = computed(() => this.friends.friends().find((f) => f.id === this.friendId)?.name ?? tr('safeboxView.yourFriend', 'Your friend'));
   private readonly itemId = toSignal(this.route.paramMap.pipe(map((p) => p.get('itemId') ?? '')), { initialValue: this.route.snapshot.paramMap.get('itemId') ?? '' });
 
   protected readonly box = signal<Safebox | null>(null);
@@ -76,7 +79,7 @@ export class SafeboxView {
     return type === 'pdf' ? 'pdf' : type === 'word' && ending === 'docx' ? 'docx' : type === 'sheet' && ending === 'xlsx' ? 'xlsx' : type === 'slides' && ending === 'pptx' ? 'pptx' : null;
   });
   /** the words for a document that cannot be shown here */
-  protected readonly docLabel = computed(() => ({ pdf: 'PDF', text: 'Text', word: 'Word document', sheet: 'Spreadsheet', slides: 'Presentation', zip: 'Zip archive', other: 'File' })[this.docType()]);
+  protected readonly docLabel = computed(() => ({ pdf: 'PDF', text: tr('safeboxView.text', 'Text'), word: tr('safeboxView.wordDocument', 'Word document'), sheet: 'Spreadsheet', slides: 'Presentation', zip: tr('safeboxView.zipArchive', 'Zip archive'), other: 'File' })[this.docType()]);
 
   /** the same file as the media components read it: they ask the server for `box-<id>/<item id>` */
   protected readonly ref = computed<MediaRef | null>(() => {
@@ -166,7 +169,7 @@ export class SafeboxView {
     try {
       this.box.set(await this.service.load(this.friendId));
     } catch (err: any) {
-      this.loadError.set(err.message ?? 'Could not open the file');
+      this.loadError.set(err.message ?? tr('safeboxView.couldNotOpenThe', 'Could not open the file'));
     }
   }
 
@@ -194,7 +197,7 @@ export class SafeboxView {
 
   /** The file could not be read. A locked file says why (no key on this device, locked for another device, or changed); anything else is the connection. */
   private fail(item: SafeboxItem, err: unknown): void {
-    this.failReason.set(item.enc ? (err instanceof Error ? err.message : 'This file is locked and could not be opened.') : null);
+    this.failReason.set(item.enc ? (err instanceof Error ? err.message : tr('safeboxView.thisFileIsLocked2', 'This file is locked and could not be opened.')) : null);
     this.failed.set(true);
     this.failDetails.set(null);
     if (item.enc) {

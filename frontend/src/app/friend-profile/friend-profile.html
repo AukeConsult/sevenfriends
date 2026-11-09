@@ -1,6 +1,7 @@
+<ng-container *transloco="let t">
 <main class="sf-lock-page">
   <div class="sf-page-head">
-    <h1 class="m-0 mw-100"><span class="sf-ellipsis">Profile</span></h1>
+    <h1 class="m-0 mw-100"><span class="sf-ellipsis">{{ t('friendProfile.profile') || 'Profile' }}</span></h1>
   </div>
 
   @if (ctx.friend(); as f) {
@@ -9,7 +10,7 @@
       <div>
         <h2 class="m-0">{{ f.name }}</h2>
         <p class="sf-hint m-0">{{ presenceLabel(f.presence) }}</p>
-        @if (f.sleepsMe) { <p class="sf-hint m-0">😴 Has you on {{ possessive(f.pronoun) }} sleep list</p> }
+        @if (f.sleepsMe) { <p class="sf-hint m-0">{{ t('friendProfile.hasYouOnPronoun', { pronoun: possessive(f.pronoun) }) || '😴 Has you on ' + possessive(f.pronoun) + ' sleep list' }}</p> }
       </div>
     </section>
 
@@ -23,45 +24,45 @@
       }
       @if (f.unverified.length && f.status !== 'rejected') {
         <p class="sf-hint text-warning-emphasis m-0">
-          {{ f.name }} has not verified {{ f.unverified.length === 2 ? 'their email or phone' : f.unverified[0] === 'email' ? 'their email' : 'their phone' }},
-          so we cannot be sure it is really them.
+          {{ t('friendProfile.fnameHasNotVerified', { fName: f.name, phone: f.unverified.length === 2 ? 'their email or phone' : f.unverified[0] === 'email' ? 'their email' : 'their phone' }) || f.name + ' has not verified ' + (f.unverified.length === 2 ? 'their email or phone' : f.unverified[0] === 'email' ? 'their email' : 'their phone') + ', so we cannot be sure it is really them.' }}
         </p>
-        <button type="button" class="btn btn-light btn-sm align-self-start" (click)="trust(f)" [disabled]="busy()">This is really {{ f.name }}</button>
+        <button type="button" class="btn btn-light btn-sm align-self-start" (click)="trust(f)" [disabled]="busy()">{{ t('friendProfile.thisIsReallyFname', { fName: f.name }) || 'This is really ' + f.name }}</button>
       }
       <dl class="sf-details">
-        @if (f.phone) { <dt>Phone</dt><dd>{{ f.phone }}</dd> }
-        @if (f.email) { <dt>Email</dt><dd>{{ f.email }}</dd> }
-        @if (f.createdAt) { <dt>Added</dt><dd>{{ f.createdAt | date: 'mediumDate' }}</dd> }
+        @if (f.phone) { <dt>{{ t('friendProfile.phone') || 'Phone' }}</dt><dd>{{ f.phone }}</dd> }
+        @if (f.email) { <dt>{{ t('friendProfile.email') || 'Email' }}</dt><dd>{{ f.email }}</dd> }
+        @if (f.createdAt) { <dt>{{ t('friendProfile.added') || 'Added' }}</dt><dd>{{ f.createdAt | appDate: 'mediumDate' }}</dd> }
       </dl>
     </section>
 
     <section>
       @if (f.status === 'rejected') {
-        <p class="sf-hint m-0">They rejected your request. Delete it to remove it from both lists.</p>
+        <p class="sf-hint m-0">{{ t('friendProfile.theyRejectedYourRequest') || 'They rejected your request. Delete it to remove it from both lists.' }}</p>
       } @else if (f.status === 'pending') {
         <p class="sf-hint m-0">{{ f.incoming ? 'Wants to be your friend' : f.waiting ? 'Their list is full. You are on their waiting list.' : 'Waiting for them to confirm' }}</p>
       }
       @if (f.incoming && f.status === 'pending') {
         <div class="sf-actions">
-          <button type="button" class="btn btn-primary flex-fill" (click)="confirm(f)" [disabled]="busy()">Confirm</button>
-          <button type="button" class="btn btn-outline-secondary flex-fill" (click)="reject(f)" [disabled]="busy()">Reject</button>
+          <button type="button" class="btn btn-primary flex-fill" (click)="confirm(f)" [disabled]="busy()">{{ t('friendProfile.confirm') || 'Confirm' }}</button>
+          <button type="button" class="btn btn-outline-secondary flex-fill" (click)="reject(f)" [disabled]="busy()">{{ t('friendProfile.reject') || 'Reject' }}</button>
         </div>
       } @else if (asking()) {
         <div class="sf-confirm" role="alertdialog" [attr.aria-label]="(sleepable(f) ? 'Put to sleep ' : 'Delete ') + f.name">
           <p class="sf-confirm-text">{{ deleteMessage(f) }}</p>
           <div class="sf-confirm-actions">
-            <button type="button" class="btn btn-light btn-sm" (click)="asking.set(false)" [disabled]="busy()">Cancel</button>
+            <button type="button" class="btn btn-light btn-sm" (click)="asking.set(false)" [disabled]="busy()">{{ t('friendProfile.cancel') || 'Cancel' }}</button>
             <button type="button" class="btn btn-danger btn-sm" (click)="remove(f)" [disabled]="busy()">
               {{ busy() ? 'Please wait…' : sleepable(f) ? 'Put to sleep' : 'Delete' }}
             </button>
           </div>
         </div>
       } @else {
-        <button type="button" class="btn btn-outline-danger btn-sm align-self-start" (click)="asking.set(true)">{{ sleepable(f) ? 'Add ' + f.name + ' to the sleep list…' : 'Delete ' + f.name + '…' }}</button>
+        <button type="button" class="btn btn-outline-danger btn-sm align-self-start" (click)="asking.set(true)">{{ sleepable(f) ? (t('friendProfile.addFnameToThe', { fName: f.name }) || 'Add ' + f.name + ' to the sleep list…') : (t('friendProfile.deleteFname', { fName: f.name }) || 'Delete ' + f.name + '…') }}</button>
       }
       @if (error(); as e) { <p class="text-danger m-0" role="alert">{{ e }}</p> }
     </section>
   } @else {
-    <p class="text-secondary text-center">Opening the profile…</p>
+    <p class="text-secondary text-center">{{ t('friendProfile.openingTheProfile') || 'Opening the profile…' }}</p>
   }
 </main>
+</ng-container>

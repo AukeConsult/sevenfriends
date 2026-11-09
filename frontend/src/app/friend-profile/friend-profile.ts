@@ -1,4 +1,5 @@
-import { DatePipe } from '@angular/common';
+import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
+import { AppDatePipe } from '../core/app-date.pipe';
 import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { FriendsService } from '../core/friends.service';
@@ -10,6 +11,7 @@ import { presenceLabel } from '../core/presence';
 import { possessive } from '../core/pronoun';
 import { FriendAvatar } from '../friend-avatar/friend-avatar';
 import { FriendContext } from '../friend-page/friend-context';
+import { tr } from '../core/i18n';
 
 /**
  * The profile of one friend (`/friends/:id/profile`, opened with the friend's picture): who they are and how to reach them, under the header of the friend page.
@@ -17,8 +19,9 @@ import { FriendContext } from '../friend-page/friend-context';
  */
 @Component({
   selector: 'app-friend-profile',
-  imports: [DatePipe, FriendAvatar],
+  imports: [AppDatePipe, FriendAvatar, TranslocoDirective],
   templateUrl: './friend-profile.html',
+  providers: [provideTranslocoScope('friendProfile')],
 })
 export class FriendProfile {
   protected readonly ctx = inject(FriendContext);
@@ -42,11 +45,11 @@ export class FriendProfile {
 
   protected deleteMessage(friend: Friend): string {
     if (this.sleepable(friend)) {
-      return `Put ${friend.name} to sleep? ${friend.name} leaves your list and the seat is free again. Your conversation is kept, and you can wake ${friend.name} up from the sleep list.`;
+      return tr('friendProfile.putToSleepLeaves', 'Put {{ friendName }} to sleep? {{ friendName }} leaves your list and the seat is free again. Your conversation is kept, and you can wake {{ friendName }} up from the sleep list.', { friendName: friend.name });
     }
     return friend.invited || friend.incoming
-      ? `Delete ${friend.name}? This removes the connection from your list and from theirs.`
-      : `Remove ${friend.name} from your circle?`;
+      ? tr('friendProfile.deleteThisRemovesThe', 'Delete {{ friendName }}? This removes the connection from your list and from theirs.', { friendName: friend.name })
+      : tr('friendProfile.removeFromYourCircle', 'Remove {{ friendName }} from your circle?', { friendName: friend.name });
   }
 
   private async run(action: () => Promise<unknown>, after?: () => Promise<unknown>): Promise<void> {

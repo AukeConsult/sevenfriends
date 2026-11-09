@@ -1,0 +1,11 @@
+{
+  "backToSounds": "Back to sounds",
+  "back": "‹ Back",
+  "hintTapASound": "{{ hint }}. Tap a sound to choose it and hear it.",
+  "sevenFriendsJingles": "Seven Friends jingles",
+  "otherSounds": "Other sounds",
+  "stop": "■ Stop",
+  "play": "▶ Play",
+  "done": "Done",
+  "soundForLabel": "Sound for {{ label }}"
+}

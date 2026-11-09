@@ -1,3 +1,4 @@
+import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { SafeboxService } from '../core/safebox.service';
@@ -12,8 +13,9 @@ import { SafeboxItem } from '../models';
  */
 @Component({
   selector: 'app-friend-lock',
-  imports: [RouterLink],
+  imports: [RouterLink, TranslocoDirective],
   templateUrl: './friend-lock.html',
+  providers: [provideTranslocoScope('friendLock')],
 })
 export class FriendLock {
   protected readonly ctx = inject(FriendContext);

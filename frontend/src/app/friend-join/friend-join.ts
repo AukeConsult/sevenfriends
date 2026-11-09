@@ -1,3 +1,5 @@
+import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
+import { tr } from '../core/i18n';
 import { Clearable } from '../core/clearable';
 import { Component, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
@@ -28,8 +30,9 @@ interface Target {
  */
 @Component({
   selector: 'app-friend-join',
-  imports: [RouterLink, Clearable],
+  imports: [RouterLink, Clearable, TranslocoDirective],
   templateUrl: './friend-join.html',
+  providers: [provideTranslocoScope('friendJoin')],
 })
 export class FriendJoin {
   private readonly api = inject(ApiService);
@@ -73,7 +76,7 @@ export class FriendJoin {
     const mine = CIRCLE_CHOICES.find((c) => c.id === this.active.id);
     const wanted = CIRCLE_CHOICES.find((c) => c.type === pending.circle);
     if (wanted && mine && wanted.id !== mine.id) {
-      return this.finish(`This invitation is for the ${wanted.label} circle, and this app is in the ${mine.label} circle. Open the link in an app for ${wanted.label}.`);
+      return this.finish(tr('friendJoin.thisInvitationIsFor', 'This invitation is for the {{ label }} circle, and this app is in the {{ label2 }} circle. Open the link in an app for {{ label }}.', { label: wanted.label, label2: mine.label }));
     }
     try {
       await this.friends.load(); // to see whether this person is already a friend
@@ -88,18 +91,18 @@ export class FriendJoin {
     if (pending.code) {
       try {
         const found = await this.api.request<{ self: boolean; requestId?: string | null } & Target>(`/invite/lookup/${pending.code}`);
-        if (found.self) return this.finish('This is your own invite link: send it to your friends.');
+        if (found.self) return this.finish(tr('friendJoin.thisIsYourOwn', 'This is your own invite link: send it to your friends.'));
         target = { name: found.name ?? null, email: found.email ?? null, phone: found.phone ?? null };
         requestId = found.requestId ?? null;
       } catch (err: any) {
-        return this.finish(err?.status === 404 ? 'This invite link is not valid any more. Ask your friend for a new one.' : (err?.message ?? 'Could not open the invite link.'));
+        return this.finish(err?.status === 404 ? 'This invite link is not valid any more. Ask your friend for a new one.' : (err?.message ?? tr('friendJoin.couldNotOpenThe', 'Could not open the invite link.')));
       }
     } else {
       target = { name: null, email: pending.email, phone: pending.phone };
       const me = this.auth.user();
       const mine = (me?.email ?? '').toLowerCase();
       if ((target.email && target.email === mine) || (target.phone && lastDigits(target.phone) && lastDigits(target.phone) === lastDigits(me?.phoneNumber))) {
-        return this.finish('This is your own link: send it to your friends.');
+        return this.finish(tr('friendJoin.thisIsYourOwn2', 'This is your own link: send it to your friends.'));
       }
     }
 
@@ -108,7 +111,7 @@ export class FriendJoin {
     );
     if (already) {
       this.existing.set(already);
-      return this.finish(`${already.name} is already on your friend list.`);
+      return this.finish(tr('friendJoin.isAlreadyOnYour', '{{ alreadyName }} is already on your friend list.', { alreadyName: already.name }));
     }
 
     // this person has already asked me: show that request (accept it) instead of sending one back
@@ -142,7 +145,7 @@ export class FriendJoin {
       this.link.clear();
       await this.router.navigateByUrl('/', { replaceUrl: true });
     } catch (err: any) {
-      this.error.set(err.message ?? 'Could not send the friend request');
+      this.error.set(err.message ?? tr('friendJoin.couldNotSendThe', 'Could not send the friend request'));
     } finally {
       this.sending.set(false);
     }
@@ -161,9 +164,9 @@ export class FriendJoin {
         await this.router.navigateByUrl('/', { replaceUrl: true });
         return;
       }
-      this.error.set(`You have no free seats. The request from ${request.fromName} stays pending: put a friend on the sleep list or remove one to make room, then confirm it on the Home page.`);
+      this.error.set(tr('friendJoin.youHaveNoFree', 'You have no free seats. The request from {{ fromName }} stays pending: put a friend on the sleep list or remove one to make room, then confirm it on the Home page.', { fromName: request.fromName }));
     } catch (err: any) {
-      this.error.set(err.message ?? 'Could not confirm the request');
+      this.error.set(err.message ?? tr('friendJoin.couldNotConfirmThe', 'Could not confirm the request'));
     } finally {
       this.sending.set(false);
     }

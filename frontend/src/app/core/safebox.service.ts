@@ -7,6 +7,7 @@ import { classify, openFileKey, openMeta, openPart, sealFile, sealMeta } from '.
 import { getDeviceKey } from './device-key';
 import { FriendsService } from './friends.service';
 import { PreparedImage } from './image';
+import { tr } from './i18n';
 
 /** A file of the safebox read back from the server: where to show it (an object URL) and its type. */
 export interface BoxFile {
@@ -51,7 +52,7 @@ export class SafeboxService {
         const uid = this.auth.user()?.uid;
         const device = uid ? await getDeviceKey(uid) : null;
         const fingerprint = device ? await fingerprintOf(device.publicKey) : null;
-        if (!device || !fingerprint) throw new Error('There is no encryption key on this device. Set one up (or restore it) in Settings → Keys.');
+        if (!device || !fingerprint) throw new Error(tr('core.thereIsNoEncryption', 'There is no encryption key on this device. Set one up (or restore it) in Settings → Keys.'));
         return openFileKey(item.enc!, keyIdOf(fingerprint), device.privateKey);
       })();
       this.fileKeys.set(id, key);
@@ -68,7 +69,7 @@ export class SafeboxService {
       const meta = await openMeta(friendId, item.enc, await this.fileKey(friendId, item));
       return { ...item, name: meta.name, mime: meta.mime };
     } catch {
-      return { ...item, name: 'Locked file' };
+      return { ...item, name: tr('core.lockedFile', 'Locked file') };
     }
   }
 
@@ -108,7 +109,7 @@ export class SafeboxService {
 
   private async addEncrypted(friendId: string, file: Blob, name: string, thumb: Blob | null, keys: BoxKeys): Promise<SafeboxItem> {
     const me = this.auth.user()?.uid;
-    if (!me) throw new Error('Not signed in');
+    if (!me) throw new Error(tr('core.notSignedIn', 'Not signed in'));
     const { kind, mime } = await classify(file, name);
     const body = await sealFile({
       connectionId: friendId,
@@ -129,7 +130,7 @@ export class SafeboxService {
    */
   async encryptExisting(friendId: string, item: SafeboxItem, keys: BoxKeys): Promise<SafeboxItem> {
     const me = this.auth.user()?.uid;
-    if (!me) throw new Error('Not signed in');
+    if (!me) throw new Error(tr('core.notSignedIn', 'Not signed in'));
     if (item.enc) return item;
     const file = (await this.api.file(`${this.base(friendId)}/${item.id}`)).blob;
     const thumb = item.hasThumb ? (await this.api.file(`${this.base(friendId)}/${item.id}/thumb`)).blob : null;

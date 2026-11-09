@@ -1,6 +1,8 @@
-<nav class="d-flex flex-wrap justify-content-center gap-2" aria-label="Info">
-  <a routerLink="/settings/about" class="btn btn-sm btn-outline-secondary" routerLinkActive="active" ariaCurrentWhenActive="page">About</a>
-  <a routerLink="/settings/terms" class="btn btn-sm btn-outline-secondary" routerLinkActive="active" ariaCurrentWhenActive="page">Terms of use</a>
-  <a routerLink="/settings/privacy" class="btn btn-sm btn-outline-secondary" routerLinkActive="active" ariaCurrentWhenActive="page">Data and privacy</a>
-  <a routerLink="/settings/locking" class="btn btn-sm btn-outline-secondary" routerLinkActive="active" ariaCurrentWhenActive="page">Locking</a>
+<ng-container *transloco="let t">
+<nav class="d-flex flex-wrap justify-content-center gap-2" [attr.aria-label]="t('infoNav.info') || 'Info'">
+  <a routerLink="/settings/about" class="btn btn-sm btn-outline-secondary" routerLinkActive="active" ariaCurrentWhenActive="page">{{ t('infoNav.about') || 'About' }}</a>
+  <a routerLink="/settings/terms" class="btn btn-sm btn-outline-secondary" routerLinkActive="active" ariaCurrentWhenActive="page">{{ t('infoNav.termsOfUse') || 'Terms of use' }}</a>
+  <a routerLink="/settings/privacy" class="btn btn-sm btn-outline-secondary" routerLinkActive="active" ariaCurrentWhenActive="page">{{ t('infoNav.dataAndPrivacy') || 'Data and privacy' }}</a>
+  <a routerLink="/settings/locking" class="btn btn-sm btn-outline-secondary" routerLinkActive="active" ariaCurrentWhenActive="page">{{ t('infoNav.locking') || 'Locking' }}</a>
 </nav>
+</ng-container>

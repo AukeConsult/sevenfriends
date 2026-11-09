@@ -1,5 +1,8 @@
-import { DatePipe, NgTemplateOutlet } from '@angular/common';
+import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
+import { tr } from '../core/i18n';
+import { NgTemplateOutlet } from '@angular/common';
 import { ActiveCircleService } from '../core/active-circle.service';
+import { AppDatePipe } from '../core/app-date.pipe';
 import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FriendAvatar } from '../friend-avatar/friend-avatar';
@@ -19,8 +22,9 @@ const MAX_FRIENDS = 7; // seats (the same number as on the Friends page)
  */
 @Component({
   selector: 'app-sleeping',
-  imports: [DatePipe, NgTemplateOutlet, RouterLink, FriendAvatar],
+  imports: [AppDatePipe, NgTemplateOutlet, RouterLink, FriendAvatar, TranslocoDirective],
   templateUrl: './sleeping.html',
+  providers: [provideTranslocoScope('sleeping')],
 })
 export class Sleeping {
   protected readonly w = inject(ActiveCircleService).words;
@@ -82,7 +86,7 @@ export class Sleeping {
   }
 
   protected lastSpoken(friend: Friend): string {
-    return friend.lastSpokenAt ? `Last spoken to ${timeAgo(friend.lastSpokenAt)}` : '';
+    return friend.lastSpokenAt ? tr('sleeping.lastSpoken', 'Last spoken to {{ when }}', { when: timeAgo(friend.lastSpokenAt) }) : '';
   }
 
   protected async wake(friend: Friend): Promise<void> {
@@ -108,7 +112,7 @@ export class Sleeping {
       await action();
       return true;
     } catch (err: any) {
-      this.error.set(err.message ?? 'Something went wrong');
+      this.error.set(err.message ?? tr('sleeping.somethingWentWrong', 'Something went wrong'));
       return false;
     } finally {
       this.busy.set(false);

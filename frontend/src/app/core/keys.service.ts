@@ -5,6 +5,7 @@ import { AuthService } from './auth.service';
 import { StoredDeviceKey, deleteDeviceKey, deviceKeySupported, deviceKeyWorks, generateDeviceKey, getDeviceKey, keepDeviceKey, restoreDeviceKey, saveDeviceKey, storedKeyOwners } from './device-key';
 import { lockBackup, unlockBackup } from './key-backup';
 import { keyOf, newRecoveryKey, wordsOf } from './recovery-code';
+import { tr } from './i18n';
 
 /** How a restore from the recovery words ended. */
 export type RestoreResult = 'ok' | 'bad-words' | 'no-backup' | 'wrong-code' | 'no-key';
@@ -78,7 +79,7 @@ export class KeysService {
 
   private get uid(): string {
     const uid = this.auth.user()?.uid;
-    if (!uid) throw new Error('Not signed in');
+    if (!uid) throw new Error(tr('core.notSignedIn', 'Not signed in'));
     return uid;
   }
 
@@ -133,7 +134,7 @@ export class KeysService {
     const recoveryKey = newRecoveryKey();
     try {
       const publicKey = canonicalPublicKey(created.key.publicKey);
-      if (!publicKey || !created.backup) throw new Error('The key could not be made.');
+      if (!publicKey || !created.backup) throw new Error(tr('core.theKeyCouldNot', 'The key could not be made.'));
       const backup = await lockBackup(created.backup, recoveryKey);
       const words = await wordsOf(recoveryKey);
       this.pending = { uid, key: created.key, publicKey, backup, replaces: replace ? this.thisKeyId() : null };
@@ -155,11 +156,11 @@ export class KeysService {
    */
   async commit(): Promise<void> {
     const pending = this.pending;
-    if (!pending) throw new Error('There is no new key to save. Start again.');
+    if (!pending) throw new Error(tr('core.thereIsNoNew', 'There is no new key to save. Start again.'));
     const uid = this.uid;
     if (pending.uid !== uid) {
       this.pending = null;
-      throw new Error('You signed in as someone else. Start again.');
+      throw new Error(tr('core.youSignedInAs', 'You signed in as someone else. Start again.'));
     }
     const before = await getDeviceKey(uid); // what this device had, to put it back if saving fails
     try {
@@ -169,9 +170,9 @@ export class KeysService {
       // and it is read back: the key counts as made only when the server lists it as in use ...
       await this.refresh();
       const id = keyIdOf((await fingerprintOf(pending.publicKey))!);
-      if (this.thisKeyId() !== id) throw new Error('The key could not be saved on the server. Try again.');
+      if (this.thisKeyId() !== id) throw new Error(tr('core.theKeyCouldNot2', 'The key could not be saved on the server. Try again.'));
       // ... and the key on this device is the same one and works
-      if (!(await deviceKeyWorks(uid, pending.key.publicKey))) throw new Error('The key on this device could not be checked. Try again.');
+      if (!(await deviceKeyWorks(uid, pending.key.publicKey))) throw new Error(tr('core.theKeyOnThis', 'The key on this device could not be checked. Try again.'));
     } catch (err) {
       if (before) await saveDeviceKey(uid, before);
       else await deleteDeviceKey(uid);
@@ -186,7 +187,7 @@ export class KeysService {
 
   /** A name for this device in the list of keys. */
   private label(): string {
-    const app = (window as unknown as { SevenFriendsAndroid?: unknown }).SevenFriendsAndroid ? 'Android app' : 'Browser';
+    const app = (window as unknown as { SevenFriendsAndroid?: unknown }).SevenFriendsAndroid ? tr('core.androidApp', 'Android app') : 'Browser';
     return `${app}, ${new Date().toISOString().slice(0, 10)}`;
   }
 

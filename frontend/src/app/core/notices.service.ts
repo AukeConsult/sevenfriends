@@ -1,6 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { NoticePreferences, Preferences } from '../models';
 import { ApiService } from './api.service';
+import { tr } from './i18n';
 
 /** Which pushes the person gets and what they show: saved on the account (`/preferences/notices`), so it holds for every device. */
 @Injectable({ providedIn: 'root' })
@@ -16,7 +17,7 @@ export class NoticesService {
       this.notices.set((await this.api.request<Preferences>('/preferences')).notices);
       return true;
     } catch {
-      this.problem.set('Your notification choices could not be loaded. Check the connection and open this page again.');
+      this.problem.set(tr('core.yourNotificationChoicesCould', 'Your notification choices could not be loaded. Check the connection and open this page again.'));
       return false;
     }
   }
@@ -26,12 +27,12 @@ export class NoticesService {
     try {
       const { devices, delivered } = await this.api.request<{ devices: number; delivered: number }>('/push/test', { method: 'POST' });
       return devices === 0
-        ? 'No device is set up for notifications yet. Turn on "Notify this device" on the device you want to test.'
+        ? tr('core.noDeviceIsSet', 'No device is set up for notifications yet. Turn on "Notify this device" on the device you want to test.')
         : delivered === devices
           ? `Sent to ${devices === 1 ? 'your device' : `all ${devices} of your devices`}. It should arrive in a moment, also when the app is closed.`
-          : `Sent, but only ${delivered} of ${devices} devices were reached. A device that cannot be reached any more is removed from the list.`;
+          : tr('core.sentButOnlyOf', 'Sent, but only {{ delivered }} of {{ devices }} devices were reached. A device that cannot be reached any more is removed from the list.', { delivered, devices });
     } catch {
-      return 'The test could not be sent. Check the connection and try again.';
+      return tr('core.theTestCouldNot', 'The test could not be sent. Check the connection and try again.');
     }
   }
 
@@ -45,7 +46,7 @@ export class NoticesService {
       return true;
     } catch {
       this.notices.set(before);
-      this.problem.set('That choice could not be saved. Try again.');
+      this.problem.set(tr('core.thatChoiceCouldNot', 'That choice could not be saved. Try again.'));
       return false;
     }
   }

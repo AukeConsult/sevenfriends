@@ -1,6 +1,8 @@
+import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { Component, DestroyRef, computed, inject, output, signal } from '@angular/core';
 import { KeysService } from '../core/keys.service';
 import { readableFingerprint } from '../models';
+import { tr } from '../core/i18n';
 
 /**
  * Making the encryption key, in one piece used by the setup wizard and by Settings → Keys: shows whether this device has a key, makes one
@@ -9,9 +11,11 @@ import { readableFingerprint } from '../models';
  * `finished` is sent when the key is saved and checked.
  */
 @Component({
+  imports: [TranslocoDirective],
   selector: 'app-key-setup',
   host: { class: 'd-flex flex-column gap-3' }, // the parts (words, copy button, check, buttons) have room between them
   templateUrl: './key-setup.html',
+  providers: [provideTranslocoScope('keySetup')],
 })
 export class KeySetup {
   protected readonly keys = inject(KeysService);
@@ -55,7 +59,7 @@ export class KeySetup {
       this.copied.set(false);
       this.words.set(words);
     } catch (err: any) {
-      this.problem.set(err?.message || 'The key could not be made. Try again.');
+      this.problem.set(err?.message || tr('keySetup.theKeyCouldNot', 'The key could not be made. Try again.'));
     } finally {
       this.busy.set(false);
     }
@@ -89,7 +93,7 @@ export class KeySetup {
     try {
       await this.keys.commit();
     } catch (err: any) {
-      this.problem.set(err?.message || 'The key could not be saved. Try again.');
+      this.problem.set(err?.message || tr('keySetup.theKeyCouldNot2', 'The key could not be saved. Try again.'));
       return; // the words stay on the screen: Save can be pressed again
     } finally {
       this.busy.set(false);

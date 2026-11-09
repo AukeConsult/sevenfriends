@@ -4,6 +4,7 @@ import { Preferences, SoundPreferences } from '../models';
 import { ApiService } from './api.service';
 import { AuthService } from './auth.service';
 import { LiveChanges } from './live-changes';
+import { tr } from './i18n';
 
 /** What can make a sound. */
 export type SoundEvent = 'message' | 'request' | 'answer';
@@ -31,18 +32,18 @@ interface Tune {
 
 /** The sounds, all made in the browser (Web Audio API, no sound files). */
 export const TUNES: Record<Exclude<BuiltInSoundId, 'none'>, Tune> = {
-  ding: { label: 'Ding', wave: 'sine', notes: [[880, 0], [1175, 0.12]], ring: 0.22 },
-  chime: { label: 'Chime', wave: 'sine', notes: [[660, 0], [880, 0.14], [1100, 0.28]], ring: 0.3 },
-  bell: { label: 'Bell', wave: 'triangle', notes: [[1320, 0], [990, 0.25]], ring: 0.6 },
-  pop: { label: 'Pop', wave: 'square', notes: [[330, 0]], ring: 0.08 },
-  marimba: { label: 'Marimba', wave: 'triangle', notes: [[523, 0], [659, 0.1], [784, 0.2], [1047, 0.3]], ring: 0.25 },
-  soft: { label: 'Soft note', wave: 'sine', notes: [[784, 0]], ring: 0.35 },
+  ding: { get label() { return tr('core.ding', 'Ding'); }, wave: 'sine', notes: [[880, 0], [1175, 0.12]], ring: 0.22 },
+  chime: { get label() { return tr('core.chime', 'Chime'); }, wave: 'sine', notes: [[660, 0], [880, 0.14], [1100, 0.28]], ring: 0.3 },
+  bell: { get label() { return tr('core.bell', 'Bell'); }, wave: 'triangle', notes: [[1320, 0], [990, 0.25]], ring: 0.6 },
+  pop: { get label() { return tr('core.pop', 'Pop'); }, wave: 'square', notes: [[330, 0]], ring: 0.08 },
+  marimba: { get label() { return tr('core.marimba', 'Marimba'); }, wave: 'triangle', notes: [[523, 0], [659, 0.1], [784, 0.2], [1047, 0.3]], ring: 0.25 },
+  soft: { get label() { return tr('core.softNote', 'Soft note'); }, wave: 'sine', notes: [[784, 0]], ring: 0.35 },
 };
 
 /** The choices in the order they are listed on the Settings page. */
 export const SOUND_CHOICES: { id: BuiltInSoundId; label: string }[] = [
-  { id: 'none', label: 'No sound' },
-  ...(Object.entries(TUNES) as [Exclude<BuiltInSoundId, 'none'>, Tune][]).map(([id, t]) => ({ id, label: t.label })),
+  { id: 'none', get label() { return tr('core.noSound', 'No sound'); } },
+  ...(Object.entries(TUNES) as [Exclude<BuiltInSoundId, 'none'>, Tune][]).map(([id, t]) => ({ id, get label() { return t.label; } })),
 ];
 
 const JINGLES_URL = '/sounds/sounds.json';
@@ -53,9 +54,9 @@ const JINGLE_MAX_MS = 20000;
 const SAVE_DELAY_MS = 600;
 
 export const SOUND_EVENTS: { event: SoundEvent; label: string; hint: string }[] = [
-  { event: 'message', label: 'New message', hint: 'A friend wrote to you' },
-  { event: 'request', label: 'Friend request', hint: 'Somebody wants to be your friend' },
-  { event: 'answer', label: 'Answer to your request', hint: 'A friend confirmed or rejected your request' },
+  { event: 'message', get label() { return tr('core.newMessage', 'New message'); }, get hint() { return tr('core.aFriendWroteTo', 'A friend wrote to you'); } },
+  { event: 'request', get label() { return tr('core.friendRequest', 'Friend request'); }, get hint() { return tr('core.somebodyWantsToBe', 'Somebody wants to be your friend'); } },
+  { event: 'answer', get label() { return tr('core.answerToYourRequest', 'Answer to your request'); }, get hint() { return tr('core.aFriendConfirmedOr', 'A friend confirmed or rejected your request'); } },
 ];
 
 const DEFAULTS: Record<SoundEvent, SoundId> = { message: 'ding', request: 'chime', answer: 'soft' };

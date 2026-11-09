@@ -1,0 +1,19 @@
+{
+  "yourPicture": "Your picture",
+  "chooseAPhotoAnd": "Choose a photo and place it in the circle. It is made small (256 pixels) before it is saved, so a big photo is fine.",
+  "chooseAPhoto": "Choose a photo",
+  "removeMyPicture": "Remove my picture",
+  "cancel": "Cancel",
+  "yourPhotoDragTo": "Your photo: drag to move it",
+  "dragThePhotoTo": "Drag the photo to move it. Pinch, scroll or use the slider to zoom.",
+  "zoom": "Zoom",
+  "saving": "Saving…",
+  "useThisPicture": "Use this picture",
+  "chooseAnotherPhoto": "Choose another photo",
+  "chooseAnImageFile": "Choose an image file (a photo).",
+  "thatImageIsVery": "That image is very big. Choose one under 20 MB.",
+  "thisImageCannotBe": "This image cannot be opened. Try another one (JPEG, PNG or WebP).",
+  "couldNotSaveThe": "Could not save the picture. Please try again.",
+  "couldNotRemoveThe": "Could not remove the picture. Please try again.",
+  "thePictureIsToo": "The picture is too big to save."
+}

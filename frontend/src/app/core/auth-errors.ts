@@ -1,3 +1,5 @@
+import { tr } from './i18n';
+
 /** Friendly text for the Firebase login error codes (all login pages use this). */
 const MESSAGES: Record<string, string> = {
   'auth/invalid-credential': 'Wrong email or password.',
@@ -26,7 +28,11 @@ const MESSAGES: Record<string, string> = {
 const code = (err: unknown): string => (err as { code?: string } | null)?.code ?? '';
 
 /** The message for an error, or the fallback when the code is not known. */
-export const authMessage = (err: unknown, fallback: string): string => MESSAGES[code(err)] ?? fallback;
+export const authMessage = (err: unknown, fallback: string): string => {
+  const known = code(err);
+  const text = MESSAGES[known];
+  return text ? tr(`errors.${known.replace('/', '.')}`, text) : fallback; // the text in the language of the app (public/i18n/<language>/common.json)
+};
 
 /** The user closed the pop-up: not an error to show. */
 export const wasCancelled = (err: unknown): boolean =>

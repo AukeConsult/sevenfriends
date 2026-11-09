@@ -3,6 +3,8 @@ import { Clearable } from '../core/clearable';
 import { Hero } from '../hero/hero';
 import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
+import { tr } from '../core/i18n';
 import { authMessage, wasCancelled, wasRejected } from '../core/auth-errors';
 import { AuthService } from '../core/auth.service';
 import { FriendLinkService } from '../core/friend-link.service';
@@ -10,7 +12,8 @@ import { AuthMode } from '../models';
 
 @Component({
   selector: 'app-login',
-  imports: [RouterLink, Clearable, Hero],
+  imports: [RouterLink, Clearable, Hero, TranslocoDirective],
+  providers: [provideTranslocoScope('login')],
   templateUrl: './login.html',
 })
 export class Login {
@@ -64,7 +67,7 @@ export class Login {
 
   protected submit(email: string, password: string, name: string, again: string): Promise<void> {
     if (this.mode() === 'signup' && password !== again) {
-      this.error.set('The two passwords are not the same. Type them again.');
+      this.error.set(tr('login.passwordsDiffer', 'The two passwords are not the same. Type them again.'));
       return Promise.resolve();
     }
     return this.run(() =>
@@ -78,14 +81,14 @@ export class Login {
     this.error.set(null);
     this.info.set(null);
     if (!email.trim()) {
-      this.error.set('Enter your email first.');
+      this.error.set(tr('login.enterEmail', 'Enter your email first.'));
       return;
     }
     try {
       await this.auth.resetPassword(email.trim());
-      this.info.set('Password reset email sent (if the account exists).');
+      this.info.set(tr('login.resetSent', 'Password reset email sent (if the account exists).'));
     } catch (err: any) {
-      this.error.set(authMessage(err, 'Could not send reset email.'));
+      this.error.set(authMessage(err, tr('login.resetFail', 'Could not send reset email.')));
     }
   }
 
@@ -98,7 +101,7 @@ export class Login {
       await action();
       await this.router.navigateByUrl(this.auth.landingPath());
     } catch (err) {
-      if (!wasCancelled(err)) this.error.set(authMessage(err, 'Sign-in failed. Please try again.'));
+      if (!wasCancelled(err)) this.error.set(authMessage(err, tr('login.signInFailed', 'Sign-in failed. Please try again.')));
       if (this.mode() === 'signin' && wasRejected(err)) this.rejected.set(true);
     } finally {
       this.busy.set(false);

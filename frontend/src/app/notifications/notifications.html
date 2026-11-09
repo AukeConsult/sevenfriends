@@ -1,3 +1,4 @@
+<ng-container *transloco="let t">
 <main class="sf-page">
   <!-- a slim top: the small logo and the name, then a greeting and who is around -->
   <app-home-top />
@@ -20,7 +21,7 @@
   @if (error()) {
     <div class="alert alert-danger d-flex align-items-center justify-content-between" role="alert">
       <span>{{ error() }}</span>
-      <button type="button" class="btn btn-link" (click)="load()">Retry</button>
+      <button type="button" class="btn btn-link" (click)="load()">{{ t('notifications.retry') || 'Retry' }}</button>
     </div>
   }
 
@@ -31,18 +32,18 @@
   }
 
   @if (!loaded()) {
-    <p class="text-secondary">Checking for news…</p>
+    <p class="text-secondary">{{ t('notifications.checkingForNews') || 'Checking for news…' }}</p>
   }
 
   <!-- the setup notes (sound, notifications, unverified details) fold into one line that opens -->
   @if (checkCount() > 0 && !checksHidden()) {
     <details class="sf-checks">
-      <summary><span aria-hidden="true">⚠️</span> {{ checkCount() }} {{ checkCount() === 1 ? 'thing' : 'things' }} to check in your setup<button type="button" class="sf-checks-x" aria-label="Hide these for 24 hours" title="Hide for 24 hours" (click)="$event.preventDefault(); $event.stopPropagation(); hideChecks()">✕</button></summary>
+      <summary><span aria-hidden="true">⚠️</span> {{ t('notifications.checkcountThingsToCheck', { checkCount: checkCount(), things: checkCount() === 1 ? 'thing' : 'things' }) || checkCount() + ' ' + (checkCount() === 1 ? 'thing' : 'things') + ' to check in your setup' }}<button type="button" class="sf-checks-x" [attr.aria-label]="t('notifications.hideTheseForHours') || 'Hide these for 24 hours'" [attr.title]="t('notifications.hideForHours') || 'Hide for 24 hours'" (click)="$event.preventDefault(); $event.stopPropagation(); hideChecks()">✕</button></summary>
       <div class="vstack gap-2 mt-2">
       @if (setupLeft()) {
         <div class="alert alert-info d-flex flex-wrap align-items-center justify-content-between gap-2" role="status">
-          <span>Your sound and notifications are not set up yet.</span>
-          <a routerLink="/setup" class="btn btn-primary btn-sm">Finish setup</a>
+          <span>{{ t('notifications.yourSoundAndNotifications') || 'Your sound and notifications are not set up yet.' }}</span>
+          <a routerLink="/setup" class="btn btn-primary btn-sm">{{ t('notifications.finishSetup') || 'Finish setup' }}</a>
         </div>
       }
 
@@ -50,8 +51,8 @@
         <div class="alert alert-warning" role="alert">
           <div>{{ off }}</div>
           <div class="d-flex gap-2 mt-2">
-            <button type="button" class="btn btn-warning btn-sm" (click)="openAndroidSettings()">Open Android settings</button>
-            <button type="button" class="btn btn-outline-secondary btn-sm" (click)="androidLater.set(true)">Not now</button>
+            <button type="button" class="btn btn-warning btn-sm" (click)="openAndroidSettings()">{{ t('notifications.openAndroidSettings') || 'Open Android settings' }}</button>
+            <button type="button" class="btn btn-outline-secondary btn-sm" (click)="androidLater.set(true)">{{ t('notifications.notNow') || 'Not now' }}</button>
           </div>
         </div>
       }
@@ -62,16 +63,16 @@
           @if (pushProblem()) { <div class="small mt-1">{{ pushProblem() }}</div> }
           <div class="d-flex gap-2 mt-2">
             @if (off.canTurnOn) {
-              <button type="button" class="btn btn-warning btn-sm" (click)="turnOnPush()">Turn on notifications</button>
+              <button type="button" class="btn btn-warning btn-sm" (click)="turnOnPush()">{{ t('notifications.turnOnNotifications') || 'Turn on notifications' }}</button>
             }
-            <button type="button" class="btn btn-outline-secondary btn-sm" (click)="pushLater.set(true)">Not now</button>
+            <button type="button" class="btn btn-outline-secondary btn-sm" (click)="pushLater.set(true)">{{ t('notifications.notNow') || 'Not now' }}</button>
           </div>
         </div>
       }
 
       @if (unverified().length) {
         <div class="alert alert-warning" role="status">
-          Your {{ unverified().join(' and ') }} is not verified yet: confirm it (in Settings) so {{ w.one }} requests can reach you.
+          {{ t('notifications.yourAndIsNot', { and: unverified().join(' and '), one: w.one }) || 'Your ' + unverified().join(' and ') + ' is not verified yet: confirm it (in Settings) so ' + w.one + ' requests can reach you.' }}
         </div>
       }
       </div>
@@ -80,8 +81,8 @@
 
   <!-- 1. what needs me -->
   @if (needsYou()) {
-    <section aria-label="Needs you">
-      <h2 class="sf-section">Needs you</h2>
+    <section [attr.aria-label]="t('notifications.needsYou') || 'Needs you'">
+      <h2 class="sf-section">{{ t('notifications.needsYou') || 'Needs you' }}</h2>
 
       @if (seated().length) {
         <ul class="sf-list sf-home-cards">
@@ -89,15 +90,15 @@
             <li class="sf-list-item">
               <span class="sf-home-ic" aria-hidden="true">🙋</span>
               <span class="sf-list-text">
-                <strong>{{ request.fromName }}</strong>
-                <small>wants to be your {{ w.one }}</small>
+                <span [innerHTML]="t('notifications.strongFromnameStrong', { fromName: request.fromName }) || '<strong>{{ fromName }}</strong>'"></span>
+                <small>{{ t('notifications.wantsToBeYour', { one: w.one }) || 'wants to be your ' + w.one }}</small>
                 @if (request.message) { <small class="fst-italic">“{{ request.message }}”</small> }
                 @if (request.fromUnverified.length) {
-                  <small class="text-warning-emphasis">Has not verified {{ request.fromUnverified.length === 2 ? 'their email or phone' : request.fromUnverified[0] === 'email' ? 'their email' : 'their phone' }}: we cannot be sure it is really them.</small>
+                  <small class="text-warning-emphasis">{{ t('notifications.hasNotVerifiedPhone', { phone: request.fromUnverified.length === 2 ? 'their email or phone' : request.fromUnverified[0] === 'email' ? 'their email' : 'their phone' }) || 'Has not verified ' + (request.fromUnverified.length === 2 ? 'their email or phone' : request.fromUnverified[0] === 'email' ? 'their email' : 'their phone') + ': we cannot be sure it is really them.' }}</small>
                 }
               </span>
-              <button type="button" class="btn btn-primary" (click)="accept(request)">Confirm</button>
-              <button type="button" class="btn btn-outline-secondary" (click)="reject(request)">Reject</button>
+              <button type="button" class="btn btn-primary" (click)="accept(request)">{{ t('notifications.confirm') || 'Confirm' }}</button>
+              <button type="button" class="btn btn-outline-secondary" (click)="reject(request)">{{ t('notifications.reject') || 'Reject' }}</button>
             </li>
           }
         </ul>
@@ -105,7 +106,7 @@
 
       @if (waitingCount() > 0) {
         <a routerLink="/pending" class="sf-link-row">
-          {{ waitingCount() }} {{ waitingCount() === 1 ? 'request is' : 'requests are' }} waiting for a free seat
+          {{ t('notifications.waitingcountAreWaitingFor', { waitingCount: waitingCount(), are: waitingCount() === 1 ? 'request is' : 'requests are' }) || waitingCount() + ' ' + (waitingCount() === 1 ? 'request is' : 'requests are') + ' waiting for a free seat' }}
           <span aria-hidden="true">›</span>
         </a>
       }
@@ -119,20 +120,20 @@
                 <strong class="sf-ellipsis">{{ group.name }}@if (group.count > 1) { <span class="badge text-bg-primary ms-2">{{ group.count }}</span> }</strong>
                 <span class="sf-message-actions">
                   @if (group.connectionId) {
-                    <a [routerLink]="['/friends', group.connectionId]" class="btn btn-primary btn-sm">Open</a>
+                    <a [routerLink]="['/friends', group.connectionId]" class="btn btn-primary btn-sm">{{ t('notifications.open') || 'Open' }}</a>
                   }
-                  <button type="button" class="btn btn-outline-secondary btn-sm" (click)="markGroupRead(group)">Mark read</button>
+                  <button type="button" class="btn btn-outline-secondary btn-sm" (click)="markGroupRead(group)">{{ t('notifications.markRead') || 'Mark read' }}</button>
                 </span>
               </div>
               <span class="sf-wrap">{{ group.last.text }}</span>
               @if (group.last.time) {
-                <small class="sf-message-time">{{ group.last.time | date: 'short' }}</small>
+                <small class="sf-message-time">{{ group.last.time | appDate: 'short' }}</small>
               }
               @if (group.connectionId) {
                 <form class="input-group input-group-sm mt-2" (submit)="$event.preventDefault(); sendReply(group)">
-                  <input type="text" class="form-control" placeholder="Quick reply" [attr.aria-label]="'Reply to ' + group.name"
+                  <input type="text" class="form-control" [attr.placeholder]="t('notifications.quickReply') || 'Quick reply'" [attr.aria-label]="(t('notifications.replyToGroupname', { groupName: group.name }) || 'Reply to ' + group.name)"
                     [value]="replies()[group.key] ?? ''" (input)="setReply(group.key, $any($event.target).value)" />
-                  <button type="submit" class="btn btn-primary" [disabled]="replying() === group.key || !(replies()[group.key] ?? '').trim()">Send</button>
+                  <button type="submit" class="btn btn-primary" [disabled]="replying() === group.key || !(replies()[group.key] ?? '').trim()">{{ t('notifications.send') || 'Send' }}</button>
                 </form>
               }
             </li>
@@ -142,19 +143,19 @@
     </section>
   } @else if (loaded() && !error() && !quiet().length) {
     <!-- quiet: a small line, and something useful to do instead of an empty page -->
-    <p class="sf-home-quiet"><span aria-hidden="true">🌙</span> All quiet. Nothing needs you right now.</p>
+    <p class="sf-home-quiet"><span aria-hidden="true">🌙</span> {{ t('notifications.allQuietNothingNeeds') || 'All quiet. Nothing needs you right now.' }}</p>
     @if (nudge(); as friend) {
       <ul class="sf-list sf-home-cards">
         <li class="sf-list-item">
           <app-friend-avatar [friend]="friend" [seat]="friend.seat ?? 1" [small]="true" [size]="36" />
-          <span class="sf-list-text"><strong class="small">Say hi to {{ friend.name }}?</strong><small>{{ lastTalk(friend) }}</small></span>
-          <a [routerLink]="['/friends', friend.id]" class="btn btn-outline-primary btn-sm">Say hi</a>
+          <span class="sf-list-text"><strong class="small">{{ t('notifications.sayHiToFriendname', { friendName: friend.name }) || 'Say hi to ' + friend.name + '?' }}</strong><small>{{ lastTalk(friend) }}</small></span>
+          <a [routerLink]="['/friends', friend.id]" class="btn btn-outline-primary btn-sm">{{ t('notifications.sayHi') || 'Say hi' }}</a>
         </li>
       </ul>
     }
     @if (freeSeats() > 0) {
       <a routerLink="/share" class="sf-link-row">
-        {{ freeSeats() === 1 ? 'You have a free seat: invite a ' + w.one : 'You have ' + freeSeats() + ' free seats: invite ' + w.many }}
+        {{ freeSeats() === 1 ? (t('notifications.youHaveAFree', { one: w.one }) || 'You have a free seat: invite a ' + w.one) : (t('notifications.youHaveFreeseatsFree', { freeSeats: freeSeats(), many: w.many }) || 'You have ' + freeSeats() + ' free seats: invite ' + w.many) }}
         <span aria-hidden="true">›</span>
       </a>
     }
@@ -162,14 +163,14 @@
 
   <!-- 2. keep in touch: only friends who have gone quiet -->
   @if (quiet().length) {
-    <section aria-label="Keep in touch">
-      <h2 class="sf-section">Keep in touch</h2>
+    <section [attr.aria-label]="t('notifications.keepInTouch') || 'Keep in touch'">
+      <h2 class="sf-section">{{ t('notifications.keepInTouch') || 'Keep in touch' }}</h2>
       <ul class="sf-list sf-home-cards">
         @for (friend of quiet(); track friend.id) {
           <li class="sf-list-item">
             <app-friend-avatar [friend]="friend" [seat]="friend.seat ?? 1" [small]="true" [size]="36" />
             <span class="sf-list-text">{{ quietText(friend) }}</span>
-            <a [routerLink]="['/friends', friend.id]" class="btn btn-outline-primary btn-sm">Say hi</a>
+            <a [routerLink]="['/friends', friend.id]" class="btn btn-outline-primary btn-sm">{{ t('notifications.sayHi') || 'Say hi' }}</a>
           </li>
         }
       </ul>
@@ -177,3 +178,4 @@
   }
   }
 </main>
+</ng-container>

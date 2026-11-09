@@ -1,31 +1,33 @@
+<ng-container *transloco="let t">
 <main class="sf-vw">
-  <h1 class="sf-vw-title">Welcome pages</h1>
-  <p class="sf-vw-sub">The welcome pages of the circle this app is in: {{ circleLabel() }}. Open one alone to see it in full size.</p>
+  <h1 class="sf-vw-title">{{ t('viewWelcome.welcomePages') || 'Welcome pages' }}</h1>
+  <p class="sf-vw-sub">{{ t('viewWelcome.theWelcomePagesOf', { circleLabel: circleLabel() }) || 'The welcome pages of the circle this app is in: ' + circleLabel() + '. Open one alone to see it in full size.' }}</p>
 
-  <section class="sf-vw-circles" aria-label="The circle this app uses">
-    <strong>This app uses the circle</strong>
+  <section class="sf-vw-circles" [attr.aria-label]="t('viewWelcome.theCircleThisApp') || 'The circle this app uses'">
+    <span [innerHTML]="t('viewWelcome.strongThisAppUses') || '<strong>This app uses the circle</strong>'"></span>
     <div class="sf-vw-seg" role="group">
       @for (c of circles; track c.id) {
         <button type="button" class="btn btn-sm" [class.btn-primary]="active.id === c.id" [class.btn-outline-primary]="active.id !== c.id" [attr.aria-pressed]="active.id === c.id" (click)="active.choose(c.id)">{{ c.label }}</button>
       }
     </div>
-    <label class="sf-vw-all"><input type="checkbox" [checked]="showAll()" (change)="showAll.set($any($event.target).checked)" /> Show all circles</label>
-    <span class="sf-vw-note">For test and demo. An app covers exactly one circle and cannot see the others. The friends, seats, messages and sounds of the other circles are hidden. A circle is made the first time it is chosen.</span>
+    <label class="sf-vw-all"><input type="checkbox" [checked]="showAll()" (change)="showAll.set($any($event.target).checked)" /> {{ t('viewWelcome.showAllCircles') || 'Show all circles' }}</label>
+    <span class="sf-vw-note">{{ t('viewWelcome.forTestAndDemo') || 'For test and demo. An app covers exactly one circle and cannot see the others. The friends, seats, messages and sounds of the other circles are hidden. A circle is made the first time it is chosen.' }}</span>
   </section>
 
-  <h2 class="sf-vw-h2">Welcome pages</h2>
+  <h2 class="sf-vw-h2">{{ t('viewWelcome.welcomePages') || 'Welcome pages' }}</h2>
   <div class="sf-vw-grid">
     @for (page of visiblePages(); track page.path) {
       <section class="sf-vw-item">
         <div class="sf-vw-head">
           <div>
-            <strong>{{ page.title }}</strong>
+            <span [innerHTML]="t('viewWelcome.strongTitleStrong', { title: page.title }) || '<strong>{{ title }}</strong>'"></span>
             <span class="sf-vw-note">{{ page.note }}</span>
           </div>
-          <a [routerLink]="page.path" class="btn btn-outline-primary btn-sm">Open</a>
+          <a [routerLink]="page.path" class="btn btn-outline-primary btn-sm">{{ t('viewWelcome.open') || 'Open' }}</a>
         </div>
-        <div class="sf-vw-box"><iframe class="sf-vw-frame" [src]="page.src" [title]="page.title + ' preview'" scrolling="no" (load)="fit($event)"></iframe></div>
+        <div class="sf-vw-box"><iframe class="sf-vw-frame" [src]="page.src" [title]="(t('viewWelcome.titlePreview', { title: page.title }) || page.title + ' preview')" scrolling="no" (load)="fit($event)"></iframe></div>
       </section>
     }
   </div>
 </main>
+</ng-container>

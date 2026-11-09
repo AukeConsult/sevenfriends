@@ -1,15 +1,16 @@
+<ng-container *transloco="let t">
 <div class="sf-page-head">
-  <h1>Your picture</h1>
+  <h1>{{ t('profilePicture.yourPicture') || 'Your picture' }}</h1>
 </div>
 
 <main class="sf-narrow">
   @if (!hasImage()) {
     <p class="m-0">
-      Choose a photo and place it in the circle. It is made small (256 pixels) before it is saved, so a big photo is fine.
+      {{ t('profilePicture.chooseAPhotoAnd') || 'Choose a photo and place it in the circle. It is made small (256 pixels) before it is saved, so a big photo is fine.' }}
     </p>
 
     <label class="btn btn-primary">
-      Choose a photo
+      {{ t('profilePicture.chooseAPhoto') || 'Choose a photo' }}
       <input type="file" accept="image/*" hidden (change)="onFile($event)" />
     </label>
 
@@ -18,26 +19,26 @@
     }
 
     @if (existing()) {
-      <button type="button" class="btn btn-outline-danger" [disabled]="busy()" (click)="remove()">Remove my picture</button>
+      <button type="button" class="btn btn-outline-danger" [disabled]="busy()" (click)="remove()">{{ t('profilePicture.removeMyPicture') || 'Remove my picture' }}</button>
     }
-    <a [routerLink]="backTo" [queryParams]="backParams" class="btn btn-light">Cancel</a>
+    <a [routerLink]="backTo" [queryParams]="backParams" class="btn btn-light">{{ t('profilePicture.cancel') || 'Cancel' }}</a>
   } @else {
     <div class="sf-crop-wrap">
       <div class="sf-crop" [style.width.px]="view" [style.height.px]="view">
         <canvas #canvas class="sf-crop-canvas" [style.width.px]="view" [style.height.px]="view"
                 (pointerdown)="onPointerDown($event)" (pointermove)="onPointerMove($event)"
                 (pointerup)="onPointerEnd($event)" (pointercancel)="onPointerEnd($event)" (wheel)="onWheel($event)"
-                aria-label="Your photo: drag to move it"></canvas>
+                [attr.aria-label]="t('profilePicture.yourPhotoDragTo') || 'Your photo: drag to move it'"></canvas>
         <div class="sf-crop-circle" aria-hidden="true"></div>
       </div>
     </div>
 
-    <p class="small text-secondary text-center m-0">Drag the photo to move it. Pinch, scroll or use the slider to zoom.</p>
+    <p class="small text-secondary text-center m-0">{{ t('profilePicture.dragThePhotoTo') || 'Drag the photo to move it. Pinch, scroll or use the slider to zoom.' }}</p>
 
     <label class="d-grid gap-1">
-      <span class="form-label small text-secondary m-0">Zoom</span>
+      <span class="form-label small text-secondary m-0">{{ t('profilePicture.zoom') || 'Zoom' }}</span>
       <input type="range" class="form-range" min="1" [max]="maxZoom" step="0.01" [value]="zoom()"
-             (input)="setZoom(+$any($event.target).value)" aria-label="Zoom" />
+             (input)="setZoom(+$any($event.target).value)" [attr.aria-label]="t('profilePicture.zoom') || 'Zoom'" />
     </label>
 
     @if (error()) {
@@ -45,14 +46,15 @@
     }
 
     <div class="d-flex gap-2">
-      <a [routerLink]="backTo" [queryParams]="backParams" class="btn btn-light flex-fill" [class.disabled]="busy()">Cancel</a>
+      <a [routerLink]="backTo" [queryParams]="backParams" class="btn btn-light flex-fill" [class.disabled]="busy()">{{ t('profilePicture.cancel') || 'Cancel' }}</a>
       <button type="button" class="btn btn-primary flex-fill" [disabled]="busy()" (click)="save()">
-        {{ busy() ? 'Saving…' : 'Use this picture' }}
+        {{ busy() ? (t('profilePicture.saving') || 'Saving…') : (t('profilePicture.useThisPicture') || 'Use this picture') }}
       </button>
     </div>
     <label class="btn btn-link">
-      Choose another photo
+      {{ t('profilePicture.chooseAnotherPhoto') || 'Choose another photo' }}
       <input type="file" accept="image/*" hidden (change)="onFile($event)" />
     </label>
   }
 </main>
+</ng-container>

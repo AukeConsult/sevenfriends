@@ -1,4 +1,5 @@
 import { RECOVERY_WORDS } from './recovery-words';
+import { tr } from './i18n';
 
 /**
  * The recovery code: a random 256-bit recovery key written as 24 words (design: docs/design/safebox-encryption.md).
@@ -22,7 +23,7 @@ async function checkByte(key: Uint8Array): Promise<number> {
 
 /** The 24 words of a recovery key. */
 export async function wordsOf(key: Uint8Array): Promise<string[]> {
-  if (key.length !== KEY_BYTES) throw new Error('A recovery key is 32 bytes');
+  if (key.length !== KEY_BYTES) throw new Error(tr('core.aRecoveryKeyIs', 'A recovery key is 32 bytes'));
   const bits: number[] = [];
   for (const byte of [...key, await checkByte(key)]) for (let i = 7; i >= 0; i--) bits.push((byte >> i) & 1);
   const words: string[] = [];

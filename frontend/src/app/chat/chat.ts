@@ -1,11 +1,13 @@
+import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
+import { tr } from '../core/i18n';
 import { ActiveCircleService } from '../core/active-circle.service';
 import { AddMedia } from '../add-media/add-media';
 import { Clearable } from '../core/clearable';
 import { FriendContext } from '../friend-page/friend-context';
 import { PokeToggle } from '../friend-page/poke-toggle';
-import { DatePipe } from '@angular/common';
 import { NgTemplateOutlet } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AppDatePipe } from '../core/app-date.pipe';
 import { Component, DestroyRef, ElementRef, HostListener, computed, effect, inject, signal, untracked, viewChild } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Router, RouterLink } from '@angular/router';
@@ -36,8 +38,9 @@ const SAFETY_REFRESH_MS = 30000;
 /** The message feed with one friend: /friends/:id (the id of the connection). */
 @Component({
   selector: 'app-chat',
-  imports: [AddMedia, PokeToggle, DatePipe, FriendAvatar, MediaAudio, MediaImage, MediaVideo, NgTemplateOutlet, RouterLink, Clearable, RecoveryHint],
+  imports: [AddMedia, PokeToggle, AppDatePipe, FriendAvatar, MediaAudio, MediaImage, MediaVideo, NgTemplateOutlet, RouterLink, Clearable, RecoveryHint, TranslocoDirective],
   templateUrl: './chat.html',
+  providers: [provideTranslocoScope('chat')],
 })
 export class Chat {
   protected readonly w = inject(ActiveCircleService).words;
@@ -90,16 +93,16 @@ export class Chat {
 
   // deleting several of my messages: the expanding frame under the header
   protected readonly ageChoices: { label: string; days: number | null; icon: string }[] = [
-    { label: 'Older than a day', days: 1, icon: 'day' },
-    { label: 'Older than a week', days: 7, icon: 'week' },
-    { label: 'Older than a month', days: 30, icon: 'month' },
-    { label: 'All of them', days: null, icon: 'all' },
+    { label: tr('chat.olderThanADay', 'Older than a day'), days: 1, icon: 'day' },
+    { label: tr('chat.olderThanAWeek', 'Older than a week'), days: 7, icon: 'week' },
+    { label: tr('chat.olderThanAMonth', 'Older than a month'), days: 30, icon: 'month' },
+    { label: tr('chat.allOfThem', 'All of them'), days: null, icon: 'all' },
   ];
   protected readonly cleanupOpen = signal(false);
   protected readonly cleanupWhose = signal<'mine' | 'both'>(this.prefs.get('cleanupWhose'));
   /** my messages, or both sides' (never the friend's alone) */
   protected readonly whoseChoices = computed<{ value: 'mine' | 'both'; label: string }[]>(() => [
-    { value: 'mine', label: 'My messages' },
+    { value: 'mine', label: tr('chat.myMessages', 'My messages') },
     { value: 'both', label: `Both: mine and ${this.name() || 'my friend'}'s` },
   ]);
   protected readonly cleanupDays = signal<number | null>(this.rememberedDays());
@@ -281,7 +284,7 @@ export class Chat {
       if (changed) this.scrollDown();
     } catch (err: any) {
       if (err instanceof ApiError && (err.status === 403 || err.status === 404)) this.blocked.set(err.message);
-      else if (first) this.error.set(err.message ?? 'Could not load the conversation');
+      else if (first) this.error.set(err.message ?? tr('chat.couldNotLoadThe', 'Could not load the conversation'));
     } finally {
       this.loaded.set(true);
     }
@@ -392,7 +395,7 @@ export class Chat {
       link.download = /\.[A-Za-z0-9]{2,5}$/.test(name) || !extension ? name : `${name}.${extension}`;
       link.click();
     } catch (err: any) {
-      this.error.set(err.message ?? 'Could not download the file');
+      this.error.set(err.message ?? tr('chat.couldNotDownloadThe', 'Could not download the file'));
     }
   }
 
@@ -407,7 +410,7 @@ export class Chat {
     try {
       await navigator.clipboard.writeText(message.text);
     } catch {
-      this.error.set('Could not copy the text');
+      this.error.set(tr('chat.couldNotCopyThe', 'Could not copy the text'));
     }
     this.selected.set(null);
   }
@@ -420,7 +423,7 @@ export class Chat {
 
   protected startEdit(message: ChatItem): void {
     if (message.locked === 'shut') {
-      this.error.set('This message is locked for another device, so it cannot be changed here.');
+      this.error.set(tr('chat.thisMessageIsLocked', 'This message is locked for another device, so it cannot be changed here.'));
       this.selected.set(null);
       return;
     }
@@ -452,7 +455,7 @@ export class Chat {
       this.selected.set(null);
       this.moving.set(null);
     } catch (err: any) {
-      this.error.set(err.message ?? 'Could not put the file in the safebox');
+      this.error.set(err.message ?? tr('chat.couldNotPutThe', 'Could not put the file in the safebox'));
     } finally {
       this.movingBusy.set(false);
     }
@@ -466,7 +469,7 @@ export class Chat {
       this.selected.set(null);
       this.deleting.set(null);
     } catch (err: any) {
-      this.error.set(err.message ?? 'Could not delete the message');
+      this.error.set(err.message ?? tr('chat.couldNotDeleteThe', 'Could not delete the message'));
     }
   }
 
@@ -502,7 +505,7 @@ export class Chat {
     } catch (err: any) {
       this.messages.update((list) => list.filter((m) => m.id !== temp.id));
       if (fromField && !this.text()) this.text.set(text);
-      this.error.set(err.message ?? 'Could not send the message');
+      this.error.set(err.message ?? tr('chat.couldNotSendThe', 'Could not send the message'));
     }
   }
 
@@ -527,7 +530,7 @@ export class Chat {
       setTimeout(() => this.fit());
       this.scrollDown();
     } catch (err: any) {
-      this.error.set(err.message ?? (editingId ? 'Could not save the message' : 'Could not send the message'));
+      this.error.set(err.message ?? (editingId ? tr('chat.couldNotSaveThe', 'Could not save the message') : tr('chat.couldNotSendThe', 'Could not send the message')));
     } finally {
       this.sending.set(false);
     }
@@ -723,7 +726,7 @@ export class Chat {
         const { matched } = await this.chat.deleteMatching(this.friendId, { ...this.criteria(), dryRun: true });
         if (seq === this.countSeq) this.cleanupCount.set(matched);
       } catch (err: any) {
-        if (seq === this.countSeq) this.error.set(err.message ?? 'Could not count the messages');
+        if (seq === this.countSeq) this.error.set(err.message ?? tr('chat.couldNotCountThe', 'Could not count the messages'));
       }
     }, delay);
   }
@@ -737,7 +740,7 @@ export class Chat {
       await this.refresh(false);
       this.recount(0);
     } catch (err: any) {
-      this.error.set(err.message ?? 'Could not delete the messages');
+      this.error.set(err.message ?? tr('chat.couldNotDeleteThe2', 'Could not delete the messages'));
     } finally {
       this.cleanupBusy.set(false);
       this.cleanupAsk.set(false);

@@ -1,13 +1,16 @@
+import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { Component, inject } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { InstallService } from '../core/install.service';
 import { SettingsTab, UiPreferencesService } from '../core/ui-preferences';
+import { tr } from '../core/i18n';
 
 /** The Settings page: one tab for each part (the part itself is the page shown under the tabs). */
 @Component({
   selector: 'app-settings-shell',
-  imports: [RouterLink, RouterOutlet],
+  imports: [RouterLink, RouterOutlet, TranslocoDirective],
   templateUrl: './settings-shell.html',
+  providers: [provideTranslocoScope('settingsShell')],
 })
 export class SettingsShell {
   /** `install.native`: the Android app has no "Install the app" page */
@@ -32,11 +35,11 @@ export class SettingsShell {
   }
 
   protected readonly tabs = [
-    { path: 'profile', label: 'Profile' },
-    { path: 'preferences', label: 'Preferences' },
-    { path: 'notifications', label: 'Notifications' },
-    { path: 'encryption', label: 'Keys' },
-    { path: 'install', label: 'Install', browserOnly: true },
-    { path: 'about', label: 'Info', also: ['terms', 'privacy'] },
+    { path: 'profile', label: tr('settingsShell.profile', 'Profile') },
+    { path: 'preferences', label: tr('settingsShell.preferences', 'Preferences') },
+    { path: 'notifications', label: tr('settingsShell.notifications', 'Notifications') },
+    { path: 'encryption', label: tr('settingsShell.keys', 'Keys') },
+    { path: 'install', label: tr('settingsShell.install', 'Install'), browserOnly: true },
+    { path: 'about', label: tr('settingsShell.info', 'Info'), also: ['terms', 'privacy'] },
   ];
 }

@@ -4,6 +4,7 @@ import { ApiService } from './api.service';
 import { AuthService } from './auth.service';
 import { rewrapKey } from './box-crypto';
 import { myDeviceKey } from './my-key';
+import { tr } from './i18n';
 
 /**
  * Recovery from my own other device (design: docs/design/message-encryption.md): this device has a key that opens my messages and files; another key of mine
@@ -38,7 +39,7 @@ export class OwnRecoveryService {
   /** The person says this device's key opens their old messages and files: it becomes the one that gives the others access. */
   async trustThisDevice(): Promise<void> {
     const mine = await myDeviceKey(this.auth.user()?.uid);
-    if (!mine) throw new Error('This device has no key.');
+    if (!mine) throw new Error(tr('core.thisDeviceHasNo', 'This device has no key.'));
     await this.api.request<unknown>('/own-recovery/trust', { method: 'POST', body: JSON.stringify({ key: mine.keyId }) });
     await this.check();
   }
@@ -46,7 +47,7 @@ export class OwnRecoveryService {
   /** Gives `target` its copies of every message and file key of mine (100 at a time). Returns how many were done and how many this device could not open. */
   async allow(target: PublishedKey, progress: (done: number) => void): Promise<{ done: number; skipped: number }> {
     const mine = await myDeviceKey(this.auth.user()?.uid);
-    if (!mine) throw new Error('This device has no key.');
+    if (!mine) throw new Error(tr('core.thisDeviceHasNo', 'This device has no key.'));
     const result = { done: 0, skipped: 0 };
     for (const part of ['messages', 'box'] as const) {
       let after: string | null = null;

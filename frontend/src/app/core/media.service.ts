@@ -7,6 +7,7 @@ import { myDeviceKey } from './my-key';
 import { PreparedAudio } from './audio';
 import { PreparedImage } from './image';
 import { PreparedVideo } from './video';
+import { tr } from './i18n';
 
 /** The pieces of a big upload: `done` of `total` have been sent. */
 export type Progress = (done: number, total: number) => void;
@@ -144,9 +145,9 @@ export class MediaService {
   /** A locked file (or preview) opened on this device. */
   private async openLocked(entry: LockedEntry, blob: Blob, thumb: boolean): Promise<StoredFile> {
     const mine = await myDeviceKey(this.auth.user()?.uid);
-    if (!mine) throw new Error('There is no encryption key on this device. Set one up (or restore it) in Settings → Keys.');
+    if (!mine) throw new Error(tr('core.thereIsNoEncryption', 'There is no encryption key on this device. Set one up (or restore it) in Settings → Keys.'));
     const media = entry.enc.media;
-    if (!media) throw new Error('This file could not be opened.');
+    if (!media) throw new Error(tr('core.thisFileCouldNot2', 'This file could not be opened.'));
     const key = await openMessageKey(entry.enc, mine.keyId, mine.privateKey);
     const meta = await openMessageMeta(entry.friendId, media, key);
     const plain = await openMessageMedia(entry.friendId, media, key, thumb ? 'thumb' : 'file', await blob.arrayBuffer());
@@ -166,7 +167,7 @@ export class MediaService {
       const locked = this.lockedFiles().get(`${ownerId}/${name.replace(/\.thumb$/, '')}`);
       file = this.api.file(`/sf-cache/${key}`).then(({ blob, name: fileName }) => {
         if (locked) return this.openLocked(locked, blob, name.endsWith('.thumb'));
-        if (blob.type === 'application/octet-stream') throw new Error('This file is locked. Open the conversation first, then try again.');
+        if (blob.type === 'application/octet-stream') throw new Error(tr('core.thisFileIsLocked', 'This file is locked. Open the conversation first, then try again.'));
         return { url: URL.createObjectURL(blob), name: fileName, type: blob.type, bytes: blob.size };
       });
       this.files.set(key, file);

@@ -1,20 +1,21 @@
+<ng-container *transloco="let t">
 <ng-template #body>
   <div class="sf-page-head">
     <h1 class="d-flex align-items-center justify-content-center gap-1">
       @if (embedded()) {
-        <button type="button" class="sf-back-inline" aria-label="Back to home" (click)="closed.emit()"></button>
+        <button type="button" class="sf-back-inline" [attr.aria-label]="t('sleeping.backToHome') || 'Back to home'" (click)="closed.emit()"></button>
       } @else {
-        <a routerLink="/" class="sf-back-inline" aria-label="Back to my friends"></a>
+        <a routerLink="/" class="sf-back-inline" [attr.aria-label]="t('sleeping.backToMyFriends') || 'Back to my friends'"></a>
       }
-      <span>😴 Sleep list</span>
+      <span>{{ t('sleeping.sleepList') || '😴 Sleep list' }}</span>
     </h1>
   </div>
   <p class="text-secondary">
-    {{ w.Many }} who sleep have no seat. Your conversation with them is kept. Wake a {{ w.one }} up to give them a seat again.
+    {{ t('sleeping.manyWhoSleepHave', { Many: w.Many, one: w.one }) || w.Many + ' who sleep have no seat. Your conversation with them is kept. Wake a ' + w.one + ' up to give them a seat again.' }}
   </p>
 
   @if (!seatFree() && sleeping().length) {
-    <div class="alert alert-info" role="status">All {{ max }} seats are taken. Free a seat (put a {{ w.one }} to sleep) before you wake someone up.</div>
+    <div class="alert alert-info" role="status">{{ t('sleeping.allMaxSeatsAre', { max: max, one: w.one }) || 'All ' + max + ' seats are taken. Free a seat (put a ' + w.one + ' to sleep) before you wake someone up.' }}</div>
   }
 
   @if (error()) {
@@ -22,7 +23,7 @@
   }
 
   @if (!sleeping().length) {
-    <p class="text-secondary">Nobody is asleep.</p>
+    <p class="text-secondary">{{ t('sleeping.nobodyIsAsleep') || 'Nobody is asleep.' }}</p>
   } @else {
     <!-- the sleepers as small circles that flow from left to right and wrap with the width of the view; tap one to see how it is and what you can do -->
     <ul class="sf-sl-row list-unstyled m-0">
@@ -33,7 +34,7 @@
             <span class="sf-hs-ring">
               <app-friend-avatar [friend]="friend" [seat]="1" [size]="42" />
               @if (unread().get(friend.id); as count) {
-                <span class="sf-hs-unread" [attr.aria-label]="count + ' unread'">{{ count }}</span>
+                <span class="sf-hs-unread" [attr.aria-label]="(t('sleeping.countUnread', { count: count }) || count + ' unread')">{{ count }}</span>
               }
             </span>
             <span class="sf-sl-name">{{ friend.name }}</span>
@@ -48,11 +49,11 @@
           <div class="d-flex align-items-center flex-wrap gap-2">
             <a [routerLink]="['/friends', friend.id]" class="sf-name sf-friend-name text-decoration-none">{{ friend.name }}</a>
             @if (unread().get(friend.id); as count) {
-              <span class="badge rounded-pill text-bg-danger">{{ count === 1 ? 'New message' : count + ' new messages' }}</span>
+              <span class="badge rounded-pill text-bg-danger">{{ count === 1 ? 'New message' : (t('sleeping.countNewMessages', { count: count }) || count + ' new messages') }}</span>
             }
           </div>
           @if (lastSpoken(friend); as spoken) { <p class="sf-hint sf-spoken m-0">{{ spoken }}</p> }
-          @if (friend.sleepsMe) { <p class="sf-hint sf-spoken m-0">😴 {{ friend.name }} has you on {{ possessive(friend.pronoun) }} sleep list too</p> }
+          @if (friend.sleepsMe) { <p class="sf-hint sf-spoken m-0">{{ t('sleeping.friendnameHasYouOn', { friendName: friend.name, pronoun: possessive(friend.pronoun) }) || '😴 ' + friend.name + ' has you on ' + possessive(friend.pronoun) + ' sleep list too' }}</p> }
           @if (countryName(friend.country); as country) { <p class="sf-hint m-0">{{ country }}</p> }
           @if (friend.mood; as mood) {
             <p class="sf-profile-mood">
@@ -62,26 +63,25 @@
           }
           @if (friend.unverified.length) {
             <p class="sf-hint text-warning-emphasis m-0">
-              {{ friend.name }} has not verified {{ friend.unverified.length === 2 ? 'their email or phone' : friend.unverified[0] === 'email' ? 'their email' : 'their phone' }},
-              so we cannot be sure it is really them.
+              {{ t('sleeping.friendnameHasNotVerified', { friendName: friend.name, phone: friend.unverified.length === 2 ? 'their email or phone' : friend.unverified[0] === 'email' ? 'their email' : 'their phone' }) || friend.name + ' has not verified ' + (friend.unverified.length === 2 ? 'their email or phone' : friend.unverified[0] === 'email' ? 'their email' : 'their phone') + ', so we cannot be sure it is really them.' }}
             </p>
           }
           <dl class="sf-details">
-            @if (friend.phone) { <dt>Phone</dt><dd>{{ friend.phone }}</dd> }
-            @if (friend.email) { <dt>Email</dt><dd>{{ friend.email }}</dd> }
-            @if (friend.createdAt) { <dt>Added</dt><dd>{{ friend.createdAt | date: 'mediumDate' }}</dd> }
+            @if (friend.phone) { <dt>{{ t('sleeping.phone') || 'Phone' }}</dt><dd>{{ friend.phone }}</dd> }
+            @if (friend.email) { <dt>{{ t('sleeping.email') || 'Email' }}</dt><dd>{{ friend.email }}</dd> }
+            @if (friend.createdAt) { <dt>{{ t('sleeping.added') || 'Added' }}</dt><dd>{{ friend.createdAt | appDate: 'mediumDate' }}</dd> }
           </dl>
           @if (deleting() === friend.id) {
-            <p class="sf-confirm-text m-0 mt-2">Delete {{ friend.name }} for good? This removes the connection and the whole conversation, for both of you.</p>
+            <p class="sf-confirm-text m-0 mt-2">{{ t('sleeping.deleteFriendnameForGood', { friendName: friend.name }) || 'Delete ' + friend.name + ' for good? This removes the connection and the whole conversation, for both of you.' }}</p>
             <div class="sf-actions sf-compact">
-              <button type="button" class="btn btn-light btn-sm flex-fill text-nowrap" (click)="deleting.set(null)" [disabled]="busy()">Cancel</button>
-              <button type="button" class="btn btn-danger btn-sm flex-fill text-nowrap" (click)="remove(friend)" [disabled]="busy()">Delete</button>
+              <button type="button" class="btn btn-light btn-sm flex-fill text-nowrap" (click)="deleting.set(null)" [disabled]="busy()">{{ t('sleeping.cancel') || 'Cancel' }}</button>
+              <button type="button" class="btn btn-danger btn-sm flex-fill text-nowrap" (click)="remove(friend)" [disabled]="busy()">{{ t('sleeping.delete') || 'Delete' }}</button>
             </div>
           } @else {
             <div class="sf-actions sf-compact">
-              <a [routerLink]="['/friends', friend.id]" class="btn btn-light btn-sm flex-fill text-nowrap">Open</a>
-              <button type="button" class="btn btn-primary btn-sm flex-fill text-nowrap" (click)="wake(friend)" [disabled]="busy() || !seatFree()">Wake up</button>
-              <button type="button" class="btn btn-outline-danger btn-sm flex-fill text-nowrap" (click)="deleting.set(friend.id)" [disabled]="busy()">Delete</button>
+              <a [routerLink]="['/friends', friend.id]" class="btn btn-light btn-sm flex-fill text-nowrap">{{ t('sleeping.open') || 'Open' }}</a>
+              <button type="button" class="btn btn-primary btn-sm flex-fill text-nowrap" (click)="wake(friend)" [disabled]="busy() || !seatFree()">{{ t('sleeping.wakeUp') || 'Wake up' }}</button>
+              <button type="button" class="btn btn-outline-danger btn-sm flex-fill text-nowrap" (click)="deleting.set(friend.id)" [disabled]="busy()">{{ t('sleeping.delete') || 'Delete' }}</button>
             </div>
           }
         </div>
@@ -90,8 +90,8 @@
   }
 </ng-template>
 @if (embedded()) {
-  <section [attr.aria-label]="'Silent ' + w.many"><ng-container [ngTemplateOutlet]="body" /></section>
+  <section [attr.aria-label]="(t('sleeping.silentMany', { many: w.many }) || 'Silent ' + w.many)"><ng-container [ngTemplateOutlet]="body" /></section>
 } @else {
   <main class="sf-page"><ng-container [ngTemplateOutlet]="body" /></main>
 }
-
+</ng-container>

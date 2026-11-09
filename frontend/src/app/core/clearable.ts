@@ -1,4 +1,5 @@
 import { AfterViewChecked, AfterViewInit, Directive, ElementRef, OnDestroy, inject } from '@angular/core';
+import { tr } from './i18n';
 
 /**
  * Puts a small "×" in a text field that can be empty: it shows when there is something to clear, and clears the field
@@ -17,8 +18,8 @@ export class Clearable implements AfterViewInit, AfterViewChecked, OnDestroy {
     if (!parent) return;
     const button = document.createElement('button');
     button.type = 'button';
-    button.title = 'Clear';
-    button.setAttribute('aria-label', 'Clear');
+    button.title = tr('core.clear', 'Clear');
+    button.setAttribute('aria-label', tr('core.clear', 'Clear'));
     button.textContent = '×';
     button.addEventListener('mousedown', (event) => event.preventDefault()); // the field keeps the focus
     button.addEventListener('click', () => {

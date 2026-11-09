@@ -2,6 +2,7 @@ import { circleLink } from './friend-link.service';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { ActiveCircleService } from './active-circle.service';
 import { ApiService } from './api.service';
+import { tr } from './i18n';
 
 /**
  * My invite link (`/welcome/<circle>?invite=<code>`): whoever opens it, signs in and confirms sends me a request in that circle (the link decides which).
@@ -30,7 +31,7 @@ export class InviteLinkService {
       this.code.set((await this.api.request<{ code: string }>('/invite/code')).code);
     } catch (err: any) {
       // the rest of the page works without the link; 404 = the backend has not been deployed with the invite routes yet
-      this.problem.set(err?.status === 404 ? 'The invite link is not available yet (the server needs to be updated).' : `Could not load your invite link: ${err?.message ?? 'no connection'}`);
+      this.problem.set(err?.status === 404 ? tr('core.theInviteLinkIs', 'The invite link is not available yet (the server needs to be updated).') : `Could not load your invite link: ${err?.message ?? 'no connection'}`);
     }
   }
 
@@ -55,26 +56,26 @@ export class InviteLinkService {
       // the Android app: its own share sheet (the WebView has no navigator.share; an older app without it copies, as before)
       const app = (window as unknown as { SevenFriendsAndroid?: { share?(title: string, text: string): void } }).SevenFriendsAndroid;
       if (app?.share) {
-        app.share(this.active.words.app, `Be my ${this.active.words.one} on ${this.active.words.app}: ${url}`);
+        app.share(this.active.words.app, tr('core.beMyOn', 'Be my {{ one }} on {{ app }}: {{ url }}', { one: this.active.words.one, app: this.active.words.app, url }));
         return;
       }
       if (navigator.share) {
-        await navigator.share({ title: this.active.words.app, text: `Be my ${this.active.words.one} on ${this.active.words.app}:`, url });
+        await navigator.share({ title: this.active.words.app, text: tr('core.beMyOn2', 'Be my {{ one }} on {{ app }}:', { one: this.active.words.one, app: this.active.words.app }), url });
         return;
       }
       await navigator.clipboard.writeText(url);
-      this.say('Link copied');
+      this.say(tr('core.linkCopied', 'Link copied'));
     } catch (err) {
-      if ((err as Error)?.name !== 'AbortError') this.say('Could not copy: select the link and copy it');
+      if ((err as Error)?.name !== 'AbortError') this.say(tr('core.couldNotCopySelect', 'Could not copy: select the link and copy it'));
     }
   }
 
   async copy(url: string | null = this.link()): Promise<void> {
     try {
       await navigator.clipboard.writeText(url ?? '');
-      this.say('Link copied');
+      this.say(tr('core.linkCopied', 'Link copied'));
     } catch {
-      this.say('Could not copy: select the link and copy it');
+      this.say(tr('core.couldNotCopySelect', 'Could not copy: select the link and copy it'));
     }
   }
 
@@ -82,9 +83,9 @@ export class InviteLinkService {
   async reset(): Promise<void> {
     try {
       this.code.set((await this.api.request<{ code: string }>('/invite/code/reset', { method: 'POST' })).code);
-      this.say('New link made: the old one no longer works');
+      this.say(tr('core.newLinkMadeThe', 'New link made: the old one no longer works'));
     } catch {
-      this.say('Could not make a new link');
+      this.say(tr('core.couldNotMakeA', 'Could not make a new link'));
     }
   }
 }

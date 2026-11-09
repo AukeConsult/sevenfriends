@@ -1,34 +1,36 @@
+<ng-container *transloco="let t">
 <div class="sf-back-row">
-  <a routerLink="/login" class="btn btn-light" aria-label="Back to sign in">‹ Back</a>
+  <a routerLink="/login" class="btn btn-light" [attr.aria-label]="t('login.backToSignIn') || 'Back to sign in'">‹ {{ t('common.back') || 'Back' }}</a>
 </div>
 <div class="sf-page-head">
-  <h1>Signing you in</h1>
+  <h1>{{ t('loginLink.title') || 'Signing you in' }}</h1>
 </div>
 
 <main class="sf-narrow">
   @if (!valid) {
-    <div class="alert alert-warning" role="alert">This link is not valid, or it has expired. Ask for a new one.</div>
-    <a routerLink="/login/email" class="btn btn-primary">Send me a new link</a>
-    <a routerLink="/login" class="btn btn-link">Back to sign in</a>
+    <div class="alert alert-warning" role="alert">{{ t('loginLink.invalid') || 'This link is not valid, or it has expired. Ask for a new one.' }}</div>
+    <a routerLink="/login/email" class="btn btn-primary">{{ t('loginLink.newLink') || 'Send me a new link' }}</a>
+    <a routerLink="/login" class="btn btn-link">{{ t('login.backToSignIn') || 'Back to sign in' }}</a>
   } @else {
     @if (busy()) {
-      <p class="text-secondary m-0">Signing you in…</p>
+      <p class="text-secondary m-0">{{ t('loginLink.busy') || 'Signing you in…' }}</p>
     }
 
     @if (needEmail() && !busy()) {
-      <p class="text-secondary m-0">To finish, confirm the email address this link was sent to.</p>
+      <p class="text-secondary m-0">{{ t('loginLink.confirm') || 'To finish, confirm the email address this link was sent to.' }}</p>
       <form class="vstack gap-2" (submit)="$event.preventDefault(); submit()">
-        <label class="d-grid gap-1"><span class="form-label small text-secondary m-0">Your email address</span>
+        <label class="d-grid gap-1"><span class="form-label small text-secondary m-0">{{ t('loginEmail.yourEmail') || 'Your email address' }}</span>
           <input type="email" class="form-control" [value]="email()" (input)="email.set($any($event.target).value)"
                  autocomplete="email" inputmode="email" required />
         </label>
-        <button type="submit" class="btn btn-primary">Sign in</button>
+        <button type="submit" class="btn btn-primary">{{ t('login.signIn') || 'Sign in' }}</button>
       </form>
     }
 
     @if (error()) {
       <div class="alert alert-danger" role="alert">{{ error() }}</div>
-      <a routerLink="/login/email" class="btn btn-link">Send me a new link</a>
+      <a routerLink="/login/email" class="btn btn-link">{{ t('loginLink.newLink') || 'Send me a new link' }}</a>
     }
   }
 </main>
+</ng-container>

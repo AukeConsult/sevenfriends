@@ -1,6 +1,9 @@
 import { ActiveCircleService } from '../core/active-circle.service';
 import { Component, computed, inject, signal, viewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
+import { tr } from '../core/i18n';
+import { LanguageService, deviceCountry } from '../core/language.service';
 import { ApiService } from '../core/api.service';
 import { AuthService } from '../core/auth.service';
 import { authMessage } from '../core/auth-errors';
@@ -33,7 +36,8 @@ type Permission = 'granted' | 'denied' | 'ask';
  */
 @Component({
   selector: 'app-setup',
-  imports: [KeySetup, NoticeControls],
+  imports: [KeySetup, NoticeControls, TranslocoDirective],
+  providers: [provideTranslocoScope('setup')],
   templateUrl: './setup.html',
 })
 export class Setup {
@@ -46,6 +50,7 @@ export class Setup {
   private readonly route = inject(ActivatedRoute);
 
   private readonly api = inject(ApiService);
+  private readonly lang = inject(LanguageService);
   private readonly auth = inject(AuthService);
   private readonly keys = inject(KeysService);
   /** I already have a friend: the last step says so and lets me finish */
@@ -108,7 +113,7 @@ export class Setup {
       this.name.set(me.name ?? '');
       this.icon.set(me.icon);
       this.color.set(me.color);
-      this.country.set(me.country ?? '');
+      this.country.set(me.country ?? deviceCountry() ?? ''); // none yet: the country of the browser, phone or computer (the person can change it)
       this.language.set(me.language ?? '');
       this.hasPhoto.set(me.hasPicture || !!this.auth.user()?.photoURL);
       this.photo.set(me.hasPicture ? ((await this.api.request<ProfilePicture>('/profile/picture').catch(() => null))?.image ?? null) : (this.auth.user()?.photoURL ?? null));
@@ -158,9 +163,10 @@ export class Setup {
         method: 'PUT',
         body: JSON.stringify({ ...(name ? { name } : {}), icon: this.icon(), color: this.color(), country: this.country() || null, language: this.language() || null }),
       });
+      this.lang.useAccount(this.language(), this.country()); // the app changes language at once
       return true;
     } catch (err: any) {
-      this.saveProblem.set(err?.message ?? 'Could not save. Try again, or choose "Do it later".');
+      this.saveProblem.set(err?.message ?? tr('setup.saveFailed', 'Could not save. Try again, or choose "Do it later".'));
       return false;
     } finally {
       this.busy.set(false);
@@ -227,7 +233,7 @@ export class Setup {
       await this.auth.sendVerificationEmail();
       this.emailSent.set(true);
     } catch (err) {
-      this.emailProblem.set(authMessage(err, 'Could not send the email. Please try again.'));
+      this.emailProblem.set(authMessage(err, tr('setup.emailSendFailed', 'Could not send the email. Please try again.')));
     }
   }
 
@@ -238,9 +244,9 @@ export class Setup {
       await this.auth.refreshAccount();
       const me = await this.api.request<ProfileDetails>('/profile');
       this.emailVerified.set(me.emailVerified);
-      if (!me.emailVerified) this.emailProblem.set('Not verified yet. Open the link in the email we sent, then try again.');
+      if (!me.emailVerified) this.emailProblem.set(tr('setup.emailNotYet', 'Not verified yet. Open the link in the email we sent, then try again.'));
     } catch {
-      this.emailProblem.set('Could not check. Try again in a moment.');
+      this.emailProblem.set(tr('setup.emailCheckFailed', 'Could not check. Try again in a moment.'));
     }
   }
   protected readonly busy = signal(false);

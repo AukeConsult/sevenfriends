@@ -1,13 +1,16 @@
 import { ActiveCircleService } from '../core/active-circle.service';
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
+import { tr } from '../core/i18n';
 import { authMessage } from '../core/auth-errors';
 import { AuthService } from '../core/auth.service';
 
 /** Sign in without a password: we email a link, and opening it signs the person in. */
 @Component({
   selector: 'app-login-email',
-  imports: [RouterLink],
+  imports: [RouterLink, TranslocoDirective],
+  providers: [provideTranslocoScope('loginEmail', 'login')],
   templateUrl: './login-email.html',
 })
 export class LoginEmail {
@@ -23,7 +26,7 @@ export class LoginEmail {
   protected async send(): Promise<void> {
     const email = this.email().trim();
     if (!email) {
-      this.error.set('Write your email address first.');
+      this.error.set(tr('loginEmail.writeEmail', 'Write your email address first.'));
       return;
     }
     this.busy.set(true);
@@ -32,7 +35,7 @@ export class LoginEmail {
       await this.auth.sendSignInLink(email);
       this.sentTo.set(email);
     } catch (err) {
-      this.error.set(authMessage(err, 'Could not send the link. Please try again.'));
+      this.error.set(authMessage(err, tr('loginEmail.sendFailed', 'Could not send the link. Please try again.')));
     } finally {
       this.busy.set(false);
     }

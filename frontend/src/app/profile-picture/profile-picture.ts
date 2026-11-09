@@ -1,3 +1,5 @@
+import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
+import { tr } from '../core/i18n';
 import { Component, ElementRef, Injector, afterNextRender, inject, signal, viewChild } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ApiService } from '../core/api.service';
@@ -21,8 +23,9 @@ const MAX_FILE_BYTES = 20 * 1024 * 1024;
  */
 @Component({
   selector: 'app-profile-picture',
-  imports: [RouterLink],
+  imports: [RouterLink, TranslocoDirective],
   templateUrl: './profile-picture.html',
+  providers: [provideTranslocoScope('profilePicture')],
 })
 export class ProfilePicturePage {
   private readonly api = inject(ApiService);
@@ -68,17 +71,17 @@ export class ProfilePicturePage {
     if (!file) return;
     this.error.set(null);
     if (!file.type.startsWith('image/')) {
-      this.error.set('Choose an image file (a photo).');
+      this.error.set(tr('profilePicture.chooseAnImageFile', 'Choose an image file (a photo).'));
       return;
     }
     if (file.size > MAX_FILE_BYTES) {
-      this.error.set('That image is very big. Choose one under 20 MB.');
+      this.error.set(tr('profilePicture.thatImageIsVery', 'That image is very big. Choose one under 20 MB.'));
       return;
     }
     try {
       this.source = await decodeImage(file);
     } catch {
-      this.error.set('This image cannot be opened. Try another one (JPEG, PNG or WebP).');
+      this.error.set(tr('profilePicture.thisImageCannotBe', 'This image cannot be opened. Try another one (JPEG, PNG or WebP).'));
       return;
     }
     const { width, height } = sizeOf(this.source);
@@ -186,7 +189,7 @@ export class ProfilePicturePage {
         if ((url.length * 3) / 4 <= TARGET_BYTES) return url;
       }
     }
-    throw new Error('The picture is too big to save.');
+    throw new Error(tr('profilePicture.thePictureIsToo', 'The picture is too big to save.'));
   }
 
   protected async save(): Promise<void> {
@@ -197,7 +200,7 @@ export class ProfilePicturePage {
       await this.api.request('/profile/picture', { method: 'PUT', body: JSON.stringify({ image: this.result() }) });
       await this.leave();
     } catch (err: any) {
-      this.error.set(err.message ?? 'Could not save the picture. Please try again.');
+      this.error.set(err.message ?? tr('profilePicture.couldNotSaveThe', 'Could not save the picture. Please try again.'));
       this.busy.set(false);
     }
   }
@@ -211,7 +214,7 @@ export class ProfilePicturePage {
       await this.auth.clearPhoto().catch(() => undefined); // the photo of the sign-in goes too
       await this.leave();
     } catch (err: any) {
-      this.error.set(err.message ?? 'Could not remove the picture. Please try again.');
+      this.error.set(err.message ?? tr('profilePicture.couldNotRemoveThe', 'Could not remove the picture. Please try again.'));
       this.busy.set(false);
     }
   }

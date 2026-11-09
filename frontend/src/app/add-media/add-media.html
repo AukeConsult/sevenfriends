@@ -1,3 +1,4 @@
+<ng-container *transloco="let t">
 @if (!embedded) {
   <div class="sf-page-head">
     <h1>{{ cameraOpen() ? text.recording : text.title }}</h1>
@@ -7,9 +8,9 @@
 <main [class.sf-narrow]="!embedded" [class.sf-attach-panel]="embedded">
   @if (embedded) {
     <div class="d-flex justify-content-between align-items-center">
-      <strong>{{ cameraOpen() ? text.recording : text.title }}</strong>
+      <span [innerHTML]="t('addMedia.strongTitleStrong', { title: cameraOpen() ? text.recording : text.title }) || '<strong>' + (cameraOpen() ? text.recording : text.title) + '</strong>'"></span>
       @if (hosted()) {
-        <button type="button" class="sf-icon-btn" (click)="closed.emit()" aria-label="Close" title="Close">✕</button>
+        <button type="button" class="sf-icon-btn" (click)="closed.emit()" [attr.aria-label]="t('addMedia.close') || 'Close'" [attr.title]="t('addMedia.close') || 'Close'">✕</button>
       }
     </div>
   }
@@ -24,11 +25,11 @@
   } @else if (!file()) {
     <p class="m-0">
       @if (kind === 'image') {
-        Take a photo or choose a picture from your {{ phoneCamera ? 'phone' : 'computer' }}. It is made smaller before it is sent, so a big photo is fine.
+        {{ t('addMedia.takeAPhotoOr', { computer: phoneCamera ? (t('addMedia.phone') || 'phone') : (t('addMedia.computer') || 'computer') }) || 'Take a photo or choose a picture from your ' + (phoneCamera ? (t('addMedia.phone') || 'phone') : (t('addMedia.computer') || 'computer')) + '. It is made smaller before it is sent, so a big photo is fine.' }}
       } @else if (kind === 'video') {
-        Film a video or choose one from your {{ phoneCamera ? 'phone' : 'computer' }}. It is made smaller before it is sent, and only the first {{ maxSeconds }} seconds are kept.
+        {{ t('addMedia.filmAVideoOr', { computer: phoneCamera ? (t('addMedia.phone') || 'phone') : (t('addMedia.computer') || 'computer'), maxSeconds: maxSeconds }) || 'Film a video or choose one from your ' + (phoneCamera ? (t('addMedia.phone') || 'phone') : (t('addMedia.computer') || 'computer')) + '. It is made smaller before it is sent, and only the first ' + maxSeconds + ' seconds are kept.' }}
       } @else {
-        Record your voice or choose an audio file from your {{ phoneCamera ? 'phone' : 'computer' }}. A voice message can be up to {{ maxMinutes }} minutes.
+        {{ t('addMedia.recordYourVoiceOr', { computer: phoneCamera ? (t('addMedia.phone') || 'phone') : (t('addMedia.computer') || 'computer'), maxMinutes: maxMinutes }) || 'Record your voice or choose an audio file from your ' + (phoneCamera ? (t('addMedia.phone') || 'phone') : (t('addMedia.computer') || 'computer')) + '. A voice message can be up to ' + maxMinutes + ' minutes.' }}
       }
     </p>
     @if (nativeCapture) {
@@ -51,27 +52,27 @@
       <div class="alert alert-danger" role="alert">{{ error() }}</div>
     }
     @if (!hosted()) {
-      <button type="button" class="btn btn-light" (click)="cancel()">Cancel</button>
+      <button type="button" class="btn btn-light" (click)="cancel()">{{ t('addMedia.cancel') || 'Cancel' }}</button>
     }
   } @else {
     @if (preview(); as src) {
       @if (kind === 'image') {
-        <img class="sf-attach-preview" [src]="src" alt="The image you are about to send" />
+        <img class="sf-attach-preview" [src]="src" [attr.alt]="t('addMedia.theImageYouAre') || 'The image you are about to send'" />
       } @else if (kind === 'video') {
-        <video class="sf-attach-preview" [src]="src" controls playsinline aria-label="The video you are about to send"></video>
+        <video class="sf-attach-preview" [src]="src" controls playsinline [attr.aria-label]="t('addMedia.theVideoYouAre') || 'The video you are about to send'"></video>
       } @else {
-        <audio class="sf-attach-audio" [src]="src" controls aria-label="The voice message you are about to send"></audio>
+        <audio class="sf-attach-audio" [src]="src" controls [attr.aria-label]="t('addMedia.theVoiceMessageYou') || 'The voice message you are about to send'"></audio>
       }
     }
     @if (canRotate()) {
       <!-- a photo that came out sideways is turned here, before it is sent -->
       <div class="d-flex justify-content-center gap-2">
-        <button type="button" class="btn btn-light" [disabled]="!!working()" (click)="rotate(false)" aria-label="Turn left" title="Turn left">
+        <button type="button" class="btn btn-light" [disabled]="!!working()" (click)="rotate(false)" [attr.aria-label]="t('addMedia.turnLeft') || 'Turn left'" [attr.title]="t('addMedia.turnLeft') || 'Turn left'">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4L5 8l4 4" /><path d="M5 8h9a5 5 0 015 5v1a5 5 0 01-5 5H9" /></svg>
-          Turn left
+          {{ t('addMedia.turnLeft') || 'Turn left' }}
         </button>
-        <button type="button" class="btn btn-light" [disabled]="!!working()" (click)="rotate(true)" aria-label="Turn right" title="Turn right">
-          Turn right
+        <button type="button" class="btn btn-light" [disabled]="!!working()" (click)="rotate(true)" [attr.aria-label]="t('addMedia.turnRight') || 'Turn right'" [attr.title]="t('addMedia.turnRight') || 'Turn right'">
+          {{ t('addMedia.turnRight') || 'Turn right' }}
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 4l4 4-4 4" /><path d="M19 8h-9a5 5 0 00-5 5v1a5 5 0 005 5h5" /></svg>
         </button>
       </div>
@@ -80,10 +81,10 @@
       <p class="sf-hint text-center m-0">{{ details(shown) }}</p>
     }
     @if (trimmed()) {
-      <p class="sf-hint text-center m-0">The video is longer than {{ maxSeconds }} seconds: only the first {{ maxSeconds }} seconds are sent.</p>
+      <p class="sf-hint text-center m-0">{{ t('addMedia.theVideoIsLonger', { maxSeconds: maxSeconds }) || 'The video is longer than ' + maxSeconds + ' seconds: only the first ' + maxSeconds + ' seconds are sent.' }}</p>
     }
     @if (!hosted()) {
-    <label class="sf-field"><span class="sf-hint">Add a text (optional)</span>
+    <label class="sf-field"><span class="sf-hint">{{ t('addMedia.addATextOptional') || 'Add a text (optional)' }}</span>
       <textarea appClear class="form-control" rows="2" maxlength="500" [value]="caption()" (input)="caption.set($any($event.target).value)" [disabled]="!!working()"></textarea>
     </label>
     }
@@ -92,10 +93,11 @@
     }
     @if (!hosted()) {
     <div class="d-flex gap-2">
-      <button type="button" class="btn btn-light flex-fill" [disabled]="!!working()" (click)="cancel()">Cancel</button>
-      <button type="button" class="btn btn-primary flex-fill" [disabled]="!!working()" (click)="send()">{{ working() ?? 'Send' }}</button>
+      <button type="button" class="btn btn-light flex-fill" [disabled]="!!working()" (click)="cancel()">{{ t('addMedia.cancel') || 'Cancel' }}</button>
+      <button type="button" class="btn btn-primary flex-fill" [disabled]="!!working()" (click)="send()">{{ working() ?? (t('addMedia.send') || 'Send') }}</button>
     </div>
     }
     <button type="button" class="btn btn-link" [disabled]="!!working()" (click)="startAgain()">{{ text.another }}</button>
   }
 </main>
+</ng-container>

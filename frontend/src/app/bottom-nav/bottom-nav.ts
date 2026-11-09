@@ -1,12 +1,14 @@
 import { Component, HostListener, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { TranslocoDirective } from '@jsverse/transloco';
+import { tr } from '../core/i18n';
 import { ActiveCircleService, CIRCLE_CHOICES } from '../core/active-circle.service';
 import { NotificationsService } from '../core/notifications.service';
 
 /** Always-visible banner menu at the bottom of the screen (shown when signed in). */
 @Component({
   selector: 'app-bottom-nav',
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, TranslocoDirective],
   templateUrl: './bottom-nav.html',
 })
 export class BottomNav {
@@ -18,7 +20,8 @@ export class BottomNav {
   private readonly notifications = inject(NotificationsService);
   /** the name of the circle this app is in: it is what the Home tab says */
   private readonly circle = CIRCLE_CHOICES.find((c) => c.id === inject(ActiveCircleService).id);
-  protected readonly circleName = this.circle?.label ?? 'Home';
+  protected get circleName(): string { return tr(`circle.${this.circle?.id ?? 'default'}.label`, this.circle?.label ?? 'Home'); }
+  protected circleLabel(c: { id: string; label: string }): string { return tr(`circle.${c.id}.label`, c.label); }
   /** the kind of circle: the tab has an icon for each (people, a chat bubble, a briefcase, a house with a heart) */
   protected readonly circleType = this.circle?.type ?? 'friends';
 

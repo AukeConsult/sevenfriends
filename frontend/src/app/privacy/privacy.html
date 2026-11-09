@@ -1,11 +1,12 @@
+<ng-container *transloco="let t">
 <!-- signed out: no menu, so a way back to the sign-in page -->
 @if (!auth.user()) {
   <div class="sf-back-row">
-    <a routerLink="/login" class="btn btn-light" aria-label="Back to sign in">‹ Back</a>
+    <a routerLink="/login" class="btn btn-light" [attr.aria-label]="t('privacy.backToSignIn') || 'Back to sign in'">{{ t('privacy.back') || '‹ Back' }}</a>
   </div>
 }
 <div class="sf-page-head">
-  <h1>Your data and privacy</h1>
+  <h1>{{ t('privacy.yourDataAndPrivacy') || 'Your data and privacy' }}</h1>
 </div>
 
 <main class="sf-narrow sf-reading vstack gap-3">
@@ -13,95 +14,92 @@
     <app-info-nav />
   }
   <p class="m-0">
-    Seven Friends is for your closest friends, so we keep as little as possible. This page explains in plain words what is
-    stored, who can see it, which rights you have under the GDPR (the European data protection law), and how to delete things.
+    {{ t('privacy.sevenFriendsIsFor') || 'Seven Friends is for your closest friends, so we keep as little as possible. This page explains in plain words what is stored, who can see it, which rights you have under the GDPR (the European data protection law), and how to delete things.' }}
   </p>
 
   <section class="vstack gap-2">
-    <h2 class="sf-section-title m-0">What is stored about you</h2>
+    <h2 class="sf-section-title m-0">{{ t('privacy.whatIsStoredAbout') || 'What is stored about you' }}</h2>
     <ul class="m-0 ps-3">
-      <li><strong>Your login:</strong> how you sign in (Google, email or phone) and the email address or phone number you signed in with.</li>
-      <li><strong>Your profile:</strong> your name, and what you choose to add: email, phone number, country, mood and mood message, whether friends say he, she or they about you, social accounts, a picture or an icon.</li>
-      <li><strong>Your friends:</strong> the friend list (seven seats and a sleep list), friend requests and the message that came with them.</li>
-      <li><strong>Your conversations:</strong> messages, pictures, videos and voice messages you send and receive, and the preview of links you send.</li>
-      <li><strong>Settings and status:</strong> your sound choices, whether you are active, passive or offline, the devices that receive your notifications, and your invite link code.</li>
+      <li><span [innerHTML]="t('privacy.strongYourLoginStrong') || '<strong>Your login:</strong> how you sign in (Google, email or phone) and the email address or phone number you signed in with.'"></span></li>
+      <li><span [innerHTML]="t('privacy.strongYourProfileStrong') || '<strong>Your profile:</strong> your name, and what you choose to add: email, phone number, country, mood and mood message, whether friends say he, she or they about you, social accounts, a picture or an icon.'"></span></li>
+      <li><span [innerHTML]="t('privacy.strongYourFriendsStrong') || '<strong>Your friends:</strong> the friend list (seven seats and a sleep list), friend requests and the message that came with them.'"></span></li>
+      <li><span [innerHTML]="t('privacy.strongYourConversationsStrong') || '<strong>Your conversations:</strong> messages, pictures, videos and voice messages you send and receive, and the preview of links you send.'"></span></li>
+      <li><span [innerHTML]="t('privacy.strongSettingsAndStatus') || '<strong>Settings and status:</strong> your sound choices, whether you are active, passive or offline, the devices that receive your notifications, and your invite link code.'"></span></li>
     </ul>
     <p class="small text-secondary m-0">
-      Everything is kept until you or the other person delete it, or until you delete your account. Nothing is sold, and there are no advertisements.
+      {{ t('privacy.everythingIsKeptUntil') || 'Everything is kept until you or the other person delete it, or until you delete your account. Nothing is sold, and there are no advertisements.' }}
     </p>
   </section>
 
   <section class="vstack gap-2">
-    <h2 class="sf-section-title m-0">Who can see it</h2>
+    <h2 class="sf-section-title m-0">{{ t('privacy.whoCanSeeIt') || 'Who can see it' }}</h2>
     <ul class="m-0 ps-3">
-      <li>Your <strong>friends</strong> see your name, picture, mood, status and he / she / they. A friend who has not confirmed yet only sees what is needed to answer the request.</li>
-      <li>Your friends see the contact details you put on your profile (phone, email, social accounts). Leave a field empty if you do not want to share it.</li>
-      <li>If you have not verified your email or phone, your friends are told that, because someone else could be using it.</li>
-      <li>Only you and your friend can read your conversation.</li>
-      <li>Someone who knows your email address or phone number can send you a friend request.</li>
+      <li><span [innerHTML]="t('privacy.yourStrongFriendsStrong') || 'Your <strong>friends</strong> see your name, picture, mood, status and he / she / they. A friend who has not confirmed yet only sees what is needed to answer the request.'"></span></li>
+      <li>{{ t('privacy.yourFriendsSeeThe') || 'Your friends see the contact details you put on your profile (phone, email, social accounts). Leave a field empty if you do not want to share it.' }}</li>
+      <li>{{ t('privacy.ifYouHaveNot') || 'If you have not verified your email or phone, your friends are told that, because someone else could be using it.' }}</li>
+      <li>{{ t('privacy.onlyYouAndYour') || 'Only you and your friend can read your conversation.' }}</li>
+      <li>{{ t('privacy.someoneWhoKnowsYour') || 'Someone who knows your email address or phone number can send you a friend request.' }}</li>
     </ul>
     <p class="small text-secondary m-0">
-      The app runs on Google Firebase (login, database, file storage, hosting and notifications): your data is stored with Google on our behalf.
+      {{ t('privacy.theAppRunsOn') || 'The app runs on Google Firebase (login, database, file storage, hosting and notifications): your data is stored with Google on our behalf.' }}
     </p>
   </section>
 
   <section class="vstack gap-2">
-    <h2 class="sf-section-title m-0">Locked messages and files</h2>
+    <h2 class="sf-section-title m-0">{{ t('privacy.lockedMessagesAndFiles') || 'Locked messages and files' }}</h2>
     <ul class="m-0 ps-3">
-      <li>When you and your friend both have an encryption key, your <strong>messages, pictures, videos and voice messages</strong> are locked on your devices before they are sent. Every message has its own key, locked for you and for your friend.</li>
-      <li>We store them locked and <strong>cannot read them</strong>. A notification says only "New message", and so does the list on your home page.</li>
-      <li>Files in the <strong>safebox</strong> are locked the same way.</li>
-      <li>Your key stays on your device. If you lose it and your recovery words, what was locked for it cannot be opened again, by anyone.</li>
-      <li>We can still see who wrote to whom, when, which kind of file it is and how big. A friend's name still shows in a notification.</li>
-      <li>You can switch locking off with the padlock in a conversation. What was sent before keys were set up, or while locking was off, is not locked, and we can read it. A link in a plain message gets a preview made by our server; a link in a locked message does not.</li>
+      <li><span [innerHTML]="t('privacy.whenYouAndYour') || 'When you and your friend both have an encryption key, your <strong>messages, pictures, videos and voice messages</strong> are locked on your devices before they are sent. Every message has its own key, locked for you and for your friend.'"></span></li>
+      <li><span [innerHTML]="t('privacy.weStoreThemLocked') || 'We store them locked and <strong>cannot read them</strong>. A notification says only &quot;New message&quot;, and so does the list on your home page.'"></span></li>
+      <li><span [innerHTML]="t('privacy.filesInTheStrong') || 'Files in the <strong>safebox</strong> are locked the same way.'"></span></li>
+      <li>{{ t('privacy.yourKeyStaysOn') || 'Your key stays on your device. If you lose it and your recovery words, what was locked for it cannot be opened again, by anyone.' }}</li>
+      <li>{{ t('privacy.weCanStillSee') || 'We can still see who wrote to whom, when, which kind of file it is and how big. A friend\'s name still shows in a notification.' }}</li>
+      <li>{{ t('privacy.youCanSwitchLocking') || 'You can switch locking off with the padlock in a conversation. What was sent before keys were set up, or while locking was off, is not locked, and we can read it. A link in a plain message gets a preview made by our server; a link in a locked message does not.' }}</li>
     </ul>
-    <p class="small text-secondary m-0">Set up or restore your key in Settings → Keys.</p>
+    <p class="small text-secondary m-0">{{ t('privacy.setUpOrRestore') || 'Set up or restore your key in Settings → Keys.' }}</p>
   </section>
 
   <section class="vstack gap-2">
-    <h2 class="sf-section-title m-0">Your rights under the GDPR</h2>
+    <h2 class="sf-section-title m-0">{{ t('privacy.yourRightsUnderThe') || 'Your rights under the GDPR' }}</h2>
     <ul class="m-0 ps-3">
-      <li><strong>To know and to see your data:</strong> your profile, friends and conversations are all visible in the app.</li>
-      <li><strong>To correct it:</strong> change your name, contact details, country, mood and picture on your <a routerLink="/settings/profile">profile</a>; edit a message you sent.</li>
-      <li><strong>To have it erased:</strong> see "How to delete" below. You can erase a message, a friend, or everything.</li>
-      <li><strong>To take it with you:</strong> there is no export button yet. Pictures, videos and voice messages can be downloaded one by one from the conversation.</li>
-      <li><strong>To object or to restrict:</strong> you can stop any time: put a friend to sleep, turn off sounds and notifications, or delete your account.</li>
-      <li><strong>To complain:</strong> you can complain to the data protection authority of your country (in Norway: Datatilsynet).</li>
+      <li><span [innerHTML]="t('privacy.strongToKnowAnd') || '<strong>To know and to see your data:</strong> your profile, friends and conversations are all visible in the app.'"></span></li>
+      <li><span [innerHTML]="t('privacy.strongToCorrectIt') || '<strong>To correct it:</strong> change your name, contact details, country, mood and picture on your'"></span> <a routerLink="/settings/profile">{{ t('privacy.profile') || 'profile' }}</a>{{ t('privacy.editAMessageYou') || '; edit a message you sent.' }}</li>
+      <li><span [innerHTML]="t('privacy.strongToHaveIt') || '<strong>To have it erased:</strong> see &quot;How to delete&quot; below. You can erase a message, a friend, or everything.'"></span></li>
+      <li><span [innerHTML]="t('privacy.strongToTakeIt') || '<strong>To take it with you:</strong> there is no export button yet. Pictures, videos and voice messages can be downloaded one by one from the conversation.'"></span></li>
+      <li><span [innerHTML]="t('privacy.strongToObjectOr') || '<strong>To object or to restrict:</strong> you can stop any time: put a friend to sleep, turn off sounds and notifications, or delete your account.'"></span></li>
+      <li><span [innerHTML]="t('privacy.strongToComplainStrong') || '<strong>To complain:</strong> you can complain to the data protection authority of your country (in Norway: Datatilsynet).'"></span></li>
     </ul>
   </section>
 
   <section class="vstack gap-2">
-    <h2 class="sf-section-title m-0">How to delete</h2>
+    <h2 class="sf-section-title m-0">{{ t('privacy.howToDelete') || 'How to delete' }}</h2>
     <ul class="m-0 ps-3">
-      <li><strong>One message:</strong> delete it in the conversation. It disappears for both of you.</li>
-      <li><strong>Many messages:</strong> in the conversation, tap <em>Delete</em> at the top and choose by age, by who wrote them, or by a word. They disappear for both of you.</li>
-      <li><strong>Your picture:</strong> remove or replace it on your profile.</li>
-      <li><strong>A friend:</strong> open the friend's profile (tap the friend's picture) and delete the friend there. The friendship and the whole shared conversation, pictures and videos included, are erased on both sides.</li>
-      <li><strong>Put a friend to sleep:</strong> the friend loses the seat but the conversation is kept. Delete the friend if you want it gone.</li>
-      <li><strong>This device:</strong> logging out stops notifications on this device.</li>
-      <li><strong>Everything:</strong> delete your account.</li>
+      <li><span [innerHTML]="t('privacy.strongOneMessageStrong') || '<strong>One message:</strong> delete it in the conversation. It disappears for both of you.'"></span></li>
+      <li><span [innerHTML]="t('privacy.strongManyMessagesStrong') || '<strong>Many messages:</strong> in the conversation, tap <em>Delete</em> at the top and choose by age, by who wrote them, or by a word. They disappear for both of you.'"></span></li>
+      <li><span [innerHTML]="t('privacy.strongYourPictureStrong') || '<strong>Your picture:</strong> remove or replace it on your profile.'"></span></li>
+      <li><span [innerHTML]="t('privacy.strongAFriendStrong') || '<strong>A friend:</strong> open the friend\'s profile (tap the friend\'s picture) and delete the friend there. The friendship and the whole shared conversation, pictures and videos included, are erased on both sides.'"></span></li>
+      <li><span [innerHTML]="t('privacy.strongPutAFriend') || '<strong>Put a friend to sleep:</strong> the friend loses the seat but the conversation is kept. Delete the friend if you want it gone.'"></span></li>
+      <li><span [innerHTML]="t('privacy.strongThisDeviceStrong') || '<strong>This device:</strong> logging out stops notifications on this device.'"></span></li>
+      <li><span [innerHTML]="t('privacy.strongEverythingStrongDelete') || '<strong>Everything:</strong> delete your account.'"></span></li>
     </ul>
   </section>
 
   <section class="card">
     <div class="card-body vstack gap-2">
-      <h2 class="sf-section-title m-0">What deleting your account erases</h2>
+      <h2 class="sf-section-title m-0">{{ t('privacy.whatDeletingYourAccount') || 'What deleting your account erases' }}</h2>
       <p class="m-0">
-        Your login, your profile and picture, your friend list, every friend request you sent or received, and every message you sent or received,
-        including the pictures, videos and voice messages, in your friends' conversations too. It is erased for good and cannot be undone.
-        You are asked to confirm first.
+        {{ t('privacy.yourLoginYourProfile') || 'Your login, your profile and picture, your friend list, every friend request you sent or received, and every message you sent or received, including the pictures, videos and voice messages, in your friends\' conversations too. It is erased for good and cannot be undone. You are asked to confirm first.' }}
       </p>
       <p class="small text-secondary m-0">
-        What your friends already saw cannot be taken back: a friend may have downloaded a picture or copied a message to somewhere else, outside the app.
+        {{ t('privacy.whatYourFriendsAlready') || 'What your friends already saw cannot be taken back: a friend may have downloaded a picture or copied a message to somewhere else, outside the app.' }}
       </p>
       @if (auth.user()) {
-        <a routerLink="/delete-account" class="btn btn-outline-danger btn-sm align-self-start">Delete my account…</a>
+        <a routerLink="/delete-account" class="btn btn-outline-danger btn-sm align-self-start">{{ t('privacy.deleteMyAccount') || 'Delete my account…' }}</a>
       }
     </div>
   </section>
 
   <p class="small text-secondary m-0">
-    Responsible for the service: Blueboot R&amp;D AS, Norway. Questions or requests about your data: <a href="mailto:hey@blueboot.ai">hey&#64;blueboot.ai</a>.
-    This is a short explanation, not a legal contract.
+    {{ t('privacy.responsibleForTheService') || 'Responsible for the service: Blueboot R&D AS, Norway. Questions or requests about your data:' }} <a href="mailto:hey@blueboot.ai">{{ t('privacy.heyBluebootAi') || 'hey@blueboot.ai' }}</a>{{ t('privacy.thisIsAShort') || '. This is a short explanation, not a legal contract.' }}
   </p>
 </main>
+</ng-container>

@@ -1,4 +1,5 @@
 import { formatBytes } from './image';
+import { tr } from './i18n';
 
 /** A voice message can be this long (an audio file too). */
 export const MAX_AUDIO_SECONDS = 120;
@@ -38,9 +39,9 @@ export function prepareRecordedAudio(blob: Blob, durationMs: number): PreparedAu
  * at most 2 minutes and 25 MB. The server checks what the file really is.
  */
 export async function prepareAudioFile(file: File): Promise<PreparedAudio> {
-  if (file.size > MAX_AUDIO_BYTES) throw new Error(`That file is too big (${formatBytes(file.size)}). Audio can be at most ${formatBytes(MAX_AUDIO_BYTES)}.`);
+  if (file.size > MAX_AUDIO_BYTES) throw new Error(tr('core.thatFileIsToo', 'That file is too big ({{ size }}). Audio can be at most {{ MAX_AUDIO_BYTES }}.', { size: formatBytes(file.size), MAX_AUDIO_BYTES: formatBytes(MAX_AUDIO_BYTES) }));
   const seconds = await lengthOf(file);
-  if (seconds > MAX_AUDIO_SECONDS + 0.5) throw new Error(`That audio is ${Math.round(seconds)} seconds long. Audio can be at most ${MAX_AUDIO_SECONDS / 60} minutes.`);
+  if (seconds > MAX_AUDIO_SECONDS + 0.5) throw new Error(tr('core.thatAudioIsSeconds', 'That audio is {{ seconds }} seconds long. Audio can be at most {{ MAX_AUDIO_SECONDS }} minutes.', { seconds: Math.round(seconds), MAX_AUDIO_SECONDS: MAX_AUDIO_SECONDS / 60 }));
   return { blob: file, name: file.name, durationMs: Math.round(seconds * 1000) };
 }
 
@@ -51,7 +52,7 @@ async function lengthOf(blob: Blob): Promise<number> {
   audio.preload = 'metadata';
   try {
     return await new Promise<number>((resolve, reject) => {
-      audio.onerror = () => reject(new Error('This audio file cannot be opened. Try another one (MP3, M4A, WAV, OGG or WebM).'));
+      audio.onerror = () => reject(new Error(tr('core.thisAudioFileCannot', 'This audio file cannot be opened. Try another one (MP3, M4A, WAV, OGG or WebM).')));
       audio.onloadedmetadata = () => {
         if (Number.isFinite(audio.duration)) return resolve(audio.duration);
         audio.ontimeupdate = () => {

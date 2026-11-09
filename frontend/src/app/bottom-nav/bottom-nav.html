@@ -1,4 +1,4 @@
-<nav class="sf-menu" aria-label="Main">
+<nav class="sf-menu" *transloco="let t" [attr.aria-label]="t('nav.main') || 'Main'">
   <a class="sf-menu-item" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="onHome()">
     <span class="sf-menu-icon" aria-hidden="true">
       @switch (circleType) {
@@ -12,29 +12,29 @@
   </a>
   <a class="sf-menu-item" routerLink="/share" routerLinkActive="active">
     <span class="sf-menu-icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><path d="M8.6 10.6l6.8-4M8.6 13.4l6.8 4" /></svg></span>
-    <span class="text">Share</span>
+    <span class="text">{{ t('nav.share') || 'Share' }}</span>
   </a>
 
   <a class="sf-menu-item" routerLink="/settings" routerLinkActive="active">
     <span class="sf-menu-icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1" /></svg></span>
-    <span class="text">Settings</span>
+    <span class="text">{{ t('nav.settings') || 'Settings' }}</span>
   </a>
   <!-- TEST: remove before launch (the circles: tick the one this app is in; and the demo page of the welcome pages) -->
   <div class="sf-circle-wrap">
     @if (circlesOpen()) {
-      <div class="sf-circle-pop" role="menu" aria-label="Circles">
+      <div class="sf-circle-pop" role="menu" [attr.aria-label]="t('nav.circles') || 'Circles'">
         @for (c of circles; track c.id) {
           <button type="button" class="sf-circle-opt" role="menuitemcheckbox" [attr.aria-checked]="active.id === c.id" (click)="pick(c.id)">
-            <span class="sf-circle-tick" aria-hidden="true">@if (active.id === c.id) { ✓ }</span>{{ c.label }}
+            <span class="sf-circle-tick" aria-hidden="true">@if (active.id === c.id) { ✓ }</span>{{ circleLabel(c) }}
           </button>
         }
         <div class="sf-menu-sep"></div>
-        <a class="sf-circle-opt" routerLink="/viewwelcome" role="menuitem" (click)="circlesOpen.set(false)">Welcome pages</a>
+        <a class="sf-circle-opt" routerLink="/viewwelcome" role="menuitem" (click)="circlesOpen.set(false)">{{ t('nav.welcomePages') || 'Welcome pages' }}</a>
       </div>
     }
     <button type="button" class="sf-menu-item" [class.active]="circlesOpen()" aria-haspopup="menu" [attr.aria-expanded]="circlesOpen()" (click)="circlesOpen.set(!circlesOpen())">
       <span class="sf-menu-icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg></span>
-      <span class="text">Circles</span>
+      <span class="text">{{ t('nav.circles') || 'Circles' }}</span>
     </button>
   </div>
 </nav>

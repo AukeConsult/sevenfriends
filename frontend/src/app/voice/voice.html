@@ -1,36 +1,38 @@
+<ng-container *transloco="let t">
 <div class="sf-voice">
   <div class="sf-voice-time" role="status" [class.sf-voice-live]="recording()">{{ format(seconds()) }} / {{ format(maxSeconds) }}</div>
   <div class="sf-voice-meter" aria-hidden="true"><span [style.width.%]="level() * 100"></span></div>
   @if (micName()) {
-    <p class="sf-hint m-0 text-center">Microphone: {{ micName() }}</p>
+    <p class="sf-hint m-0 text-center">{{ t('voice.microphoneMicname', { micName: micName() }) || 'Microphone: ' + micName() }}</p>
   }
   @if (muted()) {
-    <div class="alert alert-danger w-100" role="alert">The microphone is <strong>muted</strong> (the computer reports it as muted). Unmute it: the mute key of the keyboard, or Windows Settings › System › Sound › Input, or Settings › Privacy &amp; security › Microphone. This message goes away by itself when it is unmuted.</div>
+    <div class="alert alert-danger w-100" role="alert"><span [innerHTML]="t('voice.theMicrophoneIsStrong') || 'The microphone is <strong>muted</strong> (the computer reports it as muted). Unmute it: the mute key of the keyboard, or Windows Settings › System › Sound › Input, or Settings › Privacy &amp; security › Microphone. This message goes away by itself when it is unmuted.'"></span></div>
   }
   @if (problem()) {
-    <div class="alert alert-warning w-100" role="alert">@if (stillBlocked()) {<strong>Nothing popped up. </strong>{{ settingsSteps }}} @else {{{ problem() }}}</div>
+    <div class="alert alert-warning w-100" role="alert">@if (stillBlocked()) {<span [innerHTML]="t('voice.strongNothingPoppedUp', { settingsSteps: settingsSteps }) || '<strong>Nothing popped up. </strong>{{ settingsSteps }}'"></span>} @else {{{ problem() }}}</div>
     @if (chromeLink && stillBlocked()) {
-      <p class="m-0 w-100">Or open the site in Chrome: tap the <strong>lock or sliders icon</strong> at the left of the address, then <strong>Permissions</strong>, and allow the <strong>Microphone</strong>. No icon? Tap the three dots, then <strong>Settings</strong>, <strong>Site settings</strong>, <strong>Microphone</strong>.</p>
-      <a class="btn btn-outline-primary w-100" [href]="chromeLink">Open in Chrome</a>
+      <p class="m-0 w-100"><span [innerHTML]="t('voice.orOpenTheSite') || 'Or open the site in Chrome: tap the <strong>lock or sliders icon</strong> at the left of the address, then <strong>Permissions</strong>, and allow the <strong>Microphone</strong>. No icon? Tap the three dots, then <strong>Settings</strong>, <strong>Site settings</strong>, <strong>Microphone</strong>.'"></span></p>
+      <a class="btn btn-outline-primary w-100" [href]="chromeLink">{{ t('voice.openInChrome') || 'Open in Chrome' }}</a>
     }
-    <button type="button" class="btn btn-primary btn-lg w-100" (click)="allow()">{{ stillBlocked() ? 'Try again' : 'Allow the microphone' }}</button>
+    <button type="button" class="btn btn-primary btn-lg w-100" (click)="allow()">{{ stillBlocked() ? (t('voice.tryAgain') || 'Try again') : (t('voice.allowTheMicrophone') || 'Allow the microphone') }}</button>
   }
-  <p class="sf-hint m-0 text-center">{{ !ready() ? 'Waiting for the microphone…' : recording() ? 'Recording… speak now.' : 'Press Start and speak.' }}</p>
+  <p class="sf-hint m-0 text-center">{{ !ready() ? (t('voice.waitingForTheMicrophone') || 'Waiting for the microphone…') : recording() ? (t('voice.recordingSpeakNow') || 'Recording… speak now.') : (t('voice.pressStartAndSpeak') || 'Press Start and speak.') }}</p>
 </div>
 <div class="d-flex gap-2">
-  <button type="button" class="btn btn-light flex-fill" [disabled]="recording()" (click)="closed.emit()">Cancel</button>
+  <button type="button" class="btn btn-light flex-fill" [disabled]="recording()" (click)="closed.emit()">{{ t('voice.cancel') || 'Cancel' }}</button>
   @if (!recording()) {
-    <button type="button" class="btn btn-primary flex-fill" [disabled]="!ready()" (click)="start()">Start recording</button>
+    <button type="button" class="btn btn-primary flex-fill" [disabled]="!ready()" (click)="start()">{{ t('voice.startRecording') || 'Start recording' }}</button>
   } @else {
-    <button type="button" class="btn btn-danger flex-fill" (click)="stop()">Stop</button>
+    <button type="button" class="btn btn-danger flex-fill" (click)="stop()">{{ t('voice.stop') || 'Stop' }}</button>
   }
 </div>
 @if (retried()) {
-  <div class="alert alert-warning" role="alert">Nothing was heard, so the recording was not kept. The microphone was set up again without the sound filters of the browser: record once more.</div>
+  <div class="alert alert-warning" role="alert">{{ t('voice.nothingWasHeardSo') || 'Nothing was heard, so the recording was not kept. The microphone was set up again without the sound filters of the browser: record once more.' }}</div>
 }
 @if (silent()) {
-  <div class="alert alert-warning" role="alert">Nothing was heard, so the recording was not kept. Check that the microphone is not muted and speak close to it{{ microphones().length > 1 ? ', or use another microphone' : '' }}, then record again.</div>
+  <div class="alert alert-warning" role="alert">{{ t('voice.nothingWasHeardSo2', { microphone: microphones().length > 1 ? (t('voice.orUseAnotherMicrophone') || ', or use another microphone') : '' }) || 'Nothing was heard, so the recording was not kept. Check that the microphone is not muted and speak close to it' + (microphones().length > 1 ? (t('voice.orUseAnotherMicrophone') || ', or use another microphone') : '') + ', then record again.' }}</div>
 }
 @if (microphones().length > 1 && !recording()) {
-  <button type="button" class="btn btn-link" (click)="nextMicrophone()">Use another microphone</button>
+  <button type="button" class="btn btn-link" (click)="nextMicrophone()">{{ t('voice.useAnotherMicrophone') || 'Use another microphone' }}</button>
 }
+</ng-container>

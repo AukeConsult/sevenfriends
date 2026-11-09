@@ -4,6 +4,7 @@ import type { User } from 'firebase/auth';
 import { environment } from '../../environments/environment';
 import { ActiveCircleService } from './active-circle.service';
 import { AuthService } from './auth.service';
+import { tr } from './i18n';
 
 export class ApiError extends Error {
   constructor(message: string, readonly status: number) {
@@ -47,20 +48,20 @@ export class ApiService {
 
   private async send(path: string, init: RequestInit = {}): Promise<Response> {
     const user = this.auth.user();
-    if (!user) throw new ApiError('Not signed in', 401);
+    if (!user) throw new ApiError(tr('core.notSignedIn', 'Not signed in'), 401);
 
     let res = await this.call(path, init, await this.token(user, false));
     if (res.status === 401) {
       // the server did not accept the token: ask for a fresh one once, then give up and sign the person out
       res = await this.call(path, init, await this.token(user, true));
       if (res.status === 401) {
-        await this.signOutDeadSession('You were signed out because your login is no longer valid. Please sign in again.');
-        throw new ApiError('Signed out', 401);
+        await this.signOutDeadSession(tr('core.youWereSignedOut', 'You were signed out because your login is no longer valid. Please sign in again.'));
+        throw new ApiError(tr('core.signedOut', 'Signed out'), 401);
       }
     }
     if (!res.ok) {
       const body = await res.json().catch(() => ({}));
-      throw new ApiError(body.error ?? `Request failed (${res.status})`, res.status);
+      throw new ApiError(body.error ?? tr('core.requestFailed', 'Request failed ({{ status }})', { status: res.status }), res.status);
     }
     return res;
   }
@@ -79,8 +80,8 @@ export class ApiService {
       return await user.getIdToken(refresh);
     } catch (err) {
       if (!DEAD_SESSION.has((err as { code?: string }).code ?? '')) throw err;
-      await this.signOutDeadSession('You were signed out because the connection to sign-in failed. Please sign in again.');
-      throw new ApiError('Signed out', 401);
+      await this.signOutDeadSession(tr('core.youWereSignedOut2', 'You were signed out because the connection to sign-in failed. Please sign in again.'));
+      throw new ApiError(tr('core.signedOut', 'Signed out'), 401);
     }
   }
 

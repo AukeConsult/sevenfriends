@@ -1,3 +1,4 @@
+import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { ActiveCircleService } from '../core/active-circle.service';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -7,8 +8,9 @@ import { QUICK_LENGTH, QUICK_MAX, THEMES, UiPreferencesService, quickOf } from '
 /** A full page for the person's own settings: for now, which sound plays for what. */
 @Component({
   selector: 'app-settings',
-  imports: [RouterLink, NoticeControls],
+  imports: [RouterLink, NoticeControls, TranslocoDirective],
   templateUrl: './settings.html',
+  providers: [provideTranslocoScope('settings')],
 })
 export class Settings {
   protected readonly w = inject(ActiveCircleService).words;

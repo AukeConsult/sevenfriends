@@ -1,4 +1,5 @@
 import { PreparedImage, scaled } from './image';
+import { tr } from './i18n';
 
 /** A video can be this long. */
 export const MAX_VIDEO_SECONDS = 60;
@@ -41,7 +42,7 @@ async function open(source: Blob): Promise<{ video: HTMLVideoElement; done: () =
   video.src = url;
   await new Promise<void>((resolve, reject) => {
     video.onloadeddata = () => resolve();
-    video.onerror = () => reject(new Error('This video cannot be opened. Try another one.'));
+    video.onerror = () => reject(new Error(tr('core.thisVideoCannotBe', 'This video cannot be opened. Try another one.')));
   });
   return { video, done: () => URL.revokeObjectURL(url) };
 }
@@ -68,7 +69,7 @@ async function previewOf(video: HTMLVideoElement): Promise<Blob> {
 export async function prepareVideo(file: File, onProgress: (fraction: number) => void): Promise<PreparedVideo> {
   const { video, done } = await open(file);
   try {
-    if (!Number.isFinite(video.duration) || video.duration <= 0) throw new Error('This video cannot be opened. Try another one.');
+    if (!Number.isFinite(video.duration) || video.duration <= 0) throw new Error(tr('core.thisVideoCannotBe', 'This video cannot be opened. Try another one.'));
     const seconds = Math.min(video.duration, MAX_VIDEO_SECONDS);
     const trimmed = video.duration > MAX_VIDEO_SECONDS + 0.5;
     const thumb = await previewOf(video);
@@ -84,7 +85,7 @@ export async function prepareVideo(file: File, onProgress: (fraction: number) =>
     if (made && !(keepable && (made.blob.size >= file.size || made.silent))) {
       return { blob: made.blob, thumb, width: made.width, height: made.height, durationMs: Math.round(seconds * 1000), trimmed, name: `${baseName(file.name)}.${extensionOf(made.blob.type)}` };
     }
-    if (!keepable) throw new Error(trimmed ? `Videos can be at most ${MAX_VIDEO_SECONDS} seconds.` : 'This video cannot be prepared. Try another one.');
+    if (!keepable) throw new Error(trimmed ? tr('core.videosCanBeAt', 'Videos can be at most {{ MAX_VIDEO_SECONDS }} seconds.', { MAX_VIDEO_SECONDS }) : tr('core.thisVideoCannotBe2', 'This video cannot be prepared. Try another one.'));
     return { blob: file, thumb, width: video.videoWidth, height: video.videoHeight, durationMs: Math.round(seconds * 1000), trimmed, name: file.name };
   } finally {
     done();
@@ -105,14 +106,14 @@ export async function prepareRecorded(blob: Blob, durationMs: number): Promise<P
 /** Plays the video (its first `seconds`) into a recorder: the pictures through a canvas, the sound through the audio system of the browser. */
 async function transcode(video: HTMLVideoElement, seconds: number, onProgress: (fraction: number) => void): Promise<{ blob: Blob; width: number; height: number; silent: boolean }> {
   const type = recorderType();
-  if (!type || typeof HTMLCanvasElement.prototype.captureStream !== 'function' || typeof AudioContext === 'undefined') throw new Error('This browser cannot record video');
+  if (!type || typeof HTMLCanvasElement.prototype.captureStream !== 'function' || typeof AudioContext === 'undefined') throw new Error(tr('core.thisBrowserCannotRecord', 'This browser cannot record video'));
   const k = Math.min(1, VIDEO_SIDE / Math.max(video.videoWidth, video.videoHeight));
   const even = (n: number) => Math.max(2, Math.round(n / 2) * 2); // video sizes are even numbers
   const canvas = document.createElement('canvas');
   canvas.width = even(video.videoWidth * k);
   canvas.height = even(video.videoHeight * k);
   const context = canvas.getContext('2d');
-  if (!context) throw new Error('No canvas');
+  if (!context) throw new Error(tr('core.noCanvas', 'No canvas'));
 
   const stream = canvas.captureStream(30);
   const audio = new AudioContext();

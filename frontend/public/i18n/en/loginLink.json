@@ -1,0 +1,8 @@
+{
+  "title": "Signing you in",
+  "invalid": "This link is not valid, or it has expired. Ask for a new one.",
+  "newLink": "Send me a new link",
+  "busy": "Signing you in…",
+  "confirm": "To finish, confirm the email address this link was sent to.",
+  "failed": "Could not sign you in with this link. Ask for a new one."
+}

@@ -1,11 +1,12 @@
+<ng-container *transloco="let t">
 <span class="sf-media-audio">
   @if (src(); as url) {
     <audio [src]="url" controls autoplay (click)="stop($event)" (error)="playbackFailed()"></audio>
     @if (failed()) {
-      <span class="sf-audio-info">This device cannot play this audio.</span>
+      <span class="sf-audio-info">{{ t('mediaAudio.thisDeviceCannotPlay') || 'This device cannot play this audio.' }}</span>
     }
   } @else {
-    <button type="button" class="sf-play sf-play-small" [disabled]="loading()" (click)="play($event)" aria-label="Play the audio message">
+    <button type="button" class="sf-play sf-play-small" [disabled]="loading()" (click)="play($event)" [attr.aria-label]="t('mediaAudio.playTheAudioMessage') || 'Play the audio message'">
       @if (loading()) {
         <span class="sf-hint">…</span>
       } @else {
@@ -14,5 +15,6 @@
     </button>
     <span class="sf-audio-info">🎤 {{ failed() ? 'Could not load the audio' : info() }}</span>
   }
-  <a class="sf-audio-open" [routerLink]="['/media', media().ownerId, media().objectId]" (click)="stop($event)" aria-label="Open the audio to download it">⤓</a>
+  <a class="sf-audio-open" [routerLink]="['/media', media().ownerId, media().objectId]" (click)="stop($event)" [attr.aria-label]="t('mediaAudio.openTheAudioTo') || 'Open the audio to download it'">⤓</a>
 </span>
+</ng-container>

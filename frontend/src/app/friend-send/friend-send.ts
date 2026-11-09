@@ -1,3 +1,5 @@
+import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
+import { tr } from '../core/i18n';
 import { Component, DestroyRef, ElementRef, HostListener, computed, inject, signal, viewChild } from '@angular/core';
 import { AddMedia } from '../add-media/add-media';
 import { ChatService } from '../core/chat.service';
@@ -16,8 +18,9 @@ import { FriendContext } from '../friend-page/friend-context';
  */
 @Component({
   selector: 'app-friend-send',
-  imports: [AddMedia, Clearable, PokeToggle],
+  imports: [AddMedia, Clearable, PokeToggle, TranslocoDirective],
   templateUrl: './friend-send.html',
+  providers: [provideTranslocoScope('friendSend')],
 })
 export class FriendSend {
   protected readonly ctx = inject(FriendContext);
@@ -32,7 +35,7 @@ export class FriendSend {
 
   constructor() {
     // the menu of the header: "Messages for Leif x only" opens the frame to change them (after the click that chose it has been seen by the click-outside rule)
-    this.ctx.setPageTool({ label: `Messages for ${this.friendName()} only`, kind: 'message', run: () => setTimeout(() => this.openAdd()) }, inject(DestroyRef));
+    this.ctx.setPageTool({ label: tr('friendSend.messagesForOnly', 'Messages for {{ friendName }} only', { friendName: this.friendName() }), kind: 'message', run: () => setTimeout(() => this.openAdd()) }, inject(DestroyRef));
   }
 
   private openAdd(): void {
@@ -131,7 +134,7 @@ export class FriendSend {
         this.emojiOpen.set(false);
       }
     } catch (err: any) {
-      this.error.set(err.message ?? 'Could not send the message');
+      this.error.set(err.message ?? tr('friendSend.couldNotSendThe', 'Could not send the message'));
     } finally {
       this.busy.set(false);
     }

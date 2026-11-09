@@ -1,20 +1,21 @@
+<ng-container *transloco="let t">
 <span class="sf-media sf-media-video" [class.sf-playing]="src()" [style.--sf-ratio]="ratio()">
-  <a class="sf-media-open" [routerLink]="['/media', media().ownerId, media().objectId]" (click)="stop($event)" aria-label="Open the video to download it">⤓</a>
+  <a class="sf-media-open" [routerLink]="['/media', media().ownerId, media().objectId]" (click)="stop($event)" [attr.aria-label]="t('mediaVideo.openTheVideoTo') || 'Open the video to download it'">⤓</a>
   @if (src(); as url) {
     <!-- no native controls: Safari and iPhone draw them over the picture, Chrome differently. The same bar is shown under the video everywhere. -->
     <video #video [src]="url" autoplay playsinline [muted]="muted()" (click)="toggle($event)" (play)="playing.set(true)" (pause)="playing.set(false)"
            (ended)="playing.set(false)" (timeupdate)="tick()" (loadedmetadata)="tick()" (durationchange)="tick()"></video>
     <span class="sf-video-bar" (click)="stop($event)">
-      <button type="button" class="sf-video-btn" (click)="toggle($event)" [attr.aria-label]="playing() ? 'Pause' : 'Play'">
+      <button type="button" class="sf-video-btn" (click)="toggle($event)" [attr.aria-label]="playing() ? (t('mediaVideo.pause') || 'Pause') : (t('mediaVideo.play') || 'Play')">
         @if (playing()) {
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 5h4v14H6zM14 5h4v14h-4z" /></svg>
         } @else {
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
         }
       </button>
-      <input type="range" class="sf-video-seek" min="0" [max]="duration() || 1" step="0.1" [value]="current()" (input)="seek($any($event.target).value)" aria-label="Position in the video" />
+      <input type="range" class="sf-video-seek" min="0" [max]="duration() || 1" step="0.1" [value]="current()" (input)="seek($any($event.target).value)" [attr.aria-label]="t('mediaVideo.positionInTheVideo') || 'Position in the video'" />
       <span class="sf-video-time">{{ clock(current()) }} / {{ clock(duration()) }}</span>
-      <button type="button" class="sf-video-btn" (click)="toggleMute($event)" [attr.aria-label]="muted() ? 'Sound on' : 'Sound off'">
+      <button type="button" class="sf-video-btn" (click)="toggleMute($event)" [attr.aria-label]="muted() ? (t('mediaVideo.soundOn') || 'Sound on') : (t('mediaVideo.soundOff') || 'Sound off')">
         @if (muted()) {
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5L6 9H2v6h4l5 4zM22 9l-6 6M16 9l6 6" /></svg>
         } @else {
@@ -24,15 +25,16 @@
     </span>
   } @else {
     @if (poster(); as picture) {
-      <img [src]="picture" alt="Video preview" />
+      <img [src]="picture" [attr.alt]="t('mediaVideo.videoPreview') || 'Video preview'" />
     }
-    <button type="button" class="sf-play" [disabled]="loading()" (click)="play($event)" aria-label="Play the video">
+    <button type="button" class="sf-play" [disabled]="loading()" (click)="play($event)" [attr.aria-label]="t('mediaVideo.playTheVideo') || 'Play the video'">
       @if (loading()) {
         <span class="sf-hint">…</span>
       } @else {
         <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
       }
     </button>
-    <span class="sf-media-info">{{ failed() ? 'Could not load the video' : info() }}</span>
+    <span class="sf-media-info">{{ failed() ? (t('mediaVideo.couldNotLoadThe') || 'Could not load the video') : info() }}</span>
   }
 </span>
+</ng-container>

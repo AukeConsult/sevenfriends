@@ -1,3 +1,4 @@
+import { tr } from './i18n';
 /**
  * The device key: an RSA key pair made on THIS device for ONE signed-in person (design: docs/design/safebox-encryption.md).
  *
@@ -63,8 +64,8 @@ function open(): Promise<IDBDatabase> {
     const request = indexedDB.open(DATABASE, 1);
     request.onupgradeneeded = () => request.result.createObjectStore(STORE);
     request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error ?? new Error('The key store could not be opened'));
-    request.onblocked = () => reject(new Error('The key store is busy'));
+    request.onerror = () => reject(request.error ?? new Error(tr('core.theKeyStoreCould', 'The key store could not be opened')));
+    request.onblocked = () => reject(new Error(tr('core.theKeyStoreIs', 'The key store is busy')));
   });
 }
 
@@ -75,8 +76,8 @@ async function run<T>(mode: IDBTransactionMode, work: (store: IDBObjectStore) =>
       const transaction = database.transaction(STORE, mode);
       const request = work(transaction.objectStore(STORE));
       transaction.oncomplete = () => resolve(request.result);
-      transaction.onerror = () => reject(transaction.error ?? new Error('The key store failed'));
-      transaction.onabort = () => reject(transaction.error ?? new Error('The key store failed'));
+      transaction.onerror = () => reject(transaction.error ?? new Error(tr('core.theKeyStoreFailed', 'The key store failed')));
+      transaction.onabort = () => reject(transaction.error ?? new Error(tr('core.theKeyStoreFailed', 'The key store failed')));
     });
   } finally {
     database.close();
@@ -129,7 +130,7 @@ export async function getDeviceKey(uid: string, store: KeyStore = indexedDbKeySt
 
 /** Makes a key pair in memory: the private key sealed (it cannot be read), and its bytes for the backup. Nothing is saved. */
 async function generate(): Promise<{ key: StoredDeviceKey; pkcs8: ArrayBuffer }> {
-  if (!deviceKeySupported()) throw new Error('This browser cannot keep an encryption key (it needs a secure page).');
+  if (!deviceKeySupported()) throw new Error(tr('core.thisBrowserCannotKeep', 'This browser cannot keep an encryption key (it needs a secure page).'));
   const pair = await crypto.subtle.generateKey(DEVICE_KEY_ALGORITHM, true, ['encrypt', 'decrypt', 'wrapKey', 'unwrapKey']);
   const pkcs8 = await crypto.subtle.exportKey('pkcs8', pair.privateKey);
   const key: StoredDeviceKey = {
@@ -194,7 +195,7 @@ export async function createDeviceKey(uid: string, options: { forBackup?: boolea
  * `publicKey` is the one published for it; the bytes must belong to it, or this throws.
  */
 export async function restoreDeviceKey(uid: string, id: string, pkcs8: Uint8Array, publicKey: JsonWebKey, store: KeyStore = indexedDbKeyStore): Promise<StoredDeviceKey> {
-  if (!deviceKeySupported()) throw new Error('This browser cannot keep an encryption key (it needs a secure page).');
+  if (!deviceKeySupported()) throw new Error(tr('core.thisBrowserCannotKeep', 'This browser cannot keep an encryption key (it needs a secure page).'));
   const bytes = pkcs8.buffer.slice(pkcs8.byteOffset, pkcs8.byteOffset + pkcs8.byteLength) as ArrayBuffer;
   const privateKey = await seal(bytes);
   // the private key must belong to the public key: whatever the public key encrypts, the private key must open
@@ -207,7 +208,7 @@ export async function restoreDeviceKey(uid: string, id: string, pkcs8: Uint8Arra
   } catch {
     opened = new Uint8Array(); // the browser refuses to open it with a key that does not fit: the same answer as a wrong result
   }
-  if (opened.length !== probe.length || opened.some((b, i) => b !== probe[i])) throw new Error('That backup does not belong to this key.');
+  if (opened.length !== probe.length || opened.some((b, i) => b !== probe[i])) throw new Error(tr('core.thatBackupDoesNot', 'That backup does not belong to this key.'));
   const key: StoredDeviceKey = { id, publicKey, privateKey, createdAt: new Date().toISOString(), version: VERSION };
   await store.write(uid, key);
   return key;

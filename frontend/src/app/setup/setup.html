@@ -1,22 +1,23 @@
+<ng-container *transloco="let t">
 <div class="sf-page-head">
   <!-- one line, so the header is the same 44px band as on every other page -->
-  <h1>Setup wizard@if (step()) { <span class="sf-hint fw-normal"> · Step {{ stepNumber() }} of {{ stepCount() }}</span> }</h1>
+  <h1>{{ t('setup.title') || 'Setup wizard' }}@if (step()) { <span class="sf-hint fw-normal"> · {{ t('setup.step', { n: stepNumber(), total: stepCount() }) || 'Step ' + stepNumber() + ' of ' + stepCount() }}</span> }</h1>
 </div>
 <main class="sf-narrow">
   @switch (step()) {
-    @case (null) { <p class="sf-hint m-0" role="status">Getting ready…</p> }
+    @case (null) { <p class="sf-hint m-0" role="status">{{ t('setup.getting') || 'Getting ready…' }}</p> }
     @case ('profile') {
-      <h2 class="sf-section-title m-0">Who are you to your {{ w.many }}?</h2>
-      <p class="small text-secondary m-0">This is what your {{ w.many }} see. You can change it later under Settings → Profile.</p>
-      <label class="d-grid gap-1"><span class="form-label small text-secondary m-0">Your name</span>
+      <h2 class="sf-section-title m-0">{{ t('setup.whoTitle', { many: w.many }) || 'Who are you to your ' + w.many + '?' }}</h2>
+      <p class="small text-secondary m-0">{{ t('setup.whoText', { many: w.many }) || 'This is what your ' + w.many + ' see. You can change it later under Settings → Profile.' }}</p>
+      <label class="d-grid gap-1"><span class="form-label small text-secondary m-0">{{ t('setup.name') || 'Your name' }}</span>
         <input type="text" class="form-control" [value]="name()" (input)="name.set($any($event.target).value)" maxlength="100" autocomplete="name" />
       </label>
       <!-- how my picture looks to my friends, with the ring in the chosen colour -->
       <div class="text-center">
         @if (hasPhoto() && photo(); as shown) {
-          <img class="sf-photo" [class.sf-ringed]="!!color()" [style.--sf-friend]="colorHex()" [src]="shown" alt="Your picture" referrerpolicy="no-referrer" />
+          <img class="sf-photo" [class.sf-ringed]="!!color()" [style.--sf-friend]="colorHex()" [src]="shown" [attr.alt]="t('setup.pictureAlt') || 'Your picture'" referrerpolicy="no-referrer" />
         } @else if (icon(); as chosen) {
-          <img class="sf-photo" [class.sf-ringed]="!!color()" [style.--sf-friend]="colorHex()" [src]="'icons/friends/friend' + chosen + '.svg'" alt="Your icon" />
+          <img class="sf-photo" [class.sf-ringed]="!!color()" [style.--sf-friend]="colorHex()" [src]="'icons/friends/friend' + chosen + '.svg'" [attr.alt]="t('setup.iconAlt') || 'Your icon'" />
         } @else {
           <div class="sf-photo sf-photo-initial" [class.sf-ringed]="!!color()" [style.--sf-friend]="colorHex()" aria-hidden="true">{{ initial() }}</div>
         }
@@ -24,11 +25,11 @@
       @if (!hasPhoto()) {
         <!-- no picture yet: upload one (small button), or choose an icon; all centred under the preview -->
         <div class="vstack gap-1 align-items-center text-center">
-          <button type="button" class="btn btn-outline-primary btn-sm" [disabled]="busy()" (click)="pickPicture()">Upload a picture</button>
-          <span class="small text-secondary">or choose an icon</span>
-          <div class="sf-choices sf-choices-compact" role="radiogroup" aria-label="Choose your icon">
+          <button type="button" class="btn btn-outline-primary btn-sm" [disabled]="busy()" (click)="pickPicture()">{{ t('setup.upload') || 'Upload a picture' }}</button>
+          <span class="small text-secondary">{{ t('setup.orIcon') || 'or choose an icon' }}</span>
+          <div class="sf-choices sf-choices-compact" role="radiogroup" [attr.aria-label]="t('setup.chooseIcon') || 'Choose your icon'">
             @for (n of icons; track n) {
-              <button type="button" class="sf-choice sf-choice-round" role="radio" [attr.aria-checked]="icon() === n" [class.sf-chosen]="icon() === n" [attr.aria-label]="'Icon ' + n" (click)="icon.set(n)">
+              <button type="button" class="sf-choice sf-choice-round" role="radio" [attr.aria-checked]="icon() === n" [class.sf-chosen]="icon() === n" [attr.aria-label]="(t('setup.icon') || 'Icon') + ' ' + n" (click)="icon.set(n)">
                 <img [src]="'icons/friends/friend' + n + '.svg'" alt="" width="44" height="44" />
               </button>
             }
@@ -36,22 +37,22 @@
         </div>
       }
       <div class="text-center">
-        <span class="form-label small text-secondary m-0">Your colour <span class="text-secondary">(your {{ w.many }} see it)</span></span>
-        <div class="sf-colors justify-content-center mt-1" role="radiogroup" aria-label="Your colour">
-          <button type="button" class="sf-color sf-color-none" role="radio" [attr.aria-checked]="!color()" [class.sf-chosen]="!color()" aria-label="No colour" title="No colour" (click)="color.set(null)"></button>
+        <span class="form-label small text-secondary m-0">{{ t('setup.colour') || 'Your colour' }} <span class="text-secondary">({{ t('setup.colourSee', { many: w.many }) || 'your ' + w.many + ' see it' }})</span></span>
+        <div class="sf-colors justify-content-center mt-1" role="radiogroup" [attr.aria-label]="t('setup.colour') || 'Your colour'">
+          <button type="button" class="sf-color sf-color-none" role="radio" [attr.aria-checked]="!color()" [class.sf-chosen]="!color()" [attr.aria-label]="t('setup.noColour') || 'No colour'" [attr.title]="t('setup.noColour') || 'No colour'" (click)="color.set(null)"></button>
           @for (c of colors; track c.key) {
             <button type="button" class="sf-color" role="radio" [attr.aria-checked]="color() === c.key" [class.sf-chosen]="color() === c.key" [style.background]="c.hex" [attr.aria-label]="c.label" [title]="c.label" (click)="color.set(c.key)"></button>
           }
         </div>
       </div>
-      <label class="d-grid gap-1"><span class="form-label small text-secondary m-0">Country</span>
+      <label class="d-grid gap-1"><span class="form-label small text-secondary m-0">{{ t('setup.country') || 'Country' }}</span>
         <select class="form-select" [value]="country()" (change)="setCountry($any($event.target).value)" autocomplete="country">
-          <option value="" [selected]="!country()">Not set</option>
+          <option value="" [selected]="!country()">{{ t('setup.notSet') || 'Not set' }}</option>
           @for (c of countryList; track c.code) { <option [value]="c.code" [selected]="c.code === country()">{{ c.name }}</option> }
         </select>
       </label>
       @if (country()) {
-        <label class="d-grid gap-1"><span class="form-label small text-secondary m-0">Language</span>
+        <label class="d-grid gap-1"><span class="form-label small text-secondary m-0">{{ t('setup.language') || 'Language' }}</span>
           <select class="form-select" [value]="languageShown()" (change)="setLanguage($any($event.target).value)">
             @for (l of languageChoices(); track l.code) { <option [value]="l.code" [selected]="l.code === languageShown()">{{ l.name }}</option> }
           </select>
@@ -59,153 +60,154 @@
       }
       @if (saveProblem(); as text) { <div class="alert alert-warning m-0" role="alert">{{ text }}</div> }
       <div class="d-flex flex-wrap gap-3 justify-content-center">
-        <button type="button" class="btn btn-link" (click)="later()">Do it later</button>
-        <button type="button" class="btn btn-primary" [disabled]="busy()" (click)="saveProfile()">Next</button>
+        <button type="button" class="btn btn-link" (click)="later()">{{ t('common.doItLater') || 'Do it later' }}</button>
+        <button type="button" class="btn btn-primary" [disabled]="busy()" (click)="saveProfile()">{{ t('common.next') || 'Next' }}</button>
       </div>
     }
     @case ('email') {
-      <h2 class="sf-section-title m-0">Verify your email</h2>
-      <p class="small text-secondary m-0">Your {{ w.many }} see a warning until your email is verified, and they can only find you by email once it is. We send a link to <strong>{{ email() }}</strong>.</p>
+      <h2 class="sf-section-title m-0">{{ t('setup.emailTitle') || 'Verify your email' }}</h2>
+      <p class="small text-secondary m-0">{{ t('setup.emailText', { many: w.many }) || 'Your ' + w.many + ' see a warning until your email is verified, and they can only find you by email once it is. We send a link to' }} <strong>{{ email() }}</strong>.</p>
       @if (emailVerified()) {
-        <div class="alert alert-success m-0" role="status">✓ Your email is verified.</div>
+        <div class="alert alert-success m-0" role="status">✓ {{ t('setup.emailOk') || 'Your email is verified.' }}</div>
       } @else if (emailSent()) {
-        <div class="alert alert-info m-0" role="status">Email sent. Open the link in it, then come back here and press the button below.</div>
-        <button type="button" class="btn btn-sm btn-primary align-self-center" (click)="checkEmail()">I have opened the link</button>
+        <div class="alert alert-info m-0" role="status">{{ t('setup.emailSent') || 'Email sent. Open the link in it, then come back here and press the button below.' }}</div>
+        <button type="button" class="btn btn-sm btn-primary align-self-center" (click)="checkEmail()">{{ t('setup.emailOpened') || 'I have opened the link' }}</button>
       } @else {
-        <button type="button" class="btn btn-sm btn-primary align-self-center" (click)="sendEmail()">Send the verification email</button>
+        <button type="button" class="btn btn-sm btn-primary align-self-center" (click)="sendEmail()">{{ t('setup.emailSend') || 'Send the verification email' }}</button>
       }
       @if (emailProblem(); as text) { <div class="alert alert-warning m-0" role="alert">{{ text }}</div> }
       <div class="d-flex flex-wrap gap-3 justify-content-center">
-        <button type="button" class="btn btn-link" (click)="later()">Do it later</button>
-        <button type="button" class="btn btn-primary" (click)="next()">Next</button>
+        <button type="button" class="btn btn-link" (click)="later()">{{ t('common.doItLater') || 'Do it later' }}</button>
+        <button type="button" class="btn btn-primary" (click)="next()">{{ t('common.next') || 'Next' }}</button>
       </div>
     }
     @case ('install') {
-      <h2 class="sf-section-title m-0">Put the app on this device</h2>
-      <p class="small text-secondary m-0">The app opens like any other app, and notifications are most reliable from it.</p>
+      <h2 class="sf-section-title m-0">{{ t('setup.installTitle') || 'Put the app on this device' }}</h2>
+      <p class="small text-secondary m-0">{{ t('setup.installText') || 'The app opens like any other app, and notifications are most reliable from it.' }}</p>
       @if (install.installed()) {
-        <div class="alert alert-success m-0" role="status">✓ The app is installed on this device.</div>
+        <div class="alert alert-success m-0" role="status">✓ {{ t('setup.installed') || 'The app is installed on this device.' }}</div>
       } @else if (install.canInstall()) {
-        <button type="button" class="btn btn-sm btn-primary align-self-center" (click)="installApp()">Install the app</button>
+        <button type="button" class="btn btn-sm btn-primary align-self-center" (click)="installApp()">{{ t('setup.installApp') || 'Install the app' }}</button>
       } @else if (install.ios) {
-        <div class="alert alert-info m-0" role="status">In Safari, tap <strong>Share</strong>, then <strong>Add to Home Screen</strong>. Then open {{ w.app }} from your home screen.</div>
+        <div class="alert alert-info m-0" role="status"><span [innerHTML]="t('setup.ios', { app: w.app }) || 'In Safari, tap <strong>Share</strong>, then <strong>Add to Home Screen</strong>. Then open {{ app }} from your home screen.'"></span></div>
       } @else {
-        <div class="alert alert-info m-0" role="status">Your browser has no install button here. Look for <strong>Install app</strong> in its menu, or see Settings → Install the app.</div>
+        <div class="alert alert-info m-0" role="status"><span [innerHTML]="t('setup.noInstall') || 'Your browser has no install button here. Look for <strong>Install app</strong> in its menu, or see Settings → Install the app.'"></span></div>
       }
       @if (install.mobile) {
         <div class="alert alert-secondary m-0" role="note">
-          <strong>Then open the app and sign in with the same account.</strong> The setup continues there with notifications, microphone and camera, text size and your key.
+          <strong>{{ t('setup.thenOpen') || 'Then open the app and sign in with the same account.' }}</strong> {{ t('setup.thenContinues') || 'The setup continues there with notifications, microphone and camera, text size and your key.' }}
         </div>
       }
       <div class="vstack gap-2 align-items-center">
         @if (install.mobile) {
-          <button type="button" class="btn btn-primary" (click)="finish('/')">Finish, I will continue in the app</button>
-          <button type="button" class="btn btn-outline-secondary btn-sm" (click)="continueInBrowser()">No app: continue in the browser</button>
+          <button type="button" class="btn btn-primary" (click)="finish('/')">{{ t('setup.finishApp') || 'Finish, I will continue in the app' }}</button>
+          <button type="button" class="btn btn-outline-secondary btn-sm" (click)="continueInBrowser()">{{ t('setup.noApp') || 'No app: continue in the browser' }}</button>
         } @else {
-          <button type="button" class="btn btn-primary" (click)="finish('/')">Finish</button>
+          <button type="button" class="btn btn-primary" (click)="finish('/')">{{ t('common.finish') || 'Finish' }}</button>
         }
       </div>
     }
     @case ('devices') {
-      <h2 class="sf-section-title m-0">Voice messages and pictures</h2>
-      <p class="small text-secondary m-0">To record a voice message or take a picture, the app needs your microphone and camera. Allow them now, so the first message is not interrupted. Nothing is recorded.</p>
+      <h2 class="sf-section-title m-0">{{ t('setup.devTitle') || 'Voice messages and pictures' }}</h2>
+      <p class="small text-secondary m-0">{{ t('setup.devText') || 'To record a voice message or take a picture, the app needs your microphone and camera. Allow them now, so the first message is not interrupted. Nothing is recorded.' }}</p>
       <div class="card"><div class="card-body d-flex align-items-center justify-content-between gap-2">
-        <strong>Microphone</strong>
-        @if (mic() === 'granted') { <span class="text-success fw-semibold">✓ Allowed</span> }
-        @else if (mic() === 'denied') { <span class="small text-warning-emphasis">Blocked. Allow it in the browser settings (the lock icon at the left of the address).</span> }
-        @else { <button type="button" class="btn btn-sm btn-outline-primary" (click)="allow('mic')">Allow the microphone</button> }
+        <strong>{{ t('setup.mic') || 'Microphone' }}</strong>
+        @if (mic() === 'granted') { <span class="text-success fw-semibold">✓ {{ t('setup.allowed') || 'Allowed' }}</span> }
+        @else if (mic() === 'denied') { <span class="small text-warning-emphasis">{{ t('setup.blocked') || 'Blocked. Allow it in the browser settings (the lock icon at the left of the address).' }}</span> }
+        @else { <button type="button" class="btn btn-sm btn-outline-primary" (click)="allow('mic')">{{ t('setup.allowMic') || 'Allow the microphone' }}</button> }
       </div></div>
       <div class="card"><div class="card-body d-flex align-items-center justify-content-between gap-2">
-        <strong>Camera</strong>
-        @if (cam() === 'granted') { <span class="text-success fw-semibold">✓ Allowed</span> }
-        @else if (cam() === 'denied') { <span class="small text-warning-emphasis">Blocked. Allow it in the browser settings (the lock icon at the left of the address).</span> }
-        @else { <button type="button" class="btn btn-sm btn-outline-primary" (click)="allow('cam')">Allow the camera</button> }
+        <strong>{{ t('setup.camera') || 'Camera' }}</strong>
+        @if (cam() === 'granted') { <span class="text-success fw-semibold">✓ {{ t('setup.allowed') || 'Allowed' }}</span> }
+        @else if (cam() === 'denied') { <span class="small text-warning-emphasis">{{ t('setup.blocked') || 'Blocked. Allow it in the browser settings (the lock icon at the left of the address).' }}</span> }
+        @else { <button type="button" class="btn btn-sm btn-outline-primary" (click)="allow('cam')">{{ t('setup.allowCam') || 'Allow the camera' }}</button> }
       </div></div>
       <div class="d-flex flex-wrap gap-3 justify-content-center">
-        <button type="button" class="btn btn-link" (click)="later()">Do it later</button>
-        <button type="button" class="btn btn-primary" (click)="next()">Next</button>
+        <button type="button" class="btn btn-link" (click)="later()">{{ t('common.doItLater') || 'Do it later' }}</button>
+        <button type="button" class="btn btn-primary" (click)="next()">{{ t('common.next') || 'Next' }}</button>
       </div>
     }
     @case ('look') {
-      <h2 class="sf-section-title m-0">Text size and colours</h2>
-      <p class="small text-secondary m-0">Make the app easy to read. This is saved on this device, and you can change it under Settings.</p>
+      <h2 class="sf-section-title m-0">{{ t('setup.lookTitle') || 'Text size and colours' }}</h2>
+      <p class="small text-secondary m-0">{{ t('setup.lookText') || 'Make the app easy to read. This is saved on this device, and you can change it under Settings.' }}</p>
       <div class="row g-2">
-        <label class="col-6 d-grid gap-1 align-content-start" for="setup-theme"><span>Theme</span>
+        <label class="col-6 d-grid gap-1 align-content-start" for="setup-theme"><span>{{ t('setup.theme') || 'Theme' }}</span>
           <select id="setup-theme" class="form-select" [value]="prefs.get('theme')" (change)="prefs.set('theme', $any($event.target).value)">
             @for (t of themes; track t.key) { <option [value]="t.key" [selected]="t.key === prefs.get('theme')">{{ t.label }}</option> }
           </select>
         </label>
-        <label class="col-6 d-grid gap-1 align-content-start" for="setup-text-size"><span>Text size</span>
+        <label class="col-6 d-grid gap-1 align-content-start" for="setup-text-size"><span>{{ t('setup.textSize') || 'Text size' }}</span>
           <select id="setup-text-size" class="form-select" [value]="prefs.get('textSize')" (change)="prefs.set('textSize', $any($event.target).value)">
-            <option value="tiny" [selected]="prefs.get('textSize') === 'tiny'">Tiny</option>
-            <option value="small" [selected]="prefs.get('textSize') === 'small'">Small</option>
-            <option value="normal" [selected]="prefs.get('textSize') === 'normal'">Normal</option>
-            <option value="big" [selected]="prefs.get('textSize') === 'big'">Big</option>
-            <option value="huge" [selected]="prefs.get('textSize') === 'huge'">Huge</option>
+            <option value="tiny" [selected]="prefs.get('textSize') === 'tiny'">{{ t('setup.sizeTiny') || 'Tiny' }}</option>
+            <option value="small" [selected]="prefs.get('textSize') === 'small'">{{ t('setup.sizeSmall') || 'Small' }}</option>
+            <option value="normal" [selected]="prefs.get('textSize') === 'normal'">{{ t('setup.sizeNormal') || 'Normal' }}</option>
+            <option value="big" [selected]="prefs.get('textSize') === 'big'">{{ t('setup.sizeBig') || 'Big' }}</option>
+            <option value="huge" [selected]="prefs.get('textSize') === 'huge'">{{ t('setup.sizeHuge') || 'Huge' }}</option>
           </select>
         </label>
       </div>
       <div class="d-flex flex-wrap gap-3 justify-content-center">
-        <button type="button" class="btn btn-link" (click)="later()">Do it later</button>
-        <button type="button" class="btn btn-primary" (click)="next()">Next</button>
+        <button type="button" class="btn btn-link" (click)="later()">{{ t('common.doItLater') || 'Do it later' }}</button>
+        <button type="button" class="btn btn-primary" (click)="next()">{{ t('common.next') || 'Next' }}</button>
       </div>
     }
     @case ('notify') {
-      <h2 class="sf-section-title m-0">Notifications</h2>
-      <p class="small text-secondary m-0">The same choices as under Settings → Notifications, for the kind of device you use. Turn them on so you do not miss a message.</p>
+      <h2 class="sf-section-title m-0">{{ t('setup.notifyTitle') || 'Notifications' }}</h2>
+      <p class="small text-secondary m-0">{{ t('setup.notifyText') || 'The same choices as under Settings → Notifications, for the kind of device you use. Turn them on so you do not miss a message.' }}</p>
       <app-notice-controls [setup]="true" part="notifications" />
       <div class="d-flex flex-wrap gap-3 justify-content-center">
-        <button type="button" class="btn btn-link" (click)="later()">Do it later</button>
-        <button type="button" class="btn btn-primary" (click)="next()">Next</button>
+        <button type="button" class="btn btn-link" (click)="later()">{{ t('common.doItLater') || 'Do it later' }}</button>
+        <button type="button" class="btn btn-primary" (click)="next()">{{ t('common.next') || 'Next' }}</button>
       </div>
     }
     @case ('sounds') {
-      <h2 class="sf-section-title m-0">Sounds</h2>
-      <p class="small text-secondary m-0">Choose a sound for each thing that can arrive. You can change them any time under Settings → Notifications.</p>
+      <h2 class="sf-section-title m-0">{{ t('setup.soundsTitle') || 'Sounds' }}</h2>
+      <p class="small text-secondary m-0">{{ t('setup.soundsText') || 'Choose a sound for each thing that can arrive. You can change them any time under Settings → Notifications.' }}</p>
       <app-notice-controls [setup]="true" part="sounds" />
       <div class="d-flex flex-wrap gap-3 justify-content-center">
-        <button type="button" class="btn btn-link" (click)="later()">Do it later</button>
-        <button type="button" class="btn btn-primary" (click)="next()">Next</button>
+        <button type="button" class="btn btn-link" (click)="later()">{{ t('common.doItLater') || 'Do it later' }}</button>
+        <button type="button" class="btn btn-primary" (click)="next()">{{ t('common.next') || 'Next' }}</button>
       </div>
     }
     @case ('key') {
-      <h2 class="sf-section-title m-0">Lock your files with a key</h2>
-      <p class="small text-secondary m-0">The key keeps the files in your safebox private, even from us. Make it now, and write down the 24 words you are shown.</p>
+      <h2 class="sf-section-title m-0">{{ t('setup.keyTitle') || 'Lock your files with a key' }}</h2>
+      <p class="small text-secondary m-0">{{ t('setup.keyText') || 'The key keeps the files in your safebox private, even from us. Make it now, and write down the 24 words you are shown.' }}</p>
       <app-key-setup (finished)="next()" (cancelled)="next()" />
       @if (!showingWords()) {
         <div class="d-flex flex-wrap gap-3 justify-content-center">
-          <button type="button" class="btn btn-link" (click)="later()">Do it later</button>
-          <button type="button" class="btn btn-primary" (click)="next()">Next</button>
+          <button type="button" class="btn btn-link" (click)="later()">{{ t('common.doItLater') || 'Do it later' }}</button>
+          <button type="button" class="btn btn-primary" (click)="next()">{{ t('common.next') || 'Next' }}</button>
         </div>
       }
     }
     @case ('friend') {
       <div class="text-center vstack gap-3 align-items-center">
         <div class="sf-logo sf-logo-lg mx-auto" aria-hidden="true">✓</div>
-        <h2 class="sf-section-title m-0">{{ installLast() ? 'Your ' + w.many : 'You are all set' }}</h2>
+        <h2 class="sf-section-title m-0">{{ installLast() ? (t('setup.yourMany', { many: w.many }) || 'Your ' + w.many) : (t('setup.allSet') || 'You are all set') }}</h2>
         @if (hasFriends()) {
-          <div class="alert alert-success m-0 w-100" role="status">✓ You already have {{ w.many }}. Everything is ready.</div>
-          <button type="button" class="btn btn-primary" (click)="afterFriend()">{{ installLast() ? 'Next' : 'Finish' }}</button>
-          <button type="button" class="btn btn-outline-primary btn-sm" (click)="addFriend()">Add another {{ w.one }}</button>
+          <div class="alert alert-success m-0 w-100" role="status">✓ {{ t('setup.haveMany', { many: w.many }) || 'You already have ' + w.many + '. Everything is ready.' }}</div>
+          <button type="button" class="btn btn-primary" (click)="afterFriend()">{{ installLast() ? (t('common.next') || 'Next') : (t('common.finish') || 'Finish') }}</button>
+          <button type="button" class="btn btn-outline-primary btn-sm" (click)="addFriend()">{{ t('setup.addAnother', { one: w.one }) || 'Add another ' + w.one }}</button>
         } @else {
-          <p class="m-0">Add your first {{ w.one }}: there are only seven seats, so choose the {{ w.many }} who matter most.</p>
-          <button type="button" class="btn btn-primary" (click)="addFriend()">Add a {{ w.one }}</button>
+          <p class="m-0">{{ t('setup.addFirst', { one: w.one, many: w.many }) || 'Add your first ' + w.one + ': there are only seven seats, so choose the ' + w.many + ' who matter most.' }}</p>
+          <button type="button" class="btn btn-primary" (click)="addFriend()">{{ t('setup.addOne', { one: w.one }) || 'Add a ' + w.one }}</button>
         }
         @if (invite.link()) {
-          <p class="small text-secondary m-0">Or send your invite link. When they open it and sign in, you get their {{ w.one }} request.</p>
-          <button type="button" class="btn btn-outline-primary btn-sm" (click)="invite.share()">{{ invite.canShare ? 'Share my invite link' : 'Copy my invite link' }}</button>
+          <p class="small text-secondary m-0">{{ t('setup.inviteText', { one: w.one }) || 'Or send your invite link. When they open it and sign in, you get their ' + w.one + ' request.' }}</p>
+          <button type="button" class="btn btn-outline-primary btn-sm" (click)="invite.share()">{{ invite.canShare ? (t('setup.shareInvite') || 'Share my invite link') : (t('setup.copyInvite') || 'Copy my invite link') }}</button>
           @if (invite.note(); as note) { <p class="small text-secondary m-0" role="status">{{ note }}</p> }
         }
-        @if (!hasFriends()) { <button type="button" class="btn btn-link btn-sm" (click)="afterFriend()">{{ installLast() ? 'Skip this step' : 'Go to Home' }}</button> }
+        @if (!hasFriends()) { <button type="button" class="btn btn-link btn-sm" (click)="afterFriend()">{{ installLast() ? (t('setup.skipStep') || 'Skip this step') : (t('setup.goHome') || 'Go to Home') }}</button> }
       </div>
     }
     @case ('done') {
       <div class="text-center vstack gap-3 align-items-center">
         <div class="sf-logo sf-logo-lg mx-auto" aria-hidden="true">✓</div>
-        <h2 class="sf-section-title m-0">You are all set</h2>
-        <p class="m-0">Everything is set up in this browser.</p>
-        <button type="button" class="btn btn-primary" (click)="finish('/')">Finish</button>
+        <h2 class="sf-section-title m-0">{{ t('setup.allSet') || 'You are all set' }}</h2>
+        <p class="m-0">{{ t('setup.doneText') || 'Everything is set up in this browser.' }}</p>
+        <button type="button" class="btn btn-primary" (click)="finish('/')">{{ t('common.finish') || 'Finish' }}</button>
       </div>
     }
   }
 </main>
+</ng-container>

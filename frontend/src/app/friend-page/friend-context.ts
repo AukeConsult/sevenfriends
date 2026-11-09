@@ -7,6 +7,7 @@ import { SafeboxService } from '../core/safebox.service';
 import { UiPreferencesService } from '../core/ui-preferences';
 import { ApiError } from '../core/api.service';
 import { BoxKeys, SafeboxItem, profileColorHex, profileColorInk, readableFingerprint } from '../models';
+import { tr } from '../core/i18n';
 
 /** What the conversation tells the header it can do (the sort order and the clean-up belong to the feed, so the menu shows them only while the feed is open). */
 export interface FeedActions {
@@ -125,7 +126,7 @@ export class FriendContext {
   readonly messagesLocked = computed(() => this.bothHaveKeys() && !this.boxPlain());
   /** what the padlock says (for a screen reader and the tooltip) */
   readonly lockText = computed(() =>
-    this.messagesLocked() ? 'New messages and files are locked' : this.bothHaveKeys() ? 'Locking is switched off for new messages and files' : 'Messages and files are not locked yet: you both need a key',
+    this.messagesLocked() ? tr('friendPage.newMessagesAndFiles', 'New messages and files are locked') : this.bothHaveKeys() ? tr('friendPage.lockingIsSwitchedOff', 'Locking is switched off for new messages and files') : tr('friendPage.messagesAndFilesAre', 'Messages and files are not locked yet: you both need a key'),
   );
 
   constructor() {
@@ -157,7 +158,7 @@ export class FriendContext {
   async lockExisting(item: SafeboxItem): Promise<void> {
     for (let attempt = 0; ; attempt++) {
       const keys = this.boxKeys();
-      if (!keys) throw new Error('The keys are not known yet');
+      if (!keys) throw new Error(tr('friendPage.theKeysAreNot', 'The keys are not known yet'));
       try {
         await this.safebox.encryptExisting(this.friendId, item, keys);
         return;
@@ -184,8 +185,8 @@ export class FriendContext {
     const who = this.friendName();
     this.lockNotice.set(
       on
-        ? `Locking is on. What you send to ${who} is locked on your device, so only the two of you can read it. Not even we can.`
-        : `Locking is off. What you send to ${who} is not locked, so our system can read it. What was sent earlier stays as it was sent.`,
+        ? tr('friendPage.lockingIsOnWhat', 'Locking is on. What you send to {{ who }} is locked on your device, so only the two of you can read it. Not even we can.', { who })
+        : tr('friendPage.lockingIsOffWhat', 'Locking is off. What you send to {{ who }} is not locked, so our system can read it. What was sent earlier stays as it was sent.', { who }),
     );
     this.lockNoticeSeq.update((n) => n + 1);
     clearTimeout(this.lockNoticeTimer);

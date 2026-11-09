@@ -1,0 +1,17 @@
+{
+  "deleteMyAccount": "Delete my account",
+  "strongThisCannotBe": "<strong>This cannot be undone.</strong> You will be erased from Seven Friends, completely.",
+  "everythingAboutYouIs": "Everything about you is deleted:",
+  "yourAccountYourProfile": "your account, your profile and your login",
+  "allYourFriendsAnd": "all your friends and every request, sent or received",
+  "everyMessageYouSent": "every message you sent or received. Your friends lose the conversation too",
+  "yourNameAndContact": "your name and contact details in other friends' lists",
+  "yourFriendsAreNot": "Your friends are not told. They simply no longer have you as a friend.",
+  "typeWordToConfirm": "Type {{ word }} to confirm",
+  "cancel": "Cancel",
+  "deleting": "Deleting…",
+  "deleteEverything": "Delete everything",
+  "couldNotDeleteYour": "Could not delete your account. Nothing was changed, please try again.",
+  "thisCannotBeUndone": "This cannot be undone.",
+  "youWillBeErased": "You will be erased from Seven Friends, completely.'\">"
+}

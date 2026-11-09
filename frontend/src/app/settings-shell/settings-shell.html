@@ -1,4 +1,5 @@
-<nav class="sf-tabs" aria-label="Settings">
+<ng-container *transloco="let t">
+<nav class="sf-tabs" [attr.aria-label]="t('settingsShell.settings') || 'Settings'">
   @for (tab of tabs; track tab.path) {
     @if (!tab.browserOnly || !install.native) {
       <a class="sf-tab" [routerLink]="['/settings', tab.path]" [class.active]="on(tab)" [attr.aria-current]="on(tab) ? 'page' : null">{{ tab.label }}</a>
@@ -6,3 +7,4 @@
   }
 </nav>
 <router-outlet />
+</ng-container>

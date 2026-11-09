@@ -1,3 +1,4 @@
+import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { Component, computed, inject } from '@angular/core';
 import { ActiveCircleService } from '../core/active-circle.service';
 import { Router, RouterLink } from '@angular/router';
@@ -9,8 +10,9 @@ import { HomeTop } from '../home-top/home-top';
 /** Share (a tab of the bottom menu): the link that invites friends, and the way to install the app on a phone. */
 @Component({
   selector: 'app-share',
-  imports: [HomeTop, RouterLink],
+  imports: [HomeTop, RouterLink, TranslocoDirective],
   templateUrl: './share.html',
+  providers: [provideTranslocoScope('share')],
 })
 export class Share {
   private readonly circle = inject(ActiveCircleService);

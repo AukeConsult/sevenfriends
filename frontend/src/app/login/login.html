@@ -1,10 +1,14 @@
-<main class="sf-landing">
+<main class="sf-landing" *transloco="let t">
   <app-hero />
 
   <div class="sf-form-width mx-auto w-100">
     @if (link(); as pending) {
       <p class="alert alert-info text-center m-0 mb-3">
-        Sign in or create an account to send a {{ w.one }} request{{ pending.email || pending.phone ? ' to ' + (pending.email || pending.phone) : '' }}.
+        @if (pending.email || pending.phone) {
+          {{ t('login.friendLinkTo', { one: w.one, to: pending.email || pending.phone }) || 'Sign in or create an account to send a ' + w.one + ' request to ' + (pending.email || pending.phone) + '.' }}
+        } @else {
+          {{ t('login.friendLink', { one: w.one }) || 'Sign in or create an account to send a ' + w.one + ' request.' }}
+        }
       </p>
     }
     @if (mode() === 'signin') {
@@ -17,33 +21,33 @@
             <path fill="#FBBC05" d="M10.5 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.9-6.1A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.9-6.1z"/>
             <path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.8 2.3-8.4 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/>
           </svg>
-          <span>Continue with Google</span>
+          <span>{{ t('login.google') || 'Continue with Google' }}</span>
         </button>
         <!-- TODO: bring back when SMS verification is ready
         <a routerLink="/login/phone" class="btn btn-outline-secondary w-100">Continue with phone</a>
         -->
-        <a routerLink="/login/email" class="btn btn-outline-secondary w-100">Email me a sign-in link</a>
+        <a routerLink="/login/email" class="btn btn-outline-secondary w-100">{{ t('login.emailLink') || 'Email me a sign-in link' }}</a>
       </div>
 
-      <div class="sf-divider"><span>or use a password</span></div>
+      <div class="sf-divider"><span>{{ t('login.orPassword') || 'or use a password' }}</span></div>
     } @else {
-      <h2 class="text-center mb-3">Create your account</h2>
+      <h2 class="text-center mb-3">{{ t('login.createTitle') || 'Create your account' }}</h2>
     }
 
     <form class="vstack gap-2" (submit)="$event.preventDefault(); submit(email.value, password.value, name.value, again.value)">
-      <input appClear #name type="text" name="name" class="form-control" placeholder="Your name (optional)"
+      <input appClear #name type="text" name="name" class="form-control" [attr.placeholder]="t('login.namePlaceholder') || 'Your name (optional)'"
              autocomplete="name" [hidden]="mode() === 'signin'" />
-      <input #email type="email" name="email" class="form-control" placeholder="Email"
+      <input #email type="email" name="email" class="form-control" [attr.placeholder]="t('login.email') || 'Email'"
              autocomplete="email" inputmode="email" required (input)="rejected.set(false)" />
-      <input #password type="password" name="password" class="form-control" placeholder="Password"
+      <input #password type="password" name="password" class="form-control" [attr.placeholder]="t('login.password') || 'Password'"
              required minlength="6" [attr.autocomplete]="mode() === 'signin' ? 'current-password' : 'new-password'" (input)="rejected.set(false)" />
       <!-- creating an account: the password is typed twice, so a typing mistake does not lock the person out -->
-      <input #again type="password" name="password-again" class="form-control" placeholder="Repeat the password"
+      <input #again type="password" name="password-again" class="form-control" [attr.placeholder]="t('login.repeat') || 'Repeat the password'"
              [hidden]="mode() === 'signin'" [required]="mode() === 'signup'" minlength="6" autocomplete="new-password" />
 
       @if (!rejected()) {
         <button type="submit" class="btn btn-primary" [disabled]="busy()">
-          {{ busy() ? 'Please wait…' : mode() === 'signin' ? 'Sign in' : 'Create account' }}
+          {{ busy() ? (t('login.wait') || 'Please wait…') : mode() === 'signin' ? (t('login.signIn') || 'Sign in') : (t('login.createAccount') || 'Create account') }}
         </button>
       }
 
@@ -52,24 +56,24 @@
       }
       @if (rejected()) {
         <!-- turned down: no red error, but the two ways on: there may be no account yet, or the password is forgotten -->
-        <div class="card mt-2" role="region" aria-label="Create an account or reset the password">
+        <div class="card mt-2" role="region" [attr.aria-label]="t('login.rejectedLabel') || 'Create an account or reset the password'">
           <div class="card-body vstack gap-2 text-center">
-            <p class="m-0">We could not sign you in with this email and password.</p>
+            <p class="m-0">{{ t('login.rejectedText') || 'We could not sign you in with this email and password.' }}</p>
             <div class="d-flex gap-2 justify-content-center">
-              <button type="button" class="btn btn-primary btn-sm" (click)="toggleMode()">Create an account</button>
-              <button type="button" class="btn btn-outline-secondary btn-sm" (click)="forgot(email.value)">Forgot password?</button>
+              <button type="button" class="btn btn-primary btn-sm" (click)="toggleMode()">{{ t('login.createAnAccount') || 'Create an account' }}</button>
+              <button type="button" class="btn btn-outline-secondary btn-sm" (click)="forgot(email.value)">{{ t('login.forgot') || 'Forgot password?' }}</button>
             </div>
           </div>
         </div>
       }
 
       @if (mode() === 'signin' && !rejected()) {
-        <button type="button" class="btn btn-link" (click)="forgot(email.value)">Forgot password?</button>
+        <button type="button" class="btn btn-link" (click)="forgot(email.value)">{{ t('login.forgot') || 'Forgot password?' }}</button>
       }
     </form>
 
     <button type="button" class="btn btn-link w-100 mt-2" (click)="toggleMode()">
-      {{ mode() === 'signin' ? 'No account? Create one' : 'Have an account? Sign in' }}
+      {{ mode() === 'signin' ? (t('login.noAccount') || 'No account? Create one') : (t('login.haveAccount') || 'Have an account? Sign in') }}
     </button>
 
     @if (signedOutNotice(); as notice) {
@@ -81,22 +85,22 @@
     @if (!link()) {
       @if (inviteOpen()) {
         <div class="vstack gap-2 mt-2">
-          <input #invite type="text" class="form-control" placeholder="Paste the invitation link or code" aria-label="Invitation link or code"
+          <input #invite type="text" class="form-control" [attr.placeholder]="t('login.invitePlaceholder') || 'Paste the invitation link or code'" [attr.aria-label]="t('login.inviteLabel') || 'Invitation link or code'"
                  (keydown.enter)="useInvite(invite.value)" />
           @if (inviteProblem()) {
-            <div class="alert alert-warning m-0 text-center" role="alert">That is not an invitation link or code.</div>
+            <div class="alert alert-warning m-0 text-center" role="alert">{{ t('login.inviteBad') || 'That is not an invitation link or code.' }}</div>
           }
           <div class="d-flex gap-2">
-            <button type="button" class="btn btn-outline-secondary flex-fill" (click)="pasteInvite(invite)">Paste</button>
-            <button type="button" class="btn btn-primary flex-fill" (click)="useInvite(invite.value)">Use it</button>
+            <button type="button" class="btn btn-outline-secondary flex-fill" (click)="pasteInvite(invite)">{{ t('login.paste') || 'Paste' }}</button>
+            <button type="button" class="btn btn-primary flex-fill" (click)="useInvite(invite.value)">{{ t('login.useIt') || 'Use it' }}</button>
           </div>
         </div>
       } @else {
-        <button type="button" class="btn btn-link btn-sm w-100 mt-1" (click)="inviteOpen.set(true)">I have an invitation</button>
+        <button type="button" class="btn btn-link btn-sm w-100 mt-1" (click)="inviteOpen.set(true)">{{ t('login.haveInvite') || 'I have an invitation' }}</button>
       }
     }
     <p class="small text-center text-secondary mt-3 mb-0">
-      <a routerLink="/welcome">Get the app</a> · <a routerLink="/terms">Terms of use</a> · <a routerLink="/privacy">Data and privacy</a> · <a routerLink="/about">About</a> · <a routerLink="/viewwelcome">Test welcome pages</a>
+      <a routerLink="/welcome">{{ t('login.getApp') || 'Get the app' }}</a> · <a routerLink="/terms">{{ t('login.terms') || 'Terms of use' }}</a> · <a routerLink="/privacy">{{ t('login.privacy') || 'Data and privacy' }}</a> · <a routerLink="/about">{{ t('login.about') || 'About' }}</a> · <a routerLink="/viewwelcome">{{ t('login.testWelcome') || 'Test welcome pages' }}</a>
     </p>
   </div>
 </main>

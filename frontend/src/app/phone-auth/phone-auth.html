@@ -1,18 +1,19 @@
+<ng-container *transloco="let t">
 <div class="sf-back-row">
-  <a [routerLink]="backLink" class="btn btn-light" aria-label="Back">‹ Back</a>
+  <a [routerLink]="backLink" class="btn btn-light" [attr.aria-label]="t('phoneAuth.back') || 'Back'">{{ t('phoneAuth.back2') || '‹ Back' }}</a>
 </div>
 <div class="sf-page-head">
-  <h1>{{ linking ? 'Verify your phone' : 'Sign in with phone' }}</h1>
+  <h1>{{ linking ? (t('phoneAuth.verifyYourPhone') || 'Verify your phone') : (t('phoneAuth.signInWithPhone') || 'Sign in with phone') }}</h1>
 </div>
 
 <main class="sf-narrow">
   @if (step() === 'number') {
     <p class="text-secondary m-0">
-      We send a code by text message. {{ linking ? 'Once verified, {{ w.many }} who add your number can find you.' : 'No password needed.' }}
-      Standard message rates from your phone company may apply.
+      {{ linking ? (t('phoneAuth.weSendACodeLinking', { many: w.many }) || 'We send a code by text message. Once verified, ' + w.many + ' who add your number can find you.') : (t('phoneAuth.weSendACodeNoPassword') || 'We send a code by text message. No password needed.') }}
+      {{ t('phoneAuth.standardMessageRatesFrom') || 'Standard message rates from your phone company may apply.' }}
     </p>
     <form class="vstack gap-2" (submit)="$event.preventDefault(); sendCode()">
-      <label class="d-grid gap-1"><span class="form-label small text-secondary m-0">Phone number with country code</span>
+      <label class="d-grid gap-1"><span class="form-label small text-secondary m-0">{{ t('phoneAuth.phoneNumberWithCountry') || 'Phone number with country code' }}</span>
         <input type="tel" class="form-control" placeholder="+47 900 00 000" [value]="phone()"
                (input)="phone.set($any($event.target).value)" autocomplete="tel" inputmode="tel" required />
       </label>
@@ -20,13 +21,13 @@
         <div class="alert alert-danger" role="alert">{{ error() }}</div>
       }
       <div class="d-flex gap-2">
-        <button type="submit" class="btn btn-primary flex-fill" [disabled]="busy()">{{ busy() ? 'Sending…' : 'Send code' }}</button>
+        <button type="submit" class="btn btn-primary flex-fill" [disabled]="busy()">{{ busy() ? (t('phoneAuth.sending') || 'Sending…') : (t('phoneAuth.sendCode') || 'Send code') }}</button>
       </div>
     </form>
   } @else {
-    <p class="text-secondary m-0">We sent a code to <strong>{{ phone() }}</strong>.</p>
+    <p class="text-secondary m-0"><span [innerHTML]="t('phoneAuth.weSentACode', { phone: phone() }) || 'We sent a code to <strong>' + phone() + '</strong>.'"></span></p>
     <form class="vstack gap-2" (submit)="$event.preventDefault(); confirm()">
-      <label class="d-grid gap-1"><span class="form-label small text-secondary m-0">Code</span>
+      <label class="d-grid gap-1"><span class="form-label small text-secondary m-0">{{ t('phoneAuth.code') || 'Code' }}</span>
         <input type="text" class="form-control" [value]="code()" (input)="code.set($any($event.target).value)"
                autocomplete="one-time-code" inputmode="numeric" required />
       </label>
@@ -34,10 +35,11 @@
         <div class="alert alert-danger" role="alert">{{ error() }}</div>
       }
       <div class="d-flex gap-2">
-        <button type="button" class="btn btn-light flex-fill" (click)="changeNumber()">Change number</button>
-        <button type="submit" class="btn btn-primary flex-fill" [disabled]="busy()">{{ busy() ? 'Checking…' : 'Confirm' }}</button>
+        <button type="button" class="btn btn-light flex-fill" (click)="changeNumber()">{{ t('phoneAuth.changeNumber') || 'Change number' }}</button>
+        <button type="submit" class="btn btn-primary flex-fill" [disabled]="busy()">{{ busy() ? (t('phoneAuth.checking') || 'Checking…') : (t('phoneAuth.confirm') || 'Confirm') }}</button>
       </div>
     </form>
   }
   <div #recaptcha></div>
 </main>
+</ng-container>

@@ -1,0 +1,14 @@
+{
+  "cancel": "Cancel",
+  "takeThePhoto": "Take the photo",
+  "startRecording": "Start recording",
+  "stop": "Stop",
+  "useAnotherCamera": "Use another camera",
+  "theCamera": "The camera",
+  "theCameraIsBlocked": "The camera is blocked. Allow it for this site in the browser settings, or choose a file instead.",
+  "noCameraWasFound": "No camera was found. Choose a file instead.",
+  "theCameraIsIn": "The camera is in use by another program. Close it and try again, or choose a file instead.",
+  "theCameraCouldNot": "The camera could not be started. Choose a file instead.",
+  "thePhotoCouldNot": "The photo could not be taken. Try again.",
+  "thisBrowserCannotRecord": "This browser cannot record video. Choose a file instead."
+}

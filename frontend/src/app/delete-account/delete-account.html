@@ -1,23 +1,24 @@
+<ng-container *transloco="let t">
 <div class="sf-page-head">
-  <h1>Delete my account</h1>
+  <h1>{{ t('deleteAccount.deleteMyAccount') || 'Delete my account' }}</h1>
 </div>
 
 <main class="sf-narrow">
   <div class="alert alert-danger" role="alert">
-    <strong>This cannot be undone.</strong> You will be erased from Seven Friends, completely.
+    <span [innerHTML]="t('deleteAccount.strongThisCannotBe') || '<strong>This cannot be undone.</strong> You will be erased from Seven Friends, completely.'"></span>
   </div>
 
-  <p class="m-0">Everything about you is deleted:</p>
+  <p class="m-0">{{ t('deleteAccount.everythingAboutYouIs') || 'Everything about you is deleted:' }}</p>
   <ul class="m-0">
-    <li>your account, your profile and your login</li>
-    <li>all your friends and every request, sent or received</li>
-    <li>every message you sent or received. Your friends lose the conversation too</li>
-    <li>your name and contact details in other friends' lists</li>
+    <li>{{ t('deleteAccount.yourAccountYourProfile') || 'your account, your profile and your login' }}</li>
+    <li>{{ t('deleteAccount.allYourFriendsAnd') || 'all your friends and every request, sent or received' }}</li>
+    <li>{{ t('deleteAccount.everyMessageYouSent') || 'every message you sent or received. Your friends lose the conversation too' }}</li>
+    <li>{{ t('deleteAccount.yourNameAndContact') || 'your name and contact details in other friends\' lists' }}</li>
   </ul>
-  <p class="small text-secondary m-0">Your friends are not told. They simply no longer have you as a friend.</p>
+  <p class="small text-secondary m-0">{{ t('deleteAccount.yourFriendsAreNot') || 'Your friends are not told. They simply no longer have you as a friend.' }}</p>
 
   <form class="vstack gap-2" (submit)="$event.preventDefault(); erase()">
-    <label class="d-grid gap-1"><span class="form-label small text-secondary m-0">Type {{ word }} to confirm</span>
+    <label class="d-grid gap-1"><span class="form-label small text-secondary m-0">{{ t('deleteAccount.typeWordToConfirm', { word: word }) || 'Type ' + word + ' to confirm' }}</span>
       <input type="text" class="form-control" [value]="typed()" (input)="typed.set($any($event.target).value)"
              autocomplete="off" autocapitalize="characters" [disabled]="busy()" />
     </label>
@@ -27,10 +28,11 @@
     }
 
     <div class="d-flex gap-2">
-      <a routerLink="/settings/profile" class="btn btn-light flex-fill">Cancel</a>
+      <a routerLink="/settings/profile" class="btn btn-light flex-fill">{{ t('deleteAccount.cancel') || 'Cancel' }}</a>
       <button type="submit" class="btn btn-danger flex-fill" [disabled]="!confirmed() || busy()">
-        {{ busy() ? 'Deleting…' : 'Delete everything' }}
+        {{ busy() ? (t('deleteAccount.deleting') || 'Deleting…') : (t('deleteAccount.deleteEverything') || 'Delete everything') }}
       </button>
     </div>
   </form>
 </main>
+</ng-container>

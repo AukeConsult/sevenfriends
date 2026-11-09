@@ -1,4 +1,5 @@
 import { EncryptedUploadHeader, MessageEnc, MessageEncMedia, PublishedKey, SafeboxEnc, SafeboxKind, SafeboxWrap } from '../models';
+import { tr } from './i18n';
 
 /**
  * The encryption of a safebox file (design: docs/design/safebox-encryption.md). Each file gets a random AES-256-GCM key; the file, its small
@@ -57,7 +58,7 @@ async function unlock(key: CryptoKey, connectionId: string, part: Part, iv: stri
   try {
     return await crypto.subtle.decrypt({ name: 'AES-GCM', iv: fromBase64(iv), additionalData: aad(connectionId, part) }, key, data);
   } catch {
-    throw new Error('This file could not be opened: it was changed or damaged.');
+    throw new Error(tr('core.thisFileCouldNot', 'This file could not be opened: it was changed or damaged.'));
   }
 }
 
@@ -118,24 +119,24 @@ export async function sealFile(input: { connectionId: string; file: Blob; name: 
 /** The file key of an encrypted file, opened with the private key of this device; throws when none of the copies was locked for this key. */
 export async function openFileKey(enc: { wraps: SafeboxWrap[] }, myKeyId: string, privateKey: CryptoKey, noun: 'file' | 'message' = 'file'): Promise<CryptoKey> {
   const wrap = enc.wraps.find((w) => w.keyId === myKeyId);
-  if (!wrap) throw new Error(`This ${noun} was locked for another device.`);
+  if (!wrap) throw new Error(tr('core.thisWasLockedFor', 'This {{ noun }} was locked for another device.', { noun }));
   try {
     return await crypto.subtle.unwrapKey('raw', fromBase64(wrap.wrappedKey), privateKey, { name: 'RSA-OAEP' }, { name: 'AES-GCM', length: 256 }, false, FILE_KEY_USAGES);
   } catch {
-    throw new Error(`This ${noun} could not be opened with the key on this device.`);
+    throw new Error(tr('core.thisCouldNotBe', 'This {{ noun }} could not be opened with the key on this device.', { noun }));
   }
 }
 
 /** The file (`thumb`: its preview) opened; `data` is what the server holds. */
 export async function openPart(connectionId: string, enc: SafeboxEnc, fileKey: CryptoKey, part: 'file' | 'thumb', data: ArrayBuffer): Promise<ArrayBuffer> {
   const iv = part === 'file' ? enc.iv : enc.thumbIv;
-  if (!iv) throw new Error('There is no preview.');
+  if (!iv) throw new Error(tr('core.thereIsNoPreview', 'There is no preview.'));
   return unlock(fileKey, connectionId, part, iv, data);
 }
 
 export async function openMeta(connectionId: string, enc: SafeboxEnc, fileKey: CryptoKey): Promise<BoxMeta> {
   const meta = JSON.parse(new TextDecoder().decode(await unlock(fileKey, connectionId, 'meta', enc.metaIv, fromBase64(enc.meta)))) as Partial<BoxMeta>;
-  if (typeof meta.name !== 'string' || typeof meta.mime !== 'string') throw new Error('This file could not be opened: it was changed or damaged.');
+  if (typeof meta.name !== 'string' || typeof meta.mime !== 'string') throw new Error(tr('core.thisFileCouldNot', 'This file could not be opened: it was changed or damaged.'));
   return { name: meta.name, mime: meta.mime };
 }
 
@@ -192,13 +193,13 @@ export const openMessageKey = (enc: { wraps: SafeboxWrap[] }, myKeyId: string, p
 /** The file (`thumb`: its preview) of a locked message opened; `data` is what the server holds. */
 export async function openMessageMedia(connectionId: string, media: MessageEncMedia, key: CryptoKey, part: 'file' | 'thumb', data: ArrayBuffer): Promise<ArrayBuffer> {
   const iv = part === 'file' ? media.iv : media.thumbIv;
-  if (!iv) throw new Error('There is no preview.');
+  if (!iv) throw new Error(tr('core.thereIsNoPreview', 'There is no preview.'));
   return unlock(key, connectionId, part, iv, data);
 }
 
 export async function openMessageMeta(connectionId: string, media: MessageEncMedia, key: CryptoKey): Promise<MessageMediaMeta> {
   const meta = JSON.parse(new TextDecoder().decode(await unlock(key, connectionId, 'meta', media.metaIv, fromBase64(media.meta)))) as Partial<MessageMediaMeta>;
-  if (typeof meta.mime !== 'string') throw new Error('This file could not be opened: it was changed or damaged.');
+  if (typeof meta.mime !== 'string') throw new Error(tr('core.thisFileCouldNot', 'This file could not be opened: it was changed or damaged.'));
   const number = (v: unknown) => (typeof v === 'number' && Number.isFinite(v) ? v : null);
   return { name: typeof meta.name === 'string' ? meta.name : null, mime: meta.mime, width: number(meta.width), height: number(meta.height), durationMs: number(meta.durationMs) };
 }
@@ -229,7 +230,7 @@ export async function openTextWith(connectionId: string, enc: MessageEnc, text: 
  */
 export async function rewrapKey(enc: { wraps: SafeboxWrap[] }, myKeyId: string, privateKey: CryptoKey, target: { uid: string; key: PublishedKey }, noun: 'file' | 'message' = 'file'): Promise<SafeboxWrap> {
   const mine = enc.wraps.find((w) => w.keyId === myKeyId);
-  if (!mine) throw new Error(`This ${noun} was locked for another device.`);
+  if (!mine) throw new Error(tr('core.thisWasLockedFor', 'This {{ noun }} was locked for another device.', { noun }));
   const key = await crypto.subtle.unwrapKey('raw', fromBase64(mine.wrappedKey), privateKey, { name: 'RSA-OAEP' }, { name: 'AES-GCM', length: 256 }, true, FILE_KEY_USAGES);
   const publicKey = await crypto.subtle.importKey('jwk', target.key.publicKey, RSA, false, ['wrapKey']);
   const wrapped = await crypto.subtle.wrapKey('raw', key, publicKey, { name: 'RSA-OAEP' });

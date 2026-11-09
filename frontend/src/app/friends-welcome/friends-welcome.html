@@ -1,38 +1,40 @@
+<ng-container *transloco="let t">
 <main class="sf-landing sf-fr" [class]="'sf-landing sf-fr sf-fr-v' + variant">
   <div class="sf-fr-card">
     <div class="sf-fr-brand"><span class="sf-fr-logo" [style.background]="look.bg" [style.color]="look.fg">7</span>Seven Friends</div>
     @switch (variant) {
       @case (1) {
-      <h1 class="sf-fr-hd">Seven people.<br>That is your circle.</h1>
-      <p class="sf-fr-sub">The friends you would call first, in one calm place.</p>
+      <h1 class="sf-fr-hd"><span [innerHTML]="t('friendsWelcome.sevenPeopleBrThat') || 'Seven people.<br>That is your circle.'"></span></h1>
+      <p class="sf-fr-sub">{{ t('friendsWelcome.theFriendsYouWould') || 'The friends you would call first, in one calm place.' }}</p>
       <div class="sf-fr-ring" aria-hidden="true">
         @for (p of ring; track p[0]; let i = $index) {
           <span class="sf-fr-seat" [style.--a]="(i * 360 / 7) + 'deg'" [style.background]="p[1]" [style.color]="p[2]"><i>{{ p[0] }}</i></span>
         }
-        <span class="sf-fr-me">You</span>
+        <span class="sf-fr-me">{{ t('friendsWelcome.you') || 'You' }}</span>
       </div>
       }
       @case (2) {
-      <h1 class="sf-fr-hd">Your phone,<br>finally quiet</h1>
-      <p class="sf-fr-sub">Only the people you chose can reach you.</p>
+      <h1 class="sf-fr-hd"><span [innerHTML]="t('friendsWelcome.yourPhoneBrFinally') || 'Your phone,<br>finally quiet'"></span></h1>
+      <p class="sf-fr-sub">{{ t('friendsWelcome.onlyThePeopleYou') || 'Only the people you chose can reach you.' }}</p>
       <div class="sf-fr-vs">
-        <div class="sf-fr-other"><b>Other apps</b><p>47 new posts</p><p>Someone liked…</p><p>Don't miss out!</p></div>
-        <div class="sf-fr-us"><b>Seven Friends</b><p>Mia: coffee at 5?</p><p class="sf-fr-dim">Nothing else</p></div>
+        <div class="sf-fr-other"><span [innerHTML]="t('friendsWelcome.bOtherAppsB') || '<b>Other apps</b>'"></span><p>{{ t('friendsWelcome.newPosts') || '47 new posts' }}</p><p>{{ t('friendsWelcome.someoneLiked') || 'Someone liked…' }}</p><p>{{ t('friendsWelcome.donTMissOut') || 'Don\'t miss out!' }}</p></div>
+        <div class="sf-fr-us"><span [innerHTML]="t('friendsWelcome.bSevenFriendsB') || '<b>Seven Friends</b>'"></span><p>{{ t('friendsWelcome.miaCoffeeAt') || 'Mia: coffee at 5?' }}</p><p class="sf-fr-dim">{{ t('friendsWelcome.nothingElse') || 'Nothing else' }}</p></div>
       </div>
       }
       @case (3) {
-      <h1 class="sf-fr-hd">A private room<br>for every friend</h1>
-      <p class="sf-fr-sub">Locked on your phone. Only you two can open it.</p>
+      <h1 class="sf-fr-hd"><span [innerHTML]="t('friendsWelcome.aPrivateRoomBr') || 'A private room<br>for every friend'"></span></h1>
+      <p class="sf-fr-sub">{{ t('friendsWelcome.lockedOnYourPhone') || 'Locked on your phone. Only you two can open it.' }}</p>
       <div class="sf-fr-room" aria-hidden="true">
-        <div class="sf-fr-roomhead"><span class="sf-fr-seat sf-fr-small" style="background:#F5C4B3;color:#712B13"><i>M</i></span>Mia<svg class="sf-fr-lock" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg></div>
-        <p class="sf-fr-bubble">Coffee at 5?</p>
-        <p class="sf-fr-bubble sf-fr-mine">Yes. Same place.</p>
-        <div class="sf-fr-file">photo-from-friday.jpg<span>locked</span></div>
+        <div class="sf-fr-roomhead"><span class="sf-fr-seat sf-fr-small" style="background:#F5C4B3;color:#712B13"><i>M</i></span>{{ t('friendsWelcome.mia') || 'Mia' }}<svg class="sf-fr-lock" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg></div>
+        <p class="sf-fr-bubble">{{ t('friendsWelcome.coffeeAt') || 'Coffee at 5?' }}</p>
+        <p class="sf-fr-bubble sf-fr-mine">{{ t('friendsWelcome.yesSamePlace') || 'Yes. Same place.' }}</p>
+        <div class="sf-fr-file">{{ t('friendsWelcome.photoFromFridayJpg') || 'photo-from-friday.jpg' }}<span>{{ t('friendsWelcome.locked') || 'locked' }}</span></div>
       </div>
       }
     }
     <app-why circle="default" />
     <app-next-step circle="default" ctaClass="sf-fr-cta" [bg]="look.bg" [fg]="look.fg" [back]="variant === 1 ? 'Back to my seven' : 'Back to my friends'" [cta]="variant === 1 ? 'Find my seven' : variant === 2 ? 'Choose my seven' : 'Open my first room'" />
-    <p class="sf-fr-fine"><a routerLink="/welcome">More about the app</a> · <a routerLink="/privacy">Privacy</a></p>
+    <p class="sf-fr-fine"><a routerLink="/welcome">{{ t('friendsWelcome.moreAboutTheApp') || 'More about the app' }}</a> · <a routerLink="/privacy">{{ t('friendsWelcome.privacy') || 'Privacy' }}</a></p>
   </div>
 </main>
+</ng-container>

@@ -1,3 +1,4 @@
+import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { computed, Component, DestroyRef, ElementRef, HostListener, effect, inject, untracked, viewChild } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
@@ -19,8 +20,8 @@ import { FriendContext } from './friend-context';
  */
 @Component({
   selector: 'app-friend-page',
-  imports: [FriendAvatar, RouterLink, RouterLinkActive, RouterOutlet],
-  providers: [FriendContext],
+  imports: [FriendAvatar, RouterLink, RouterLinkActive, RouterOutlet, TranslocoDirective],
+  providers: [provideTranslocoScope('friendPage'), FriendContext],
   templateUrl: './friend-page.html',
   // every page under the header has the look of the conversation: a light tint of the friend's colour, and my own colour for what is mine
   host: {

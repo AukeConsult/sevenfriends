@@ -1,6 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { ActiveCircleService } from './active-circle.service';
+import { tr } from './i18n';
 
 const STORAGE_KEY = 'sf-desktop-notices';
 const WORKER_URL = '/firebase-messaging-sw.js'; // the one service worker of the app (push + notification clicks)
@@ -43,7 +44,7 @@ export class DesktopNoticeService {
   readonly wanted = signal(this.read());
 
   /** What happened the last time a notice was due (shown on Settings, to find out why nothing appeared). */
-  readonly lastResult = signal<string>('Nothing yet');
+  readonly lastResult = signal<string>(tr('core.nothingYet', 'Nothing yet'));
 
   private worker: ServiceWorkerRegistration | null = null;
   /** ids of the events already announced */
@@ -84,16 +85,16 @@ export class DesktopNoticeService {
   /** Shows a notice when the person is not looking at the app (or always, with `force`). */
   async show(notice: DesktopNotice, force = false): Promise<void> {
     if (!this.supported || !this.wanted() || Notification.permission !== 'granted') {
-      this.lastResult.set('Not shown: notifications are switched off or not allowed in this browser');
+      this.lastResult.set(tr('core.notShownNotificationsAre', 'Not shown: notifications are switched off or not allowed in this browser'));
       return;
     }
     // not while the person is looking at the app: the tab is in view AND its window is in front
     if (!force && document.visibilityState === 'visible' && document.hasFocus()) {
-      this.lastResult.set('Not shown: you were looking at the app');
+      this.lastResult.set(tr('core.notShownYouWere', 'Not shown: you were looking at the app'));
       return;
     }
     if (this.announced.has(notice.id)) {
-      this.lastResult.set('Not shown again: this event was announced already');
+      this.lastResult.set(tr('core.notShownAgainThis', 'Not shown again: this event was announced already'));
       return;
     }
     this.announced.add(notice.id);
@@ -108,7 +109,7 @@ export class DesktopNoticeService {
       const worker = this.worker ?? (await this.registerWorker());
       if (worker) {
         await worker.showNotification(notice.title, options);
-        this.lastResult.set(`Shown through the service worker (${new Date().toLocaleTimeString()})`);
+        this.lastResult.set(tr('core.shownThroughTheService', 'Shown through the service worker ({{ toLocaleTimeString }})', { toLocaleTimeString: new Date().toLocaleTimeString() }));
         return;
       }
       const shown = new Notification(notice.title, options);
@@ -117,9 +118,9 @@ export class DesktopNoticeService {
         shown.close();
         void this.router.navigateByUrl(notice.go);
       };
-      this.lastResult.set(`Shown by the page (${new Date().toLocaleTimeString()})`);
+      this.lastResult.set(tr('core.shownByThePage', 'Shown by the page ({{ toLocaleTimeString }})', { toLocaleTimeString: new Date().toLocaleTimeString() }));
     } catch (error) {
-      this.lastResult.set(`The browser refused the notification: ${(error as Error).message}`);
+      this.lastResult.set(tr('core.theBrowserRefusedThe', 'The browser refused the notification: {{ ErrorMessage }}', { ErrorMessage: (error as Error).message }));
     }
   }
 

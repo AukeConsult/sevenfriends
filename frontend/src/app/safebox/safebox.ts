@@ -1,4 +1,6 @@
-import { DatePipe } from '@angular/common';
+import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
+import { tr } from '../core/i18n';
+import { AppDatePipe } from '../core/app-date.pipe';
 import { Component, DestroyRef, computed, effect, inject, input, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { KeysService } from '../core/keys.service';
@@ -42,8 +44,9 @@ export class SafeboxThumb {
  */
 @Component({
   selector: 'app-safebox',
-  imports: [DatePipe, RouterLink, SafeboxThumb, RecoveryHint],
+  imports: [AppDatePipe, RouterLink, SafeboxThumb, RecoveryHint, TranslocoDirective],
   templateUrl: './safebox.html',
+  providers: [provideTranslocoScope('safebox')],
 })
 export class Safebox {
   private readonly service = inject(SafeboxService);
@@ -89,7 +92,7 @@ export class Safebox {
     if (!this.friends.friends().length) void this.friends.load().catch(() => undefined); // for the friend's name
     void this.reload();
     // the menu of the header: Add files opens the frame to add them (after the click that chose it has been seen by any click-outside rule)
-    this.ctx.setPageTool({ label: 'Add files', kind: 'files', run: () => setTimeout(() => this.addOpen.set(true)) }, inject(DestroyRef));
+    this.ctx.setPageTool({ label: tr('safebox.addFiles', 'Add files'), kind: 'files', run: () => setTimeout(() => this.addOpen.set(true)) }, inject(DestroyRef));
   }
 
   protected async reload(): Promise<void> {
@@ -97,7 +100,7 @@ export class Safebox {
     try {
       this.box.set(await this.service.load(this.friendId));
     } catch (err: any) {
-      this.loadError.set(err.message ?? 'Could not open the safebox');
+      this.loadError.set(err.message ?? tr('safebox.couldNotOpenThe', 'Could not open the safebox'));
     }
   }
 
@@ -135,7 +138,7 @@ export class Safebox {
         else if (max && file.size > max) throw new Error(`“${file.name}” is too big (at most ${formatBytes(max)})`);
         else await this.service.add(this.friendId, file, file.name, undefined, this.encryptWith());
       } catch (err: any) {
-        this.error.set(err.message ?? `Could not add “${file.name}”`);
+        this.error.set(err.message ?? tr('safebox.couldNotAdd', 'Could not add “{{ fileName }}”', { fileName: file.name }));
         break;
       }
     }
@@ -180,7 +183,7 @@ export class Safebox {
     try {
       this.save((await this.service.file(this.friendId, item.id)).url, item.name);
     } catch (err: any) {
-      this.error.set(err.message ?? 'Could not download the file');
+      this.error.set(err.message ?? tr('safebox.couldNotDownloadThe', 'Could not download the file'));
     } finally {
       this.busy.set(false);
     }
@@ -210,7 +213,7 @@ export class Safebox {
       this.renaming.set(null);
       await this.reload();
     } catch (err: any) {
-      this.error.set(err.message ?? 'Could not rename the file');
+      this.error.set(err.message ?? tr('safebox.couldNotRenameThe', 'Could not rename the file'));
     } finally {
       this.busy.set(false);
     }
@@ -225,7 +228,7 @@ export class Safebox {
       this.deleting.set(null);
       await this.reload();
     } catch (err: any) {
-      this.error.set(err.message ?? 'Could not take the file out');
+      this.error.set(err.message ?? tr('safebox.couldNotTakeThe', 'Could not take the file out'));
     } finally {
       this.busy.set(false);
     }

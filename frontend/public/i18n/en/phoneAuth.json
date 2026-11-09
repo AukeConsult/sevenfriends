@@ -1,0 +1,21 @@
+{
+  "back": "Back",
+  "back2": "‹ Back",
+  "verifyYourPhone": "Verify your phone",
+  "signInWithPhone": "Sign in with phone",
+  "standardMessageRatesFrom": "Standard message rates from your phone company may apply.",
+  "phoneNumberWithCountry": "Phone number with country code",
+  "sending": "Sending…",
+  "sendCode": "Send code",
+  "weSentACode": "We sent a code to <strong>{{ phone }}</strong>.",
+  "code": "Code",
+  "changeNumber": "Change number",
+  "checking": "Checking…",
+  "confirm": "Confirm",
+  "writeTheNumberWith": "Write the number with country code, for example +47 900 00 000.",
+  "writeTheCodeFrom": "Write the code from the text message.",
+  "couldNotSendThe": "Could not send the code. Please try again.",
+  "thatCodeDidNot": "That code did not work. Please try again.",
+  "weSendACodeLinking": "We send a code by text message. Once verified, {{ many }} who add your number can find you.",
+  "weSendACodeNoPassword": "We send a code by text message. No password needed."
+}

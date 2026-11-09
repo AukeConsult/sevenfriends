@@ -22,6 +22,7 @@ import {
 } from 'firebase/auth';
 import { environment } from '../../environments/environment';
 import { auth } from './firebase';
+import { tr } from './i18n';
 
 /** Where the email is kept between asking for a sign-in link and opening it (same device). */
 const EMAIL_KEY = 'sf-email-for-sign-in';
@@ -71,7 +72,7 @@ export class AuthService {
     const { FirebaseAuthentication } = await import('@capacitor-firebase/authentication');
     const result = await FirebaseAuthentication.signInWithGoogle();
     const idToken = result.credential?.idToken;
-    if (!idToken) throw new Error('Google did not give a sign-in token.');
+    if (!idToken) throw new Error(tr('core.googleDidNotGive', 'Google did not give a sign-in token.'));
     const { user } = await signInWithCredential(auth, GoogleAuthProvider.credential(idToken, result.credential?.accessToken));
     await this.finishLogin(user);
   }
@@ -158,7 +159,7 @@ export class AuthService {
 
   /** Step 2: the code from the SMS. Signs in, or (linking) adds the verified number to this account. */
   async confirmPhoneCode(code: string, linking = false): Promise<void> {
-    if (!this.confirmation) throw new Error('Ask for a new code first.');
+    if (!this.confirmation) throw new Error(tr('core.askForANew', 'Ask for a new code first.'));
     const { user } = await this.confirmation.confirm(code);
     this.confirmation = null;
     this.clearVerifier();
@@ -240,7 +241,7 @@ export class AuthService {
       headers: { Authorization: `Bearer ${token}` },
     });
     if (!res.ok) {
-      throw new Error(`User sync failed (${res.status})`);
+      throw new Error(tr('core.userSyncFailed', 'User sync failed ({{ status }})', { status: res.status }));
     }
   }
 }

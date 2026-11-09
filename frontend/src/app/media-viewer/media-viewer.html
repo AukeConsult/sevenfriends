@@ -1,9 +1,10 @@
+<ng-container *transloco="let t">
 <div class="sf-page-head">
   <h1 class="m-0 mw-100">
     <!-- the arrow and the name go back, like the title of the safebox pages -->
-    <button type="button" class="sf-title-link sf-title-button" (click)="back()" aria-label="Back">
+    <button type="button" class="sf-title-link sf-title-button" (click)="back()" [attr.aria-label]="t('mediaViewer.back') || 'Back'">
       <span class="sf-back-inline" aria-hidden="true"></span>
-      <span class="sf-ellipsis">{{ file()?.name ?? 'Image, video or audio' }}</span>
+      <span class="sf-ellipsis">{{ file()?.name ?? (t('mediaViewer.imageVideoOrAudio') || 'Image, video or audio') }}</span>
     </button>
   </h1>
 </div>
@@ -11,17 +12,18 @@
 <main class="sf-viewer">
   @if (file(); as shown) {
     @if (isAudio(shown)) {
-      <audio [src]="shown.url" controls autoplay [attr.aria-label]="shown.name ?? 'Audio'"></audio>
+      <audio [src]="shown.url" controls autoplay [attr.aria-label]="shown.name ?? (t('mediaViewer.audio') || 'Audio')"></audio>
     } @else if (isVideo(shown)) {
-      <video [src]="shown.url" controls autoplay playsinline [attr.aria-label]="shown.name ?? 'Video'"></video>
+      <video [src]="shown.url" controls autoplay playsinline [attr.aria-label]="shown.name ?? (t('mediaViewer.video') || 'Video')"></video>
     } @else {
-      <img [src]="shown.url" [alt]="shown.name ?? 'Image'" />
+      <img [src]="shown.url" [alt]="shown.name ?? (t('mediaViewer.image') || 'Image')" />
     }
     <p class="sf-hint text-center m-0">{{ shown.type }} · {{ formatBytes(shown.bytes) }}</p>
-    <a class="btn btn-primary align-self-center" [href]="shown.url" [download]="saveName(shown)">Download</a>
+    <a class="btn btn-primary align-self-center" [href]="shown.url" [download]="saveName(shown)">{{ t('mediaViewer.download') || 'Download' }}</a>
   } @else if (error()) {
     <div class="alert alert-danger" role="alert">{{ error() }}</div>
   } @else {
-    <p class="sf-hint-center">Loading…</p>
+    <p class="sf-hint-center">{{ t('mediaViewer.loading') || 'Loading…' }}</p>
   }
 </main>
+</ng-container>

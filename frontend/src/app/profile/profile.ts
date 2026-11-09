@@ -3,7 +3,10 @@ import { Clearable } from '../core/clearable';
 import { Component, DestroyRef, computed, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
+import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
+import { tr } from '../core/i18n';
 import { InviteLinkService } from '../core/invite-link.service';
+import { LanguageService } from '../core/language.service';
 import { ApiService } from '../core/api.service';
 import { authMessage } from '../core/auth-errors';
 import { AuthService } from '../core/auth.service';
@@ -21,12 +24,14 @@ const RETRY_MS = 5000;
 
 @Component({
   selector: 'app-profile',
-  imports: [RouterLink, Clearable],
+  imports: [RouterLink, Clearable, TranslocoDirective],
+  providers: [provideTranslocoScope('profile')],
   templateUrl: './profile.html',
 })
 export class Profile {
   protected readonly w = inject(ActiveCircleService).words;
   private readonly api = inject(ApiService);
+  private readonly lang = inject(LanguageService);
   private readonly presence = inject(PresenceService);
   private readonly push = inject(PushService);
   private readonly auth = inject(AuthService);
@@ -91,11 +96,11 @@ export class Profile {
   protected readonly initial = computed(() => (this.form().name.trim() || this.user()?.email || '?')[0].toUpperCase());
   protected readonly provider = computed(() => {
     const id = this.user()?.providerData[0]?.providerId;
-    return id === 'google.com' ? 'Google' : id === 'password' ? 'Email' : id === 'phone' ? 'Phone' : (id ?? 'Unknown');
+    return id === 'google.com' ? 'Google' : id === 'password' ? tr('profile.providerEmail', 'Email') : id === 'phone' ? tr('profile.providerPhone', 'Phone') : (id ?? tr('profile.providerUnknown', 'Unknown'));
   });
   protected readonly memberSince = computed(() => {
     const created = this.user()?.metadata.creationTime;
-    return created ? new Date(created).toLocaleDateString() : null;
+    return created ? new Date(created).toLocaleDateString(this.lang.lang()) : null;
   });
 
   private timer: ReturnType<typeof setTimeout> | undefined;
@@ -210,7 +215,7 @@ export class Profile {
       await this.auth.sendVerificationEmail();
       this.verificationSent.set(true);
     } catch (err) {
-      this.verificationError.set(authMessage(err, 'Could not send the email. Please try again.'));
+      this.verificationError.set(authMessage(err, tr('profile.sendFailed', 'Could not send the email. Please try again.')));
     }
   }
 
@@ -243,7 +248,7 @@ export class Profile {
     } catch (err: any) {
       this.loadFailed = true;
       this.state.set('error');
-      this.error.set(err.message ?? 'Could not load your profile');
+      this.error.set(err.message ?? tr('profile.loadFailed', 'Could not load your profile'));
     } finally {
       this.loading.set(false);
     }
@@ -310,6 +315,7 @@ export class Profile {
             pronoun: sent.pronoun || null,
           }),
         });
+        this.lang.useAccount(sent.language, sent.country); // the app changes language at once
         // show the cleaned-up values (for example a leading @ removed), unless the user typed on meanwhile
         if (!this.dirty && this.form() === sent) {
           // (a phone number that was not valid is kept in the field as typed, and the message says it is not saved)
@@ -320,7 +326,7 @@ export class Profile {
     } catch (err: any) {
       this.dirty = true; // not saved: try again by itself in a few seconds (and when the connection is back), on the next change, a blur or "Try again"
       this.state.set('error');
-      this.error.set(err.message ?? 'Could not save');
+      this.error.set(err.message ?? tr('profile.saveFailed', 'Could not save'));
       this.retryTimer = setTimeout(() => void this.flush(), RETRY_MS);
     } finally {
       this.saving = false;

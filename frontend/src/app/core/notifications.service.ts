@@ -4,6 +4,7 @@ import { ActiveCircleService } from './active-circle.service';
 import { ApiService } from './api.service';
 import { FriendsService } from './friends.service';
 import { MessagesService } from './messages.service';
+import { tr } from './i18n';
 
 /**
  * Runs the "check" that fires when Home is opened or clicked:
@@ -39,7 +40,7 @@ export class NotificationsService {
         this.friends.requests.set(res.requests); // the server answers with the requests of the circle this app is in only
         this.messages.replace(res.messages);
       } catch (err: any) {
-        this.error.set(err.message ?? 'Could not load notifications');
+        this.error.set(err.message ?? tr('core.couldNotLoadNotifications', 'Could not load notifications'));
       } finally {
         this.loading.set(false);
         this.loaded.set(true);

@@ -1,6 +1,8 @@
+import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { Component, ElementRef, OnDestroy, OnInit, effect, input, output, signal, viewChild } from '@angular/core';
 import { scaled } from '../core/image';
 import { MAX_VIDEO_SECONDS, recorderOptions, recorderType } from '../core/video';
+import { tr } from '../core/i18n';
 
 /** The longest side of a photo taken on the page, in pixels (it is made smaller still when it is prepared to be sent). */
 const PHOTO_SIDE = 1280;
@@ -10,14 +12,14 @@ export function cameraProblem(err: unknown): string {
   switch ((err as { name?: string }).name) {
     case 'NotAllowedError':
     case 'SecurityError':
-      return 'The camera is blocked. Allow it for this site in the browser settings, or choose a file instead.';
+      return tr('camera.theCameraIsBlocked', 'The camera is blocked. Allow it for this site in the browser settings, or choose a file instead.');
     case 'NotFoundError':
     case 'OverconstrainedError':
-      return 'No camera was found. Choose a file instead.';
+      return tr('camera.noCameraWasFound', 'No camera was found. Choose a file instead.');
     case 'NotReadableError':
-      return 'The camera is in use by another program. Close it and try again, or choose a file instead.';
+      return tr('camera.theCameraIsIn', 'The camera is in use by another program. Close it and try again, or choose a file instead.');
     default:
-      return 'The camera could not be started. Choose a file instead.';
+      return tr('camera.theCameraCouldNot', 'The camera could not be started. Choose a file instead.');
   }
 }
 
@@ -27,8 +29,10 @@ export function cameraProblem(err: unknown): string {
  * it stops by itself). The camera is stopped (its light goes out) when this is removed from the page.
  */
 @Component({
+  imports: [TranslocoDirective],
   selector: 'app-camera',
   templateUrl: './camera.html',
+  providers: [provideTranslocoScope('camera')],
 })
 export class Camera implements OnInit, OnDestroy {
   readonly mode = input.required<'photo' | 'video'>();
@@ -124,7 +128,7 @@ export class Camera implements OnInit, OnDestroy {
     }
     if (!blob) {
       this.shot = false;
-      this.failed.emit('The photo could not be taken. Try again.');
+      this.failed.emit(tr('camera.thePhotoCouldNot', 'The photo could not be taken. Try again.'));
       return;
     }
     this.photo.emit(new File([blob], `photo-${new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-')}.jpg`, { type: 'image/jpeg' }));
@@ -134,7 +138,7 @@ export class Camera implements OnInit, OnDestroy {
     const stream = this.stream();
     const type = recorderType();
     if (!stream || !type) {
-      this.failed.emit('This browser cannot record video. Choose a file instead.');
+      this.failed.emit(tr('camera.thisBrowserCannotRecord', 'This browser cannot record video. Choose a file instead.'));
       return;
     }
     const chunks: Blob[] = [];

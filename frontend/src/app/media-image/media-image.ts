@@ -1,11 +1,14 @@
+import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { Component, effect, inject, input, signal } from '@angular/core';
 import { MediaService } from '../core/media.service';
 import { MediaRef } from '../models';
 
 /** An image of a message: read from the server (`getObject`), the small preview when there is one. It keeps its shape while it loads. */
 @Component({
+  imports: [TranslocoDirective],
   selector: 'app-media-image',
   templateUrl: './media-image.html',
+  providers: [provideTranslocoScope('mediaImage')],
 })
 export class MediaImage {
   private readonly service = inject(MediaService);

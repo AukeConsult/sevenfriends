@@ -5,6 +5,7 @@ import { ActiveCircleService, CIRCLE_CHOICES } from './active-circle.service';
 import { NoticesService } from './notices.service';
 import { PushService } from './push.service';
 import { SoundService } from './sound.service';
+import { tr } from './i18n';
 
 type AndroidHost = {
   SevenFriendsAndroid?: { status?(): string; openNotificationSettings?(): void; sync(sounds: string): void; pushed(ok: boolean, text: string): void; deviceSet(on: boolean, problem: string): void; appState(json: string): void; tested(text: string): void };
@@ -115,17 +116,17 @@ export class AndroidChannelsService {
         this.phoneVolume.set(android.volume);
         this.sounds.setVolume(android.volume);
       }
-      if (!(await this.notices.load())) return answer(false, 'The app could not read your choices from the account. Check the connection.');
+      if (!(await this.notices.load())) return answer(false, tr('core.theAppCouldNot', 'The app could not read your choices from the account. Check the connection.'));
       const now = this.notices.notices();
-      if (!now) return answer(false, 'The app could not read your choices from the account.');
+      if (!now) return answer(false, tr('core.theAppCouldNot2', 'The app could not read your choices from the account.'));
       const next = { ...now };
       for (const kind of ['message', 'request', 'answer', 'removed'] as const) {
         if (typeof android[kind] === 'boolean') next[kind] = android[kind];
       }
       const ok = await this.notices.save(next);
-      answer(ok, ok ? 'Stored on your account: ' + this.describe(next) + ` The phone's notification volume is ${this.phoneVolume() ?? '?'} %.` : 'It could not be saved. Check the connection and try again.');
+      answer(ok, ok ? tr('core.storedOnYourAccount', 'Stored on your account: {{ next }}', { next: this.describe(next) }) + ` The phone's notification volume is ${this.phoneVolume() ?? '?'} %.` : 'It could not be saved. Check the connection and try again.');
     } catch {
-      answer(false, 'The app did not understand what was sent.');
+      answer(false, tr('core.theAppDidNot', 'The app did not understand what was sent.'));
     }
   }
 
@@ -138,7 +139,7 @@ export class AndroidChannelsService {
     const now = this.notices.notices();
     const state = loaded && now
       ? { device: this.push.enabled(), notices: now, sounds: this.sounds.choices(), volume: this.sounds.volume() }
-      : { error: 'The account could not be read. Check the connection.' };
+      : { error: tr('core.theAccountCouldNot', 'The account could not be read. Check the connection.') };
     this.host.SevenFriendsAndroid?.appState(JSON.stringify(state));
   }
 

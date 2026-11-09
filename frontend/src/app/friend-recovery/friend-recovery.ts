@@ -1,3 +1,5 @@
+import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
+import { tr } from '../core/i18n';
 import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { RecoveryState, readableFingerprint } from '../models';
@@ -13,8 +15,9 @@ const POLL_MS = 2500;
  */
 @Component({
   selector: 'app-friend-recovery',
-  imports: [RouterLink],
+  imports: [RouterLink, TranslocoDirective],
   templateUrl: './friend-recovery.html',
+  providers: [provideTranslocoScope('friendRecovery')],
 })
 export class FriendRecovery {
   protected readonly ctx = inject(FriendContext);
@@ -47,7 +50,7 @@ export class FriendRecovery {
     try {
       this.state.set(await this.service.state(this.ctx.friendId));
     } catch (err: any) {
-      if (!this.state()) this.error.set(err.message ?? 'Could not read the request');
+      if (!this.state()) this.error.set(err.message ?? tr('friendRecovery.couldNotReadThe', 'Could not read the request'));
     }
   }
 
@@ -93,7 +96,7 @@ export class FriendRecovery {
     try {
       await action();
     } catch (err: any) {
-      this.error.set(err.message ?? 'That did not work');
+      this.error.set(err.message ?? tr('friendRecovery.thatDidNotWork', 'That did not work'));
     } finally {
       this.busy.set(false);
     }

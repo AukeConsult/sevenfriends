@@ -1,16 +1,17 @@
+<ng-container *transloco="let t">
 <div class="sf-back-row">
-  <a [routerLink]="fromSetup ? '/setup' : '/settings/notifications'" [queryParams]="fromSetup ? { step: 'sounds' } : null" class="btn btn-light" (click)="sounds.stop()" aria-label="Back to sounds">‹ Back</a>
+  <a [routerLink]="fromSetup ? '/setup' : '/settings/notifications'" [queryParams]="fromSetup ? { step: 'sounds' } : null" class="btn btn-light" (click)="sounds.stop()" [attr.aria-label]="t('soundPicker.backToSounds') || 'Back to sounds'">{{ t('soundPicker.back') || '‹ Back' }}</a>
 </div>
 <div class="sf-page-head">
   <h1>{{ item().label }}</h1>
 </div>
 
 <main class="sf-narrow">
-  <p class="sf-hint">{{ item().hint }}. Tap a sound to choose it and hear it.</p>
+  <p class="sf-hint">{{ t('soundPicker.hintTapASound', { hint: item().hint }) || item().hint + '. Tap a sound to choose it and hear it.' }}</p>
 
   @if (jingles().length) {
-    <h2 class="sf-section">Seven Friends jingles</h2>
-    <ul class="sf-list" role="radiogroup" aria-label="Seven Friends jingles">
+    <h2 class="sf-section">{{ t('soundPicker.sevenFriendsJingles') || 'Seven Friends jingles' }}</h2>
+    <ul class="sf-list" role="radiogroup" [attr.aria-label]="t('soundPicker.sevenFriendsJingles') || 'Seven Friends jingles'">
       @for (jingle of jingles(); track jingle.file) {
         <li class="sf-list-item">
           <button type="button" class="sf-pick" role="radio" [attr.aria-checked]="current() === 'file:' + jingle.file" (click)="choose('file:' + jingle.file)">
@@ -18,7 +19,7 @@
           </button>
           @if (sounds.playingKey() === 'file:' + jingle.file) {
             <button type="button" class="btn btn-sm btn-outline-primary" (click)="toggle('file:' + jingle.file)"
-                  [attr.aria-label]="(sounds.playingKey() === 'file:' + jingle.file ? 'Stop ' : 'Play ') + jingle.label">{{ sounds.playingKey() === 'file:' + jingle.file ? '■ Stop' : '▶ Play' }}</button>
+                  [attr.aria-label]="(sounds.playingKey() === 'file:' + jingle.file ? 'Stop ' : 'Play ') + jingle.label">{{ sounds.playingKey() === 'file:' + jingle.file ? (t('soundPicker.stop') || '■ Stop') : (t('soundPicker.play') || '▶ Play') }}</button>
           }
         </li>
       }
@@ -26,9 +27,9 @@
   }
 
   @if (jingles().length) {
-    <h2 class="sf-section">Other sounds</h2>
+    <h2 class="sf-section">{{ t('soundPicker.otherSounds') || 'Other sounds' }}</h2>
   }
-  <ul class="sf-list" role="radiogroup" [attr.aria-label]="'Sound for ' + item().label">
+  <ul class="sf-list" role="radiogroup" [attr.aria-label]="(t('soundPicker.soundForLabel', { label: item().label }) || 'Sound for ' + item().label)">
     @for (option of choices; track option.id) {
       <li class="sf-list-item">
         <button type="button" class="sf-pick" role="radio" [attr.aria-checked]="current() === option.id" (click)="choose(option.id)">
@@ -37,12 +38,13 @@
         @if (option.id !== 'none') {
           @if (sounds.playingKey() === option.id) {
           <button type="button" class="btn btn-sm btn-outline-primary" (click)="toggle(option.id)"
-                  [attr.aria-label]="(sounds.playingKey() === option.id ? 'Stop ' : 'Play ') + option.label">{{ sounds.playingKey() === option.id ? '■ Stop' : '▶ Play' }}</button>
+                  [attr.aria-label]="(sounds.playingKey() === option.id ? 'Stop ' : 'Play ') + option.label">{{ sounds.playingKey() === option.id ? (t('soundPicker.stop') || '■ Stop') : (t('soundPicker.play') || '▶ Play') }}</button>
           }
         }
       </li>
     }
   </ul>
 
-  <a [routerLink]="fromSetup ? '/setup' : '/settings/notifications'" [queryParams]="fromSetup ? { step: 'sounds' } : null" class="btn btn-primary" (click)="sounds.stop()">Done</a>
+  <a [routerLink]="fromSetup ? '/setup' : '/settings/notifications'" [queryParams]="fromSetup ? { step: 'sounds' } : null" class="btn btn-primary" (click)="sounds.stop()">{{ t('soundPicker.done') || 'Done' }}</a>
 </main>
+</ng-container>

@@ -1,3 +1,5 @@
+import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
+import { tr } from '../core/i18n';
 import { ActiveCircleService } from '../core/active-circle.service';
 import { Component, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -8,8 +10,9 @@ import { PhoneStep } from '../models/view';
 /** Phone number + SMS code. Used to sign in ('login') and to verify the phone of a signed-in account ('link'). */
 @Component({
   selector: 'app-phone-auth',
-  imports: [RouterLink],
+  imports: [RouterLink, TranslocoDirective],
   templateUrl: './phone-auth.html',
+  providers: [provideTranslocoScope('phoneAuth')],
 })
 export class PhoneAuth {
   protected readonly w = inject(ActiveCircleService).words;
@@ -38,7 +41,7 @@ export class PhoneAuth {
   protected async sendCode(): Promise<void> {
     const phone = this.normalize(this.phone());
     if (!phone) {
-      this.error.set('Write the number with country code, for example +47 900 00 000.');
+      this.error.set(tr('phoneAuth.writeTheNumberWith', 'Write the number with country code, for example +47 900 00 000.'));
       return;
     }
     this.busy.set(true);
@@ -48,7 +51,7 @@ export class PhoneAuth {
       this.phone.set(phone);
       this.step.set('code');
     } catch (err) {
-      this.error.set(authMessage(err, 'Could not send the code. Please try again.'));
+      this.error.set(authMessage(err, tr('phoneAuth.couldNotSendThe', 'Could not send the code. Please try again.')));
     } finally {
       this.busy.set(false);
     }
@@ -57,7 +60,7 @@ export class PhoneAuth {
   protected async confirm(): Promise<void> {
     const code = this.code().trim();
     if (!code) {
-      this.error.set('Write the code from the text message.');
+      this.error.set(tr('phoneAuth.writeTheCodeFrom', 'Write the code from the text message.'));
       return;
     }
     this.busy.set(true);
@@ -66,7 +69,7 @@ export class PhoneAuth {
       await this.auth.confirmPhoneCode(code, this.linking);
       await this.router.navigateByUrl(this.linking ? '/settings/profile' : this.auth.landingPath());
     } catch (err) {
-      this.error.set(authMessage(err, 'That code did not work. Please try again.'));
+      this.error.set(authMessage(err, tr('phoneAuth.thatCodeDidNot', 'That code did not work. Please try again.')));
     } finally {
       this.busy.set(false);
     }

@@ -1,3 +1,4 @@
+import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { Component, ElementRef, effect, inject, input, signal, viewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { formatBytes } from '../core/image';
@@ -10,8 +11,9 @@ import { MediaRef } from '../models';
  */
 @Component({
   selector: 'app-media-video',
-  imports: [RouterLink],
+  imports: [RouterLink, TranslocoDirective],
   templateUrl: './media-video.html',
+  providers: [provideTranslocoScope('mediaVideo')],
 })
 export class MediaVideo {
   private readonly service = inject(MediaService);

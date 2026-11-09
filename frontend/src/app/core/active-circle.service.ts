@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { tr } from './i18n';
 
 /** The circles an app can be bound to: the id each one has on the server (friends is the first circle, `default`), and its name. */
 export const CIRCLE_CHOICES = [
@@ -35,9 +36,21 @@ const BASE: Record<string, Omit<CircleWords, 'One' | 'Many'>> = {
 };
 
 const cap = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
-const WORDS: Record<string, CircleWords> = Object.fromEntries(
-  Object.entries(BASE).map(([id, w]) => [id, { ...w, One: cap(w.one), Many: cap(w.many) }]),
-);
+/** The words of a circle: each one is looked up when it is read, so they follow the language of the app (public/i18n/<language>/common.json, `circle.<id>.<word>`). */
+function wordsOf(id: string): CircleWords {
+  const base = BASE[id];
+  const word = (key: keyof typeof base) => tr(`circle.${id}.${key}`, base[key]);
+  return {
+    get app() { return word('app'); },
+    get one() { return word('one'); },
+    get many() { return word('many'); },
+    get One() { return cap(word('one')); },
+    get Many() { return cap(word('many')); },
+    get hello() { return word('hello'); },
+    get slogan() { return word('slogan'); },
+  };
+}
+const WORDS: Record<string, CircleWords> = Object.fromEntries(Object.keys(BASE).map((id) => [id, wordsOf(id)]));
 
 /** The words of the circle with this id (a welcome page speaks the language of its own circle, whichever circle the app is in). */
 export function circleWords(id: string): CircleWords {

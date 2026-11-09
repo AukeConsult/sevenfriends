@@ -1,5 +1,6 @@
-import { DatePipe } from '@angular/common';
+import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { ActiveCircleService } from '../core/active-circle.service';
+import { AppDatePipe } from '../core/app-date.pipe';
 import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FriendsService } from '../core/friends.service';
@@ -12,8 +13,9 @@ import { FriendRequest } from '../models';
  */
 @Component({
   selector: 'app-pending',
-  imports: [DatePipe, RouterLink],
+  imports: [AppDatePipe, RouterLink, TranslocoDirective],
   templateUrl: './pending.html',
+  providers: [provideTranslocoScope('pending')],
 })
 export class Pending {
   protected readonly w = inject(ActiveCircleService).words;

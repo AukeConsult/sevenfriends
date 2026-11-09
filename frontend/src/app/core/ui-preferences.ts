@@ -1,4 +1,6 @@
 import { Injectable, Signal, computed, signal } from '@angular/core';
+import { isLanguage } from '../models/shared/languages';
+import { tr } from './i18n';
 
 /**
  * Everything the person chooses in THIS app on THIS device that is not part of their account
@@ -27,6 +29,8 @@ export interface UiPreferences {
   feedIcons: boolean;
   /** ready-made messages: they are listed in the + menu of a conversation and sent with one tap (at most QUICK_MAX, each at most QUICK_LENGTH characters) */
   quickMessages: string[];
+  /** the language of the texts of the app (a code of languages.ts); '' = not chosen on this device yet: the language of the account, the country or the browser is used (see language.service.ts) */
+  language: string;
   /** the first-time setup (/setup): 'new' = not offered yet, 'skipped' = left for later (Home offers it again), 'done' */
   setup: 'new' | 'skipped' | 'done';
   /** the page that was open last (a path like `/friends`), shown again when the app is opened at its start page; null = none */
@@ -57,11 +61,11 @@ export interface PendingFriend {
 
 /** The colour themes: `header` is the colour of the browser's address bar (the header colour of the theme in styles.scss); `dark` themes switch Bootstrap's dark mode on too. */
 export const THEMES = [
-  { key: 'light', label: 'Light', header: '#fde6c6', dark: false },
-  { key: 'dark', label: 'Dark', header: '#1f2430', dark: true },
-  { key: 'ocean', label: 'Ocean', header: '#d6eaf7', dark: false },
-  { key: 'forest', label: 'Forest', header: '#dcefd3', dark: false },
-  { key: 'rose', label: 'Rose', header: '#fbdde3', dark: false },
+  { key: 'light', get label() { return tr('core.light', 'Light'); }, header: '#fde6c6', dark: false },
+  { key: 'dark', get label() { return tr('core.dark', 'Dark'); }, header: '#1f2430', dark: true },
+  { key: 'ocean', get label() { return tr('core.ocean', 'Ocean'); }, header: '#d6eaf7', dark: false },
+  { key: 'forest', get label() { return tr('core.forest', 'Forest'); }, header: '#dcefd3', dark: false },
+  { key: 'rose', get label() { return tr('core.rose', 'Rose'); }, header: '#fbdde3', dark: false },
 ] as const;
 export type ThemeKey = (typeof THEMES)[number]['key'];
 
@@ -77,7 +81,7 @@ export const TEXT_SCALES: Record<UiPreferences['textSize'], number> = { tiny: 0.
 /** The same on a phone (a screen up to 575 px wide): one step up, so Small is what Normal was, Normal is what Big was, and Big is 15% more. */
 export const PHONE_TEXT_SCALES: Record<UiPreferences['textSize'], number> = { tiny: 0.9, small: 1, normal: 1.15, big: 1.3225, huge: 1.55 };
 
-export const DEFAULTS: UiPreferences = { theme: 'light', textSize: 'normal', settingsTab: 'profile', emojiTab: 'People', chatOrder: 'oldest', enterSends: true, sleepList: true, quickMessages: [], feedIcons: true, setup: 'new', lastPage: null, micRaw: false, pendingFriend: null, welcomeUntil: null, boxPlain: false, cleanupWhose: 'mine', cleanupDays: 30, friendQuick: {} };
+export const DEFAULTS: UiPreferences = { theme: 'light', textSize: 'normal', settingsTab: 'profile', emojiTab: 'People', chatOrder: 'oldest', enterSends: true, sleepList: true, quickMessages: [], feedIcons: true, language: '', setup: 'new', lastPage: null, micRaw: false, pendingFriend: null, welcomeUntil: null, boxPlain: false, cleanupWhose: 'mine', cleanupDays: 30, friendQuick: {} };
 
 /** The ready-made messages as stored: only texts, trimmed, not empty, not too long, not too many. */
 export function quickOf(value: unknown): string[] {
@@ -131,6 +135,7 @@ function read(): UiPreferences {
       sleepList: saved.sleepList !== false,
       quickMessages: quickOf(saved.quickMessages),
       feedIcons: saved.feedIcons !== false,
+      language: typeof saved.language === 'string' && isLanguage(saved.language) ? saved.language : '',
       setup: saved.setup === 'done' || saved.setup === 'skipped' ? saved.setup : 'new',
       lastPage: typeof saved.lastPage === 'string' && saved.lastPage.startsWith('/') ? saved.lastPage : null,
       micRaw: saved.micRaw === true,

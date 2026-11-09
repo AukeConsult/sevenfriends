@@ -1,3 +1,5 @@
+import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
+import { tr } from '../core/i18n';
 import { Location } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
@@ -9,8 +11,10 @@ import { MediaService, StoredFile } from '../core/media.service';
  * and can be saved on the device (Download: the bytes already read, saved under the file name of the message).
  */
 @Component({
+  imports: [TranslocoDirective],
   selector: 'app-media-viewer',
   templateUrl: './media-viewer.html',
+  providers: [provideTranslocoScope('mediaViewer')],
 })
 export class MediaViewer {
   private readonly location = inject(Location);
@@ -24,7 +28,7 @@ export class MediaViewer {
     inject(MediaService)
       .object(params.get('ownerId') ?? '', params.get('objectId') ?? '')
       .then((file) => this.file.set(file))
-      .catch((err) => this.error.set(err.message ?? 'Could not load the file'));
+      .catch((err) => this.error.set(err.message ?? tr('mediaViewer.couldNotLoadThe', 'Could not load the file')));
   }
 
   protected isAudio(file: StoredFile): boolean {

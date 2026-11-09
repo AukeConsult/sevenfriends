@@ -1,6 +1,8 @@
+import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { Component, OnDestroy, OnInit, inject, output, signal } from '@angular/core';
 import { UiPreferencesService } from '../core/ui-preferences';
 import { MAX_AUDIO_SECONDS, audioRecorderOptions, audioRecorderType } from '../core/audio';
+import { tr } from '../core/i18n';
 
 
 /** The app runs installed on an Android phone (not as a tab of the browser). */
@@ -23,17 +25,17 @@ export function micProblem(err: unknown, permission: string | null = null): stri
     case 'SecurityError':
       if (permission === 'denied') {
         return installedOnAndroid()
-          ? 'The microphone is switched off for this app. Open your phone Settings, tap Apps, Seven Friends, Permissions, Microphone, and choose Allow. Then come back here. If it still does not work, Android must also allow Chrome to use the microphone: Settings, Apps, Chrome, Permissions, Microphone, Allow.'
-          : 'The microphone is switched off for this site. Tap the lock or settings icon next to the web address, allow the microphone, and try again.';
+          ? tr('voice.theMicrophoneIsSwitched', 'The microphone is switched off for this app. Open your phone Settings, tap Apps, Seven Friends, Permissions, Microphone, and choose Allow. Then come back here. If it still does not work, Android must also allow Chrome to use the microphone: Settings, Apps, Chrome, Permissions, Microphone, Allow.')
+          : tr('voice.theMicrophoneIsSwitched2', 'The microphone is switched off for this site. Tap the lock or settings icon next to the web address, allow the microphone, and try again.');
       }
-      return 'Please tap the button below and choose Allow.';
+      return tr('voice.pleaseTapTheButton', 'Please tap the button below and choose Allow.');
     case 'NotFoundError':
     case 'OverconstrainedError':
-      return 'No microphone was found on this device.';
+      return tr('voice.noMicrophoneWasFound', 'No microphone was found on this device.');
     case 'NotReadableError':
-      return 'Another app is using the microphone. Close it and tap the button below.';
+      return tr('voice.anotherAppIsUsing', 'Another app is using the microphone. Close it and tap the button below.');
     default:
-      return 'The microphone did not start. Tap the button below to try again.';
+      return tr('voice.theMicrophoneDidNot', 'The microphone did not start. Tap the button below to try again.');
   }
 }
 
@@ -52,8 +54,10 @@ export const micMessage = async (err: unknown): Promise<string> => micProblem(er
  * silent the microphone is opened again **without the filters** and the person records again; that choice is remembered.
  */
 @Component({
+  imports: [TranslocoDirective],
   selector: 'app-voice',
   templateUrl: './voice.html',
+  providers: [provideTranslocoScope('voice')],
 })
 export class Voice implements OnInit, OnDestroy {
   readonly recorded = output<{ blob: Blob; durationMs: number }>();
@@ -78,8 +82,8 @@ export class Voice implements OnInit, OnDestroy {
   /** Only inside the installed app on Android: a link that opens this site in Chrome itself (a normal tab), where the lock icon next to the address leads to the microphone setting. A page cannot open the settings, this is the nearest it can go. */
   /** said when "Allow" was tapped and the browser did not ask anything: it is switched off, and only the person can switch it on, in the settings */
   protected readonly settingsSteps = installedOnAndroid()
-    ? 'The phone is not letting the app use the microphone. Press and hold the Seven Friends icon, tap App info, Permissions, Microphone, and choose Allow. Then come back here.'
-    : 'The microphone is switched off. Tap the lock or sliders icon at the left of the web address, then Permissions, and allow the Microphone (no icon: three dots, Settings, Site settings, Microphone). Then tap Try again.';
+    ? tr('voice.thePhoneIsNot', 'The phone is not letting the app use the microphone. Press and hold the Seven Friends icon, tap App info, Permissions, Microphone, and choose Allow. Then come back here.')
+    : tr('voice.theMicrophoneIsSwitched3', 'The microphone is switched off. Tap the lock or sliders icon at the left of the web address, then Permissions, and allow the Microphone (no icon: three dots, Settings, Site settings, Microphone). Then tap Try again.');
   protected readonly chromeLink = installedOnAndroid() ? `intent://${location.host}/#Intent;scheme=https;package=com.android.chrome;end` : null;
   /** nothing was heard with the filters on: the microphone was opened again without them, record again */
   protected readonly retried = signal(false);
@@ -178,7 +182,7 @@ export class Voice implements OnInit, OnDestroy {
   protected start(): void {
     const type = audioRecorderType();
     if (!this.stream || !type) {
-      this.failed.emit('This browser cannot record audio. Choose a file instead.');
+      this.failed.emit(tr('voice.thisBrowserCannotRecord', 'This browser cannot record audio. Choose a file instead.'));
       return;
     }
     const chunks: Blob[] = [];
