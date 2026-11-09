@@ -972,7 +972,10 @@ app-voice { display: contents; }
 
 // ---- Full-page choice rows (sound picker) ----
 .sf-pick { flex: 1; min-width: 0; display: flex; align-items: center; gap: 0.5rem; min-height: var(--sf-touch); padding: 0; border: 0; background: none; color: var(--sf-text); font: inherit; text-align: start; }
-.sf-pick-mark { flex: none; width: 1.5rem; color: var(--sf-primary); font-weight: 600; }
+.sf-pick-mark { flex: none; width: 1.25rem; color: var(--sf-primary); font-weight: 600; }
+.sf-pick-list .sf-list-item { padding: 0; gap: 0.5rem; } // compact rows: one touch height each, the divider runs the full width
+.sf-pick.sf-picked { font-weight: 600; color: var(--sf-primary); }
+.sf-pick-play { flex: none; min-width: 2.25rem; padding-inline: 0.5rem; }
 
 // ---- Presence dot on a seat icon: green = active, amber = away (screen hidden or off), gray = offline ----
 .sf-seat { position: relative; flex: none; display: inline-flex; }
@@ -1364,6 +1367,9 @@ button.sf-hs-sleep { padding: 0; border: 0; background: none; font: inherit; wid
   > li { padding: 0.625rem 0.75rem; border: 0; border-radius: 0.875rem; background: var(--sf-card); }
   > li:last-child { border-bottom: 0; } }
 .sf-home-ic { flex: none; display: grid; place-items: center; width: 2.25rem; height: 2.25rem; border-radius: 50%; background: var(--bs-primary-bg-subtle); font-size: 1.125rem; }
+.sf-home-cards > li.sf-list-item { flex-wrap: wrap; gap: 0.5rem 0.75rem; }
+/* the buttons of a card: under the text, small, side by side, never stretched */
+.sf-home-actions { flex: 1 0 100%; display: flex; flex-wrap: wrap; gap: 0.5rem; .btn { flex: 0 0 auto; } }
 .sf-home-cards .sf-message-head { justify-content: flex-start; .sf-message-actions { margin-inline-start: auto; } }
 
 /* the three welcome pages for Seven Buddies (/buddy1, /buddy2, /buddy3) */

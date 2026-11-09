@@ -91,13 +91,13 @@
       @if (toHelp().length) {
         <ul class="sf-list sf-home-cards">
           @for (item of toHelp(); track item.id) {
-            <li class="sf-list-item flex-wrap gap-2">
+            <li class="sf-list-item">
               <span class="sf-home-ic" aria-hidden="true">🔑</span>
               <span class="sf-list-text">
                 <strong>{{ item.friendName }}</strong>
                 <small>{{ item.status === 'asked' ? (t('notifications.recoveryAsksYou') || 'asks you to help open their old messages') : (t('notifications.recoveryYouHelp') || 'you are helping to open their old messages') }}</small>
               </span>
-              <span class="d-flex gap-2">
+              <span class="sf-home-actions">
                 <a class="btn btn-primary btn-sm" [routerLink]="['/friends', item.id, 'recovery']">{{ t('notifications.open') || 'Open' }}</a>
                 @if (item.status === 'asked') { <button type="button" class="btn btn-outline-secondary btn-sm" (click)="declineHelp(item)">{{ t('notifications.recoveryDecline') || 'Decline' }}</button> }
               </span>
@@ -110,13 +110,13 @@
       @if (declined().length) {
         <ul class="sf-list sf-home-cards">
           @for (item of declined(); track item.id) {
-            <li class="sf-list-item flex-wrap gap-2">
+            <li class="sf-list-item">
               <span class="sf-home-ic" aria-hidden="true">🔒</span>
               <span class="sf-list-text">
                 <strong>{{ item.friendName }}</strong>
                 <small>{{ t('notifications.recoveryDeclined') || 'declined your request to open your old messages' }}</small>
               </span>
-              <span class="d-flex gap-2">
+              <span class="sf-home-actions">
                 <a class="btn btn-primary btn-sm" [routerLink]="['/friends', item.id, 'recovery']">{{ t('notifications.recoveryAskAgain') || 'Ask again' }}</a>
                 <button type="button" class="btn btn-outline-secondary btn-sm" (click)="dismissDeclined(item)">{{ t('notifications.recoveryDismiss') || 'Dismiss' }}</button>
               </span>
@@ -138,8 +138,10 @@
                   <small class="text-warning-emphasis">{{ t('notifications.hasNotVerifiedPhone', { phone: request.fromUnverified.length === 2 ? (t('notifications.unverifiedAnd', { a: t('notifications.unverifiedEmail') || 'email', b: t('notifications.unverifiedPhone') || 'phone number' }) || 'their email or phone') : request.fromUnverified[0] === 'email' ? (t('notifications.unverifiedEmail') || 'their email') : (t('notifications.unverifiedPhone') || 'their phone') }) || 'Has not verified ' + (request.fromUnverified.length === 2 ? 'their email or phone' : request.fromUnverified[0] === 'email' ? 'their email' : 'their phone') + ': we cannot be sure it is really them.' }}</small>
                 }
               </span>
-              <button type="button" class="btn btn-primary" (click)="accept(request)">{{ t('notifications.confirm') || 'Confirm' }}</button>
-              <button type="button" class="btn btn-outline-secondary" (click)="reject(request)">{{ t('notifications.reject') || 'Reject' }}</button>
+              <span class="sf-home-actions">
+                <button type="button" class="btn btn-primary btn-sm" (click)="accept(request)">{{ t('notifications.confirm') || 'Confirm' }}</button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" (click)="reject(request)">{{ t('notifications.reject') || 'Reject' }}</button>
+              </span>
             </li>
           }
         </ul>
@@ -159,14 +161,14 @@
               <div class="sf-message-head">
                 @if (group.friend; as friend) { <app-friend-avatar [friend]="friend" [seat]="friend.seat ?? 1" [small]="true" [size]="36" /> }
                 <strong class="sf-ellipsis">{{ group.name }}@if (group.count > 1) { <span class="badge text-bg-primary ms-2">{{ group.count }}</span> }</strong>
-                <span class="sf-message-actions">
-                  @if (group.connectionId) {
-                    <a [routerLink]="['/friends', group.connectionId]" class="btn btn-primary btn-sm">{{ t('notifications.open') || 'Open' }}</a>
-                  }
-                  <button type="button" class="btn btn-outline-secondary btn-sm" (click)="markGroupRead(group)">{{ t('notifications.markRead') || 'Mark read' }}</button>
-                </span>
               </div>
               <span class="sf-wrap">{{ group.last.text }}@if (group.last.time) { <small class="sf-message-time ms-2">{{ group.last.time | appDate: 'short' }}</small> }</span>
+              <div class="sf-home-actions mt-2">
+                @if (group.connectionId) {
+                  <a [routerLink]="['/friends', group.connectionId]" class="btn btn-primary btn-sm">{{ t('notifications.open') || 'Open' }}</a>
+                }
+                <button type="button" class="btn btn-outline-secondary btn-sm" (click)="markGroupRead(group)">{{ t('notifications.markRead') || 'Mark read' }}</button>
+              </div>
               @if (group.connectionId) {
                 <form class="input-group input-group-sm mt-2" (submit)="$event.preventDefault(); sendReply(group)">
                   <input type="text" class="form-control" [attr.placeholder]="t('notifications.quickReply') || 'Quick reply'" [attr.aria-label]="(t('notifications.replyToGroupname', { groupName: group.name }) || 'Reply to ' + group.name)"

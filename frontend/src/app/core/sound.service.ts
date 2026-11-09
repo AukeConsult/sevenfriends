@@ -319,12 +319,11 @@ export class SoundService {
   }
 
   /**
-   * Plays the built-in sound of this event, whatever was chosen for it: the signal for something in ANOTHER circle, which has no sound of its own.
-   * Silent when the person switched this event's sound off (No sound): sounds that are off stay off.
+   * Plays the sound chosen for this event for something in ANOTHER circle: the person has ONE sound for all circles, so it is the same sound
+   * (silent when the person chose No sound).
    */
   playDefault(event: SoundEvent): void {
-    if (this.choices()[event] === 'none') return;
-    if (this.start(DEFAULTS[event])) this.alerting = true;
+    this.play(event);
   }
 
   /** Plays one sound to try it out on the Settings page: it replaces the one that is playing. Never throws. */

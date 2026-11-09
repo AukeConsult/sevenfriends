@@ -6,6 +6,7 @@ An app for staying in contact with your 7 closest friends.
 The long parts of this guide live in `docs/guide/`. Read only the file for the area you are working on:
 - `docs/guide/connections.md`: friend requests, seats, waiting list, deleting a friend / account, the rules the pool tests check. **Only a change to a connection rule needs the "change code + this guide + a test" routine.**
 - `docs/guide/live-and-notifications.md`: pings, live updates, sound, push, email, several devices, system settings.
+- `docs/notifications.md`: **the push rules** (delivery, TTL, one sound for all circles, Android channels, browser limits) and the Android notification screen. Read it before changing a push or a sound.
 - `docs/guide/messages-and-profile.md`: the message feed, profile, links in messages, friend links, sleep list, UI preferences.
 - `docs/guide/media-and-safebox.md`: the media cache, the safebox, pictures and memory.
 - `docs/design/safebox-encryption.md`: the proposed end-to-end encryption of the safebox (keys, data model, flows, rollout). Step 1 (the local device key, `core/device-key.ts`) is built; nothing uses it yet.

@@ -12,3 +12,4 @@ export * from "./profile-color";
 export * from "./preferences";
 export * from "./profile";
 export * from "./safebox";
+export * from "./sounds";

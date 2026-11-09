@@ -9,9 +9,10 @@
     "test": "ng test",
     "sync:models": "node ../scripts/sync-models.mjs",
     "sync:sounds": "node ../scripts/sounds-manifest.mjs",
-    "prestart": "npm run sync:models && npm run sync:sounds",
-    "prebuild": "npm run sync:models && npm run sync:sounds",
-    "prewatch": "npm run sync:models && npm run sync:sounds",
+    "sync:android-sounds": "node ../scripts/sync-android-sounds.mjs",
+    "prestart": "npm run sync:models && npm run sync:sounds && npm run sync:android-sounds",
+    "prebuild": "npm run sync:models && npm run sync:sounds && npm run sync:android-sounds",
+    "prewatch": "npm run sync:models && npm run sync:sounds && npm run sync:android-sounds",
     "pretest": "npm run sync:models"
   },
   "prettier": {

@@ -41,10 +41,13 @@ export class AndroidChannelsService {
 
   constructor() {
     if (!Capacitor.isNativePlatform()) return;
-    effect(() => this.tell(this.soundsJson()));
+    // not before the sounds are the person's own (chosen here or read from the account): the defaults must never replace the channels of a chosen sound
+    effect(() => {
+      if (this.sounds.defined()) this.tell(this.soundsJson());
+    });
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible') {
-        this.tell(this.soundsJson());
+        if (this.sounds.defined()) this.tell(this.soundsJson());
         this.readStatus();
       }
     });

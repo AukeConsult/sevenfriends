@@ -5,7 +5,8 @@ import { DocumentReference, FieldValue, getFirestore } from "firebase-admin/fire
 import { getMessaging } from "firebase-admin/messaging";
 import { asyncHandler, requireAuth } from "./auth";
 import { DEFAULT_CIRCLE_ID, PUSH_DEVICE_COLLECTION, circleIdForType, circleTypeOf } from "./constants";
-import { CIRCLE_TYPES } from "./models";
+import { CIRCLE_TYPES, androidKeyOf } from "./models";
+import { setting } from "./settings";
 import { circleCol, pushDeviceCol, readFields, userFields } from "./paths";
 import { noticesOf } from "./preferences";
 import { deleteRefs } from "./signals";
@@ -56,11 +57,6 @@ export interface PushResult {
  * here and in Channels.java. "none" = "silent"; any other choice (a built-in sound, which only the browser can make) = "default"
  * (the phone's own sound).
  */
-const SOUND_KEY_BY_JINGLE: Record<string, string> = {
-  "SevenFriends_raw1_Drill.mp3": "drill",
-  "SevenFriends_raw2_Hyper.mp3": "hyper",
-  "SevenFriends_raw3_AcidBreaks.mp3": "acidbreaks",
-};
 
 /** The sound this person chose for this kind of push: "none", a built-in sound, or "file:<file name>"; null = not chosen (or "removed"). */
 function soundChoice(data: Record<string, any> | undefined, kind: PushMessage["kind"]): string | null {
@@ -71,7 +67,7 @@ function soundChoice(data: Record<string, any> | undefined, kind: PushMessage["k
 
 /** One channel for each kind and sound: `friends_<kind>_<sound>` (friends_message_drill ...); the Android app makes them (Channels.java). The same set serves every circle. */
 const channelFor = (kind: PushMessage["kind"], choice: string | null): string => {
-  const sound = choice === "none" ? "silent" : choice?.startsWith("file:") ? (SOUND_KEY_BY_JINGLE[choice.slice(5)] ?? "default") : "default";
+  const sound = androidKeyOf(choice);
   return `friends_${kind}_${sound}`;
 };
 
@@ -99,15 +95,25 @@ export async function nameOf(uid: string, token?: DecodedIdToken, circleId: stri
   return shown ?? (data?.displayName as string | undefined) ?? token?.name ?? token?.email ?? "Someone";
 }
 
+/**
+ * How long the push services keep a push for a device that is off or offline: the setting PUSH_TTL_DAYS (1 to 28). 0 = send no TTL at all: Firebase
+ * then keeps it for its own default, 4 weeks, which is also the longest it ever keeps one (there is no "forever"). null = no TTL sent.
+ */
+const pushTtlSeconds = (): number | null => {
+  const days = Math.floor(Number(setting("PUSH_TTL_DAYS")) || 0);
+  return days <= 0 ? null : Math.min(28, days) * 24 * 60 * 60;
+};
+
 /** One FCM send to some devices; the devices FCM says are gone are removed. Returns how many were reached. */
 async function deliver(devices: Device[], message: { data: Record<string, string>; android: { priority: "high"; notification: { channelId: string; title: string; body: string } } }): Promise<number> {
+  const ttl = pushTtlSeconds();
   const result = await getMessaging().sendEachForMulticast({
     tokens: devices.map((d) => d.token),
     // data only for the web: the app's service worker shows it (so it can use the event id and open the right page)
     data: message.data,
-    webpush: { headers: { Urgency: "high", TTL: "3600" } },
+    webpush: { headers: { Urgency: "high", ...(ttl === null ? {} : { TTL: String(ttl) }) } },
     // the notification block is what lets Android show it in the chosen channel (with its jingle) while the app is closed
-    android: message.android,
+    android: { ...message.android, ...(ttl === null ? {} : { ttl: ttl * 1000 }) },
   });
   const dead: DocumentReference[] = [];
   result.responses.forEach((r, i) => {
@@ -120,7 +126,7 @@ async function deliver(devices: Device[], message: { data: Record<string, string
 /**
  * Sends a push to every device of `uid`. Never throws (the answer says what happened).
  * A device that is in the circle the push is about gets it as it is (the text, the sound the person chose for this kind). A device that is in ANOTHER circle
- * (the app tells the server which one it is in) gets only "Activity in <circle>", with the default message sound and no text: what happened in a circle
+ * (the app tells the server which one it is in) gets only "Activity in <circle>", with the person's own message sound and no text: what happened in a circle
  * is shown in detail only while the person is in it. A tap on that one switches the app to the circle (`opencircle`).
  */
 export async function sendPush(uid: string, push: PushMessage): Promise<PushResult> {
@@ -139,6 +145,7 @@ export async function sendPush(uid: string, push: PushMessage): Promise<PushResu
     const body = notices.hideText && !push.force ? (push.kind === "message" ? "New message" : "") : cut(push.body, MAX_BODY);
     const away = push.force ? [] : devices.filter((d) => d.circleId && d.circleId !== circleId);
     const here = devices.filter((d) => !away.includes(d));
+    const awayChoice = soundChoice(account, "message");
     const awayTitle = `Activity in ${CIRCLE_LABEL[circleType] ?? circleType}`;
 
     const delivered = await Promise.all([
@@ -151,8 +158,9 @@ export async function sendPush(uid: string, push: PushMessage): Promise<PushResu
         : 0,
       away.length
         ? deliver(away, {
-            data: { id: push.id, title: awayTitle, body: "", url: withOpen(push.url, circleType), circle: circleType },
-            android: { priority: "high", notification: { channelId: channelFor("message", null), title: awayTitle, body: "" } }, // the default message sound
+            // the sound is the person's ONE sound for a message, whatever circle the app was last in (only "No sound" silences it)
+            data: { id: push.id, title: awayTitle, body: "", url: withOpen(push.url, circleType), circle: circleType, ...(awayChoice === "none" ? { silent: "1" } : {}) },
+            android: { priority: "high", notification: { channelId: channelFor("message", awayChoice), title: awayTitle, body: "" } },
           })
         : 0,
     ]);

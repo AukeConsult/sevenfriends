@@ -1,18 +1,20 @@
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
+import { NgTemplateOutlet } from '@angular/common';
 import { Component, computed, DestroyRef, inject } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { SOUND_CHOICES, SOUND_EVENTS, SoundEvent, SoundId, SoundService } from '../core/sound.service';
 
 /** A full page to pick the sound for one event (no drop-down that would open outside the screen). */
 @Component({
   selector: 'app-sound-picker',
-  imports: [RouterLink, TranslocoDirective],
+  imports: [NgTemplateOutlet, TranslocoDirective],
   templateUrl: './sound-picker.html',
   providers: [provideTranslocoScope('soundPicker')],
 })
 export class SoundPicker {
   protected readonly sounds = inject(SoundService);
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
 
   protected readonly event = computed<SoundEvent>(() => {
     const id = this.route.snapshot.paramMap.get('event');
@@ -39,10 +41,11 @@ export class SoundPicker {
     });
   }
 
-  /** Choosing a sound plays it, so you hear what you picked. */
+  /** Choosing a sound selects it and goes back (it does not play: the ▶ on each row is for listening first). */
   protected choose(sound: string): void {
+    this.sounds.stop();
     this.sounds.choose(this.event(), sound as SoundId);
-    this.sounds.preview(sound as SoundId, sound);
+    void this.router.navigate([this.fromSetup ? '/setup' : '/settings/notifications'], { queryParams: this.fromSetup ? { step: 'sounds' } : null });
   }
 
   protected toggle(sound: string): void {

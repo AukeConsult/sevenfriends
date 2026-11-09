@@ -15,12 +15,22 @@ import { fileURLToPath } from "node:url";
 const folder = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../frontend/public/sounds");
 const AUDIO = /\.(mp3|wav|ogg|m4a|aac)$/i;
 
+/** "SevenFriends_raw3_AcidBreaks.mp3" -> "Acid Breaks": the numbering prefix goes, underscores become spaces, a capital inside a word starts a new word */
+function labelOf(file) {
+  return file
+    .replace(AUDIO, "")
+    .replace(/^SevenFriends[ _]?raw\d+[ _]?/i, "")
+    .replace(/_+/g, " ")
+    .replace(/([a-z])([A-Z])/g, "$1 $2")
+    .trim();
+}
+
 fs.mkdirSync(folder, { recursive: true });
 const jingles = fs
   .readdirSync(folder)
   .filter((file) => AUDIO.test(file))
   .sort((a, b) => a.localeCompare(b))
-  .map((file) => ({ file, label: file.replace(AUDIO, "").replace(/[_]+/g, " ").trim() }));
+  .map((file) => ({ file, label: labelOf(file) }));
 
 const target = path.join(folder, "sounds.json");
 const text = JSON.stringify({ jingles }, null, 2) + "\n";

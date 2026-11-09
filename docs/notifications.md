@@ -1,11 +1,21 @@
 # Notifications
 
+## The push rules (all in one place)
+1. **Delivery.** `sendPush(uid, ...)` in `functions/src/push.ts` sends through Firebase Cloud Messaging (Admin SDK, `sendEachForMulticast`) to EVERY device of the person: browsers and installed web apps by the Web Push protocol (HTTP, through the browser's own push service), Android by its native Firebase connection. It never throws; tokens FCM says are gone are removed. The Windows app has no push while it is closed.
+2. **What is sent is decided by the account**, for all devices: a kind (`message`, `request`, `answer`, `removed`) switched off is not sent (the test push ignores that); "hide the text" sends "New message" instead of the text.
+3. **Lifetime (TTL).** A push waits for a device that is off or offline for `PUSH_TTL_DAYS` (setting in `functions/.env`, default 28, 1 to 28; 0 = send no TTL and Firebase keeps it its own 4 weeks). Firebase never keeps one longer, there is no "forever". Web Push is sent with `Urgency: high`; Android with high priority. The same event id is shown once (the tag on the notification).
+4. **ONE sound for everything.** The sound is the person's choice per kind, saved once on the account (`soundPreferences`), the same in every circle. The ids are in ONE list, `functions/src/models/shared/sounds.ts` (`SOUNDS`, `androidKeyOf`); the server names the Android channel `friends_<kind>_<androidKey>` from it, the Android app gets the same list as the generated `SoundIds.java` (`npm run sync:android-sounds`, run by itself before every frontend start / build / watch and before `android:sync` / `android:open`; `functions/test/sounds.test.ts` guards it). A choice saved under an older file name still finds its jingle by the name in it.
+5. **A push plays that sound whatever circle it is about.** A device in the circle gets the text; a device in ANOTHER circle gets only "Activity in <circle>" (no text) with the SAME chosen message sound. Only "No sound" silences it. (A muted circle will be the one exception; not built.)
+6. **Android:** the OS shows the push from the channel, so the app can be closed or hidden and the jingle still plays. The page stays quiet while the app is hidden and push is on (`pushCovers()`), or everything would sound twice. The page tells Android the sounds only once they are the person's own (chosen here or read from the account), never the defaults. A push for a channel the phone does not have is shown by Firebase's own "Miscellaneous" channel (no chosen sound): the app makes the channels at start and whenever the choice changes.
+7. **Browser and installed web app:** the push is data only; the service worker (`public/firebase-messaging-sw.js`) shows it, except when a window of the app is visible AND focused: then the page shows it itself (sound, list, note for another circle). A browser notification can only play the system's default sound, or be silent (`silent: "1"` = "No sound"): it can NOT play the chosen jingle. Only the open page can, and only while the browser keeps the page running (after the first tap or key press; a frozen or discarded hidden tab hears nothing). A hidden tab that is still alive can give the page sound AND the system notification. Needs HTTPS, notification permission and a registered device; on iPhone only the installed web app.
+8. **A tap** brings the app to the front and opens the page of the push (`?incircle=` for a push about the circle the app is in, `?opencircle=` for "Activity in <circle>", which switches the circle at once).
+
 ## What is sent
 `functions/src/push.ts` `sendPush(uid, {id,title,body,url,kind})`. `kind` is `message`, `request`, `answer` or `removed`.
 
 | Device | How it is shown |
 |---|---|
-| Web / installed web app | data-only FCM message, shown by `public/firebase-messaging-sw.js` |
+| Web / installed web app | data-only FCM message (Web Push over HTTP), shown by `public/firebase-messaging-sw.js` (system sound or silent only, see rule 7) |
 | Android app | FCM `notification` block with `channelId`; the OS shows it even when the app is closed |
 | Windows app | the page shows a tray balloon while the app runs. WNS push (app closed) is NOT done: needs a Microsoft registration, MSIX packaging, a device kind in `push.ts` and WNS credentials |
 
@@ -21,7 +31,7 @@ Settings -> "Send me a test notification" calls `POST /push/test` and shows how 
 
 ## Several circles
 - The device tells the server which circle the app is in (`POST /push/devices { token, app, circle }` when it registers, `PUT /push/devices/circle { token, circle }` at every switch of circle: `PushService`). The server keeps it as `circleId` on the device.
-- `sendPush` (push.ts): a device in the circle the push is about (or one that never told) gets the push as it is: the text, the sound the person chose for that kind, url with `?incircle=<type>` (if the app is not in that circle after all, it asks before switching). A device in ANOTHER circle gets only "Activity in <Circle>": no text, the default message sound (`friends_message_default`), url with `?opencircle=<type>`. A tap on it switches the app to that circle at once and opens the page (`CircleSwitch`). The switches (message / request / answer / removed) decide for both. The web app shows nothing for a push while it is in front (it hears every circle itself).
+- `sendPush` (push.ts): a device in the circle the push is about (or one that never told) gets the push as it is: the text, the sound the person chose for that kind, url with `?incircle=<type>` (if the app is not in that circle after all, it asks before switching). A device in ANOTHER circle gets only "Activity in <Circle>": no text, the person's own message sound (the ONE sound for all circles: the channel of the chosen message sound, silent only for No sound), url with `?opencircle=<type>`. A tap on it switches the app to that circle at once and opens the page (`CircleSwitch`). The switches (message / request / answer / removed) decide for both. The web app shows nothing for a push while it is in front (it hears every circle itself).
 - The push text is still English: the backend texts are translated in the last step.
 
 ## Badge

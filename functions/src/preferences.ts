@@ -3,11 +3,11 @@ import { Router } from "express";
 import { DecodedIdToken } from "firebase-admin/auth";
 import { FieldValue } from "firebase-admin/firestore";
 import { asyncHandler, requireAuth } from "./auth";
-import { NoticePreferences, Preferences, SoundPreferences } from "./models";
+import { BUILT_IN_SOUND_IDS, NoticePreferences, Preferences, SoundPreferences } from "./models";
 import { userDoc, userFields } from "./paths";
 
 /** The built-in sounds (the same list as the app's SoundService). */
-const BUILT_IN = new Set(["none", "ding", "chime", "bell", "pop", "marimba", "soft"]);
+const BUILT_IN = new Set(BUILT_IN_SOUND_IDS);
 const MAX_FILE_NAME = 200;
 
 const uidOf = (res: { locals: Record<string, unknown> }) => (res.locals.token as DecodedIdToken).uid;

@@ -124,7 +124,7 @@ describe("a device in another circle than the push is about", () => {
     expect(await circleOfDevice("uid01", token(1))).toBe("family");
   });
 
-  it("a device in the circle gets the push as it is, a device in another circle only 'Activity in <circle>' (no text, default message sound, opens that circle)", async () => {
+  it("a device in the circle gets the push as it is, a device in another circle only 'Activity in <circle>' (no text, opens that circle)", async () => {
     await registerIn(u(1), token(1, "here"), "work");
     await registerIn(u(1), token(1, "away"), "default");
     await registerIn(u(1), token(1, "unknown")); // never told: as it is
@@ -138,6 +138,21 @@ describe("a device in another circle than the push is about", () => {
     expect(away.data).toEqual({ id: "message-m1", title: "Activity in Work", body: "", url: "/friends/c1?opencircle=work", circle: "work" });
     expect(JSON.stringify(away)).not.toContain("a secret");
     expect((away.android as { notification: { channelId: string } }).notification.channelId).toBe("friends_message_default");
+  });
+
+  it("a device in another circle plays the person's ONE chosen message sound too, and is silent only for No sound", async () => {
+    await registerIn(u(1), token(1, "away"), "default");
+    await sounds(u(1), { message: "file:SevenFriends_raw2_Hyper.mp3" });
+    sentPushes.length = 0;
+    await aboutWork();
+    const away = sentPushes.find((p) => p.tokens.includes(token(1, "away")))!;
+    expect((away.android as { notification: { channelId: string } }).notification.channelId).toBe("friends_message_hyper");
+    await sounds(u(1), { message: "none" });
+    sentPushes.length = 0;
+    await aboutWork();
+    const quiet = sentPushes.find((p) => p.tokens.includes(token(1, "away")))!;
+    expect((quiet.android as { notification: { channelId: string } }).notification.channelId).toBe("friends_message_silent");
+    expect(quiet.data).toMatchObject({ silent: "1" });
   });
 
   it("the Android channels are the one set (friends_...) whatever the circle, and the switches still decide what is sent", async () => {

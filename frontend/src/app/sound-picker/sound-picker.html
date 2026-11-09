@@ -1,50 +1,36 @@
 <ng-container *transloco="let t">
-<div class="sf-back-row">
-  <a [routerLink]="fromSetup ? '/setup' : '/settings/notifications'" [queryParams]="fromSetup ? { step: 'sounds' } : null" class="btn btn-light" (click)="sounds.stop()" [attr.aria-label]="t('soundPicker.backToSounds') || 'Back to sounds'">{{ t('soundPicker.back') || '‹ Back' }}</a>
-</div>
-<div class="sf-page-head">
-  <h1>{{ item().label }}</h1>
-</div>
+<main class="sf-narrow sf-page-first">
+  <p class="sf-hint m-0">{{ t('soundPicker.hintTapASound', { hint: item().hint }) || item().hint + '. Tap a sound to choose it, ▶ to listen first. It is used in all your circles.' }}</p>
 
-<main class="sf-narrow">
-  <p class="sf-hint">{{ t('soundPicker.hintTapASound', { hint: item().hint }) || item().hint + '. Tap a sound to choose it and hear it.' }}</p>
+  <ul class="sf-list sf-pick-list" role="radiogroup" [attr.aria-label]="(t('soundPicker.soundForLabel', { label: item().label }) || 'Sound for ' + item().label)">
+    <ng-container *ngTemplateOutlet="row; context: { id: 'none', label: choices[0].label }" />
+  </ul>
 
   @if (jingles().length) {
     <h2 class="sf-section">{{ t('soundPicker.sevenFriendsJingles') || 'Seven Friends jingles' }}</h2>
-    <ul class="sf-list" role="radiogroup" [attr.aria-label]="t('soundPicker.sevenFriendsJingles') || 'Seven Friends jingles'">
+    <ul class="sf-list sf-pick-list" role="radiogroup" [attr.aria-label]="t('soundPicker.sevenFriendsJingles') || 'Seven Friends jingles'">
       @for (jingle of jingles(); track jingle.file) {
-        <li class="sf-list-item">
-          <button type="button" class="sf-pick" role="radio" [attr.aria-checked]="current() === 'file:' + jingle.file" (click)="choose('file:' + jingle.file)">
-            <span class="sf-pick-mark" aria-hidden="true">{{ current() === 'file:' + jingle.file ? '✓' : '' }}</span>{{ jingle.label }}
-          </button>
-          @if (sounds.playingKey() === 'file:' + jingle.file) {
-            <button type="button" class="btn btn-sm btn-outline-primary" (click)="toggle('file:' + jingle.file)"
-                  [attr.aria-label]="(sounds.playingKey() === 'file:' + jingle.file ? 'Stop ' : 'Play ') + jingle.label">{{ sounds.playingKey() === 'file:' + jingle.file ? (t('soundPicker.stop') || '■ Stop') : (t('soundPicker.play') || '▶ Play') }}</button>
-          }
-        </li>
+        <ng-container *ngTemplateOutlet="row; context: { id: 'file:' + jingle.file, label: jingle.label }" />
       }
     </ul>
-  }
-
-  @if (jingles().length) {
     <h2 class="sf-section">{{ t('soundPicker.otherSounds') || 'Other sounds' }}</h2>
   }
-  <ul class="sf-list" role="radiogroup" [attr.aria-label]="(t('soundPicker.soundForLabel', { label: item().label }) || 'Sound for ' + item().label)">
-    @for (option of choices; track option.id) {
-      <li class="sf-list-item">
-        <button type="button" class="sf-pick" role="radio" [attr.aria-checked]="current() === option.id" (click)="choose(option.id)">
-          <span class="sf-pick-mark" aria-hidden="true">{{ current() === option.id ? '✓' : '' }}</span>{{ option.label }}
-        </button>
-        @if (option.id !== 'none') {
-          @if (sounds.playingKey() === option.id) {
-          <button type="button" class="btn btn-sm btn-outline-primary" (click)="toggle(option.id)"
-                  [attr.aria-label]="(sounds.playingKey() === option.id ? 'Stop ' : 'Play ') + option.label">{{ sounds.playingKey() === option.id ? (t('soundPicker.stop') || '■ Stop') : (t('soundPicker.play') || '▶ Play') }}</button>
-          }
-        }
-      </li>
+  <ul class="sf-list sf-pick-list" role="radiogroup">
+    @for (option of choices.slice(1); track option.id) {
+      <ng-container *ngTemplateOutlet="row; context: { id: option.id, label: option.label }" />
     }
   </ul>
-
-  <a [routerLink]="fromSetup ? '/setup' : '/settings/notifications'" [queryParams]="fromSetup ? { step: 'sounds' } : null" class="btn btn-primary" (click)="sounds.stop()">{{ t('soundPicker.done') || 'Done' }}</a>
 </main>
+
+<ng-template #row let-id="id" let-label="label">
+  <li class="sf-list-item">
+    <button type="button" class="sf-pick" role="radio" [class.sf-picked]="current() === id" [attr.aria-checked]="current() === id" (click)="choose(id)">
+      <span class="sf-pick-mark" aria-hidden="true">{{ current() === id ? '✓' : '' }}</span>{{ label }}
+    </button>
+    @if (id !== 'none') {
+      <button type="button" class="btn btn-sm btn-outline-primary sf-pick-play" (click)="toggle(id)"
+              [attr.aria-label]="(sounds.playingKey() === id ? 'Stop ' : 'Play ') + label">{{ sounds.playingKey() === id ? '■' : '▶' }}</button>
+    }
+  </li>
+</ng-template>
 </ng-container>
