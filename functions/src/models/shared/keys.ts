@@ -83,7 +83,25 @@ export function readableFingerprint(fingerprint: string): string {
  * Recovery (design: docs/design/message-encryption.md): a person with a NEW key asks their friend to open the old messages and safebox files for it. The friend's
  * device opens each message key with its own key and locks it again for the new key; only the keys move. One request per friendship.
  */
-export type RecoveryStatus = "none" | "asked" | "approved" | "done";
+export type RecoveryStatus = "none" | "asked" | "approved" | "declined" | "done";
+
+/**
+ * One request of mine in the list on Home (GET /recovery, all my circles): as the friend who is asked (`helper`) or as the one who asked (`requester`).
+ * `declined` and `done` are only news on their way (see docs/design/recovery-by-friend.md): they are deleted when the asker's app has shown them.
+ */
+export interface RecoveryItem {
+  /** the id of the friendship (the friend's id in my circle) */
+  id: string;
+  /** my circle of that friendship */
+  circleId: string;
+  role: "requester" | "helper";
+  status: Exclude<RecoveryStatus, "none">;
+  friendName: string;
+  total: number;
+  added: number;
+  /** when the request was made (ISO), the app tells a new one from one it has seen */
+  createdAt: string | null;
+}
 
 /** What GET .../recovery returns. `role` is mine in this request: the one who asked (requester) or the friend who is asked (helper). */
 export interface RecoveryState {

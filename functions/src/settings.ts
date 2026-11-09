@@ -11,6 +11,8 @@ export const DEFAULTS = {
   MAIL_TRIGGER_REGION: "europe-west1",
   /** the file that sets how the invitation email LOOKS (HTML), relative to the functions folder; delete the file to send text only */
   INVITE_EMAIL_TEMPLATE: "assets/mail/invite.html",
+  /** how many times one person can ask a friend for key recovery in a day; 0 = no limit (off while it is being tested, 3 is the plan: docs/design/recovery-by-friend.md) */
+  RECOVERY_ASKS_PER_DAY: "0",
   /** the subject of the invitation email */
   INVITE_EMAIL_SUBJECT: "{fromName} invited you to {appName}",
   /** the text of the invitation email */

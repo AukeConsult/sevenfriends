@@ -35,5 +35,12 @@
   "askFriendnameToHelp": "Ask {{ friendName }} to help",
   "checking": "Checking…",
   "couldNotReadThe": "Could not read the request",
-  "thatDidNotWork": "That did not work"
+  "thatDidNotWork": "That did not work",
+  "friendnameDeclined": "{{ friendName }} said no",
+  "theyDidNotOpen": "They did not open your old messages. You can ask again, or use one of your own devices or your 24 recovery words (Settings, Keys).",
+  "askAgain": "Ask again",
+  "dismiss": "Dismiss",
+  "decline": "Decline",
+  "youDeclined": "You said no. {{ friendName }} has been told.",
+  "alsoWhenNothing": "You can ask at any time, also when nothing is locked for you: {{ friendName }} then locks everything again for all your keys, and has to say yes each time."
 }

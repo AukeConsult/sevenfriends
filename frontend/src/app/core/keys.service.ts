@@ -6,6 +6,7 @@ import { StoredDeviceKey, deleteDeviceKey, deviceKeySupported, deviceKeyWorks, g
 import { lockBackup, unlockBackup } from './key-backup';
 import { keyOf, newRecoveryKey, wordsOf } from './recovery-code';
 import { tr } from './i18n';
+import { deviceLabel } from './device-name';
 
 /** How a restore from the recovery words ended. */
 export type RestoreResult = 'ok' | 'bad-words' | 'no-backup' | 'wrong-code' | 'no-key';
@@ -111,6 +112,7 @@ export class KeysService {
       this.elsewhere.set(!ready && mine.keys.some((k) => !k.revoked));
       this.state.set(ready ? 'ready' : 'none');
       if (ready) void keepDeviceKey(); // ask again on every visit: the browser may grant it later, and then it does not clear the key
+      if (ready && local && found && found.label !== deviceLabel()) void this.relabel(local.publicKey, found.id);
     } catch {
       // the server (or the key store) could not be asked: a key that was known to be ready stays; otherwise the person can still try to set up
       if (this.state() !== 'ready') this.state.set('none');
@@ -166,7 +168,7 @@ export class KeysService {
     try {
       await saveDeviceKey(uid, pending.key);
       // the key and its backup are stored in ONE step on the server: a key is never published without its backup (nor a backup without its key)
-      await this.api.request('/keys', { method: 'POST', body: JSON.stringify({ publicKey: pending.publicKey, label: this.label(), backup: pending.backup }) });
+      await this.api.request('/keys', { method: 'POST', body: JSON.stringify({ publicKey: pending.publicKey, label: deviceLabel(), backup: pending.backup }) });
       // and it is read back: the key counts as made only when the server lists it as in use ...
       await this.refresh();
       const id = keyIdOf((await fingerprintOf(pending.publicKey))!);
@@ -185,10 +187,21 @@ export class KeysService {
     if (pending.replaces && pending.replaces !== this.thisKeyId()) await this.revoke(pending.replaces);
   }
 
-  /** A name for this device in the list of keys. */
-  private label(): string {
-    const app = (window as unknown as { SevenFriendsAndroid?: unknown }).SevenFriendsAndroid ? tr('core.androidApp', 'Android app') : 'Browser';
-    return `${app}, ${new Date().toISOString().slice(0, 10)}`;
+  private relabelled = new Set<string>();
+
+  /** The key of this device gets the name that tells its kind and device (an older key only had "Browser, <date>"). Checked on every start and refresh of the app (a name that is already right is not sent again). */
+  private async relabel(jwk: JsonWebKey, id: string): Promise<void> {
+    if (this.relabelled.has(id)) return;
+    this.relabelled.add(id);
+    const publicKey = canonicalPublicKey(jwk);
+    if (!publicKey) return;
+    try {
+      const label = deviceLabel();
+      await this.api.request('/keys', { method: 'POST', body: JSON.stringify({ publicKey, label }) });
+      this.published.update((list) => list.map((k) => (k.id === id ? { ...k, label } : k)));
+    } catch {
+      this.relabelled.delete(id); // the old name stays; the next refresh tries again
+    }
   }
 
   /** Retires a key of mine (a lost or replaced device): it is no longer used for new files. */

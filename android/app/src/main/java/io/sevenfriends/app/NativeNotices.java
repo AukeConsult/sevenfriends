@@ -101,6 +101,30 @@ final class NativeNotices {
         });
     }
 
+    /**
+     * The phone's model for the list of keys (device-name.ts): the maker and the model ("Samsung SM-S918B", "Google Pixel 8"). The browser inside
+     * hides the model, so the app tells it. Read straight away (no answer later).
+     */
+    @JavascriptInterface
+    public String deviceModel() {
+        String maker = Build.MANUFACTURER == null ? "" : Build.MANUFACTURER.trim();
+        String model = Build.MODEL == null ? "" : Build.MODEL.trim();
+        if (!maker.isEmpty() && model.toLowerCase().startsWith(maker.toLowerCase())) return model; // some models already begin with the maker
+        String name = (maker + " " + model).trim();
+        return name.isEmpty() ? "Android" : name.substring(0, 1).toUpperCase() + name.substring(1);
+    }
+
+    /** The name the owner gave the phone in Android's settings ("Leif's Pixel"), or "" when it has none or the system does not tell it. */
+    @JavascriptInterface
+    public String deviceName() {
+        try {
+            String name = Settings.Global.getString(activity.getContentResolver(), "device_name");
+            return name == null ? "" : name.trim();
+        } catch (RuntimeException e) {
+            return "";
+        }
+    }
+
     /** Android's notification settings of this app (only the person can switch notifications on again: an app cannot). */
     @JavascriptInterface
     public void openNotificationSettings() {

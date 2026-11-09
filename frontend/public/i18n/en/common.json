@@ -163,6 +163,11 @@
     "theKeyCouldNot2": "The key could not be saved on the server. Try again.",
     "theKeyOnThis": "The key on this device could not be checked. Try again.",
     "androidApp": "Android app",
+    "iphoneApp": "iPhone app",
+    "windowsApp": "Windows app",
+    "browser": "Browser",
+    "browserApp": "Browser app",
+    "browserOnDevice": "{{ browser }} on {{ device }}",
     "thereIsNoEncryption": "There is no encryption key on this device. Set one up (or restore it) in Settings → Keys.",
     "thisFileCouldNot2": "This file could not be opened.",
     "thisFileIsLocked": "This file is locked. Open the conversation first, then try again.",
@@ -278,5 +283,9 @@
     "pokeAnyway": "Poke anyway",
     "makesASound": "makes a sound",
     "activityIn": "Activity in {{ circle }}"
-  }
+  },
+  "needsYourHelp": "{{ friendName }} needs your help",
+  "openToUnlockTheir": "Open the app to unlock their old messages again.",
+  "openedYourHistory": "{{ friendName }} opened your history",
+  "declinedYourRequest": "{{ friendName }} declined your request"
 }

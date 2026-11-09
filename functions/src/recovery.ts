@@ -3,11 +3,15 @@ import { DecodedIdToken } from "firebase-admin/auth";
 import { DocumentData, DocumentReference, FieldValue, Timestamp, getFirestore } from "firebase-admin/firestore";
 import { asyncHandler, requireAuth } from "./auth";
 import { MAX_WRAPS, wrapValid } from "./box-encryption";
+import { shownNameOf } from "./circle-profile";
+import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, RECOVERY_COLLECTION } from "./constants";
 import { connectionOf } from "./conversation";
 import { publishedKeysOf } from "./keys";
-import { RecoveryState, RecoveryTodo, RecoveryTodoItem, SafeboxWrap } from "./models";
-import { messageCol, recoveryDoc, safeboxItems } from "./paths";
+import { RecoveryItem, RecoveryState, RecoveryTodo, RecoveryTodoItem, SafeboxWrap } from "./models";
+import { circleCol, messageCol, recoveryDoc, safeboxItems } from "./paths";
+import { touchSync } from "./sync";
 import { nameOf, sendPush } from "./push";
+import { setting } from "./settings";
 
 /**
  * Recovery (design: docs/design/message-encryption.md): somebody with a NEW key (the one who asks, the requester) asks their friend (the helper) to open the old
@@ -32,6 +36,50 @@ const timeOf = (cursor: string): Timestamp | null => {
   return m ? new Timestamp(Number(m[1]), Number(m[2])) : null;
 };
 
+const DAY_MS = 24 * 60 * 60 * 1000;
+/** A request that nobody answered or finished is gone after this long (design: docs/design/recovery-by-friend.md). */
+const REQUEST_LIFE_MS = 7 * DAY_MS;
+/** `done` is only the news "your friend opened your history" on its way: kept at most this long if the asker's app never shows it. */
+const DONE_LIFE_MS = DAY_MS;
+/** How many times one person can ask in a day: the setting RECOVERY_ASKS_PER_DAY (0 = no limit, which is the default for now). */
+const asksPerDay = (): number => Math.max(0, Math.floor(Number(setting("RECOVERY_ASKS_PER_DAY")) || 0));
+const LIMIT_COLLECTION = "recovery-limit";
+
+const madeAt = (data: DocumentData): number => (data.createdAt instanceof Timestamp ? data.createdAt.toMillis() : Date.now());
+const isStale = (data: DocumentData): boolean => Date.now() - madeAt(data) > (data.status === "done" ? DONE_LIFE_MS : REQUEST_LIFE_MS);
+const isoOf = (t: unknown): string | null => (t instanceof Timestamp ? t.toDate().toISOString() : null);
+
+/** The request of this friendship, or undefined: a request that is too old is deleted here (nothing is kept). */
+async function liveRequest(connectionId: string): Promise<DocumentData | undefined> {
+  const ref = recoveryDoc(connectionId);
+  const data = (await ref.get()).data();
+  if (data && isStale(data)) {
+    await ref.delete();
+    return undefined;
+  }
+  return data;
+}
+
+/** Counts this ask against the day's limit; false = the limit is used up. */
+async function countAsk(uid: string): Promise<boolean> {
+  const limit = asksPerDay();
+  if (!limit) return true; // no limit
+  const ref = getFirestore().collection(LIMIT_COLLECTION).doc(uid);
+  const day = new Date().toISOString().slice(0, 10);
+  return getFirestore().runTransaction(async (tx) => {
+    const data = (await tx.get(ref)).data();
+    const count = data?.day === day ? (data.count as number) : 0;
+    if (count >= limit) return false;
+    tx.set(ref, { day, count: count + 1 });
+    return true;
+  });
+}
+
+/** Both people's apps look again (the friend's Home has a card, the asker's own other devices follow). */
+async function touchBoth(a: string, b: string): Promise<void> {
+  await Promise.all([touchSync(a, "requestsAt"), touchSync(b, "requestsAt")]);
+}
+
 function stateOf(data: DocumentData | undefined, me: string, friendName: string): RecoveryState {
   if (!data) return { role: "none", status: "none", keyId: null, fingerprint: null, total: 0, added: 0, friendName };
   return {
@@ -51,7 +99,7 @@ recoveryRouter.get(
   asyncHandler(async (req, res) => {
     const connection = await connectionOf(req, res);
     if (!connection) return;
-    res.json(stateOf((await recoveryDoc(connection.id).get()).data(), uidOf(res), connection.name));
+    res.json(stateOf(await liveRequest(connection.id), uidOf(res), connection.name));
   }),
 );
 
@@ -71,6 +119,10 @@ recoveryRouter.post(
       res.status(409).json({ error: `${connection.name} has no key, so there is nothing to open for you.` });
       return;
     }
+    if (!(await countAsk(me))) {
+      res.status(429).json({ error: `You can ask at most ${asksPerDay()} times a day. Try again tomorrow.` });
+      return;
+    }
     const target = mine[mine.length - 1]; // the newest key in use
     const data = {
       requesterUid: me,
@@ -80,10 +132,12 @@ recoveryRouter.post(
       status: "asked",
       total: 0,
       added: 0,
-      circleId: connection.peerCircleId,
+      circleId: connection.peerCircleId, // the helper's circle
+      requesterCircleId: connection.circleId, // my circle
       createdAt: FieldValue.serverTimestamp(),
-    };
+    }; // a new request always replaces what is there, also a finished or declined one
     await recoveryDoc(connection.id).set(data);
+    await touchBoth(connection.peerUid, me);
     const fromName = await nameOf(me, res.locals.token as DecodedIdToken, connection.circleId);
     await sendPush(connection.peerUid, {
       circleId: connection.peerCircleId,
@@ -93,18 +147,77 @@ recoveryRouter.post(
       url: `/friends/${connection.id}/recovery`,
       kind: "request",
     });
-    res.status(201).json(stateOf((await recoveryDoc(connection.id).get()).data(), me, connection.name));
+    res.status(201).json(stateOf(await liveRequest(connection.id), me, connection.name));
   }),
 );
 
-/** Stop: the one who asked takes the request back, or the friend turns it down. */
+/** Tells the one who asked how it went (a push with the sound of an answer; another circle of theirs gets "Activity in ..." from sendPush). */
+async function tellRequester(data: DocumentData, connection: { id: string; name: string; circleId: string }, res: { locals: Record<string, unknown> }, what: "declined" | "done"): Promise<void> {
+  const fromName = await nameOf(uidOf(res), res.locals.token as DecodedIdToken, connection.circleId);
+  await sendPush(data.requesterUid as string, {
+    circleId: (data.requesterCircleId as string | undefined) ?? DEFAULT_CIRCLE_ID,
+    id: `recovery-${what}-${connection.id}`,
+    title: what === "done" ? `${fromName} opened your history` : `${fromName} declined your request`,
+    body: what === "done" ? "Your old messages and files can be opened on your devices again." : "They did not open your old messages. You can ask again.",
+    url: `/friends/${connection.id}/recovery`,
+    kind: "answer",
+  });
+}
+
+/** Stop: the one who asked takes the request back (it is gone). A friend who calls this declines (the older way of declining). */
 recoveryRouter.delete(
   "/",
   asyncHandler(async (req, res) => {
     const connection = await connectionOf(req, res);
     if (!connection) return;
-    await recoveryDoc(connection.id).delete();
+    const data = await liveRequest(connection.id);
+    if (data?.helperUid === uidOf(res)) {
+      await declineRequest(connection, data, res);
+    } else {
+      await recoveryDoc(connection.id).delete();
+      await touchBoth(connection.peerUid, uidOf(res));
+    }
     res.json({ ok: true });
+  }),
+);
+
+/** The friend says no: the request stays as `declined` until the asker has seen it (dismiss), and the asker is told. */
+async function declineRequest(connection: { id: string; name: string; circleId: string; peerUid: string }, data: DocumentData, res: { locals: Record<string, unknown> }): Promise<void> {
+  if (data.status === "declined" || data.status === "done") return;
+  await recoveryDoc(connection.id).update({ status: "declined", declinedAt: FieldValue.serverTimestamp() });
+  await tellRequester(data, connection, res, "declined");
+  await touchBoth(connection.peerUid, uidOf(res));
+}
+
+recoveryRouter.post(
+  "/decline",
+  asyncHandler(async (req, res) => {
+    const connection = await connectionOf(req, res);
+    if (!connection) return;
+    const me = uidOf(res);
+    const data = await liveRequest(connection.id);
+    if (!data || data.helperUid !== me) {
+      res.status(404).json({ error: "There is no request from your friend" });
+      return;
+    }
+    await declineRequest(connection, data, res);
+    res.json(stateOf(await liveRequest(connection.id), me, connection.name));
+  }),
+);
+
+/** The asker's app has shown a declined or finished request: it is deleted (a finished recovery leaves nothing behind). */
+recoveryRouter.post(
+  "/dismiss",
+  asyncHandler(async (req, res) => {
+    const connection = await connectionOf(req, res);
+    if (!connection) return;
+    const me = uidOf(res);
+    const data = await liveRequest(connection.id);
+    if (data && data.requesterUid === me && (data.status === "declined" || data.status === "done")) {
+      await recoveryDoc(connection.id).delete();
+      await touchSync(me, "requestsAt"); // my other devices drop it too
+    }
+    res.json(stateOf(await liveRequest(connection.id), me, connection.name));
   }),
 );
 
@@ -123,14 +236,19 @@ recoveryRouter.post(
     if (!connection) return;
     const me = uidOf(res);
     const ref = recoveryDoc(connection.id);
-    const data = (await ref.get()).data();
+    const data = await liveRequest(connection.id);
     if (!data || data.helperUid !== me) {
       res.status(404).json({ error: "There is no request from your friend" });
+      return;
+    }
+    if (data.status === "declined" || data.status === "done") {
+      res.status(409).json({ error: "This request is over. Your friend can ask again." });
       return;
     }
     if (data.status === "asked") {
       const total = await countMissing(connection.id, data.requesterUid, (await publishedKeysOf(data.requesterUid)).map((k) => k.id));
       await ref.update({ status: "approved", total, added: 0, approvedAt: FieldValue.serverTimestamp() });
+      await touchBoth(connection.peerUid, me); // the asker's page shows that it has started
     }
     res.json(stateOf((await ref.get()).data(), me, connection.name));
   }),
@@ -139,7 +257,7 @@ recoveryRouter.post(
 /** What the approved request is for: the requester must still have a key in use (`inUse`: all of them), and I must be the helper. */
 async function approvedRequest(connectionId: string, me: string): Promise<{ ref: DocumentReference; data: DocumentData; inUse: string[] } | { error: string; status: number }> {
   const ref = recoveryDoc(connectionId);
-  const data = (await ref.get()).data();
+  const data = await liveRequest(connectionId);
   if (!data || data.helperUid !== me) return { status: 404, error: "There is no request from your friend" };
   if (data.status !== "approved") return { status: 409, error: "Approve the request first" };
   const inUse = (await publishedKeysOf(data.requesterUid)).map((k) => k.id);
@@ -257,6 +375,42 @@ recoveryRouter.post(
       return;
     }
     await request.ref.update({ status: "done", finishedAt: FieldValue.serverTimestamp() });
+    await tellRequester(request.data, connection, res, "done");
+    await touchBoth(connection.peerUid, me);
     res.json(stateOf((await request.ref.get()).data(), me, connection.name));
+  }),
+);
+
+/**
+ * My requests in ALL my circles, for Home: those I was asked (`helper`) and those I made (`requester`). A request whose friendship is gone, or that is too old,
+ * is deleted here. `declined` and `done` only show to the one who asked (the friend has nothing more to do).
+ */
+export const recoveryListRouter = Router();
+recoveryListRouter.use(requireAuth);
+
+recoveryListRouter.get(
+  "/",
+  asyncHandler(async (_req, res) => {
+    const me = uidOf(res);
+    const col = getFirestore().collection(RECOVERY_COLLECTION);
+    const [asked, made] = await Promise.all([col.where("helperUid", "==", me).get(), col.where("requesterUid", "==", me).get()]);
+    const items: RecoveryItem[] = [];
+    for (const doc of [...asked.docs, ...made.docs]) {
+      const data = doc.data();
+      if (isStale(data)) {
+        await doc.ref.delete();
+        continue;
+      }
+      const role = data.requesterUid === me ? "requester" : "helper";
+      if (role === "helper" && (data.status === "declined" || data.status === "done")) continue;
+      const circleId = (role === "helper" ? data.circleId : data.requesterCircleId) ?? DEFAULT_CIRCLE_ID;
+      const entry = (await circleCol(me).doc(circleId).collection(FRIENDS_SUBCOLLECTION).doc(doc.id).get()).data();
+      if (!entry || entry.status !== "confirmed") {
+        await doc.ref.delete(); // the friendship is gone: nothing to help with
+        continue;
+      }
+      items.push({ id: doc.id, circleId, role, status: data.status, friendName: await shownNameOf(entry), total: data.total ?? 0, added: data.added ?? 0, createdAt: isoOf(data.createdAt) });
+    }
+    res.json({ requests: items });
   }),
 );

@@ -28,8 +28,18 @@ export class RecoveryService {
   private readonly safebox = inject(SafeboxService);
   private readonly auth = inject(AuthService);
 
-  private base(friendId: string): string {
-    return `/circles/${this.friends.circle()?.id ?? this.active.id}/friends/${friendId}/recovery`;
+  private base(friendId: string, circleId?: string): string {
+    return `/circles/${circleId ?? this.friends.circle()?.id ?? this.active.id}/friends/${friendId}/recovery`;
+  }
+
+  /** The friend says no: the asker is told. */
+  decline(friendId: string, circleId?: string): Promise<RecoveryState> {
+    return this.api.request<RecoveryState>(`${this.base(friendId, circleId)}/decline`, { method: 'POST' });
+  }
+
+  /** The asker has seen a declined or finished request: it is deleted (nothing is kept of a finished recovery). */
+  async dismiss(friendId: string, circleId?: string): Promise<void> {
+    await this.api.request<unknown>(`${this.base(friendId, circleId)}/dismiss`, { method: 'POST' });
   }
 
   state(friendId: string): Promise<RecoveryState> {

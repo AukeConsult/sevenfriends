@@ -23,7 +23,7 @@ For the recovery backup the private key must be extractable once, only to export
 Each safebox item already carries who saved it: `addedBy` in Firestore (sent to the app as `ownerId`) and `savedBy` on the stored file. The encryption builds on that.
 
 ## Data model (Firestore)
-- `user-account/{uid}/keys/{keyId}`: `publicKey` (only `e`, `kty`, `n`), `fingerprint`, `createdAt`, `label`, `revoked`. The document id is the key ID, worked out by the server from the key, so publishing a key twice is one key. At most 10 per person.
+- `user-account/{uid}/keys/{keyId}`: `publicKey` (only `e`, `kty`, `n`), `fingerprint`, `createdAt`, `label` (the kind and the device, made by `core/device-name.ts`; in the Android app the phone comes from the wrapper (`NativeNotices.deviceModel()` and `deviceName()`: the model, and the name the owner gave the phone; the Windows app sends the computer name in its user agent as `SevenFriendsDevice/<name>`, so a key reads "Android app · Leif's Pixel (Google Pixel 8)"): "Browser · Chrome on Windows", "Browser app · Chrome on Android" (the web app installed from the browser), "Android app · SM-S918B", "iPhone app · iPhone", "Windows app · Windows"; the key of the device in use gets it on the first visit, an older key that was only "Browser, <date>" is renamed that way), `revoked`. The document id is the key ID, worked out by the server from the key, so publishing a key twice is one key. At most 10 per person.
 - `user-account/{uid}/key-backup/current`: the private key scrambled with the recovery key (AES-256-GCM, `{ v: 1, iv, data }` in base64, the purpose is bound as additional data). The recovery key is random, so it is used as the AES key itself.
 - `safebox/{connectionId}/items/{itemId}` gains:
   - `enc: { v: 1, iv, metaIv, meta, wraps: [{ uid, keyId, wrappedKey }], fingerprints: { owner, friend } }`
@@ -44,7 +44,7 @@ Each safebox item already carries who saved it: `addedBy` in Firestore (sent to 
    5. Encrypt the name and type (`meta`), and upload the ciphertext and the `enc` block.
 3. **Opening a file:** download the ciphertext, find the wrap whose `keyId` equals the fingerprint of this device's key, unwrap the file key with the private key, and decrypt in memory (the file, then `meta` for the name). With no matching `keyId` the app says: "This file was locked for another device. Ask someone with access to share it again." The viewers already work from a blob, so they need little change.
 4. **Moving a message picture to the box:** done in the client, because the server can no longer encrypt. The app downloads the picture, encrypts it and uploads it.
-5. **New device:** a new key pair is created. A device that already has access can wrap each file key for the new key, or the user enters the recovery code and restores the old key.
+5. **New device:** a new key pair is created. There are two ways to get the old history back (see `docs/design/message-encryption.md`, "Recovery: the two ways"): **Way 1, my own devices**: a device of mine that already has access wraps each file key for the new key, or I enter the recovery code and restore the old key. **Way 2, ask my friend**: when I have neither, my friend's device opens the keys of our friendship and locks them again for my new key.
 6. **Lost access:** if both the device and the recovery code are gone, the files can't be opened. The app says so plainly.
 7. **Friendship ends:** the box is deleted, as now.
 

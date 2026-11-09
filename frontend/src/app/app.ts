@@ -6,6 +6,7 @@ import { CircleSwitch } from './circle-switch/circle-switch';
 import { OwnKeyPrompt } from './own-key-prompt/own-key-prompt';
 import { AndroidChannelsService } from './core/android-channels.service';
 import { AppUpdateService } from './core/app-update.service';
+import { KeysService } from './core/keys.service';
 import { ActiveCircleService } from './core/active-circle.service';
 import { AuthService } from './core/auth.service';
 import { FriendLinkService } from './core/friend-link.service';
@@ -59,6 +60,7 @@ export class App {
     inject(RealtimeService); // starts listening for live updates (friend requests, messages) once somebody is signed in
     inject(LookSyncService); // the theme and the text size are kept on the account, so every device shows them
     inject(InstallService); // catches the browser's install offer early (it can arrive soon after the page opens)
+    inject(KeysService); // looks at the key of this device when somebody signs in, and keeps its name (kind and device) up to date
     inject(PresenceService); // tells the system when the person is active, away or offline (the dot on their friends)
     inject(AndroidChannelsService); // Android's notification channels follow the sounds chosen here
     inject(AppUpdateService); // a new version of the web app is loaded when the app comes to the front, and at least once an hour

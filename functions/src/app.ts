@@ -10,6 +10,7 @@ import { notificationsRouter } from "./notifications";
 import { preferencesRouter } from "./preferences";
 import { keysRouter } from "./keys";
 import { ownRecoveryRouter } from "./own-recovery";
+import { recoveryListRouter } from "./recovery";
 import { profileRouter } from "./profile";
 import { pushRouter } from "./push";
 import { usersRouter } from "./users";
@@ -50,6 +51,7 @@ export function createApp(): express.Express {
   router.use("/profile", profileRouter);
   router.use("/keys", keysRouter);
   router.use("/own-recovery", ownRecoveryRouter);
+  router.use("/recovery", recoveryListRouter);
   router.use("/preferences", preferencesRouter);
   router.use("/push", pushRouter);
   app.use("/api", router);

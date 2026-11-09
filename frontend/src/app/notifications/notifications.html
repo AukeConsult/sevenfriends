@@ -87,6 +87,44 @@
       <!-- other circles with something waiting: one note each, tap to open that circle -->
       <app-circle-activity />
 
+      <!-- a friend asks me to help open their old messages (recovery by a friend) -->
+      @if (toHelp().length) {
+        <ul class="sf-list sf-home-cards">
+          @for (item of toHelp(); track item.id) {
+            <li class="sf-list-item flex-wrap gap-2">
+              <span class="sf-home-ic" aria-hidden="true">🔑</span>
+              <span class="sf-list-text">
+                <strong>{{ item.friendName }}</strong>
+                <small>{{ item.status === 'asked' ? (t('notifications.recoveryAsksYou') || 'asks you to help open their old messages') : (t('notifications.recoveryYouHelp') || 'you are helping to open their old messages') }}</small>
+              </span>
+              <span class="d-flex gap-2">
+                <a class="btn btn-primary btn-sm" [routerLink]="['/friends', item.id, 'recovery']">{{ t('notifications.open') || 'Open' }}</a>
+                @if (item.status === 'asked') { <button type="button" class="btn btn-outline-secondary btn-sm" (click)="declineHelp(item)">{{ t('notifications.recoveryDecline') || 'Decline' }}</button> }
+              </span>
+            </li>
+          }
+        </ul>
+      }
+
+      <!-- a friend said no to my recovery request -->
+      @if (declined().length) {
+        <ul class="sf-list sf-home-cards">
+          @for (item of declined(); track item.id) {
+            <li class="sf-list-item flex-wrap gap-2">
+              <span class="sf-home-ic" aria-hidden="true">🔒</span>
+              <span class="sf-list-text">
+                <strong>{{ item.friendName }}</strong>
+                <small>{{ t('notifications.recoveryDeclined') || 'declined your request to open your old messages' }}</small>
+              </span>
+              <span class="d-flex gap-2">
+                <a class="btn btn-primary btn-sm" [routerLink]="['/friends', item.id, 'recovery']">{{ t('notifications.recoveryAskAgain') || 'Ask again' }}</a>
+                <button type="button" class="btn btn-outline-secondary btn-sm" (click)="dismissDeclined(item)">{{ t('notifications.recoveryDismiss') || 'Dismiss' }}</button>
+              </span>
+            </li>
+          }
+        </ul>
+      }
+
       @if (seated().length) {
         <ul class="sf-list sf-home-cards">
           @for (request of seated(); track request.id) {

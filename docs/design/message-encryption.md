@@ -78,7 +78,35 @@ is locked with the same key and the copies of the key are made for the keys in u
 - An edit of the caption uses the same key (the file stays readable). A file cannot be locked by an edit.
 - A locked picture or video cannot be moved to the safebox yet (the server answers 409 and the button is hidden).
 
-## Recovery (step 5)
+## Recovery: the two ways
+
+A person who gets a new key (a new phone, a reinstalled app, a cleared browser) cannot open what was locked for the old key until somebody gives the new key its copies. There are exactly **two ways**, and every screen, push text and message about recovery must say which one it is:
+
+| | Way 1: my own devices | Way 2: ask my friend |
+|---|---|---|
+| Who helps | **I do**, from another device of mine that still has a working key, or with my own 24 recovery words | **my friend** (the other person of a friendship), from their device |
+| Needs | one of my devices that opens my history (or the 24 words) | the friend, with a working key, who says yes |
+| Covers | all my friends at once (one tap) | **one friendship at a time** (and one circle: a friendship belongs to one circle) |
+| What the helper opens | my own copy of every key | their own copy of every key of that friendship, and locks it again for my new key |
+| When to use | the normal case: I still have an old device | I have no old device and no words: the friend is the only one left who can open our shared history |
+| Built | step 5b (below), and restoring the key from the 24 words (`docs/design/safebox-encryption.md`) | step 5 (below) |
+
+The order the app offers them: first Way 1 (cheap, covers everything), and Way 2 only when Way 1 is not possible. If neither is possible (no old device, no words, and the friend has no key either), the history of that friendship is gone and the app says so plainly.
+
+Way 2 is the weaker way, because it depends on another person and on checking that the request really comes from the person (see "Way 2: what is to be improved" in `docs/design/recovery-by-friend.md`).
+
+### Way 1: my own devices (step 5b)
+
+A key that is added next to another one of mine (a new device, a reinstalled app) waits until a device of mine whose key can open everything allows it. Nobody else is needed, and it covers every friend at once.
+
+- **Which key can help:** a key is *shared* when it needs no copies: the first key of a person (`ownShared: true` when it is published), a key that was allowed, or (keys made before this existed, no flag) the oldest key in use. Every other key in use is waiting. Only a shared key is asked.
+- **The question:** on a shared device a small card says "A new key was added to your account" with the label and the short code, and the buttons Allow and Not now (`own-key-prompt/`, checked when the app opens, every 5 minutes and when the app is focused).
+- **The work** (`core/own-recovery.service.ts`, `own-recovery.ts`): Allow reads my own messages and the files of all my friendships that have no copy for the waiting key (`GET /own-recovery/todo`, 100 at a time), opens each key with this device's key, locks it for the waiting key and sends `POST /own-recovery/wraps`. A copy is accepted only for me, for that key, on my own messages and on files in my friendships.
+- **Done:** `POST /own-recovery/done` marks the key allowed (`ownShared: true`) only when nothing of mine lacks a copy for it; a device that could not open some items does not call the key complete, and says so.
+- **Why one tap:** without it, anyone with a stolen login could add a key and be given the whole history. The server cannot tell a real copy from random data, so the tap on a device with a working key is the check.
+- **Or my own 24 recovery words:** the words open the backup of my old private key (`key-backup/current`), so the old key is back on the new device and nothing has to be copied (Settings → Keys, "restore"). This is also Way 1: no other person is involved.
+
+### Way 2: ask my friend (step 5)
 
 A person with a NEW key (the old one and the 24 words are gone) cannot open messages and safebox files locked for the old key. The friend can: each message and each safebox file
 keeps a copy of its key for every key in use of both people, and the friend's copy is still locked for the friend's key. The friend's device opens that key and locks it again for the new key.
@@ -89,15 +117,7 @@ Only keys move; no text, file or key is readable on the server.
 - **Approve:** the friend sees the short code of the new key and is asked to check it with the person ("Approve and start"). `POST .../approve` counts the messages and files that need a copy (`total`).
 - **Work** (`core/recovery.service.ts`, `rewrapKey` in `box-crypto.ts`): the friend's app reads `GET .../todo?part=messages|box&after=` (100 at a time, newest first; the friend's own copies of each key), opens each with the friend's key, locks it for EVERY key in use of the person who asks that has no copy yet (the new key, and any other device of theirs) and sends `POST .../wraps`. Then `POST .../finish`.
 - **Server checks** (`recovery.ts`): only the friend who was asked may approve and work; a copy is accepted only for the asker and for the key of the request (still in use); it is added to the asker's copy of the message, or to the shared safebox item, only when that has no copy for that key yet (the key must be one the asker has in use).
-- **Both pages stay open** until it is done (the asker's page polls every 2.5 seconds). Cancel or decline: `DELETE .../recovery`.
+- **Both pages stay open** until it is done (the asker's page polls every 2.5 seconds).
+- **Who is told what** (`docs/design/recovery-by-friend.md`): `status` is asked, approved, **declined** or **done**. A request shows on the friend's Home under "Needs you" (Open, Decline; another circle: only "Activity in <circle>"); `POST .../decline` (only the friend) sets `declined`, tells the asker (push kind `answer`, a card on Home with Ask again and Dismiss) and `POST .../dismiss` (only the asker) deletes it; `finish` sets `done`, tells the asker, whose app shows "<name> opened your history" and dismisses it at once (a finished recovery leaves nothing; at the latest a `done` request is deleted after 1 day, any other after 7). `DELETE .../recovery` is the asker taking the request back (it is gone); a friend who calls it declines. Both people's apps look again on every change (the `requestsAt` stamp). `GET /api/recovery` lists my requests in all circles (`RecoveryItem`, as friend and as asker) and deletes those that are too old or whose friendship is gone.
+- **Asking again:** possible at any time, also when everything works and also right after a finished or declined one (a new request replaces what is there), with a limit per person and day that is a setting (`RECOVERY_ASKS_PER_DAY`, 429 after that; 0 = no limit, the value for now). The friend says yes each time.
 - **Limits:** if both lose their keys, the history is gone. Messages the helper's device cannot open (locked for a key it does not have) are skipped and counted. The approval depends on the friend comparing the code of the new key; pinning friends' keys is not built.
-
-### Recovery from my own other device (step 5b)
-
-A key that is added next to another one of mine (a new device, a reinstalled app) waits until a device of mine whose key can open everything allows it. Nobody else is needed, and it covers every friend at once.
-
-- **Which key can help:** a key is *shared* when it needs no copies: the first key of a person (`ownShared: true` when it is published), a key that was allowed, or (keys made before this existed, no flag) the oldest key in use. Every other key in use is waiting. Only a shared key is asked.
-- **The question:** on a shared device a small card says "A new key was added to your account" with the label and the short code, and the buttons Allow and Not now (`own-key-prompt/`, checked when the app opens, every 5 minutes and when the app is focused).
-- **The work** (`core/own-recovery.service.ts`, `own-recovery.ts`): Allow reads my own messages and the files of all my friendships that have no copy for the waiting key (`GET /own-recovery/todo`, 100 at a time), opens each key with this device's key, locks it for the waiting key and sends `POST /own-recovery/wraps`. A copy is accepted only for me, for that key, on my own messages and on files in my friendships.
-- **Done:** `POST /own-recovery/done` marks the key allowed (`ownShared: true`) only when nothing of mine lacks a copy for it; a device that could not open some items does not call the key complete, and says so.
-- **Why one tap:** without it, anyone with a stolen login could add a key and be given the whole history. The server cannot tell a real copy from random data, so the tap on a device with a working key is the check.

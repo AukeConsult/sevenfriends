@@ -6,7 +6,17 @@
 
   @if (error()) { <p class="text-danger small" role="alert">{{ error() }}</p> }
 
-  @if (state(); as s) {
+  @if (ended(); as who) {
+    <section>
+      @if (who === 'helper') {
+        <p class="text-success">{{ t('friendRecovery.doneFriendnameCanOpen', { friendName: friendName() }) || 'Done. ' + friendName() + ' can open their old messages again.' }}</p>
+        @if (skipped() > 0) { <p class="sf-hint">{{ t('friendRecovery.skippedCouldNotBe', { skipped: skipped() }) || skipped() + ' could not be opened on this device (they were locked for a key it does not have).' }}</p> }
+      } @else {
+        <p class="text-success">{{ t('friendRecovery.doneYourHistoryWith', { friendName: friendName() }) || 'Done. Your history with ' + friendName() + ' is open again on this device.' }}</p>
+      }
+      <a class="btn btn-primary btn-sm" [routerLink]="['/friends', ctx.friendId]">{{ t('friendRecovery.backToTheConversation') || 'Back to the conversation' }}</a>
+    </section>
+  } @else if (state(); as s) {
     @switch (s.role) {
       @case ('requester') {
         @switch (s.status) {
@@ -27,6 +37,16 @@
               <p class="sf-hint">{{ t('friendRecovery.stayOnThisPage', { friendName: friendName() }) || 'Stay on this page until it is done. ' + friendName() + '’s app must stay open too. New messages work as usual.' }}</p>
             </section>
           }
+          @case ('declined') {
+            <section>
+              <h2>{{ t('friendRecovery.friendnameDeclined', { friendName: friendName() }) || friendName() + ' said no' }}</h2>
+              <p>{{ t('friendRecovery.theyDidNotOpen') || 'They did not open your old messages. You can ask again, or use one of your own devices or your 24 recovery words (Settings, Keys).' }}</p>
+              <div class="d-flex gap-2">
+                <button type="button" class="btn btn-primary btn-sm" (click)="ask()" [disabled]="busy()">{{ t('friendRecovery.askAgain') || 'Ask again' }}</button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" (click)="dismiss()" [disabled]="busy()">{{ t('friendRecovery.dismiss') || 'Dismiss' }}</button>
+              </div>
+            </section>
+          }
           @case ('done') {
             <section>
               <p class="text-success">{{ t('friendRecovery.doneYourHistoryWith', { friendName: friendName() }) || 'Done. Your history with ' + friendName() + ' is open again on this device.' }}</p>
@@ -45,6 +65,7 @@
               <details class="mb-2"><summary class="small">{{ t('friendRecovery.fullCode') || 'Full code' }}</summary><pre class="sf-fingerprint small">{{ fingerprint() }}</pre></details>
               <p class="sf-hint">{{ t('friendRecovery.checkWithFriendnameIn', { friendName: friendName() }) || 'Check with ' + friendName() + ' (in person, or by phone) that this is really their key before you say yes.' }}</p>
               <button type="button" class="btn btn-primary btn-sm" (click)="approve()" [disabled]="busy()">{{ t('friendRecovery.approveAndStart') || 'Approve and start' }}</button>
+              <button type="button" class="btn btn-outline-secondary btn-sm" (click)="decline()" [disabled]="busy()">{{ t('friendRecovery.decline') || 'Decline' }}</button>
               <a class="btn btn-link btn-sm" [routerLink]="['/friends', ctx.friendId]">{{ t('friendRecovery.notNow') || 'Not now' }}</a>
             </section>
           }
@@ -58,6 +79,12 @@
               } @else {
                 <button type="button" class="btn btn-primary btn-sm" (click)="approve()" [disabled]="busy()">{{ t('friendRecovery.continue') || 'Continue' }}</button>
               }
+            </section>
+          }
+          @case ('declined') {
+            <section>
+              <p>{{ t('friendRecovery.youDeclined', { friendName: friendName() }) || 'You said no. ' + friendName() + ' has been told.' }}</p>
+              <a class="btn btn-primary btn-sm" [routerLink]="['/friends', ctx.friendId]">{{ t('friendRecovery.backToTheConversation') || 'Back to the conversation' }}</a>
             </section>
           }
           @case ('done') {
@@ -79,6 +106,7 @@
             <li>{{ t('friendRecovery.theyCheckThatIt') || 'They check that it is you and approve.' }}</li>
             <li>{{ t('friendRecovery.theirAppOpensYour') || 'Their app opens your history again. This page shows how far it is.' }}</li>
           </ol>
+          <p class="sf-hint">{{ t('friendRecovery.alsoWhenNothing', { friendName: friendName() }) || 'You can ask at any time, also when nothing is locked for you: ' + friendName() + ' then locks everything again for all your keys, and has to say yes each time.' }}</p>
           <p class="sf-hint">{{ t('friendRecovery.keepThisPageOpen') || 'Keep this page open until it says done.' }}</p>
           @if (ctx.meHasKey() === false) {
             <p class="sf-hint">{{ t('friendRecovery.youNeedAKey') || 'You need a key on this device first.' }}</p>

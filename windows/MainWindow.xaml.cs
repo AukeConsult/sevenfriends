@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -170,6 +171,8 @@ public partial class MainWindow : Window
         web.Settings.IsStatusBarEnabled = false;
         // the web app tells the Windows app from the browser by this name (it then skips the welcome page, which is the install step)
         web.Settings.UserAgent += " SevenFriendsWindows/1.0";
+        // the name of this computer, for the list of keys (device-name.ts reads it from the user agent)
+        web.Settings.UserAgent += " SevenFriendsDevice/" + Uri.EscapeDataString(Environment.MachineName);
 
         // a popup (the sign-in) opens in a small window of the app; any other new window goes to the browser
         web.NewWindowRequested += (_, e) =>

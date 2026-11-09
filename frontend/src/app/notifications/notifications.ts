@@ -3,9 +3,10 @@ import { activeLang, tr } from '../core/i18n';
 import { ActiveCircleService } from '../core/active-circle.service';
 import { Capacitor } from '@capacitor/core';
 import { AppDatePipe } from '../core/app-date.pipe';
-import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, computed, effect, inject, signal, untracked } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { ChatService } from '../core/chat.service';
+import { RecoveryInboxService } from '../core/recovery-inbox.service';
 import { ApiService } from '../core/api.service';
 import { MoodEditor } from '../mood-editor/mood-editor';
 import { CircleActivity } from '../circle-activity/circle-activity';
@@ -21,7 +22,7 @@ import { MessagesService } from '../core/messages.service';
 import { NotificationsService } from '../core/notifications.service';
 import { InstallService } from '../core/install.service';
 import { UiPreferencesService } from '../core/ui-preferences';
-import { Friend, FriendRequest, Message, Notice, ProfileDetails } from '../models';
+import { Friend, FriendRequest, Message, Notice, ProfileDetails, RecoveryItem } from '../models';
 import { AndroidChannelsService } from '../core/android-channels.service';
 import { KeysService } from '../core/keys.service';
 import { PushService } from '../core/push.service';
@@ -87,6 +88,10 @@ export class Notifications {
   private readonly prefs = inject(UiPreferencesService);
   private readonly keys = inject(KeysService);
   private readonly otherCircles = inject(CircleActivityService).circles;
+  private readonly recovery = inject(RecoveryInboxService);
+  /** friends who ask me to help open their old messages, and friends who declined my request (both of the circle in use) */
+  protected readonly toHelp = this.recovery.toHelp;
+  protected readonly declined = this.recovery.declined;
   /** the first-time setup was left for later: Home offers it again */
   protected readonly setupLeft = computed(() => this.prefs.value('setup')() === 'skipped');
 
@@ -201,7 +206,7 @@ export class Notifications {
   protected readonly checkCount = computed(() => [this.setupLeft(), this.androidOff() !== null, this.pushOff() !== null, this.unverified().length > 0].filter(Boolean).length);
 
   /** what needs me from people: requests, a request waiting for a seat, unread messages, activity in another circle */
-  protected readonly needsYou = computed(() => this.seated().length > 0 || this.waitingCount() > 0 || this.groups().length > 0 || this.otherCircles().length > 0);
+  protected readonly needsYou = computed(() => this.seated().length > 0 || this.waitingCount() > 0 || this.groups().length > 0 || this.otherCircles().length > 0 || this.toHelp().length > 0 || this.declined().length > 0);
 
   /** "Good evening, Leif" */
   protected readonly greeting = computed(() => {
@@ -239,6 +244,15 @@ export class Notifications {
     const recheck = () => this.permission.set(typeof Notification === 'undefined' ? 'denied' : Notification.permission);
     document.addEventListener('visibilitychange', recheck);
     inject(DestroyRef).onDestroy(() => document.removeEventListener('visibilitychange', recheck));
+    // a friend finished my recovery request: told once, as a note that fades
+    effect(() => {
+      const names = this.recovery.finished();
+      if (!names.length) return;
+      untracked(() => {
+        this.recovery.finished.set([]);
+        this.fadeNotice({ kind: 'success', fade: true, text: names.length === 1 ? tr('notifications.openedYourHistory', '{{ friendName }} opened your history.', { friendName: names[0] }) : tr('notifications.openedYourHistoryMany', '{{ friendNames }} opened your history.', { friendNames: names.join(', ') }) });
+      });
+    });
     this.load();
     void this.checkOwnDetails();
     if (!this.friendsService.circle()) void this.friendsService.load().catch(() => undefined); // opened directly: the seats come from the list
@@ -286,11 +300,35 @@ export class Notifications {
     try {
       await this.friendsService.rejectRequest(request.id);
       const note: Notice = { kind: 'warning', fade: true, text: tr('notifications.youRejectedTheRequest', 'You rejected the request from {{ fromName }}.', { fromName: request.fromName }) };
-      this.notice.set(note);
-      clearTimeout(this.noticeTimer);
-      this.noticeTimer = setTimeout(() => { if (this.notice() === note) this.notice.set(null); }, NOTICE_FADE_MS);
+      this.fadeNotice(note);
     } catch (err: any) {
       await this.failed(err);
+    }
+  }
+
+  /** A note that fades out and goes by itself. */
+  private fadeNotice(note: Notice): void {
+    this.notice.set(note);
+    clearTimeout(this.noticeTimer);
+    this.noticeTimer = setTimeout(() => { if (this.notice() === note) this.notice.set(null); }, NOTICE_FADE_MS);
+  }
+
+  /** I say no to a friend's recovery request: the friend is told. */
+  protected async declineHelp(item: RecoveryItem): Promise<void> {
+    try {
+      await this.recovery.decline(item);
+    } catch (err: any) {
+      await this.failed(err);
+      void this.recovery.refresh();
+    }
+  }
+
+  /** I have read that a friend said no to my recovery request. */
+  protected async dismissDeclined(item: RecoveryItem): Promise<void> {
+    try {
+      await this.recovery.dismiss(item);
+    } catch (err: any) {
+      this.error.set(err.message);
     }
   }
 

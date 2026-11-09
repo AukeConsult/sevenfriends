@@ -50,5 +50,13 @@
   "unverifiedPhone": "phone number",
   "unverifiedAnd": "{{ a }} and {{ b }}",
   "waitingOne": "1 request is waiting for a free seat",
-  "waitingMany": "{{ count }} requests are waiting for a free seat"
+  "waitingMany": "{{ count }} requests are waiting for a free seat",
+  "recoveryAsksYou": "asks you to help open their old messages",
+  "recoveryYouHelp": "you are helping to open their old messages",
+  "recoveryDecline": "Decline",
+  "recoveryDeclined": "declined your request to open your old messages",
+  "recoveryAskAgain": "Ask again",
+  "recoveryDismiss": "Dismiss",
+  "openedYourHistory": "{{ friendName }} opened your history.",
+  "openedYourHistoryMany": "{{ friendNames }} opened your history."
 }

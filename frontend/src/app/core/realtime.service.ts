@@ -1,7 +1,7 @@
 import { Injectable, effect, inject, signal, untracked } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import type { DocumentData, Query, QuerySnapshot } from 'firebase/firestore'; // types only: the SDK itself is loaded on demand below
-import { LiveMessage } from '../models';
+import { LiveMessage, RecoveryItem } from '../models';
 import { AuthService } from './auth.service';
 import { DesktopNoticeService } from './desktop-notice.service';
 import { ActiveCircleService, circleLabel, circleType } from './active-circle.service';
@@ -10,6 +10,7 @@ import { FriendsService } from './friends.service';
 import { LiveChanges } from './live-changes';
 import { NotificationsService } from './notifications.service';
 import { PushService } from './push.service';
+import { RecoveryInboxService } from './recovery-inbox.service';
 import { SoundService } from './sound.service';
 import { tr } from './i18n';
 
@@ -48,6 +49,7 @@ export class RealtimeService {
   private readonly friends = inject(FriendsService);
   private readonly active = inject(ActiveCircleService);
   private readonly activity = inject(CircleActivityService);
+  private readonly recovery = inject(RecoveryInboxService);
   private readonly sound = inject(SoundService);
   private readonly desktop = inject(DesktopNoticeService);
   private readonly push = inject(PushService);
@@ -90,6 +92,7 @@ export class RealtimeService {
     this.messagesChangedAt.clear();
     if (!uid) {
       this.activity.clearAll();
+      this.recovery.clear();
       return;
     }
 
@@ -367,6 +370,30 @@ export class RealtimeService {
   private async refreshEverything(): Promise<void> {
     await this.notifications.refresh();
     await this.friends.load().catch(() => undefined); // the Friends page shows the new pending seat
+    this.announceRecovery(await this.recovery.refresh()); // recovery requests (a friend asks me, a friend answered me), all circles
+  }
+
+  /**
+   * What is new in the recovery requests: in the circle in use the sound of the kind (a request, or an answer) and a desktop notice that says what it is; in
+   * another circle only the note "Activity in ..." with the default sound (see `elsewhere`).
+   */
+  private announceRecovery(news: { item: RecoveryItem; here: boolean }[]): void {
+    this.elsewhere(news.filter((n) => !n.here).map((n) => ({ circle: n.item.circleId, id: `recovery-${n.item.id}-${n.item.status}` })), true);
+    for (const { item } of news.filter((n) => n.here)) {
+      const name = item.friendName;
+      if (item.role === 'helper') {
+        this.ring('request');
+        this.notify('request', { title: tr('core.needsYourHelp', '{{ friendName }} needs your help', { friendName: name }), body: tr('core.openToUnlockTheir', 'Open the app to unlock their old messages again.'), id: `recovery-${item.id}`, go: `/friends/${item.id}/recovery` });
+      } else {
+        this.ring('answer');
+        this.notify('answer', {
+          title: item.status === 'done' ? tr('core.openedYourHistory', '{{ friendName }} opened your history', { friendName: name }) : tr('core.declinedYourRequest', '{{ friendName }} declined your request', { friendName: name }),
+          body: '',
+          id: `recovery-${item.status}-${item.id}`,
+          go: `/friends/${item.id}/recovery`,
+        });
+      }
+    }
   }
 
   private stopAll(): void {

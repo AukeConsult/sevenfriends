@@ -1,7 +1,7 @@
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { tr } from '../core/i18n';
 import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { RecoveryState, readableFingerprint } from '../models';
 import { RecoveryService } from '../core/recovery.service';
 import { FriendContext } from '../friend-page/friend-context';
@@ -22,6 +22,7 @@ const POLL_MS = 2500;
 export class FriendRecovery {
   protected readonly ctx = inject(FriendContext);
   private readonly service = inject(RecoveryService);
+  private readonly router = inject(Router);
 
   protected readonly friendName = this.ctx.friendName;
   protected readonly state = signal<RecoveryState | null>(null);
@@ -31,6 +32,8 @@ export class FriendRecovery {
   protected readonly running = signal(false);
   protected readonly doneNow = signal(0);
   protected readonly skipped = signal(0);
+  /** the request ended while this page was open (it was approved or done and is gone now: the work is finished, and a finished request is deleted once the asker's app has shown it): who I was in it */
+  protected readonly ended = signal<'requester' | 'helper' | null>(null);
 
   protected readonly fingerprint = computed(() => readableFingerprint(this.state()?.fingerprint ?? ''));
   protected readonly short = computed(() => (this.state()?.fingerprint ?? '').slice(0, 8).replace(/(.{4})/, '$1 ').toUpperCase());
@@ -48,7 +51,16 @@ export class FriendRecovery {
 
   private async refresh(): Promise<void> {
     try {
-      this.state.set(await this.service.state(this.ctx.friendId));
+      const was = this.state();
+      const now = await this.service.state(this.ctx.friendId);
+      if (was && was.role !== 'none' && (was.status === 'approved' || was.status === 'done') && now.status === 'none') this.ended.set(was.role);
+      else if (now.status !== 'none') this.ended.set(null);
+      this.state.set(now);
+      // the friend has done it: the one who asked goes back to the messages, which are open again (the friend's own page stays, it says what was done)
+      const finishedForMe = now.role === 'requester' && now.status === 'done';
+      if (finishedForMe || (was?.role === 'requester' && (was.status === 'approved' || was.status === 'done') && now.status === 'none')) {
+        void this.router.navigate(['/friends', this.ctx.friendId], { replaceUrl: true });
+      }
     } catch (err: any) {
       if (!this.state()) this.error.set(err.message ?? tr('friendRecovery.couldNotReadThe', 'Could not read the request'));
     }
@@ -61,6 +73,19 @@ export class FriendRecovery {
   protected async cancel(): Promise<void> {
     await this.run(async () => {
       await this.service.cancel(this.ctx.friendId);
+      await this.refresh();
+    });
+  }
+
+  /** The friend says no: the one who asked is told. */
+  protected async decline(): Promise<void> {
+    await this.run(async () => this.state.set(await this.service.decline(this.ctx.friendId)));
+  }
+
+  /** The one who asked has read that the friend said no: the request is deleted. */
+  protected async dismiss(): Promise<void> {
+    await this.run(async () => {
+      await this.service.dismiss(this.ctx.friendId);
       await this.refresh();
     });
   }

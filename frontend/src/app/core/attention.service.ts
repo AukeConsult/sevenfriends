@@ -2,6 +2,7 @@ import { Injectable, computed, effect, inject, signal } from '@angular/core';
 import { CircleActivityService } from './circle-activity.service';
 import { FriendsService } from './friends.service';
 import { MessagesService } from './messages.service';
+import { RecoveryInboxService } from './recovery-inbox.service';
 
 /** How often the title flips while the tab is in the background. */
 const FLASH_MS = 1200;
@@ -16,12 +17,13 @@ export class AttentionService {
   private readonly messages = inject(MessagesService);
   private readonly friends = inject(FriendsService);
   private readonly activity = inject(CircleActivityService);
+  private readonly recovery = inject(RecoveryInboxService);
 
   /** The title of the current page (set by the title strategy on every navigation). */
   readonly baseTitle = signal('Seven Friends');
 
   /** the total across circles: what waits in the circle in use, and one for each other circle with activity (the app knows no more of those) */
-  readonly count = computed(() => this.messages.messages().length + this.friends.requests().filter((r) => r.seated).length + this.activity.circles().length);
+  readonly count = computed(() => this.messages.messages().length + this.friends.requests().filter((r) => r.seated).length + this.activity.circles().length + this.recovery.count());
 
   private readonly hidden = signal(document.hidden);
   private readonly flash = signal(false);
