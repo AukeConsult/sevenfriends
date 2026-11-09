@@ -86,6 +86,8 @@ export const KEY_BACKUP_DOC = "current";
 export const RECOVERY_COLLECTION = "recovery-request";
 export const SAFEBOX_COLLECTION = "safebox";
 export const SAFEBOX_ITEMS = "items";
+/** safebox-reminders/{connectionId}_{itemId}: a reminder that waits to be pushed (the moment, who gets it); the document goes when it was sent, or the item goes */
+export const SAFEBOX_REMINDERS = "safebox-reminders";
 export const SAFEBOX_MAX_BYTES = 200 * 1024 * 1024;
 export const SAFEBOX_MAX_ITEMS = 500;
 /** The owner name of a safebox in the media cache: `box-<connectionId>` (the app reads its files through `/api/sf-cache/box-<id>/<itemId>` like any media file). */

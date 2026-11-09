@@ -227,7 +227,7 @@ export class Query {
   ) {}
 
   where(field: string, op: string, value: any) {
-    if (op !== "==" && op !== "in" && op !== ">=") throw new Error(`fake-firestore: operator "${op}" not supported`);
+    if (op !== "==" && op !== "in" && op !== ">=" && op !== "<=") throw new Error(`fake-firestore: operator "${op}" not supported`);
     return new Query(this.scope, [...this.filters, { field, op, value }], this.sort, this.max, this.fields, this.after);
   }
   orderBy(field: string, dir: "asc" | "desc" = "asc") {
@@ -270,6 +270,7 @@ export class Query {
       found = found.filter((d) => {
         const v = d.get(f.field);
         if (f.op === ">=") return v !== undefined && order(v, f.value) >= 0;
+        if (f.op === "<=") return v !== undefined && order(v, f.value) <= 0;
         return f.op === "==" ? same(v, f.value) : (f.value as any[]).some((x) => same(v, x));
       });
     }

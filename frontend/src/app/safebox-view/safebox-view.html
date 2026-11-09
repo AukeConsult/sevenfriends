@@ -1,18 +1,18 @@
 <ng-container *transloco="let t">
 <main class="sf-page sf-page-wide">
   @if (loadError()) {
-    <a [routerLink]="['/friends', friendId, 'safebox']" class="sf-back-inline" [attr.aria-label]="t('safeboxView.backToTheSafebox') || 'Back to the safebox'"></a>
+    <a [routerLink]="back()" class="sf-back-inline" [attr.aria-label]="t('safeboxView.backToTheSafebox') || 'Back to the safebox'"></a>
     <div class="alert alert-danger" role="alert">{{ loadError() }}</div>
   } @else if (!box()) {
-    <a [routerLink]="['/friends', friendId, 'safebox']" class="sf-back-inline" [attr.aria-label]="t('safeboxView.backToTheSafebox') || 'Back to the safebox'"></a>
+    <a [routerLink]="back()" class="sf-back-inline" [attr.aria-label]="t('safeboxView.backToTheSafebox') || 'Back to the safebox'"></a>
     <p class="text-secondary text-center">{{ t('safeboxView.openingTheFile') || 'Opening the file…' }}</p>
   } @else if (!item(); as none) {
-    <a [routerLink]="['/friends', friendId, 'safebox']" class="sf-back-inline" [attr.aria-label]="t('safeboxView.backToTheSafebox') || 'Back to the safebox'"></a>
+    <a [routerLink]="back()" class="sf-back-inline" [attr.aria-label]="t('safeboxView.backToTheSafebox') || 'Back to the safebox'"></a>
     <p class="text-secondary text-center">{{ t('safeboxView.thisFileIsNot') || 'This file is not in the safebox any more.' }}</p>
   } @else {
     <div class="sf-page-head">
       <h1 class="m-0 mw-100">
-        <a [routerLink]="['/friends', friendId, 'safebox']" class="sf-title-link" [attr.aria-label]="t('safeboxView.backToTheSafebox') || 'Back to the safebox'">
+        <a [routerLink]="back()" class="sf-title-link" [attr.aria-label]="t('safeboxView.backToTheSafebox') || 'Back to the safebox'">
           <span class="sf-back-inline" aria-hidden="true"></span>
           <span class="sf-ellipsis">{{ item()!.name }}</span>
         </a>

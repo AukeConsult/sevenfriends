@@ -1,9 +1,10 @@
 import { ActiveCircleService } from './active-circle.service';
 import { Injectable, inject } from '@angular/core';
-import { BoxKeys, Safebox, SafeboxItem, fingerprintOf, keyIdOf } from '../models';
+import { BoxKeys, NotePayload, ObjectPayload, ReminderRequest, SafeboxType, Safebox, SafeboxItem, fingerprintOf, keyIdOf } from '../models';
 import { ApiService } from './api.service';
 import { AuthService } from './auth.service';
-import { classify, openFileKey, openMeta, openPart, sealFile, sealMeta } from './box-crypto';
+import { isObjectType, summaryOf, whenOf } from './safebox-objects';
+import { classify, openFileKey, openMeta, openNote, openObject, openPart, resealNote, resealObject, sealFile, sealMeta, sealNote, sealObject } from './box-crypto';
 import { getDeviceKey } from './device-key';
 import { FriendsService } from './friends.service';
 import { PreparedImage } from './image';
@@ -28,12 +29,17 @@ export class SafeboxService {
   private readonly fileKeys = new Map<string, Promise<CryptoKey>>();
   /** the previews that were read (a file never changes under its id): kept while the app is open */
   private readonly previews = new Map<string, Promise<BoxFile>>();
+  /** the first line of each opened note, for the list (kept with the items: a note is opened once when the box is read) */
+  private readonly snippets = new Map<string, string>();
+  /** when each date and ticket is, for the list and the badges */
+  private readonly whens = new Map<string, string>();
 
   constructor() {
     // another circle: the files, the opened keys and the previews of the old circle are let go (the object URLs too)
     this.active.onSwitch(() => {
       this.raw.clear();
       this.fileKeys.clear();
+      this.snippets.clear();
       for (const preview of this.previews.values()) void preview.then((file) => URL.revokeObjectURL(file.url), () => undefined);
       this.previews.clear();
     });
@@ -75,12 +81,91 @@ export class SafeboxService {
   private async reveal(friendId: string, item: SafeboxItem): Promise<SafeboxItem> {
     this.raw.set(`${friendId}/${item.id}`, item);
     if (!item.enc) return item;
+    if (item.type === 'note') {
+      // a note has no file: its title and text are inside; the list shows the title (as the name) and the first line
+      try {
+        const note = await openNote(friendId, item.enc, await this.fileKey(friendId, item));
+        this.snippets.set(`${friendId}/${item.id}`, firstLine(note.text));
+        return { ...item, name: note.title };
+      } catch {
+        return { ...item, name: tr('core.lockedNote', 'Locked note') };
+      }
+    }
+    if (isObjectType(item.type)) {
+      // a secret, link, checklist ...: the title and fields are inside; the list shows the title and a short line made from the fields
+      try {
+        const object = await openObject(friendId, item.enc, await this.fileKey(friendId, item));
+        this.snippets.set(`${friendId}/${item.id}`, summaryOf(item.type, object));
+        this.whens.set(`${friendId}/${item.id}`, whenOf(item.type, object));
+        return { ...item, name: object.title };
+      } catch {
+        return { ...item, name: tr('core.lockedItem', 'Locked item') };
+      }
+    }
     try {
       const meta = await openMeta(friendId, item.enc, await this.fileKey(friendId, item));
       return { ...item, name: meta.name, mime: meta.mime };
     } catch {
       return { ...item, name: tr('core.lockedFile', 'Locked file') };
     }
+  }
+
+  /** When a date or a ticket is ("5 Dec 2026 19:30"), for the list and the badges ('' for anything else). */
+  when(friendId: string, itemId: string): string {
+    return this.whens.get(`${friendId}/${itemId}`) ?? '';
+  }
+
+  /** The first line of a note, for the list ('' for anything else). */
+  snippet(friendId: string, itemId: string): string {
+    return this.snippets.get(`${friendId}/${itemId}`) ?? '';
+  }
+
+  /** Makes a new note (both of us must have a key: a note is never stored unlocked). Answers with the note as the list shows it. */
+  async addNote(friendId: string, title: string, text: string, keys: BoxKeys): Promise<SafeboxItem> {
+    const me = this.auth.user()?.uid;
+    if (!me) throw new Error(tr('core.notSignedIn', 'Not signed in'));
+    const body = await sealNote(friendId, { v: 1, title, text }, [{ uid: me, keys: keys.mine }, { uid: keys.friendUid, keys: keys.friend }]);
+    return this.reveal(friendId, await this.api.request<SafeboxItem>(`${this.base(friendId)}/items`, { method: 'POST', body: JSON.stringify(body) }));
+  }
+
+  /** A note opened, with the revision it is at (read from the server again when `fresh`: after a conflict or when the page opens). */
+  async readNote(friendId: string, itemId: string, fresh = false): Promise<{ note: NotePayload; revision: number; mine: boolean; updatedAt: string | null }> {
+    if (fresh) this.raw.delete(`${friendId}/${itemId}`);
+    const item = await this.rawItem(friendId, itemId);
+    if (!item || item.type !== 'note' || !item.enc) throw new Error(tr('core.thatNoteIsGone', 'That note is not there any more.'));
+    return { note: await openNote(friendId, item.enc, await this.fileKey(friendId, item)), revision: item.revision, mine: item.mine, updatedAt: item.updatedAt ?? item.createdAt };
+  }
+
+  /** Saves a changed note. The revision is the one the page opened it at: if your friend saved first, the server says so (409) and the page reads it again. */
+  async updateNote(friendId: string, itemId: string, title: string, text: string, revision: number): Promise<SafeboxItem> {
+    const raw = await this.rawItem(friendId, itemId);
+    if (!raw?.enc) throw new Error(tr('core.thatNoteIsGone', 'That note is not there any more.'));
+    const sealed = await resealNote(friendId, await this.fileKey(friendId, raw), { v: 1, title, text });
+    return this.reveal(friendId, await this.api.request<SafeboxItem>(`${this.base(friendId)}/items/${itemId}`, { method: 'PUT', body: JSON.stringify({ revision, ...sealed }) }));
+  }
+
+  /** Makes a new object of any kind but a note (both must have a key). */
+  async addObject(friendId: string, type: SafeboxType, payload: ObjectPayload, keys: BoxKeys, remind: ReminderRequest | null = null): Promise<SafeboxItem> {
+    const me = this.auth.user()?.uid;
+    if (!me) throw new Error(tr('core.notSignedIn', 'Not signed in'));
+    const body = { ...(await sealObject(friendId, type, payload, [{ uid: me, keys: keys.mine }, { uid: keys.friendUid, keys: keys.friend }])), remind };
+    return this.reveal(friendId, await this.api.request<SafeboxItem>(`${this.base(friendId)}/items`, { method: 'POST', body: JSON.stringify(body) }));
+  }
+
+  /** An object opened, with its type and the revision it is at. */
+  async readObject(friendId: string, itemId: string, fresh = false): Promise<{ type: SafeboxType; payload: ObjectPayload; revision: number; mine: boolean; updatedAt: string | null }> {
+    if (fresh) this.raw.delete(`${friendId}/${itemId}`);
+    const item = await this.rawItem(friendId, itemId);
+    if (!item || !isObjectType(item.type) || !item.enc) throw new Error(tr('core.thatItemIsGone', 'That item is not there any more.'));
+    return { type: item.type, payload: await openObject(friendId, item.enc, await this.fileKey(friendId, item)), revision: item.revision, mine: item.mine, updatedAt: item.updatedAt ?? item.createdAt };
+  }
+
+  /** Saves a changed object (a 409 means the friend saved first). */
+  async updateObject(friendId: string, itemId: string, payload: ObjectPayload, revision: number, remind: ReminderRequest | null = null): Promise<SafeboxItem> {
+    const raw = await this.rawItem(friendId, itemId);
+    if (!raw?.enc) throw new Error(tr('core.thatItemIsGone', 'That item is not there any more.'));
+    const sealed = await resealObject(friendId, await this.fileKey(friendId, raw), payload);
+    return this.reveal(friendId, await this.api.request<SafeboxItem>(`${this.base(friendId)}/items/${itemId}`, { method: 'PUT', body: JSON.stringify({ revision, ...sealed, remind }) }));
   }
 
   /** For a locked file that does not open: which keys it was locked for (mine), and the key of this device: shown on the file page so a failure can be explained. */
@@ -117,7 +202,17 @@ export class SafeboxService {
     return item;
   }
 
-  private async addEncrypted(friendId: string, file: Blob, name: string, thumb: Blob | null, keys: BoxKeys): Promise<SafeboxItem> {
+  /** Adds a file as an ATTACHMENT of an object (always locked: it needs the keys of both friends). */
+  addAttachment(friendId: string, parentId: string, file: Blob, name: string, thumb: Blob | undefined, keys: BoxKeys): Promise<SafeboxItem> {
+    return this.addEncrypted(friendId, file, name, thumb ?? null, keys, parentId);
+  }
+
+  /** The attachments of an object, as the list shows them (read from the server). */
+  async children(friendId: string, parentId: string): Promise<SafeboxItem[]> {
+    return (await this.load(friendId)).items.filter((item) => item.parentId === parentId);
+  }
+
+  private async addEncrypted(friendId: string, file: Blob, name: string, thumb: Blob | null, keys: BoxKeys, parentId?: string): Promise<SafeboxItem> {
     const me = this.auth.user()?.uid;
     if (!me) throw new Error(tr('core.notSignedIn', 'Not signed in'));
     const { kind, mime } = await classify(file, name);
@@ -130,7 +225,7 @@ export class SafeboxService {
       thumb: kind === 'image' ? thumb : null,
       recipients: [{ uid: me, keys: keys.mine }, { uid: keys.friendUid, keys: keys.friend }],
     });
-    const item = await this.api.request<SafeboxItem>(`${this.base(friendId)}/encrypted`, { method: 'POST', body, headers: { 'Content-Type': 'application/octet-stream' } });
+    const item = await this.api.request<SafeboxItem>(`${this.base(friendId)}/encrypted${parentId ? `?parent=${encodeURIComponent(parentId)}` : ''}`, { method: 'POST', body, headers: { 'Content-Type': 'application/octet-stream' } });
     return this.reveal(friendId, item);
   }
 
@@ -207,4 +302,10 @@ export class SafeboxService {
     this.raw.delete(`${friendId}/${itemId}`);
     this.fileKeys.delete(`${friendId}/${itemId}`);
   }
+}
+
+/** The first non-empty line of a text, cut to fit a list row. */
+function firstLine(text: string): string {
+  const line = text.split('\n').map((l) => l.trim()).find((l) => l) ?? '';
+  return line.length > 120 ? `${line.slice(0, 120)}…` : line;
 }

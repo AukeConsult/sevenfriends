@@ -1,4 +1,4 @@
-import { EncryptedUploadHeader, MessageEnc, MessageEncMedia, PublishedKey, SafeboxEnc, SafeboxKind, SafeboxWrap } from '../models';
+import { EncryptedUploadHeader, MessageEnc, MessageEncMedia, NotePayload, ObjectPayload, SafeboxType, PublishedKey, SafeboxEnc, SafeboxKind, SafeboxWrap } from '../models';
 import { tr } from './i18n';
 
 /**
@@ -144,6 +144,52 @@ export async function openMeta(connectionId: string, enc: SafeboxEnc, fileKey: C
 export async function sealMeta(connectionId: string, fileKey: CryptoKey, meta: BoxMeta): Promise<{ metaIv: string; meta: string }> {
   const sealed = await lock(fileKey, connectionId, 'meta', encoder.encode(JSON.stringify(meta)));
   return { metaIv: toBase64(sealed.iv), meta: toBase64(sealed.data) };
+}
+
+/**
+ * A new note (design: docs/design/safebox-objects.md): a new key for it, the title and text locked with it (part "meta": for an object `meta` is the whole
+ * payload; the iv of the file is only a placeholder and is the same as `metaIv`), the key locked for every key in use of both friends. Returns the body of
+ * `POST .../safebox/items`.
+ */
+export async function sealNote(connectionId: string, payload: NotePayload, recipients: Recipient[]): Promise<{ type: 'note'; enc: SafeboxEnc }> {
+  const key = await newKey();
+  const sealed = await lock(key, connectionId, 'meta', encoder.encode(JSON.stringify(payload)));
+  const iv = toBase64(sealed.iv);
+  return { type: 'note', enc: { v: 1, iv, metaIv: iv, meta: toBase64(sealed.data), thumbIv: null, wraps: await wrapKeyFor(key, recipients) } };
+}
+
+/** The new content of a note, locked again with the key it already has: what `PUT .../safebox/items/:id` takes (the copies of the key stay as they are). */
+export async function resealNote(connectionId: string, key: CryptoKey, payload: NotePayload): Promise<{ metaIv: string; meta: string }> {
+  const sealed = await lock(key, connectionId, 'meta', encoder.encode(JSON.stringify(payload)));
+  return { metaIv: toBase64(sealed.iv), meta: toBase64(sealed.data) };
+}
+
+/** A note opened; throws when it was changed or is not a note. */
+export async function openNote(connectionId: string, enc: SafeboxEnc, key: CryptoKey): Promise<NotePayload> {
+  const payload = JSON.parse(new TextDecoder().decode(await unlock(key, connectionId, 'meta', enc.metaIv, fromBase64(enc.meta)))) as Partial<NotePayload>;
+  if (payload.v !== 1 || typeof payload.title !== 'string' || typeof payload.text !== 'string') throw new Error(tr('core.thisNoteCouldNot', 'This note could not be opened: it was changed or damaged.'));
+  return { v: 1, title: payload.title, text: payload.text };
+}
+
+/** A new object other than a note (a secret, link, checklist ...): the same as a note, with its type and its fields/entries as the payload. */
+export async function sealObject(connectionId: string, type: SafeboxType, payload: ObjectPayload, recipients: Recipient[]): Promise<{ type: SafeboxType; enc: SafeboxEnc }> {
+  const key = await newKey();
+  const sealed = await lock(key, connectionId, 'meta', encoder.encode(JSON.stringify(payload)));
+  const iv = toBase64(sealed.iv);
+  return { type, enc: { v: 1, iv, metaIv: iv, meta: toBase64(sealed.data), thumbIv: null, wraps: await wrapKeyFor(key, recipients) } };
+}
+
+/** The new content of such an object, locked again with its key (what `PUT .../safebox/items/:id` takes). */
+export const resealObject = (connectionId: string, key: CryptoKey, payload: ObjectPayload): Promise<{ metaIv: string; meta: string }> => resealNote(connectionId, key, payload as unknown as NotePayload);
+
+/** An object opened; throws when it was changed or is not what it says. */
+export async function openObject(connectionId: string, enc: SafeboxEnc, key: CryptoKey): Promise<ObjectPayload> {
+  const p = JSON.parse(new TextDecoder().decode(await unlock(key, connectionId, 'meta', enc.metaIv, fromBase64(enc.meta)))) as Partial<ObjectPayload>;
+  if (p.v !== 1 || typeof p.title !== 'string' || !p.fields || typeof p.fields !== 'object') throw new Error(tr('core.thisItemCouldNot', 'This item could not be opened: it was changed or damaged.'));
+  const fields: Record<string, string> = {};
+  for (const [k, v] of Object.entries(p.fields)) if (typeof v === 'string') fields[k] = v;
+  const items = Array.isArray(p.items) ? p.items.filter((i) => i && typeof i.id === 'string' && typeof i.text === 'string').map((i) => ({ id: i.id, text: i.text, done: i.done === true })) : undefined;
+  return { v: 1, title: p.title, fields, ...(items ? { items } : {}) };
 }
 
 /**

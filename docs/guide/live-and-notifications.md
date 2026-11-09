@@ -1,5 +1,7 @@
 # Live updates, pings, sound, push, email
 
+> **Safebox reminders** (a date or a ticket with "remind me"): a scheduled function pushes "⏰ A reminder from your safebox" at the chosen moment, as a normal message push; see `docs/design/safebox-objects.md`.
+
 Part of the project guide (moved out of `CLAUDE.md`; text unchanged). Read this before changing this area.
 
 ### Pings (incoming signals)

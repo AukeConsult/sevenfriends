@@ -1,0 +1,73 @@
+<ng-container *transloco="let t">
+<main class="sf-page sf-page-wide">
+  <div class="sf-page-head">
+    <h1 class="m-0 mw-100">
+      <a [routerLink]="list" class="sf-title-link" [attr.aria-label]="t('safeboxNote.backToTheSafebox') || 'Back to the safebox'">
+        <span class="sf-back-inline" aria-hidden="true"></span>
+        <span class="sf-ellipsis">{{ isNew ? (t('safeboxNote.newNote') || 'New note') : (title() || (t('safeboxNote.note') || 'Note')) }}</span>
+      </a>
+    </h1>
+    <p class="sf-hint m-0">{{ t('safeboxNote.onlyYouAndFriendname', { friendName: friendName() }) || 'Locked on this device. Only you and ' + friendName() + ' can read it.' }}</p>
+  </div>
+
+  @if (loadError()) {
+    <div class="alert alert-danger" role="alert">{{ loadError() }}</div>
+    <a [routerLink]="list" class="btn btn-light btn-sm align-self-start">{{ t('safeboxNote.back') || 'Back' }}</a>
+  } @else if (loading()) {
+    <p class="text-secondary text-center">{{ t('safeboxNote.openingTheNote') || 'Opening the note…' }}</p>
+  } @else {
+    @if (keyStatus() === 'checking') {
+      <p class="text-secondary">{{ t('safeboxNote.checkingTheKeys') || 'Checking the keys…' }}</p>
+    } @else if (keyStatus() !== 'both') {
+      <!-- a note is never stored unlocked: both of us need a key -->
+      <div class="alert alert-warning" role="status">
+        @if (keyStatus() === 'me' ) { {{ t('safeboxNote.friendHasNoKey', { friendName: friendName() }) || friendName() + ' has no encryption key yet, so a note cannot be locked for you both. Ask them to set one up in Settings → Keys.' }} }
+        @else { {{ t('safeboxNote.youHaveNoKey') || 'A note is always locked, and you need an encryption key for that.' }} <a routerLink="/settings/encryption">{{ t('safeboxNote.setUpAKey') || 'Set up a key' }}</a> }
+      </div>
+    }
+
+    @if (conflict()) {
+      <div class="alert alert-warning" role="alert">
+        <div>{{ t('safeboxNote.friendSavedFirst', { friendName: friendName() }) || friendName() + ' saved this note while you were writing. Their version replaces yours if you load it. Copy your text first if you want to keep it.' }}</div>
+        <div class="d-flex gap-2 mt-2">
+          <button type="button" class="btn btn-warning btn-sm" (click)="loadTheirs()">{{ t('safeboxNote.loadTheirVersion') || 'Load their version' }}</button>
+        </div>
+      </div>
+    }
+
+    <form class="sf-narrow-form d-grid gap-2" (submit)="$event.preventDefault(); save()">
+      <label class="d-grid gap-1" for="note-title"><span>{{ t('safeboxNote.title') || 'Title' }}</span>
+        <input id="note-title" type="text" class="form-control" [maxLength]="titleMax" autocomplete="off" [value]="title()" (input)="title.set($any($event.target).value)" />
+      </label>
+      <label class="d-grid gap-1" for="note-text"><span>{{ t('safeboxNote.text') || 'Text' }}</span>
+        <textarea id="note-text" class="form-control" rows="12" [maxLength]="textMax" [value]="text()" (input)="text.set($any($event.target).value)"></textarea>
+      </label>
+      <span class="sf-hint text-end">{{ text().length }} / {{ textMax }}</span>
+
+      <app-safebox-attachments [friendId]="friendId" [parentId]="itemId" [keys]="keyStatus() === 'both' ? boxKeys() : null" />
+
+      @if (error()) { <div class="alert alert-danger m-0" role="alert">{{ error() }}</div> }
+
+      <div class="sf-actions">
+        <a [routerLink]="list" class="btn btn-light btn-sm">{{ t('safeboxNote.cancel') || 'Cancel' }}</a>
+        <button type="submit" class="btn btn-primary ms-auto" [disabled]="!canSave()">{{ busy() ? (t('safeboxNote.saving') || 'Saving…') : (t('safeboxNote.save') || 'Save') }}</button>
+      </div>
+    </form>
+
+    @if (!isNew) {
+      <!-- taking it out: an expandable question under the note, not a pop-up -->
+      @if (confirmDelete()) {
+        <div class="sf-expand">
+          <p class="sf-confirm-text">{{ t('safeboxNote.takeThisNoteOut') || 'Take this note out of the safebox? It disappears for both of you and cannot be got back.' }}</p>
+          <div class="sf-msg-actions justify-content-end">
+            <button type="button" class="btn btn-light btn-sm" (click)="confirmDelete.set(false)" [disabled]="busy()">{{ t('safeboxNote.cancel') || 'Cancel' }}</button>
+            <button type="button" class="btn btn-danger btn-sm" (click)="remove()" [disabled]="busy()">{{ t('safeboxNote.takeItOut') || 'Take it out' }}</button>
+          </div>
+        </div>
+      } @else {
+        <button type="button" class="btn btn-outline-danger btn-sm align-self-start mt-2" (click)="confirmDelete.set(true)" [disabled]="busy()">{{ t('safeboxNote.takeItOutOfThe') || 'Take it out of the safebox' }}</button>
+      }
+    }
+  }
+</main>
+</ng-container>

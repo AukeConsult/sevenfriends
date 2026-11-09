@@ -1,0 +1,20 @@
+{
+  "pictures": "Pictures",
+  "attachments": "Attachments",
+  "sentWhenSaved": "These are sent when you save.",
+  "cancel": "Cancel",
+  "takeItOut": "Take it out",
+  "needKeys": "Files are always locked: both of you need an encryption key before you can add one.",
+  "addPictures": "Add pictures",
+  "addFiles": "Add files",
+  "takeAPhoto": "Take a photo",
+  "adding": "Adding {{ fileName }}…",
+  "takeOutItemname": "Take out {{ itemName }}",
+  "dropItemname": "Do not add {{ itemName }}",
+  "takeThisOut": "Take “{{ itemName }}” out? It disappears for both of you.",
+  "couldNotRead": "Could not read the attachments",
+  "couldNotAddCount": "{{ count }} file(s) could not be added.",
+  "noKeys": "The keys are not known yet.",
+  "couldNotAdd": "Could not add “{{ fileName }}”",
+  "couldNotTakeOut": "Could not take it out"
+}

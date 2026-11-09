@@ -1,4 +1,4 @@
-import { ENC_HEADER_MAX, EncryptedUploadHeader, MessageEnc, MessageEncMedia, PublishedKey, SafeboxEnc, SafeboxKind, SafeboxWrap } from "./models";
+import { ENC_HEADER_MAX, EncryptedUploadHeader, MessageEnc, MessageEncMedia, NewObject, ObjectChange, ReminderRequest, PublishedKey, SAFEBOX_OBJECT_TYPES, SAFEBOX_PAYLOAD_MAX_BYTES, SafeboxEnc, SafeboxKind, SafeboxType, SafeboxWrap } from "./models";
 
 /** The server cannot look inside an encrypted file: it checks the shape of what it is sent and that every key of both friends has its copy of the file key. */
 
@@ -34,6 +34,57 @@ export function wrapValid(w: unknown): w is SafeboxWrap {
 function wrapsValid(wraps: unknown): wraps is SafeboxWrap[] {
   if (!Array.isArray(wraps) || !wraps.length || wraps.length > MAX_WRAPS) return false;
   return wraps.every((w) => w && typeof w.uid === "string" && w.uid && KEY_ID.test(w.keyId) && isBase64(w.wrappedKey, WRAP_LENGTH));
+}
+
+/** A locked payload (base64): at least the 16-byte lock plus one byte, whole base64 groups, and not more than the biggest payload plus its lock. */
+const MAX_LOCKED_PAYLOAD_LENGTH = Math.ceil((SAFEBOX_PAYLOAD_MAX_BYTES + 16) / 3) * 4;
+const lockedPayloadOk = (value: unknown): value is string => isBase64(value) && value.length >= 24 && value.length <= MAX_LOCKED_PAYLOAD_LENGTH && value.length % 4 === 0;
+
+/** How many bytes a locked payload is (the length of the base64 text decoded): what the object counts in the box. */
+export const lockedBytes = (meta: string): number => Math.floor((meta.length * 3) / 4) - (meta.endsWith("==") ? 2 : meta.endsWith("=") ? 1 : 0);
+
+/** A reminder as the server keeps it. */
+export interface ParsedReminder {
+  at: Date;
+  both: boolean;
+}
+const REMINDER_PAST_MS = 2 * 24 * 3600 * 1000;
+const REMINDER_FUTURE_MS = 6 * 365 * 24 * 3600 * 1000;
+
+/** The `remind` of a request: undefined = not sent (unchanged), null = none, otherwise the moment (not more than 2 days back or 6 years ahead) and who gets it. */
+export function parseReminder(value: unknown, now = Date.now()): ParsedReminder | null | undefined | Refused {
+  if (value === undefined) return undefined;
+  if (value === null) return null;
+  const r = value as Partial<ReminderRequest>;
+  const at = typeof r?.at === "string" ? new Date(r.at) : null;
+  if (!at || Number.isNaN(at.getTime()) || typeof r.both !== "boolean" || at.getTime() < now - REMINDER_PAST_MS || at.getTime() > now + REMINDER_FUTURE_MS) return bad("The reminder is not valid");
+  return { at, both: r.both };
+}
+
+/**
+ * A new object (a note ...): `{ type, enc }` with the content locked on the device. The server cannot look inside: it checks the type, the shape,
+ * the size and (the caller, with `wrapsCover`) the copies of the key. An object has no file, so `iv` is only a placeholder (it must be the same as `metaIv`)
+ * and there is no preview.
+ */
+export function parseNewObject(body: unknown): { type: SafeboxType; enc: SafeboxEnc; remind: ParsedReminder | null | undefined } | Refused {
+  const o = body as Partial<NewObject> | null;
+  const enc = o?.enc as Partial<SafeboxEnc> | undefined;
+  if (!o || typeof o !== "object" || !enc || typeof enc !== "object" || enc.v !== 1) return bad("The new item is not valid");
+  if (!SAFEBOX_OBJECT_TYPES.includes(o.type as SafeboxType)) return bad("That kind of item is not known");
+  if (!isBase64(enc.metaIv, IV_LENGTH) || enc.iv !== enc.metaIv || !lockedPayloadOk(enc.meta) || enc.thumbIv !== null || !wrapsValid(enc.wraps)) return bad("The new item is not valid");
+  const remind = parseReminder(o.remind);
+  if (remind && "error" in remind) return remind;
+  return { remind, type: o.type as SafeboxType, enc: { v: 1, iv: enc.metaIv, metaIv: enc.metaIv, meta: enc.meta, thumbIv: null, wraps: enc.wraps.map((w) => ({ uid: w.uid, keyId: w.keyId, wrappedKey: w.wrappedKey })) } };
+}
+
+/** A change of an object: the new locked content and the revision it started from. */
+export function parseObjectChange(body: unknown): { revision: number; metaIv: string; meta: string; remind: ParsedReminder | null | undefined } | Refused {
+  const c = body as Partial<ObjectChange> | null;
+  if (!c || typeof c !== "object" || !Number.isInteger(c.revision) || (c.revision as number) < 1) return bad("The change is not valid");
+  if (!isBase64(c.metaIv, IV_LENGTH) || !lockedPayloadOk(c.meta)) return bad("The change is not valid");
+  const remind = parseReminder(c.remind);
+  if (remind && "error" in remind) return remind;
+  return { revision: c.revision as number, metaIv: c.metaIv, meta: c.meta, remind };
 }
 
 /** Cuts the request body into header, file and preview, and checks the header's shape. */

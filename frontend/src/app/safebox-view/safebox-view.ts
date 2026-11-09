@@ -8,6 +8,7 @@ import { FriendsService } from '../core/friends.service';
 import { formatBytes } from '../core/image';
 import { PREVIEW_LIMIT_BYTES, SheetView, readSheets, renderDocx, renderPdf, renderPptx } from '../core/office-preview';
 import { SafeboxService } from '../core/safebox.service';
+import { isObjectType } from '../core/safebox-objects';
 import { MediaAudio } from '../media-audio/media-audio';
 import { MediaVideo } from '../media-video/media-video';
 import { MediaRef, Safebox, SafeboxItem } from '../models';
@@ -57,11 +58,21 @@ export class SafeboxView {
   protected readonly failDetails = signal<string | null>(null);
   protected readonly busy = signal(false);
 
-  protected readonly index = computed(() => (this.box()?.items ?? []).findIndex((i) => i.id === this.itemId()));
-  protected readonly item = computed<SafeboxItem | null>(() => this.box()?.items[this.index()] ?? null);
+  /** the files of the box (a note has its own page: the arrows go from file to file) */
+  private readonly parentOfCurrent = computed(() => (this.box()?.items ?? []).find((i) => i.id === this.itemId())?.parentId ?? null);
+  /** the files the arrows go through: the other attachments of the same object, or the files of the box that belong to none */
+  private readonly files = computed(() => (this.box()?.items ?? []).filter((i) => !isObjectType(i.type) && (i.parentId ?? null) === this.parentOfCurrent()));
+  /** where Back goes: the object this file is attached to, otherwise the list */
+  protected readonly back = computed(() => {
+    const parent = this.parentOfCurrent();
+    if (!parent) return ['/friends', this.friendId, 'safebox'];
+    return ['/friends', this.friendId, 'safebox', (this.box()?.items ?? []).find((i) => i.id === parent)?.type === 'note' ? 'note' : 'object', parent];
+  });
+  protected readonly index = computed(() => this.files().findIndex((i) => i.id === this.itemId()));
+  protected readonly item = computed<SafeboxItem | null>(() => this.files()[this.index()] ?? null);
   /** the files around this one (newest first, like the box) */
-  protected readonly newer = computed(() => (this.index() > 0 ? this.box()!.items[this.index() - 1] : null));
-  protected readonly older = computed(() => (this.index() >= 0 ? (this.box()!.items[this.index() + 1] ?? null) : null));
+  protected readonly newer = computed(() => (this.index() > 0 ? this.files()[this.index() - 1] : null));
+  protected readonly older = computed(() => (this.index() >= 0 ? (this.files()[this.index() + 1] ?? null) : null));
   private readonly ending = computed(() => this.item()?.name.split('.').pop()?.toLowerCase() ?? '');
   protected readonly docType = computed<DocType>(() => {
     const item = this.item();

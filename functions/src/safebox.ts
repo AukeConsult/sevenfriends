@@ -2,10 +2,10 @@ import express, { Request, Response, Router } from "express";
 import { DecodedIdToken } from "firebase-admin/auth";
 import { DocumentReference, FieldValue, Timestamp, getFirestore } from "firebase-admin/firestore";
 import { asyncHandler } from "./auth";
-import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAX_UPLOAD_BYTES, SAFEBOX_MAX_BYTES, SAFEBOX_MAX_ITEMS, boxOwner } from "./constants";
+import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAX_UPLOAD_BYTES, SAFEBOX_MAX_BYTES, SAFEBOX_MAX_ITEMS, SAFEBOX_REMINDERS, boxOwner } from "./constants";
 import { connectionOf, sleepsMe } from "./conversation";
-import { BoxKeys, ENC_HEADER_MAX, MediaRef, Safebox, SafeboxItem } from "./models";
-import { parseEncryptedUpload, wrapsCover, wrapsFor } from "./box-encryption";
+import { ALBUM_PICTURES_MAX, ATTACHMENTS_MAX, CASE_DOCUMENTS_MAX, BoxKeys, ENC_HEADER_MAX, MediaRef, SAFEBOX_OBJECT_TYPES, Safebox, SafeboxItem } from "./models";
+import { ParsedReminder, lockedBytes, parseEncryptedUpload, parseNewObject, parseObjectChange, wrapsCover, wrapsFor } from "./box-encryption";
 import { publishedKeysOf } from "./keys";
 import { circleCol, messageCol, safeboxItems } from "./paths";
 import { nameOf, sendPush } from "./push";
@@ -28,8 +28,20 @@ const encryptedBody = express.raw({ type: () => true, limit: MAX_FILE_BYTES + EN
  */
 export const safeboxRouter = Router({ mergeParams: true });
 
+/**
+ * Who may change or take out an item. For now BOTH friends may change or delete ANY item (a file or an object); the owner is kept on every item
+ * (`addedBy`) so a rule such as "only the owner" can be added here, in one place, when it is decided.
+ */
+const canChange = (_item: FirebaseFirestore.DocumentData, _uid: string): boolean => true;
+
+/** An object (a note ...) has no stored file; an item without a type is a file (everything from before there were types). */
+const isObject = (d: FirebaseFirestore.DocumentData): boolean => SAFEBOX_OBJECT_TYPES.includes(d.type);
+
 const toItem = (id: string, d: FirebaseFirestore.DocumentData, uid: string): SafeboxItem => ({
   id,
+  type: d.type ?? "file",
+  revision: (d.revision as number | undefined) ?? 1,
+  updatedAt: iso(d.updatedAt),
   name: d.name as string,
   kind: d.kind,
   mime: d.mime as string,
@@ -37,6 +49,7 @@ const toItem = (id: string, d: FirebaseFirestore.DocumentData, uid: string): Saf
   ownerId: d.addedBy as string,
   mine: d.addedBy === uid,
   createdAt: iso(d.createdAt),
+  parentId: (d.parentId as string | undefined) ?? null,
   hasThumb: Boolean(d.hasThumb),
   ...(d.enc ? { enc: wrapsFor(d.enc, uid) } : {}), // an encrypted file: only my copies of the file key are sent
 });
@@ -172,6 +185,30 @@ safeboxRouter.post(
       res.status(409).json({ error: "The encryption keys changed while the file was sent. Try again." });
       return;
     }
+    // `?parent=<object id>`: this locked file is an ATTACHMENT of that object (at most ATTACHMENTS_MAX; an album holds only pictures, up to ALBUM_PICTURES_MAX)
+    let parent: { ref: DocumentReference; id: string; data: FirebaseFirestore.DocumentData } | null = null;
+    if (req.query.parent !== undefined) {
+      if (req.query.replaces !== undefined) {
+        res.status(400).json({ error: "An attachment does not replace a file" });
+        return;
+      }
+      parent = await itemById(res, connection.id, req.query.parent);
+      if (!parent) return;
+      if (!isObject(parent.data)) {
+        res.status(400).json({ error: "Only an object can have attachments" });
+        return;
+      }
+      const album = parent.data.type === "album";
+      if (album && upload.header.kind !== "image") {
+        res.status(400).json({ error: "An album holds only pictures" });
+        return;
+      }
+      const max = album ? ALBUM_PICTURES_MAX : parent.data.type === "case" ? CASE_DOCUMENTS_MAX : ATTACHMENTS_MAX;
+      if ((await safeboxItems(connection.id).where("parentId", "==", parent.id).get()).size >= max) {
+        res.status(409).json({ error: `At most ${max} ${album ? "pictures" : "attachments"} on one item` });
+        return;
+      }
+    }
     // `?replaces=<item id>`: this locked file takes the place of a plain file of the box (the app locks the files that were put in before the keys)
     let old: { ref: DocumentReference; id: string; data: FirebaseFirestore.DocumentData } | null = null;
     if (req.query.replaces !== undefined) {
@@ -190,7 +227,7 @@ safeboxRouter.post(
     const name = boxOwner(connection.id);
     await putObject(name, ref.id, upload.file, kind, "application/octet-stream", null, owner);
     if (upload.thumb) await putObject(name, `${ref.id}.thumb`, upload.thumb, "thumb", "application/octet-stream", null, owner);
-    const fields = { name: "Encrypted file", kind, mime: "application/octet-stream", bytes: upload.file.length, addedBy: owner, circles: circlesOf(connection, owner), hasThumb: Boolean(upload.thumb), enc, ...(replaced ?? { createdAt: FieldValue.serverTimestamp() }) };
+    const fields = { name: "Encrypted file", kind, mime: "application/octet-stream", bytes: upload.file.length, addedBy: owner, circles: circlesOf(connection, owner), hasThumb: Boolean(upload.thumb), enc, ...(parent ? { parentId: parent.id } : {}), ...(replaced ?? { createdAt: FieldValue.serverTimestamp() }) };
     if (old) {
       // ONE atomic step: the locked item appears and the plain item goes in the same transaction (it still must be there and still plain), so the
       // list never shows both or neither. If it fails, the locked file just stored is taken away again and the plain file stays.
@@ -213,7 +250,7 @@ safeboxRouter.post(
       await deleteObject(name, old.id).catch((err) => console.error(`Could not delete the plain file ${connection.id}/${old.id}`, err)); // the list no longer has it; only the stored bytes are left to clean up
     } else {
       await ref.set(fields);
-      await announceItem(res, connection);
+      if (!parent) await announceItem(res, connection); // an attachment is no news of its own: its object was announced
     }
     res.status(201).json(toItem(ref.id, (await ref.get()).data()!, me));
   }),
@@ -289,6 +326,99 @@ async function itemById(res: Response, connectionId: string, itemId: unknown) {
   return { ref: snap.ref, id: snap.id, data: snap.data()! };
 }
 
+const reminderRef = (connectionId: string, itemId: string) => getFirestore().collection(SAFEBOX_REMINDERS).doc(`${connectionId}_${itemId}`);
+
+/**
+ * The reminder of an object with a time (a date, a ticket): the moment to push and who gets it, kept in `safebox-reminders` (the server cannot read the
+ * object, so this moment is all it knows). `undefined` = leave as it is; `null`, or a moment that has passed already, = none (a reminder is never sent late
+ * for an event saved after its lead time). The sender is `sendDueReminders` (safebox-reminders.ts).
+ */
+async function setReminder(connection: Connection, itemId: string, me: string, remind: ParsedReminder | null | undefined): Promise<void> {
+  if (remind === undefined) return;
+  const ref = reminderRef(connection.id, itemId);
+  if (remind === null || remind.at.getTime() <= Date.now()) {
+    await ref.delete();
+    return;
+  }
+  const targets = [{ uid: me, circleId: connection.circleId, friendUid: connection.peerUid }, ...(remind.both ? [{ uid: connection.peerUid, circleId: connection.peerCircleId, friendUid: me }] : [])];
+  await ref.set({ connectionId: connection.id, itemId, at: Timestamp.fromMillis(remind.at.getTime()), targets, setBy: me });
+}
+
+/**
+ * Put an OBJECT in the box (a note ...): `POST .../safebox/items` `{ type, enc }`, the content locked on the device (`enc.meta` is the locked payload).
+ * The server cannot look inside: it checks the type, the shape, the size, and that the key is locked for every key in use of both friends. There is no
+ * file and no preview; the locked payload counts in the box. Answers with the new item.
+ */
+safeboxRouter.post(
+  "/items",
+  asyncHandler(async (req, res) => {
+    const connection = await connectionOf(req, res);
+    if (!connection) return;
+    const parsed = parseNewObject(req.body);
+    if ("error" in parsed) {
+      res.status(parsed.status).json({ error: parsed.error });
+      return;
+    }
+    const me = uidOf(res);
+    const [mine, friend] = await Promise.all([publishedKeysOf(me), publishedKeysOf(connection.peerUid)]);
+    if (!wrapsCover(parsed.enc, [{ uid: me, keys: mine }, { uid: connection.peerUid, keys: friend }])) {
+      res.status(409).json({ error: "The encryption keys changed while the item was sent. Try again." });
+      return;
+    }
+    const bytes = lockedBytes(parsed.enc.meta);
+    if (!(await boxHasRoom(res, connection, bytes))) return;
+    const ref = safeboxItems(connection.id).doc();
+    await ref.set({ type: parsed.type, name: "Encrypted item", kind: "document", mime: "application/octet-stream", bytes, addedBy: me, circles: circlesOf(connection, me), hasThumb: false, enc: parsed.enc, revision: 1, createdAt: FieldValue.serverTimestamp(), updatedAt: FieldValue.serverTimestamp() });
+    await setReminder(connection, ref.id, me, parsed.remind);
+    await announceItem(res, connection);
+    res.status(201).json(toItem(ref.id, (await ref.get()).data()!, me));
+  }),
+);
+
+/**
+ * Change an OBJECT: `PUT .../safebox/items/:id` `{ revision, metaIv, meta }`, the new locked content and the revision the app started from. If the other
+ * friend saved in between the revision is not the current one: 409, and the app reads the item again. The key and its copies stay as they are.
+ */
+safeboxRouter.put(
+  "/items/:itemId",
+  asyncHandler(async (req, res) => {
+    const connection = await connectionOf(req, res);
+    if (!connection) return;
+    const item = await itemOf(req, res, connection.id);
+    if (!item) return;
+    if (!isObject(item.data) || !item.data.enc) {
+      res.status(400).json({ error: "That item is not an object" });
+      return;
+    }
+    if (!canChange(item.data, uidOf(res))) {
+      res.status(403).json({ error: "You cannot change this item" });
+      return;
+    }
+    const change = parseObjectChange(req.body);
+    if ("error" in change) {
+      res.status(change.status).json({ error: change.error });
+      return;
+    }
+    const bytes = lockedBytes(change.meta);
+    // the new size must fit (the old content of this object does not count)
+    if (!(await boxHasRoom(res, connection, bytes, item.id))) return;
+    let saved: FirebaseFirestore.DocumentData | null = null;
+    await getFirestore().runTransaction(async (tx) => {
+      const current = await tx.get(item.ref);
+      const data = current.data();
+      if (!data || ((data.revision as number | undefined) ?? 1) !== change.revision) return; // somebody else saved first (or it is gone): saved stays null
+      saved = { ...data, enc: { ...data.enc, iv: change.metaIv, metaIv: change.metaIv, meta: change.meta }, bytes, revision: change.revision + 1, updatedAt: Timestamp.now() };
+      tx.update(item.ref, { enc: saved.enc, bytes, revision: saved.revision, updatedAt: FieldValue.serverTimestamp() });
+    });
+    if (!saved) {
+      res.status(409).json({ error: "This item was changed by your friend. Open it again to see the new version." });
+      return;
+    }
+    await setReminder(connection, item.id, uidOf(res), change.remind);
+    res.json(toItem(item.id, saved, uidOf(res)));
+  }),
+);
+
 /** Add the small preview to an image or a video in the box: `PUT .../safebox/<id>/thumb`, the picture as the body. */
 safeboxRouter.put(
   "/:itemId/thumb",
@@ -326,6 +456,14 @@ safeboxRouter.put(
     if (!connection) return;
     const item = await itemOf(req, res, connection.id);
     if (!item) return;
+    if (isObject(item.data)) {
+      res.status(400).json({ error: "An item that is not a file has no name to change: change its content" });
+      return;
+    }
+    if (!canChange(item.data, uidOf(res))) {
+      res.status(403).json({ error: "You cannot change this item" });
+      return;
+    }
     if (item.data.enc) {
       // an encrypted file is renamed on the device: the new name comes locked with the file key of the file (`{ metaIv, meta }`)
       const { metaIv, meta } = (req.body ?? {}) as { metaIv?: unknown; meta?: unknown };
@@ -357,8 +495,21 @@ safeboxRouter.delete(
     if (!connection) return;
     const item = await itemOf(req, res, connection.id);
     if (!item) return;
-    await deleteObject(boxOwner(connection.id), item.id);
+    if (!canChange(item.data, uidOf(res))) {
+      res.status(403).json({ error: "You cannot take out this item" });
+      return;
+    }
+    if (isObject(item.data)) {
+      // the attachments of an object go with it: their stored files, their previews and their entries
+      for (const child of (await safeboxItems(connection.id).where("parentId", "==", item.id).get()).docs) {
+        await deleteObject(boxOwner(connection.id), child.id);
+        await deleteObject(boxOwner(connection.id), `${child.id}.thumb`);
+        await child.ref.delete();
+      }
+    }
+    await deleteObject(boxOwner(connection.id), item.id); // an object has no stored file: nothing is found, nothing fails
     await item.ref.delete();
+    await reminderRef(connection.id, item.id).delete();
     res.status(204).end();
   }),
 );
@@ -404,7 +555,7 @@ safeboxRouter.get("/:itemId", asyncHandler((req, res) => sendFile(req, res, fals
 export async function deleteBox(connectionId: string): Promise<void> {
   try {
     const docs = await safeboxItems(connectionId).select().get();
-    await Promise.all(docs.docs.map((d) => d.ref.delete()));
+    await Promise.all(docs.docs.map((d) => Promise.all([d.ref.delete(), reminderRef(connectionId, d.id).delete()])));
   } catch (err) {
     console.error(`Could not delete the safebox list of ${connectionId}`, err);
   }

@@ -1,6 +1,8 @@
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { tr } from '../core/i18n';
 import { AppDatePipe } from '../core/app-date.pipe';
+import { isObjectType, objectIcon, objectKind, objectKinds } from '../core/safebox-objects';
+import { NgTemplateOutlet } from '@angular/common';
 import { Component, DestroyRef, computed, effect, inject, input, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { KeysService } from '../core/keys.service';
@@ -43,7 +45,7 @@ export class SafeboxThumb {
  */
 @Component({
   selector: 'app-safebox',
-  imports: [AppDatePipe, RouterLink, SafeboxThumb, TranslocoDirective],
+  imports: [AppDatePipe, NgTemplateOutlet, RouterLink, SafeboxThumb, TranslocoDirective],
   templateUrl: './safebox.html',
   providers: [provideTranslocoScope('safebox')],
 })
@@ -78,10 +80,35 @@ export class Safebox {
   protected readonly keyStatus = this.ctx.keyStatus;
   /** the Add files frame is open (it is always open while the box is empty) */
   protected readonly addOpen = signal(false);
+  protected readonly newOpen = signal(false);
   /** files are stored encrypted (both of us have a key) */
   protected readonly canEncrypt = computed(() => this.keyStatus() === 'both');
   /** ticked on the page (and remembered on this device): the files added now are stored unencrypted even though both of us have a key */
   protected readonly plain = this.prefs.value('boxPlain');
+  protected readonly boxView = this.prefs.value('boxView');
+  protected readonly hidden = this.prefs.value('boxHidden');
+  /** the items of the kinds that are ticked (a file always shows) */
+  protected readonly shown = computed(() => this.items().filter((item) => !item.parentId && !this.hidden().includes(item.type)));
+  /** how many attachments each object has, and the first picture of an album (its cover) */
+  private readonly attachmentsOf = computed(() => {
+    const map = new Map<string, SafeboxItem[]>();
+    for (const item of this.items()) if (item.parentId) map.set(item.parentId, [...(map.get(item.parentId) ?? []), item]);
+    return map;
+  });
+
+  protected attachments(item: SafeboxItem): number {
+    return this.attachmentsOf().get(item.id)?.length ?? 0;
+  }
+
+  protected cover(item: SafeboxItem): SafeboxItem | null {
+    return item.type === 'album' ? (this.attachmentsOf().get(item.id)?.find((i) => i.kind === 'image' && i.hasThumb) ?? null) : null;
+  }
+
+  /** Tick or untick a kind in the New frame: ticked = its items are in the list. */
+  protected toggleKind(type: string, on: boolean): void {
+    const rest = this.hidden().filter((k) => k !== type);
+    this.prefs.set('boxHidden', on ? rest : [...rest, type]);
+  }
   /** the keys to lock a new file for, or null (then it is stored as before) */
   private encryptWith(): BoxKeys | null {
     return this.canEncrypt() && !this.plain() ? this.boxKeys() : null;
@@ -235,8 +262,40 @@ export class Safebox {
     }
   }
 
-  /** What the file is, in a word, for people who read the list with a screen reader */
+  /** What the item is, in a word, for people who read the list with a screen reader */
   protected kindLabel(item: SafeboxItem): string {
+    if (isObjectType(item.type)) return objectKind(item.type)?.label ?? '';
     return { image: 'Picture', video: 'Video', audio: 'Sound', document: 'Document' }[item.kind];
+  }
+
+  /** Where an item opens: a note has its own page, a file the viewer. */
+  protected openLink(item: SafeboxItem): string[] {
+    if (item.type === 'note') return ['/friends', this.friendId, 'safebox', 'note', item.id];
+    return isObjectType(item.type) ? ['/friends', this.friendId, 'safebox', 'object', item.id] : ['/friends', this.friendId, 'safebox', item.id];
+  }
+
+  /** True for a note, secret, link ... (everything that is not a stored file). */
+  protected isObject(item: SafeboxItem): boolean {
+    return isObjectType(item.type);
+  }
+
+  /** The kinds a new object can be (the "New" frame): note first, then the rest; a note has its own page. */
+  protected readonly kinds = objectKinds();
+
+  protected newLink(type: string): string[] {
+    return type === 'note' ? ['/friends', this.friendId, 'safebox', 'note'] : ['/friends', this.friendId, 'safebox', 'new', type];
+  }
+
+  /** The sign of an object's type. */
+  protected readonly iconOf = objectIcon;
+
+  /** When a date or a ticket is, for the list and the badges. */
+  protected when(item: SafeboxItem): string {
+    return this.service.when(this.friendId, item.id);
+  }
+
+  /** The first line of a note, for the list. */
+  protected snippet(item: SafeboxItem): string {
+    return this.service.snippet(this.friendId, item.id);
   }
 }

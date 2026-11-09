@@ -44,3 +44,9 @@ Do not decode a chosen photo at full size anywhere.
 
 ## Locked files in messages
 A picture, video or voice in a locked message is locked on the device with the key of the message and uploaded with `locked=1` (`POST /api/sf-cache`, `PUT .../thumb`, chunked finish): only the size is checked, it is stored as binary data with no name, and the real name, type, pixels and length are inside `enc.media.meta`. `attachedMedia` refuses a locked file in a plain message and the other way round. The reader opens it in `MediaService` (`registerLocked`). A locked picture or video cannot be moved to the safebox yet.
+
+## Notes in the safebox
+The box holds files and **notes** (type `note`, `secret`, `link`, `checklist`, `place`, `contact`, `date`, `ticket`, `album` or `case`, no stored file) in ONE list. A note is written in the app, locked on the device and changed by either friend (`POST/PUT .../safebox/items`, revision check, `409` when the friend saved first). Pages: `/friends/:id/safebox/note` (new) and `/friends/:id/safebox/note/:itemId`. Both friends can change or delete any item for now (`canChange` in `functions/src/safebox.ts`). Design, data and rules: `docs/design/safebox-objects.md`.
+
+## Safebox views: list and icons
+The safebox page has a two-button switch at the end of the tools row: **List** (default, with the per-item actions) and **Icons** (small tiles floating side by side: the picture or the type sign, the name under it, a small padlock on locked items; a tap opens the item, no per-item buttons). The choice is the UI preference `boxView` (`'list' | 'icons'`, `core/ui-preferences.ts`), kept on this device. Both views share one template (`#visual`) for the picture/sign, so notes and files look the same in both.

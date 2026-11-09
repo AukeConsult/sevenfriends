@@ -1092,6 +1092,25 @@ app-voice { display: contents; }
 .sf-send-addframe { display: grid; gap: 0.5rem; padding: 0.75rem; background: var(--sf-card); border: 1px solid var(--sf-border); border-radius: 1rem; }
 .sf-box-add summary { color: var(--sf-primary); } .sf-box-add.sf-over { border-color: var(--sf-primary); background: color-mix(in srgb, var(--sf-primary) 10%, var(--sf-card)); } // the Add files frame: in the brand colour, lit while files are dragged over it
 .sf-box-tools { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: center; gap: 0.5rem; margin-top: 0.5rem; margin-bottom: 0.75rem; > details { margin: 0; } > details[open] { flex: 1 1 100%; } } // the padlock and the Add files frame side by side
+.sf-box-newnote { display: inline-flex; align-items: center; gap: 0.375rem; min-height: var(--sf-touch); padding: 0.5rem 0.875rem; border: 1px solid var(--sf-border); border-radius: 999px; background: var(--sf-card); color: var(--sf-primary); font-size: var(--sf-fs-description); font-weight: 600; text-decoration: none; } // the "New note" pill beside the round Add files icon
+.sf-box-new:not([open]) { border-radius: 999px; summary { gap: 0.375rem; padding: 0.5rem 0.875rem; font-size: var(--sf-fs-description); font-weight: 600; color: var(--sf-primary); &::after { display: none; } } } // the New frame, closed: one pill; open: the whole frame with a pill for each kind
+.sf-box-security-body.sf-box-new-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem; .sf-box-newnote { min-width: 0; } @media (min-width: 576px) { grid-template-columns: repeat(4, minmax(0, 1fr)); } } // the New frame: the kinds in two columns on a phone, four on a wider screen
+.sf-obj-field { display: flex; align-items: flex-start; gap: 0.5rem; .form-control { flex: 1 1 auto; min-width: 0; } .btn { flex: none; } } // a field with its Show / Copy / Add buttons beside it
+.sf-obj-entries { display: grid; gap: 0.5rem; margin: 0; padding: 0; list-style: none; }
+.sf-obj-entry { display: flex; align-items: center; gap: 0.5rem; .form-control { flex: 1 1 auto; min-width: 0; } .btn { flex: none; } .form-check-input { flex: none; margin: 0; width: 1.5rem; height: 1.5rem; } } // one line of a checklist
+.sf-obj-map { width: 100%; height: 16rem; border: 1px solid var(--sf-border); border-radius: var(--sf-radius); } // the map of a place (loaded only when "Show the map" is tapped)
+.sf-pin { background: none; border: 0; color: var(--sf-red); } // the pin of a place on the map
+.sf-obj-map { position: relative; z-index: 0; isolation: isolate; } // the map stays under the bottom menu
+.sf-obj-map-empty { display: grid; place-items: center; padding: 1rem; text-align: center; color: var(--sf-muted); background: var(--sf-card); font-size: var(--sf-fs-description); } // the empty frame where the map will be
+.sf-obj-found { height: auto; white-space: normal; border-radius: var(--sf-radius); } // one place found by the search
+.sf-obj-done { text-decoration: line-through; opacity: 0.6; }
+.sf-box-view-switch { display: inline-flex; gap: 0.25rem; align-self: center; margin-inline-start: auto; .btn { min-width: var(--sf-touch); min-height: var(--sf-touch); display: grid; place-items: center; padding: 0; &.active { background: var(--bs-primary-bg-subtle); color: var(--sf-primary); } } } // list / icons switch, at the end of the tools row
+.sf-box-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.5rem; margin: 0.75rem 0 0; padding: 0; list-style: none; @media (min-width: 576px) { grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr)); gap: 0.75rem; } } // the icon view: small badges floating side by side
+.sf-box-tile { position: relative; display: grid; align-content: start; gap: 0.25rem; min-width: 0; padding: 0.375rem; border: 1px solid var(--sf-border); border-radius: var(--sf-radius); background: var(--sf-card); box-shadow: 0 0.125rem 0.5rem rgb(0 0 0 / 0.06); color: var(--sf-text); text-decoration: none; transition: transform 0.1s; &:active { transform: scale(0.96); } .sf-box-open { width: 100%; height: 3.5rem; } } // one badge: a picture or a coloured sign on top, the name and a line of text inside
+.sf-box-tile-name { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; font-size: var(--sf-fs-description); font-weight: 600; line-height: 1.25; word-break: break-word; }
+.sf-box-tile-sub { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--sf-fs-description); color: var(--sf-muted); } // the line under the name: when it is, the first line, or what kind it is
+.sf-box-tile-lock { position: absolute; top: 0.625rem; inset-inline-end: 0.625rem; display: grid; place-items: center; width: 1.5rem; height: 1.5rem; border-radius: 50%; background: var(--sf-card); color: var(--sf-primary); box-shadow: 0 0.0625rem 0.25rem rgb(0 0 0 / 0.25); } // the padlock of a locked item, in the top right corner
+.sf-box-when { color: var(--sf-primary); font-weight: 600; } // the date and time line in the list
 .sf-box-add:not([open]) { border-radius: 999px; summary { gap: 0; padding: 0.5rem 0.75rem; &::after { display: none; } .sf-box-security-title { display: none; } } } // the Add files frame, closed: only the round icon beside the padlock (a file can still be dropped on it)
 .sf-box-lock { width: fit-content; margin-inline: auto; &:not([open]) { border-radius: 999px; } &[open] { width: auto; margin-inline: 0; } summary { gap: 0.375rem; padding: 0.5rem 0.75rem; &::after { display: none; } } } // the lock frame, closed: only a padlock (round); open: the whole frame
 .sf-box-usage { display: grid; gap: 0.25rem; margin-bottom: 0.75rem; .progress { height: 0.5rem; } }
@@ -1112,7 +1131,17 @@ button.sf-back-inline { padding: 0; border: 0; background: none; cursor: pointer
 .sf-box-wait { display: block; width: 100%; height: 100%; background: var(--sf-bg); }
 .sf-box-icon { display: grid; place-items: center; width: 100%; height: 100%; background: var(--bs-primary-bg-subtle); color: var(--sf-primary);
   &[data-kind='video'] { background: #fdeed9; color: #b45f06; }
-  &[data-kind='audio'] { background: #e5f4e8; color: #2e7d32; } }
+  &[data-kind='audio'] { background: #e5f4e8; color: #2e7d32; }
+  &[data-kind='note'] { background: #fff4c2; color: #8a6d00; }
+  &[data-kind='secret'] { background: #fde2e4; color: #ba0c2f; }
+  &[data-kind='link'] { background: #dbeafe; color: #1d4ed8; }
+  &[data-kind='checklist'] { background: #e5f4e8; color: #2e7d32; }
+  &[data-kind='place'] { background: #fdeed9; color: #b45f06; }
+  &[data-kind='contact'] { background: #ede4fb; color: #6d3fc0; }
+  &[data-kind='date'] { background: #d9f2f4; color: #0e7490; }
+  &[data-kind='ticket'] { background: #fce7f3; color: #be185d; }
+  &[data-kind='album'] { background: #ecfccb; color: #4d7c0f; }
+  &[data-kind='case'] { background: #e2e8f0; color: #334155; } }
 .sf-box-note { display: inline-flex; align-items: center; gap: 0.4rem; color: var(--sf-primary); font-weight: 600; text-decoration: none; &:hover { text-decoration: underline; } }
 .sf-box-view { display: grid; justify-items: center; gap: 0.5rem; margin: 0.5rem 0 1rem; }
 .sf-box-view-image { max-width: 100%; max-height: 85vh; object-fit: contain; border-radius: var(--sf-radius); }
@@ -1616,3 +1645,8 @@ html[dir='rtl'] .sf-activity-go { transform: scaleX(-1); }
 /* A note that confirms what was just done: it stays, then fades out (the page removes it when the fade ends: NOTICE_FADE_MS in notifications.ts) */
 .sf-fade { animation: sf-fade-out 5s ease forwards; }
 @keyframes sf-fade-out { 0%, 65% { opacity: 1; } 100% { opacity: 0; } }
+
+.sf-box-newnote { justify-content: space-between; gap: 0.25rem; padding-block: 0; padding-inline: 0.75rem 0; .sf-box-newnote-link { display: inline-flex; align-items: center; gap: 0.375rem; flex: 1 1 auto; min-width: 0; min-height: var(--sf-touch); color: inherit; text-decoration: none; span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } } .sf-box-newnote-tick { flex: none; width: 1.5rem; height: 1.5rem; margin: 0 0.75rem 0 0; } } // a kind in the New frame: the pill opens a new item, the tick at its right end shows or hides that kind in the list
+
+.sf-att-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.5rem; margin: 0; padding: 0; list-style: none; @media (min-width: 576px) { grid-template-columns: repeat(5, minmax(0, 1fr)); } } // the attachments of an object: small squares, three across on a phone
+.sf-att { position: relative; display: grid; gap: 0.25rem; min-width: 0; .sf-att-open { display: grid; place-items: center; aspect-ratio: 1; overflow: hidden; border-radius: var(--sf-radius); background: var(--sf-bg); color: inherit; text-decoration: none; } .sf-att-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--sf-fs-description); } .sf-att-x { position: absolute; top: 0.25rem; inset-inline-end: 0.25rem; display: grid; place-items: center; width: 1.75rem; height: 1.75rem; min-height: 0; padding: 0; border-radius: 50%; box-shadow: 0 0.0625rem 0.25rem rgb(0 0 0 / 0.25); } } // one attachment: the picture or sign, its name, a small x to take it out
