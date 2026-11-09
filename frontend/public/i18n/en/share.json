@@ -9,7 +9,6 @@
   "seat": "seat",
   "seats": "seats",
   "youHaveFreeseatsFree": "You have {{ freeSeats }} free {{ seats }}. Invite the {{ many }} who matter to you.",
-  "inviteFriendsWithA": "Invite friends with a link",
   "yourOneLink": "Your {{ one }} link",
   "emailAddress": "email address",
   "phoneNumber": "phone number",

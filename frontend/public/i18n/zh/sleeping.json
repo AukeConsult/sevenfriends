@@ -9,7 +9,6 @@
   "phone": "手机",
   "email": "邮箱",
   "added": "添加于",
-  "mediumdate": "mediumDate",
   "deleteFriendnameForGood": "要永久删除 {{ friendName }} 吗？这会移除这段关系和全部对话，你们两人都一样。",
   "cancel": "取消",
   "delete": "删除",
@@ -17,14 +16,8 @@
   "wakeUp": "唤醒",
   "somethingWentWrong": "出错了",
   "lastSpoken": "上次联系：{{ when }}",
-  "hide": "隐藏",
-  "show": "显示",
   "countUnread": "{{ count }} 条未读",
-  "newMessage": "新消息",
   "countNewMessages": "{{ count }} 条新消息",
-  "theirEmailOrPhone": "对方的邮箱或手机号",
-  "theirEmail": "对方的邮箱",
-  "theirPhone": "对方的手机号",
   "friendnameHasNotVerified": "{{ friendName }} 还没有验证{{ phone }}，所以我们不能确定就是本人。",
   "silentMany": "静音的{{ many }}"
 }

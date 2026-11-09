@@ -71,9 +71,5 @@
   "saveFailed": "Could not save. Try again, or choose \"Do it later\".",
   "emailSendFailed": "Could not send the email. Please try again.",
   "emailNotYet": "Not verified yet. Open the link in the email we sent, then try again.",
-  "emailCheckFailed": "Could not check. Try again in a moment.",
-  "share": "Share",
-  "thenStrongAddTo": ", then <strong>Add to Home Screen</strong>. Then open ' + w.app + ' from your home screen.'\">",
-  "installApp2": "Install app",
-  "inItsMenuOr": "in its menu, or see Settings → Install the app.'\">"
+  "emailCheckFailed": "Could not check. Try again in a moment."
 }

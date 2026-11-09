@@ -11,7 +11,5 @@
   "cancel": "キャンセル",
   "deleting": "削除中…",
   "deleteEverything": "すべて削除する",
-  "couldNotDeleteYour": "アカウントを削除できませんでした。何も変更されていません。もう一度お試しください。",
-  "thisCannotBeUndone": "この操作は元に戻せません。",
-  "youWillBeErased": "あなたは Seven Friends から完全に消去されます。'\">"
+  "couldNotDeleteYour": "アカウントを削除できませんでした。何も変更されていません。もう一度お試しください。"
 }

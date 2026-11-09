@@ -14,14 +14,12 @@
   "nameOptional": "Nombre (opcional)",
   "messageOptional": "Mensaje (opcional)",
   "cancel": "Cancelar",
-  "couldNotSendThe": "No se pudo enviar la ",
-  "saved": "Guardado.",
-  "doneToIsNot": "' + done.to + ' aún no está en ' + w.app + '. Tu solicitud lo espera.'\">",
   "sending": "Enviando…",
   "addOne": "Añadir {{ one }}",
   "addAnEmailOr": "Añade un correo o un número de teléfono para poder encontrar a tu {{ one }}.",
   "thatIsYouAdd": "Ese eres tú. Añade el correo o el teléfono de un {{ one }}.",
   "isAlreadyYour": "{{ sameName }} ya es tu {{ one }}.",
   "youHaveAlreadyAdded": "Ya añadiste a {{ sameName }}: la solicitud lo espera.",
-  "thisPerson": "Esta persona"
+  "thisPerson": "Esta persona",
+  "sendFailed": "No se pudo enviar la solicitud."
 }

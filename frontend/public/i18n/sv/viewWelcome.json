@@ -7,8 +7,6 @@
   "forTestAndDemo": "För test och demo. En app täcker exakt en krets och kan inte se de andra. Vänner, platser, meddelanden och ljud i de andra kretsarna är dolda. En krets skapas första gången den väljs.",
   "strongTitleStrong": "<strong>{{ title }}</strong>",
   "open": "Öppna",
-  "thisAppUsesThe": "Den här appen använder kretsen",
-  "pageTitle": "' + page.title + '",
   "titlePreview": "Förhandsvisning av {{ title }}",
   "welcome": "Välkommen",
   "theNormalFirstPage": "Den vanliga första sidan",

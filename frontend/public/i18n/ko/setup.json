@@ -71,9 +71,5 @@
   "saveFailed": "저장할 수 없어요. 다시 해 보거나 \"나중에 하기\"를 선택하세요.",
   "emailSendFailed": "이메일을 보낼 수 없어요. 다시 해 주세요.",
   "emailNotYet": "아직 인증되지 않았어요. 보내 드린 이메일의 링크를 열고 다시 해 주세요.",
-  "emailCheckFailed": "확인할 수 없어요. 잠시 후 다시 해 주세요.",
-  "share": "공유",
-  "thenStrongAddTo": "를 누른 다음 <strong>홈 화면에 추가</strong>를 누르세요. 그런 다음 홈 화면에서 ' + w.app + '을 여세요.'\">",
-  "installApp2": "앱 설치",
-  "inItsMenuOr": "를 메뉴에서 찾아보거나, 설정 → 앱 설치를 보세요.'\">"
+  "emailCheckFailed": "확인할 수 없어요. 잠시 후 다시 해 주세요."
 }

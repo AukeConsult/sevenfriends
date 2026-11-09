@@ -14,14 +14,12 @@
   "nameOptional": "Namn (valfritt)",
   "messageOptional": "Meddelande (valfritt)",
   "cancel": "Avbryt",
-  "couldNotSendThe": "Kunde inte skicka ",
-  "saved": "Sparat.",
-  "doneToIsNot": "' + done.to + ' finns inte på ' + w.app + ' ännu. Din förfrågan väntar på hen.'\">",
   "sending": "Skickar…",
   "addOne": "Lägg till: {{ one }}",
   "addAnEmailOr": "Lägg till en e-postadress eller ett telefonnummer så att personen går att hitta ({{ one }}).",
   "thatIsYouAdd": "Det där är du. Lägg till e-postadressen eller telefonnumret till någon annan ({{ one }}).",
   "isAlreadyYour": "{{ sameName }} finns redan hos dig ({{ one }}).",
   "youHaveAlreadyAdded": "Du har redan lagt till {{ sameName }}: förfrågan väntar på hen.",
-  "thisPerson": "Den här personen"
+  "thisPerson": "Den här personen",
+  "sendFailed": "Det gick inte att skicka förfrågan."
 }

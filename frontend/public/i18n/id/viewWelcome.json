@@ -7,8 +7,6 @@
   "forTestAndDemo": "Untuk uji coba dan demo. Satu aplikasi hanya mencakup satu lingkaran dan tidak bisa melihat yang lain. Teman, kursi, pesan, dan suara dari lingkaran lain disembunyikan. Sebuah lingkaran dibuat saat pertama kali dipilih.",
   "strongTitleStrong": "<strong>{{ title }}</strong>",
   "open": "Buka",
-  "thisAppUsesThe": "Aplikasi ini memakai lingkaran",
-  "pageTitle": "' + page.title + '",
   "titlePreview": "Pratinjau {{ title }}",
   "welcome": "Selamat datang",
   "theNormalFirstPage": "Halaman pertama biasa",

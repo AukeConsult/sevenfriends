@@ -11,7 +11,5 @@
   "cancel": "取消",
   "deleting": "删除中…",
   "deleteEverything": "全部删除",
-  "couldNotDeleteYour": "无法删除你的账号。没有任何改动，请再试一次。",
-  "thisCannotBeUndone": "此操作无法撤销。",
-  "youWillBeErased": "你会被从 Seven Friends 中彻底抹去。'\">"
+  "couldNotDeleteYour": "无法删除你的账号。没有任何改动，请再试一次。"
 }

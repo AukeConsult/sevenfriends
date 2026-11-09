@@ -9,7 +9,6 @@
   "phone": "Telefon",
   "email": "E-mail",
   "added": "Tilføjet",
-  "mediumdate": "mediumDate",
   "deleteFriendnameForGood": "Slette {{ friendName }} for altid? Det fjerner forbindelsen og hele samtalen, for jer begge.",
   "cancel": "Annullér",
   "delete": "Slet",
@@ -17,14 +16,8 @@
   "wakeUp": "Væk",
   "somethingWentWrong": "Noget gik galt",
   "lastSpoken": "Sidst talt sammen: {{ when }}",
-  "hide": "Skjul",
-  "show": "Vis",
   "countUnread": "{{ count }} ulæste",
-  "newMessage": "Ny besked",
   "countNewMessages": "{{ count }} nye beskeder",
-  "theirEmailOrPhone": "deres e-mail eller telefon",
-  "theirEmail": "deres e-mail",
-  "theirPhone": "deres telefon",
   "friendnameHasNotVerified": "{{ friendName }} har ikke bekræftet {{ phone }}, så vi kan ikke være sikre på, at det virkelig er dem.",
   "silentMany": "Stille {{ many }}"
 }

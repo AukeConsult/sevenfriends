@@ -39,8 +39,6 @@
   "lockingDoneOfTotal": "Locking {{ done }} of {{ total }}…",
   "lockThisFile": "Lock this file",
   "lockAllPlainitemslengthFiles": "Lock all {{ plainItemsLength }} files",
-  "key": "key",
-  "madeOnceOnThe": ", made once on the device you use. It never leaves that device. Messages and files are locked only when you both have a key.'\">",
   "yesSlice": "yes ({{ slice }})",
   "no": "no",
   "published": "published",

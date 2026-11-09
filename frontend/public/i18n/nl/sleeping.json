@@ -9,7 +9,6 @@
   "phone": "Telefoon",
   "email": "E-mail",
   "added": "Toegevoegd",
-  "mediumdate": "mediumDate",
   "deleteFriendnameForGood": "{{ friendName }} definitief verwijderen? Hiermee verdwijnen de verbinding en het hele gesprek, voor jullie allebei.",
   "cancel": "Annuleren",
   "delete": "Verwijderen",
@@ -17,14 +16,8 @@
   "wakeUp": "Wakker maken",
   "somethingWentWrong": "Er ging iets mis",
   "lastSpoken": "Laatst gesproken: {{ when }}",
-  "hide": "Verbergen",
-  "show": "Tonen",
   "countUnread": "{{ count }} ongelezen",
-  "newMessage": "Nieuw bericht",
   "countNewMessages": "{{ count }} nieuwe berichten",
-  "theirEmailOrPhone": "hun e-mailadres of telefoonnummer",
-  "theirEmail": "hun e-mailadres",
-  "theirPhone": "hun telefoonnummer",
   "friendnameHasNotVerified": "{{ friendName }} heeft {{ phone }} niet bevestigd, dus we kunnen er niet zeker van zijn dat zij het echt zijn.",
   "silentMany": "Stille {{ many }}"
 }

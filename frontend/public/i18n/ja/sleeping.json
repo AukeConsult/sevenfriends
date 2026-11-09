@@ -9,7 +9,6 @@
   "phone": "電話番号",
   "email": "メールアドレス",
   "added": "追加日",
-  "mediumdate": "mediumDate",
   "deleteFriendnameForGood": "{{ friendName }}さんを完全に削除しますか？つながりと会話のすべてが、2人とも消えます。",
   "cancel": "キャンセル",
   "delete": "削除",
@@ -17,14 +16,8 @@
   "wakeUp": "起こす",
   "somethingWentWrong": "問題が起きました",
   "lastSpoken": "最後に話したのは {{ when }}",
-  "hide": "隠す",
-  "show": "表示",
   "countUnread": "未読 {{ count }} 件",
-  "newMessage": "新しいメッセージ",
   "countNewMessages": "新しいメッセージ {{ count }} 件",
-  "theirEmailOrPhone": "メールアドレスまたは電話番号",
-  "theirEmail": "メールアドレス",
-  "theirPhone": "電話番号",
   "friendnameHasNotVerified": "{{ friendName }}さんは{{ phone }}を確認していないため、本人かどうか確実ではありません。",
   "silentMany": "サイレントの{{ many }}"
 }

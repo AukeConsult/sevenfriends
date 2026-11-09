@@ -39,8 +39,6 @@
   "lockingDoneOfTotal": "Låser {{ done }} af {{ total }}…",
   "lockThisFile": "Lås denne fil",
   "lockAllPlainitemslengthFiles": "Lås alle {{ plainItemsLength }} filer",
-  "key": "nøgle",
-  "madeOnceOnThe": ", som oprettes én gang på den enhed, du bruger. Den forlader aldrig den enhed. Beskeder og filer bliver kun låst, når I begge har en nøgle.'\">",
   "yesSlice": "ja ({{ slice }})",
   "no": "nej",
   "published": "udgivet",

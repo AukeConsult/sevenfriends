@@ -49,7 +49,6 @@
   "sendFailed": "Tidak bisa mengirim email. Silakan coba lagi.",
   "loadFailed": "Tidak bisa memuat profilmu",
   "saveFailed": "Tidak bisa menyimpan",
-  "providerGoogle": "Google",
   "providerEmail": "Email",
   "providerPhone": "Telepon",
   "providerUnknown": "Tidak diketahui"

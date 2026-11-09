@@ -39,8 +39,6 @@
   "lockingDoneOfTotal": "Lukitaan {{ done }} / {{ total }}…",
   "lockThisFile": "Lukitse tämä tiedosto",
   "lockAllPlainitemslengthFiles": "Lukitse kaikki {{ plainItemsLength }} tiedostoa",
-  "key": "avain",
-  "madeOnceOnThe": ", joka tehdään kerran käyttämällänne laitteella. Se ei koskaan poistu siltä laitteelta. Viestit ja tiedostot lukitaan vain, kun teillä molemmilla on avain.'\">",
   "yesSlice": "kyllä ({{ slice }})",
   "no": "ei",
   "published": "julkaistu",

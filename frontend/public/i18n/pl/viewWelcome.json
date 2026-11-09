@@ -7,8 +7,6 @@
   "forTestAndDemo": "Do testów i demo. Aplikacja obejmuje dokładnie jeden krąg i nie widzi pozostałych. Przyjaciele, miejsca, wiadomości i dźwięki innych kręgów są ukryte. Krąg jest tworzony przy pierwszym wyborze.",
   "strongTitleStrong": "<strong>{{ title }}</strong>",
   "open": "Otwórz",
-  "thisAppUsesThe": "Ta aplikacja używa kręgu",
-  "pageTitle": "' + page.title + '",
   "titlePreview": "Podgląd: {{ title }}",
   "welcome": "Witaj",
   "theNormalFirstPage": "Zwykła pierwsza strona",

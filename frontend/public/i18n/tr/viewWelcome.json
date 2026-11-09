@@ -7,8 +7,6 @@
   "forTestAndDemo": "Test ve gösterim için. Bir uygulama tam olarak bir çevreyi kapsar ve diğerlerini göremez. Diğer çevrelerin arkadaşları, yerleri, mesajları ve sesleri gizlidir. Bir çevre ilk seçildiğinde oluşturulur.",
   "strongTitleStrong": "<strong>{{ title }}</strong>",
   "open": "Aç",
-  "thisAppUsesThe": "Bu uygulama şu çevreyi kullanır",
-  "pageTitle": "' + page.title + '",
   "titlePreview": "{{ title }} önizlemesi",
   "welcome": "Hoş geldin",
   "theNormalFirstPage": "Normal ilk sayfa",

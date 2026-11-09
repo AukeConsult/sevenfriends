@@ -21,9 +21,6 @@
   "filesInYourSafebox": "Kasandaki dosyalar cihazında kalan bir anahtarla kilitlenir, böylece sadece sen ve arkadaşın okuyabilirsiniz, hizmetin kendisi bile okuyamaz. Bu, anahtarı oluşturur ve sana saklaman için 24 kurtarma kelimesi verir.",
   "makingYourKey": "Anahtarın oluşturuluyor…",
   "makeMyKey": "Anahtarımı oluştur",
-  "saveTheseWordsNow": "Bu 24 kelimeyi şimdi kaydet.",
-  "theyAreTheOnly": "Bu cihazı kaybedersen kilitli dosyalarını açmanın tek yolu bunlar. Bir kez gösterilir ve kimse onları senin için bulamaz, biz bile.'\">",
-  "checkThatYouSaved": "Kaydettiğini kontrol et",
   "theKeyCouldNot": "Anahtar oluşturulamadı. Tekrar dene.",
   "theKeyCouldNot2": "Anahtar kaydedilemedi. Tekrar dene."
 }

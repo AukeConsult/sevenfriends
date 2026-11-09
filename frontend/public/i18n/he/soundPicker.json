@@ -1,0 +1,11 @@
+{
+  "backToSounds": "חזרה לצלילים",
+  "back": "‹ חזרה",
+  "hintTapASound": "{{ hint }}. לחיצה על צליל בוחרת אותו ומשמיעה אותו.",
+  "sevenFriendsJingles": "ג׳ינגלים של Seven Friends",
+  "otherSounds": "צלילים אחרים",
+  "stop": "■ עצירה",
+  "play": "▶ ניגון",
+  "done": "סיום",
+  "soundForLabel": "צליל עבור {{ label }}"
+}

@@ -14,14 +14,12 @@
   "nameOptional": "Navn (valgfrit)",
   "messageOptional": "Besked (valgfrit)",
   "cancel": "Annullér",
-  "couldNotSendThe": "Kunne ikke sende ",
-  "saved": "Gemt.",
-  "doneToIsNot": "' + done.to + ' er der ikke på ' + w.app + ' endnu. Din anmodning venter på dem.'\">",
   "sending": "Sender…",
   "addOne": "Tilføj {{ one }}",
   "addAnEmailOr": "Tilføj en e-mail eller et telefonnummer, så {{ one }} kan blive fundet.",
   "thatIsYouAdd": "Det er dig selv. Tilføj e-mail eller telefonnummer til {{ one }}.",
   "isAlreadyYour": "{{ sameName }} er allerede tilføjet som {{ one }}.",
   "youHaveAlreadyAdded": "Du har allerede tilføjet {{ sameName }}: anmodningen venter på dem.",
-  "thisPerson": "Denne person"
+  "thisPerson": "Denne person",
+  "sendFailed": "Anmodningen kunne ikke sendes."
 }

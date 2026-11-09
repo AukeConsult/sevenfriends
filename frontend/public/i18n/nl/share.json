@@ -9,7 +9,6 @@
   "seat": "plek",
   "seats": "plekken",
   "youHaveFreeseatsFree": "Je hebt {{ freeSeats }} vrije {{ seats }}. Nodig de {{ many }} uit die voor je belangrijk zijn.",
-  "inviteFriendsWithA": "Nodig vrienden uit met een link",
   "yourOneLink": "Jouw {{ one }}-link",
   "emailAddress": "e-mailadres",
   "phoneNumber": "telefoonnummer",

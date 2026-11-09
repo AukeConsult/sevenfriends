@@ -94,7 +94,7 @@
                 <small>{{ t('notifications.wantsToBeYour', { one: w.one }) || 'wants to be your ' + w.one }}</small>
                 @if (request.message) { <small class="fst-italic">“{{ request.message }}”</small> }
                 @if (request.fromUnverified.length) {
-                  <small class="text-warning-emphasis">{{ t('notifications.hasNotVerifiedPhone', { phone: request.fromUnverified.length === 2 ? 'their email or phone' : request.fromUnverified[0] === 'email' ? 'their email' : 'their phone' }) || 'Has not verified ' + (request.fromUnverified.length === 2 ? 'their email or phone' : request.fromUnverified[0] === 'email' ? 'their email' : 'their phone') + ': we cannot be sure it is really them.' }}</small>
+                  <small class="text-warning-emphasis">{{ t('notifications.hasNotVerifiedPhone', { phone: request.fromUnverified.length === 2 ? (t('notifications.unverifiedAnd', { a: t('notifications.unverifiedEmail') || 'email', b: t('notifications.unverifiedPhone') || 'phone number' }) || 'their email or phone') : request.fromUnverified[0] === 'email' ? (t('notifications.unverifiedEmail') || 'their email') : (t('notifications.unverifiedPhone') || 'their phone') }) || 'Has not verified ' + (request.fromUnverified.length === 2 ? 'their email or phone' : request.fromUnverified[0] === 'email' ? 'their email' : 'their phone') + ': we cannot be sure it is really them.' }}</small>
                 }
               </span>
               <button type="button" class="btn btn-primary" (click)="accept(request)">{{ t('notifications.confirm') || 'Confirm' }}</button>
@@ -106,7 +106,7 @@
 
       @if (waitingCount() > 0) {
         <a routerLink="/pending" class="sf-link-row">
-          {{ t('notifications.waitingcountAreWaitingFor', { waitingCount: waitingCount(), are: waitingCount() === 1 ? 'request is' : 'requests are' }) || waitingCount() + ' ' + (waitingCount() === 1 ? 'request is' : 'requests are') + ' waiting for a free seat' }}
+          {{ waitingCount() === 1 ? (t('notifications.waitingOne') || '1 request is waiting for a free seat') : (t('notifications.waitingMany', { count: waitingCount() }) || waitingCount() + ' requests are waiting for a free seat') }}
           <span aria-hidden="true">›</span>
         </a>
       }

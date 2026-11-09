@@ -7,8 +7,6 @@
   "forTestAndDemo": "Pour les tests et les démos. Une appli couvre exactement un cercle et ne voit pas les autres. Les amis, places, messages et sons des autres cercles sont masqués. Un cercle est créé la première fois qu'il est choisi.",
   "strongTitleStrong": "<strong>{{ title }}</strong>",
   "open": "Ouvrir",
-  "thisAppUsesThe": "Cette appli utilise le cercle",
-  "pageTitle": "' + page.title + '",
   "titlePreview": "Aperçu : {{ title }}",
   "welcome": "Bienvenue",
   "theNormalFirstPage": "La première page habituelle",

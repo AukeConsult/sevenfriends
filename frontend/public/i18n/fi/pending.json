@@ -10,7 +10,5 @@
   "hasNotVerifiedTheir": "Ei ole vahvistanut sähköpostiaan tai puhelintaan: emme voi olla varmoja, että kyseessä on oikeasti hän.",
   "pending": "Odottaa",
   "reject": "Hylkää",
-  "requestFromname": "' + request.fromName + '",
-  "mediumdate": "mediumDate",
   "sinceMediumdate": "alkaen {{ mediumDate }}"
 }

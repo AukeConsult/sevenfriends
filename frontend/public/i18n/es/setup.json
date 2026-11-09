@@ -71,9 +71,5 @@
   "saveFailed": "No se pudo guardar. Inténtalo de nuevo o elige \"Hacerlo más tarde\".",
   "emailSendFailed": "No se pudo enviar el correo. Inténtalo de nuevo.",
   "emailNotYet": "Aún no está verificado. Abre el enlace del correo que enviamos e inténtalo de nuevo.",
-  "emailCheckFailed": "No se pudo comprobar. Inténtalo de nuevo en un momento.",
-  "share": "Compartir",
-  "thenStrongAddTo": " y luego <strong>Añadir a pantalla de inicio</strong>. Después abre ' + w.app + ' desde tu pantalla de inicio.'\">",
-  "installApp2": "Instalar app",
-  "inItsMenuOr": "en su menú, o mira Ajustes → Instalar la app.'\">"
+  "emailCheckFailed": "No se pudo comprobar. Inténtalo de nuevo en un momento."
 }

@@ -10,7 +10,5 @@
   "hasNotVerifiedTheir": "Heeft het e-mailadres of telefoonnummer niet bevestigd: we kunnen er niet zeker van zijn dat zij het echt zijn.",
   "pending": "In behandeling",
   "reject": "Afwijzen",
-  "requestFromname": "' + request.fromName + '",
-  "mediumdate": "mediumDate",
   "sinceMediumdate": "sinds {{ mediumDate }}"
 }

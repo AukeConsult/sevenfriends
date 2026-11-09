@@ -10,7 +10,5 @@
   "hasNotVerifiedTheir": "E-postasını veya telefonunu doğrulamamış: gerçekten o olduğundan emin olamayız.",
   "pending": "Beklemede",
   "reject": "Reddet",
-  "requestFromname": "' + request.fromName + '",
-  "mediumdate": "mediumDate",
   "sinceMediumdate": "{{ mediumDate }} tarihinden beri"
 }

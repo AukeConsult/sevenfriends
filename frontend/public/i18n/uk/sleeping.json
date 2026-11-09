@@ -9,7 +9,6 @@
   "phone": "Телефон",
   "email": "Пошта",
   "added": "Додано",
-  "mediumdate": "mediumDate",
   "deleteFriendnameForGood": "Видалити {{ friendName }} назавжди? Це прибере зв’язок і всю розмову в обох.",
   "cancel": "Скасувати",
   "delete": "Видалити",
@@ -17,14 +16,8 @@
   "wakeUp": "Розбудити",
   "somethingWentWrong": "Щось пішло не так",
   "lastSpoken": "Востаннє розмовляли: {{ when }}",
-  "hide": "Сховати",
-  "show": "Показати",
   "countUnread": "Непрочитаних: {{ count }}",
-  "newMessage": "Нове повідомлення",
   "countNewMessages": "Нових повідомлень: {{ count }}",
-  "theirEmailOrPhone": "їхню пошту або телефон",
-  "theirEmail": "їхню пошту",
-  "theirPhone": "їхній телефон",
   "friendnameHasNotVerified": "{{ friendName }} не підтвердив(ла) {{ phone }}, тож ми не можемо бути певні, що це справді ця людина.",
   "silentMany": "Тихі: {{ many }}"
 }

@@ -14,14 +14,12 @@
   "nameOptional": "Navn (valgfritt)",
   "messageOptional": "Melding (valgfritt)",
   "cancel": "Avbryt",
-  "couldNotSendThe": "Kunne ikke sende ",
-  "saved": "Lagret.",
-  "doneToIsNot": "' + done.to + ' er ikke på ' + w.app + ' ennå. Forespørselen din venter på dem.'\">",
   "sending": "Sender…",
   "addOne": "Legg til {{ one }}",
   "addAnEmailOr": "Legg til en e-post eller et telefonnummer, så {{ one }} kan bli funnet.",
   "thatIsYouAdd": "Det er deg. Legg til e-posten eller telefonnummeret til {{ one }}.",
   "isAlreadyYour": "{{ sameName }} er allerede i kretsen din som {{ one }}.",
   "youHaveAlreadyAdded": "Du har allerede lagt til {{ sameName }}: forespørselen venter på dem.",
-  "thisPerson": "Denne personen"
+  "thisPerson": "Denne personen",
+  "sendFailed": "Kunne ikke sende forespørselen."
 }

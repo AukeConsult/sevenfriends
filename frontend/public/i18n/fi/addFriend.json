@@ -14,14 +14,12 @@
   "nameOptional": "Nimi (valinnainen)",
   "messageOptional": "Viesti (valinnainen)",
   "cancel": "Peruuta",
-  "couldNotSendThe": "Lähetys epäonnistui: ",
-  "saved": "Tallennettu.",
-  "doneToIsNot": "' + done.to + ' ei ole vielä sovelluksessa ' + w.app + '. Pyyntösi odottaa häntä.'\">",
   "sending": "Lähetetään…",
   "addOne": "Lisää {{ one }}",
   "addAnEmailOr": "Lisää sähköposti tai puhelinnumero, jotta {{ one }} löytyy.",
   "thatIsYouAdd": "Se olet sinä. Lisää sähköposti tai puhelinnumero: {{ one }}.",
   "isAlreadyYour": "{{ sameName }} on jo sinun {{ one }}.",
   "youHaveAlreadyAdded": "Olet jo lisännyt käyttäjän {{ sameName }}: pyyntö odottaa häntä.",
-  "thisPerson": "Tämä henkilö"
+  "thisPerson": "Tämä henkilö",
+  "sendFailed": "Pyyntöä ei voitu lähettää."
 }

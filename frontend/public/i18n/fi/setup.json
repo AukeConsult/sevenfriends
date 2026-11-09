@@ -71,9 +71,5 @@
   "saveFailed": "Tallennus ei onnistunut. Yritä uudelleen tai valitse \"Tee myöhemmin\".",
   "emailSendFailed": "Sähköpostia ei voitu lähettää. Yritä uudelleen.",
   "emailNotYet": "Ei vielä vahvistettu. Avaa lähettämämme sähköpostin linkki ja yritä uudelleen.",
-  "emailCheckFailed": "Tarkistus ei onnistunut. Yritä hetken kuluttua uudelleen.",
-  "share": "Jaa",
-  "thenStrongAddTo": ", ja sitten <strong>Lisää Koti-valikkoon</strong>. Avaa sitten ' + w.app + ' aloitusnäytöltäsi.'\">",
-  "installApp2": "Asenna sovellus",
-  "inItsMenuOr": "valikosta tai katso Asetukset → Asenna sovellus.'\">"
+  "emailCheckFailed": "Tarkistus ei onnistunut. Yritä hetken kuluttua uudelleen."
 }

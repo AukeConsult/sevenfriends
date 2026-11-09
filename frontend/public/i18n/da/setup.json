@@ -71,9 +71,5 @@
   "saveFailed": "Kunne ikke gemme. Prøv igen, eller vælg \"Gør det senere\".",
   "emailSendFailed": "E-mailen kunne ikke sendes. Prøv igen.",
   "emailNotYet": "Ikke bekræftet endnu. Åbn linket i den e-mail, vi sendte, og prøv igen.",
-  "emailCheckFailed": "Kunne ikke tjekke. Prøv igen om lidt.",
-  "share": "Del",
-  "thenStrongAddTo": ", derefter på <strong>Føj til hjemmeskærm</strong>. Åbn derefter ' + w.app + ' fra din startskærm.'\">",
-  "installApp2": "Installér app",
-  "inItsMenuOr": "i dens menu, eller se Indstillinger → Installér appen.'\">"
+  "emailCheckFailed": "Kunne ikke tjekke. Prøv igen om lidt."
 }

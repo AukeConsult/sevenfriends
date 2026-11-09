@@ -39,8 +39,6 @@
   "lockingDoneOfTotal": "{{ total }} में से {{ done }} लॉक हो रही हैं…",
   "lockThisFile": "यह फ़ाइल लॉक करें",
   "lockAllPlainitemslengthFiles": "सभी {{ plainItemsLength }} फ़ाइलें लॉक करें",
-  "key": "कुंजी",
-  "madeOnceOnThe": ", जो आपके इस्तेमाल के डिवाइस पर एक बार बनती है। वह उस डिवाइस से बाहर कभी नहीं जाती। संदेश और फ़ाइलें तभी लॉक होती हैं जब आप दोनों के पास कुंजी हो।'\">",
   "yesSlice": "हाँ ({{ slice }})",
   "no": "नहीं",
   "published": "प्रकाशित",

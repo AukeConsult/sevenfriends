@@ -109,7 +109,7 @@ export class AddFriend {
         this.result.set({ to: created.name || created.email || created.phone || tr('addFriend.thisPerson', 'This person'), link: this.link() });
       }
     } catch (err: any) {
-      this.error.set(err.message ?? tr('addFriend.couldNotSendThe', 'Could not send the ') + this.w.one + ' request');
+      this.error.set(err.message ?? tr('addFriend.sendFailed', 'Could not send the request.'));
     } finally {
       this.sending.set(false);
     }

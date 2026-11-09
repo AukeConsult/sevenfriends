@@ -14,14 +14,12 @@
   "nameOptional": "Nama (opsional)",
   "messageOptional": "Pesan (opsional)",
   "cancel": "Batal",
-  "couldNotSendThe": "Tidak bisa mengirim ",
-  "saved": "Tersimpan.",
-  "doneToIsNot": "' + done.to + ' belum ada di ' + w.app + '. Permintaanmu menunggu mereka.'\">",
   "sending": "Mengirim…",
   "addOne": "Tambah {{ one }}",
   "addAnEmailOr": "Tambahkan email atau nomor telepon, supaya {{ one }}mu bisa ditemukan.",
   "thatIsYouAdd": "Itu kamu sendiri. Tambahkan email atau nomor telepon seorang {{ one }}.",
   "isAlreadyYour": "{{ sameName }} sudah jadi {{ one }}mu.",
   "youHaveAlreadyAdded": "Kamu sudah menambahkan {{ sameName }}: permintaannya menunggu mereka.",
-  "thisPerson": "Orang ini"
+  "thisPerson": "Orang ini",
+  "sendFailed": "Permintaan tidak dapat dikirim."
 }

@@ -9,7 +9,6 @@
   "phone": "Telefon",
   "email": "E-posta",
   "added": "Eklendi",
-  "mediumdate": "mediumDate",
   "deleteFriendnameForGood": "{{ friendName }} kalıcı olarak silinsin mi? Bağlantı ve tüm sohbet ikiniz için de kaldırılır.",
   "cancel": "Vazgeç",
   "delete": "Sil",
@@ -17,14 +16,8 @@
   "wakeUp": "Uyandır",
   "somethingWentWrong": "Bir şeyler ters gitti",
   "lastSpoken": "Son konuşma: {{ when }}",
-  "hide": "Gizle",
-  "show": "Göster",
   "countUnread": "{{ count }} okunmamış",
-  "newMessage": "Yeni mesaj",
   "countNewMessages": "{{ count }} yeni mesaj",
-  "theirEmailOrPhone": "e-posta veya telefon",
-  "theirEmail": "e-posta",
-  "theirPhone": "telefon",
   "friendnameHasNotVerified": "{{ friendName }} bunu doğrulamadı: {{ phone }}. Bu yüzden gerçekten o olduğundan emin olamayız.",
   "silentMany": "Sessiz: {{ many }}"
 }

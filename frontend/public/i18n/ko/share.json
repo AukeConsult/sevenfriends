@@ -9,7 +9,6 @@
   "seat": "자리",
   "seats": "자리",
   "youHaveFreeseatsFree": "빈 {{ seats }}: {{ freeSeats }}개. 소중한 사람({{ many }})을 초대하세요.",
-  "inviteFriendsWithA": "링크로 친구 초대하기",
   "yourOneLink": "내 {{ one }} 링크",
   "emailAddress": "이메일 주소",
   "phoneNumber": "전화번호",

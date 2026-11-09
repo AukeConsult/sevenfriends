@@ -7,8 +7,6 @@
   "forTestAndDemo": "Til test og demo. En app dækker præcis én kreds og kan ikke se de andre. De andre kredses venner, pladser, beskeder og lyde er skjult. En kreds oprettes første gang, den vælges.",
   "strongTitleStrong": "<strong>{{ title }}</strong>",
   "open": "Åbn",
-  "thisAppUsesThe": "Denne app bruger kredsen",
-  "pageTitle": "' + page.title + '",
   "titlePreview": "Forhåndsvisning af {{ title }}",
   "welcome": "Velkommen",
   "theNormalFirstPage": "Den almindelige førsteside",

@@ -71,9 +71,5 @@
   "saveFailed": "Kon niet opslaan. Probeer het opnieuw, of kies \"Later doen\".",
   "emailSendFailed": "Kon de e-mail niet versturen. Probeer het opnieuw.",
   "emailNotYet": "Nog niet bevestigd. Open de link in de e-mail die we hebben gestuurd en probeer het opnieuw.",
-  "emailCheckFailed": "Kon niet controleren. Probeer het zo meteen opnieuw.",
-  "share": "Deel",
-  "thenStrongAddTo": ", dan op <strong>Zet op beginscherm</strong>. Open daarna ' + w.app + ' vanaf je beginscherm.'\">",
-  "installApp2": "App installeren",
-  "inItsMenuOr": "in het menu, of zie Instellingen → De app installeren.'\">"
+  "emailCheckFailed": "Kon niet controleren. Probeer het zo meteen opnieuw."
 }

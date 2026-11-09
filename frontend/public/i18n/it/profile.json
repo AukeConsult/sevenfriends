@@ -49,7 +49,6 @@
   "sendFailed": "Impossibile inviare l'email. Riprova.",
   "loadFailed": "Impossibile caricare il tuo profilo",
   "saveFailed": "Impossibile salvare",
-  "providerGoogle": "Google",
   "providerEmail": "Email",
   "providerPhone": "Telefono",
   "providerUnknown": "Sconosciuto"

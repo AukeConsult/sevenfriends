@@ -71,9 +71,5 @@
   "saveFailed": "无法保存。请再试一次，或选择“稍后再说”。",
   "emailSendFailed": "无法发送邮件。请再试一次。",
   "emailNotYet": "还没有验证。请打开我们发送的邮件里的链接，然后再试一次。",
-  "emailCheckFailed": "无法检查。请稍后再试。",
-  "share": "分享",
-  "thenStrongAddTo": "，然后点<strong>添加到主屏幕</strong>。然后从主屏幕打开 ' + w.app + '。'\">",
-  "installApp2": "安装应用",
-  "inItsMenuOr": "（在它的菜单里），或查看 设置 → 安装应用。'\">"
+  "emailCheckFailed": "无法检查。请稍后再试。"
 }

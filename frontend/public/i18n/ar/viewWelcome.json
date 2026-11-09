@@ -7,8 +7,6 @@
   "forTestAndDemo": "للتجربة والعرض. يغطي التطبيق دائرة واحدة فقط ولا يرى الدوائر الأخرى. أصدقاء الدوائر الأخرى ومقاعدها ورسائلها وأصواتها مخفية. تُنشأ الدائرة عند اختيارها لأول مرة.",
   "strongTitleStrong": "<strong>{{ title }}</strong>",
   "open": "فتح",
-  "thisAppUsesThe": "هذا التطبيق يستخدم الدائرة",
-  "pageTitle": "' + page.title + '",
   "titlePreview": "معاينة {{ title }}",
   "welcome": "أهلًا بك",
   "theNormalFirstPage": "الصفحة الأولى المعتادة",

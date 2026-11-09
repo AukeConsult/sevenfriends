@@ -7,8 +7,6 @@
   "forTestAndDemo": "For test and demo. An app covers exactly one circle and cannot see the others. The friends, seats, messages and sounds of the other circles are hidden. A circle is made the first time it is chosen.",
   "strongTitleStrong": "<strong>{{ title }}</strong>",
   "open": "Open",
-  "thisAppUsesThe": "This app uses the circle",
-  "pageTitle": "' + page.title + '",
   "titlePreview": "{{ title }} preview",
   "welcome": "Welcome",
   "theNormalFirstPage": "The normal first page",

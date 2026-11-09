@@ -9,7 +9,6 @@
   "phone": "الهاتف",
   "email": "البريد الإلكتروني",
   "added": "تاريخ الإضافة",
-  "mediumdate": "mediumDate",
   "deleteFriendnameForGood": "حذف {{ friendName }} نهائيًا؟ هذا يزيل الصلة والمحادثة كلها، عند كليكما.",
   "cancel": "إلغاء",
   "delete": "حذف",
@@ -17,14 +16,8 @@
   "wakeUp": "إيقاظ",
   "somethingWentWrong": "حدث خطأ ما",
   "lastSpoken": "آخر حديث معه: {{ when }}",
-  "hide": "إخفاء",
-  "show": "إظهار",
   "countUnread": "{{ count }} غير مقروءة",
-  "newMessage": "رسالة جديدة",
   "countNewMessages": "{{ count }} رسائل جديدة",
-  "theirEmailOrPhone": "بريده الإلكتروني أو هاتفه",
-  "theirEmail": "بريده الإلكتروني",
-  "theirPhone": "هاتفه",
   "friendnameHasNotVerified": "{{ friendName }} لم يوثّق {{ phone }}، لذا لا يمكننا التأكد أنه هو فعلًا.",
   "silentMany": "{{ many }} الصامتون"
 }

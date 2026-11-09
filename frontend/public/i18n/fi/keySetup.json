@@ -21,9 +21,6 @@
   "filesInYourSafebox": "Kassakaappisi tiedostot lukitaan avaimella, joka pysyy laitteellasi, jotta vain sinä ja ystäväsi voitte lukea ne, ei edes palvelu. Tämä tekee avaimen ja antaa sinulle 24 palautussanaa säilytettäväksi.",
   "makingYourKey": "Tehdään avaintasi…",
   "makeMyKey": "Tee avaimeni",
-  "saveTheseWordsNow": "Tallenna nämä 24 sanaa nyt.",
-  "theyAreTheOnly": "Ne ovat ainoa tapa avata lukitut tiedostosi, jos menetät tämän laitteen. Ne näytetään vain kerran, eikä kukaan voi löytää niitä puolestasi, emme edes me.'\">",
-  "checkThatYouSaved": "Tarkista, että tallensit ne",
   "theKeyCouldNot": "Avainta ei voitu tehdä. Yritä uudelleen.",
   "theKeyCouldNot2": "Avainta ei voitu tallentaa. Yritä uudelleen."
 }

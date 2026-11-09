@@ -7,8 +7,6 @@
   "forTestAndDemo": "जाँच और डेमो के लिए। एक ऐप ठीक एक सर्कल को देखता है और दूसरों को नहीं देख सकता। दूसरे सर्कलों के दोस्त, सीटें, संदेश और आवाज़ें छिपी रहती हैं। सर्कल पहली बार चुनने पर बनता है।",
   "strongTitleStrong": "<strong>{{ title }}</strong>",
   "open": "खोलें",
-  "thisAppUsesThe": "यह ऐप इस सर्कल का इस्तेमाल करता है",
-  "pageTitle": "' + page.title + '",
   "titlePreview": "{{ title }} प्रीव्यू",
   "welcome": "स्वागत है",
   "theNormalFirstPage": "सामान्य पहला पेज",

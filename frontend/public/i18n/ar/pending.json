@@ -10,7 +10,5 @@
   "hasNotVerifiedTheir": "لم يوثّق بريده الإلكتروني أو هاتفه: لا يمكننا التأكد أنه هو فعلًا.",
   "pending": "معلّق",
   "reject": "رفض",
-  "requestFromname": "' + request.fromName + '",
-  "mediumdate": "mediumDate",
   "sinceMediumdate": "منذ {{ mediumDate }}"
 }

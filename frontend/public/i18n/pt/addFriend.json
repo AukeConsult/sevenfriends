@@ -14,14 +14,12 @@
   "nameOptional": "Nome (opcional)",
   "messageOptional": "Mensagem (opcional)",
   "cancel": "Cancelar",
-  "couldNotSendThe": "Não foi possível enviar o ",
-  "saved": "Salvo.",
-  "doneToIsNot": "' + done.to + ' ainda não está no ' + w.app + '. Seu pedido fica esperando por essa pessoa.'\">",
   "sending": "Enviando…",
   "addOne": "Adicionar {{ one }}",
   "addAnEmailOr": "Informe um e-mail ou telefone para que seu {{ one }} possa ser encontrado.",
   "thatIsYouAdd": "Esse é você. Informe o e-mail ou telefone de um {{ one }}.",
   "isAlreadyYour": "{{ sameName }} já é seu {{ one }}.",
   "youHaveAlreadyAdded": "Você já adicionou {{ sameName }}: o pedido fica esperando.",
-  "thisPerson": "Esta pessoa"
+  "thisPerson": "Esta pessoa",
+  "sendFailed": "Não foi possível enviar o pedido."
 }

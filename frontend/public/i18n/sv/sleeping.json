@@ -9,7 +9,6 @@
   "phone": "Telefon",
   "email": "E-post",
   "added": "Tillagd",
-  "mediumdate": "mediumDate",
   "deleteFriendnameForGood": "Radera {{ friendName }} för gott? Det tar bort kopplingen och hela konversationen, för er båda.",
   "cancel": "Avbryt",
   "delete": "Radera",
@@ -17,14 +16,8 @@
   "wakeUp": "Väck",
   "somethingWentWrong": "Något gick fel",
   "lastSpoken": "Pratade senast {{ when }}",
-  "hide": "Dölj",
-  "show": "Visa",
   "countUnread": "{{ count }} olästa",
-  "newMessage": "Nytt meddelande",
   "countNewMessages": "{{ count }} nya meddelanden",
-  "theirEmailOrPhone": "sin e-postadress eller sitt telefonnummer",
-  "theirEmail": "sin e-postadress",
-  "theirPhone": "sitt telefonnummer",
   "friendnameHasNotVerified": "{{ friendName }} har inte verifierat {{ phone }}, så vi kan inte vara säkra på att det verkligen är hen.",
   "silentMany": "Tysta {{ many }}"
 }

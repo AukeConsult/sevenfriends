@@ -49,7 +49,6 @@
   "sendFailed": "Sähköpostia ei voitu lähettää. Yritä uudelleen.",
   "loadFailed": "Profiiliasi ei voitu ladata",
   "saveFailed": "Tallennus ei onnistunut",
-  "providerGoogle": "Google",
   "providerEmail": "Sähköposti",
   "providerPhone": "Puhelin",
   "providerUnknown": "Tuntematon"

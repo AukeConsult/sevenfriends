@@ -14,14 +14,12 @@
   "nameOptional": "Imię (opcjonalnie)",
   "messageOptional": "Wiadomość (opcjonalnie)",
   "cancel": "Anuluj",
-  "couldNotSendThe": "Nie udało się wysłać zaproszenia ",
-  "saved": "Zapisano.",
-  "doneToIsNot": "' + done.to + ' nie ma jeszcze w ' + w.app + '. Twoje zaproszenie na nich czeka.'\">",
   "sending": "Wysyłanie…",
   "addOne": "Dodaj: {{ one }}",
   "addAnEmailOr": "Dodaj e-mail lub numer telefonu, żeby można było znaleźć osobę: {{ one }}.",
   "thatIsYouAdd": "To Ty. Dodaj e-mail lub numer telefonu osoby: {{ one }}.",
   "isAlreadyYour": "{{ sameName }} jest już na Twojej liście jako {{ one }}.",
   "youHaveAlreadyAdded": "Już dodałeś {{ sameName }}: zaproszenie na nią czeka.",
-  "thisPerson": "Ta osoba"
+  "thisPerson": "Ta osoba",
+  "sendFailed": "Nie udało się wysłać prośby."
 }

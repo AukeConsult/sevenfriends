@@ -7,8 +7,6 @@
   "forTestAndDemo": "테스트와 데모용이에요. 앱 하나는 서클 하나만 다루고 다른 서클은 볼 수 없어요. 다른 서클의 친구, 자리, 메시지, 소리는 숨겨져요. 서클은 처음 선택할 때 만들어져요.",
   "strongTitleStrong": "<strong>{{ title }}</strong>",
   "open": "열기",
-  "thisAppUsesThe": "이 앱이 사용하는 서클",
-  "pageTitle": "' + page.title + '",
   "titlePreview": "{{ title }} 미리보기",
   "welcome": "환영해요",
   "theNormalFirstPage": "일반 첫 페이지",

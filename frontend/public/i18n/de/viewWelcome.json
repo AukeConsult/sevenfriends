@@ -7,8 +7,6 @@
   "forTestAndDemo": "Für Test und Demo. Eine App deckt genau einen Kreis ab und kann die anderen nicht sehen. Die Freunde, Plätze, Nachrichten und Töne der anderen Kreise sind ausgeblendet. Ein Kreis wird erstellt, wenn er zum ersten Mal gewählt wird.",
   "strongTitleStrong": "<strong>{{ title }}</strong>",
   "open": "Öffnen",
-  "thisAppUsesThe": "Diese App nutzt den Kreis",
-  "pageTitle": "' + page.title + '",
   "titlePreview": "Vorschau: {{ title }}",
   "welcome": "Willkommen",
   "theNormalFirstPage": "Die normale erste Seite",

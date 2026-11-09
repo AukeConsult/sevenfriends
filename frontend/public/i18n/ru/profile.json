@@ -49,7 +49,6 @@
   "sendFailed": "Не удалось отправить письмо. Попробуй ещё раз.",
   "loadFailed": "Не удалось загрузить твой профиль",
   "saveFailed": "Не удалось сохранить",
-  "providerGoogle": "Google",
   "providerEmail": "Почта",
   "providerPhone": "Телефон",
   "providerUnknown": "Неизвестно"

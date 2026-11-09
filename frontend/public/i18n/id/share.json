@@ -9,7 +9,6 @@
   "seat": "kursi",
   "seats": "kursi",
   "youHaveFreeseatsFree": "Kamu punya {{ freeSeats }} {{ seats }} kosong. Undang {{ many }} yang berarti bagimu.",
-  "inviteFriendsWithA": "Undang teman dengan tautan",
   "yourOneLink": "Tautan {{ one }}mu",
   "emailAddress": "alamat email",
   "phoneNumber": "nomor telepon",

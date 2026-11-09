@@ -9,7 +9,6 @@
   "seat": "posto libero",
   "seats": "posti liberi",
   "youHaveFreeseatsFree": "Hai {{ freeSeats }} {{ seats }}. Invita i {{ many }} che contano per te.",
-  "inviteFriendsWithA": "Invita gli amici con un link",
   "yourOneLink": "Il tuo link per {{ one }}",
   "emailAddress": "indirizzo email",
   "phoneNumber": "numero di telefono",

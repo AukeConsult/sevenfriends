@@ -9,7 +9,6 @@
   "seat": "yer",
   "seats": "yer",
   "youHaveFreeseatsFree": "{{ freeSeats }} boş {{ seats }} var. Önemli olanları davet et: {{ many }}.",
-  "inviteFriendsWithA": "Arkadaşlarını bir bağlantıyla davet et",
   "yourOneLink": "{{ one }} bağlantın",
   "emailAddress": "e-posta adresi",
   "phoneNumber": "telefon numarası",

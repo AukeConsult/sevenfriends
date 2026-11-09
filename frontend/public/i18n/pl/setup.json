@@ -71,9 +71,5 @@
   "saveFailed": "Nie udało się zapisać. Spróbuj ponownie albo wybierz „Zrobię to później”.",
   "emailSendFailed": "Nie udało się wysłać e-maila. Spróbuj ponownie.",
   "emailNotYet": "Jeszcze nie zweryfikowano. Otwórz link w wysłanym e-mailu, potem spróbuj ponownie.",
-  "emailCheckFailed": "Nie udało się sprawdzić. Spróbuj za chwilę.",
-  "share": "Udostępnij",
-  "thenStrongAddTo": ", potem <strong>Do ekranu początkowego</strong>. Potem otwórz ' + w.app + ' z ekranu głównego.'\">",
-  "installApp2": "Zainstaluj aplikację",
-  "inItsMenuOr": "w jej menu albo zobacz Ustawienia → Zainstaluj aplikację.'\">"
+  "emailCheckFailed": "Nie udało się sprawdzić. Spróbuj za chwilę."
 }

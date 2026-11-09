@@ -39,8 +39,6 @@
   "lockingDoneOfTotal": "正在加锁 {{ done }} / {{ total }}…",
   "lockThisFile": "给这个文件加锁",
   "lockAllPlainitemslengthFiles": "给全部 {{ plainItemsLength }} 个文件加锁",
-  "key": "密钥",
-  "madeOnceOnThe": "，在你使用的设备上创建一次，永远不会离开那台设备。只有你们两人都有密钥时，消息和文件才会加锁。'\">",
   "yesSlice": "有（{{ slice }}）",
   "no": "没有",
   "published": "已发布",

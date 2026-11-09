@@ -1,0 +1,14 @@
+{
+  "backToHome": "חזרה לדף הבית",
+  "back": "‹ חזרה",
+  "waitingForASeat": "ממתינים למקום",
+  "theseManyWantTo": "אלה {{ many }} שרוצים להצטרף אליך, אבל כל המקומות שלך תפוסים. הם יכולים לראות שהם ברשימת ההמתנה שלך. הם נשארים כאן עד שתפנו מקום, או עד שיבטלו את הבקשה.",
+  "retry": "ניסיון חוזר",
+  "checking": "בודקים…",
+  "nobodyIsWaitingFor": "אף אחד לא ממתין למקום.",
+  "strongFromnameStrong": "<strong>{{ fromName }}</strong>",
+  "hasNotVerifiedTheir": "לא אימת/ה את האימייל או הטלפון: אי אפשר להיות בטוחים שזה באמת הוא/היא.",
+  "pending": "ממתין",
+  "reject": "דחייה",
+  "sinceMediumdate": "מאז {{ mediumDate }}"
+}

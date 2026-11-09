@@ -1,5 +1,5 @@
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
-import { tr } from '../core/i18n';
+import { activeLang, tr } from '../core/i18n';
 import { ActiveCircleService } from '../core/active-circle.service';
 import { Capacitor } from '@capacitor/core';
 import { AppDatePipe } from '../core/app-date.pipe';
@@ -288,7 +288,8 @@ export class Notifications {
   protected quietText(friend: Friend): string {
     if (!friend.lastSpokenAt) return tr('notifications.youHavenTTalked', 'You haven\'t talked to {{ friendName }} yet', { friendName: friend.name });
     const days = Math.floor((this.now - new Date(friend.lastSpokenAt).getTime()) / 86_400_000);
-    const span = days < 60 ? `${Math.max(2, Math.round(days / 7))} weeks` : `${Math.round(days / 30)} months`;
+    const unit = (value: number, name: 'week' | 'month') => new Intl.NumberFormat(activeLang(), { style: 'unit', unit: name, unitDisplay: 'long' }).format(value);
+    const span = days < 60 ? unit(Math.max(2, Math.round(days / 7)), 'week') : unit(Math.round(days / 30), 'month');
     return tr('notifications.youHavenTTalked2', 'You haven\'t talked to {{ friendName }} for {{ span }}', { friendName: friend.name, span });
   }
 

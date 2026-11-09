@@ -71,9 +71,5 @@
   "saveFailed": "Impossible d'enregistrer. Réessaie, ou choisis « Plus tard ».",
   "emailSendFailed": "Impossible d'envoyer l'e-mail. Réessaie.",
   "emailNotYet": "Pas encore vérifié. Ouvre le lien de l'e-mail que nous avons envoyé, puis réessaie.",
-  "emailCheckFailed": "Vérification impossible. Réessaie dans un instant.",
-  "share": "Partager",
-  "thenStrongAddTo": ", puis sur <strong>Sur l'écran d'accueil</strong>. Ouvre ensuite ' + w.app + ' depuis ton écran d'accueil.'\">",
-  "installApp2": "Installer l'appli",
-  "inItsMenuOr": "dans son menu, ou va dans Réglages → Installer l'appli.'\">"
+  "emailCheckFailed": "Vérification impossible. Réessaie dans un instant."
 }

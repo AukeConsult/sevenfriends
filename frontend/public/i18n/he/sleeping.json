@@ -1,0 +1,23 @@
+{
+  "backToHome": "חזרה לדף הבית",
+  "backToMyFriends": "חזרה לחברים שלי",
+  "sleepList": "😴 רשימת שינה",
+  "manyWhoSleepHave": "מי שבשינה ({{ Many }}) אין להם מקום. השיחה איתם נשמרת. אפשר להעיר מישהו ({{ one }}) כדי להחזיר לו מקום.",
+  "allMaxSeatsAre": "כל {{ max }} המקומות תפוסים. כדי להעיר מישהו, קודם יש לפנות מקום (להעביר {{ one }} לשינה).",
+  "nobodyIsAsleep": "אף אחד לא בשינה.",
+  "friendnameHasYouOn": "😴 את/ה גם ברשימת השינה של {{ friendName }}",
+  "phone": "טלפון",
+  "email": "אימייל",
+  "added": "נוסף",
+  "deleteFriendnameForGood": "למחוק את {{ friendName }} לצמיתות? הקשר וכל השיחה יימחקו אצל שניכם.",
+  "cancel": "ביטול",
+  "delete": "מחיקה",
+  "open": "פתיחה",
+  "wakeUp": "הערה",
+  "somethingWentWrong": "משהו השתבש",
+  "lastSpoken": "דיברתם לאחרונה: {{ when }}",
+  "countUnread": "{{ count }} שלא נקראו",
+  "countNewMessages": "{{ count }} הודעות חדשות",
+  "friendnameHasNotVerified": "{{ friendName }} לא אימת/ה את {{ phone }}, ולכן אי אפשר להיות בטוחים שזה באמת הוא/היא.",
+  "silentMany": "שקט: {{ many }}"
+}

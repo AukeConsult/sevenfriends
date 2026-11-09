@@ -135,9 +135,9 @@
       </div>
 
       <div class="d-grid gap-1"><span class="form-label small text-secondary m-0">{{ t('profile.phone') || 'Phone number' }}</span>
-        <div class="input-group">
+        <div class="input-group sf-ltr-group">
           @if (showCode()) {
-            <span class="input-group-text fw-semibold" [attr.aria-label]="t('profile.countryCode') || 'Country code'">+{{ dial() }}</span>
+            <span class="input-group-text fw-semibold sf-ltr" [attr.aria-label]="t('profile.countryCode') || 'Country code'">+{{ dial() }}</span>
           }
           <input appClear type="tel" class="form-control" [placeholder]="showCode() ? '900 00 000' : '+47 900 00 000'" [value]="phoneField()"
                  (input)="setPhone($any($event.target).value)" (blur)="flush()"

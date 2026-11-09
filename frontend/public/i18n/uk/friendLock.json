@@ -39,8 +39,6 @@
   "lockingDoneOfTotal": "Замикаю {{ done }} із {{ total }}…",
   "lockThisFile": "Замкнути цей файл",
   "lockAllPlainitemslengthFiles": "Замкнути всі файли: {{ plainItemsLength }}",
-  "key": "ключ",
-  "madeOnceOnThe": ", створений один раз на пристрої, яким ти користуєшся. Він ніколи не залишає цей пристрій. Повідомлення й файли замикаються лише тоді, коли ключ є в обох.'\">",
   "yesSlice": "так ({{ slice }})",
   "no": "ні",
   "published": "опубліковано",

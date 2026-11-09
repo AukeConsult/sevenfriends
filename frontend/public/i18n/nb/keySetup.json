@@ -21,9 +21,6 @@
   "filesInYourSafebox": "Filer i safeboksen din låses med en nøkkel som blir på enheten din, slik at bare du og vennen din kan lese dem, ikke engang tjenesten. Dette lager nøkkelen og gir deg 24 gjenopprettingsord å ta vare på.",
   "makingYourKey": "Lager nøkkelen din…",
   "makeMyKey": "Lag nøkkelen min",
-  "saveTheseWordsNow": "Lagre disse 24 ordene nå.",
-  "theyAreTheOnly": "De er den eneste måten å åpne de låste filene dine på hvis du mister denne enheten. De vises bare én gang, og ingen kan finne dem for deg, ikke engang vi.'\">",
-  "checkThatYouSaved": "Sjekk at du har lagret dem",
   "theKeyCouldNot": "Nøkkelen kunne ikke lages. Prøv igjen.",
   "theKeyCouldNot2": "Nøkkelen kunne ikke lagres. Prøv igjen."
 }

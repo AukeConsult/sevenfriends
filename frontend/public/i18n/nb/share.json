@@ -9,7 +9,6 @@
   "seat": "plass",
   "seats": "plasser",
   "youHaveFreeseatsFree": "Du har {{ freeSeats }} {{ seats }} ledig. Inviter {{ many }} som betyr noe for deg.",
-  "inviteFriendsWithA": "Inviter venner med en lenke",
   "yourOneLink": "Din {{ one }}-lenke",
   "emailAddress": "e-postadressen din",
   "phoneNumber": "telefonnummeret ditt",

@@ -9,7 +9,6 @@
   "phone": "전화번호",
   "email": "이메일",
   "added": "추가한 날",
-  "mediumdate": "mediumDate",
   "deleteFriendnameForGood": "{{ friendName }}님을 완전히 삭제할까요? 연결과 전체 대화가 두 사람 모두에게서 사라져요.",
   "cancel": "취소",
   "delete": "삭제",
@@ -17,14 +16,8 @@
   "wakeUp": "깨우기",
   "somethingWentWrong": "문제가 생겼어요",
   "lastSpoken": "마지막 대화: {{ when }}",
-  "hide": "숨기기",
-  "show": "보기",
   "countUnread": "읽지 않음 {{ count }}",
-  "newMessage": "새 메시지",
   "countNewMessages": "새 메시지 {{ count }}개",
-  "theirEmailOrPhone": "상대의 이메일 또는 전화번호",
-  "theirEmail": "상대의 이메일",
-  "theirPhone": "상대의 전화번호",
   "friendnameHasNotVerified": "{{ friendName }}님이 {{ phone }}을 인증하지 않아서 정말 본인인지 확신할 수 없어요.",
   "silentMany": "조용한 {{ many }}"
 }

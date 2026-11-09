@@ -7,8 +7,6 @@
   "forTestAndDemo": "Voor test en demo. Een app dekt precies één kring en kan de andere niet zien. De vrienden, plekken, berichten en geluiden van de andere kringen zijn verborgen. Een kring wordt gemaakt de eerste keer dat hij wordt gekozen.",
   "strongTitleStrong": "<strong>{{ title }}</strong>",
   "open": "Openen",
-  "thisAppUsesThe": "Deze app gebruikt de kring",
-  "pageTitle": "' + page.title + '",
   "titlePreview": "Voorbeeld van {{ title }}",
   "welcome": "Welkom",
   "theNormalFirstPage": "De gewone eerste pagina",

@@ -21,9 +21,6 @@
   "filesInYourSafebox": "Os arquivos do seu cofre serão trancados com uma chave que fica no seu dispositivo, para que só você e seu amigo possam lê-los, nem mesmo o serviço. Isto cria a chave e dá 24 palavras de recuperação para você guardar.",
   "makingYourKey": "Criando sua chave…",
   "makeMyKey": "Criar minha chave",
-  "saveTheseWordsNow": "Salve estas 24 palavras agora.",
-  "theyAreTheOnly": "Elas são a única forma de abrir seus arquivos trancados se você perder este dispositivo. São mostradas uma vez só, e ninguém pode encontrá-las para você, nem nós.'\">",
-  "checkThatYouSaved": "Confirme que você as salvou",
   "theKeyCouldNot": "Não foi possível criar a chave. Tente de novo.",
   "theKeyCouldNot2": "Não foi possível salvar a chave. Tente de novo."
 }

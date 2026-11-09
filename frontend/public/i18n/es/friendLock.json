@@ -39,8 +39,6 @@
   "lockingDoneOfTotal": "Bloqueando {{ done }} de {{ total }}…",
   "lockThisFile": "Bloquear este archivo",
   "lockAllPlainitemslengthFiles": "Bloquear los {{ plainItemsLength }} archivos",
-  "key": "clave",
-  "madeOnceOnThe": ", creada una vez en el dispositivo que usas. Nunca sale de ese dispositivo. Los mensajes y archivos solo se bloquean cuando los dos tenéis una clave.'\">",
   "yesSlice": "sí ({{ slice }})",
   "no": "no",
   "published": "publicada",

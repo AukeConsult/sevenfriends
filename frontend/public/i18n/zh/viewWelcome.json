@@ -7,8 +7,6 @@
   "forTestAndDemo": "用于测试和演示。一个应用只对应一个圈子，看不到其他圈子。其他圈子的朋友、位置、消息和提示音都是隐藏的。圈子在第一次被选择时创建。",
   "strongTitleStrong": "<strong>{{ title }}</strong>",
   "open": "打开",
-  "thisAppUsesThe": "这个应用使用的圈子是",
-  "pageTitle": "' + page.title + '",
   "titlePreview": "{{ title }} 预览",
   "welcome": "欢迎",
   "theNormalFirstPage": "常规的首页",

@@ -71,9 +71,5 @@
   "saveFailed": "Kaydedilemedi. Tekrar dene ya da \"Sonra yaparım\"ı seç.",
   "emailSendFailed": "E-posta gönderilemedi. Lütfen tekrar dene.",
   "emailNotYet": "Henüz doğrulanmadı. Gönderdiğimiz e-postadaki bağlantıyı aç, sonra tekrar dene.",
-  "emailCheckFailed": "Kontrol edilemedi. Birazdan tekrar dene.",
-  "share": "Paylaş",
-  "thenStrongAddTo": ", sonra <strong>Ana Ekrana Ekle</strong>. Sonra ana ekranından ' + w.app + ' uygulamasını aç.'\">",
-  "installApp2": "Uygulamayı yükle",
-  "inItsMenuOr": "menüsünde ya da Ayarlar → Uygulamayı yükle'ye göz at.'\">"
+  "emailCheckFailed": "Kontrol edilemedi. Birazdan tekrar dene."
 }

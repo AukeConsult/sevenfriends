@@ -21,9 +21,6 @@
   "filesInYourSafebox": "Los archivos de tu caja fuerte se bloquearán con una clave que se queda en tu dispositivo, para que solo tú y tu amigo podáis leerlos, ni siquiera el servicio. Esto crea la clave y te da 24 palabras de recuperación para guardar.",
   "makingYourKey": "Creando tu clave…",
   "makeMyKey": "Crear mi clave",
-  "saveTheseWordsNow": "Guarda estas 24 palabras ahora.",
-  "theyAreTheOnly": "Son la única forma de abrir tus archivos bloqueados si pierdes este dispositivo. Se muestran una sola vez y nadie puede encontrarlas por ti, ni siquiera nosotros.'\">",
-  "checkThatYouSaved": "Comprueba que las guardaste",
   "theKeyCouldNot": "No se pudo crear la clave. Inténtalo de nuevo.",
   "theKeyCouldNot2": "No se pudo guardar la clave. Inténtalo de nuevo."
 }

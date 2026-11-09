@@ -39,8 +39,6 @@
   "lockingDoneOfTotal": "ロック中… {{ done }} / {{ total }}",
   "lockThisFile": "このファイルをロック",
   "lockAllPlainitemslengthFiles": "{{ plainItemsLength }}件のファイルをすべてロック",
-  "key": "キー",
-  "madeOnceOnThe": "。使っているデバイスで一度だけ作ります。キーはそのデバイスの外に出ません。メッセージとファイルは、2人ともキーを持っているときだけロックされます。'\">",
   "yesSlice": "はい（{{ slice }}）",
   "no": "いいえ",
   "published": "公開済み",

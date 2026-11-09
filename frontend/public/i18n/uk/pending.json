@@ -10,7 +10,5 @@
   "hasNotVerifiedTheir": "Не підтвердив(ла) свою пошту чи телефон: ми не можемо бути певні, що це справді ця людина.",
   "pending": "У черзі",
   "reject": "Відхилити",
-  "requestFromname": "' + request.fromName + '",
-  "mediumdate": "mediumDate",
   "sinceMediumdate": "з {{ mediumDate }}"
 }

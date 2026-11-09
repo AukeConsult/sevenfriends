@@ -21,9 +21,6 @@
   "filesInYourSafebox": "Les fichiers de ton coffre-fort seront verrouillés avec une clé qui reste sur ton appareil, pour que seuls toi et ton ami puissiez les lire, pas même le service. Ceci crée la clé et te donne 24 mots de récupération à garder.",
   "makingYourKey": "Création de ta clé…",
   "makeMyKey": "Créer ma clé",
-  "saveTheseWordsNow": "Enregistre ces 24 mots maintenant.",
-  "theyAreTheOnly": "C'est le seul moyen d'ouvrir tes fichiers verrouillés si tu perds cet appareil. Ils ne s'affichent qu'une fois, et personne ne peut les retrouver pour toi, pas même nous.'\">",
-  "checkThatYouSaved": "Vérifie que tu les as enregistrés",
   "theKeyCouldNot": "Impossible de créer la clé. Réessaie.",
   "theKeyCouldNot2": "Impossible d'enregistrer la clé. Réessaie."
 }

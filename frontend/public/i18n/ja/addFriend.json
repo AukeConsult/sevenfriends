@@ -14,14 +14,12 @@
   "nameOptional": "名前（任意）",
   "messageOptional": "メッセージ（任意）",
   "cancel": "キャンセル",
-  "couldNotSendThe": "送信できませんでした: ",
-  "saved": "保存しました。",
-  "doneToIsNot": "' + done.to + ' さんはまだ ' + w.app + ' を使っていません。リクエストは相手を待っています。'\">",
   "sending": "送信中…",
   "addOne": "{{ one }}を追加",
   "addAnEmailOr": "{{ one }}が見つかるように、メールアドレスか電話番号を入力してください。",
   "thatIsYouAdd": "それはあなた自身です。{{ one }}のメールアドレスか電話番号を入力してください。",
   "isAlreadyYour": "{{ sameName }}さんはすでにあなたの{{ one }}です。",
   "youHaveAlreadyAdded": "{{ sameName }}さんはすでに追加済みです。リクエストは相手を待っています。",
-  "thisPerson": "この人"
+  "thisPerson": "この人",
+  "sendFailed": "リクエストを送信できませんでした。"
 }

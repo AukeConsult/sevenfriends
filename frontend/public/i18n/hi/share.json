@@ -9,7 +9,6 @@
   "seat": "सीट",
   "seats": "सीटें",
   "youHaveFreeseatsFree": "आपके पास {{ freeSeats }} {{ seats }} खाली हैं। जो {{ many }} आपके लिए ख़ास हैं, उन्हें बुलाएँ।",
-  "inviteFriendsWithA": "लिंक से दोस्तों को बुलाएँ",
   "yourOneLink": "आपका {{ one }} लिंक",
   "emailAddress": "ईमेल पता",
   "phoneNumber": "फ़ोन नंबर",

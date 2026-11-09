@@ -49,7 +49,6 @@
   "sendFailed": "Could not send the email. Please try again.",
   "loadFailed": "Could not load your profile",
   "saveFailed": "Could not save",
-  "providerGoogle": "Google",
   "providerEmail": "Email",
   "providerPhone": "Phone",
   "providerUnknown": "Unknown"

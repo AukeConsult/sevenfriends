@@ -9,7 +9,6 @@
   "seat": "Вільне місце",
   "seats": "Вільні місця",
   "youHaveFreeseatsFree": "{{ seats }}: {{ freeSeats }}. Запроси тих ({{ many }}), хто важливий для тебе.",
-  "inviteFriendsWithA": "Запроси друзів за посиланням",
   "yourOneLink": "Твоє посилання ({{ one }})",
   "emailAddress": "адресу пошти",
   "phoneNumber": "номер телефону",

@@ -9,7 +9,6 @@
   "seat": "Platz",
   "seats": "Plätze",
   "youHaveFreeseatsFree": "Du hast {{ freeSeats }} {{ seats }} frei. Lad die {{ many }} ein, die dir wichtig sind.",
-  "inviteFriendsWithA": "Freunde per Link einladen",
   "yourOneLink": "Dein {{ one }}-Link",
   "emailAddress": "E-Mail-Adresse",
   "phoneNumber": "Telefonnummer",

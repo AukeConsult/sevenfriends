@@ -49,7 +49,6 @@
   "sendFailed": "No se pudo enviar el correo. Inténtalo de nuevo.",
   "loadFailed": "No se pudo cargar tu perfil",
   "saveFailed": "No se pudo guardar",
-  "providerGoogle": "Google",
   "providerEmail": "Correo",
   "providerPhone": "Teléfono",
   "providerUnknown": "Desconocido"

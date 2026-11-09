@@ -39,8 +39,6 @@
   "lockingDoneOfTotal": "Vergrendelen {{ done }} van {{ total }}…",
   "lockThisFile": "Dit bestand vergrendelen",
   "lockAllPlainitemslengthFiles": "Alle {{ plainItemsLength }} bestanden vergrendelen",
-  "key": "sleutel",
-  "madeOnceOnThe": ", eenmalig gemaakt op het apparaat dat je gebruikt. Hij verlaat dat apparaat nooit. Berichten en bestanden worden alleen vergrendeld als jullie allebei een sleutel hebben.'\">",
   "yesSlice": "ja ({{ slice }})",
   "no": "nee",
   "published": "gepubliceerd",

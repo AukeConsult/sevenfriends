@@ -1,0 +1,16 @@
+{
+  "share": "שיתוף",
+  "allYourSevenSeats": "כל שבעת המקומות שלך תפוסים. הקישור שלך עדיין עובד אם תפנו מקום.",
+  "installTheApp": "התקנת האפליקציה",
+  "strongInviteFriendsWith": "<strong>הזמנת חברים בעזרת קישור</strong>",
+  "sendThisLinkTo": "אפשר לשלוח את הקישור הזה לחברים שרוצים שיצטרפו. כשיפתחו אותו, יתחברו (או יצרו חשבון) ויאשרו, תישלח אליך בקשת חברות.",
+  "shareLink": "שיתוף הקישור",
+  "copyLink": "העתקת הקישור",
+  "seat": "מקומות",
+  "seats": "מקומות",
+  "youHaveFreeseatsFree": "{{ seats }} פנויים אצלך: {{ freeSeats }}. אפשר להזמין את מי שחשובים לך: {{ many }}.",
+  "yourOneLink": "הקישור שלך: {{ one }}",
+  "emailAddress": "כתובת אימייל",
+  "phoneNumber": "מספר טלפון",
+  "theLinkContainsYour": "הקישור מכיל את הפרטים שלך ({{ number }})."
+}

@@ -49,7 +49,6 @@
   "sendFailed": "Не вдалося надіслати лист. Спробуй ще раз.",
   "loadFailed": "Не вдалося завантажити твій профіль",
   "saveFailed": "Не вдалося зберегти",
-  "providerGoogle": "Google",
   "providerEmail": "Пошта",
   "providerPhone": "Телефон",
   "providerUnknown": "Невідомо"

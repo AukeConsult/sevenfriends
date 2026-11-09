@@ -10,7 +10,5 @@
   "hasNotVerifiedTheir": "Не подтвердил(а) почту или телефон: мы не можем быть уверены, что это действительно он(а).",
   "pending": "В ожидании",
   "reject": "Отклонить",
-  "requestFromname": "' + request.fromName + '",
-  "mediumdate": "mediumDate",
   "sinceMediumdate": "с {{ mediumDate }}"
 }

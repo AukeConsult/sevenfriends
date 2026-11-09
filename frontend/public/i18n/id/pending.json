@@ -10,7 +10,5 @@
   "hasNotVerifiedTheir": "Belum memverifikasi email atau teleponnya: kami tidak bisa memastikan itu benar-benar dia.",
   "pending": "Tertunda",
   "reject": "Tolak",
-  "requestFromname": "' + request.fromName + '",
-  "mediumdate": "mediumDate",
   "sinceMediumdate": "sejak {{ mediumDate }}"
 }

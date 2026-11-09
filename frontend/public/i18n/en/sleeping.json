@@ -9,7 +9,6 @@
   "phone": "Phone",
   "email": "Email",
   "added": "Added",
-  "mediumdate": "mediumDate",
   "deleteFriendnameForGood": "Delete {{ friendName }} for good? This removes the connection and the whole conversation, for both of you.",
   "cancel": "Cancel",
   "delete": "Delete",
@@ -17,14 +16,8 @@
   "wakeUp": "Wake up",
   "somethingWentWrong": "Something went wrong",
   "lastSpoken": "Last spoken to {{ when }}",
-  "hide": "Hide",
-  "show": "Show",
   "countUnread": "{{ count }} unread",
-  "newMessage": "New message",
   "countNewMessages": "{{ count }} new messages",
-  "theirEmailOrPhone": "their email or phone",
-  "theirEmail": "their email",
-  "theirPhone": "their phone",
   "friendnameHasNotVerified": "{{ friendName }} has not verified {{ phone }}, so we cannot be sure it is really them.",
   "silentMany": "Silent {{ many }}"
 }

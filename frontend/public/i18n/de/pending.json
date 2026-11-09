@@ -10,7 +10,5 @@
   "hasNotVerifiedTheir": "Hat die E-Mail-Adresse oder Telefonnummer nicht bestätigt: Wir können nicht sicher sein, dass es wirklich die Person ist.",
   "pending": "Offen",
   "reject": "Ablehnen",
-  "requestFromname": "' + request.fromName + '",
-  "mediumdate": "mediumDate",
   "sinceMediumdate": "seit {{ mediumDate }}"
 }

@@ -71,9 +71,5 @@
   "saveFailed": "Kunne ikke lagre. Prøv igjen, eller velg «Gjør det senere».",
   "emailSendFailed": "Kunne ikke sende e-posten. Prøv igjen.",
   "emailNotYet": "Ikke bekreftet ennå. Åpne lenken i e-posten vi sendte, og prøv igjen.",
-  "emailCheckFailed": "Kunne ikke sjekke. Prøv igjen om litt.",
-  "share": "Del",
-  "thenStrongAddTo": ", deretter <strong>Legg til på Hjem-skjerm</strong>. Åpne så ' + w.app + ' fra startskjermen.'\">",
-  "installApp2": "Installer app",
-  "inItsMenuOr": "i menyen, eller se Innstillinger → Installer appen.'\">"
+  "emailCheckFailed": "Kunne ikke sjekke. Prøv igjen om litt."
 }

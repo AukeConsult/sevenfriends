@@ -7,8 +7,6 @@
   "forTestAndDemo": "Para pruebas y demostraciones. Una app abarca exactamente un círculo y no ve los demás. Los amigos, plazas, mensajes y sonidos de los otros círculos están ocultos. Un círculo se crea la primera vez que se elige.",
   "strongTitleStrong": "<strong>{{ title }}</strong>",
   "open": "Abrir",
-  "thisAppUsesThe": "Esta app usa el círculo",
-  "pageTitle": "' + page.title + '",
   "titlePreview": "Vista previa de {{ title }}",
   "welcome": "Bienvenida",
   "theNormalFirstPage": "La primera página normal",

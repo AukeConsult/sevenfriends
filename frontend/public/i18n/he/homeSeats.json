@@ -1,0 +1,17 @@
+{
+  "yourSevenSeats": "שבעת המקומות שלך",
+  "yourSeven": "השבעה שלך",
+  "waiting": "בהמתנה",
+  "pending": "ממתינים",
+  "addAOne": "הוספה: {{ one }}",
+  "silent": "שקט",
+  "dropHere": "לשחרר כאן",
+  "sleepList": "רשימת שינה",
+  "couldNotMoveThe": "לא ניתן היה להעביר את ",
+  "openTheConversationWith": "פתיחת השיחה עם {{ friendName }}. לחיצה ארוכה להזזה.",
+  "countUnread": "{{ count }} שלא נקראו",
+  "seatPositionIsFree": "מקום {{ position }} פנוי: הוספה: {{ one }}",
+  "dropOnASeat": "לשחרר על מקום או על מעגל השקט",
+  "dropOnASeat2": "לשחרר על מקום",
+  "pressAndHoldA": "לחיצה ארוכה על {{ one }} כדי להזיז"
+}

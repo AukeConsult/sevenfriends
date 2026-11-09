@@ -21,9 +21,6 @@
   "filesInYourSafebox": "保险箱里的文件会用一把保存在你设备上的密钥加锁，这样只有你和你的朋友能读取，连服务本身也不能。这一步会创建密钥，并给你 24 个需要保管的恢复单词。",
   "makingYourKey": "正在创建你的密钥…",
   "makeMyKey": "创建我的密钥",
-  "saveTheseWordsNow": "现在就保存这 24 个单词。",
-  "theyAreTheOnly": "如果你丢了这台设备，它们是打开你已加锁文件的唯一办法。它们只显示一次，没有人能帮你找回，连我们也不能。'\">",
-  "checkThatYouSaved": "确认你已经保存好了",
   "theKeyCouldNot": "无法创建密钥。请再试一次。",
   "theKeyCouldNot2": "无法保存密钥。请再试一次。"
 }

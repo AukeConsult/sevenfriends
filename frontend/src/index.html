@@ -53,6 +53,16 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Seven Friends">
+  <script>
+    // Bootstrap comes in two builds, left-to-right and right-to-left: the right one for a right-to-left language (core/language.service.ts changes it later when the language changes)
+    (function () {
+      var rtl = false;
+      try { rtl = ['ar', 'he'].indexOf(JSON.parse(localStorage.getItem('sf-ui') || '{}').language) >= 0; } catch (e) {}
+      var link = document.createElement('link');
+      link.id = 'sf-bootstrap'; link.rel = 'stylesheet'; link.href = 'vendor/bootstrap' + (rtl ? '.rtl' : '') + '.min.css';
+      document.head.appendChild(link);
+    })();
+  </script>
 </head>
 <body>
   <app-root></app-root>

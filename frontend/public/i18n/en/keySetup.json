@@ -21,9 +21,6 @@
   "filesInYourSafebox": "Files in your safebox will be locked with a key that stays on your device, so that only you and your friend can read them, not even the service. This makes the key and gives you 24 recovery words to keep.",
   "makingYourKey": "Making your key…",
   "makeMyKey": "Make my key",
-  "saveTheseWordsNow": "Save these 24 words now.",
-  "theyAreTheOnly": "They are the only way to open your locked files if you lose this device. They are shown once, and nobody can find them for you, not even us.'\">",
-  "checkThatYouSaved": "Check that you saved them",
   "theKeyCouldNot": "The key could not be made. Try again.",
   "theKeyCouldNot2": "The key could not be saved. Try again."
 }

@@ -8,7 +8,7 @@ import { registerTranslator } from './i18n';
 import { UiPreferencesService } from './ui-preferences';
 
 /** The languages that are written from right to left. */
-export const RTL_LANGUAGES: readonly string[] = ['ar'];
+export const RTL_LANGUAGES: readonly string[] = ['ar', 'he'];
 
 /** The browser's own codes for languages that have another code here (Norwegian Bokmål and Nynorsk are `nb`). */
 const BROWSER_ALIASES: Record<string, string> = { no: 'nb', nn: 'nb' };
@@ -116,6 +116,11 @@ export class LanguageService {
     this.lang.set(code);
     this.transloco.setActiveLang(code);
     document.documentElement.lang = code;
-    document.documentElement.dir = RTL_LANGUAGES.includes(code) ? 'rtl' : 'ltr';
+    const rtl = RTL_LANGUAGES.includes(code);
+    document.documentElement.dir = rtl ? 'rtl' : 'ltr';
+    // the right-to-left build of Bootstrap for a right-to-left language (see index.html)
+    const bootstrap = document.getElementById('sf-bootstrap') as HTMLLinkElement | null;
+    const href = `vendor/bootstrap${rtl ? '.rtl' : ''}.min.css`;
+    if (bootstrap && !bootstrap.href.endsWith(href)) bootstrap.href = href;
   }
 }

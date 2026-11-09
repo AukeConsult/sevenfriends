@@ -49,7 +49,6 @@
   "sendFailed": "Kunne ikke sende e-posten. Prøv igjen.",
   "loadFailed": "Kunne ikke laste profilen din",
   "saveFailed": "Kunne ikke lagre",
-  "providerGoogle": "Google",
   "providerEmail": "E-post",
   "providerPhone": "Telefon",
   "providerUnknown": "Ukjent"

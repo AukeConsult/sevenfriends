@@ -49,7 +49,6 @@
   "sendFailed": "Nie udało się wysłać e-maila. Spróbuj ponownie.",
   "loadFailed": "Nie udało się wczytać Twojego profilu",
   "saveFailed": "Nie udało się zapisać",
-  "providerGoogle": "Google",
   "providerEmail": "E-mail",
   "providerPhone": "Telefon",
   "providerUnknown": "Nieznany"

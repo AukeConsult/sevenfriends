@@ -10,7 +10,5 @@
   "hasNotVerifiedTheir": "Nie zweryfikowano e-maila ani telefonu: nie mamy pewności, że to naprawdę ta osoba.",
   "pending": "Oczekuje",
   "reject": "Odrzuć",
-  "requestFromname": "' + request.fromName + '",
-  "mediumdate": "mediumDate",
   "sinceMediumdate": "od {{ mediumDate }}"
 }

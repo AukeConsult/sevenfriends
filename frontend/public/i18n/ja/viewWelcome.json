@@ -7,8 +7,6 @@
   "forTestAndDemo": "テストとデモ用です。1つのアプリが扱うサークルは1つだけで、ほかのサークルは見えません。ほかのサークルの友だち、席、メッセージ、サウンドは非表示です。サークルは、初めて選んだときに作られます。",
   "strongTitleStrong": "<strong>{{ title }}</strong>",
   "open": "開く",
-  "thisAppUsesThe": "このアプリが使うサークル",
-  "pageTitle": "' + page.title + '",
   "titlePreview": "{{ title }}のプレビュー",
   "welcome": "ようこそ",
   "theNormalFirstPage": "通常の最初のページ",

@@ -39,8 +39,6 @@
   "lockingDoneOfTotal": "Låser {{ done }} av {{ total }}…",
   "lockThisFile": "Lås den här filen",
   "lockAllPlainitemslengthFiles": "Lås alla {{ plainItemsLength }} filer",
-  "key": "nyckel",
-  "madeOnceOnThe": ", som skapas en gång på enheten du använder. Den lämnar aldrig den enheten. Meddelanden och filer låses bara när ni båda har en nyckel.'\">",
   "yesSlice": "ja ({{ slice }})",
   "no": "nej",
   "published": "publicerad",

@@ -71,9 +71,5 @@
   "saveFailed": "Tidak bisa menyimpan. Coba lagi, atau pilih \"Nanti saja\".",
   "emailSendFailed": "Tidak bisa mengirim email. Silakan coba lagi.",
   "emailNotYet": "Belum terverifikasi. Buka tautan di email yang kami kirim, lalu coba lagi.",
-  "emailCheckFailed": "Tidak bisa memeriksa. Coba lagi sebentar lagi.",
-  "share": "Bagikan",
-  "thenStrongAddTo": ", lalu <strong>Tambah ke Layar Utama</strong>. Setelah itu buka ' + w.app + ' dari layar utamamu.'\">",
-  "installApp2": "Pasang aplikasi",
-  "inItsMenuOr": "di menunya, atau lihat Pengaturan → Pasang aplikasi.'\">"
+  "emailCheckFailed": "Tidak bisa memeriksa. Coba lagi sebentar lagi."
 }

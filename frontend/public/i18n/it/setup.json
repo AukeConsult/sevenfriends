@@ -71,9 +71,5 @@
   "saveFailed": "Impossibile salvare. Riprova, oppure scegli \"Lo farò dopo\".",
   "emailSendFailed": "Impossibile inviare l'email. Riprova.",
   "emailNotYet": "Non ancora verificata. Apri il link nell'email che abbiamo inviato, poi riprova.",
-  "emailCheckFailed": "Impossibile controllare. Riprova tra un attimo.",
-  "share": "Condividi",
-  "thenStrongAddTo": ", poi <strong>Aggiungi alla schermata Home</strong>. Poi apri ' + w.app + ' dalla schermata Home.'\">",
-  "installApp2": "Installa app",
-  "inItsMenuOr": "nel suo menu, oppure vedi Impostazioni → Installa l'app.'\">"
+  "emailCheckFailed": "Impossibile controllare. Riprova tra un attimo."
 }

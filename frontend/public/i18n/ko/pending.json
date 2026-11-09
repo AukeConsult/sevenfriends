@@ -10,7 +10,5 @@
   "hasNotVerifiedTheir": "이메일이나 전화번호를 인증하지 않았어요. 정말 본인인지 확신할 수 없어요.",
   "pending": "대기 중",
   "reject": "거절",
-  "requestFromname": "' + request.fromName + '",
-  "mediumdate": "mediumDate",
   "sinceMediumdate": "{{ mediumDate }}부터"
 }

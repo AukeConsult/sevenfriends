@@ -14,14 +14,12 @@
   "nameOptional": "Ad (isteğe bağlı)",
   "messageOptional": "Mesaj (isteğe bağlı)",
   "cancel": "Vazgeç",
-  "couldNotSendThe": "Gönderilemedi: ",
-  "saved": "Kaydedildi.",
-  "doneToIsNot": "' + done.to + ' henüz ' + w.app + ' üzerinde değil. İsteğin onu bekliyor.'\">",
   "sending": "Gönderiliyor…",
   "addOne": "{{ one }} ekle",
   "addAnEmailOr": "Bulunabilmesi için bir e-posta ya da telefon numarası ekle ({{ one }}).",
   "thatIsYouAdd": "Bu sensin. Ekleyeceğin kişinin ({{ one }}) e-postasını ya da telefon numarasını yaz.",
   "isAlreadyYour": "{{ sameName }} zaten çevrende ({{ one }}).",
   "youHaveAlreadyAdded": "{{ sameName }} kişisini zaten eklemiştin: isteğin onu bekliyor.",
-  "thisPerson": "Bu kişi"
+  "thisPerson": "Bu kişi",
+  "sendFailed": "İstek gönderilemedi."
 }

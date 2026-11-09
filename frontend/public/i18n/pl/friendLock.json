@@ -39,8 +39,6 @@
   "lockingDoneOfTotal": "Blokuję {{ done }} z {{ total }}…",
   "lockThisFile": "Zablokuj ten plik",
   "lockAllPlainitemslengthFiles": "Zablokuj wszystkie pliki ({{ plainItemsLength }})",
-  "key": "klucz",
-  "madeOnceOnThe": ", utworzony raz na używanym urządzeniu. Nigdy go nie opuszcza. Wiadomości i pliki są blokowane tylko wtedy, gdy oboje macie klucz.'\">",
   "yesSlice": "tak ({{ slice }})",
   "no": "nie",
   "published": "opublikowany",

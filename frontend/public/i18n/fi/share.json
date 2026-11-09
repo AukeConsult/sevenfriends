@@ -9,7 +9,6 @@
   "seat": "paikka",
   "seats": "paikkaa",
   "youHaveFreeseatsFree": "Vapaana: {{ freeSeats }} {{ seats }}. Kutsu sinulle tärkeät {{ many }}.",
-  "inviteFriendsWithA": "Kutsu ystäviä linkillä",
   "yourOneLink": "Linkkisi ({{ one }})",
   "emailAddress": "sähköpostiosoite",
   "phoneNumber": "puhelinnumero",

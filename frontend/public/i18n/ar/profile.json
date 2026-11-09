@@ -49,7 +49,6 @@
   "sendFailed": "تعذّر إرسال الرسالة. حاول مرة أخرى.",
   "loadFailed": "تعذّر تحميل ملفك الشخصي",
   "saveFailed": "تعذّر الحفظ",
-  "providerGoogle": "Google",
   "providerEmail": "البريد الإلكتروني",
   "providerPhone": "الهاتف",
   "providerUnknown": "غير معروف"

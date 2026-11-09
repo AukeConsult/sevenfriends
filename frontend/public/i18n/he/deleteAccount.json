@@ -1,0 +1,15 @@
+{
+  "deleteMyAccount": "מחיקת החשבון שלי",
+  "strongThisCannotBe": "<strong>אי אפשר לבטל את זה.</strong> תימחקו מ-Seven Friends לגמרי.",
+  "everythingAboutYouIs": "כל מה שקשור אליך יימחק:",
+  "yourAccountYourProfile": "החשבון, הפרופיל וההתחברות",
+  "allYourFriendsAnd": "כל החברים וכל הבקשות, שנשלחו או התקבלו",
+  "everyMessageYouSent": "כל הודעה שנשלחה או התקבלה. גם החברים מאבדים את השיחה",
+  "yourNameAndContact": "השם ופרטי הקשר ברשימות של חברים אחרים",
+  "yourFriendsAreNot": "החברים לא יקבלו הודעה. פשוט לא יהיה להם יותר אותך כחבר.",
+  "typeWordToConfirm": "לאישור יש להקליד {{ word }}",
+  "cancel": "ביטול",
+  "deleting": "מוחקים…",
+  "deleteEverything": "מחיקת הכול",
+  "couldNotDeleteYour": "לא ניתן היה למחוק את החשבון. שום דבר לא השתנה, כדאי לנסות שוב."
+}

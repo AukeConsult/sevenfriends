@@ -49,7 +49,6 @@
   "sendFailed": "Kon de e-mail niet versturen. Probeer het opnieuw.",
   "loadFailed": "Kon je profiel niet laden",
   "saveFailed": "Kon niet opslaan",
-  "providerGoogle": "Google",
   "providerEmail": "E-mail",
   "providerPhone": "Telefoon",
   "providerUnknown": "Onbekend"

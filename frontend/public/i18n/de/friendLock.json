@@ -39,8 +39,6 @@
   "lockingDoneOfTotal": "Sperren {{ done }} von {{ total }} …",
   "lockThisFile": "Diese Datei sperren",
   "lockAllPlainitemslengthFiles": "Alle {{ plainItemsLength }} Dateien sperren",
-  "key": "Schlüssel",
-  "madeOnceOnThe": ", einmalig auf dem Gerät erstellt, das du benutzt. Er verlässt dieses Gerät nie. Nachrichten und Dateien werden nur gesperrt, wenn ihr beide einen Schlüssel habt.'\">",
   "yesSlice": "ja ({{ slice }})",
   "no": "nein",
   "published": "veröffentlicht",

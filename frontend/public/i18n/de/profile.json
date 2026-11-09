@@ -49,7 +49,6 @@
   "sendFailed": "Die E-Mail konnte nicht gesendet werden. Bitte versuch es noch einmal.",
   "loadFailed": "Dein Profil konnte nicht geladen werden",
   "saveFailed": "Konnte nicht gespeichert werden",
-  "providerGoogle": "Google",
   "providerEmail": "E-Mail",
   "providerPhone": "Telefon",
   "providerUnknown": "Unbekannt"

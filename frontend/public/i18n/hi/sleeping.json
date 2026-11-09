@@ -9,7 +9,6 @@
   "phone": "फ़ोन",
   "email": "ईमेल",
   "added": "जोड़ा गया",
-  "mediumdate": "mediumDate",
   "deleteFriendnameForGood": "{{ friendName }} को हमेशा के लिए हटाएँ? इससे आप दोनों के लिए जुड़ाव और पूरी बातचीत मिट जाती है।",
   "cancel": "रद्द करें",
   "delete": "हटाएँ",
@@ -17,14 +16,8 @@
   "wakeUp": "जगाएँ",
   "somethingWentWrong": "कुछ गड़बड़ हो गई",
   "lastSpoken": "आखिरी बार बात हुई: {{ when }}",
-  "hide": "छिपाएँ",
-  "show": "दिखाएँ",
   "countUnread": "{{ count }} अनपढ़े",
-  "newMessage": "नया संदेश",
   "countNewMessages": "{{ count }} नए संदेश",
-  "theirEmailOrPhone": "उनका ईमेल या फ़ोन",
-  "theirEmail": "उनका ईमेल",
-  "theirPhone": "उनका फ़ोन",
   "friendnameHasNotVerified": "{{ friendName }} ने {{ phone }} सत्यापित नहीं किया है, इसलिए हम पक्का नहीं कह सकते कि यह सच में वही हैं।",
   "silentMany": "शांत {{ many }}"
 }

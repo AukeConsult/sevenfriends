@@ -9,7 +9,6 @@
   "phone": "Puhelin",
   "email": "Sähköposti",
   "added": "Lisätty",
-  "mediumdate": "mediumDate",
   "deleteFriendnameForGood": "Poistetaanko {{ friendName }} lopullisesti? Tämä poistaa yhteyden ja koko keskustelun teiltä molemmilta.",
   "cancel": "Peruuta",
   "delete": "Poista",
@@ -17,14 +16,8 @@
   "wakeUp": "Herätä",
   "somethingWentWrong": "Jokin meni pieleen",
   "lastSpoken": "Viimeksi puhuttu: {{ when }}",
-  "hide": "Piilota",
-  "show": "Näytä",
   "countUnread": "{{ count }} lukematonta",
-  "newMessage": "Uusi viesti",
   "countNewMessages": "{{ count }} uutta viestiä",
-  "theirEmailOrPhone": "sähköpostia tai puhelinta",
-  "theirEmail": "sähköpostia",
-  "theirPhone": "puhelinta",
   "friendnameHasNotVerified": "{{ friendName }} ei ole vahvistanut tätä: {{ phone }}. Emme voi olla varmoja, että kyseessä on oikeasti hän.",
   "silentMany": "Hiljaiset: {{ many }}"
 }

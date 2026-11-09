@@ -21,9 +21,6 @@
   "filesInYourSafebox": "Filer i ditt kassaskåp låses med en nyckel som stannar på din enhet, så att bara du och din vän kan läsa dem, inte ens tjänsten. Här skapas nyckeln och du får 24 återställningsord att spara.",
   "makingYourKey": "Skapar din nyckel…",
   "makeMyKey": "Skapa min nyckel",
-  "saveTheseWordsNow": "Spara de här 24 orden nu.",
-  "theyAreTheOnly": "De är det enda sättet att öppna dina låsta filer om du tappar bort den här enheten. De visas en gång, och ingen kan hitta dem åt dig, inte ens vi.'\">",
-  "checkThatYouSaved": "Kontrollera att du har sparat dem",
   "theKeyCouldNot": "Nyckeln kunde inte skapas. Försök igen.",
   "theKeyCouldNot2": "Nyckeln kunde inte sparas. Försök igen."
 }

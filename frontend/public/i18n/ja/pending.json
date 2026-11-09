@@ -10,7 +10,5 @@
   "hasNotVerifiedTheir": "メールアドレスまたは電話番号が確認されていません。本人かどうか確実ではありません。",
   "pending": "保留中",
   "reject": "断る",
-  "requestFromname": "' + request.fromName + '",
-  "mediumdate": "mediumDate",
   "sinceMediumdate": "{{ mediumDate }}から"
 }

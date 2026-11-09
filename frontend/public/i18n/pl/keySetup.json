@@ -21,9 +21,6 @@
   "filesInYourSafebox": "Pliki w Twoim sejfie będą blokowane kluczem, który zostaje na Twoim urządzeniu, więc mogą je czytać tylko Ty i Twój przyjaciel, nawet nie sama usługa. Tu tworzysz klucz i dostajesz 24 słowa odzyskiwania do zachowania.",
   "makingYourKey": "Tworzę Twój klucz…",
   "makeMyKey": "Utwórz mój klucz",
-  "saveTheseWordsNow": "Zapisz teraz te 24 słowa.",
-  "theyAreTheOnly": "To jedyny sposób na otwarcie zablokowanych plików, jeśli zgubisz to urządzenie. Są pokazane tylko raz i nikt nie może ich dla Ciebie odnaleźć, nawet my.'\">",
-  "checkThatYouSaved": "Sprawdź, czy je zapisałeś",
   "theKeyCouldNot": "Nie udało się utworzyć klucza. Spróbuj ponownie.",
   "theKeyCouldNot2": "Nie udało się zapisać klucza. Spróbuj ponownie."
 }

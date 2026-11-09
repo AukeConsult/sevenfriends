@@ -10,7 +10,5 @@
   "hasNotVerifiedTheir": "还没有验证邮箱或手机号：我们不能确定就是本人。",
   "pending": "待处理",
   "reject": "拒绝",
-  "requestFromname": "' + request.fromName + '",
-  "mediumdate": "mediumDate",
   "sinceMediumdate": "自 {{ mediumDate }} 起"
 }

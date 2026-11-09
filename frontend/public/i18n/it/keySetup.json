@@ -21,9 +21,6 @@
   "filesInYourSafebox": "I file nella tua cassaforte verranno bloccati con una chiave che resta sul tuo dispositivo, così solo tu e il tuo amico potete leggerli, nemmeno il servizio. Questo crea la chiave e ti dà 24 parole di recupero da conservare.",
   "makingYourKey": "Creo la tua chiave…",
   "makeMyKey": "Crea la mia chiave",
-  "saveTheseWordsNow": "Salva subito queste 24 parole.",
-  "theyAreTheOnly": "Sono l'unico modo per aprire i tuoi file bloccati se perdi questo dispositivo. Vengono mostrate una sola volta e nessuno può ritrovarle per te, nemmeno noi.'\">",
-  "checkThatYouSaved": "Controlla di averle salvate",
   "theKeyCouldNot": "Non è stato possibile creare la chiave. Riprova.",
   "theKeyCouldNot2": "Non è stato possibile salvare la chiave. Riprova."
 }

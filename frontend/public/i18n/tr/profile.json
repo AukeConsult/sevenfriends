@@ -49,7 +49,6 @@
   "sendFailed": "E-posta gönderilemedi. Lütfen tekrar dene.",
   "loadFailed": "Profilin yüklenemedi",
   "saveFailed": "Kaydedilemedi",
-  "providerGoogle": "Google",
   "providerEmail": "E-posta",
   "providerPhone": "Telefon",
   "providerUnknown": "Bilinmiyor"

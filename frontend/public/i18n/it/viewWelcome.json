@@ -7,8 +7,6 @@
   "forTestAndDemo": "Per prove e demo. Un'app copre esattamente una cerchia e non vede le altre. Amici, posti, messaggi e suoni delle altre cerchie sono nascosti. Una cerchia viene creata la prima volta che viene scelta.",
   "strongTitleStrong": "<strong>{{ title }}</strong>",
   "open": "Apri",
-  "thisAppUsesThe": "Questa app usa la cerchia",
-  "pageTitle": "' + page.title + '",
   "titlePreview": "Anteprima di {{ title }}",
   "welcome": "Benvenuto",
   "theNormalFirstPage": "La normale prima pagina",

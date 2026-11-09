@@ -71,9 +71,5 @@
   "saveFailed": "Kunde inte spara. Försök igen, eller välj \"Gör det senare\".",
   "emailSendFailed": "Kunde inte skicka mejlet. Försök igen.",
   "emailNotYet": "Inte verifierad än. Öppna länken i mejlet vi skickade och försök igen.",
-  "emailCheckFailed": "Kunde inte kontrollera. Försök igen om en stund.",
-  "share": "Dela",
-  "thenStrongAddTo": ", sedan <strong>Lägg till på hemskärmen</strong>. Öppna sedan ' + w.app + ' från hemskärmen.'\">",
-  "installApp2": "Installera app",
-  "inItsMenuOr": "i menyn, eller se Inställningar → Installera appen.'\">"
+  "emailCheckFailed": "Kunde inte kontrollera. Försök igen om en stund."
 }

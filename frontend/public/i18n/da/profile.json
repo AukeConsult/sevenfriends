@@ -49,7 +49,6 @@
   "sendFailed": "E-mailen kunne ikke sendes. Prøv igen.",
   "loadFailed": "Din profil kunne ikke indlæses",
   "saveFailed": "Kunne ikke gemme",
-  "providerGoogle": "Google",
   "providerEmail": "E-mail",
   "providerPhone": "Telefon",
   "providerUnknown": "Ukendt"

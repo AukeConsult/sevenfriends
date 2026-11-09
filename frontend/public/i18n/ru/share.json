@@ -9,7 +9,6 @@
   "seat": "Место",
   "seats": "Места",
   "youHaveFreeseatsFree": "{{ seats }}: свободно {{ freeSeats }}. Пригласи тех, кто тебе важен ({{ many }}).",
-  "inviteFriendsWithA": "Приглашай друзей по ссылке",
   "yourOneLink": "Твоя ссылка ({{ one }})",
   "emailAddress": "адрес почты",
   "phoneNumber": "номер телефона",

@@ -39,8 +39,6 @@
   "lockingDoneOfTotal": "Mengunci {{ done }} dari {{ total }}…",
   "lockThisFile": "Kunci file ini",
   "lockAllPlainitemslengthFiles": "Kunci semua {{ plainItemsLength }} file",
-  "key": "kunci",
-  "madeOnceOnThe": ", dibuat sekali di perangkat yang kamu pakai. Kunci itu tidak pernah keluar dari perangkat. Pesan dan file hanya dikunci kalau kalian berdua punya kunci.'\">",
   "yesSlice": "ya ({{ slice }})",
   "no": "tidak",
   "published": "dipublikasikan",

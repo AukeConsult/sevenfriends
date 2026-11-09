@@ -39,8 +39,6 @@
   "lockingDoneOfTotal": "Trancando {{ done }} de {{ total }}…",
   "lockThisFile": "Trancar este arquivo",
   "lockAllPlainitemslengthFiles": "Trancar todos os {{ plainItemsLength }} arquivos",
-  "key": "chave",
-  "madeOnceOnThe": ", criada uma vez no dispositivo que você usa. Ela nunca sai desse dispositivo. Mensagens e arquivos só são trancados quando vocês dois têm uma chave.'\">",
   "yesSlice": "sim ({{ slice }})",
   "no": "não",
   "published": "publicada",

@@ -49,7 +49,6 @@
   "sendFailed": "メールを送れませんでした。もう一度お試しください。",
   "loadFailed": "プロフィールを読み込めませんでした",
   "saveFailed": "保存できませんでした",
-  "providerGoogle": "Google",
   "providerEmail": "メール",
   "providerPhone": "電話",
   "providerUnknown": "不明"

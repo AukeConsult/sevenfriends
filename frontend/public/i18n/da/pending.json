@@ -10,7 +10,5 @@
   "hasNotVerifiedTheir": "Har ikke bekræftet deres e-mail eller telefon: vi kan ikke være sikre på, at det virkelig er dem.",
   "pending": "Afventer",
   "reject": "Afvis",
-  "requestFromname": "' + request.fromName + '",
-  "mediumdate": "mediumDate",
   "sinceMediumdate": "siden {{ mediumDate }}"
 }

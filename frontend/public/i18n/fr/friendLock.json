@@ -39,8 +39,6 @@
   "lockingDoneOfTotal": "Verrouillage de {{ done }} sur {{ total }}…",
   "lockThisFile": "Verrouiller ce fichier",
   "lockAllPlainitemslengthFiles": "Verrouiller les {{ plainItemsLength }} fichiers",
-  "key": "clé",
-  "madeOnceOnThe": ", créée une seule fois sur l'appareil que tu utilises. Elle ne quitte jamais cet appareil. Les messages et fichiers ne sont verrouillés que si vous avez tous les deux une clé.'\">",
   "yesSlice": "oui ({{ slice }})",
   "no": "non",
   "published": "publiée",

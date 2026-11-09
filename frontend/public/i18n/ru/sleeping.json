@@ -9,7 +9,6 @@
   "phone": "Телефон",
   "email": "Почта",
   "added": "Добавлен(а)",
-  "mediumdate": "mediumDate",
   "deleteFriendnameForGood": "Удалить {{ friendName }} навсегда? Связь и весь разговор будут стёрты у вас обоих.",
   "cancel": "Отмена",
   "delete": "Удалить",
@@ -17,14 +16,8 @@
   "wakeUp": "Разбудить",
   "somethingWentWrong": "Что-то пошло не так",
   "lastSpoken": "Последний разговор: {{ when }}",
-  "hide": "Скрыть",
-  "show": "Показать",
   "countUnread": "Непрочитанных: {{ count }}",
-  "newMessage": "Новое сообщение",
   "countNewMessages": "Новых сообщений: {{ count }}",
-  "theirEmailOrPhone": "почту или телефон",
-  "theirEmail": "почту",
-  "theirPhone": "телефон",
   "friendnameHasNotVerified": "{{ friendName }} не подтвердил(а) {{ phone }}, поэтому мы не можем быть уверены, что это действительно он(а).",
   "silentMany": "Тихие: {{ many }}"
 }

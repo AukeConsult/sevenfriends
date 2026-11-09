@@ -10,7 +10,5 @@
   "hasNotVerifiedTheir": "Har inte verifierat sin e-postadress eller sitt telefonnummer: vi kan inte vara säkra på att det verkligen är hen.",
   "pending": "Väntande",
   "reject": "Avslå",
-  "requestFromname": "' + request.fromName + '",
-  "mediumdate": "mediumDate",
   "sinceMediumdate": "sedan {{ mediumDate }}"
 }

@@ -14,14 +14,12 @@
   "nameOptional": "الاسم (اختياري)",
   "messageOptional": "رسالة (اختياري)",
   "cancel": "إلغاء",
-  "couldNotSendThe": "تعذّر إرسال ",
-  "saved": "تم الحفظ.",
-  "doneToIsNot": "' + done.to + ' ليس على ' + w.app + ' بعد. طلبك ينتظره.'\">",
   "sending": "جارٍ الإرسال…",
   "addOne": "إضافة {{ one }}",
   "addAnEmailOr": "أضِف بريدًا إلكترونيًا أو رقم هاتف ليمكن العثور على {{ one }} الخاص بك.",
   "thatIsYouAdd": "هذا أنت. أضِف البريد الإلكتروني أو رقم الهاتف لـ {{ one }}.",
   "isAlreadyYour": "{{ sameName }} هو بالفعل {{ one }} لك.",
   "youHaveAlreadyAdded": "لقد أضفت {{ sameName }} من قبل: الطلب ينتظره.",
-  "thisPerson": "هذا الشخص"
+  "thisPerson": "هذا الشخص",
+  "sendFailed": "تعذّر إرسال الطلب."
 }

@@ -9,7 +9,6 @@
   "seat": "席",
   "seats": "席",
   "youHaveFreeseatsFree": "空いている{{ seats }}が {{ freeSeats }} つあります。大切な{{ many }}を招待しましょう。",
-  "inviteFriendsWithA": "リンクで友だちを招待",
   "yourOneLink": "あなたの{{ one }}リンク",
   "emailAddress": "メールアドレス",
   "phoneNumber": "電話番号",

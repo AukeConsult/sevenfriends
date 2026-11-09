@@ -1,0 +1,9 @@
+{
+  "tapToSayHow": "לחיצה כדי לספר מה שלומך",
+  "yourMood": "מצב הרוח שלך",
+  "noMood": "בלי מצב רוח",
+  "aFewWordsAbout": "כמה מילים על איך המצב (לא חובה)",
+  "moodMessage": "הודעת מצב רוח",
+  "couldNotLoadYour": "לא ניתן היה לטעון את מצב הרוח",
+  "couldNotSaveYour": "לא ניתן היה לשמור את מצב הרוח"
+}

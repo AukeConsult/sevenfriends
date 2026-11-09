@@ -71,9 +71,5 @@
   "saveFailed": "Konnte nicht gespeichert werden. Versuch es noch einmal oder wähl „Später“.",
   "emailSendFailed": "Die E-Mail konnte nicht gesendet werden. Bitte versuch es noch einmal.",
   "emailNotYet": "Noch nicht bestätigt. Öffne den Link in der E-Mail, die wir geschickt haben, und versuch es dann noch einmal.",
-  "emailCheckFailed": "Konnte nicht geprüft werden. Versuch es gleich noch einmal.",
-  "share": "Teilen",
-  "thenStrongAddTo": " und dann auf <strong>Zum Home-Bildschirm</strong>. Öffne danach ' + w.app + ' von deinem Home-Bildschirm.'\">",
-  "installApp2": "App installieren",
-  "inItsMenuOr": "im Menü, oder schau unter Einstellungen → App installieren.'\">"
+  "emailCheckFailed": "Konnte nicht geprüft werden. Versuch es gleich noch einmal."
 }

@@ -14,14 +14,12 @@
   "nameOptional": "Name (optional)",
   "messageOptional": "Message (optional)",
   "cancel": "Cancel",
-  "couldNotSendThe": "Could not send the ",
-  "saved": "Saved.",
-  "doneToIsNot": "' + done.to + ' is not on ' + w.app + ' yet. Your request waits for them.'\">",
   "sending": "Sending…",
   "addOne": "Add {{ one }}",
   "addAnEmailOr": "Add an email or a phone number, so your {{ one }} can be found.",
   "thatIsYouAdd": "That is you. Add the email or phone number of a {{ one }}.",
   "isAlreadyYour": "{{ sameName }} is already your {{ one }}.",
   "youHaveAlreadyAdded": "You have already added {{ sameName }}: the request waits for them.",
-  "thisPerson": "This person"
+  "thisPerson": "This person",
+  "sendFailed": "Could not send the request."
 }

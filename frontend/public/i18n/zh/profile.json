@@ -49,7 +49,6 @@
   "sendFailed": "无法发送邮件。请再试一次。",
   "loadFailed": "无法加载你的个人资料",
   "saveFailed": "无法保存",
-  "providerGoogle": "Google",
   "providerEmail": "邮箱",
   "providerPhone": "手机",
   "providerUnknown": "未知"

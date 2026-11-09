@@ -1,0 +1,21 @@
+{
+  "back": "חזרה",
+  "back2": "‹ חזרה",
+  "verifyYourPhone": "אימות הטלפון",
+  "signInWithPhone": "התחברות עם טלפון",
+  "standardMessageRatesFrom": "ייתכן שיחולו תעריפי הודעות רגילים של חברת הטלפון.",
+  "phoneNumberWithCountry": "מספר טלפון עם קידומת מדינה",
+  "sending": "שולחים…",
+  "sendCode": "שליחת קוד",
+  "weSentACode": "שלחנו קוד אל <strong>{{ phone }}</strong>.",
+  "code": "קוד",
+  "changeNumber": "שינוי מספר",
+  "checking": "בודקים…",
+  "confirm": "אישור",
+  "writeTheNumberWith": "יש לכתוב את המספר עם קידומת המדינה, למשל ‎+47 900 00 000.",
+  "writeTheCodeFrom": "יש לכתוב את הקוד מהודעת ה-SMS.",
+  "couldNotSendThe": "לא ניתן היה לשלוח את הקוד. כדאי לנסות שוב.",
+  "thatCodeDidNot": "הקוד לא עבד. כדאי לנסות שוב.",
+  "weSendACodeLinking": "אנחנו שולחים קוד בהודעת SMS. אחרי האימות, {{ many }} שמוסיפים את המספר שלך יוכלו למצוא אותך.",
+  "weSendACodeNoPassword": "אנחנו שולחים קוד בהודעת SMS. בלי סיסמה."
+}

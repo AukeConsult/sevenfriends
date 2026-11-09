@@ -9,7 +9,6 @@
   "phone": "Telefon",
   "email": "E-mail",
   "added": "Dodano",
-  "mediumdate": "mediumDate",
   "deleteFriendnameForGood": "Usunąć na dobre: {{ friendName }}? Zniknie połączenie i cała rozmowa, dla was obojga.",
   "cancel": "Anuluj",
   "delete": "Usuń",
@@ -17,14 +16,8 @@
   "wakeUp": "Obudź",
   "somethingWentWrong": "Coś poszło nie tak",
   "lastSpoken": "Ostatnia rozmowa: {{ when }}",
-  "hide": "Ukryj",
-  "show": "Pokaż",
   "countUnread": "Nieprzeczytane: {{ count }}",
-  "newMessage": "Nowa wiadomość",
   "countNewMessages": "Nowe wiadomości: {{ count }}",
-  "theirEmailOrPhone": "ich e-mail lub telefon",
-  "theirEmail": "ich e-mail",
-  "theirPhone": "ich telefon",
   "friendnameHasNotVerified": "{{ friendName }} nie zweryfikował(a): {{ phone }}, więc nie mamy pewności, że to naprawdę ta osoba.",
   "silentMany": "Ciche: {{ many }}"
 }

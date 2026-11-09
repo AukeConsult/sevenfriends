@@ -39,8 +39,6 @@
   "lockingDoneOfTotal": "Kilitleniyor: {{ done }} / {{ total }}…",
   "lockThisFile": "Bu dosyayı kilitle",
   "lockAllPlainitemslengthFiles": "Tüm {{ plainItemsLength }} dosyayı kilitle",
-  "key": "anahtar",
-  "madeOnceOnThe": ", kullandığın cihazda bir kez oluşturulur. O cihazdan hiç çıkmaz. Mesajlar ve dosyalar yalnızca ikinizin de anahtarı olduğunda kilitlenir.'\">",
   "yesSlice": "evet ({{ slice }})",
   "no": "hayır",
   "published": "yayımlandı",

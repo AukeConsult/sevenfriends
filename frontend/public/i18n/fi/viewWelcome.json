@@ -7,8 +7,6 @@
   "forTestAndDemo": "Testiä ja esittelyä varten. Sovellus kattaa täsmälleen yhden piirin eikä näe muita. Muiden piirien ystävät, paikat, viestit ja äänet on piilotettu. Piiri tehdään, kun se valitaan ensimmäisen kerran.",
   "strongTitleStrong": "<strong>{{ title }}</strong>",
   "open": "Avaa",
-  "thisAppUsesThe": "Tämä sovellus käyttää piiriä",
-  "pageTitle": "' + page.title + '",
   "titlePreview": "{{ title }}: esikatselu",
   "welcome": "Tervetuloa",
   "theNormalFirstPage": "Tavallinen ensimmäinen sivu",
