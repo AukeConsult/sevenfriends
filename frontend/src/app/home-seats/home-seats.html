@@ -12,7 +12,7 @@
           <div class="sf-hs-friend" [class.sf-dragging]="dragging()?.from === slot.position" [class.sf-hs-press]="pressing() === slot.position" [class.sf-hs-lift]="dragging()?.from === slot.position" [class.sf-hs-dim]="friend.status !== 'confirmed'"
                [style.--sf-friend]="colorOf(friend.color)" [style.transform]="dragging()?.from === slot.position ? 'translate(' + dragDx() + 'px, ' + dragDy() + 'px)' : null"
                role="button" tabindex="0" [attr.aria-label]="(t('homeSeats.openTheConversationWith', { friendName: friend.name }) || 'Open the conversation with ' + friend.name + '. Press and hold to move.')"
-               (click)="open(friend)" (keydown.enter)="open(friend)" (keydown)="seatKey($event, slot.position)" (contextmenu)="$event.preventDefault()"
+               (click)="open(friend)" (keydown.enter)="open(friend)" (keydown)="seatKey($event, slot.position)" (contextmenu)="$event.preventDefault()" (dragstart)="$event.preventDefault()"
                (pointerdown)="dragStart($event, slot.position)" (pointermove)="dragMove($event)" (pointerup)="dragEnd($event)" (pointercancel)="dragEnd($event, true)">
             <span class="sf-hs-ring">
               <app-friend-avatar [friend]="friend" [seat]="slot.position" [size]="56" />

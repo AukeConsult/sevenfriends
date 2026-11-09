@@ -1573,3 +1573,12 @@ html[dir='rtl'] {
 }
 // A group that is always written left-to-right (the country code, then the number) inside a right-to-left page.
 html[dir='rtl'] .sf-ltr-group { direction: ltr; > input { text-align: start; } }
+
+// Pressing and holding a picture (a friend on the Home page, a card on the Friends page) must move it, not open the browser's own menu
+// ("Open image in new tab", "Download image", ...) which also cancels the move on Android: the pictures there take no touch of their own,
+// so the press belongs to the card, and a picture cannot be dragged out of it.
+img { -webkit-user-drag: none; }
+.sf-hs-friend, .sf-slot, .sf-slot-empty { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+.sf-hs-friend img, .sf-hs-friend svg, .sf-slot img, .sf-slot-empty img { pointer-events: none; -webkit-user-drag: none; }
+.sf-hs-friend { touch-action: pan-y; } // a vertical swipe still scrolls the page; the hold that picks the friend up takes over (touch-action: none, see .sf-hs-lift)
+.sf-hs-friend.sf-hs-lift { touch-action: none; }

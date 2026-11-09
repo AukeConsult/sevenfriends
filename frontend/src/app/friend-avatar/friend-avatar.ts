@@ -9,7 +9,7 @@ import { Friend } from '../models';
 @Component({
   selector: 'app-friend-avatar',
   host: { style: 'display: contents' },
-  template: `<img class="sf-avatar" [class.sf-avatar-sm]="small()" [src]="src()" alt="" [attr.width]="size()" [attr.height]="size()" />`,
+  template: `<img class="sf-avatar" [class.sf-avatar-sm]="small()" [src]="src()" alt="" draggable="false" [attr.width]="size()" [attr.height]="size()" />`,
 })
 export class FriendAvatar {
   private readonly pictures = inject(FriendPictureService);

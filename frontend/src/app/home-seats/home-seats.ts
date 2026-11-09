@@ -93,6 +93,7 @@ export class HomeSeats {
     const target = event.currentTarget as HTMLElement;
     const { pointerId, clientX, clientY } = event;
     this.pressing.set(seat);
+    this.blockMenu(true);
     this.holdStart = { x: clientX, y: clientY };
     clearTimeout(this.holdTimer);
     this.holdTimer = setTimeout(() => {
@@ -114,10 +115,26 @@ export class HomeSeats {
     if (e.cancelable) e.preventDefault();
   };
 
+  /** while a friend is pressed or moved, the browser's own menu (Download, Print, ...) and the text marking must not open: they would take the press away */
+  private readonly noMenu = (e: Event): void => e.preventDefault();
+  private menuTimer: ReturnType<typeof setTimeout> | undefined;
+  private blockMenu(on: boolean): void {
+    clearTimeout(this.menuTimer);
+    if (on) {
+      document.addEventListener('contextmenu', this.noMenu, true);
+      document.addEventListener('selectstart', this.noMenu, true);
+      this.menuTimer = setTimeout(() => this.blockMenu(false), 8000); // never left on
+    } else {
+      document.removeEventListener('contextmenu', this.noMenu, true);
+      document.removeEventListener('selectstart', this.noMenu, true);
+    }
+  }
+
   private endHold(): void {
     clearTimeout(this.holdTimer);
     this.pressing.set(null);
     document.removeEventListener('touchmove', this.blockScroll);
+    if (!this.dragging()) setTimeout(() => this.blockMenu(false), 700); // the menu of a long press comes a moment after the hold
   }
 
   protected dragMove(event: PointerEvent): void {
@@ -146,6 +163,7 @@ export class HomeSeats {
     const to = this.dropSeat();
     const toBucket = this.overBucket();
     this.dragging.set(null);
+    setTimeout(() => this.blockMenu(false), 700);
     this.dragDx.set(0);
     this.dragDy.set(0);
     this.dropSeat.set(null);

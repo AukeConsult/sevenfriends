@@ -131,13 +131,19 @@ export class FriendContext {
 
   constructor() {
     void this.keys.refresh(); // is there a key for me on this device?
+    this.loadBoxKeys(); // and for my friend?
+    if (!this.friends.friends().length) void this.friends.load().catch(() => undefined); // opened directly (a reload): the seat comes from the list
+  }
+
+  /** Asks the server for the keys in use of me and of my friend (again when the padlock is tapped while they are still not known). */
+  private loadBoxKeys(): void {
     void this.safebox
       .keys(this.friendId)
       .then((keys) => this.boxKeys.set(keys))
       .catch((err) => {
+        console.warn('The keys of the friend could not be loaded', err);
         if (err instanceof ApiError && (err.status === 403 || err.status === 404)) this.blocked.set(err.message); // not a confirmed friend (any page of this friend can be opened directly)
-      }); // and for my friend?
-    if (!this.friends.friends().length) void this.friends.load().catch(() => undefined); // opened directly (a reload): the seat comes from the list
+      });
   }
 
   /** Locks files one by one (the safebox and the Locking and keys page both do this); stops at the first one that fails and returns what to say about it, null when all are done. */
@@ -175,7 +181,16 @@ export class FriendContext {
    */
   toggleLock(): void {
     const status = this.keyStatus();
-    if (status === 'checking') return;
+    if (status === 'checking') {
+      // the keys are not known (still asking, or the answer did not come): say so and ask again, instead of doing nothing
+      this.lockNotice.set(tr('friendPage.theKeysAreNot', 'The keys are not known yet'));
+      this.lockNoticeSeq.update((n) => n + 1);
+      clearTimeout(this.lockNoticeTimer);
+      this.lockNoticeTimer = setTimeout(() => this.lockNotice.set(null), 4000);
+      void this.keys.refresh();
+      this.loadBoxKeys();
+      return;
+    }
     if (status !== 'both') {
       void this.router.navigate(['/friends', this.friendId, 'lock']);
       return;
