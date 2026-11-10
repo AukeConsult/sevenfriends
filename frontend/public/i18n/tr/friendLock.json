@@ -46,6 +46,6 @@
   "notPublished": "yayımlanmadı",
   "detailsForThisBrowser": "Bu tarayıcının ayrıntıları: hesap …{{ slice }} · bu tarayıcıdaki anahtar: {{ no }}{{ published }} · sunucuda kullanımdaki anahtarlar: sen {{ mine }}, {{ friendName }} {{ friend }}",
   "groupLocked": "Mesajlar ve dosyalar kilitli: yalnızca bu gruptaki kişiler açabilir.",
-  "groupSomeoneNoKey": "Herkesin henüz bir anahtarı yok ({{ names }}). Herkesin olana kadar sistemimiz gönderdiklerini okuyabilir.",
-  "groupNobodyHasAKey": "Bu gruptaki kimsenin henüz anahtarı yok. Herkesin olana kadar sistemimiz gönderdiklerini okuyabilir."
+  "groupSomeoneNoKey": "Henüz gizli değil. Kilit şunlarda eksik: {{ names }}. Uygulamayı açıp kurulumu bitirmelerini iste. O zamana kadar sistemimiz gönderdiklerini okuyabilir.",
+  "groupNobodyHasAKey": "Henüz gizli değil. Bu gruptaki kimse kilidi kurmadı. Herkesten uygulamayı açıp kurulumu bitirmesini iste. O zamana kadar sistemimiz gönderdiklerini okuyabilir."
 }

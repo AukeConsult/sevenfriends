@@ -46,6 +46,6 @@
   "notPublished": "未发布",
   "detailsForThisBrowser": "这个浏览器的详情：账号 …{{ slice }} · 此浏览器中的密钥：{{ no }}{{ published }} · 服务器上在用的密钥：你 {{ mine }} 把，{{ friendName }} {{ friend }} 把",
   "groupLocked": "消息和文件已锁定：只有这个群组里的人能打开。",
-  "groupSomeoneNoKey": "还不是每个人都有密钥（{{ names }}）。在所有人都有之前，我们的系统可以读取你发送的内容。",
-  "groupNobodyHasAKey": "这个群组里还没有人有密钥。在所有人都有之前，我们的系统可以读取你发送的内容。"
+  "groupSomeoneNoKey": "尚未私密。以下人员还没有锁：{{ names }}。请他们打开应用并完成设置。在此之前，我们的系统可以读取你发送的内容。",
+  "groupNobodyHasAKey": "尚未私密。这个群组里还没有人设置锁。请大家打开应用并完成设置。在此之前，我们的系统可以读取你发送的内容。"
 }

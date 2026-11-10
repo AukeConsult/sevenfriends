@@ -67,14 +67,18 @@ export async function createGroup(req: Request, res: Response): Promise<void> {
  * Leave a group (deleting it from my list): my entry and my copies of its messages go; the others keep the group, its messages and its safebox.
  * The last member to leave deletes the group: its safebox and the files of the messages go with it.
  */
-export async function leaveGroup(uid: string, entryRef: DocumentReference, groupId: string): Promise<void> {
+export async function leaveGroup(uid: string, entryRef: DocumentReference, groupId: string, how: "left" | "removed" = "left"): Promise<void> {
   const mine = await messageCol(uid).where("connectionId", "==", groupId).select("media").get();
   const group = groupDoc(groupId);
   let last = false;
+  let remaining: Record<string, string> = {};
+  let groupName = "the group";
   await getFirestore().runTransaction(async (tx) => {
     const data = (await tx.get(group)).data();
     const members = { ...((data?.members ?? {}) as Record<string, string>) };
     delete members[uid];
+    remaining = members;
+    groupName = (data?.name as string | undefined) ?? groupName;
     // nobody is "invited by" a person who has left, and the one who left was invited by nobody any more
     const order = orderOf(data ?? {}).filter((m) => m !== uid);
     const invitedBy = Object.fromEntries(Object.entries((data?.invitedBy ?? {}) as Record<string, string>).filter(([member, by]) => member !== uid && by !== uid));
@@ -88,6 +92,11 @@ export async function leaveGroup(uid: string, entryRef: DocumentReference, group
     await syncMemberCount(groupId);
     await deleteItemsOf(groupId, uid);
     await dropReminders(groupId, uid);
+    // the others are told: what the person wrote and put in the safebox is gone with them
+    const who = ((await userFields(uid, "displayName"))?.displayName as string | undefined) || "Someone";
+    for (const [memberUid, circleId] of Object.entries(remaining)) {
+      await sendPush(memberUid, { circleId, id: `group-${groupId}-${how}-${uid}`, title: `${who} ${how === "left" ? "left" : "was removed from"} ${groupName}`, body: "Their messages and safebox items in the group are gone.", url: `/friends/${groupId}`, kind: "removed" });
+    }
   }
   if (last) {
     await deleteObjects(mine.docs.flatMap((d) => (d.data().media as MediaRef | undefined) ?? []));
@@ -275,7 +284,7 @@ export async function removeGroupMember(req: Request, res: Response, groupId: st
     return;
   }
   const ref = circleCol(memberUid).doc(members[memberUid]).collection(FRIENDS_SUBCOLLECTION).doc(groupId);
-  await leaveGroup(memberUid, ref, groupId);
+  await leaveGroup(memberUid, ref, groupId, memberUid === uid ? "left" : "removed");
   await touchSync(memberUid, "requestsAt");
   if (memberUid !== uid) {
     const by = await nameOf(uid, res.locals.token as DecodedIdToken, (res.locals.circleRef as DocumentReference).id);

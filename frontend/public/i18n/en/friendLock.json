@@ -46,6 +46,6 @@
   "notPublished": "not published",
   "detailsForThisBrowser": "Details for this browser: account …{{ slice }} · key in this browser: {{ no }}{{ published }} · keys in use on the server: you {{ mine }}, {{ friendName }} {{ friend }}",
   "groupLocked": "Messages and files are locked: only the people in this group can open them.",
-  "groupSomeoneNoKey": "Not everybody has a key yet ({{ names }}). Until everyone has one, what you send can be read by our system.",
-  "groupNobodyHasAKey": "Nobody in this group has a key yet. Until everyone has one, what you send can be read by our system."
+  "groupSomeoneNoKey": "Not private yet. Still missing the lock: {{ names }}. Ask them to open the app and finish the setup. Until then our system can read what you send.",
+  "groupNobodyHasAKey": "Not private yet. Nobody in this group has set up the lock. Ask everyone to open the app and finish the setup. Until then our system can read what you send."
 }

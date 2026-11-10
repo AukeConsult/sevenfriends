@@ -25,5 +25,6 @@
   "theKeysAreNot": "Nøklene er ikke kjent ennå",
   "lockingIsOnWhat": "Låsing er på. Det du sender til {{ who }}, låses på enheten din, så bare dere to kan lese det. Ikke engang vi kan.",
   "lockingIsOffWhat": "Låsing er av. Det du sender til {{ who }}, er ikke låst, så systemet vårt kan lese det. Det som ble sendt tidligere, forblir som det ble sendt.",
-  "asleepNoSeat": "😴 Sover · på din sovende-liste"
+  "asleepNoSeat": "😴 Sover · på din sovende-liste",
+  "noLongerHere": "Du er ikke lenger med i denne gruppen eller dette vennskapet."
 }

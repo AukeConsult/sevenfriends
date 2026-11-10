@@ -46,6 +46,6 @@
   "notPublished": "nicht veröffentlicht",
   "detailsForThisBrowser": "Details für diesen Browser: Konto …{{ slice }} · Schlüssel in diesem Browser: {{ no }}{{ published }} · Schlüssel in Gebrauch auf dem Server: du {{ mine }}, {{ friendName }} {{ friend }}",
   "groupLocked": "Nachrichten und Dateien sind gesperrt: Nur die Personen in dieser Gruppe können sie öffnen.",
-  "groupSomeoneNoKey": "Noch nicht alle haben einen Schlüssel ({{ names }}). Bis alle einen haben, kann unser System lesen, was du sendest.",
-  "groupNobodyHasAKey": "Noch niemand in dieser Gruppe hat einen Schlüssel. Bis alle einen haben, kann unser System lesen, was du sendest."
+  "groupSomeoneNoKey": "Noch nicht privat. Das Schloss fehlt noch bei: {{ names }}. Bitte sie, die App zu öffnen und die Einrichtung abzuschließen. Bis dahin kann unser System lesen, was du sendest.",
+  "groupNobodyHasAKey": "Noch nicht privat. Niemand in dieser Gruppe hat das Schloss eingerichtet. Bitte alle, die App zu öffnen und die Einrichtung abzuschließen. Bis dahin kann unser System lesen, was du sendest."
 }

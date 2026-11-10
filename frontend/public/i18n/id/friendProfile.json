@@ -23,7 +23,7 @@
   "people": "Orang di grup",
   "you": "Kamu",
   "remove": "Hapus",
-  "noFriendsToAdd": "Tidak ada temanmu yang bisa ditambahkan sekarang.",
+  "noFriendsToAdd": "Kamu belum punya teman untuk ditambahkan.",
   "addAPerson": "Tambahkan teman ke grup",
   "group": "Grup",
   "peopleCount": "orang",
@@ -32,5 +32,15 @@
   "owner": "pemilik",
   "addedToSleepList": "{{ name }} tidak punya kursi kosong, jadi grup ada di daftar tidurnya.",
   "wakeFname": "Bangunkan {{ fName }}",
-  "openTheConversation": "Buka percakapan dengan {{ name }}"
+  "openTheConversation": "Buka percakapan dengan {{ name }}",
+  "removeRules": "Kamu bisa mengeluarkan orang yang kamu tambahkan. Pemilik bisa mengeluarkan siapa saja. Tidak ada yang bisa mengeluarkan pemilik.",
+  "newMembersSeeNew": "Orang yang kamu tambahkan melihat pesan mulai sekarang, bukan yang sebelumnya.",
+  "leaveTheGroup": "Keluar dari grup",
+  "leaveQuestion": "Keluar dari {{ name }}? Pesanmu di grup dan item brankasmu di sana dihapus untuk semua orang. Yang lain tetap memiliki grup. Kamu kembali hanya jika ada yang menambahkanmu lagi.",
+  "leaveOwnerNote": "Kamu pemilik: orang berikutnya dalam daftar menjadi pemilik.",
+  "leaveLastNote": "Kamu orang terakhir: grup dan seluruh isinya dihapus.",
+  "leave": "Keluar",
+  "alreadyInGroup": "Sudah ada di grup",
+  "notConfirmedYet": "Belum mengonfirmasi pertemanan",
+  "groupIsFull": "Grup berisi 7 orang, jumlah terbanyak"
 }

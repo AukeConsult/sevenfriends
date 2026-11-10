@@ -25,5 +25,6 @@
   "theKeysAreNot": "Avaimia ei vielä tiedetä",
   "lockingIsOnWhat": "Lukitus on päällä. Se, minkä lähetät: {{ who }}, lukitaan laitteellasi, joten vain te kaksi voitte lukea sen. Emme edes me.",
   "lockingIsOffWhat": "Lukitus on pois päältä. Se, minkä lähetät: {{ who }}, ei ole lukittu, joten järjestelmämme voi lukea sen. Aiemmin lähetetty pysyy sellaisena kuin se lähetettiin.",
-  "asleepNoSeat": "😴 Nukkuu · unilistallasi"
+  "asleepNoSeat": "😴 Nukkuu · unilistallasi",
+  "noLongerHere": "Et ole enää tässä ryhmässä tai ystävyydessä."
 }

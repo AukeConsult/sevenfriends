@@ -46,6 +46,6 @@
   "notPublished": "não publicada",
   "detailsForThisBrowser": "Detalhes deste navegador: conta …{{ slice }} · chave neste navegador: {{ no }}{{ published }} · chaves em uso no servidor: você {{ mine }}, {{ friendName }} {{ friend }}",
   "groupLocked": "Mensagens e arquivos estão bloqueados: só as pessoas deste grupo podem abri-los.",
-  "groupSomeoneNoKey": "Nem todos têm uma chave ainda ({{ names }}). Até que todos tenham, o nosso sistema pode ler o que você envia.",
-  "groupNobodyHasAKey": "Ninguém neste grupo tem uma chave ainda. Até que todos tenham, o nosso sistema pode ler o que você envia."
+  "groupSomeoneNoKey": "Ainda não é privado. Falta o cadeado de: {{ names }}. Peça que abram o app e terminem a configuração. Até lá, nosso sistema pode ler o que você envia.",
+  "groupNobodyHasAKey": "Ainda não é privado. Ninguém neste grupo configurou o cadeado. Peça a todos que abram o app e terminem a configuração. Até lá, nosso sistema pode ler o que você envia."
 }

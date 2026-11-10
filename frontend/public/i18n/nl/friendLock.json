@@ -46,6 +46,6 @@
   "notPublished": "niet gepubliceerd",
   "detailsForThisBrowser": "Details voor deze browser: account …{{ slice }} · sleutel in deze browser: {{ no }}{{ published }} · sleutels in gebruik op de server: jij {{ mine }}, {{ friendName }} {{ friend }}",
   "groupLocked": "Berichten en bestanden zijn vergrendeld: alleen de mensen in deze groep kunnen ze openen.",
-  "groupSomeoneNoKey": "Nog niet iedereen heeft een sleutel ({{ names }}). Totdat iedereen er een heeft, kan ons systeem lezen wat je verstuurt.",
-  "groupNobodyHasAKey": "Niemand in deze groep heeft nog een sleutel. Totdat iedereen er een heeft, kan ons systeem lezen wat je verstuurt."
+  "groupSomeoneNoKey": "Nog niet privé. Het slot ontbreekt nog bij: {{ names }}. Vraag hen de app te openen en de installatie af te maken. Tot die tijd kan ons systeem lezen wat je verstuurt.",
+  "groupNobodyHasAKey": "Nog niet privé. Niemand in deze groep heeft het slot ingesteld. Vraag iedereen de app te openen en de installatie af te maken. Tot die tijd kan ons systeem lezen wat je verstuurt."
 }

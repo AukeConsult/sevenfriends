@@ -23,7 +23,7 @@
   "people": "그룹 멤버",
   "you": "나",
   "remove": "삭제",
-  "noFriendsToAdd": "지금 추가할 수 있는 친구가 없습니다.",
+  "noFriendsToAdd": "아직 추가할 친구가 없습니다.",
   "addAPerson": "그룹에 친구 추가",
   "group": "그룹",
   "peopleCount": "명",
@@ -32,5 +32,15 @@
   "owner": "소유자",
   "addedToSleepList": "{{ name }}님은 빈 자리가 없어서 그룹이 수면 목록에 있습니다.",
   "wakeFname": "{{ fName }} 깨우기",
-  "openTheConversation": "{{ name }}와의 대화 열기"
+  "openTheConversation": "{{ name }}와의 대화 열기",
+  "removeRules": "내가 추가한 사람은 내보낼 수 있습니다. 소유자는 누구든 내보낼 수 있습니다. 소유자는 아무도 내보낼 수 없습니다.",
+  "newMembersSeeNew": "추가한 사람은 지금부터의 메시지를 보며, 이전 메시지는 보지 못합니다.",
+  "leaveTheGroup": "그룹 나가기",
+  "leaveQuestion": "{{ name }}에서 나갈까요? 그룹에 있는 내 메시지와 금고 항목이 모두에게서 삭제됩니다. 다른 사람들은 그룹을 유지합니다. 누군가 다시 추가해야만 돌아올 수 있습니다.",
+  "leaveOwnerNote": "당신은 소유자입니다. 목록의 다음 사람이 소유자가 됩니다.",
+  "leaveLastNote": "당신이 마지막 사람입니다. 그룹과 그 안의 모든 것이 삭제됩니다.",
+  "leave": "나가기",
+  "alreadyInGroup": "이미 그룹에 있습니다",
+  "notConfirmedYet": "아직 친구 관계를 확인하지 않았습니다",
+  "groupIsFull": "그룹은 7명으로, 더 늘릴 수 없습니다"
 }

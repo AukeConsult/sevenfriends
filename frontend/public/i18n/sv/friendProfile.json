@@ -23,7 +23,7 @@
   "people": "Personer i gruppen",
   "you": "Du",
   "remove": "Ta bort",
-  "noFriendsToAdd": "Ingen av dina vänner kan läggas till nu.",
+  "noFriendsToAdd": "Du har inga vänner att lägga till än.",
   "addAPerson": "Lägg till en vän i gruppen",
   "group": "Grupp",
   "peopleCount": "personer",
@@ -32,5 +32,15 @@
   "owner": "ägare",
   "addedToSleepList": "{{ name }} har ingen ledig plats, så gruppen ligger på deras vilolista.",
   "wakeFname": "Väck {{ fName }}",
-  "openTheConversation": "Öppna samtalet med {{ name }}"
+  "openTheConversation": "Öppna samtalet med {{ name }}",
+  "removeRules": "Du kan ta bort de du själv lade till. Ägaren kan ta bort alla. Ingen kan ta bort ägaren.",
+  "newMembersSeeNew": "Den du lägger till ser meddelanden från nu, inte de tidigare.",
+  "leaveTheGroup": "Lämna gruppen",
+  "leaveQuestion": "Lämna {{ name }}? Dina meddelanden i gruppen och dina kassaskåpsobjekt där raderas för alla. De andra behåller gruppen. Du är bara tillbaka om någon lägger till dig igen.",
+  "leaveOwnerNote": "Du är ägare: nästa person i listan blir ägare.",
+  "leaveLastNote": "Du är den sista: gruppen och allt i den raderas.",
+  "leave": "Lämna",
+  "alreadyInGroup": "Redan i gruppen",
+  "notConfirmedYet": "Har inte bekräftat vänskapen än",
+  "groupIsFull": "Gruppen har 7 personer, det högsta antalet"
 }

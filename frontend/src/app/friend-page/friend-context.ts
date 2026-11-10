@@ -1,4 +1,4 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { Injectable, computed, effect, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FriendsService } from '../core/friends.service';
 import { initials } from '../core/initials';
@@ -146,7 +146,14 @@ export class FriendContext {
     this.messagesLocked() ? tr('friendPage.newMessagesAndFiles', 'New messages and files are locked') : this.bothHaveKeys() ? tr('friendPage.lockingIsSwitchedOff', 'Locking is switched off for new messages and files') : tr('friendPage.messagesAndFilesAre', 'Messages and files are not locked yet: you both need a key'),
   );
 
+  /** the friend (or group) was in the list and is gone: removed from a group while the page was open, or the friendship ended */
+  private seen = false;
+
   constructor() {
+    effect(() => {
+      if (this.friend()) this.seen = true;
+      else if (this.seen && !this.blocked()) this.blocked.set(tr('friendPage.noLongerHere', 'You are not in this group or friendship any more.'));
+    });
     void this.keys.refresh(); // is there a key for me on this device?
     this.loadBoxKeys(); // and for my friend?
     if (!this.friends.friends().length) void this.friends.load().catch(() => undefined); // opened directly (a reload): the seat comes from the list

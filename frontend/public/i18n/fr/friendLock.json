@@ -46,6 +46,6 @@
   "notPublished": "non publiée",
   "detailsForThisBrowser": "Détails pour ce navigateur : compte …{{ slice }} · clé dans ce navigateur : {{ no }}{{ published }} · clés actives sur le serveur : toi {{ mine }}, {{ friendName }} {{ friend }}",
   "groupLocked": "Les messages et fichiers sont verrouillés : seules les personnes de ce groupe peuvent les ouvrir.",
-  "groupSomeoneNoKey": "Tout le monde n’a pas encore de clé ({{ names }}). Tant que chacun n’en a pas, notre système peut lire ce que vous envoyez.",
-  "groupNobodyHasAKey": "Personne dans ce groupe n’a encore de clé. Tant que chacun n’en a pas, notre système peut lire ce que vous envoyez."
+  "groupSomeoneNoKey": "Pas encore privé. Le cadenas manque encore chez : {{ names }}. Demandez-leur d'ouvrir l'appli et de finir la configuration. D'ici là, notre système peut lire ce que vous envoyez.",
+  "groupNobodyHasAKey": "Pas encore privé. Personne dans ce groupe n'a configuré le cadenas. Demandez à chacun d'ouvrir l'appli et de finir la configuration. D'ici là, notre système peut lire ce que vous envoyez."
 }

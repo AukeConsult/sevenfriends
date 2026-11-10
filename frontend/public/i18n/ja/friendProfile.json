@@ -23,7 +23,7 @@
   "people": "グループのメンバー",
   "you": "あなた",
   "remove": "削除",
-  "noFriendsToAdd": "今は追加できる友だちがいません。",
+  "noFriendsToAdd": "追加できる友達がまだいません。",
   "addAPerson": "友だちをグループに追加",
   "group": "グループ",
   "peopleCount": "人",
@@ -32,5 +32,15 @@
   "owner": "オーナー",
   "addedToSleepList": "{{ name }}さんには空き席がないため、グループはスリープリストに入っています。",
   "wakeFname": "{{ fName }}を起こす",
-  "openTheConversation": "{{ name }}との会話を開く"
+  "openTheConversation": "{{ name }}との会話を開く",
+  "removeRules": "自分が追加した人は削除できます。オーナーは誰でも削除できます。オーナーを削除できる人はいません。",
+  "newMembersSeeNew": "追加した人には、これ以降のメッセージが見えます。以前のものは見えません。",
+  "leaveTheGroup": "グループを退出",
+  "leaveQuestion": "{{ name }}を退出しますか？グループ内のあなたのメッセージと、そこにある金庫の項目は全員分削除されます。他の人はグループを保ちます。誰かに再び追加されない限り戻れません。",
+  "leaveOwnerNote": "あなたはオーナーです。リストの次の人がオーナーになります。",
+  "leaveLastNote": "あなたが最後の一人です。グループとその中身はすべて削除されます。",
+  "leave": "退出",
+  "alreadyInGroup": "すでにグループにいます",
+  "notConfirmedYet": "友達関係をまだ承認していません",
+  "groupIsFull": "グループは7人で、これ以上は増やせません"
 }

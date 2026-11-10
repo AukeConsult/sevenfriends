@@ -410,7 +410,7 @@ export class SafeboxService {
       if (pair.a === itemId) out.add(pair.b);
       else if (pair.b === itemId) out.add(pair.a);
     }
-    return [...out];
+    return [...out].filter((id) => this.raw.has(`${friendId}/${id}`)); // an item that is gone (its maker left the group) is no link any more
   }
 
   async addLink(friendId: string, a: string, b: string, keys: BoxKeys): Promise<void> {

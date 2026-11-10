@@ -23,7 +23,7 @@
   "people": "Personer i gruppen",
   "you": "Dig",
   "remove": "Fjern",
-  "noFriendsToAdd": "Ingen af dine venner kan tilføjes nu.",
+  "noFriendsToAdd": "Du har ingen venner at tilføje endnu.",
   "addAPerson": "Tilføj en ven til gruppen",
   "group": "Gruppe",
   "peopleCount": "personer",
@@ -32,5 +32,15 @@
   "owner": "ejer",
   "addedToSleepList": "{{ name }} har ingen ledig plads, så gruppen er på deres soveliste.",
   "wakeFname": "Væk {{ fName }}",
-  "openTheConversation": "Åbn samtalen med {{ name }}"
+  "openTheConversation": "Åbn samtalen med {{ name }}",
+  "removeRules": "Du kan fjerne de personer, du selv har tilføjet. Ejeren kan fjerne alle. Ingen kan fjerne ejeren.",
+  "newMembersSeeNew": "En person, du tilføjer, ser beskeder fra nu af, ikke de tidligere.",
+  "leaveTheGroup": "Forlad gruppen",
+  "leaveQuestion": "Forlad {{ name }}? Dine beskeder i gruppen og dine bokselementer der slettes for alle. De andre beholder gruppen. Du er kun tilbage, hvis nogen tilføjer dig igen.",
+  "leaveOwnerNote": "Du er ejer: den næste i listen bliver ejer.",
+  "leaveLastNote": "Du er den sidste: gruppen og alt i den slettes.",
+  "leave": "Forlad",
+  "alreadyInGroup": "Allerede i gruppen",
+  "notConfirmedYet": "Har ikke bekræftet venskabet endnu",
+  "groupIsFull": "Gruppen har 7 personer, det højeste antal"
 }

@@ -23,7 +23,7 @@
   "people": "Gruptaki kişiler",
   "you": "Sen",
   "remove": "Kaldır",
-  "noFriendsToAdd": "Arkadaşlarından hiçbiri şu an eklenemez.",
+  "noFriendsToAdd": "Henüz eklenecek arkadaşın yok.",
   "addAPerson": "Gruba bir arkadaş ekle",
   "group": "Grup",
   "peopleCount": "kişi",
@@ -32,5 +32,15 @@
   "owner": "sahip",
   "addedToSleepList": "{{ name }} kişisinin boş yeri yok, bu yüzden grup onun uyku listesinde.",
   "wakeFname": "{{ fName }} kişisini uyandır",
-  "openTheConversation": "{{ name }} ile sohbeti aç"
+  "openTheConversation": "{{ name }} ile sohbeti aç",
+  "removeRules": "Eklediğin kişileri çıkarabilirsin. Sahip herkesi çıkarabilir. Kimse sahibi çıkaramaz.",
+  "newMembersSeeNew": "Eklediğin kişi mesajları şu andan itibaren görür, öncekileri görmez.",
+  "leaveTheGroup": "Gruptan ayrıl",
+  "leaveQuestion": "{{ name }} grubundan ayrılacak mısın? Gruptaki mesajların ve oradaki kasa öğelerin herkes için silinir. Diğerleri grubu korur. Ancak biri seni yeniden eklerse dönebilirsin.",
+  "leaveOwnerNote": "Sahipsin: listedeki sonraki kişi sahip olur.",
+  "leaveLastNote": "Son kişisin: grup ve içindeki her şey silinir.",
+  "leave": "Ayrıl",
+  "alreadyInGroup": "Zaten grupta",
+  "notConfirmedYet": "Arkadaşlığı henüz onaylamadı",
+  "groupIsFull": "Grupta 7 kişi var, bu en fazla"
 }

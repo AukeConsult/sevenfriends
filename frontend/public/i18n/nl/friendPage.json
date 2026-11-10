@@ -25,5 +25,6 @@
   "theKeysAreNot": "De sleutels zijn nog niet bekend",
   "lockingIsOnWhat": "Vergrendelen staat aan. Wat je naar {{ who }} stuurt wordt op jouw apparaat vergrendeld, zodat alleen jullie tweeën het kunnen lezen. Wij ook niet.",
   "lockingIsOffWhat": "Vergrendelen staat uit. Wat je naar {{ who }} stuurt is niet vergrendeld, dus ons systeem kan het lezen. Wat eerder is verstuurd, blijft zoals het was.",
-  "asleepNoSeat": "😴 Slaapt · op je slaaplijst"
+  "asleepNoSeat": "😴 Slaapt · op je slaaplijst",
+  "noLongerHere": "Je zit niet meer in deze groep of vriendschap."
 }

@@ -23,7 +23,7 @@
   "people": "Pessoas no grupo",
   "you": "Você",
   "remove": "Remover",
-  "noFriendsToAdd": "Nenhum dos seus amigos pode ser adicionado agora.",
+  "noFriendsToAdd": "Você ainda não tem amigos para adicionar.",
   "addAPerson": "Adicionar um amigo ao grupo",
   "group": "Grupo",
   "peopleCount": "pessoas",
@@ -32,5 +32,15 @@
   "owner": "proprietário",
   "addedToSleepList": "{{ name }} não tem um lugar livre, então o grupo está na lista de descanso.",
   "wakeFname": "Acordar {{ fName }}",
-  "openTheConversation": "Abrir a conversa com {{ name }}"
+  "openTheConversation": "Abrir a conversa com {{ name }}",
+  "removeRules": "Você pode remover as pessoas que adicionou. O dono pode remover qualquer um. Ninguém pode remover o dono.",
+  "newMembersSeeNew": "Quem você adiciona vê as mensagens a partir de agora, não as anteriores.",
+  "leaveTheGroup": "Sair do grupo",
+  "leaveQuestion": "Sair de {{ name }}? Suas mensagens no grupo e seus itens do cofre lá são apagados para todos. Os outros ficam com o grupo. Você só volta se alguém adicionar você de novo.",
+  "leaveOwnerNote": "Você é o dono: a próxima pessoa da lista passa a ser o dono.",
+  "leaveLastNote": "Você é a última pessoa: o grupo e tudo nele é apagado.",
+  "leave": "Sair",
+  "alreadyInGroup": "Já está no grupo",
+  "notConfirmedYet": "Ainda não confirmou a amizade",
+  "groupIsFull": "O grupo tem 7 pessoas, o máximo"
 }

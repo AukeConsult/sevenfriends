@@ -46,6 +46,6 @@
   "notPublished": "ei julkaistu",
   "detailsForThisBrowser": "Tämän selaimen tiedot: tili …{{ slice }} · avain tässä selaimessa: {{ no }}{{ published }} · palvelimella käytössä olevat avaimet: sinä {{ mine }}, {{ friendName }} {{ friend }}",
   "groupLocked": "Viestit ja tiedostot on lukittu: vain tämän ryhmän jäsenet voivat avata ne.",
-  "groupSomeoneNoKey": "Kaikilla ei ole vielä avainta ({{ names }}). Kunnes kaikilla on, järjestelmämme voi lukea lähettämäsi.",
-  "groupNobodyHasAKey": "Kenelläkään tässä ryhmässä ei ole vielä avainta. Kunnes kaikilla on, järjestelmämme voi lukea lähettämäsi."
+  "groupSomeoneNoKey": "Ei vielä yksityinen. Lukko puuttuu vielä: {{ names }}. Pyydä heitä avaamaan sovellus ja viimeistelemään asetukset. Siihen asti järjestelmämme voi lukea lähettämäsi.",
+  "groupNobodyHasAKey": "Ei vielä yksityinen. Kukaan ryhmässä ei ole ottanut lukkoa käyttöön. Pyydä kaikkia avaamaan sovellus ja viimeistelemään asetukset. Siihen asti järjestelmämme voi lukea lähettämäsi."
 }

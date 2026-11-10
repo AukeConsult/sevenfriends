@@ -45,6 +45,20 @@ export class FriendProfile {
   /** A group: the people in it, and which of my friends can still be added. */
   protected readonly members = signal<GroupMember[]>([]);
   protected readonly adding = signal(false);
+  /** the question "leave the group?" is open */
+  protected readonly leaving = signal(false);
+  /** what else leaving means for me: the ownership goes on, or the group ends with me */
+  protected readonly leaveNote = computed(() => {
+    const list = this.members();
+    const me = list.find((m) => m.you);
+    if (list.length <= 1) return tr('friendProfile.leaveLastNote', 'You are the last person: the group and everything in it is deleted.');
+    return me?.creator ? tr('friendProfile.leaveOwnerNote', 'You are the owner: the next person in the list becomes the owner.') : '';
+  });
+
+  /** Leave the group: it goes from my list, my messages and safebox items in it are deleted, the others keep it. */
+  protected leave(friend: Friend): Promise<void> {
+    return this.run(() => this.friendsService.remove(friend.id), () => this.router.navigateByUrl('/'));
+  }
   private readonly myAvatar = inject(MyAvatarService);
   private readonly memberPicture = inject(MemberPictureService);
   /** The picture of a member: mine, else my friend's; null = the initial is shown. */
@@ -52,9 +66,23 @@ export class FriendProfile {
     return this.memberPicture.of(m);
   }
   protected initial(name: string): string { return (name.trim()[0] ?? '?').toUpperCase(); }
-  protected readonly canAdd = computed(() => {
+  /** Every friend of mine that is not a group, and why one cannot be added (null = can): so nobody wonders where a friend is. */
+  protected readonly addChoices = computed(() => {
     const inGroup = new Set(this.members().map((m) => m.friendId));
-    return this.friendsService.friends().filter((f) => !f.group && f.status === 'confirmed' && !f.asleep && !inGroup.has(f.id));
+    const full = this.members().length >= 7;
+    return this.friendsService
+      .friends()
+      .filter((f) => !f.group)
+      .map((f) => ({
+        friend: f,
+        reason: inGroup.has(f.id)
+          ? tr('friendProfile.alreadyInGroup', 'Already in the group')
+          : f.status !== 'confirmed'
+            ? tr('friendProfile.notConfirmedYet', 'Has not confirmed the friendship yet')
+            : full
+              ? tr('friendProfile.groupIsFull', 'The group has 7 people, the most there can be')
+              : null,
+      }));
   });
 
   constructor() {
@@ -97,7 +125,7 @@ export class FriendProfile {
   protected readonly note = signal<string | null>(null);
 
   protected async addMember(f: Friend, friendId: string): Promise<void> {
-    const name = this.canAdd().find((c) => c.id === friendId)?.name ?? '';
+    const name = this.friendsService.friends().find((c) => c.id === friendId)?.name ?? '';
     this.note.set(null);
     await this.run(
       async () => {
@@ -128,6 +156,7 @@ export class FriendProfile {
     if (this.sleepable(friend)) {
       return tr('friendProfile.putToSleepLeaves', 'Put {{ friendName }} to sleep? {{ friendName }} leaves your list and the seat is free again. Your conversation is kept, and you can wake {{ friendName }} up from the sleep list.', { friendName: friend.name });
     }
+    if (friend.group) return tr('friendProfile.leaveQuestion', 'Leave {{ name }}? Your messages in the group and your safebox items there are deleted for everybody. The others keep the group. You are back only if someone adds you again.', { name: friend.name });
     return friend.invited || friend.incoming
       ? tr('friendProfile.deleteThisRemovesThe', 'Delete {{ friendName }}? This removes the connection from your list and from theirs.', { friendName: friend.name })
       : tr('friendProfile.removeFromYourCircle', 'Remove {{ friendName }} from your circle?', { friendName: friend.name });

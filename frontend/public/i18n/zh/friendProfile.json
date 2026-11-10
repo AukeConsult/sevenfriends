@@ -23,7 +23,7 @@
   "people": "群组成员",
   "you": "你",
   "remove": "移除",
-  "noFriendsToAdd": "现在没有可添加的朋友。",
+  "noFriendsToAdd": "你还没有可添加的好友。",
   "addAPerson": "把朋友加入群组",
   "group": "群组",
   "peopleCount": "人",
@@ -32,5 +32,15 @@
   "owner": "所有者",
   "addedToSleepList": "{{ name }} 没有空闲席位，所以该群组在 TA 的休眠列表中。",
   "wakeFname": "唤醒 {{ fName }}",
-  "openTheConversation": "打开与 {{ name }} 的对话"
+  "openTheConversation": "打开与 {{ name }} 的对话",
+  "removeRules": "你可以移除自己添加的人。群主可以移除任何人。没有人能移除群主。",
+  "newMembersSeeNew": "你添加的人只能看到从现在开始的消息，看不到之前的。",
+  "leaveTheGroup": "退出群组",
+  "leaveQuestion": "退出 {{ name }}？你在群组里的消息和那里的保险箱项目会对所有人删除。其他人保留群组。只有别人再次添加你，你才能回来。",
+  "leaveOwnerNote": "你是群主：列表中的下一个人将成为群主。",
+  "leaveLastNote": "你是最后一个人：群组及其中的一切都会被删除。",
+  "leave": "退出",
+  "alreadyInGroup": "已在群组中",
+  "notConfirmedYet": "还没有确认好友关系",
+  "groupIsFull": "群组已有 7 人，已达上限"
 }

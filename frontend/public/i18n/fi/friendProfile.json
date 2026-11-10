@@ -23,7 +23,7 @@
   "people": "Ryhmän jäsenet",
   "you": "Sinä",
   "remove": "Poista",
-  "noFriendsToAdd": "Yhtäkään ystävääsi ei voi lisätä nyt.",
+  "noFriendsToAdd": "Sinulla ei ole vielä lisättäviä ystäviä.",
   "addAPerson": "Lisää ystävä ryhmään",
   "group": "Ryhmä",
   "peopleCount": "henkilöä",
@@ -32,5 +32,15 @@
   "owner": "omistaja",
   "addedToSleepList": "{{ name }}lla ei ole vapaata paikkaa, joten ryhmä on hänen lepolistallaan.",
   "wakeFname": "Herätä {{ fName }}",
-  "openTheConversation": "Avaa keskustelu: {{ name }}"
+  "openTheConversation": "Avaa keskustelu: {{ name }}",
+  "removeRules": "Voit poistaa ihmiset, jotka itse lisäsit. Omistaja voi poistaa kenet tahansa. Omistajaa ei voi poistaa.",
+  "newMembersSeeNew": "Lisäämäsi henkilö näkee viestit tästä eteenpäin, ei aiempia.",
+  "leaveTheGroup": "Poistu ryhmästä",
+  "leaveQuestion": "Poistutko ryhmästä {{ name }}? Viestisi ryhmässä ja holvin kohteesi poistetaan kaikilta. Muut pitävät ryhmän. Pääset takaisin vain, jos joku lisää sinut uudelleen.",
+  "leaveOwnerNote": "Olet omistaja: listan seuraavasta henkilöstä tulee omistaja.",
+  "leaveLastNote": "Olet viimeinen: ryhmä ja kaikki sen sisältö poistetaan.",
+  "leave": "Poistu",
+  "alreadyInGroup": "On jo ryhmässä",
+  "notConfirmedYet": "Ei ole vielä vahvistanut ystävyyttä",
+  "groupIsFull": "Ryhmässä on 7 henkilöä, enemmän ei voi olla"
 }

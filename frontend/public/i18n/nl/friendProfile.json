@@ -23,7 +23,7 @@
   "people": "Mensen in de groep",
   "you": "Jij",
   "remove": "Verwijderen",
-  "noFriendsToAdd": "Geen van je vrienden kan nu worden toegevoegd.",
+  "noFriendsToAdd": "Je hebt nog geen vrienden om toe te voegen.",
   "addAPerson": "Een vriend aan de groep toevoegen",
   "group": "Groep",
   "peopleCount": "mensen",
@@ -32,5 +32,15 @@
   "owner": "eigenaar",
   "addedToSleepList": "{{ name }} heeft geen vrije plek, dus de groep staat op de slaaplijst.",
   "wakeFname": "Maak {{ fName }} wakker",
-  "openTheConversation": "Open het gesprek met {{ name }}"
+  "openTheConversation": "Open het gesprek met {{ name }}",
+  "removeRules": "Je kunt de mensen verwijderen die je zelf hebt toegevoegd. De eigenaar kan iedereen verwijderen. Niemand kan de eigenaar verwijderen.",
+  "newMembersSeeNew": "Wie je toevoegt, ziet de berichten vanaf nu, niet de eerdere.",
+  "leaveTheGroup": "Groep verlaten",
+  "leaveQuestion": "{{ name }} verlaten? Je berichten in de groep en je kluisitems daar worden voor iedereen verwijderd. De anderen houden de groep. Je bent alleen terug als iemand je opnieuw toevoegt.",
+  "leaveOwnerNote": "Je bent de eigenaar: de volgende persoon in de lijst wordt eigenaar.",
+  "leaveLastNote": "Je bent de laatste: de groep en alles erin wordt verwijderd.",
+  "leave": "Verlaten",
+  "alreadyInGroup": "Zit al in de groep",
+  "notConfirmedYet": "Heeft de vriendschap nog niet bevestigd",
+  "groupIsFull": "De groep heeft 7 personen, meer kan niet"
 }

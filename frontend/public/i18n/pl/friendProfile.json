@@ -23,7 +23,7 @@
   "people": "Osoby w grupie",
   "you": "Ty",
   "remove": "Usuń",
-  "noFriendsToAdd": "Żadnego z twoich znajomych nie można teraz dodać.",
+  "noFriendsToAdd": "Nie masz jeszcze znajomych do dodania.",
   "addAPerson": "Dodaj znajomego do grupy",
   "group": "Grupa",
   "peopleCount": "osób",
@@ -32,5 +32,15 @@
   "owner": "właściciel",
   "addedToSleepList": "{{ name }} nie ma wolnego miejsca, więc grupa jest na jego liście uśpionych.",
   "wakeFname": "Obudź {{ fName }}",
-  "openTheConversation": "Otwórz rozmowę z {{ name }}"
+  "openTheConversation": "Otwórz rozmowę z {{ name }}",
+  "removeRules": "Możesz usunąć osoby, które dodałeś. Właściciel może usunąć każdego. Nikt nie może usunąć właściciela.",
+  "newMembersSeeNew": "Osoba, którą dodasz, widzi wiadomości od teraz, a nie wcześniejsze.",
+  "leaveTheGroup": "Opuść grupę",
+  "leaveQuestion": "Opuścić {{ name }}? Twoje wiadomości w grupie i elementy sejfu tam zostaną usunięte dla wszystkich. Pozostali zatrzymują grupę. Wrócisz tylko, jeśli ktoś doda cię ponownie.",
+  "leaveOwnerNote": "Jesteś właścicielem: następna osoba na liście zostanie właścicielem.",
+  "leaveLastNote": "Jesteś ostatnią osobą: grupa i wszystko w niej zostanie usunięte.",
+  "leave": "Opuść",
+  "alreadyInGroup": "Już w grupie",
+  "notConfirmedYet": "Nie potwierdził jeszcze znajomości",
+  "groupIsFull": "W grupie jest 7 osób, więcej się nie da"
 }

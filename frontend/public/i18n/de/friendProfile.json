@@ -23,7 +23,7 @@
   "people": "Personen in der Gruppe",
   "you": "Du",
   "remove": "Entfernen",
-  "noFriendsToAdd": "Keiner deiner Freunde kann jetzt hinzugefügt werden.",
+  "noFriendsToAdd": "Du hast noch keine Freunde zum Hinzufügen.",
   "addAPerson": "Einen Freund zur Gruppe hinzufügen",
   "group": "Gruppe",
   "peopleCount": "Personen",
@@ -32,5 +32,15 @@
   "owner": "Besitzer",
   "addedToSleepList": "{{ name }} hat keinen freien Platz, deshalb steht die Gruppe auf der Schlafliste.",
   "wakeFname": "{{ fName }} aufwecken",
-  "openTheConversation": "Unterhaltung mit {{ name }} öffnen"
+  "openTheConversation": "Unterhaltung mit {{ name }} öffnen",
+  "removeRules": "Du kannst die Personen entfernen, die du hinzugefügt hast. Der Besitzer kann jeden entfernen. Niemand kann den Besitzer entfernen.",
+  "newMembersSeeNew": "Wen du hinzufügst, sieht die Nachrichten ab jetzt, nicht die früheren.",
+  "leaveTheGroup": "Gruppe verlassen",
+  "leaveQuestion": "{{ name }} verlassen? Deine Nachrichten in der Gruppe und deine Tresor-Einträge dort werden für alle gelöscht. Die anderen behalten die Gruppe. Du bist nur wieder dabei, wenn dich jemand erneut hinzufügt.",
+  "leaveOwnerNote": "Du bist der Besitzer: die nächste Person in der Liste wird Besitzer.",
+  "leaveLastNote": "Du bist die letzte Person: die Gruppe und alles darin wird gelöscht.",
+  "leave": "Verlassen",
+  "alreadyInGroup": "Schon in der Gruppe",
+  "notConfirmedYet": "Hat die Freundschaft noch nicht bestätigt",
+  "groupIsFull": "Die Gruppe hat 7 Personen, mehr geht nicht"
 }

@@ -46,6 +46,6 @@
   "notPublished": "nieopublikowany",
   "detailsForThisBrowser": "Szczegóły dla tej przeglądarki: konto …{{ slice }} · klucz w tej przeglądarce: {{ no }}{{ published }} · klucze w użyciu na serwerze: Ty {{ mine }}, {{ friendName }} {{ friend }}",
   "groupLocked": "Wiadomości i pliki są zablokowane: mogą je otworzyć tylko osoby z tej grupy.",
-  "groupSomeoneNoKey": "Nie wszyscy mają już klucz ({{ names }}). Dopóki wszyscy go nie mają, nasz system może odczytać to, co wysyłasz.",
-  "groupNobodyHasAKey": "Nikt w tej grupie nie ma jeszcze klucza. Dopóki wszyscy go nie mają, nasz system może odczytać to, co wysyłasz."
+  "groupSomeoneNoKey": "Jeszcze nie prywatne. Brakuje jeszcze kłódki u: {{ names }}. Poproś ich o otwarcie aplikacji i dokończenie konfiguracji. Do tego czasu nasz system może czytać to, co wysyłasz.",
+  "groupNobodyHasAKey": "Jeszcze nie prywatne. Nikt w tej grupie nie skonfigurował kłódki. Poproś wszystkich o otwarcie aplikacji i dokończenie konfiguracji. Do tego czasu nasz system może czytać to, co wysyłasz."
 }

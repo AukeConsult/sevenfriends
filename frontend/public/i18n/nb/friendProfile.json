@@ -23,7 +23,7 @@
   "people": "Personer i gruppen",
   "you": "Deg",
   "remove": "Fjern",
-  "noFriendsToAdd": "Ingen av vennene dine kan legges til nå.",
+  "noFriendsToAdd": "Du har ingen venner å legge til ennå.",
   "addAPerson": "Legg til en venn i gruppen",
   "group": "Gruppe",
   "peopleCount": "personer",
@@ -32,5 +32,15 @@
   "owner": "eier",
   "addedToSleepList": "{{ name }} har ingen ledig plass, så gruppen ligger på soveslisten deres.",
   "wakeFname": "Vekk {{ fName }}",
-  "openTheConversation": "Åpne samtalen med {{ name }}"
+  "openTheConversation": "Åpne samtalen med {{ name }}",
+  "removeRules": "Du kan fjerne de du selv la til. Eieren kan fjerne alle. Ingen kan fjerne eieren.",
+  "newMembersSeeNew": "Den du legger til, ser meldinger fra nå av, ikke de tidligere.",
+  "leaveTheGroup": "Forlat gruppen",
+  "leaveQuestion": "Forlate {{ name }}? Meldingene dine i gruppen og boksgjenstandene dine der slettes for alle. De andre beholder gruppen. Du er bare tilbake hvis noen legger deg til igjen.",
+  "leaveOwnerNote": "Du er eier: den neste i listen blir eier.",
+  "leaveLastNote": "Du er den siste: gruppen og alt i den slettes.",
+  "leave": "Forlat",
+  "alreadyInGroup": "Allerede i gruppen",
+  "notConfirmedYet": "Har ikke bekreftet vennskapet ennå",
+  "groupIsFull": "Gruppen har 7 personer, det høyeste antallet"
 }

@@ -9,9 +9,9 @@
       @if (ctx.isGroup()) {
         @switch (ctx.keyStatus()) {
           @case ('both') { {{ t('friendLock.groupLocked') || 'Messages and files are locked: only the people in this group can open them.' }} }
-          @case ('me') { {{ ctx.withoutKey().length ? (t('friendLock.groupSomeoneNoKey', { names: ctx.whoLacksKey() }) || 'Not everybody has a key yet (' + ctx.whoLacksKey() + '). Until everyone has one, what you send can be read by our system.') : (t('friendLock.friendnameHasAKey', { friendName: friendName() }) || 'The others are ready, but you are not. Make or restore your key on this device. Until then, what you send can be read by our system.') }} }
-          @case ('friend') { {{ t('friendLock.groupSomeoneNoKey', { names: ctx.whoLacksKey() }) || 'Not everybody has a key yet (' + ctx.whoLacksKey() + '). Until everyone has one, what you send can be read by our system.' }} }
-          @case ('none') { {{ t('friendLock.groupNobodyHasAKey') || 'Nobody in this group has a key yet. Until everyone has one, what you send can be read by our system.' }} }
+          @case ('me') { {{ ctx.withoutKey().length ? (t('friendLock.groupSomeoneNoKey', { names: ctx.whoLacksKey() }) || 'Not private yet. Still missing the lock: ' + ctx.whoLacksKey() + '. Ask them to open the app and finish the setup. Until then our system can read what you send.') : (t('friendLock.friendnameHasAKey', { friendName: friendName() }) || 'The others are ready, but you are not. Make or restore your key on this device. Until then, what you send can be read by our system.') }} }
+          @case ('friend') { {{ t('friendLock.groupSomeoneNoKey', { names: ctx.whoLacksKey() }) || 'Not private yet. Still missing the lock: ' + ctx.whoLacksKey() + '. Ask them to open the app and finish the setup. Until then our system can read what you send.' }} }
+          @case ('none') { {{ t('friendLock.groupNobodyHasAKey') || 'Not private yet. Nobody in this group has set up the lock. Ask everyone to open the app and finish the setup. Until then our system can read what you send.' }} }
           @default { {{ t('friendLock.checkingTheKeys') || 'Checking the keys…' }} }
         }
       } @else {

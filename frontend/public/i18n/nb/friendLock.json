@@ -46,6 +46,6 @@
   "notPublished": "ikke publisert",
   "detailsForThisBrowser": "Detaljer for denne nettleseren: konto …{{ slice }} · nøkkel i denne nettleseren: {{ no }}{{ published }} · nøkler i bruk på serveren: du {{ mine }}, {{ friendName }} {{ friend }}",
   "groupLocked": "Meldinger og filer er låst: Bare personene i denne gruppen kan åpne dem.",
-  "groupSomeoneNoKey": "Ikke alle har en nøkkel ennå ({{ names }}). Til alle har det, kan systemet vårt lese det du sender.",
-  "groupNobodyHasAKey": "Ingen i denne gruppen har en nøkkel ennå. Til alle har det, kan systemet vårt lese det du sender."
+  "groupSomeoneNoKey": "Ikke privat ennå. Låsen mangler hos: {{ names }}. Be dem åpne appen og fullføre oppsettet. Inntil da kan systemet vårt lese det du sender.",
+  "groupNobodyHasAKey": "Ikke privat ennå. Ingen i gruppen har satt opp låsen. Be alle åpne appen og fullføre oppsettet. Inntil da kan systemet vårt lese det du sender."
 }

@@ -46,6 +46,6 @@
   "notPublished": "tidak dipublikasikan",
   "detailsForThisBrowser": "Detail untuk browser ini: akun …{{ slice }} · kunci di browser ini: {{ no }}{{ published }} · kunci yang dipakai di server: kamu {{ mine }}, {{ friendName }} {{ friend }}",
   "groupLocked": "Pesan dan file dikunci: hanya orang di grup ini yang bisa membukanya.",
-  "groupSomeoneNoKey": "Belum semua orang punya kunci ({{ names }}). Sampai semuanya punya, sistem kami dapat membaca apa yang kamu kirim.",
-  "groupNobodyHasAKey": "Belum ada yang punya kunci di grup ini. Sampai semuanya punya, sistem kami dapat membaca apa yang kamu kirim."
+  "groupSomeoneNoKey": "Belum privat. Kunci belum ada pada: {{ names }}. Minta mereka membuka aplikasi dan menyelesaikan pengaturan. Sampai saat itu sistem kami dapat membaca yang kamu kirim.",
+  "groupNobodyHasAKey": "Belum privat. Belum ada yang mengatur kunci di grup ini. Minta semua orang membuka aplikasi dan menyelesaikan pengaturan. Sampai saat itu sistem kami dapat membaca yang kamu kirim."
 }

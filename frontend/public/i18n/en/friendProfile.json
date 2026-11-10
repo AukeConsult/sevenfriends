@@ -23,7 +23,7 @@
   "people": "People in the group",
   "you": "You",
   "remove": "Remove",
-  "noFriendsToAdd": "None of your friends can be added now.",
+  "noFriendsToAdd": "You have no friends to add yet.",
   "addAPerson": "Add a friend to the group",
   "group": "Group",
   "peopleCount": "people",
@@ -32,5 +32,15 @@
   "owner": "owner",
   "addedToSleepList": "{{ name }} has no free seat, so the group is on their sleep list.",
   "wakeFname": "Wake {{ fName }} up",
-  "openTheConversation": "Open the conversation with {{ name }}"
+  "openTheConversation": "Open the conversation with {{ name }}",
+  "removeRules": "You can remove the people you added. The owner can remove anyone. Nobody can remove the owner.",
+  "newMembersSeeNew": "Someone you add sees the messages from now on, not the earlier ones.",
+  "leaveTheGroup": "Leave the group",
+  "leaveQuestion": "Leave {{ name }}? Your messages in the group and your safebox items there are deleted for everybody. The others keep the group. You are back only if someone adds you again.",
+  "leaveOwnerNote": "You are the owner: the next person in the list becomes the owner.",
+  "leaveLastNote": "You are the last person: the group and everything in it is deleted.",
+  "leave": "Leave",
+  "alreadyInGroup": "Already in the group",
+  "notConfirmedYet": "Has not confirmed the friendship yet",
+  "groupIsFull": "The group has 7 people, the most there can be"
 }
