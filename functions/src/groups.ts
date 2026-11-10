@@ -4,6 +4,8 @@ import { Request, Response } from "express";
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, SAFEBOX_REMINDERS, MAX_FRIENDS, MAX_GROUP_DESCRIPTION, MAX_GROUP_MEMBERS, MAX_NAME_LENGTH } from "./constants";
 import { freeSeat, assignMissingSeats } from "./seats";
 import { circleCol, groupDoc, messageCol, userFields } from "./paths";
+import { nameOf, sendPush } from "./push";
+import { settingsOf } from "./models";
 import { parsePicture } from "./avatar";
 import { GroupMember, MediaRef } from "./models";
 import { touchSync } from "./sync";
@@ -32,7 +34,7 @@ export async function createGroup(req: Request, res: Response): Promise<void> {
   const made = await getFirestore().runTransaction(async (tx) => {
     const existing = await tx.get(col);
     if (existing.docs.filter((d) => d.data().asleep !== true).length >= MAX_FRIENDS) return false; // a group needs a seat like a friend
-    tx.set(groupDoc(ref.id), { name, createdBy: uid, members: { [uid]: circle.id }, createdAt: FieldValue.serverTimestamp() });
+    tx.set(groupDoc(ref.id), { name, createdBy: uid, members: { [uid]: circle.id }, memberOrder: [uid], createdAt: FieldValue.serverTimestamp() });
     tx.set(ref, {
       kind: "group",
       groupId: ref.id,
@@ -74,12 +76,13 @@ export async function leaveGroup(uid: string, entryRef: DocumentReference, group
     const members = { ...((data?.members ?? {}) as Record<string, string>) };
     delete members[uid];
     // nobody is "invited by" a person who has left, and the one who left was invited by nobody any more
+    const order = orderOf(data ?? {}).filter((m) => m !== uid);
     const invitedBy = Object.fromEntries(Object.entries((data?.invitedBy ?? {}) as Record<string, string>).filter(([member, by]) => member !== uid && by !== uid));
     last = Object.keys(members).length === 0;
     tx.delete(entryRef);
     mine.docs.forEach((d) => tx.delete(d.ref));
     if (last) tx.delete(group);
-    else tx.update(group, { members: { ...members }, invitedBy });
+    else tx.update(group, { members: { ...members }, invitedBy, memberOrder: order, ...(data?.createdBy === uid ? { createdBy: order[0] } : {}) }); // the owner leaves: the next member of the list is the owner
   });
   if (!last) {
     await syncMemberCount(groupId);
@@ -170,14 +173,14 @@ export async function listGroupMembers(req: Request, res: Response, groupId: str
   }
   const mine = await (res.locals.circleRef as DocumentReference).collection(FRIENDS_SUBCOLLECTION).where("status", "==", "confirmed").get();
   const out: GroupMember[] = [];
-  for (const memberUid of Object.keys(members)) {
+  for (const memberUid of orderOf(data)) {
     const friend = mine.docs.find((d) => d.data().linkedUid === memberUid && d.data().kind !== "group");
     const account = await userFields(memberUid, "displayName");
     out.push({
       uid: memberUid,
       name: memberUid === uid ? ((account?.displayName as string | undefined) ?? "You") : ((friend?.data().name as string | undefined) ?? (account?.displayName as string | undefined) ?? "Someone"),
       you: memberUid === uid,
-      creator: data.createdBy === memberUid,
+      creator: data.createdBy === memberUid, // the owner
       friendId: friend?.id ?? null,
       invitedBy: ((data.invitedBy ?? {}) as Record<string, string>)[memberUid] ?? null,
       canRemove: memberUid !== uid && canRemove(data, uid, memberUid),
@@ -187,8 +190,8 @@ export async function listGroupMembers(req: Request, res: Response, groupId: str
 }
 
 /**
- * Add one of MY confirmed friends to the group: `{ friendId }` (my entry for them). The group takes a seat in their list like a friend would (409 when their list
- * is full). From now on messages and safebox items are locked for them too; what was said before is not theirs.
+ * Add one of MY confirmed friends to the group: `{ friendId }` (my entry for them). The group takes a seat in their list like a friend would; with no free seat it goes
+ * on their sleep list when they use one (`{ asleep: true }`), otherwise 409 and nobody is added. They get a push. From now on messages and safebox items are locked for them too; what was said before is not theirs.
  */
 export async function addGroupMember(req: Request, res: Response, groupId: string): Promise<void> {
   const uid = (res.locals.token as DecodedIdToken).uid;
@@ -216,10 +219,13 @@ export async function addGroupMember(req: Request, res: Response, groupId: strin
   const circleId = (mine.peerCircleId as string | undefined) ?? DEFAULT_CIRCLE_ID; // the circle this friend keeps our friendship in
   const col = circleCol(newUid).doc(circleId).collection(FRIENDS_SUBCOLLECTION);
   await assignMissingSeats(col);
+  const sleepListOn = settingsOf((await circleCol(newUid).doc(circleId).get()).data()?.settings).sleepList !== false; // on unless they switched it off
   const mineEntry = (await (res.locals.circleRef as DocumentReference).collection(FRIENDS_SUBCOLLECTION).doc(groupId).get()).data() ?? {};
-  const added = await getFirestore().runTransaction(async (tx) => {
+  const added = await getFirestore().runTransaction(async (tx): Promise<"ok" | "asleep" | "full"> => {
     const existing = await tx.get(col);
-    if (existing.docs.filter((d) => d.data().asleep !== true).length >= MAX_FRIENDS) return false;
+    const current = (await tx.get(group)).data() ?? data; // read again here: the order of the list is written back whole
+    const full = existing.docs.filter((d) => d.data().asleep !== true).length >= MAX_FRIENDS;
+    if (full && !sleepListOn) return "full";
     tx.set(col.doc(groupId), {
       kind: "group",
       groupId,
@@ -234,23 +240,25 @@ export async function addGroupMember(req: Request, res: Response, groupId: strin
       connectionId: groupId,
       peerCircleId: circleId,
       status: "confirmed",
-      seat: freeSeat(existing.docs),
+      ...(full ? { asleep: true, seat: null } : { seat: freeSeat(existing.docs) }), // no free seat: it is on their sleep list, like a friend whose list is full
       linkedUid: null,
       signaledUids: [],
       invite: null,
       members: Object.keys(members).length + 1,
       createdAt: FieldValue.serverTimestamp(),
     });
-    tx.update(group, { [`members.${newUid}`]: circleId, [`invitedBy.${newUid}`]: uid });
-    return true;
+    tx.update(group, { [`members.${newUid}`]: circleId, [`invitedBy.${newUid}`]: uid, memberOrder: [...orderOf(current), newUid] });
+    return full ? "asleep" : "ok";
   });
-  if (!added) {
-    res.status(409).json({ error: `${mine.name ?? "Their"} list is full, so the group has no seat there` });
+  if (added === "full") {
+    res.status(409).json({ error: `${mine.name ?? "This friend"} has no free seat and does not use a sleep list, so the group cannot be added to their list. They can free a seat first.` });
     return;
   }
   await syncMemberCount(groupId);
   await touchSync(newUid, "requestsAt");
-  res.status(204).end();
+  const adder = await nameOf(uid, res.locals.token as DecodedIdToken, (res.locals.circleRef as DocumentReference).id);
+  await sendPush(newUid, { circleId, id: `group-${groupId}-added-${newUid}`, title: `${adder} added you to ${data.name}`, body: added === "asleep" ? "It is on your sleep list: you have no free seat." : "", url: `/friends/${groupId}`, kind: "request" });
+  res.json({ asleep: added === "asleep" });
 }
 
 /** Remove a member: `memberUid` is me (leave), or somebody else: the maker of the group can remove anybody, and a person can remove the members they invited (see `canRemove`). Their copies of the messages go; the others keep everything. */
@@ -263,12 +271,16 @@ export async function removeGroupMember(req: Request, res: Response, groupId: st
     return;
   }
   if (!canRemove(data, uid, memberUid)) {
-    res.status(403).json({ error: "Only the person who made the group, or the person who added this member, can remove them" });
+    res.status(403).json({ error: "Only the owner of the group, or the person who added this member, can remove them. Nobody removes the owner: the owner leaves." });
     return;
   }
   const ref = circleCol(memberUid).doc(members[memberUid]).collection(FRIENDS_SUBCOLLECTION).doc(groupId);
   await leaveGroup(memberUid, ref, groupId);
   await touchSync(memberUid, "requestsAt");
+  if (memberUid !== uid) {
+    const by = await nameOf(uid, res.locals.token as DecodedIdToken, (res.locals.circleRef as DocumentReference).id);
+    await sendPush(memberUid, { circleId: members[memberUid], id: `group-${groupId}-removed-${memberUid}`, title: `${by} removed you from ${data.name}`, body: "The messages and files of the group are no longer on your side.", url: "/friends", kind: "removed" });
+  }
   res.status(204).end();
 }
 
@@ -282,6 +294,12 @@ async function dropReminders(groupId: string, uid: string): Promise<void> {
   }
 }
 
-/** May `me` remove `memberUid`? Anybody may leave; the maker removes anybody; whoever added a member removes that member. */
+/** The members in the order they joined (the owner first); a group made before the order was kept lists them by id. */
+const orderOf = (group: FirebaseFirestore.DocumentData): string[] => {
+  const members = Object.keys((group.members ?? {}) as Record<string, string>);
+  return [...new Set([...((group.memberOrder ?? []) as string[]), ...members])].filter((m) => members.includes(m));
+};
+
+/** May `me` remove `memberUid`? Anybody may leave; the owner removes anybody; whoever added a member removes that member. Nobody removes the owner: the owner leaves, and the next member of the list takes over. */
 const canRemove = (group: FirebaseFirestore.DocumentData, me: string, memberUid: string): boolean =>
-  memberUid === me || group.createdBy === me || (group.invitedBy as Record<string, string> | undefined)?.[memberUid] === me;
+  memberUid === me || (memberUid !== group.createdBy && (group.createdBy === me || (group.invitedBy as Record<string, string> | undefined)?.[memberUid] === me));

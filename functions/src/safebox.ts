@@ -4,8 +4,8 @@ import { DocumentReference, FieldValue, Timestamp, getFirestore } from "firebase
 import { asyncHandler } from "./auth";
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAX_UPLOAD_BYTES, SAFEBOX_MAX_BYTES, SAFEBOX_MAX_ITEMS, SAFEBOX_REMINDERS, boxOwner } from "./constants";
 import { Peer, connectionOf, peerEntryRef, peerSleeps } from "./conversation";
-import { ALBUM_PICTURES_MAX, ATTACHMENTS_MAX, CASE_DOCUMENTS_MAX, BoxKeys, ENC_HEADER_MAX, MediaRef, SAFEBOX_OBJECT_TYPES, Safebox, SafeboxItem } from "./models";
-import { ParsedReminder, lockedBytes, objectBytes, parseEncryptedUpload, parseNewObject, parseObjectChange, wrapsCover, wrapsFor } from "./box-encryption";
+import { ALBUM_PICTURES_MAX, ATTACHMENTS_MAX, CASE_DOCUMENTS_MAX, BoxKeys, ENC_HEADER_MAX, GroupShareItem, MediaRef, SAFEBOX_OBJECT_TYPES, Safebox, SafeboxItem } from "./models";
+import { MAX_WRAPS, ParsedReminder, lockedBytes, objectBytes, parseEncryptedUpload, parseNewObject, parseObjectChange, wrapValid, wrapsCover, wrapsFor } from "./box-encryption";
 import { publishedKeysOf } from "./keys";
 import { circleCol, messageCol, safeboxItems, userFields } from "./paths";
 import { nameOf, sendPush } from "./push";
@@ -156,6 +156,82 @@ safeboxRouter.get(
 );
 
 type Connection = NonNullable<Awaited<ReturnType<typeof connectionOf>>>;
+
+const hasCopy = (wraps: { uid: string; keyId: string }[], uid: string, keyId: string): boolean => wraps.some((w) => w.uid === uid && w.keyId === keyId);
+const SHARE_MAX_ITEMS = 100;
+
+/**
+ * A group's box, for the members' devices: which items still lack a copy of their key for a key in use of a member (somebody joined, somebody made a new key), with MY copies of
+ * each (my device can open those) and the keys to give one. A member's device does this by itself when the group is opened (design: docs/design/groups.md, "History in the safebox").
+ */
+safeboxRouter.get(
+  "/share-todo",
+  asyncHandler(async (req, res) => {
+    const connection = await connectionOf(req, res);
+    if (!connection) return;
+    if (!connection.group) {
+      res.status(404).json({ error: "Only a group shares its box this way" });
+      return;
+    }
+    const me = uidOf(res);
+    const people = await peopleOf(connection, me);
+    const items: GroupShareItem[] = [];
+    for (const d of (await safeboxItems(connection.id).select("enc").get()).docs) {
+      const wraps = (d.data().enc?.wraps ?? []) as { uid: string; keyId: string; wrappedKey: string }[];
+      if (!wraps.length) continue; // an item made before locking: nothing to copy
+      const missing = people.flatMap((p) => p.keys.filter((k) => !hasCopy(wraps, p.uid, k.id)).map((k) => ({ uid: p.uid, keyId: k.id })));
+      const mine = wraps.filter((w) => w.uid === me);
+      if (missing.length && mine.length) items.push({ id: d.id, wraps: mine, missing });
+      if (items.length >= SHARE_MAX_ITEMS) break;
+    }
+    res.json({ items });
+  }),
+);
+
+/**
+ * The new copies: `{ items: [{ id, wraps: [wrap] }] }`. A copy is accepted only for a member of the group and one of that member's keys in use; it is added to the item when
+ * the item has no copy for that key yet. Nothing is ever taken away here. Answers how many items got something.
+ */
+safeboxRouter.post(
+  "/share",
+  asyncHandler(async (req, res) => {
+    const connection = await connectionOf(req, res);
+    if (!connection) return;
+    if (!connection.group) {
+      res.status(404).json({ error: "Only a group shares its box this way" });
+      return;
+    }
+    const people = await peopleOf(connection, uidOf(res));
+    const given: unknown[] = Array.isArray(req.body?.items) ? req.body.items : [];
+    if (!given.length || given.length > SHARE_MAX_ITEMS) {
+      res.status(400).json({ error: `Send between 1 and ${SHARE_MAX_ITEMS} items` });
+      return;
+    }
+    const items = given as { id?: unknown; wraps?: unknown }[];
+    for (const i of items) {
+      const wraps = Array.isArray(i?.wraps) ? (i.wraps as unknown[]) : [];
+      const fits = wraps.every((w) => wrapValid(w) && people.some((p) => p.uid === w.uid && p.keys.some((k) => k.id === w.keyId)));
+      if (typeof i?.id !== "string" || !isObjectId(i.id) || !wraps.length || wraps.length > MAX_WRAPS || !fits) {
+        res.status(400).json({ error: "That is not a copy of a key for a key of a member of the group" });
+        return;
+      }
+    }
+    const refs = items.map((i) => safeboxItems(connection.id).doc(i.id as string));
+    const snaps = await getFirestore().getAll(...refs, { fieldMask: ["enc"] });
+    const batch = getFirestore().batch();
+    let added = 0;
+    snaps.forEach((snap, n) => {
+      const wraps = snap.data()?.enc?.wraps as { uid: string; keyId: string; wrappedKey: string }[] | undefined;
+      if (!Array.isArray(wraps)) return;
+      const fresh = (items[n].wraps as { uid: string; keyId: string; wrappedKey: string }[]).filter((w) => !hasCopy(wraps, w.uid, w.keyId)).map((w) => ({ uid: w.uid, keyId: w.keyId, wrappedKey: w.wrappedKey }));
+      if (!fresh.length) return;
+      batch.update(snap.ref, { "enc.wraps": [...wraps, ...fresh] });
+      added++;
+    });
+    if (added) await batch.commit();
+    res.json({ added });
+  }),
+);
 
 /** Which circle each of the two friends has this friendship in, written on every file: a file never belongs to more than the friendship of its two circles, and cannot show up in another one. */
 const circlesOf = (connection: Connection, me: string): Record<string, string> => ({ [me]: connection.circleId, ...Object.fromEntries(connection.peers.map((peer) => [peer.uid, peer.circleId])) });

@@ -35,15 +35,16 @@ Creates `friend-group/{id}` and my entry in one transaction. Refused with 409 wh
 
 ### Adding a member
 - No confirmation from the person: they are added at once.
-- The group gets an entry in **their** list, in a free seat, with the current name, description and picture. If all their seats are taken: 409 and nobody is added (**to be handled later**, see below).
+- The group gets an entry in **their** list, in a free seat, with the current name, description and picture. With all their seats taken it goes on their **sleep list** when they use one (the answer says `{ asleep: true }` and the profile says so); when they do not use a sleep list: 409 "has no free seat and does not use a sleep list" and nobody is added.
+- The person gets a push ("Anna added you to Club"); a person who is removed by somebody else gets one too. A message to a group is pushed to every member who has not muted it or put the sender on a sleep list, titled "Anna · Club".
 - Their circle is the one their friendship with me lives in (`peerCircleId` of my entry).
 - Every member's `members` count is updated, and the new member's app is told to reload (`touchSync(..., "requestsAt")`).
 - At most `MAX_GROUP_MEMBERS` (7, like the seven of a circle). Already in the group: 409.
-- A new member reads what is said **after** they joined, not the history (each message exists as one copy per member, made at send time).
+- A new member reads what is said **after** they joined, not the history of the messages (each message exists as one copy per member, made at send time). What is in the **safebox** is shared with them (see "History in the safebox").
 
 ### Removing a member
 - Their entry and their copies of the messages go and they get no more safebox reminders; the others keep the group, the messages (also the ones the removed person wrote) and the safebox.
-- Who may remove whom: the maker anybody (not themselves: they leave), a member the people they added, anybody themselves. The group remembers who added whom (`invitedBy` on the group document, shown in the member list as "added by"); when the person who added somebody leaves, that member has no inviter any more. Nobody removes the maker. Planned: any member can *request* a removal that the maker confirms (to be designed).
+- Who may remove whom: the maker anybody (not themselves: they leave), a member the people they added, anybody themselves. The group remembers who added whom (`invitedBy` on the group document, shown in the member list as "added by"); when the person who added somebody leaves, that member has no inviter any more. Nobody removes the owner: the owner leaves, and the next member of the list (the order they joined, `memberOrder` on the group document) becomes the owner (`createdBy`). Planned: any member can *request* a removal that the maker confirms (to be designed).
 - **Their items in the group's safebox go too**: every safebox item has an owner (the person who saved it, `addedBy`; an edit by someone else does not change it). When a member is removed or leaves, everything they saved is deleted with its files, previews, attachments and reminders (`deleteItemsOf` in `safebox.ts`). What others saved stays, and so does what others attached to their own items. Links between items (relations) are not looked at: they are locked, so the server cannot tell which items they join.
 - The **last** member to go deletes the group, its safebox and the files of the messages (`leaveGroup`).
 - Deleting my account does the same for every group I am in (`erase.ts`).
@@ -59,6 +60,9 @@ Same model as a friendship, over all members (see `docs/design/safebox-encryptio
 - A new member's key is not used for what was written before they joined (they read from the day they joined); a removed member is no longer locked for.
 - Pinned by `functions/test/group-keys.test.ts`.
 
+## History in the safebox
+Items in the box are locked for the keys that were there when they were saved. When somebody joins (or a member makes a new key) their keys have no copy. The first member's device that has the group open and a key **does it by itself**: `GET .../safebox/share-todo` lists the items that lack a copy for a key in use of a member (with that device's own copies), the device opens each item's key and locks it again for those keys (`SafeboxService.shareWithMembers`), `POST .../safebox/share` files the copies (accepted only for a member and one of their keys in use; nothing is ever taken away). One member is enough; it is quiet and safe to repeat. This is also the "trust" of a new member's key: a member who opens the group vouches for it by locking for it. A member with no key yet gets their copies as soon as they have one and somebody opens the group. Messages are not shared this way: no history.
+
 ## What a group does not have
 A group is not a person: no presence, no mood, no country, no phone/email, no "not verified" warning, no key recovery by a friend (the recovery routes answer 403 for a group), no circle profile. Its picture is the group's own; without one the app shows `icons/friends/group.svg`, never a seat icon.
 
@@ -68,7 +72,7 @@ A group is not a person: no presence, no mood, no country, no phone/email, no "n
 - Everything else (conversation, safebox, sleep list, delete) is the page of a friend.
 
 ## Not done yet
-1. **Full seats when adding**: the person is refused (409). Options: a waiting list, a pending entry they accept, or the sleep list.
-2. **Pinning of members' keys**: a group has no "did you change phone?" check yet (`friendFingerprints` is empty for a group), so a member's key is trusted when first seen, and members you are not friends with are not verified by you.
-3. **Open questions**: who may add and remove (now: anyone adds, the maker and the one who added a member remove), the size limit (now 20), whether joining needs consent or a key, history for new members (now: none).
-4. Push and sleep per member, the translations of the new texts (English only), and a check that a group a member is added to opens correctly on their device.
+1. **Verifying a member's key**: a group has no "did you change phone?" check (`friendFingerprints` is empty for a group), so a member's key is trusted when it is first seen.
+2. **Open questions**: "ask to remove" that the owner confirms (only discussed), the size limit (now 7).
+3. **Not checked in the app**: the sleeping list, the notification cards and the friend page header for a group; the app does not clear its local copy of a group a member was removed from.
+4. The translations of the new texts (English only).

@@ -80,8 +80,19 @@ export class FriendProfile {
     return this.run(() => this.friendsService.updateGroup(f.id, { picture: null }));
   }
 
+  /** What happened when somebody was added that the person should know ("on their sleep list"). */
+  protected readonly note = signal<string | null>(null);
+
   protected async addMember(f: Friend, friendId: string): Promise<void> {
-    await this.run(() => this.friendsService.addGroupMember(f.id, friendId), () => this.loadMembers(f.id));
+    const name = this.canAdd().find((c) => c.id === friendId)?.name ?? '';
+    this.note.set(null);
+    await this.run(
+      async () => {
+        const added = await this.friendsService.addGroupMember(f.id, friendId);
+        if (added.asleep) this.note.set(tr('friendProfile.addedToSleepList', '{{ name }} has no free seat, so the group is on their sleep list.', { name }));
+      },
+      () => this.loadMembers(f.id),
+    );
     this.adding.set(false);
   }
 

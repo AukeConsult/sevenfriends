@@ -113,9 +113,10 @@ export class FriendsService {
   }
 
   /** Add one of my confirmed friends (my entry `friendId`) to the group. */
-  async addGroupMember(id: string, friendId: string): Promise<void> {
-    await this.api.request(`${this.friendsPath()}/${id}/group/members`, { method: 'POST', body: JSON.stringify({ friendId }) });
+  async addGroupMember(id: string, friendId: string): Promise<{ asleep: boolean }> {
+    const added = await this.api.request<{ asleep: boolean }>(`${this.friendsPath()}/${id}/group/members`, { method: 'POST', body: JSON.stringify({ friendId }) });
     await this.load();
+    return added; // asleep: they had no free seat, so the group is on their sleep list
   }
 
   /** Remove a member (the maker removes others; anybody can remove themselves). */

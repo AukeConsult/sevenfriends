@@ -156,11 +156,29 @@ export class FriendContext {
   private loadBoxKeys(): void {
     void this.safebox
       .keys(this.friendId)
-      .then((keys) => this.boxKeys.set(keys))
+      .then((keys) => {
+        this.boxKeys.set(keys);
+        if (!keys.friendUid) void this.shareBox(keys); // a group (a friendship has the id of the friend)
+      })
       .catch((err) => {
         console.warn('The keys of the friend could not be loaded', err);
         if (err instanceof ApiError && (err.status === 403 || err.status === 404)) this.blocked.set(err.message); // not a confirmed friend (any page of this friend can be opened directly)
       });
+  }
+
+  private sharing = false;
+
+  /** A group: a new member (or a new key) gets a copy of the key of everything already in the box, from this device if it can (quiet; see `SafeboxService.shareWithMembers`). */
+  private async shareBox(keys: BoxKeys): Promise<void> {
+    if (this.sharing || !keys.others.some((o) => o.keys.length)) return;
+    this.sharing = true;
+    try {
+      await this.safebox.shareWithMembers(this.friendId, keys);
+    } catch (err) {
+      console.warn('The box of the group could not be shared with its members', err);
+    } finally {
+      this.sharing = false;
+    }
   }
 
   /** Locks files one by one (the safebox and the Locking and keys page both do this); stops at the first one that fails and returns what to say about it, null when all are done. */

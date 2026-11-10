@@ -1,10 +1,11 @@
 import { ActiveCircleService } from './active-circle.service';
 import { Injectable, inject } from '@angular/core';
-import { BoxKeys, NotePayload, ObjectPayload, ReminderRequest, SafeboxType, Safebox, SafeboxItem, fingerprintOf, keyIdOf, recipientsOf } from '../models';
+import { BoxKeys, GroupShareItem, NotePayload, ObjectPayload, ReminderRequest, SafeboxType, Safebox, SafeboxItem, fingerprintOf, keyIdOf, recipientsOf } from '../models';
 import { ApiService } from './api.service';
 import { AuthService } from './auth.service';
 import { dueRange, isObjectType, summaryOf, whenOf } from './safebox-objects';
-import { BoxHead, classify, needsBody, openFileKey, openHead, openMeta, openNote, openObject, openPart, resealNote, resealObject, sealFile, sealMeta, sealNote, sealObject } from './box-crypto';
+import { BoxHead, classify, needsBody, openFileKey, openHead, openMeta, openNote, openObject, openPart, resealNote, resealObject, rewrapKey, sealFile, sealMeta, sealNote, sealObject } from './box-crypto';
+import { myDeviceKey } from './my-key';
 import { getDeviceKey } from './device-key';
 import { FriendsService } from './friends.service';
 import { PreparedImage } from './image';
@@ -57,6 +58,39 @@ export class SafeboxService {
   /** The keys in use of me and of this friend: files can be locked only when both of us have one. */
   keys(friendId: string): Promise<BoxKeys> {
     return this.api.request<BoxKeys>(`${this.base(friendId)}/keys`);
+  }
+
+  /**
+   * A group: what is already in the box is locked for the keys that were there when it was saved. When somebody joined (or made a new key) their keys have no copy yet:
+   * this device opens each item's key with its own key and locks it again for every key that lacks one, and the server files the copies. Quiet and safe to repeat (nothing
+   * is done when nothing is missing); one member's device is enough. Returns how many items got a copy (0 when this device has no key or nothing was missing).
+   */
+  async shareWithMembers(friendId: string, keys: BoxKeys): Promise<number> {
+    const mine = await myDeviceKey(this.auth.user()?.uid);
+    if (!mine) return 0;
+    const publicKeys = new Map(recipientsOf(mine.uid, keys).flatMap((p) => p.keys.map((k) => [`${p.uid}/${k.id}`, { uid: p.uid, key: k }] as const)));
+    let total = 0;
+    for (let round = 0; round < 20; round++) {
+      const todo = await this.api.request<{ items: GroupShareItem[] }>(`${this.base(friendId)}/share-todo`);
+      const items: { id: string; wraps: Awaited<ReturnType<typeof rewrapKey>>[] }[] = [];
+      for (const item of todo.items) {
+        const wraps: Awaited<ReturnType<typeof rewrapKey>>[] = [];
+        for (const m of item.missing) {
+          const target = publicKeys.get(`${m.uid}/${m.keyId}`);
+          if (!target) continue; // a key that came after the keys were read: the next round
+          try {
+            wraps.push(await rewrapKey({ wraps: item.wraps }, mine.keyId, mine.privateKey, target, 'file'));
+          } catch {
+            break; // this device cannot open this item (it was locked for another device)
+          }
+        }
+        if (wraps.length) items.push({ id: item.id, wraps });
+      }
+      if (!items.length) break;
+      total += (await this.api.request<{ added: number }>(`${this.base(friendId)}/share`, { method: 'POST', body: JSON.stringify({ items }) })).added;
+      if (todo.items.length < 100) break; // that was all of it
+    }
+    return total;
   }
 
   async load(friendId: string): Promise<Safebox> {

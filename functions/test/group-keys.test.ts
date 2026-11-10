@@ -30,7 +30,7 @@ async function groupOfThree() {
   const ids: string[] = [];
   for (const n of [1, 2]) {
     const friendId = await connect(pool[0], pool[n]);
-    await pool[0].raw("post", `${base(made)}/group/members`, { friendId }).expect(204);
+    await pool[0].raw("post", `${base(made)}/group/members`, { friendId }).expect(200);
     ids.push(friendId);
   }
   const keyIds = [];
@@ -85,7 +85,7 @@ describe("the keys of a group", () => {
   it("a member who joins later must be locked for too, and one who left no longer is", async () => {
     const { id, wraps } = await groupOfThree();
     const friendId = await connect(pool[0], pool[3]);
-    await pool[0].raw("post", `${base(id)}/group/members`, { friendId }).expect(204);
+    await pool[0].raw("post", `${base(id)}/group/members`, { friendId }).expect(200);
     const fourth = await publish(pool[3], keys[0]); // a key for the new member (the same bytes as another person's key is fine: ids are per person)
     await pool[0].raw("post", `${base(id)}/messages`, locked(wraps)).expect(409); // the old copies miss the new member
     const all = [...wraps, wrap(pool[3].p.uid, fourth)];
@@ -128,6 +128,42 @@ describe("the items of a member in the safebox of a group", () => {
     const left = (await items(pool[0], id)).map((i) => i.id);
     expect(left).not.toContain(parent);
     expect(left).not.toContain(child.id); // an attachment of that item
+  });
+});
+
+describe("sharing the box of a group with a new member", () => {
+  const note = (wraps: ReturnType<typeof wrap>[]) => {
+    const iv = b64(12);
+    return { type: "note", enc: { v: 1, iv, metaIv: iv, meta: b64(200), thumbIv: null, wraps } };
+  };
+  const share = (user: User, id: string, items: unknown) => user.raw("post", `${base(id)}/safebox/share`, { items });
+  const wrapsOf = async (user: User, id: string) => (await user.raw("get", `${base(id)}/safebox`).expect(200)).body.items.flatMap((i: { enc: { wraps: unknown[] } }) => i.enc.wraps) as { uid: string; keyId: string }[];
+
+  it("lists what lacks a copy for a member's key, with my own copies; accepts new copies only for members' keys; the new member then sees theirs", async () => {
+    const { id, keyIds, wraps } = await groupOfThree();
+    const item = (await pool[0].raw("post", `${base(id)}/safebox/items`, note(wraps)).expect(201)).body.id as string;
+    expect((await pool[1].raw("get", `${base(id)}/safebox/share-todo`).expect(200)).body.items).toEqual([]); // everybody has a copy
+
+    const friendId = await connect(pool[0], pool[3]);
+    await pool[0].raw("post", `${base(id)}/group/members`, { friendId }).expect(200);
+    const fourth = await publish(pool[3], keys[0]);
+    const todo = (await pool[1].raw("get", `${base(id)}/safebox/share-todo`).expect(200)).body.items;
+    expect(todo).toEqual([{ id: item, wraps: [expect.objectContaining({ uid: pool[1].p.uid, keyId: keyIds[1] })], missing: [{ uid: pool[3].p.uid, keyId: fourth }] }]);
+
+    expect((await share(pool[1], id, [{ id: item, wraps: [wrap(pool[3].p.uid, "0123456789abcdef0123456789abcdef")] }])).status).toBe(400); // not a key of theirs
+    expect((await share(pool[1], id, [{ id: item, wraps: [wrap(pool[5].p.uid, fourth)] }])).status).toBe(400); // not a member
+    expect((await share(pool[1], id, [])).status).toBe(400);
+    expect((await share(pool[1], id, [{ id: item, wraps: [wrap(pool[3].p.uid, fourth)] }]).expect(200)).body).toEqual({ added: 1 });
+    expect((await share(pool[2], id, [{ id: item, wraps: [wrap(pool[3].p.uid, fourth)] }]).expect(200)).body).toEqual({ added: 0 }); // already there
+    expect(await wrapsOf(pool[3], id)).toEqual([expect.objectContaining({ uid: pool[3].p.uid, keyId: fourth })]); // the new member sees only their own copy
+    expect((await pool[2].raw("get", `${base(id)}/safebox/share-todo`).expect(200)).body.items).toEqual([]);
+  });
+
+  it("is only for a group, and not for somebody outside it", async () => {
+    const friendship = await connect(pool[0], pool[4]);
+    expect((await pool[0].raw("get", `${base(friendship)}/safebox/share-todo`)).status).toBe(404);
+    const { id } = await groupOfThree();
+    expect((await pool[5].raw("get", `${base(id)}/safebox/share-todo`)).status).toBe(404);
   });
 });
 

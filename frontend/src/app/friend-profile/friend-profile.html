@@ -42,11 +42,12 @@
         <ul class="sf-list">
           @for (m of members(); track m.uid) {
             <li class="sf-list-item">
-              <span class="sf-list-text">{{ m.you ? (t('friendProfile.you') || 'You') + ' · ' + m.name : m.name }}@if (m.creator) { <span class="sf-hint"> · {{ t('friendProfile.madeTheGroup') || 'made the group' }}</span> } @else if (inviterName(m); as by) { <span class="sf-hint"> · {{ t('friendProfile.addedBy', { name: by }) || 'added by ' + by }}</span> }</span>
+              <span class="sf-list-text">{{ m.you ? (t('friendProfile.you') || 'You') + ' · ' + m.name : m.name }}@if (m.creator) { <span class="sf-hint"> · {{ t('friendProfile.owner') || 'owner' }}</span> } @else if (inviterName(m); as by) { <span class="sf-hint"> · {{ t('friendProfile.addedBy', { name: by }) || 'added by ' + by }}</span> }</span>
               @if (m.canRemove) { <button type="button" class="btn btn-outline-danger btn-sm" (click)="removeMember(f, m)" [disabled]="busy()">{{ t('friendProfile.remove') || 'Remove' }}</button> }
             </li>
           }
         </ul>
+        @if (note(); as n) { <p class="sf-hint m-0" role="status">{{ n }}</p> }
         @if (adding()) {
           @for (c of canAdd(); track c.id) {
             <button type="button" class="btn btn-light btn-sm align-self-start" (click)="addMember(f, c.id)" [disabled]="busy()">{{ c.name }}</button>

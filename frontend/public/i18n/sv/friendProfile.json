@@ -29,5 +29,7 @@
   "group": "Group",
   "peopleCount": "people",
   "onlyYou": "only you",
-  "addedBy": "added by {{ name }}"
+  "addedBy": "added by {{ name }}",
+  "owner": "owner",
+  "addedToSleepList": "{{ name }} has no free seat, so the group is on their sleep list."
 }

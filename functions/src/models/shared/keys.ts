@@ -164,3 +164,10 @@ export interface OwnRecoveryRequest {
   added: number;
   createdAt: string | null;
 }
+
+/** A group's safebox item that lacks a copy of its key for a key in use of a member (a member who joined, a new device): `wraps` are MY copies (I can open them), `missing` the keys still to be given one. */
+export interface GroupShareItem {
+  id: string;
+  wraps: { uid: string; keyId: string; wrappedKey: string }[];
+  missing: { uid: string; keyId: string }[];
+}

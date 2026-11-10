@@ -134,7 +134,7 @@ describe("erasing the account of a member of a group with others", () => {
   it("the group goes on for the others: messages they can read, their items, the count; the erased person's own are gone", async () => {
     const friendId = await connect(u(0), u(1));
     const made = (await makeGroup(u(0), "Stays").expect(201)).body;
-    await u(0).raw("post", `/circles/default/friends/${made.id}/group/members`, { friendId }).expect(204);
+    await u(0).raw("post", `/circles/default/friends/${made.id}/group/members`, { friendId }).expect(200);
     await u(1).send(made.id, "from the one who stays");
     await u(0).raw("delete", "/users/me", { confirm: "DELETE" }).expect(204);
     expect(await groupDocOf(made.id)).toMatchObject({ members: { [u(1).p.uid]: "default" } });
@@ -148,7 +148,7 @@ describe("the profile of a group and its members", () => {
   it("any member can change the name and the description; every member's entry follows", async () => {
     const friendId = await connect(u(0), u(1));
     const made = (await makeGroup(u(0), "Old name").expect(201)).body;
-    await u(0).raw("post", `/circles/default/friends/${made.id}/group/members`, { friendId }).expect(204);
+    await u(0).raw("post", `/circles/default/friends/${made.id}/group/members`, { friendId }).expect(200);
     await u(1).raw("patch", `/circles/default/friends/${made.id}/group`, { name: "New name", description: "Books and tea" }).expect(204);
     for (const user of [u(0), u(1)]) expect(await entryOf(user, made.id)).toMatchObject({ name: "New name", description: "Books and tea" });
     expect((await u(0).raw("patch", `/circles/default/friends/${made.id}/group`, { name: "" })).status).toBe(400);
@@ -159,7 +159,7 @@ describe("the profile of a group and its members", () => {
   it("adds one of my friends: they get the group in a seat, everybody's count follows", async () => {
     const friendId = await connect(u(0), u(1));
     const made = (await makeGroup(u(0), "Club").expect(201)).body;
-    await u(0).raw("post", `/circles/default/friends/${made.id}/group/members`, { friendId }).expect(204);
+    await u(0).raw("post", `/circles/default/friends/${made.id}/group/members`, { friendId }).expect(200);
     expect(await entryOf(u(1), made.id)).toMatchObject({ group: true, name: "Club", members: 2, status: "confirmed", asleep: false });
     expect((await entryOf(u(1), made.id)).seat).not.toBeNull();
     expect((await entryOf(u(0), made.id)).members).toBe(2);
@@ -174,7 +174,7 @@ describe("the profile of a group and its members", () => {
     const friendId = await connect(u(0), u(1));
     const made = (await makeGroup(u(0), "Club").expect(201)).body;
     await u(0).send(made.id, "before");
-    await u(0).raw("post", `/circles/default/friends/${made.id}/group/members`, { friendId }).expect(204);
+    await u(0).raw("post", `/circles/default/friends/${made.id}/group/members`, { friendId }).expect(200);
     expect((await u(1).raw("get", "/circles/default/friends").expect(200)).body.friends.map((f: { id: string }) => f.id)).toContain(made.id);
     await u(0).send(made.id, "after");
     expect((await u(1).send(made.id, "hi from the new one")).status).toBe(201);
@@ -191,16 +191,28 @@ describe("the profile of a group and its members", () => {
     const made = (await makeGroup(u(0), "Club").expect(201)).body;
     expect((await u(0).raw("post", `/circles/default/friends/${made.id}/group/members`, { friendId: "nobody" })).status).toBe(400);
     expect((await u(0).raw("post", `/circles/default/friends/${made.id}/group/members`, { friendId: made.id })).status).toBe(400); // a group is no friend
+  });
+
+  it("a person with all seven seats taken gets the group on their sleep list, or a clear message when they do not use one", async () => {
+    const friendId = await connect(u(0), u(1));
+    const made = (await makeGroup(u(0), "Club").expect(201)).body;
     await fillCircle(u(1), MAX_FRIENDS - 1); // u(1) has u(0) and six more: all seven taken
-    expect((await u(0).raw("post", `/circles/default/friends/${made.id}/group/members`, { friendId })).status).toBe(409);
+    await u(1).raw("put", "/circles/default/settings", { sleepList: false }).expect(200);
+    const refused = await u(0).raw("post", `/circles/default/friends/${made.id}/group/members`, { friendId });
+    expect(refused.status).toBe(409);
+    expect(refused.body.error).toMatch(/no free seat/);
     expect((await groupDocOf(made.id))?.members).toEqual({ [u(0).p.uid]: "default" });
+    await u(1).raw("put", "/circles/default/settings", { sleepList: true }).expect(200);
+    expect((await u(0).raw("post", `/circles/default/friends/${made.id}/group/members`, { friendId }).expect(200)).body).toEqual({ asleep: true });
+    expect(await entryOf(u(1), made.id)).toMatchObject({ group: true, asleep: true, seat: null, members: 2 });
+    expect((await groupDocOf(made.id))?.members).toHaveProperty(u(1).p.uid);
   });
 
   it("is at most seven people", async () => {
     const made = (await makeGroup(u(0), "Seven").expect(201)).body;
     for (let n = 1; n <= 6; n++) {
       const f = await connect(u(0), u(n));
-      await u(0).raw("post", `/circles/default/friends/${made.id}/group/members`, { friendId: f }).expect(204);
+      await u(0).raw("post", `/circles/default/friends/${made.id}/group/members`, { friendId: f }).expect(200);
     }
     const eighth = await connect(u(1), u(7)); // u(0) has no seat left for another friend, so a member brings the eighth
     expect((await u(1).raw("post", `/circles/default/friends/${made.id}/group/members`, { friendId: eighth })).status).toBe(409);
@@ -211,14 +223,14 @@ describe("the profile of a group and its members", () => {
     const f1 = await connect(u(0), u(1));
     const f2 = await connect(u(0), u(2));
     const made = (await makeGroup(u(0), "Club").expect(201)).body;
-    for (const f of [f1, f2]) await u(0).raw("post", `/circles/default/friends/${made.id}/group/members`, { friendId: f }).expect(204);
+    for (const f of [f1, f2]) await u(0).raw("post", `/circles/default/friends/${made.id}/group/members`, { friendId: f }).expect(200);
     const remove = (by: User, who: User) => by.raw("delete", `/circles/default/friends/${made.id}/group/members/${who.p.uid}`);
     expect((await remove(u(5), u(2))).status).toBe(404); // somebody outside the group
     expect((await remove(u(2), u(1))).status).toBe(403); // added by the maker, not by this member
     expect((await remove(u(1), u(0))).status).toBe(403); // nobody removes the maker
     // u(1) brings u(3): u(1) removes u(3), u(2) cannot, the maker can
     const f3 = await connect(u(1), u(3));
-    await u(1).raw("post", `/circles/default/friends/${made.id}/group/members`, { friendId: f3 }).expect(204);
+    await u(1).raw("post", `/circles/default/friends/${made.id}/group/members`, { friendId: f3 }).expect(200);
     const list = (await u(0).raw("get", `/circles/default/friends/${made.id}/group/members`).expect(200)).body;
     expect(list.find((m: { uid: string }) => m.uid === u(3).p.uid)).toMatchObject({ invitedBy: u(1).p.uid, canRemove: true }); // the maker may
     expect(list.find((m: { uid: string }) => m.uid === u(1).p.uid)).toMatchObject({ invitedBy: u(0).p.uid, canRemove: true });
@@ -238,11 +250,43 @@ describe("the profile of a group and its members", () => {
   it("when the person who added somebody leaves, that member has no inviter any more (the maker can still remove them)", async () => {
     const f1 = await connect(u(0), u(1));
     const made = (await makeGroup(u(0), "Club").expect(201)).body;
-    await u(0).raw("post", `/circles/default/friends/${made.id}/group/members`, { friendId: f1 }).expect(204);
+    await u(0).raw("post", `/circles/default/friends/${made.id}/group/members`, { friendId: f1 }).expect(200);
     const f3 = await connect(u(1), u(3));
-    await u(1).raw("post", `/circles/default/friends/${made.id}/group/members`, { friendId: f3 }).expect(204);
+    await u(1).raw("post", `/circles/default/friends/${made.id}/group/members`, { friendId: f3 }).expect(200);
     await u(1).raw("delete", `/circles/default/friends/${made.id}/group/members/${u(1).p.uid}`).expect(204);
     const list = (await u(0).raw("get", `/circles/default/friends/${made.id}/group/members`).expect(200)).body;
     expect(list.find((m: { uid: string }) => m.uid === u(3).p.uid)).toMatchObject({ invitedBy: null, canRemove: true });
   });
 });
+
+describe("the owner of a group", () => {
+  const members = async (user: User, id: string) => (await user.raw("get", `/circles/default/friends/${id}/group/members`).expect(200)).body as { uid: string; creator: boolean; canRemove: boolean }[];
+
+  it("is listed first, cannot be removed, and when the owner leaves the next member of the list is the owner", async () => {
+    const f1 = await connect(u(0), u(1));
+    const f2 = await connect(u(0), u(2));
+    const made = (await makeGroup(u(0), "Club").expect(201)).body;
+    for (const f of [f1, f2]) await u(0).raw("post", `/circles/default/friends/${made.id}/group/members`, { friendId: f }).expect(200);
+    const list = await members(u(1), made.id);
+    expect(list.map((m) => m.uid)).toEqual([u(0).p.uid, u(1).p.uid, u(2).p.uid]); // the order they joined
+    expect(list[0]).toMatchObject({ creator: true, canRemove: false }); // nobody removes the owner
+    expect((await u(1).raw("delete", `/circles/default/friends/${made.id}/group/members/${u(0).p.uid}`)).status).toBe(403);
+    await u(0).raw("delete", `/circles/default/friends/${made.id}/group/members/${u(0).p.uid}`).expect(204); // the owner leaves
+    expect((await groupDocOf(made.id))?.createdBy).toBe(u(1).p.uid);
+    const after = await members(u(2), made.id);
+    expect(after.map((m) => m.uid)).toEqual([u(1).p.uid, u(2).p.uid]);
+    expect(after[0]).toMatchObject({ creator: true });
+    expect((await members(u(1), made.id)).find((m) => m.uid === u(2).p.uid)?.canRemove).toBe(true); // the new owner removes anybody
+  });
+
+  it("an owner who is last takes the group with them, and somebody who is not the owner leaving does not change the owner", async () => {
+    const f1 = await connect(u(0), u(1));
+    const made = (await makeGroup(u(0), "Two").expect(201)).body;
+    await u(0).raw("post", `/circles/default/friends/${made.id}/group/members`, { friendId: f1 }).expect(200);
+    await u(1).raw("delete", `/circles/default/friends/${made.id}/group/members/${u(1).p.uid}`).expect(204);
+    expect((await groupDocOf(made.id))?.createdBy).toBe(u(0).p.uid);
+    await u(0).raw("delete", `/circles/default/friends/${made.id}`).expect(204);
+    expect(await groupDocOf(made.id)).toBeUndefined();
+  });
+});
+
