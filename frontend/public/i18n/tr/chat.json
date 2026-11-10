@@ -63,5 +63,6 @@
   "couldNotSaveThe": "Mesaj kaydedilemedi",
   "messageOne": "mesaj",
   "messageMany": "mesaj",
-  "alsoWhose": ", ayrıca {{ name }} adlı kişinin,"
+  "alsoWhose": ", ayrıca {{ name }} adlı kişinin,",
+  "openTheItem": "Open the item"
 }

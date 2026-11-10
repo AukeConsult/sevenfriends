@@ -1,4 +1,5 @@
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
+import { SafeboxTell } from '../safebox-tell/safebox-tell';
 import { tr } from '../../core/i18n';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Location } from '@angular/common';
@@ -36,7 +37,7 @@ const ENDINGS: Record<string, DocType> = {
  */
 @Component({
   selector: 'app-safebox-view',
-  imports: [RouterLink, MediaVideo, MediaAudio, SafeboxLinks, TranslocoDirective],
+  imports: [SafeboxTell, RouterLink, MediaVideo, MediaAudio, SafeboxLinks, TranslocoDirective],
   templateUrl: './safebox-view.html',
   providers: [provideTranslocoScope('safebox')],
 })
@@ -50,7 +51,7 @@ export class SafeboxView {
   protected readonly list = ['/friends', this.friendId, 'safebox'];
   private readonly friends = inject(FriendsService);
   protected readonly friendName = computed(() => this.friends.friends().find((f) => f.id === this.friendId)?.name ?? tr('safebox.view.yourFriend', 'Your friend'));
-  private readonly itemId = toSignal(this.route.paramMap.pipe(map((p) => p.get('itemId') ?? '')), { initialValue: this.route.snapshot.paramMap.get('itemId') ?? '' });
+  protected readonly itemId = toSignal(this.route.paramMap.pipe(map((p) => p.get('itemId') ?? '')), { initialValue: this.route.snapshot.paramMap.get('itemId') ?? '' });
 
   protected readonly box = signal<Safebox | null>(null);
   protected readonly loadError = signal<string | null>(null);

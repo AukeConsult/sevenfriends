@@ -63,5 +63,6 @@
   "couldNotSaveThe": "Viestiä ei voitu tallentaa",
   "messageOne": "viesti",
   "messageMany": "viestiä",
-  "alsoWhose": ", myös käyttäjän {{ name }},"
+  "alsoWhose": ", myös käyttäjän {{ name }},",
+  "openTheItem": "Open the item"
 }

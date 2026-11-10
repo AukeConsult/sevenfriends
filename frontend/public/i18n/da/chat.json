@@ -63,5 +63,6 @@
   "couldNotSaveThe": "Beskeden kunne ikke gemmes",
   "messageOne": "besked",
   "messageMany": "beskeder",
-  "alsoWhose": ", også {{ name }}s,"
+  "alsoWhose": ", også {{ name }}s,",
+  "openTheItem": "Open the item"
 }

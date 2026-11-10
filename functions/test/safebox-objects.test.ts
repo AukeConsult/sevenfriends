@@ -150,12 +150,12 @@ describe("a note in the safebox", () => {
     await pool[0].raw("delete", box(id, `/${a.id}`)).expect(404);
   });
 
-  it("is told to the friend like a file: an unread 'In the safebox' note for them", async () => {
+  it("makes no message for the friend when it is added", async () => {
     const { id, wraps } = await twoWithKeys();
     await pool[0].raw("post", box(id, "/items"), note(wraps)).expect(201);
     const feed = (await pool[1].raw("get", `/circles/default/friends/${id}/messages`).expect(200)).body;
     const messages = Array.isArray(feed) ? feed : feed.messages;
-    expect(messages.some((m: { inBox?: boolean }) => m.inBox)).toBe(true);
+    expect(messages.some((m: { inBox?: boolean }) => m.inBox)).toBe(false);
   });
 
   it("is locked again for a new key by the friend's recovery, like a file (the recovery reads only `enc`)", async () => {

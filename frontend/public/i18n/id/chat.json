@@ -63,5 +63,6 @@
   "couldNotSaveThe": "Tidak bisa menyimpan pesan",
   "messageOne": "pesan",
   "messageMany": "pesan",
-  "alsoWhose": ", termasuk milik {{ name }},"
+  "alsoWhose": ", termasuk milik {{ name }},",
+  "openTheItem": "Open the item"
 }

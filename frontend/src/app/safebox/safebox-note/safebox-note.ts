@@ -1,4 +1,5 @@
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
+import { SafeboxTell } from '../safebox-tell/safebox-tell';
 import { Location } from '@angular/common';
 import { Component, DestroyRef, computed, effect, inject, signal, viewChild } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -19,7 +20,7 @@ import { NOTE_TEXT_MAX, NOTE_TITLE_MAX } from '../../models';
  */
 @Component({
   selector: 'app-safebox-note',
-  imports: [RouterLink, SafeboxAttachments, SafeboxLinks, TranslocoDirective],
+  imports: [SafeboxTell, RouterLink, SafeboxAttachments, SafeboxLinks, TranslocoDirective],
   templateUrl: './safebox-note.html',
   providers: [provideTranslocoScope('safebox')],
 })
@@ -74,7 +75,7 @@ export class SafeboxNote {
       onCleanup(() => clearTimeout(timer));
     });
     inject(DestroyRef).onDestroy(() => {
-      if (this.canSave()) void this.save(); // leaving the page keeps what was typed
+      if (this.canSave()) void this.save(true); // leaving the page keeps what was typed
     });
   }
 
@@ -101,7 +102,7 @@ export class SafeboxNote {
     void this.open(true);
   }
 
-  protected async save(): Promise<void> {
+  protected async save(leaving = false): Promise<void> {
     if (!this.canSave()) return;
     this.busy.set(true);
     this.error.set(null);
@@ -111,6 +112,10 @@ export class SafeboxNote {
         const keys = this.ctx.boxKeys();
         if (!keys) throw new Error(tr('safebox.common.keysNotKnown', 'The keys are not known yet. Try again in a moment.'));
         const created = await this.service.addNote(this.friendId, title, this.text(), keys);
+        if (leaving) {
+          if (this.linkFrom) await this.service.addLink(this.friendId, this.linkFrom, created.id, keys).catch(() => undefined);
+          return; // the person is leaving: nothing to open
+        }
         await this.attachments()?.uploadPending(created.id);
         const from = this.linkFrom; // made from "Add a new item and link it"
         this.linkFrom = null;

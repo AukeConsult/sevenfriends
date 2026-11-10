@@ -14,15 +14,8 @@
       }
     </div>
   }
-  @if (cameraOpen()) {
-    @if (kind === 'audio') {
-      <!-- the voice recorder, on this page -->
-      <app-voice (recorded)="voiceRecorded($event)" (closed)="cameraOpen.set(false)" (failed)="cameraFailed($event)" />
-    } @else {
-      <!-- the camera of a computer, on this page -->
-      <app-camera [mode]="kind === 'image' ? 'photo' : 'video'" (photo)="photoTaken($event)" (recorded)="filmed($event)" (closed)="cameraOpen.set(false)" (failed)="cameraFailed($event)" />
-    }
-  } @else if (!file()) {
+  @if (!file()) {
+    @if (!cameraOpen()) {
     <p class="m-0">
       @if (kind === 'image') {
         {{ t('addMedia.takeAPhotoOr', { computer: phoneCamera ? (t('addMedia.phone') || 'phone') : (t('addMedia.computer') || 'computer') }) || 'Take a photo or choose a picture from your ' + (phoneCamera ? (t('addMedia.phone') || 'phone') : (t('addMedia.computer') || 'computer')) + '. It is made smaller before it is sent, so a big photo is fine.' }}
@@ -32,16 +25,11 @@
         {{ t('addMedia.recordYourVoiceOr', { computer: phoneCamera ? (t('addMedia.phone') || 'phone') : (t('addMedia.computer') || 'computer'), maxMinutes: maxMinutes }) || 'Record your voice or choose an audio file from your ' + (phoneCamera ? (t('addMedia.phone') || 'phone') : (t('addMedia.computer') || 'computer')) + '. A voice message can be up to ' + maxMinutes + ' minutes.' }}
       }
     </p>
-    @if (nativeCapture) {
-      <!-- the camera app of the phone (Android and iPhone) -->
-      <label class="btn btn-primary" [class.disabled]="working()">
-        {{ text.take }}
-        <input type="file" [accept]="kind + '/*'" capture="environment" hidden [disabled]="!!working()" (change)="onFile($event)" />
-      </label>
-    } @else if (pageCamera) {
-      <button type="button" class="btn btn-primary" [disabled]="!!working()" (click)="cameraOpen.set(true)">{{ text.take }}</button>
     }
-    <label class="btn" [class.btn-outline-primary]="nativeCapture || pageCamera" [class.btn-primary]="!nativeCapture && !pageCamera" [class.disabled]="working()">
+    <!-- the common button: the camera app of the phone, or the camera / recorder on this page -->
+    <app-capture-button [kind]="kind" buttonClass="btn btn-primary" [disabled]="!!working()" (captured)="captured($event)" (failed)="cameraFailed($event)" (openChange)="cameraOpen.set($event)" />
+    @if (!cameraOpen()) {
+    <label class="btn" [class.btn-outline-primary]="canCapture" [class.btn-primary]="!canCapture" [class.disabled]="working()">
       {{ text.choose }}
       <input type="file" [accept]="kind + '/*'" hidden [disabled]="!!working()" (change)="onFile($event)" />
     </label>
@@ -53,6 +41,7 @@
     }
     @if (!hosted()) {
       <button type="button" class="btn btn-light" (click)="cancel()">{{ t('addMedia.cancel') || 'Cancel' }}</button>
+    }
     }
   } @else {
     @if (preview(); as src) {

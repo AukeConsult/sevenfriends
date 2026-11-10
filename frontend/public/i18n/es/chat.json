@@ -63,5 +63,6 @@
   "couldNotSaveThe": "No se pudo guardar el mensaje",
   "messageOne": "mensaje",
   "messageMany": "mensajes",
-  "alsoWhose": ", y también los de {{ name }},"
+  "alsoWhose": ", y también los de {{ name }},",
+  "openTheItem": "Open the item"
 }

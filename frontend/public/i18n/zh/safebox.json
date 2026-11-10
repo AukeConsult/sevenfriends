@@ -153,7 +153,8 @@
     "previewOfTheLink": "链接预览",
     "checkingThePage": "正在查看…",
     "showPreview": "显示预览",
-    "noPreviewTheSite": "无预览：该网站不允许"
+    "noPreviewTheSite": "无预览：该网站不允许",
+    "noReminderHint": "No reminder, and this item is not counted as due."
   },
   "note": {
     "openingTheNote": "正在打开笔记…",
@@ -232,9 +233,13 @@
     "linkToAnItem": "关联到另一个项目",
     "couldNotTakeTheLink": "无法取消关联"
   },
-  "capture": {
-    "image": "图片",
-    "video": "视频",
-    "voice": "语音"
+  "tell": {
+    "tell": "Tell {{ friendName }} about this",
+    "tellAgain": "Tell {{ friendName }} again",
+    "sending": "Sending…",
+    "told": "{{ friendName }} has got a message.",
+    "nothingIsSent": "Nothing is sent when you add or change something.",
+    "couldNotSend": "The message could not be sent. Try again.",
+    "message": "📦 In the safebox: {{ item }}"
   }
 }

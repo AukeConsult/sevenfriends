@@ -1,0 +1,14 @@
+<ng-container *transloco="let t">
+  <!-- one small button in the header of the item; nothing else takes room (the result is in the button) -->
+  <div class="d-flex justify-content-center">
+    <button type="button" class="btn btn-light btn-sm d-inline-flex align-items-center gap-2" (click)="tell()" [disabled]="state() === 'sending'" [attr.title]="t('safebox.tell.nothingIsSent') || 'Nothing is sent when you add or change something.'">
+      @if (state() === 'sent') {
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5" /></svg>
+      } @else {
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M8 7h9v9" /></svg>
+      }
+      <span>{{ state() === 'sending' ? (t('safebox.tell.sending') || 'Sending…') : (state() === 'sent' ? (t('safebox.tell.told', { friendName: friendName() }) || friendName() + ' has got a message') : (t('safebox.tell.tell', { friendName: friendName() }) || 'Tell ' + friendName() + ' about this')) }}</span>
+    </button>
+  </div>
+  @if (error()) { <div class="alert alert-danger m-0" role="alert">{{ error() }}</div> }
+</ng-container>

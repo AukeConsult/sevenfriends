@@ -1,4 +1,5 @@
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
+import { SafeboxTell } from '../safebox-tell/safebox-tell';
 import { Location } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Component, DestroyRef, ElementRef, computed, effect, inject, signal, untracked, viewChild } from '@angular/core';
@@ -7,7 +8,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ApiError } from '../../core/api.service';
 import { ChatService } from '../../core/chat.service';
 import { FriendsService } from '../../core/friends.service';
-import { tr } from '../../core/i18n';
+import { tr, translationsLoaded } from '../../core/i18n';
 import { SafeboxLinks } from '../safebox-links/safebox-links';
 import { SafeboxAttachments } from '../safebox-attachments/safebox-attachments';
 import { SafeboxService } from '../../core/safebox.service';
@@ -38,7 +39,7 @@ interface FoundPlace {
  */
 @Component({
   selector: 'app-safebox-object',
-  imports: [RouterLink, SafeboxAttachments, SafeboxLinks, TranslocoDirective],
+  imports: [SafeboxTell, RouterLink, SafeboxAttachments, SafeboxLinks, TranslocoDirective],
   templateUrl: './safebox-object.html',
   providers: [provideTranslocoScope('safebox')],
 })
@@ -62,7 +63,8 @@ export class SafeboxObject {
 
   /** the kind of this object (for a new one from the address, for an opened one when it has been read) */
   protected readonly type = signal<SafeboxType | null>(this.itemId === null ? ((this.route.snapshot.paramMap.get('type') as SafeboxType | null) ?? null) : null);
-  protected readonly kind = computed<ObjectKind | undefined>(() => (this.type() && SAFEBOX_OBJECT_TYPES.includes(this.type()!) ? objectKind(this.type()!) : undefined));
+  private readonly loaded = translationsLoaded();
+  protected readonly kind = computed<ObjectKind | undefined>(() => (this.loaded(), this.type() && SAFEBOX_OBJECT_TYPES.includes(this.type()!) ? objectKind(this.type()!) : undefined));
 
   protected readonly title = signal('');
   protected readonly values = signal<Record<string, string>>({});
@@ -74,7 +76,10 @@ export class SafeboxObject {
   /** "remind me": minutes before the time, or 'none' (for a date and a ticket); kept inside the locked payload, only the moment goes to the server */
   protected readonly lead = signal(REMIND_DEFAULT);
   protected readonly remindFriend = signal(false);
-  protected readonly leads = REMIND_LEADS.map((l) => ({ value: l.value, label: this.leadLabel(l.minutes) }));
+  /** A getter: the labels are read when the page is drawn, after the language file is loaded. */
+  protected get leads(): { value: string; label: string }[] {
+    return REMIND_LEADS.map((l) => ({ value: l.value, label: this.leadLabel(l.minutes) }));
+  }
   private readonly saved = signal('');
   private readonly revision = signal(0);
   protected readonly loading = signal(!this.isNew);
@@ -318,7 +323,7 @@ export class SafeboxObject {
     });
     inject(DestroyRef).onDestroy(() => {
       this.map?.remove();
-      if (!this.isNew && this.canSave()) void this.save(); // leaving the page keeps what was typed (a new item is made with Save)
+      if (this.canSave()) void this.save(true); // leaving the page keeps what was typed (also a new item, if the needed fields are filled)
     });
     if (!this.friends.friends().length) void this.friends.load().catch(() => undefined);
     if (!this.isNew) void this.open(true);
@@ -398,7 +403,7 @@ export class SafeboxObject {
     void this.open(true);
   }
 
-  protected async save(): Promise<void> {
+  protected async save(leaving = false): Promise<void> {
     if (!this.canSave()) return;
     this.busy.set(true);
     this.error.set(null);
@@ -424,6 +429,7 @@ export class SafeboxObject {
         const keys = this.ctx.boxKeys();
         if (!keys) throw new Error(tr('safebox.common.keysNotKnown', 'The keys are not known yet. Try again in a moment.'));
         const created = await this.service.addObject(this.friendId, kind.type, payload, keys, remind);
+        if (leaving) { this.linkNew(created.id, keys).catch(() => undefined); return; } // the person is leaving: nothing to open
         // the files chosen before it was saved go to the new object now; the page of the object opens, and goes on saving by itself
         await this.attachments()?.uploadPending(created.id);
         const from = await this.linkNew(created.id, keys);

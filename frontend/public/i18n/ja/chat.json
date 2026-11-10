@@ -63,5 +63,6 @@
   "couldNotSaveThe": "メッセージを保存できませんでした",
   "messageOne": "メッセージ",
   "messageMany": "メッセージ",
-  "alsoWhose": "（{{ name }}さんの分も含む）"
+  "alsoWhose": "（{{ name }}さんの分も含む）",
+  "openTheItem": "Open the item"
 }

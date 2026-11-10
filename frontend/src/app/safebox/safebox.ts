@@ -1,7 +1,7 @@
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
-import { tr } from '../core/i18n';
+import { tr, translationsLoaded } from '../core/i18n';
 import { AppDatePipe } from '../core/app-date.pipe';
-import { arrangeKinds, isObjectType, objectIcon, objectKind, objectKinds } from '../core/safebox-objects';
+import { arrangeKinds, isObjectType, objectIcon, objectKind, boxKinds } from '../core/safebox-objects';
 import { NgTemplateOutlet } from '@angular/common';
 import { Component, DestroyRef, computed, effect, inject, input, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -279,13 +279,15 @@ export class Safebox {
   }
 
   /** What the "New" frame offers: a file (the upload page), then the kinds of object; a note has its own page. */
-  protected readonly split = computed(() => arrangeKinds(this.kinds, this.layout(), new Set(this.items().map((item) => item.type))));
+  protected readonly split = computed(() => arrangeKinds(this.kinds(), this.layout(), new Set(this.items().map((item) => item.type))));
   protected readonly layout = this.prefs.value('boxKindLayout');
   /** the kinds the New frame shows now: the first group, then the rest when "More types" is open */
   protected readonly newKinds = computed(() => [...this.split().main, ...(this.moreOpen() ? this.split().more : [])]);
   /** the kinds of the New frame: picked up by holding, dropped on another kind (it takes its place) or on "More types" (it goes in there); the choice is remembered */
   protected readonly kindDrag = new HoldDrag({ selector: '[data-kind-id]', key: 'kindId', onDrop: (from, to) => this.moveKind(from, to) });
-  protected readonly kinds: { type: string; label: string; icon: string }[] = [{ type: 'file', label: tr('safebox.common.file', 'File'), icon: 'M12 16V4M7 9l5-5 5 5M4 20h16' }, ...objectKinds()];
+  private readonly loaded = translationsLoaded();
+  /** the names are read again when the language file has arrived */
+  protected readonly kinds = computed(() => (this.loaded(), boxKinds()));
 
   /**
    * Puts a kind where another kind is: it joins the group of that kind (visible or hidden) in its place, the others move aside. Dropped on the

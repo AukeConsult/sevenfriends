@@ -63,5 +63,6 @@
   "couldNotSaveThe": "Не вдалося зберегти повідомлення",
   "messageOne": "повідомлення",
   "messageMany": "повідомлень",
-  "alsoWhose": ", також від {{ name }},"
+  "alsoWhose": ", також від {{ name }},",
+  "openTheItem": "Open the item"
 }

@@ -153,7 +153,8 @@
     "previewOfTheLink": "תצוגה מקדימה של הקישור",
     "checkingThePage": "בודק…",
     "showPreview": "הצג תצוגה מקדימה",
-    "noPreviewTheSite": "אין תצוגה מקדימה: האתר לא מאפשר זאת"
+    "noPreviewTheSite": "אין תצוגה מקדימה: האתר לא מאפשר זאת",
+    "noReminderHint": "No reminder, and this item is not counted as due."
   },
   "note": {
     "openingTheNote": "פותח את הפתק…",
@@ -232,9 +233,13 @@
     "linkToAnItem": "קישור לפריט אחר",
     "couldNotTakeTheLink": "לא ניתן היה להסיר את הקישור"
   },
-  "capture": {
-    "image": "תמונה",
-    "video": "וידאו",
-    "voice": "הקלטה"
+  "tell": {
+    "tell": "Tell {{ friendName }} about this",
+    "tellAgain": "Tell {{ friendName }} again",
+    "sending": "Sending…",
+    "told": "{{ friendName }} has got a message.",
+    "nothingIsSent": "Nothing is sent when you add or change something.",
+    "couldNotSend": "The message could not be sent. Try again.",
+    "message": "📦 In the safebox: {{ item }}"
   }
 }

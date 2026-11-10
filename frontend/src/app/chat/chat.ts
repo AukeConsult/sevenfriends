@@ -92,12 +92,15 @@ export class Chat {
   protected readonly shown = computed(() => (this.sortDesc() ? [...this.messages()].reverse() : this.messages()));
 
   // deleting several of my messages: the expanding frame under the header
-  protected readonly ageChoices: { label: string; days: number | null; icon: string }[] = [
-    { label: tr('chat.olderThanADay', 'Older than a day'), days: 1, icon: 'day' },
-    { label: tr('chat.olderThanAWeek', 'Older than a week'), days: 7, icon: 'week' },
-    { label: tr('chat.olderThanAMonth', 'Older than a month'), days: 30, icon: 'month' },
-    { label: tr('chat.allOfThem', 'All of them'), days: null, icon: 'all' },
-  ];
+  /** A getter, not a field: the texts are read when the page is drawn, after the language file is loaded. */
+  protected get ageChoices(): { label: string; days: number | null; icon: string }[] {
+    return [
+      { label: tr('chat.olderThanADay', 'Older than a day'), days: 1, icon: 'day' },
+      { label: tr('chat.olderThanAWeek', 'Older than a week'), days: 7, icon: 'week' },
+      { label: tr('chat.olderThanAMonth', 'Older than a month'), days: 30, icon: 'month' },
+      { label: tr('chat.allOfThem', 'All of them'), days: null, icon: 'all' },
+    ];
+  }
   protected readonly cleanupOpen = signal(false);
   protected readonly cleanupWhose = signal<'mine' | 'both'>(this.prefs.get('cleanupWhose'));
   /** my messages, or both sides' (never the friend's alone) */
@@ -374,6 +377,22 @@ export class Chat {
   }
 
   /** The text cut into pieces: plain text and web addresses (shown as links that open in a new tab). */
+  /** an address of this app itself (an item of the safebox in a message): it opens here, not in a new tab, and has no preview frame */
+  protected own(url: string): boolean {
+    try {
+      return new URL(url).origin === location.origin;
+    } catch {
+      return false;
+    }
+  }
+
+  protected openInApp(event: Event, url: string): void {
+    if (!this.own(url)) return;
+    event.preventDefault();
+    const target = new URL(url);
+    void this.router.navigateByUrl(target.pathname + target.search + target.hash);
+  }
+
   protected parts(text: string): { text: string; url: string | null }[] {
     const result: { text: string; url: string | null }[] = [];
     let last = 0;

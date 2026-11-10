@@ -1,0 +1,17 @@
+@if (open()) {
+  <div class="w-100 d-grid gap-2">
+    @if (kind() === 'audio') {
+      <app-voice (recorded)="voice($event)" (closed)="close()" (failed)="problem($event)" />
+    } @else {
+      <app-camera [mode]="kind() === 'image' ? 'photo' : 'video'" (photo)="photo($event)" (recorded)="film($event)" (closed)="close()" (failed)="problem($event)" />
+    }
+  </div>
+} @else if (support(kind()).cameraApp) {
+  <!-- the camera app of the phone -->
+  <label [class]="buttonClass()" [class.disabled]="disabled()">
+    {{ label() }}
+    <input type="file" [accept]="kind() + '/*'" capture="environment" hidden [disabled]="disabled()" (change)="picked($event)" />
+  </label>
+} @else if (support(kind()).page) {
+  <button type="button" [class]="buttonClass()" [disabled]="disabled()" (click)="start()">{{ label() }}</button>
+}

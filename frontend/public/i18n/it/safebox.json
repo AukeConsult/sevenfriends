@@ -153,7 +153,8 @@
     "previewOfTheLink": "Anteprima del link",
     "checkingThePage": "Controllo…",
     "showPreview": "Mostra anteprima",
-    "noPreviewTheSite": "Nessuna anteprima: il sito non lo consente"
+    "noPreviewTheSite": "Nessuna anteprima: il sito non lo consente",
+    "noReminderHint": "No reminder, and this item is not counted as due."
   },
   "note": {
     "openingTheNote": "Apertura della nota…",
@@ -232,9 +233,13 @@
     "linkToAnItem": "Collega a un altro elemento",
     "couldNotTakeTheLink": "Impossibile rimuovere il collegamento"
   },
-  "capture": {
-    "image": "Immagine",
-    "video": "Video",
-    "voice": "Voce"
+  "tell": {
+    "tell": "Tell {{ friendName }} about this",
+    "tellAgain": "Tell {{ friendName }} again",
+    "sending": "Sending…",
+    "told": "{{ friendName }} has got a message.",
+    "nothingIsSent": "Nothing is sent when you add or change something.",
+    "couldNotSend": "The message could not be sent. Try again.",
+    "message": "📦 In the safebox: {{ item }}"
   }
 }

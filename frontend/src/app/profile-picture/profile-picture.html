@@ -9,7 +9,9 @@
       {{ t('profilePicture.chooseAPhotoAnd') || 'Choose a photo and place it in the circle. It is made small (256 pixels) before it is saved, so a big photo is fine.' }}
     </p>
 
-    <label class="btn btn-primary">
+    <!-- the common button, the same as everywhere: Take a photo (the camera app of the phone, or the camera on the page) -->
+    <app-capture-button kind="image" buttonClass="btn btn-primary" (captured)="use($event.file)" (failed)="error.set($event)" />
+    <label class="btn btn-outline-primary">
       {{ t('profilePicture.chooseAPhoto') || 'Choose a photo' }}
       <input type="file" accept="image/*" hidden (change)="onFile($event)" />
     </label>

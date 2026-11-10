@@ -153,7 +153,8 @@
     "previewOfTheLink": "リンクのプレビュー",
     "checkingThePage": "確認しています…",
     "showPreview": "プレビューを表示",
-    "noPreviewTheSite": "プレビューなし：このサイトは許可していません"
+    "noPreviewTheSite": "プレビューなし：このサイトは許可していません",
+    "noReminderHint": "No reminder, and this item is not counted as due."
   },
   "note": {
     "openingTheNote": "メモを開いています…",
@@ -232,9 +233,13 @@
     "linkToAnItem": "別の項目にリンク",
     "couldNotTakeTheLink": "リンクを外せませんでした"
   },
-  "capture": {
-    "image": "画像",
-    "video": "動画",
-    "voice": "音声"
+  "tell": {
+    "tell": "Tell {{ friendName }} about this",
+    "tellAgain": "Tell {{ friendName }} again",
+    "sending": "Sending…",
+    "told": "{{ friendName }} has got a message.",
+    "nothingIsSent": "Nothing is sent when you add or change something.",
+    "couldNotSend": "The message could not be sent. Try again.",
+    "message": "📦 In the safebox: {{ item }}"
   }
 }

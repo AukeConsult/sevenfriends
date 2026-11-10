@@ -63,5 +63,6 @@
   "couldNotSaveThe": "تعذّر حفظ الرسالة",
   "messageOne": "رسالة",
   "messageMany": "رسائل",
-  "alsoWhose": "، وكذلك رسائل {{ name }}،"
+  "alsoWhose": "، وكذلك رسائل {{ name }}،",
+  "openTheItem": "Open the item"
 }

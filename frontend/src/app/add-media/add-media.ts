@@ -1,21 +1,19 @@
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { tr } from '../core/i18n';
-import { Capacitor } from '@capacitor/core';
 import { FriendContext } from '../friend-page/friend-context';
 import { Component, OnDestroy, OnInit, computed, inject, input, output, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Camera } from '../camera/camera';
-import { MAX_AUDIO_SECONDS, PreparedAudio, audioRecorderType, prepareAudioFile, prepareRecordedAudio } from '../core/audio';
+import { CaptureButton, Captured, captureSupport, onPhone } from '../capture-button/capture-button';
+import { MAX_AUDIO_SECONDS, PreparedAudio, prepareAudioFile, prepareRecordedAudio } from '../core/audio';
 import { ChatService } from '../core/chat.service';
 import { ChatItem } from '../core/message-lock.service';
 import { Clearable } from '../core/clearable';
 import { MAX_IMAGE_BYTES, PreparedImage, formatBytes, prepareImage, rotateImage } from '../core/image';
 import { MediaService } from '../core/media.service';
 import { MessageLockService } from '../core/message-lock.service';
-import { MAX_VIDEO_SECONDS, PreparedVideo, prepareRecorded, prepareVideo, recorderType } from '../core/video';
+import { MAX_VIDEO_SECONDS, PreparedVideo, prepareRecorded, prepareVideo } from '../core/video';
 import { MediaUpload, MessageEncMedia } from '../models';
 import { ApiError } from '../core/api.service';
-import { Voice } from '../voice/voice';
 
 type Prepared = PreparedImage | PreparedVideo | PreparedAudio;
 
@@ -42,7 +40,7 @@ const textOf = (kind: 'image' | 'video' | 'audio') => ({
  */
 @Component({
   selector: 'app-add-media',
-  imports: [Clearable, Camera, Voice, TranslocoDirective],
+  imports: [Clearable, CaptureButton, TranslocoDirective],
   templateUrl: './add-media.html',
   providers: [provideTranslocoScope('addMedia')],
 })
@@ -85,22 +83,9 @@ export class AddMedia implements OnInit, OnDestroy {
    * It is found from the system, NOT from a touch screen: a Windows laptop with a touch screen has one too, and there `capture` is
    * ignored, so "Record a video" would only open the file chooser. Everything else shows the camera on the page.
    */
-  protected readonly phoneCamera = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); // iPadOS says it is a Mac
-  /**
-   * A photo in the Android app is taken with the camera ON THE PAGE, not with the phone's camera app: while that app is in front, Android
-   * may close this app's page to save memory (a selfie in high resolution), and the person lands on the start page without the photo.
-   * The page camera also gives a small picture at once, which is much faster than the full-size photo of the camera app.
-   */
-  private appPhoto = false;
-  /**
-   * A video in the Android app is filmed on the page too, small (960 x 540, at most one minute): the camera app of the phone films in full
-   * quality (1080p or 4K, a huge file) while this page waits in the background, where Android may close it, and the big file would then
-   * have to be made smaller in the page, which needs a lot of memory.
-   */
-  private appVideo = false;
-  protected nativeCapture = false;
-  /** the browser can show the camera, or take the voice, on the page (needs https or localhost), and for a video or voice, record it */
-  protected pageCamera = false;
+  protected readonly phoneCamera = onPhone();
+  /** the common capture button works here (camera app of the phone, or the camera / recorder on the page): the file chooser is then the second choice */
+  protected canCapture = false;
   protected readonly cameraOpen = signal(false);
 
   /** the upload that worked, when sending the message did not: the next try does not upload again */
@@ -114,12 +99,7 @@ export class AddMedia implements OnInit, OnDestroy {
     this.kind = this.kindIn() ?? this.route.snapshot.data['kind'];
     this.friendId = this.friendIn() ?? this.route.snapshot.paramMap.get('id') ?? '';
     this.text = textOf(this.kind);
-    this.appPhoto = Capacitor.isNativePlatform() && this.kind === 'image';
-    this.appVideo = Capacitor.isNativePlatform() && this.kind === 'video';
-    this.nativeCapture = this.phoneCamera && this.kind !== 'audio' && !this.appPhoto && !this.appVideo;
-    this.pageCamera =
-      Boolean(navigator.mediaDevices?.getUserMedia) &&
-      (this.kind === 'audio' ? audioRecorderType() !== null : (!this.phoneCamera || this.appPhoto || this.appVideo) && (this.kind === 'image' || recorderType() !== null));
+    this.canCapture = captureSupport(this.kind).available;
   }
 
   /** a file is chosen, the camera or the voice recorder is open, or something is being sent: tapping elsewhere must not close the panel (it would lose it) */
@@ -191,9 +171,11 @@ export class AddMedia implements OnInit, OnDestroy {
     this.error.set(message);
   }
 
-  protected async photoTaken(photo: File): Promise<void> {
-    this.cameraOpen.set(false);
-    await this.use(photo);
+  /** what the capture button made: a file from the camera app of the phone, or a picture, film or voice made on this page */
+  protected async captured(made: Captured): Promise<void> {
+    if (!made.recorded || made.kind === 'image') await this.use(made.file);
+    else if (made.kind === 'video') await this.filmed({ blob: made.file, durationMs: made.durationMs ?? 0 });
+    else this.voiceRecorded({ blob: made.file, durationMs: made.durationMs ?? 0 });
   }
 
   protected async filmed(film: { blob: Blob; durationMs: number }): Promise<void> {

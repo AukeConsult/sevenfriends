@@ -153,7 +153,8 @@
     "previewOfTheLink": "लिंक का पूर्वावलोकन",
     "checkingThePage": "देख रहे हैं…",
     "showPreview": "पूर्वावलोकन दिखाएँ",
-    "noPreviewTheSite": "कोई पूर्वावलोकन नहीं: साइट इसकी अनुमति नहीं देती"
+    "noPreviewTheSite": "कोई पूर्वावलोकन नहीं: साइट इसकी अनुमति नहीं देती",
+    "noReminderHint": "No reminder, and this item is not counted as due."
   },
   "note": {
     "openingTheNote": "नोट खोल रहे हैं…",
@@ -232,9 +233,13 @@
     "linkToAnItem": "किसी दूसरे आइटम से जोड़ें",
     "couldNotTakeTheLink": "लिंक हटाया नहीं जा सका"
   },
-  "capture": {
-    "image": "चित्र",
-    "video": "वीडियो",
-    "voice": "आवाज़"
+  "tell": {
+    "tell": "Tell {{ friendName }} about this",
+    "tellAgain": "Tell {{ friendName }} again",
+    "sending": "Sending…",
+    "told": "{{ friendName }} has got a message.",
+    "nothingIsSent": "Nothing is sent when you add or change something.",
+    "couldNotSend": "The message could not be sent. Try again.",
+    "message": "📦 In the safebox: {{ item }}"
   }
 }

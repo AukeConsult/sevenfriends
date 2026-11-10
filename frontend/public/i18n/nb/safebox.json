@@ -153,7 +153,8 @@
     "previewOfTheLink": "Forhåndsvisning av lenken",
     "checkingThePage": "Ser etter …",
     "showPreview": "Vis forhåndsvisning",
-    "noPreviewTheSite": "Ingen forhåndsvisning: nettstedet tillater det ikke"
+    "noPreviewTheSite": "Ingen forhåndsvisning: nettstedet tillater det ikke",
+    "noReminderHint": "No reminder, and this item is not counted as due."
   },
   "note": {
     "openingTheNote": "Åpner notatet …",
@@ -232,9 +233,13 @@
     "linkToAnItem": "Koble til et annet element",
     "couldNotTakeTheLink": "Kunne ikke fjerne koblingen"
   },
-  "capture": {
-    "image": "Bilde",
-    "video": "Video",
-    "voice": "Tale"
+  "tell": {
+    "tell": "Tell {{ friendName }} about this",
+    "tellAgain": "Tell {{ friendName }} again",
+    "sending": "Sending…",
+    "told": "{{ friendName }} has got a message.",
+    "nothingIsSent": "Nothing is sent when you add or change something.",
+    "couldNotSend": "The message could not be sent. Try again.",
+    "message": "📦 In the safebox: {{ item }}"
   }
 }

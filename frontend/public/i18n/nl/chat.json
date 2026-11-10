@@ -63,5 +63,6 @@
   "couldNotSaveThe": "Kon het bericht niet opslaan",
   "messageOne": "bericht",
   "messageMany": "berichten",
-  "alsoWhose": ", ook die van {{ name }},"
+  "alsoWhose": ", ook die van {{ name }},",
+  "openTheItem": "Open the item"
 }

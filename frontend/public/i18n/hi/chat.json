@@ -63,5 +63,6 @@
   "couldNotSaveThe": "संदेश सहेजा नहीं जा सका",
   "messageOne": "संदेश",
   "messageMany": "संदेश",
-  "alsoWhose": ", {{ name }} के भी,"
+  "alsoWhose": ", {{ name }} के भी,",
+  "openTheItem": "Open the item"
 }

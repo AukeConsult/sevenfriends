@@ -153,7 +153,8 @@
     "previewOfTheLink": "Попередній перегляд посилання",
     "checkingThePage": "Дивимося…",
     "showPreview": "Показати попередній перегляд",
-    "noPreviewTheSite": "Немає перегляду: сайт цього не дозволяє"
+    "noPreviewTheSite": "Немає перегляду: сайт цього не дозволяє",
+    "noReminderHint": "No reminder, and this item is not counted as due."
   },
   "note": {
     "openingTheNote": "Відкривається нотатка…",
@@ -232,9 +233,13 @@
     "linkToAnItem": "Пов'язати з іншим елементом",
     "couldNotTakeTheLink": "Не вдалося прибрати зв'язок"
   },
-  "capture": {
-    "image": "Зображення",
-    "video": "Відео",
-    "voice": "Голос"
+  "tell": {
+    "tell": "Tell {{ friendName }} about this",
+    "tellAgain": "Tell {{ friendName }} again",
+    "sending": "Sending…",
+    "told": "{{ friendName }} has got a message.",
+    "nothingIsSent": "Nothing is sent when you add or change something.",
+    "couldNotSend": "The message could not be sent. Try again.",
+    "message": "📦 In the safebox: {{ item }}"
   }
 }

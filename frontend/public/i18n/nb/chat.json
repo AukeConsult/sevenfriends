@@ -63,5 +63,6 @@
   "couldNotSaveThe": "Kunne ikke lagre meldingen",
   "messageOne": "melding",
   "messageMany": "meldinger",
-  "alsoWhose": ", og også {{ name }}s,"
+  "alsoWhose": ", og også {{ name }}s,",
+  "openTheItem": "Open the item"
 }

@@ -63,5 +63,6 @@
   "couldNotSaveThe": "לא ניתן היה לשמור את ההודעה",
   "messageOne": "הודעה",
   "messageMany": "הודעות",
-  "alsoWhose": ", וגם של {{ name }},"
+  "alsoWhose": ", וגם של {{ name }},",
+  "openTheItem": "Open the item"
 }

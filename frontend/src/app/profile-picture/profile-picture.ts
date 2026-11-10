@@ -4,6 +4,7 @@ import { Component, ElementRef, Injector, afterNextRender, inject, signal, viewC
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ApiService } from '../core/api.service';
 import { AuthService } from '../core/auth.service';
+import { CaptureButton } from '../capture-button/capture-button';
 import { Decoded, decodeImage, sizeOf } from '../core/image';
 import { ProfileDetails } from '../models';
 
@@ -23,7 +24,7 @@ const MAX_FILE_BYTES = 20 * 1024 * 1024;
  */
 @Component({
   selector: 'app-profile-picture',
-  imports: [RouterLink, TranslocoDirective],
+  imports: [RouterLink, CaptureButton, TranslocoDirective],
   templateUrl: './profile-picture.html',
   providers: [provideTranslocoScope('profilePicture')],
 })
@@ -68,7 +69,11 @@ export class ProfilePicturePage {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     input.value = ''; // the same file can be chosen again
-    if (!file) return;
+    if (file) await this.use(file);
+  }
+
+  /** a chosen or photographed picture */
+  protected async use(file: File): Promise<void> {
     this.error.set(null);
     if (!file.type.startsWith('image/')) {
       this.error.set(tr('profilePicture.chooseAnImageFile', 'Choose an image file (a photo).'));

@@ -63,5 +63,6 @@
   "couldNotSaveThe": "메시지를 저장할 수 없어요",
   "messageOne": "메시지",
   "messageMany": "메시지",
-  "alsoWhose": " ({{ name }}의 메시지 포함)"
+  "alsoWhose": " ({{ name }}의 메시지 포함)",
+  "openTheItem": "Open the item"
 }

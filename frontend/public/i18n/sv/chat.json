@@ -63,5 +63,6 @@
   "couldNotSaveThe": "Kunde inte spara meddelandet",
   "messageOne": "meddelande",
   "messageMany": "meddelanden",
-  "alsoWhose": ", även {{ name }}s,"
+  "alsoWhose": ", även {{ name }}s,",
+  "openTheItem": "Open the item"
 }

@@ -137,11 +137,11 @@ describe("an encrypted upload", () => {
     await send(pool[1], id, upload(wraps)).expect(413);
   });
 
-  it("is told to the friend like any file that is added", async () => {
+  it("makes no message for the friend when it is added (the person tells the friend with a message of their own)", async () => {
     const { id, wraps } = await twoWithKeys();
     await send(pool[0], id, upload(wraps)).expect(201);
     const messages = await getFirestore().collection("user-account").doc(pool[1].p.uid).collection("messages").get();
-    expect(messages.docs.some((m) => m.data().inBox === true)).toBe(true);
+    expect(messages.docs.some((m) => m.data().inBox === true)).toBe(false);
   });
 });
 

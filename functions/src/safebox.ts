@@ -182,30 +182,6 @@ async function storeInBox(res: Response, connection: Connection, bytes: Buffer, 
   return toItem(ref.id, (await ref.get()).data()!, uidOf(res));
 }
 
-/**
- * Tell my friend that something was added to the box: an unread note "In the safebox" in both feeds (it shows on their home page
- * like a message does, and the conversation says it too), and a push that opens the box. Best effort: the file is in the box anyway.
- */
-async function announceItem(res: Response, connection: Connection): Promise<void> {
-  try {
-    const uid = uidOf(res);
-    const fromName = await nameOf(uid, undefined, connection.circleId);
-    const mine = messageCol(uid).doc();
-    const theirs = messageCol(connection.peerUid).doc(mine.id);
-    const common = { connectionId: connection.id, fromUid: uid, fromName, toUid: connection.peerUid, text: "", inBox: true, time: FieldValue.serverTimestamp() };
-    const myEntry = (res.locals.circleRef as DocumentReference).collection(FRIENDS_SUBCOLLECTION).doc(connection.id);
-    const batch = getFirestore().batch();
-    batch.set(mine, { ...common, circleId: connection.circleId, read: true });
-    batch.set(theirs, { ...common, circleId: connection.peerCircleId, read: false });
-    touchFeed(batch, myEntry);
-    await touchFeedIfExists(batch, circleCol(connection.peerUid).doc(connection.peerCircleId).collection(FRIENDS_SUBCOLLECTION).doc(connection.id));
-    await batch.commit();
-    if (!(await sleepsMe(connection))) await sendPush(connection.peerUid, { circleId: connection.peerCircleId, id: `message-${mine.id}`, title: fromName, body: "📦 Added to the safebox", url: `/friends/${connection.id}/safebox`, kind: "message" });
-  } catch (err) {
-    console.error("Could not announce the safebox item", err);
-  }
-}
-
 /** Put a file in the box: `POST .../safebox?name=<file name>`, the file as the body. Answers with the new item. */
 safeboxRouter.post(
   "/",
@@ -221,7 +197,6 @@ safeboxRouter.post(
     }
     const item = await storeInBox(res, connection, bytes, cleanFileName(req.query.name) ?? "File", checked, null);
     if (item) {
-      await announceItem(res, connection);
       res.status(201).json(item);
     }
   }),
@@ -314,7 +289,6 @@ safeboxRouter.post(
       await deleteObject(name, old.id).catch((err) => console.error(`Could not delete the plain file ${connection.id}/${old.id}`, err)); // the list no longer has it; only the stored bytes are left to clean up
     } else {
       await ref.set(fields);
-      if (!parent) await announceItem(res, connection); // an attachment is no news of its own: its object was announced
     }
     res.status(201).json(toItem(ref.id, (await ref.get()).data()!, me));
   }),
@@ -434,7 +408,6 @@ safeboxRouter.post(
     const ref = safeboxItems(connection.id).doc();
     await ref.set({ type: parsed.type, name: "Encrypted item", kind: "document", mime: "application/octet-stream", bytes, addedBy: me, circles: circlesOf(connection, me), hasThumb: false, enc: parsed.enc, revision: 1, ...(parsed.type === "relation" ? {} : { order: await nextOrder(connection.id) }), createdAt: FieldValue.serverTimestamp(), updatedAt: FieldValue.serverTimestamp() });
     await setReminder(connection, ref.id, me, parsed.remind);
-    if (parsed.type !== "relation") await announceItem(res, connection); // a link between two items is no news
     res.status(201).json(toItem(ref.id, (await ref.get()).data()!, me));
   }),
 );

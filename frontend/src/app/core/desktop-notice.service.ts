@@ -42,7 +42,7 @@ export class DesktopNoticeService {
   readonly wanted = signal(this.read());
 
   /** What happened the last time a notice was due (shown on Settings, to find out why nothing appeared). */
-  readonly lastResult = signal<string>(tr('core.nothingYet', 'Nothing yet'));
+  readonly lastResult = signal<string>('');
 
   private worker: ServiceWorkerRegistration | null = null;
   /** ids of the events already announced */

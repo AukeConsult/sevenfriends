@@ -2,10 +2,10 @@ import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { Location, NgTemplateOutlet } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { tr } from '../../core/i18n';
+import { translationsLoaded } from '../../core/i18n';
 import { SafeboxService } from '../../core/safebox.service';
 import { UiPreferencesService } from '../../core/ui-preferences';
-import { arrangeKinds, objectKinds } from '../../core/safebox-objects';
+import { arrangeKinds, boxKinds } from '../../core/safebox-objects';
 
 /**
  * Add a new item and link it (`/friends/:id/safebox/link/:itemId/new`): the kinds to choose from, like the New frame of the list. The choice opens the page
@@ -26,9 +26,11 @@ export class SafeboxLinkNew {
   private readonly service = inject(SafeboxService);
   protected readonly prefs = inject(UiPreferencesService);
   protected readonly moreOpen = this.prefs.value('boxHiddenOpen');
-  protected readonly split = computed(() => arrangeKinds(this.kinds, this.prefs.value('boxKindLayout')()));
+  protected readonly split = computed(() => arrangeKinds(this.kinds(), this.prefs.value('boxKindLayout')()));
   protected readonly newKinds = computed(() => [...this.split().main, ...(this.moreOpen() ? this.split().more : [])]);
-  protected readonly kinds: { type: string; label: string; icon: string }[] = [{ type: 'file', label: tr('safebox.common.file', 'File'), icon: 'M12 16V4M7 9l5-5 5 5M4 20h16' }, ...objectKinds()];
+  private readonly loaded = translationsLoaded();
+  /** the names are read again when the language file has arrived */
+  protected readonly kinds = computed(() => (this.loaded(), boxKinds()));
 
   /** The new item is made linked with this one: remembered until its page has taken it. */
   protected choose(): void {

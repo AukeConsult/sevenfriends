@@ -153,7 +153,8 @@
     "previewOfTheLink": "معاينة الرابط",
     "checkingThePage": "جارٍ النظر…",
     "showPreview": "إظهار المعاينة",
-    "noPreviewTheSite": "لا معاينة: الموقع لا يسمح بذلك"
+    "noPreviewTheSite": "لا معاينة: الموقع لا يسمح بذلك",
+    "noReminderHint": "No reminder, and this item is not counted as due."
   },
   "note": {
     "openingTheNote": "جارٍ فتح الملاحظة…",
@@ -232,9 +233,13 @@
     "linkToAnItem": "اربط بعنصر آخر",
     "couldNotTakeTheLink": "تعذّرت إزالة الربط"
   },
-  "capture": {
-    "image": "صورة",
-    "video": "فيديو",
-    "voice": "صوت"
+  "tell": {
+    "tell": "Tell {{ friendName }} about this",
+    "tellAgain": "Tell {{ friendName }} again",
+    "sending": "Sending…",
+    "told": "{{ friendName }} has got a message.",
+    "nothingIsSent": "Nothing is sent when you add or change something.",
+    "couldNotSend": "The message could not be sent. Try again.",
+    "message": "📦 In the safebox: {{ item }}"
   }
 }

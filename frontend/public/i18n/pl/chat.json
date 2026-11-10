@@ -63,5 +63,6 @@
   "couldNotSaveThe": "Nie udało się zapisać wiadomości",
   "messageOne": "wiadomość",
   "messageMany": "wiadomości",
-  "alsoWhose": ", także od: {{ name }},"
+  "alsoWhose": ", także od: {{ name }},",
+  "openTheItem": "Open the item"
 }

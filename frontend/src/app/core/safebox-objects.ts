@@ -24,6 +24,9 @@ export function arrangeKinds<T extends { type: string }>(kinds: T[], layout: { m
   return { main: [...main, ...unknown.filter((k) => standard.main.includes(k))], more: [...more, ...unknown.filter((k) => standard.more.includes(k))] };
 }
 
+/** What the "New" frame offers: a file (the upload page), then the kinds of object. */
+export const boxKinds = (): { type: string; label: string; icon: string }[] => [{ type: 'file', label: tr('safebox.common.file', 'File'), icon: 'M12 16V4M7 9l5-5 5 5M4 20h16' }, ...objectKinds()];
+
 /** The kinds of object a safebox holds besides files (design: docs/design/safebox-objects.md), in the order of the "New" frame. */
 export function objectKinds(): ObjectKind[] {
   const note = tr('safebox.common.note', 'Note');
@@ -119,13 +122,14 @@ function daysLeft(date: string): string {
 
 /**
  * When an item is DUE, in milliseconds: from the start of its reminder period (the date and time minus the lead of "Remind me") or the start of its day,
- * whichever comes first, to the end of its day (local time). null for an item with no date. A date without a time counts as 09:00 for the reminder.
+ * whichever comes first, to the end of its day (local time). null for an item with no date or with "Don't remind me". A date without a time counts as 09:00 for the reminder.
  */
 export function dueRange(p: ObjectPayload): { from: number; to: number } | null {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(p.fields['date'] ?? '');
   if (!m) return null;
   const [y, mo, d] = [+m[1], +m[2] - 1, +m[3]];
   const t = /^(\d{2}):(\d{2})$/.exec(p.fields['time'] || '09:00') ?? ['', '09', '00'];
+  if (p.fields['remind'] === 'none') return null; // "Don't remind me": not counted as due
   const lead = REMIND_LEADS.find((l) => l.value === (p.fields['remind'] ?? ''))?.minutes ?? 0;
   const start = new Date(y, mo, d).getTime();
   const at = new Date(y, mo, d, +t[1], +t[2]).getTime();
