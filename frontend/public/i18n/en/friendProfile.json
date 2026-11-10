@@ -30,5 +30,6 @@
   "onlyYou": "only you",
   "addedBy": "added by {{ name }}",
   "owner": "owner",
-  "addedToSleepList": "{{ name }} has no free seat, so the group is on their sleep list."
+  "addedToSleepList": "{{ name }} has no free seat, so the group is on their sleep list.",
+  "wakeFname": "Wake {{ fName }} up"
 }

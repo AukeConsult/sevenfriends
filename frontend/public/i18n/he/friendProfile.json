@@ -30,5 +30,6 @@
   "onlyYou": "רק אתה",
   "addedBy": "נוסף על ידי {{ name }}",
   "owner": "בעלים",
-  "addedToSleepList": "ל{{ name }} אין מקום פנוי, ולכן הקבוצה ברשימת השינה שלו."
+  "addedToSleepList": "ל{{ name }} אין מקום פנוי, ולכן הקבוצה ברשימת השינה שלו.",
+  "wakeFname": "להעיר את {{ fName }}"
 }

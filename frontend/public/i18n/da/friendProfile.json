@@ -30,5 +30,6 @@
   "onlyYou": "kun dig",
   "addedBy": "tilføjet af {{ name }}",
   "owner": "ejer",
-  "addedToSleepList": "{{ name }} har ingen ledig plads, så gruppen er på deres soveliste."
+  "addedToSleepList": "{{ name }} har ingen ledig plads, så gruppen er på deres soveliste.",
+  "wakeFname": "Væk {{ fName }}"
 }

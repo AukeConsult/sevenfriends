@@ -30,5 +30,6 @@
   "onlyYou": "nur du",
   "addedBy": "hinzugefügt von {{ name }}",
   "owner": "Besitzer",
-  "addedToSleepList": "{{ name }} hat keinen freien Platz, deshalb steht die Gruppe auf der Schlafliste."
+  "addedToSleepList": "{{ name }} hat keinen freien Platz, deshalb steht die Gruppe auf der Schlafliste.",
+  "wakeFname": "{{ fName }} aufwecken"
 }

@@ -30,5 +30,6 @@
   "onlyYou": "solo tú",
   "addedBy": "añadido por {{ name }}",
   "owner": "propietario",
-  "addedToSleepList": "{{ name }} no tiene un asiento libre, así que el grupo está en su lista de descanso."
+  "addedToSleepList": "{{ name }} no tiene un asiento libre, así que el grupo está en su lista de descanso.",
+  "wakeFname": "Despertar a {{ fName }}"
 }

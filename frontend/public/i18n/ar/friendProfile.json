@@ -30,5 +30,6 @@
   "onlyYou": "أنت فقط",
   "addedBy": "أضافه {{ name }}",
   "owner": "المالك",
-  "addedToSleepList": "ليس لدى {{ name }} مقعد شاغر، لذا فالمجموعة في قائمة النوم لديه."
+  "addedToSleepList": "ليس لدى {{ name }} مقعد شاغر، لذا فالمجموعة في قائمة النوم لديه.",
+  "wakeFname": "أيقظ {{ fName }}"
 }

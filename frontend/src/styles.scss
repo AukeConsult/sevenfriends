@@ -1685,3 +1685,18 @@ app-safebox-links { display: block; margin-top: 1.5rem; } // air between the pag
 .sf-links-frame { display: grid; gap: 0.5rem; padding: 0.625rem 0.75rem; border: 1px solid var(--sf-border); border-radius: var(--sf-radius); background: var(--sf-card); } // the linked items of an item, together in a frame
 
 app-capture-button { display: contents; } // the capture button is its button (or its camera), not a box around it
+
+// Group profile: cards, and the seven seats of a group (a person in each taken seat, a dashed + in a free one)
+.sf-group-card { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sf-gap); background: #fff; border: 1px solid var(--sf-border); border-radius: var(--sf-radius); padding: 0.75rem 1rem; }
+.sf-group-card-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+.sf-group-name { font-weight: 700; color: var(--sf-primary); }
+.sf-group-people { display: flex; flex-direction: column; gap: 0.5rem; }
+.sf-member { width: 100%; box-sizing: border-box; display: flex; align-items: center; gap: 0.75rem; background: #fff; border: 1px solid var(--sf-border); border-radius: var(--sf-radius); padding: 0.75rem 1rem; }
+.sf-member-you { border-color: var(--sf-primary); }
+.sf-member-dot { overflow: hidden; flex: none; width: 2.75rem; height: 2.75rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #fff; background: #7a5c99; }
+.sf-member-you .sf-member-dot { background: var(--sf-primary); }
+.sf-member-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.sf-member-name { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sf-member-dot img { width: 100%; height: 100%; object-fit: cover; }
+.sf-member .btn { margin-inline-start: auto; }
+.sf-page-head .sf-head-wake { position: absolute; inset-inline-end: 2.75rem; top: 0.5rem; display: inline-grid; place-items: center; width: 2.25rem; height: 2.25rem; min-height: 0; padding: 0; color: var(--sf-primary); svg { width: 1.1rem; height: 1.1rem; } } // wake a sleeping friend: left of the delete button

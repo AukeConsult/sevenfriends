@@ -30,5 +30,6 @@
   "onlyYou": "あなただけ",
   "addedBy": "{{ name }}さんが追加",
   "owner": "オーナー",
-  "addedToSleepList": "{{ name }}さんには空き席がないため、グループはスリープリストに入っています。"
+  "addedToSleepList": "{{ name }}さんには空き席がないため、グループはスリープリストに入っています。",
+  "wakeFname": "{{ fName }}を起こす"
 }

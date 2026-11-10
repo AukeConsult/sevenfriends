@@ -30,5 +30,6 @@
   "onlyYou": "yalnızca sen",
   "addedBy": "ekleyen: {{ name }}",
   "owner": "sahip",
-  "addedToSleepList": "{{ name }} kişisinin boş yeri yok, bu yüzden grup onun uyku listesinde."
+  "addedToSleepList": "{{ name }} kişisinin boş yeri yok, bu yüzden grup onun uyku listesinde.",
+  "wakeFname": "{{ fName }} kişisini uyandır"
 }

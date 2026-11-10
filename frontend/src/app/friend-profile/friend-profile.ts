@@ -10,6 +10,8 @@ import { countries } from '../core/countries';
 import { moodIcon, moodLabel } from '../core/moods';
 import { presenceLabel } from '../core/presence';
 import { possessive } from '../core/pronoun';
+import { MyAvatarService } from '../core/my-avatar.service';
+import { FriendPictureService } from '../core/friend-picture.service';
 import { FriendAvatar } from '../friend-avatar/friend-avatar';
 import { FriendContext } from '../friend-page/friend-context';
 import { tr } from '../core/i18n';
@@ -42,6 +44,18 @@ export class FriendProfile {
   /** A group: the people in it, and which of my friends can still be added. */
   protected readonly members = signal<GroupMember[]>([]);
   protected readonly adding = signal(false);
+  private readonly myAvatar = inject(MyAvatarService);
+  private readonly pictures = inject(FriendPictureService);
+  /** The picture of a member: mine, else the picture (or seat icon) of my friend; null = the initial is shown (not my friend). */
+  protected pictureOf(m: GroupMember): string | null {
+    if (m.you) return this.myAvatar.src();
+    const friends = this.friendsService.friends();
+    const friend = friends.find((x) => x.id === m.friendId);
+    if (!friend) return null;
+    const seat = this.friendsService.awake().findIndex((x) => x.id === friend.id) + 1;
+    return this.pictures.src(friend.id, friend.pictureAt) ?? `icons/friends/friend${friend.icon ?? (seat || 1)}.svg`;
+  }
+  protected initial(name: string): string { return (name.trim()[0] ?? '?').toUpperCase(); }
   protected readonly canAdd = computed(() => {
     const inGroup = new Set(this.members().map((m) => m.friendId));
     return this.friendsService.friends().filter((f) => !f.group && f.status === 'confirmed' && !f.asleep && !inGroup.has(f.id));
@@ -50,7 +64,10 @@ export class FriendProfile {
   constructor() {
     effect(() => {
       const f = this.ctx.friend();
-      if (f?.group) void untracked(() => this.loadMembers(f.id));
+      if (f?.group) {
+        void untracked(() => this.loadMembers(f.id));
+        void untracked(() => this.myAvatar.load());
+      }
     });
   }
 
@@ -108,7 +125,7 @@ export class FriendProfile {
 
   /** A confirmed friend is put to sleep (the conversation is kept) when the sleep list is used; anything else is deleted. */
   protected sleepable(friend: Friend): boolean {
-    return friend.status === 'confirmed' && this.prefs.get('sleepList');
+    return friend.status === 'confirmed' && !friend.asleep && this.prefs.get('sleepList'); // one that sleeps is woken up or deleted, not put to sleep again
   }
 
   protected deleteMessage(friend: Friend): string {
@@ -139,6 +156,11 @@ export class FriendProfile {
       () => (this.sleepable(friend) ? this.friendsService.sleep(friend.id, true) : this.friendsService.remove(friend.id)),
       () => this.router.navigateByUrl('/'),
     );
+  }
+
+  /** Wake a sleeping friend: they get a seat again (the server answers with an error when no seat is free). */
+  protected wake(friend: Friend): Promise<void> {
+    return this.run(() => this.friendsService.sleep(friend.id, false));
   }
 
   /** I know it is really them: the "not verified" warning goes away. */

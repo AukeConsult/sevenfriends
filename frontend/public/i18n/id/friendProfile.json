@@ -30,5 +30,6 @@
   "onlyYou": "hanya kamu",
   "addedBy": "ditambahkan oleh {{ name }}",
   "owner": "pemilik",
-  "addedToSleepList": "{{ name }} tidak punya kursi kosong, jadi grup ada di daftar tidurnya."
+  "addedToSleepList": "{{ name }} tidak punya kursi kosong, jadi grup ada di daftar tidurnya.",
+  "wakeFname": "Bangunkan {{ fName }}"
 }

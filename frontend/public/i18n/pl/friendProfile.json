@@ -30,5 +30,6 @@
   "onlyYou": "tylko ty",
   "addedBy": "dodał(a) {{ name }}",
   "owner": "właściciel",
-  "addedToSleepList": "{{ name }} nie ma wolnego miejsca, więc grupa jest na jego liście uśpionych."
+  "addedToSleepList": "{{ name }} nie ma wolnego miejsca, więc grupa jest na jego liście uśpionych.",
+  "wakeFname": "Obudź {{ fName }}"
 }
