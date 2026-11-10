@@ -301,5 +301,8 @@
   "removeThisKeyNotYou": "이 키를 삭제할까요? 그러면 그 기기는 더 이상 내 메시지를 열 수 없어요. 내가 한 일이 아니라면 로그인 정보도 바꾸세요.",
   "removeIt": "삭제",
   "cancel": "취소",
-  "notMe": "내가 아니에요"
+  "notMe": "내가 아니에요",
+  "newKeyQuestion": "{{ name }} seems to have a new phone or a new key. Call {{ name }} and ask: did you change phone?",
+  "newKeyYes": "Yes, it is {{ name }}",
+  "newKeyUnsure": "I am not sure"
 }

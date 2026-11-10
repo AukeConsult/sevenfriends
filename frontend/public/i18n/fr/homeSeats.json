@@ -13,5 +13,6 @@
   "seatPositionIsFree": "La place {{ position }} est libre : ajouter un {{ one }}",
   "dropOnASeat": "Dépose sur une place ou sur le cercle Silence",
   "dropOnASeat2": "Dépose sur une place",
-  "pressAndHoldA": "Appuie longuement sur un {{ one }} pour le déplacer"
+  "pressAndHoldA": "Appuie longuement sur un {{ one }} pour le déplacer",
+  "seatsExplained": "7 seats, 7 close friends. Put a friend to sleep to free a seat: the chat is kept."
 }

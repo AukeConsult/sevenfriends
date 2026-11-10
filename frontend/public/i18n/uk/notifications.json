@@ -61,5 +61,8 @@
   "openedYourHistoryMany": "{{ friendNames }} відкрили твою історію.",
   "lockedOnThisDevice": "Заблоковано на цьому пристрої",
   "lockedCounts": "Повідомлень: {{ messages }} і файлів: {{ files }} поки що не можна відкрити тут",
-  "getThemBack": "Повернути їх"
+  "getThemBack": "Повернути їх",
+  "privacyLockIsOff": "Privacy lock is off, so what you send can be read by our system.",
+  "turnItOn": "Turn it on",
+  "unverifiedRequestHint": "Do you know them? Then confirm. If not, reject."
 }

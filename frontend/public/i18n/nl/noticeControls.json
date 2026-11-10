@@ -30,7 +30,6 @@
   "tapTheIconAt": "Tik op het pictogram links in de adresbalk en dan op <strong>Machtigingen → Meldingen → Toestaan</strong>.",
   "reloadThisPageThen": "Laad deze pagina opnieuw en zet de schakelaar dan weer aan.",
   "alsoCheckAndroidSettings": "Controleer ook Android Instellingen → Apps → Chrome → Meldingen: dit moet aanstaan.",
-  "orCopyTheAddress": "Of kopieer het adres, open een nieuw tabblad, plak het en druk op Enter (sommige Android-versies van Chrome openen het niet: gebruik dan de stappen hierboven).",
   "copiedNowPasteIt": "Gekopieerd: plak het nu in een nieuw tabblad",
   "copyTheChromeAddress": "Het Chrome-adres kopiëren",
   "strongIphoneStrong": "<strong>iPhone</strong>",
@@ -70,5 +69,6 @@
   "aFriendRemovedThe": "Een vriend heeft de vriendschap beëindigd",
   "notificationsAreBlockedFor2": "Meldingen zijn voor deze site geblokkeerd. Sta ze toe in de browserinstellingen (het slot- of schuifjespictogram links van het adres) en probeer het opnieuw.",
   "thisBrowserCannotShow": "Deze browser kan geen bureaubladmeldingen tonen.",
-  "thisIsHowA": "Zo ziet een melding eruit."
+  "thisIsHowA": "Zo ziet een melding eruit.",
+  "orUseTheBrowser": "Or use the browser: 3 steps"
 }

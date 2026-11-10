@@ -22,5 +22,7 @@
   "makingYourKey": "Opretter din nøgle…",
   "makeMyKey": "Opret min nøgle",
   "theKeyCouldNot": "Nøglen kunne ikke oprettes. Prøv igen.",
-  "theKeyCouldNot2": "Nøglen kunne ikke gemmes. Prøv igen."
+  "theKeyCouldNot2": "Nøglen kunne ikke gemmes. Prøv igen.",
+  "saveAsFile": "Save as a file",
+  "fileTitle": "Seven Friends: my 24 secret words. Keep this file safe and private."
 }

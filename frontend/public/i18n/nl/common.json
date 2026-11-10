@@ -301,5 +301,8 @@
   "removeThisKeyNotYou": "Deze sleutel verwijderen? Dan kan dat apparaat je berichten niet meer openen. Als jij het niet was, wijzig dan ook je login.",
   "removeIt": "Verwijderen",
   "cancel": "Annuleren",
-  "notMe": "Niet ik"
+  "notMe": "Niet ik",
+  "newKeyQuestion": "{{ name }} seems to have a new phone or a new key. Call {{ name }} and ask: did you change phone?",
+  "newKeyYes": "Yes, it is {{ name }}",
+  "newKeyUnsure": "I am not sure"
 }

@@ -30,7 +30,6 @@
   "tapTheIconAt": "Trykk på ikonet helt til venstre i adressefeltet, deretter <strong>Tillatelser → Varsler → Tillat</strong>.",
   "reloadThisPageThen": "Last denne siden på nytt, og slå så bryteren på igjen.",
   "alsoCheckAndroidSettings": "Sjekk også Android Innstillinger → Apper → Chrome → Varsler: det må være på.",
-  "orCopyTheAddress": "Eller kopier adressen, åpne en ny fane, lim den inn og trykk Enter (noen Android-versjoner av Chrome åpner den ikke: bruk trinnene ovenfor).",
   "copiedNowPasteIt": "Kopiert: lim den nå inn i en ny fane",
   "copyTheChromeAddress": "Kopier Chrome-adressen",
   "strongIphoneStrong": "<strong>iPhone</strong>",
@@ -70,5 +69,6 @@
   "aFriendRemovedThe": "En venn avsluttet vennskapet",
   "notificationsAreBlockedFor2": "Varsler er blokkert for dette nettstedet. Tillat dem i nettleserinnstillingene (lås- eller glidebryter-ikonet til venstre for adressen), og prøv igjen.",
   "thisBrowserCannotShow": "Denne nettleseren kan ikke vise skrivebordsvarsler.",
-  "thisIsHowA": "Slik ser et varsel ut."
+  "thisIsHowA": "Slik ser et varsel ut.",
+  "orUseTheBrowser": "Or use the browser: 3 steps"
 }

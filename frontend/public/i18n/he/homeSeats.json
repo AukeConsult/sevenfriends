@@ -13,5 +13,6 @@
   "seatPositionIsFree": "מקום {{ position }} פנוי: הוספה: {{ one }}",
   "dropOnASeat": "לשחרר על מקום או על מעגל השקט",
   "dropOnASeat2": "לשחרר על מקום",
-  "pressAndHoldA": "לחיצה ארוכה על {{ one }} כדי להזיז"
+  "pressAndHoldA": "לחיצה ארוכה על {{ one }} כדי להזיז",
+  "seatsExplained": "7 seats, 7 close friends. Put a friend to sleep to free a seat: the chat is kept."
 }

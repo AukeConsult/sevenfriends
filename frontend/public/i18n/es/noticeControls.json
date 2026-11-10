@@ -30,7 +30,6 @@
   "tapTheIconAt": "Toca el icono del extremo izquierdo de la barra de direcciones y luego <strong>Permisos → Notificaciones → Permitir</strong>.",
   "reloadThisPageThen": "Recarga esta página y vuelve a activar el interruptor.",
   "alsoCheckAndroidSettings": "Revisa también Ajustes de Android → Apps → Chrome → Notificaciones: deben estar activadas.",
-  "orCopyTheAddress": "O copia la dirección, abre una pestaña nueva, pégala y pulsa Intro (algunas versiones de Chrome para Android no la abren: usa los pasos de arriba).",
   "copiedNowPasteIt": "Copiada: ahora pégala en una pestaña nueva",
   "copyTheChromeAddress": "Copiar la dirección de Chrome",
   "strongIphoneStrong": "<strong>iPhone</strong>",
@@ -70,5 +69,6 @@
   "aFriendRemovedThe": "Un amigo eliminó la amistad",
   "notificationsAreBlockedFor2": "Las notificaciones están bloqueadas para este sitio. Permítelas en los ajustes del navegador (el icono de candado o controles a la izquierda de la dirección) y vuelve a intentarlo.",
   "thisBrowserCannotShow": "Este navegador no puede mostrar notificaciones de escritorio.",
-  "thisIsHowA": "Así se ve una notificación."
+  "thisIsHowA": "Así se ve una notificación.",
+  "orUseTheBrowser": "Or use the browser: 3 steps"
 }

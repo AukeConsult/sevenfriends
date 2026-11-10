@@ -13,5 +13,6 @@
   "seatPositionIsFree": "Plats {{ position }} är ledig: lägg till: {{ one }}",
   "dropOnASeat": "Släpp på en plats eller på den tysta kretsen",
   "dropOnASeat2": "Släpp på en plats",
-  "pressAndHoldA": "Tryck och håll på {{ one }} för att flytta"
+  "pressAndHoldA": "Tryck och håll på {{ one }} för att flytta",
+  "seatsExplained": "7 seats, 7 close friends. Put a friend to sleep to free a seat: the chat is kept."
 }

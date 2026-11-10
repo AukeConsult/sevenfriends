@@ -30,7 +30,6 @@
   "tapTheIconAt": "Нажми значок слева в адресной строке, затем <strong>Разрешения → Уведомления → Разрешить</strong>.",
   "reloadThisPageThen": "Перезагрузи эту страницу и снова включи переключатель.",
   "alsoCheckAndroidSettings": "Проверь ещё Настройки Android → Приложения → Chrome → Уведомления: они должны быть включены.",
-  "orCopyTheAddress": "Или скопируй адрес, открой новую вкладку, вставь его и нажми Enter (в некоторых версиях Chrome для Android он не открывается: используй шаги выше).",
   "copiedNowPasteIt": "Скопировано: теперь вставь в новой вкладке",
   "copyTheChromeAddress": "Скопировать адрес Chrome",
   "strongIphoneStrong": "<strong>iPhone</strong>",
@@ -70,5 +69,6 @@
   "aFriendRemovedThe": "Друг прекратил дружбу",
   "notificationsAreBlockedFor2": "Уведомления для этого сайта заблокированы. Разреши их в настройках браузера (значок замка или ползунков слева от адреса) и попробуй снова.",
   "thisBrowserCannotShow": "Этот браузер не может показывать уведомления на компьютере.",
-  "thisIsHowA": "Так выглядит уведомление."
+  "thisIsHowA": "Так выглядит уведомление.",
+  "orUseTheBrowser": "Or use the browser: 3 steps"
 }

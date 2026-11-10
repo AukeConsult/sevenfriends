@@ -301,5 +301,8 @@
   "removeThisKeyNotYou": "このキーを削除しますか？ そうすると、その端末ではあなたのメッセージを開けなくなります。あなたではない場合は、ログイン情報も変更してください。",
   "removeIt": "削除する",
   "cancel": "キャンセル",
-  "notMe": "私ではない"
+  "notMe": "私ではない",
+  "newKeyQuestion": "{{ name }} seems to have a new phone or a new key. Call {{ name }} and ask: did you change phone?",
+  "newKeyYes": "Yes, it is {{ name }}",
+  "newKeyUnsure": "I am not sure"
 }

@@ -30,7 +30,6 @@
   "tapTheIconAt": "एड्रेस बार के बाएँ सिरे पर आइकन दबाएँ, फिर <strong>Permissions → Notifications → Allow</strong>।",
   "reloadThisPageThen": "यह पेज दोबारा लोड करें, फिर स्विच फिर से चालू करें।",
   "alsoCheckAndroidSettings": "Android Settings → Apps → Chrome → Notifications भी जाँचें: यह चालू होना चाहिए।",
-  "orCopyTheAddress": "या पता कॉपी करें, नया टैब खोलें, पेस्ट करें और Enter दबाएँ (Chrome के कुछ Android वर्शन इसे नहीं खोलते: ऊपर के चरण अपनाएँ)।",
   "copiedNowPasteIt": "कॉपी हो गया: अब इसे नए टैब में पेस्ट करें",
   "copyTheChromeAddress": "Chrome का पता कॉपी करें",
   "strongIphoneStrong": "<strong>iPhone</strong>",
@@ -70,5 +69,6 @@
   "aFriendRemovedThe": "किसी दोस्त ने दोस्ती खत्म कर दी",
   "notificationsAreBlockedFor2": "इस साइट के लिए सूचनाएँ बंद हैं। ब्राउज़र सेटिंग्स में उन्हें चालू करें (पते के बाईं ओर ताला या स्लाइडर आइकन), फिर कोशिश करें।",
   "thisBrowserCannotShow": "यह ब्राउज़र डेस्कटॉप सूचनाएँ नहीं दिखा सकता।",
-  "thisIsHowA": "सूचना ऐसी दिखती है।"
+  "thisIsHowA": "सूचना ऐसी दिखती है।",
+  "orUseTheBrowser": "Or use the browser: 3 steps"
 }

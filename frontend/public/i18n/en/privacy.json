@@ -21,7 +21,7 @@
   "whenYouAndYour": "When you and your friend both have an encryption key, your <strong>messages, pictures, videos and voice messages</strong> are locked on your devices before they are sent. Every message has its own key, locked for you and for your friend.",
   "weStoreThemLocked": "We store them locked and <strong>cannot read them</strong>. A notification says only \"New message\", and so does the list on your home page.",
   "filesInTheStrong": "Files in the <strong>safebox</strong> are locked the same way.",
-  "yourKeyStaysOn": "Your key stays on your device. If you lose it and your recovery words, what was locked for it cannot be opened again, by anyone.",
+  "yourKeyStaysOn": "Your key stays on your device. If you lose it and your secret words, what was locked for it cannot be opened again, by anyone.",
   "weCanStillSee": "We can still see who wrote to whom, when, which kind of file it is and how big. A friend's name still shows in a notification.",
   "youCanSwitchLocking": "You can switch locking off with the padlock in a conversation. What was sent before keys were set up, or while locking was off, is not locked, and we can read it. A link in a plain message gets a preview made by our server; a link in a locked message does not.",
   "setUpOrRestore": "Set up or restore your key in Settings → Keys.",

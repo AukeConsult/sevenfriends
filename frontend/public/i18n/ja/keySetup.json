@@ -22,5 +22,7 @@
   "makingYourKey": "キーを作っています…",
   "makeMyKey": "キーを作る",
   "theKeyCouldNot": "キーを作れませんでした。もう一度お試しください。",
-  "theKeyCouldNot2": "キーを保存できませんでした。もう一度お試しください。"
+  "theKeyCouldNot2": "キーを保存できませんでした。もう一度お試しください。",
+  "saveAsFile": "Save as a file",
+  "fileTitle": "Seven Friends: my 24 secret words. Keep this file safe and private."
 }

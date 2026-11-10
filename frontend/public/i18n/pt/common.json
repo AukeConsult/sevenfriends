@@ -301,5 +301,8 @@
   "removeThisKeyNotYou": "Remover esta chave? Aí esse dispositivo não poderá mais abrir as suas mensagens. Se não foi você, troque também o seu login.",
   "removeIt": "Remover",
   "cancel": "Cancelar",
-  "notMe": "Não fui eu"
+  "notMe": "Não fui eu",
+  "newKeyQuestion": "{{ name }} seems to have a new phone or a new key. Call {{ name }} and ask: did you change phone?",
+  "newKeyYes": "Yes, it is {{ name }}",
+  "newKeyUnsure": "I am not sure"
 }

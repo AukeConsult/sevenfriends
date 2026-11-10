@@ -23,14 +23,13 @@
   "withThisOnA": "With this on, a notification shows who wrote, and \"New message\", but not what.",
   "loading": "Loading…",
   "howDoIAllow": "How do I allow notifications?",
-  "yourBrowserHasBeen": "Your browser has been told to block notifications from this site. The switches here cannot change that: you allow it once in the browser, then come back and turn the switch on again.",
+  "yourBrowserHasBeen": "Notifications are blocked for this site. Allow them once in your browser (steps below), then come back and turn the switch on.",
   "strongAndroidStrong": "<strong>Android</strong>",
   "onAndroidNotificationsAre": "On Android, notifications are set up by installing the Seven Friends app. The app asks for permission itself, and has its own sounds.",
   "strongOrKeepUsing": "<strong>Or keep using the browser</strong>",
   "tapTheIconAt": "Tap the icon at the left end of the address bar, then <strong>Permissions → Notifications → Allow</strong>.",
   "reloadThisPageThen": "Reload this page, then turn the switch on again.",
   "alsoCheckAndroidSettings": "Also check Android Settings → Apps → Chrome → Notifications: it must be on.",
-  "orCopyTheAddress": "Or copy the address, open a new tab, paste it and press Enter (some Android versions of Chrome do not open it: use the steps above).",
   "copiedNowPasteIt": "Copied: now paste it in a new tab",
   "copyTheChromeAddress": "Copy the Chrome address",
   "strongIphoneStrong": "<strong>iPhone</strong>",
@@ -70,5 +69,6 @@
   "aFriendRemovedThe": "A friend removed the friendship",
   "notificationsAreBlockedFor2": "Notifications are blocked for this site. Allow them in the browser settings (the lock or sliders icon at the left of the address), then try again.",
   "thisBrowserCannotShow": "This browser cannot show desktop notifications.",
-  "thisIsHowA": "This is how a notification looks."
+  "thisIsHowA": "This is how a notification looks.",
+  "orUseTheBrowser": "Or use the browser: 3 steps"
 }

@@ -15,5 +15,5 @@
   "deleteFname": "Delete {{ fName }}…",
   "putToSleepLeaves": "Put {{ friendName }} to sleep? {{ friendName }} leaves your list and the seat is free again. Your conversation is kept, and you can wake {{ friendName }} up from the sleep list.",
   "deleteThisRemovesThe": "Delete {{ friendName }}? This removes the connection from your list and from theirs.",
-  "removeFromYourCircle": "Remove {{ friendName }} from your circle?"
+  "removeFromYourCircle": "Remove {{ friendName }} as a friend?"
 }

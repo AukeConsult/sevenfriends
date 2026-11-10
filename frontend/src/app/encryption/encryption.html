@@ -17,7 +17,7 @@
       @if (lockedTotal() > 0) {
         <div class="alert alert-warning m-0" role="status">
           <strong>{{ t('encryption.someThingsAreLocked') || 'Some of your old messages and files are locked on this device.' }}</strong><br />
-          {{ t('encryption.lockedCounts', { messages: lockedCounts()?.messages ?? 0, files: lockedCounts()?.files ?? 0 }) || (lockedCounts()?.messages ?? 0) + ' messages and ' + (lockedCounts()?.files ?? 0) + ' files cannot be opened here yet. They were locked for another key.' }}
+          {{ t('encryption.lockedCounts', { messages: lockedCounts()?.messages ?? 0, files: lockedCounts()?.files ?? 0 }) || (lockedCounts()?.messages ?? 0) + ' messages and ' + (lockedCounts()?.files ?? 0) + ' files are locked on this device. Choose a way below to get them back.' }}
         </div>
         <ng-container *ngTemplateOutlet="ways" />
       } @else {

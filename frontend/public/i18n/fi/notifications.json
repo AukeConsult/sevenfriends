@@ -61,5 +61,8 @@
   "openedYourHistoryMany": "{{ friendNames }} avasivat historiasi.",
   "lockedOnThisDevice": "Lukittu tällä laitteella",
   "lockedCounts": "{{ messages }} viestiä ja {{ files }} tiedostoa ei voi vielä avata täällä",
-  "getThemBack": "Hae ne takaisin"
+  "getThemBack": "Hae ne takaisin",
+  "privacyLockIsOff": "Privacy lock is off, so what you send can be read by our system.",
+  "turnItOn": "Turn it on",
+  "unverifiedRequestHint": "Do you know them? Then confirm. If not, reject."
 }

@@ -46,6 +46,12 @@
           <a routerLink="/setup" class="btn btn-primary btn-sm">{{ t('notifications.finishSetup') || 'Finish setup' }}</a>
         </div>
       }
+      @if (lockOff()) {
+        <div class="alert alert-warning d-flex flex-wrap align-items-center justify-content-between gap-2" role="status">
+          <span>{{ t('notifications.privacyLockIsOff') || 'Privacy lock is off, so what you send can be read by our system.' }}</span>
+          <a routerLink="/settings/encryption" class="btn btn-primary btn-sm">{{ t('notifications.turnItOn') || 'Turn it on' }}</a>
+        </div>
+      }
 
       @if (androidOff(); as off) {
         <div class="alert alert-warning" role="alert">
@@ -136,6 +142,7 @@
                 @if (request.message) { <small class="fst-italic">“{{ request.message }}”</small> }
                 @if (request.fromUnverified.length) {
                   <small class="text-warning-emphasis">{{ t('notifications.hasNotVerifiedPhone', { phone: request.fromUnverified.length === 2 ? (t('notifications.unverifiedAnd', { a: t('notifications.unverifiedEmail') || 'email', b: t('notifications.unverifiedPhone') || 'phone number' }) || 'their email or phone') : request.fromUnverified[0] === 'email' ? (t('notifications.unverifiedEmail') || 'their email') : (t('notifications.unverifiedPhone') || 'their phone') }) || 'Has not verified ' + (request.fromUnverified.length === 2 ? 'their email or phone' : request.fromUnverified[0] === 'email' ? 'their email' : 'their phone') + ': we cannot be sure it is really them.' }}</small>
+                  <small class="text-warning-emphasis">{{ t('notifications.unverifiedRequestHint') || 'Do you know them? Then confirm. If not, reject.' }}</small>
                 }
               </span>
               <span class="sf-home-actions">

@@ -30,7 +30,6 @@
   "tapTheIconAt": "Tipp auf das Symbol am linken Ende der Adressleiste, dann auf <strong>Berechtigungen → Benachrichtigungen → Zulassen</strong>.",
   "reloadThisPageThen": "Lade diese Seite neu und schalte dann den Schalter wieder ein.",
   "alsoCheckAndroidSettings": "Prüf auch Android-Einstellungen → Apps → Chrome → Benachrichtigungen: Es muss eingeschaltet sein.",
-  "orCopyTheAddress": "Oder kopier die Adresse, öffne einen neuen Tab, füg sie ein und drück Enter (manche Android-Versionen von Chrome öffnen sie nicht: Nutz dann die Schritte oben).",
   "copiedNowPasteIt": "Kopiert: Füg sie jetzt in einem neuen Tab ein",
   "copyTheChromeAddress": "Chrome-Adresse kopieren",
   "strongIphoneStrong": "<strong>iPhone</strong>",
@@ -70,5 +69,6 @@
   "aFriendRemovedThe": "Ein Freund hat die Freundschaft beendet",
   "notificationsAreBlockedFor2": "Benachrichtigungen sind für diese Seite blockiert. Erlaub sie in den Browsereinstellungen (das Schloss- oder Regler-Symbol links neben der Adresse) und versuch es dann noch einmal.",
   "thisBrowserCannotShow": "Dieser Browser kann keine Desktop-Benachrichtigungen anzeigen.",
-  "thisIsHowA": "So sieht eine Benachrichtigung aus."
+  "thisIsHowA": "So sieht eine Benachrichtigung aus.",
+  "orUseTheBrowser": "Or use the browser: 3 steps"
 }

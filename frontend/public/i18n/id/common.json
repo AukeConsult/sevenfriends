@@ -301,5 +301,8 @@
   "removeThisKeyNotYou": "Hapus kunci ini? Perangkat itu tidak akan bisa lagi membuka pesanmu. Kalau itu bukan kamu, ganti juga login-mu.",
   "removeIt": "Hapus",
   "cancel": "Batal",
-  "notMe": "Bukan aku"
+  "notMe": "Bukan aku",
+  "newKeyQuestion": "{{ name }} seems to have a new phone or a new key. Call {{ name }} and ask: did you change phone?",
+  "newKeyYes": "Yes, it is {{ name }}",
+  "newKeyUnsure": "I am not sure"
 }

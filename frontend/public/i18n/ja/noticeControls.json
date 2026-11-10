@@ -30,7 +30,6 @@
   "tapTheIconAt": "アドレスバーの左端にあるアイコンをタップし、<strong>権限 → 通知 → 許可</strong>を選びます。",
   "reloadThisPageThen": "このページを再読み込みして、スイッチをもう一度オンにしてください。",
   "alsoCheckAndroidSettings": "Androidの 設定 → アプリ → Chrome → 通知 もオンになっているか確認してください。",
-  "orCopyTheAddress": "または、アドレスをコピーして新しいタブを開き、貼り付けてEnterを押します（Chromeのバージョンによっては開けないAndroidもあります。その場合は上の手順を使ってください）。",
   "copiedNowPasteIt": "コピーしました。新しいタブに貼り付けてください",
   "copyTheChromeAddress": "Chromeのアドレスをコピー",
   "strongIphoneStrong": "<strong>iPhone</strong>",
@@ -70,5 +69,6 @@
   "aFriendRemovedThe": "友だちが友だち関係を解除しました",
   "notificationsAreBlockedFor2": "このサイトの通知がブロックされています。ブラウザの設定（アドレスの左にあるロックまたはスライダーのアイコン）で許可してから、もう一度お試しください。",
   "thisBrowserCannotShow": "このブラウザではデスクトップ通知を表示できません。",
-  "thisIsHowA": "通知はこのように表示されます。"
+  "thisIsHowA": "通知はこのように表示されます。",
+  "orUseTheBrowser": "Or use the browser: 3 steps"
 }

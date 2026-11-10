@@ -30,7 +30,6 @@
   "tapTheIconAt": "Adres çubuğunun sol ucundaki simgeye dokun, sonra <strong>İzinler → Bildirimler → İzin ver</strong>.",
   "reloadThisPageThen": "Bu sayfayı yenile, sonra anahtarı tekrar aç.",
   "alsoCheckAndroidSettings": "Ayrıca Android Ayarlar → Uygulamalar → Chrome → Bildirimler'e bak: açık olmalı.",
-  "orCopyTheAddress": "Ya da adresi kopyala, yeni bir sekme aç, yapıştır ve Enter'a bas (Chrome'un bazı Android sürümleri bunu açmaz: yukarıdaki adımları kullan).",
   "copiedNowPasteIt": "Kopyalandı: şimdi yeni bir sekmeye yapıştır",
   "copyTheChromeAddress": "Chrome adresini kopyala",
   "strongIphoneStrong": "<strong>iPhone</strong>",
@@ -70,5 +69,6 @@
   "aFriendRemovedThe": "Bir arkadaş arkadaşlığı sonlandırdı",
   "notificationsAreBlockedFor2": "Bu site için bildirimler engelli. Tarayıcı ayarlarından izin ver (adresin solundaki kilit veya kaydırıcı simgesi), sonra tekrar dene.",
   "thisBrowserCannotShow": "Bu tarayıcı masaüstü bildirimleri gösteremiyor.",
-  "thisIsHowA": "Bir bildirim böyle görünür."
+  "thisIsHowA": "Bir bildirim böyle görünür.",
+  "orUseTheBrowser": "Or use the browser: 3 steps"
 }

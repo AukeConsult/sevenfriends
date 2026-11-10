@@ -13,5 +13,6 @@
   "seatPositionIsFree": "{{ position }}番目の席が空いています。{{ one }}を追加",
   "dropOnASeat": "席かサイレントサークルにドロップ",
   "dropOnASeat2": "席にドロップ",
-  "pressAndHoldA": "{{ one }}を長押しして移動"
+  "pressAndHoldA": "{{ one }}を長押しして移動",
+  "seatsExplained": "7 seats, 7 close friends. Put a friend to sleep to free a seat: the chat is kept."
 }

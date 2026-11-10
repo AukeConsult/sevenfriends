@@ -301,5 +301,8 @@
   "removeThisKeyNotYou": "Bu anahtar kaldırılsın mı? O zaman o cihaz mesajlarını artık açamaz. Bu sen değilsen girişini de değiştir.",
   "removeIt": "Kaldır",
   "cancel": "İptal",
-  "notMe": "Ben değilim"
+  "notMe": "Ben değilim",
+  "newKeyQuestion": "{{ name }} seems to have a new phone or a new key. Call {{ name }} and ask: did you change phone?",
+  "newKeyYes": "Yes, it is {{ name }}",
+  "newKeyUnsure": "I am not sure"
 }

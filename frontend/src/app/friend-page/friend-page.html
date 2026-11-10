@@ -115,6 +115,7 @@
     </div>
   }
 </header>
+<app-key-changed-band [friendId]="ctx.friendId" [name]="ctx.friendName()" [fingerprints]="ctx.friendFingerprints()" />
 @if (ctx.lockedMessages() + ctx.lockedFiles() > 0) { <app-locked-band [friendId]="ctx.friendId" [name]="ctx.friendName()" [messages]="ctx.lockedMessages()" [files]="ctx.lockedFiles()" /> }
 
 <!-- what the padlock just did, in plain words: it fades away by itself -->

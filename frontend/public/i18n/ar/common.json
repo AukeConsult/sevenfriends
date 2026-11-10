@@ -301,5 +301,8 @@
   "removeThisKeyNotYou": "هل تريد إزالة هذا المفتاح؟ عندها لن يتمكن ذلك الجهاز من فتح رسائلك. إذا لم تكن أنت، فغيّر أيضًا بيانات تسجيل دخولك.",
   "removeIt": "أزله",
   "cancel": "إلغاء",
-  "notMe": "لست أنا"
+  "notMe": "لست أنا",
+  "newKeyQuestion": "{{ name }} seems to have a new phone or a new key. Call {{ name }} and ask: did you change phone?",
+  "newKeyYes": "Yes, it is {{ name }}",
+  "newKeyUnsure": "I am not sure"
 }

@@ -30,7 +30,6 @@
   "tapTheIconAt": "Dotknij ikony na lewym końcu paska adresu, potem <strong>Uprawnienia → Powiadomienia → Zezwól</strong>.",
   "reloadThisPageThen": "Odśwież tę stronę, potem włącz przełącznik ponownie.",
   "alsoCheckAndroidSettings": "Sprawdź też Ustawienia Androida → Aplikacje → Chrome → Powiadomienia: muszą być włączone.",
-  "orCopyTheAddress": "Albo skopiuj adres, otwórz nową kartę, wklej go i naciśnij Enter (niektóre wersje Chrome na Androida go nie otwierają: użyj kroków powyżej).",
   "copiedNowPasteIt": "Skopiowano: wklej teraz w nowej karcie",
   "copyTheChromeAddress": "Kopiuj adres Chrome",
   "strongIphoneStrong": "<strong>iPhone</strong>",
@@ -70,5 +69,6 @@
   "aFriendRemovedThe": "Przyjaciel zakończył przyjaźń",
   "notificationsAreBlockedFor2": "Powiadomienia są zablokowane dla tej strony. Zezwól na nie w ustawieniach przeglądarki (ikona kłódki lub suwaków po lewej stronie adresu), potem spróbuj ponownie.",
   "thisBrowserCannotShow": "Ta przeglądarka nie potrafi pokazywać powiadomień na komputerze.",
-  "thisIsHowA": "Tak wygląda powiadomienie."
+  "thisIsHowA": "Tak wygląda powiadomienie.",
+  "orUseTheBrowser": "Or use the browser: 3 steps"
 }

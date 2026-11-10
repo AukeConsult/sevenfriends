@@ -24,7 +24,7 @@
   "couldNotOpenThe": "Could not open the invite link.",
   "couldNotSendThe": "Could not send the friend request",
   "couldNotConfirmThe": "Could not confirm the request",
-  "thisInvitationIsFor": "This invitation is for the {{ label }} circle, and this app is in the {{ label2 }} circle. Open the link in an app for {{ label }}.",
+  "thisInvitationIsFor": "This invitation is for a different version of the app ({{ label }}). Open the link in the {{ label }} app.",
   "thisIsYourOwn": "This is your own invite link: send it to your friends.",
   "thisIsYourOwn2": "This is your own link: send it to your friends.",
   "isAlreadyOnYour": "{{ alreadyName }} is already on your friend list.",

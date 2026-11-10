@@ -61,5 +61,8 @@
   "openedYourHistoryMany": "فتح {{ friendNames }} سجلّك.",
   "lockedOnThisDevice": "مقفل على هذا الجهاز",
   "lockedCounts": "لا يمكن فتح {{ messages }} رسالة و{{ files }} ملف هنا بعد",
-  "getThemBack": "استعدها"
+  "getThemBack": "استعدها",
+  "privacyLockIsOff": "Privacy lock is off, so what you send can be read by our system.",
+  "turnItOn": "Turn it on",
+  "unverifiedRequestHint": "Do you know them? Then confirm. If not, reject."
 }

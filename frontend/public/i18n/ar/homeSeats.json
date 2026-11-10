@@ -13,5 +13,6 @@
   "seatPositionIsFree": "المقعد {{ position }} شاغر: أضِف {{ one }}",
   "dropOnASeat": "أفلت على مقعد أو على دائرة الصامتين",
   "dropOnASeat2": "أفلت على مقعد",
-  "pressAndHoldA": "اضغط مطولًا على {{ one }} لنقله"
+  "pressAndHoldA": "اضغط مطولًا على {{ one }} لنقله",
+  "seatsExplained": "7 seats, 7 close friends. Put a friend to sleep to free a seat: the chat is kept."
 }

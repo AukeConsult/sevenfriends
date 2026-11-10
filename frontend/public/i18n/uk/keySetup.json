@@ -22,5 +22,7 @@
   "makingYourKey": "Створюю твій ключ…",
   "makeMyKey": "Створити мій ключ",
   "theKeyCouldNot": "Не вдалося створити ключ. Спробуй ще раз.",
-  "theKeyCouldNot2": "Не вдалося зберегти ключ. Спробуй ще раз."
+  "theKeyCouldNot2": "Не вдалося зберегти ключ. Спробуй ще раз.",
+  "saveAsFile": "Save as a file",
+  "fileTitle": "Seven Friends: my 24 secret words. Keep this file safe and private."
 }

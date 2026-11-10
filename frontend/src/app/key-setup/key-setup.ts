@@ -6,7 +6,7 @@ import { tr } from '../core/i18n';
 
 /**
  * Making the encryption key, in one piece used by the setup wizard and by Settings → Keys: shows whether this device has a key, makes one
- * (`makeKey`, also with `reset` for a new key) in memory, shows the 24 recovery words once, and asks for three of them back. Only when the person
+ * (`makeKey`, also with `reset` for a new key) in memory, shows the 24 recovery words once, and asks for one of them back. Only when the person
  * presses Save is the key put on this device and on the server (and checked): leaving before that throws the new key away.
  * `finished` is sent when the key is saved and checked.
  */
@@ -28,9 +28,9 @@ export class KeySetup {
   protected readonly words = signal<string[] | null>(null);
   /** true while the words are on the screen: a page around this one should not offer to leave */
   readonly showingWords = computed(() => this.words() !== null);
-  /** the three words (positions 1-24) the person is asked to type back, to show the code was written down */
+  /** the word (position 1-24) the person is asked to type back, to show the code was written down */
   protected readonly quiz = signal<number[]>([]);
-  protected readonly answers = signal<string[]>(['', '', '']);
+  protected readonly answers = signal<string[]>(['']);
   protected readonly busy = signal(false);
   protected readonly problem = signal<string | null>(null);
   protected readonly copied = signal(false);
@@ -52,10 +52,10 @@ export class KeySetup {
     this.problem.set(null);
     try {
       const words = await this.keys.prepare(reset);
-      const positions = new Set<number>(); // three different positions, in order
-      while (positions.size < 3) positions.add(1 + (crypto.getRandomValues(new Uint32Array(1))[0] % words.length));
+      const positions = new Set<number>(); // one random position
+      while (positions.size < 1) positions.add(1 + (crypto.getRandomValues(new Uint32Array(1))[0] % words.length));
       this.quiz.set([...positions].sort((a, b) => a - b));
-      this.answers.set(['', '', '']);
+      this.answers.set(['']);
       this.copied.set(false);
       this.words.set(words);
     } catch (err: any) {
@@ -63,6 +63,18 @@ export class KeySetup {
     } finally {
       this.busy.set(false);
     }
+  }
+
+  /** The words as a text file (a choice next to Copy; nothing leaves the device). */
+  protected saveFile(): void {
+    const blob = new Blob([`${tr('keySetup.fileTitle', 'Seven Friends: my 24 secret words. Keep this file safe and private.')}\n\n${(this.words() ?? []).join(' ')}\n`], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'seven-friends-secret-words.txt';
+    link.click();
+    URL.revokeObjectURL(url);
+    this.copied.set(true);
   }
 
   protected setAnswer(i: number, value: string): void {

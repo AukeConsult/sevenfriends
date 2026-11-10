@@ -61,5 +61,8 @@
   "openedYourHistoryMany": "{{ friendNames }} 打开了你的历史记录。",
   "lockedOnThisDevice": "已在此设备上锁定",
   "lockedCounts": "{{ messages }} 条消息和 {{ files }} 个文件暂时无法在此打开",
-  "getThemBack": "找回"
+  "getThemBack": "找回",
+  "privacyLockIsOff": "Privacy lock is off, so what you send can be read by our system.",
+  "turnItOn": "Turn it on",
+  "unverifiedRequestHint": "Do you know them? Then confirm. If not, reject."
 }

@@ -301,5 +301,8 @@
   "removeThisKeyNotYou": "Удалить этот ключ? Тогда то устройство больше не сможет открывать твои сообщения. Если это был не ты, смени и свой вход.",
   "removeIt": "Удалить",
   "cancel": "Отмена",
-  "notMe": "Это не я"
+  "notMe": "Это не я",
+  "newKeyQuestion": "{{ name }} seems to have a new phone or a new key. Call {{ name }} and ask: did you change phone?",
+  "newKeyYes": "Yes, it is {{ name }}",
+  "newKeyUnsure": "I am not sure"
 }

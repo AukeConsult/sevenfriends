@@ -79,6 +79,9 @@ Font scale: `--sf-fs-xs` .75rem, `--sf-fs-sm` .875rem, `--sf-fs-base` 1rem, `--s
 Other dimensions: `--sf-touch` 2.75rem (min tap target), `--sf-gap`, `--sf-radius`, `--sf-hero-pad`, `--sf-form-max`.
 Add a new size or breakpoint override in `styles.scss` first, then use the variable.
 
+## Words in the app (one word per idea)
+Use plain words and ONE word for each idea: **seat** (one of the 7 places), **sleep** (a friend who keeps the chat but gives up the seat; never "silent"), **friend**, **safebox**, **poke** (makes a friend's phone ring even when you sleep on their list). Do not show **circle** to users (it is an internal app type), nor "connection" or "contact" for a friend. A new word is explained once, in one line, where it first appears.
+
 ## Conventions
 - **All interfaces and types live in a `models` folder**, never inside a service, component or router file. Import them from `./models` (backend) / `../models` (frontend).
 - **The API types are written once and copied into the frontend.** The source is `functions/src/models/shared/` (Friend, FriendRequest, Circle, Message, ChatMessage, Conversation, Socials, ... everything that crosses the API). `scripts/sync-models.mjs` copies it to `frontend/src/app/models/shared/` before every `npm start` / `npm run build` / `npm test` in the frontend (npm pre-hooks), and by hand with `npm run sync:models`. The copy is generated and not committed (gitignored): **never edit it, edit the source**. Nothing is shared as a module; each project compiles its own copy.

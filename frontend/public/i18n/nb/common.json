@@ -301,5 +301,8 @@
   "removeThisKeyNotYou": "Fjerne denne nøkkelen? Da kan ikke den enheten åpne meldingene dine lenger. Hvis det ikke var deg, bør du også endre innloggingen din.",
   "removeIt": "Fjern den",
   "cancel": "Avbryt",
-  "notMe": "Ikke meg"
+  "notMe": "Ikke meg",
+  "newKeyQuestion": "{{ name }} seems to have a new phone or a new key. Call {{ name }} and ask: did you change phone?",
+  "newKeyYes": "Yes, it is {{ name }}",
+  "newKeyUnsure": "I am not sure"
 }

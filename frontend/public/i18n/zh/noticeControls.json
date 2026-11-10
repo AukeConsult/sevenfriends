@@ -30,7 +30,6 @@
   "tapTheIconAt": "点按地址栏左端的图标，然后依次点<strong>权限 → 通知 → 允许</strong>。",
   "reloadThisPageThen": "刷新这个页面，然后再把开关打开。",
   "alsoCheckAndroidSettings": "还要检查 Android 设置 → 应用 → Chrome → 通知：必须是开启的。",
-  "orCopyTheAddress": "或者复制地址，打开新标签页，粘贴后按回车（某些 Android 版本的 Chrome 打不开：请用上面的步骤）。",
   "copiedNowPasteIt": "已复制：现在去新标签页粘贴",
   "copyTheChromeAddress": "复制 Chrome 地址",
   "strongIphoneStrong": "<strong>iPhone</strong>",
@@ -70,5 +69,6 @@
   "aFriendRemovedThe": "有朋友解除了好友关系",
   "notificationsAreBlockedFor2": "这个网站的通知被屏蔽了。请在浏览器设置中允许（地址栏左侧的锁形或滑块图标），然后再试一次。",
   "thisBrowserCannotShow": "这个浏览器无法显示桌面通知。",
-  "thisIsHowA": "通知就是这个样子。"
+  "thisIsHowA": "通知就是这个样子。",
+  "orUseTheBrowser": "Or use the browser: 3 steps"
 }

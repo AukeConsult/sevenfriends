@@ -61,5 +61,8 @@
   "openedYourHistoryMany": "{{ friendNames }}님이 내 기록을 열었어요.",
   "lockedOnThisDevice": "이 기기에서 잠김",
   "lockedCounts": "메시지 {{ messages }}개와 파일 {{ files }}개는 아직 여기서 열 수 없어요",
-  "getThemBack": "되찾기"
+  "getThemBack": "되찾기",
+  "privacyLockIsOff": "Privacy lock is off, so what you send can be read by our system.",
+  "turnItOn": "Turn it on",
+  "unverifiedRequestHint": "Do you know them? Then confirm. If not, reject."
 }

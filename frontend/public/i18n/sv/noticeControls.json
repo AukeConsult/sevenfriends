@@ -30,7 +30,6 @@
   "tapTheIconAt": "Tryck på ikonen längst till vänster i adressfältet, sedan <strong>Behörigheter → Notiser → Tillåt</strong>.",
   "reloadThisPageThen": "Ladda om den här sidan och slå sedan på reglaget igen.",
   "alsoCheckAndroidSettings": "Kontrollera också Android Inställningar → Appar → Chrome → Notiser: det måste vara på.",
-  "orCopyTheAddress": "Eller kopiera adressen, öppna en ny flik, klistra in den och tryck på Enter (vissa Android-versioner av Chrome öppnar den inte: använd stegen ovan).",
   "copiedNowPasteIt": "Kopierat: klistra nu in den i en ny flik",
   "copyTheChromeAddress": "Kopiera Chrome-adressen",
   "strongIphoneStrong": "<strong>iPhone</strong>",
@@ -70,5 +69,6 @@
   "aFriendRemovedThe": "En vän avslutade vänskapen",
   "notificationsAreBlockedFor2": "Notiser är blockerade för den här webbplatsen. Tillåt dem i webbläsarens inställningar (lås- eller reglageikonen till vänster om adressen) och försök igen.",
   "thisBrowserCannotShow": "Den här webbläsaren kan inte visa skrivbordsnotiser.",
-  "thisIsHowA": "Så här ser en notis ut."
+  "thisIsHowA": "Så här ser en notis ut.",
+  "orUseTheBrowser": "Or use the browser: 3 steps"
 }

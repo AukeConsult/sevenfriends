@@ -61,5 +61,8 @@
   "openedYourHistoryMany": "{{ friendNames }} פתחו את ההיסטוריה שלך.",
   "lockedOnThisDevice": "נעול במכשיר הזה",
   "lockedCounts": "{{ messages }} הודעות ו-{{ files }} קבצים עדיין לא ניתן לפתוח כאן",
-  "getThemBack": "להחזיר אותן"
+  "getThemBack": "להחזיר אותן",
+  "privacyLockIsOff": "Privacy lock is off, so what you send can be read by our system.",
+  "turnItOn": "Turn it on",
+  "unverifiedRequestHint": "Do you know them? Then confirm. If not, reject."
 }

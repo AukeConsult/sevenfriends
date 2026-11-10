@@ -301,5 +301,8 @@
   "removeThisKeyNotYou": "要删除这个密钥吗？删除后，那台设备将无法再打开你的消息。如果不是你本人操作，请同时更改你的登录方式。",
   "removeIt": "删除",
   "cancel": "取消",
-  "notMe": "不是我"
+  "notMe": "不是我",
+  "newKeyQuestion": "{{ name }} seems to have a new phone or a new key. Call {{ name }} and ask: did you change phone?",
+  "newKeyYes": "Yes, it is {{ name }}",
+  "newKeyUnsure": "I am not sure"
 }

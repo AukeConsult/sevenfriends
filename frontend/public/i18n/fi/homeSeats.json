@@ -13,5 +13,6 @@
   "seatPositionIsFree": "Paikka {{ position }} on vapaa: lisää {{ one }}",
   "dropOnASeat": "Pudota paikan tai Hiljaiset-ympyrän päälle",
   "dropOnASeat2": "Pudota paikan päälle",
-  "pressAndHoldA": "Siirrä painamalla pitkään: {{ one }}"
+  "pressAndHoldA": "Siirrä painamalla pitkään: {{ one }}",
+  "seatsExplained": "7 seats, 7 close friends. Put a friend to sleep to free a seat: the chat is kept."
 }

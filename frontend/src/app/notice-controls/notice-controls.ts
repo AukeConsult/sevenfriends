@@ -60,6 +60,8 @@ export class NoticeControls {
   /** inside the Android app: the browser-only parts (pop-ups, browser help) are hidden */
   protected readonly native = Capacitor.isNativePlatform();
   /** the device of this browser: each one gets its own explanation of notifications (Android: install the app; iPhone: Home Screen app; Safari on a Mac; else Chrome / Edge on a computer) */
+  /** Windows: the extra steps in Windows settings are only shown there */
+  protected readonly isWindows = /Windows/i.test(navigator.userAgent);
   protected readonly device: 'android' | 'iphone' | 'safari' | 'computer' = /Android/i.test(navigator.userAgent)
     ? 'android'
     : /iPhone|iPad|iPod/i.test(navigator.userAgent) || (/Macintosh/i.test(navigator.userAgent) && navigator.maxTouchPoints > 1)

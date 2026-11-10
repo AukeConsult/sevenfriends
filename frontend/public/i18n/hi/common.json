@@ -301,5 +301,8 @@
   "removeThisKeyNotYou": "यह कुंजी हटाएँ? तब वह डिवाइस आपके संदेश नहीं खोल पाएगा। अगर यह आप नहीं थे, तो अपना लॉगिन भी बदल लें।",
   "removeIt": "हटाएँ",
   "cancel": "रद्द करें",
-  "notMe": "मैं नहीं हूँ"
+  "notMe": "मैं नहीं हूँ",
+  "newKeyQuestion": "{{ name }} seems to have a new phone or a new key. Call {{ name }} and ask: did you change phone?",
+  "newKeyYes": "Yes, it is {{ name }}",
+  "newKeyUnsure": "I am not sure"
 }

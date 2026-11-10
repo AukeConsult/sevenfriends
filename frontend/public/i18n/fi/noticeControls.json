@@ -30,7 +30,6 @@
   "tapTheIconAt": "Napauta osoiterivin vasemmassa päässä olevaa kuvaketta ja sitten <strong>Käyttöoikeudet → Ilmoitukset → Salli</strong>.",
   "reloadThisPageThen": "Lataa tämä sivu uudelleen ja laita sitten kytkin uudelleen päälle.",
   "alsoCheckAndroidSettings": "Tarkista myös Androidin Asetukset → Sovellukset → Chrome → Ilmoitukset: sen pitää olla päällä.",
-  "orCopyTheAddress": "Tai kopioi osoite, avaa uusi välilehti, liitä se ja paina Enter (joissakin Androidin Chrome-versioissa se ei aukea: käytä yllä olevia vaiheita).",
   "copiedNowPasteIt": "Kopioitu: liitä se nyt uudelle välilehdelle",
   "copyTheChromeAddress": "Kopioi Chromen osoite",
   "strongIphoneStrong": "<strong>iPhone</strong>",
@@ -70,5 +69,6 @@
   "aFriendRemovedThe": "Ystävä poisti ystävyyden",
   "notificationsAreBlockedFor2": "Ilmoitukset on estetty tälle sivustolle. Salli ne selaimen asetuksissa (lukko- tai liukusäädinkuvake osoitteen vasemmalla puolella) ja yritä uudelleen.",
   "thisBrowserCannotShow": "Tämä selain ei voi näyttää työpöytäilmoituksia.",
-  "thisIsHowA": "Näin ilmoitus näyttää."
+  "thisIsHowA": "Näin ilmoitus näyttää.",
+  "orUseTheBrowser": "Or use the browser: 3 steps"
 }

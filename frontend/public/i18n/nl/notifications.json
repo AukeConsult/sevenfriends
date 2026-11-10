@@ -61,5 +61,8 @@
   "openedYourHistoryMany": "{{ friendNames }} hebben je geschiedenis geopend.",
   "lockedOnThisDevice": "Vergrendeld op dit apparaat",
   "lockedCounts": "{{ messages }} berichten en {{ files }} bestanden kunnen hier nog niet worden geopend",
-  "getThemBack": "Haal ze terug"
+  "getThemBack": "Haal ze terug",
+  "privacyLockIsOff": "Privacy lock is off, so what you send can be read by our system.",
+  "turnItOn": "Turn it on",
+  "unverifiedRequestHint": "Do you know them? Then confirm. If not, reject."
 }

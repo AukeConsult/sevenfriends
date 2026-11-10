@@ -13,5 +13,6 @@
   "seatPositionIsFree": "Miejsce {{ position }} jest wolne: dodaj: {{ one }}",
   "dropOnASeat": "Upuść na miejscu lub w kręgu Ciche",
   "dropOnASeat2": "Upuść na miejscu",
-  "pressAndHoldA": "Przytrzymaj ({{ one }}), żeby przenieść"
+  "pressAndHoldA": "Przytrzymaj ({{ one }}), żeby przenieść",
+  "seatsExplained": "7 seats, 7 close friends. Put a friend to sleep to free a seat: the chat is kept."
 }

@@ -30,7 +30,6 @@
   "tapTheIconAt": "Tocca l'icona all'estremità sinistra della barra degli indirizzi, poi <strong>Autorizzazioni → Notifiche → Consenti</strong>.",
   "reloadThisPageThen": "Ricarica questa pagina, poi riattiva l'interruttore.",
   "alsoCheckAndroidSettings": "Controlla anche Impostazioni Android → App → Chrome → Notifiche: devono essere attive.",
-  "orCopyTheAddress": "Oppure copia l'indirizzo, apri una nuova scheda, incollalo e premi Invio (su alcune versioni Android di Chrome non si apre: usa i passaggi qui sopra).",
   "copiedNowPasteIt": "Copiato: ora incollalo in una nuova scheda",
   "copyTheChromeAddress": "Copia l'indirizzo di Chrome",
   "strongIphoneStrong": "<strong>iPhone</strong>",
@@ -70,5 +69,6 @@
   "aFriendRemovedThe": "Un amico ha tolto l'amicizia",
   "notificationsAreBlockedFor2": "Le notifiche sono bloccate per questo sito. Consentile nelle impostazioni del browser (l'icona del lucchetto o dei cursori a sinistra dell'indirizzo), poi riprova.",
   "thisBrowserCannotShow": "Questo browser non può mostrare le notifiche sul desktop.",
-  "thisIsHowA": "Ecco come appare una notifica."
+  "thisIsHowA": "Ecco come appare una notifica.",
+  "orUseTheBrowser": "Or use the browser: 3 steps"
 }

@@ -120,6 +120,8 @@ export class FriendContext {
   readonly friendHasKey = computed(() => (this.keyStatus() === 'checking' ? null : this.keyStatus() === 'both' || this.keyStatus() === 'me'));
   /** the keys in use of my friend (their codes are shown on the locking page, to compare with what they read from their own device) */
   readonly friendKeys = computed(() => this.boxKeys()?.friend ?? []);
+  /** the fingerprints of my friend's keys (the question "did you change phone?" is asked when one is new on this device) */
+  readonly friendFingerprints = computed(() => this.friendKeys().filter((k) => !k.revoked).map((k) => k.fingerprint));
   readonly readable = readableFingerprint;
   /** how many keys in use the server lists for me and for my friend (for the details line) */
   readonly serverKeys = computed(() => ({ mine: this.boxKeys()?.mine.length ?? 0, friend: this.boxKeys()?.friend.length ?? 0 }));

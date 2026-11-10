@@ -61,5 +61,8 @@
   "openedYourHistoryMany": "{{ friendNames }} haben deinen Verlauf geöffnet.",
   "lockedOnThisDevice": "Auf diesem Gerät gesperrt",
   "lockedCounts": "{{ messages }} Nachrichten und {{ files }} Dateien können hier noch nicht geöffnet werden",
-  "getThemBack": "Wiederherstellen"
+  "getThemBack": "Wiederherstellen",
+  "privacyLockIsOff": "Privacy lock is off, so what you send can be read by our system.",
+  "turnItOn": "Turn it on",
+  "unverifiedRequestHint": "Do you know them? Then confirm. If not, reject."
 }

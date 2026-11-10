@@ -94,6 +94,8 @@ export class Notifications {
   protected readonly declined = this.recovery.declined;
   /** the first-time setup was left for later: Home offers it again */
   protected readonly setupLeft = computed(() => this.prefs.value('setup')() === 'skipped');
+  /** no key on this device and the setup is not offering it: a small reminder stays until privacy lock is turned on */
+  protected readonly lockOff = computed(() => this.keys.state() === 'none' && !this.setupLeft());
 
   private readonly user = inject(AuthService).user;
 
@@ -202,8 +204,8 @@ export class Notifications {
     this.checksHidden.set(true);
   }
 
-  /** the setup notes: sound and notifications not set up, the phone's notification switch, details not verified (folded into one line on Home) */
-  protected readonly checkCount = computed(() => [this.setupLeft(), this.androidOff() !== null, this.pushOff() !== null, this.unverified().length > 0].filter(Boolean).length);
+  /** the setup notes: sound and notifications not set up, the phone's notification switch, details not verified (folded into one line on Home); privacy lock off is one of them */
+  protected readonly checkCount = computed(() => [this.setupLeft(), this.lockOff(), this.androidOff() !== null, this.pushOff() !== null, this.unverified().length > 0].filter(Boolean).length);
 
   /** what needs me from people: requests, a request waiting for a seat, unread messages, activity in another circle */
   protected readonly needsYou = computed(() => this.seated().length > 0 || this.waitingCount() > 0 || this.groups().length > 0 || this.otherCircles().length > 0 || this.toHelp().length > 0 || this.declined().length > 0);
@@ -234,6 +236,7 @@ export class Notifications {
   protected readonly error = this.notifications.error;
 
   constructor() {
+    void this.keys.refresh(); // the reminder "privacy lock is off" needs to know
     // a freshly installed app has nothing of what was set up in the browser (key, notifications, microphone): the setup wizard continues here, once
     if (this.install.separateApp && this.prefs.get('setup') === 'new') {
       void this.keys.refresh().then(() => {

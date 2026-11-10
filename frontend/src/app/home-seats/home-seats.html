@@ -45,18 +45,19 @@
     @if (showBucket()) {
       <!-- the eighth circle: the sleep list. A friend dropped here has no seat and makes no sound (the conversation is kept); a tap opens the list -->
       <li class="sf-hs-seat">
-        <button type="button" class="sf-hs-friend sf-hs-sleep" data-bucket="true" [class.sf-drop]="overBucket()" [class.sf-hs-sleep-open]="!!dragging()" [attr.aria-label]="'Silent: open the sleep list' + (sleeping() > 0 ? ', ' + sleeping() + ' here' : '')" (click)="silent.emit()">
+        <button type="button" class="sf-hs-friend sf-hs-sleep" data-bucket="true" [class.sf-drop]="overBucket()" [class.sf-hs-sleep-open]="!!dragging()" [attr.aria-label]="'Sleep: open the sleeping friends' + (sleeping() > 0 ? ', ' + sleeping() + ' here' : '')" (click)="silent.emit()">
           <span class="sf-hs-ring">
             <span class="sf-hs-moon" aria-hidden="true">😴</span>
             @if (sleeping() > 0) { <span class="sf-hs-unread" aria-hidden="true">{{ sleeping() }}</span> }
           </span>
-          <span class="sf-hs-name">{{ t('homeSeats.silent') || 'Silent' }}</span>
+          <span class="sf-hs-name">{{ t('homeSeats.silent') || 'Sleep' }}</span>
           <span class="sf-hs-sub">{{ dragging() ? (t('homeSeats.dropHere') || 'Drop here') : (t('homeSeats.sleepList') || 'Sleep list') }}</span>
         </button>
       </li>
     }
   </ul>
-  <p class="sf-hs-tip">{{ dragging() ? (showBucket() ? (t('homeSeats.dropOnASeat') || 'Drop on a seat or the Silent circle') : (t('homeSeats.dropOnASeat2') || 'Drop on a seat')) : (t('homeSeats.pressAndHoldA', { one: w.one }) || 'Press and hold a ' + w.one + ' to move') }}</p>
+  <p class="sf-hs-tip">{{ dragging() ? (showBucket() ? (t('homeSeats.dropOnASeat') || 'Drop on a seat or on Sleep') : (t('homeSeats.dropOnASeat2') || 'Drop on a seat')) : (t('homeSeats.pressAndHoldA', { one: w.one }) || 'Press and hold a ' + w.one + ' to move') }}</p>
+  @if (!dragging()) { <p class="sf-hs-tip">{{ t('homeSeats.seatsExplained') || '7 seats, 7 close friends. Put a friend to sleep to free a seat: the chat is kept.' }}</p> }
 
 </section>
 </ng-container>

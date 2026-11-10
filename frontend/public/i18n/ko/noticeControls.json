@@ -30,7 +30,6 @@
   "tapTheIconAt": "주소창 왼쪽 끝의 아이콘을 누르고 <strong>권한 → 알림 → 허용</strong>을 선택하세요.",
   "reloadThisPageThen": "이 페이지를 새로고침한 다음 스위치를 다시 켜세요.",
   "alsoCheckAndroidSettings": "Android 설정 → 앱 → Chrome → 알림도 확인하세요. 켜져 있어야 해요.",
-  "orCopyTheAddress": "또는 주소를 복사해서 새 탭을 열고 붙여 넣은 다음 Enter를 누르세요 (일부 Android 버전의 Chrome에서는 열리지 않아요. 위의 방법을 따르세요).",
   "copiedNowPasteIt": "복사했어요. 새 탭에 붙여 넣으세요",
   "copyTheChromeAddress": "Chrome 주소 복사",
   "strongIphoneStrong": "<strong>iPhone</strong>",
@@ -70,5 +69,6 @@
   "aFriendRemovedThe": "친구가 친구 관계를 끊었을 때",
   "notificationsAreBlockedFor2": "이 사이트의 알림이 차단되어 있어요. 브라우저 설정(주소 왼쪽의 자물쇠 또는 슬라이더 아이콘)에서 허용한 다음 다시 해 주세요.",
   "thisBrowserCannotShow": "이 브라우저는 데스크톱 알림을 표시할 수 없어요.",
-  "thisIsHowA": "알림은 이렇게 보여요."
+  "thisIsHowA": "알림은 이렇게 보여요.",
+  "orUseTheBrowser": "Or use the browser: 3 steps"
 }

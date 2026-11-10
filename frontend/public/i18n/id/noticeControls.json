@@ -30,7 +30,6 @@
   "tapTheIconAt": "Ketuk ikon di ujung kiri bilah alamat, lalu <strong>Izin → Notifikasi → Izinkan</strong>.",
   "reloadThisPageThen": "Muat ulang halaman ini, lalu aktifkan lagi tombolnya.",
   "alsoCheckAndroidSettings": "Periksa juga Pengaturan Android → Aplikasi → Chrome → Notifikasi: harus aktif.",
-  "orCopyTheAddress": "Atau salin alamatnya, buka tab baru, tempel, lalu tekan Enter (beberapa versi Chrome di Android tidak membukanya: pakai langkah di atas).",
   "copiedNowPasteIt": "Tersalin: sekarang tempel di tab baru",
   "copyTheChromeAddress": "Salin alamat Chrome",
   "strongIphoneStrong": "<strong>iPhone</strong>",
@@ -70,5 +69,6 @@
   "aFriendRemovedThe": "Seorang teman mengakhiri pertemanan",
   "notificationsAreBlockedFor2": "Notifikasi diblokir untuk situs ini. Izinkan di pengaturan browser (ikon gembok atau penggeser di sebelah kiri alamat), lalu coba lagi.",
   "thisBrowserCannotShow": "Browser ini tidak bisa menampilkan notifikasi desktop.",
-  "thisIsHowA": "Beginilah tampilan notifikasi."
+  "thisIsHowA": "Beginilah tampilan notifikasi.",
+  "orUseTheBrowser": "Or use the browser: 3 steps"
 }

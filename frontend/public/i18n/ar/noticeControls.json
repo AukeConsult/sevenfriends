@@ -30,7 +30,6 @@
   "tapTheIconAt": "اضغط على الأيقونة في الطرف الأيسر من شريط العنوان، ثم <strong>الأذونات → الإشعارات → سماح</strong>.",
   "reloadThisPageThen": "أعد تحميل هذه الصفحة، ثم فعّل المفتاح من جديد.",
   "alsoCheckAndroidSettings": "تحقق أيضًا من إعدادات Android → التطبيقات → Chrome → الإشعارات: يجب أن تكون مفعّلة.",
-  "orCopyTheAddress": "أو انسخ العنوان، وافتح علامة تبويب جديدة، والصقه واضغط Enter (بعض إصدارات Chrome على Android لا تفتحه: استخدم الخطوات أعلاه).",
   "copiedNowPasteIt": "تم النسخ: الصقه الآن في علامة تبويب جديدة",
   "copyTheChromeAddress": "نسخ عنوان Chrome",
   "strongIphoneStrong": "<strong>iPhone</strong>",
@@ -70,5 +69,6 @@
   "aFriendRemovedThe": "صديق أنهى الصداقة",
   "notificationsAreBlockedFor2": "الإشعارات محظورة لهذا الموقع. اسمح بها من إعدادات المتصفح (أيقونة القفل أو المنزلقات على يسار العنوان) ثم حاول مرة أخرى.",
   "thisBrowserCannotShow": "لا يستطيع هذا المتصفح عرض إشعارات سطح المكتب.",
-  "thisIsHowA": "هكذا يبدو الإشعار."
+  "thisIsHowA": "هكذا يبدو الإشعار.",
+  "orUseTheBrowser": "Or use the browser: 3 steps"
 }

@@ -30,7 +30,6 @@
   "tapTheIconAt": "Tryk på ikonet yderst til venstre i adresselinjen, derefter på <strong>Tilladelser → Notifikationer → Tillad</strong>.",
   "reloadThisPageThen": "Genindlæs denne side, og slå så kontakten til igen.",
   "alsoCheckAndroidSettings": "Tjek også Android Indstillinger → Apps → Chrome → Notifikationer: det skal være slået til.",
-  "orCopyTheAddress": "Eller kopiér adressen, åbn en ny fane, sæt den ind og tryk Enter (nogle Android-versioner af Chrome åbner den ikke: brug trinnene ovenfor).",
   "copiedNowPasteIt": "Kopieret: sæt den nu ind i en ny fane",
   "copyTheChromeAddress": "Kopiér Chrome-adressen",
   "strongIphoneStrong": "<strong>iPhone</strong>",
@@ -70,5 +69,6 @@
   "aFriendRemovedThe": "En ven har afsluttet venskabet",
   "notificationsAreBlockedFor2": "Notifikationer er blokeret for dette websted. Tillad dem i browserens indstillinger (lås- eller skyderikonet til venstre for adressen), og prøv igen.",
   "thisBrowserCannotShow": "Denne browser kan ikke vise skrivebordsnotifikationer.",
-  "thisIsHowA": "Sådan ser en notifikation ud."
+  "thisIsHowA": "Sådan ser en notifikation ud.",
+  "orUseTheBrowser": "Or use the browser: 3 steps"
 }

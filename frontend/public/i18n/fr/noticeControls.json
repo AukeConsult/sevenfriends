@@ -30,7 +30,6 @@
   "tapTheIconAt": "Appuie sur l'icône à l'extrémité gauche de la barre d'adresse, puis sur <strong>Autorisations → Notifications → Autoriser</strong>.",
   "reloadThisPageThen": "Recharge cette page, puis réactive l'interrupteur.",
   "alsoCheckAndroidSettings": "Vérifie aussi Réglages Android → Applications → Chrome → Notifications : elles doivent être activées.",
-  "orCopyTheAddress": "Ou copie l'adresse, ouvre un nouvel onglet, colle-la et appuie sur Entrée (certaines versions Android de Chrome ne l'ouvrent pas : utilise les étapes ci-dessus).",
   "copiedNowPasteIt": "Copiée : colle-la maintenant dans un nouvel onglet",
   "copyTheChromeAddress": "Copier l'adresse Chrome",
   "strongIphoneStrong": "<strong>iPhone</strong>",
@@ -70,5 +69,6 @@
   "aFriendRemovedThe": "Un ami a mis fin à l'amitié",
   "notificationsAreBlockedFor2": "Les notifications sont bloquées pour ce site. Autorise-les dans les réglages du navigateur (l'icône de cadenas ou de curseurs à gauche de l'adresse), puis réessaie.",
   "thisBrowserCannotShow": "Ce navigateur ne peut pas afficher de notifications sur ordinateur.",
-  "thisIsHowA": "Voilà à quoi ressemble une notification."
+  "thisIsHowA": "Voilà à quoi ressemble une notification.",
+  "orUseTheBrowser": "Or use the browser: 3 steps"
 }

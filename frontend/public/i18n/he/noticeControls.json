@@ -30,7 +30,6 @@
   "tapTheIconAt": "יש ללחוץ על הסמל בקצה הימני של שורת הכתובת, ואז על <strong>הרשאות → התראות → אישור</strong>.",
   "reloadThisPageThen": "יש לטעון את הדף מחדש, ואז להפעיל שוב את המתג.",
   "alsoCheckAndroidSettings": "כדאי לבדוק גם ב-Android: הגדרות → אפליקציות → Chrome → התראות. זה חייב להיות מופעל.",
-  "orCopyTheAddress": "או להעתיק את הכתובת, לפתוח לשונית חדשה, להדביק וללחוץ על Enter (בחלק מגרסאות Chrome ב-Android זה לא נפתח: אז יש להשתמש בשלבים שלמעלה).",
   "copiedNowPasteIt": "הועתק: עכשיו להדביק בלשונית חדשה",
   "copyTheChromeAddress": "העתקת כתובת Chrome",
   "strongIphoneStrong": "<strong>iPhone</strong>",
@@ -70,5 +69,6 @@
   "aFriendRemovedThe": "חבר הסיר את החברות",
   "notificationsAreBlockedFor2": "ההתראות חסומות לאתר הזה. יש לאפשר אותן בהגדרות הדפדפן (סמל המנעול או המחוונים בצד הכתובת) ולנסות שוב.",
   "thisBrowserCannotShow": "הדפדפן הזה לא יכול להציג התראות שולחן עבודה.",
-  "thisIsHowA": "כך נראית התראה."
+  "thisIsHowA": "כך נראית התראה.",
+  "orUseTheBrowser": "Or use the browser: 3 steps"
 }

@@ -1,13 +1,16 @@
 <ng-container *transloco="let t">
 @if (words(); as list) {
   <div class="alert alert-warning m-0" role="alert">
-    <span [innerHTML]="t('keySetup.strongSaveTheseWords') || '<strong>Save these 24 words now.</strong> They are the only way to open your locked files if you lose this device. They are shown once, and nobody can find them for you, not even us.'"></span>
+    <span [innerHTML]="t('keySetup.strongSaveTheseWords') || '<strong>Write these 24 secret words on paper and keep them safe.</strong> If you lose this phone or computer, they give you your files back. They are shown only once, and nobody can find them for you, not even us.'"></span>
   </div>
-  <ol class="sf-recovery-words" [attr.aria-label]="t('keySetup.yourRecoveryWords') || 'Your 24 recovery words'">
+  <ol class="sf-recovery-words" [attr.aria-label]="t('keySetup.yourRecoveryWords') || 'Your 24 secret words'">
     @for (word of list; track $index) { <li>{{ word }}</li> }
   </ol>
   <div class="vstack gap-2 align-items-center text-center">
-    <button type="button" class="btn btn-outline-primary btn-sm" (click)="copyWords()">{{ copied() ? (t('keySetup.copied') || 'Copied') : (t('keySetup.copyTheWords') || 'Copy the words') }}</button>
+    <div class="d-flex gap-2 justify-content-center">
+      <button type="button" class="btn btn-outline-primary btn-sm" (click)="copyWords()">{{ copied() ? (t('keySetup.copied') || 'Copied') : (t('keySetup.copyTheWords') || 'Copy the words') }}</button>
+      <button type="button" class="btn btn-outline-primary btn-sm" (click)="saveFile()">{{ t('keySetup.saveAsFile') || 'Save as a file' }}</button>
+    </div>
     <span class="small text-secondary">{{ copied() ? (t('keySetup.nowPasteThemInto') || 'Now paste them into a file and keep it somewhere safe.') : (t('keySetup.copyThemAndStore') || 'Copy them and store them in a file on your computer, somewhere safe.') }}</span>
   </div>
   <div class="card"><div class="card-body vstack gap-2">

@@ -177,9 +177,9 @@
     "thereIsNoEncryption": "There is no encryption key on this device. Set one up (or restore it) in Settings → Keys.",
     "thisFileCouldNot2": "This file could not be opened.",
     "thisFileIsLocked": "This file is locked. Open the conversation first, then try again.",
-    "thisMessageIsLocked": "This message is locked, so the new text must be locked too. It needs a key for you and for your friend.",
-    "thisMessageIsLocked2": "This message is locked, so it needs a key for you and for your friend. Try again.",
-    "thisMessageIsLocked3": "This message is locked, and this device has no key to change it with.",
+    "thisMessageIsLocked": "This message is locked, so the new text must be locked too. You and your friend both need privacy lock turned on.",
+    "thisMessageIsLocked2": "This message is locked, so you and your friend both need privacy lock turned on. Try again in a moment.",
+    "thisMessageIsLocked3": "This message is locked, and this device cannot open it. Get your old messages back under Settings → Keys.",
     "yourNotificationChoicesCould": "Your notification choices could not be loaded. Check the connection and open this page again.",
     "noDeviceIsSet": "No device is set up for notifications yet. Turn on \"Notify this device\" on the device you want to test.",
     "sentButOnlyOf": "Sent, but only {{ delivered }} of {{ devices }} devices were reached. A device that cannot be reached any more is removed from the list.",
@@ -285,7 +285,7 @@
     "ocean": "Ocean",
     "forest": "Forest",
     "rose": "Rose",
-    "hasYouOnSleep": "Has you on sleep list.",
+    "hasYouOnSleep": "You are on their sleep list: your messages arrive quietly. A poke makes their phone ring.",
     "pokeAnyway": "Poke anyway",
     "makesASound": "makes a sound",
     "activityIn": "Activity in {{ circle }}"
@@ -301,5 +301,8 @@
   "removeThisKeyNotYou": "Remove this key? Then that device can no longer open your messages. If it was not you, also change your login.",
   "removeIt": "Remove it",
   "cancel": "Cancel",
-  "notMe": "Not me"
+  "notMe": "Not me",
+  "newKeyQuestion": "{{ name }} seems to have a new phone or a new key. Call {{ name }} and ask: did you change phone?",
+  "newKeyYes": "Yes, it is {{ name }}",
+  "newKeyUnsure": "I am not sure"
 }

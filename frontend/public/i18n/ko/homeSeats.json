@@ -13,5 +13,6 @@
   "seatPositionIsFree": "{{ position }}번 자리가 비어 있어요: {{ one }} 추가",
   "dropOnASeat": "자리 또는 조용히 서클에 놓으세요",
   "dropOnASeat2": "자리에 놓으세요",
-  "pressAndHoldA": "길게 눌러 옮기기 ({{ one }})"
+  "pressAndHoldA": "길게 눌러 옮기기 ({{ one }})",
+  "seatsExplained": "7 seats, 7 close friends. Put a friend to sleep to free a seat: the chat is kept."
 }

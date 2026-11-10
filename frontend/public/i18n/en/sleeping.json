@@ -19,5 +19,5 @@
   "countUnread": "{{ count }} unread",
   "countNewMessages": "{{ count }} new messages",
   "friendnameHasNotVerified": "{{ friendName }} has not verified {{ phone }}, so we cannot be sure it is really them.",
-  "silentMany": "Silent {{ many }}"
+  "silentMany": "Sleeping {{ many }}"
 }

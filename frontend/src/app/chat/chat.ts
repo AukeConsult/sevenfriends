@@ -426,7 +426,7 @@ export class Chat {
 
   protected startEdit(message: ChatItem): void {
     if (message.locked === 'shut') {
-      this.error.set(tr('chat.thisMessageIsLocked', 'This message is locked for another device, so it cannot be changed here.'));
+      this.error.set(tr('chat.thisMessageIsLocked', 'This message is locked for another phone or computer of yours, so it cannot be changed here. Use that device, or get your old messages back under Settings → Keys.'));
       this.selected.set(null);
       return;
     }

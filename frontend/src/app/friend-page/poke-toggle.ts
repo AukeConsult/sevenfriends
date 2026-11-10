@@ -10,7 +10,7 @@ import { tr } from '../core/i18n';
     @if (ctx.friend()?.sleepsMe) {
       <label class="sf-poke" [class.sf-on]="ctx.poke()">
         <input type="checkbox" class="form-check-input m-0" [checked]="ctx.poke()" (change)="ctx.poke.set($any($event.target).checked)" />
-        <span>😴 {{ tr('core.hasYouOnSleep', 'Has you on sleep list.') }} <strong>🔔 {{ tr('core.pokeAnyway', 'Poke anyway') }}</strong> <span class="sf-poke-note">({{ tr('core.makesASound', 'makes a sound') }})</span></span>
+        <span>😴 {{ tr('core.hasYouOnSleep', 'You are on their sleep list: your messages arrive quietly. A poke makes their phone ring.') }} <strong>🔔 {{ tr('core.pokeAnyway', 'Poke anyway') }}</strong> <span class="sf-poke-note">({{ tr('core.makesASound', 'makes a sound') }})</span></span>
       </label>
     }
   `,

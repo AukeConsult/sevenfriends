@@ -90,7 +90,7 @@
   }
 </ng-template>
 @if (embedded()) {
-  <section [attr.aria-label]="(t('sleeping.silentMany', { many: w.many }) || 'Silent ' + w.many)"><ng-container [ngTemplateOutlet]="body" /></section>
+  <section [attr.aria-label]="(t('sleeping.silentMany', { many: w.many }) || 'Sleeping ' + w.many)"><ng-container [ngTemplateOutlet]="body" /></section>
 } @else {
   <main class="sf-page"><ng-container [ngTemplateOutlet]="body" /></main>
 }

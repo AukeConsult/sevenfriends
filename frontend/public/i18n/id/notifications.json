@@ -61,5 +61,8 @@
   "openedYourHistoryMany": "{{ friendNames }} membuka riwayatmu.",
   "lockedOnThisDevice": "Terkunci di perangkat ini",
   "lockedCounts": "{{ messages }} pesan dan {{ files }} file belum bisa dibuka di sini",
-  "getThemBack": "Pulihkan"
+  "getThemBack": "Pulihkan",
+  "privacyLockIsOff": "Privacy lock is off, so what you send can be read by our system.",
+  "turnItOn": "Turn it on",
+  "unverifiedRequestHint": "Do you know them? Then confirm. If not, reject."
 }

@@ -22,5 +22,7 @@
   "makingYourKey": "Anahtarın oluşturuluyor…",
   "makeMyKey": "Anahtarımı oluştur",
   "theKeyCouldNot": "Anahtar oluşturulamadı. Tekrar dene.",
-  "theKeyCouldNot2": "Anahtar kaydedilemedi. Tekrar dene."
+  "theKeyCouldNot2": "Anahtar kaydedilemedi. Tekrar dene.",
+  "saveAsFile": "Save as a file",
+  "fileTitle": "Seven Friends: my 24 secret words. Keep this file safe and private."
 }

@@ -22,5 +22,7 @@
   "makingYourKey": "Membuat kuncimu…",
   "makeMyKey": "Buat kunciku",
   "theKeyCouldNot": "Kunci tidak bisa dibuat. Coba lagi.",
-  "theKeyCouldNot2": "Kunci tidak bisa disimpan. Coba lagi."
+  "theKeyCouldNot2": "Kunci tidak bisa disimpan. Coba lagi.",
+  "saveAsFile": "Save as a file",
+  "fileTitle": "Seven Friends: my 24 secret words. Keep this file safe and private."
 }
