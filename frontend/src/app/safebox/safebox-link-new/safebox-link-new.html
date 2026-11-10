@@ -1,15 +1,8 @@
 <ng-container *transloco="let t">
 <main class="sf-page sf-page-item">
-  <div class="sf-page-head">
-    <a [routerLink]="list" class="btn btn-light btn-sm sf-head-list" [attr.aria-label]="(t('safebox.common.allItems') || 'All items in the safebox')" [attr.title]="(t('safebox.common.allItems') || 'All items in the safebox')"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg></a>
-    <h1 class="m-0 mw-100">
-      <a [routerLink]="list" (click)="back($event)" class="sf-title-link" [attr.aria-label]="t('safebox.common.back') || 'Back'">
-        <span class="sf-back-inline" aria-hidden="true"></span>
-        <span class="sf-ellipsis">{{ t('safebox.linkNew.newLinkedItem') || 'New linked item' }}</span>
-      </a>
-    </h1>
-    <p class="sf-hint m-0">{{ t('safebox.linkNew.whatKind') || 'What kind of item? It is linked with the one you came from.' }}</p>
-  </div>
+  <app-page-bar [sub]="true" [title]="t('safebox.linkNew.newLinkedItem') || 'New linked item'" [subtitle]="t('safebox.linkNew.whatKind') || 'What kind of item? It is linked with the one you came from.'" [backTo]="list" (backClick)="back($event)">
+    <a [routerLink]="list" class="sf-bar-icon" [attr.aria-label]="(t('safebox.common.allItems') || 'All items in the safebox')" [attr.title]="(t('safebox.common.allItems') || 'All items in the safebox')"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg></a>
+  </app-page-bar>
 
   <div class="sf-narrow-form">
     <div class="sf-box-security-body sf-box-new-list">

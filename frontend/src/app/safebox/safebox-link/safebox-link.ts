@@ -7,6 +7,7 @@ import { SafeboxService } from '../../core/safebox.service';
 import { isObjectType, objectIcon, objectKind } from '../../core/safebox-objects';
 import { FriendContext } from '../../friend-page/friend-context';
 import { SafeboxItem } from '../../models';
+import { PageBar } from '../../page-bar/page-bar';
 
 /**
  * Link an item with another (`/friends/:id/safebox/link/:itemId`): a list of the other items of the box, with a search field. A tap on one makes the
@@ -14,7 +15,7 @@ import { SafeboxItem } from '../../models';
  */
 @Component({
   selector: 'app-safebox-link',
-  imports: [RouterLink, TranslocoDirective],
+  imports: [PageBar, RouterLink, TranslocoDirective],
   templateUrl: './safebox-link.html',
   providers: [provideTranslocoScope('safebox')],
 })

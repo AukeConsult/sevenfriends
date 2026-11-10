@@ -16,6 +16,7 @@ import { MemberPictureService } from '../core/member-picture.service';
 import { FriendAvatar } from '../friend-avatar/friend-avatar';
 import { FriendContext } from '../friend-page/friend-context';
 import { tr } from '../core/i18n';
+import { PageBar } from '../page-bar/page-bar';
 
 /**
  * The profile of one friend (`/friends/:id/profile`, opened with the friend's picture): who they are and how to reach them, under the header of the friend page.
@@ -23,7 +24,7 @@ import { tr } from '../core/i18n';
  */
 @Component({
   selector: 'app-friend-profile',
-  imports: [AppDatePipe, FriendAvatar, TranslocoDirective, RouterLink, NgTemplateOutlet],
+  imports: [PageBar, AppDatePipe, FriendAvatar, TranslocoDirective, RouterLink, NgTemplateOutlet],
   templateUrl: './friend-profile.html',
   providers: [provideTranslocoScope('friendProfile')],
 })

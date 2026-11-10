@@ -10,6 +10,7 @@ import { FriendLinkService } from '../core/friend-link.service';
 import { FriendsService } from '../core/friends.service';
 import { NotificationsService } from '../core/notifications.service';
 import { Friend, FriendRequest } from '../models';
+import { PageBar } from '../page-bar/page-bar';
 
 /** The last 8 digits of a phone number: how numbers are compared (the same rule as the backend). */
 const lastDigits = (phone: string | null | undefined): string | null => {
@@ -30,7 +31,7 @@ interface Target {
  */
 @Component({
   selector: 'app-friend-join',
-  imports: [RouterLink, Clearable, TranslocoDirective],
+  imports: [PageBar, RouterLink, Clearable, TranslocoDirective],
   templateUrl: './friend-join.html',
   providers: [provideTranslocoScope('friendJoin')],
 })

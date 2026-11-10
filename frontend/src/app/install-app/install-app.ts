@@ -4,11 +4,12 @@ import { RouterLink } from '@angular/router';
 import { AuthService } from '../core/auth.service';
 import { fileExists } from '../core/download';
 import { InstallService } from '../core/install.service';
+import { PageBar } from '../page-bar/page-bar';
 
 /** What "install" means and how to do it on this device (opened from the Me menu). */
 @Component({
   selector: 'app-install-app',
-  imports: [RouterLink, TranslocoDirective],
+  imports: [PageBar, RouterLink, TranslocoDirective],
   templateUrl: './install-app.html',
   providers: [provideTranslocoScope('installApp')],
 })

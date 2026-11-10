@@ -5,13 +5,14 @@ import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { formatBytes } from '../core/image';
 import { MediaService, StoredFile } from '../core/media.service';
+import { PageBar } from '../page-bar/page-bar';
 
 /**
  * An image, a video or an audio message in full: /media/:ownerId/:objectId. It is read from the server like the one in the conversation,
  * and can be saved on the device (Download: the bytes already read, saved under the file name of the message).
  */
 @Component({
-  imports: [TranslocoDirective],
+  imports: [PageBar, TranslocoDirective],
   selector: 'app-media-viewer',
   templateUrl: './media-viewer.html',
   providers: [provideTranslocoScope('mediaViewer')],

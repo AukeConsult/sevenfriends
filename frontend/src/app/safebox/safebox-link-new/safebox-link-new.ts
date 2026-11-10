@@ -6,6 +6,7 @@ import { translationsLoaded } from '../../core/i18n';
 import { SafeboxService } from '../../core/safebox.service';
 import { UiPreferencesService } from '../../core/ui-preferences';
 import { arrangeKinds, boxKinds } from '../../core/safebox-objects';
+import { PageBar } from '../../page-bar/page-bar';
 
 /**
  * Add a new item and link it (`/friends/:id/safebox/link/:itemId/new`): the kinds to choose from, like the New frame of the list. The choice opens the page
@@ -13,7 +14,7 @@ import { arrangeKinds, boxKinds } from '../../core/safebox-objects';
  */
 @Component({
   selector: 'app-safebox-link-new',
-  imports: [NgTemplateOutlet, RouterLink, TranslocoDirective],
+  imports: [PageBar, NgTemplateOutlet, RouterLink, TranslocoDirective],
   templateUrl: './safebox-link-new.html',
   providers: [provideTranslocoScope('safebox')],
 })

@@ -1,7 +1,5 @@
 <ng-container *transloco="let t">
-<div class="sf-page-head">
-  <h1>{{ t('profilePicture.yourPicture') || 'Your picture' }}</h1>
-</div>
+<app-page-bar [title]="t('profilePicture.yourPicture') || 'Your picture'" [backTo]="'/settings/profile'" />
 
 <main class="sf-narrow">
   @if (!hasImage()) {

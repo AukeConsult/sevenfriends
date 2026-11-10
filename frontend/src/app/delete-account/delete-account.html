@@ -1,7 +1,5 @@
 <ng-container *transloco="let t">
-<div class="sf-page-head">
-  <h1>{{ t('deleteAccount.deleteMyAccount') || 'Delete my account' }}</h1>
-</div>
+<app-page-bar [title]="t('deleteAccount.deleteMyAccount') || 'Delete my account'" [backTo]="'/settings/profile'" />
 
 <main class="sf-narrow">
   <div class="alert alert-danger" role="alert">

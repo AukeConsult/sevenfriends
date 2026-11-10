@@ -15,6 +15,7 @@ import { isObjectType } from '../../core/safebox-objects';
 import { MediaAudio } from '../../media-audio/media-audio';
 import { MediaVideo } from '../../media-video/media-video';
 import { MediaRef, Safebox, SafeboxItem } from '../../models';
+import { PageBar } from '../../page-bar/page-bar';
 
 /** What a document is, from its type and the ending of its name: how it is shown. */
 type DocType = 'pdf' | 'text' | 'word' | 'sheet' | 'slides' | 'zip' | 'other';
@@ -37,7 +38,7 @@ const ENDINGS: Record<string, DocType> = {
  */
 @Component({
   selector: 'app-safebox-view',
-  imports: [SafeboxTell, RouterLink, MediaVideo, MediaAudio, SafeboxLinks, TranslocoDirective],
+  imports: [PageBar, SafeboxTell, RouterLink, MediaVideo, MediaAudio, SafeboxLinks, TranslocoDirective],
   templateUrl: './safebox-view.html',
   providers: [provideTranslocoScope('safebox')],
 })

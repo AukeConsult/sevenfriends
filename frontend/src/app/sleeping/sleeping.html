@@ -1,16 +1,8 @@
 <ng-container *transloco="let t">
 <ng-template #bar>
-  <header class="sf-bar">
-    @if (embedded()) {
-      <button type="button" class="sf-back" [attr.aria-label]="t('sleeping.backToHome') || 'Back to home'" (click)="closed.emit()">‹</button>
-    } @else {
-      <a routerLink="/" class="sf-back" [attr.aria-label]="t('sleeping.backToMyFriends') || 'Back to my friends'">‹</a>
-    }
-    <h1 class="sf-bar-title d-flex align-items-center gap-2">
-      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
-      <span>{{ t('sleeping.sleepList') || 'Sleep list' }}</span>
-    </h1>
-  </header>
+  <app-page-bar [title]="t('sleeping.sleepList') || 'Sleep list'" [backButton]="embedded()" [backTo]="embedded() ? null : '/'" [backLabel]="embedded() ? (t('sleeping.backToHome') || 'Back to home') : (t('sleeping.backToMyFriends') || 'Back to my friends')" (backClick)="closed.emit()">
+    <svg barIcon viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+  </app-page-bar>
 </ng-template>
 <ng-template #card let-friend="friend">
     <article class="sf-sl-card" [style.--sf-friend]="colorOf(friend.color)">

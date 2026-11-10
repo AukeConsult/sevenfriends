@@ -1,12 +1,5 @@
 <ng-container *transloco="let t">
-@if (loading()) {
-<div class="sf-back-row">
-  <a href="/" class="btn btn-light" [attr.aria-label]="t('friendJoin.notNowGoTo') || 'Not now, go to the start page'" (click)="$event.preventDefault(); notNow()">{{ t('friendJoin.back') || '‹ Back' }}</a>
-</div>
-}
-<div class="sf-page-head">
-  <h1>{{ t('friendJoin.friendRequest') || 'Friend request' }}</h1>
-</div>
+<app-page-bar [title]="t('friendJoin.friendRequest') || 'Friend request'" [backButton]="true" [backLabel]="t('friendJoin.notNowGoTo') || 'Not now, go to the start page'" (backClick)="$event.preventDefault(); notNow()" />
 
 <main class="sf-narrow">
   @if (loading()) {

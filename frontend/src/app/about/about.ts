@@ -3,11 +3,12 @@ import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../core/auth.service';
 import { InfoNav } from '../info-nav/info-nav';
+import { PageBar } from '../page-bar/page-bar';
 
 /** Who made the app and how to reach them (public: also shown before signing in). */
 @Component({
   selector: 'app-about',
-  imports: [RouterLink, InfoNav, TranslocoDirective],
+  imports: [PageBar, RouterLink, InfoNav, TranslocoDirective],
   templateUrl: './about.html',
   providers: [provideTranslocoScope('about')],
 })

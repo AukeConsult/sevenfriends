@@ -609,31 +609,11 @@ router-outlet + * { display: block; min-height: 100dvh; }
 // ---- Bar extras (message feed header) ----
 .sf-bar-text { display: flex; flex-direction: column; min-width: 0; }
 .sf-bar .sf-seat + .sf-bar-text { margin-inline-start: 0.75rem; } // room between the picture and the name in a conversation header
-// A plain page title instead of the coloured bar: centred, with the seat dots under it
-.sf-page-head { display: flex; flex-direction: column; align-items: center; gap: 0.35rem; padding: 0.5rem 0 1rem; text-align: center;
-  h1 { margin: 0; font-size: var(--sf-fs-text); font-weight: 700; } // the page title: the normal text size, bold
-  .sf-hero-dots { margin-top: 0.4rem; } }
-// A page without a coloured header: just a Back button, centred at the top
-// the page content under a plain title needs no extra top space of its own
 .sf-title-dot { display: inline-block; width: 0.75rem; height: 0.75rem; margin-inline-end: 0.5rem; border-radius: 50%; background: var(--sf-red); vertical-align: middle; } // a seat dot to the left of a title
-.sf-page-head-slim { padding: 0.75rem 0 0.5rem; gap: 0; .sf-hero-dots { margin-top: 0; } } // only the seat dots, no title
-.sf-page-head + main, .sf-page-head + form { padding-top: 0; }
 // The save status of the Profile sits at the right of the title and takes no room of its own
-.sf-page-head { position: relative; }
-.sf-page-head .sf-status { position: absolute; inset-inline-end: 0; top: 0.75rem; min-height: 0; margin: 0; max-width: 45%; }
 // a card without its frame: the content sits straight on the page
 .card.sf-unframed { border: 0; background: none; box-shadow: none; }
 .card.sf-unframed > .card-body { padding-inline: 0; padding-top: 0; }
-.sf-back-row { display: flex; justify-content: center; padding: 1rem var(--sf-gutter) 0; }
-.sf-back-row:has(+ .sf-page-head), .sf-back-row:has(+ main > .sf-page-head:first-child) { position: relative; height: 0; padding: 0; } // Back on the line of the title, not a row of its own
-.sf-back-row:has(+ .sf-page-head) .btn, .sf-back-row:has(+ main > .sf-page-head:first-child) .btn { // a small plain arrow level with the title, like the one on the safebox (the word Back stays for screen readers)
-  position: absolute; inset-inline-start: calc(var(--sf-gutter) - 0.5rem); top: 0.5rem; z-index: 2;
-  display: grid; place-items: center; width: 2.75rem; min-height: 2.75rem; height: 2.75rem; padding: 0; border: 0; border-radius: 50%; // a big tap target, nothing drawn around it
-  font-size: 0; color: var(--sf-primary); background: none; box-shadow: none;
-  &::before { content: ''; width: 0.5rem; height: 0.5rem; margin-inline-start: 0.2rem; border-left: 2.5px solid currentColor; border-bottom: 2.5px solid currentColor; border-radius: 1px; transform: rotate(45deg); } // the arrow, drawn with two lines
-  &:hover, &:focus-visible { background: none; color: var(--sf-primary-hover); }
-}
-.sf-back-row:has(+ .sf-page-head) + .sf-page-head, .sf-back-row:has(+ main > .sf-page-head:first-child) + main > .sf-page-head { padding: 1.1rem 4rem 1rem; } // room for the Back button on both sides
 .sf-name-btn { display: inline-flex; align-items: center; gap: 0.35rem; min-width: 0; padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: start; cursor: pointer; }
 .sf-name-arrow { flex: none; font-size: 0.8em; opacity: 0.6; }
 .sf-profile.sf-profile-bar { margin: 0; padding: 0.75rem var(--sf-gutter); border: 0; border-bottom: 1px solid var(--sf-border); border-radius: 0; }
@@ -1136,10 +1116,6 @@ app-voice { display: contents; }
 .sf-box-list { margin-top: 0.75rem; }
 .sf-box-list .sf-list-text small { font-size: var(--sf-fs-description); font-weight: 400; } // the line under a file name (kind, size, who, date): the smallest text size
 .sf-box-name { color: var(--sf-text); font-weight: 400; text-decoration: none; } // a file name: normal text size and colour, not a blue bold link
-.sf-back-inline { display: inline-grid; place-items: center; width: 1.75rem; height: 1.75rem; margin-inline-end: 0.25rem; color: var(--sf-primary); text-decoration: none; // a small arrow to the left of the title icon
-  &::before { content: ''; width: 0.5rem; height: 0.5rem; margin-inline-start: 0.2rem; border-left: 2.5px solid currentColor; border-bottom: 2.5px solid currentColor; border-radius: 1px; transform: rotate(45deg); }
-  &:hover, &:focus-visible { color: var(--sf-primary-hover); } }
-button.sf-back-inline { padding: 0; border: 0; background: none; cursor: pointer; } // the back arrow as a button (the silent list inside Home): no box, the same small arrow as the link
 .sf-box-open { flex: none; width: 3.5rem; height: 3.5rem; padding: 0; border: 0; border-radius: var(--sf-radius); background: var(--sf-bg); overflow: hidden; cursor: pointer; display: grid; place-items: center; }
 .sf-box-thumb { display: block; width: 100%; height: 100%; img { width: 100%; height: 100%; object-fit: cover; display: block; } }
 .sf-box-wait { display: block; width: 100%; height: 100%; background: var(--sf-bg); }
@@ -1247,38 +1223,22 @@ html[data-theme='dark'] .sf-feed-tinted { background: color-mix(in srgb, var(--s
 .sf-feed-tinted .sf-composer { background: var(--sf-feed-bg); } // the message band has the same background as the page
 html[data-theme='dark'] .sf-feed-tinted .sf-composer { background: color-mix(in srgb, var(--sf-feed-bg) 12%, var(--sf-bg)); }
 
-// ---- Phone: every page header is at least 44px high, the title centred in it, with the status bar space on top ----
-@media (max-width: 575.98px) {
-  .sf-page-head, .sf-page-head-slim,
-  .sf-back-row:has(+ .sf-page-head) + .sf-page-head, .sf-back-row:has(+ main > .sf-page-head:first-child) + main > .sf-page-head {
-    box-sizing: border-box; min-height: calc(2.75rem + var(--sf-safe-top)); justify-content: center;
-    padding-top: calc(0.25rem + var(--sf-safe-top)); padding-bottom: 0.25rem;
-  }
-  .sf-back-row:has(+ .sf-page-head) + .sf-page-head, .sf-back-row:has(+ main > .sf-page-head:first-child) + main > .sf-page-head { padding-inline: 4rem; }
-  .sf-page:has(> .sf-page-head:first-child), .sf-content:has(> .sf-page-head:first-child) { padding-top: 0; } // the header carries the top space itself
-  .sf-back-row:has(+ .sf-page-head) .btn, .sf-back-row:has(+ main > .sf-page-head:first-child) .btn { top: var(--sf-safe-top); }
-}
 // ---- Phone: the space above the first text of a page is at least 44px (a header, or this padding) ----
 @media (max-width: 575.98px) {
   .sf-hero-home { padding-top: calc(2.75rem + var(--sf-safe-top)); } // the logo on Home
-  .sf-page:not(.sf-box-page, :has(> .sf-page-head:first-child), :has(> .sf-hero-home:first-child), .sf-back-row + *, .sf-page-head + *),
-  .sf-content:not(:has(> .sf-page-head:first-child), .sf-back-row + *, .sf-page-head + *),
-  .sf-narrow:not(.sf-back-row + *, .sf-page-head + *) { padding-top: calc(2.75rem + var(--sf-safe-top)); }
+  .sf-page:not(.sf-box-page, :has(> app-page-bar:first-child), :has(> .sf-hero-home:first-child), app-page-bar + *),
+  .sf-content:not(:has(> app-page-bar:first-child), app-page-bar + *),
+  .sf-narrow:not(app-page-bar + *) { padding-top: calc(2.75rem + var(--sf-safe-top)); }
 }
 // ---- The tabs of Settings are the header of those pages: a band at least 44px high (status bar space on top), the chosen tab marked along the bottom ----
 nav.sf-tabs {
-  gap: 0; padding: var(--sf-safe-top) var(--sf-gutter) 0; align-items: stretch; background: var(--sf-header); border-bottom-color: var(--sf-header-border);
+  gap: 0; padding: 0 var(--sf-gutter); align-items: stretch; background: var(--sf-header); border-bottom-color: var(--sf-header-border);
   .sf-tab { display: flex; align-items: center; min-height: 2.75rem; padding: 0 0.9rem; border-radius: 0; border-bottom: 3px solid transparent; background: none;
     &:hover { background: none; border-bottom-color: var(--sf-header-border); }
     &.active { background: none; color: var(--sf-primary); border-bottom-color: var(--sf-primary); } }
 }
-@media (max-width: 575.98px) {
-  nav.sf-tabs ~ * .sf-page-head { padding-top: 0.25rem; min-height: 2.75rem; } // the tabs above already carry the status bar space
-}
+nav.sf-tabs ~ * > app-page-bar { display: none; } // inside Settings the one bar above the tabs is the header; the page's own bar (when it is also used on its own) is not shown
 
-.sf-title-link { display: inline-flex; align-items: center; gap: 0.5rem; max-width: 100%; min-height: 2.75rem; color: inherit; text-decoration: none; cursor: pointer; } // a page title that is also the way back: the arrow, the icon and the text are one big tap target
-.sf-title-link:hover, .sf-title-link:focus-visible { color: var(--sf-primary); }
-.sf-title-button { padding: 0; border: 0; background: none; font: inherit; } // the same title as a button (it goes back in the history)
 @media (max-width: 575.98px) {
   .sf-choice-round img { --sf-pick: calc((100vw - 2 * var(--sf-gutter) - 1rem) / 2 - 0.75rem); width: var(--sf-pick); height: var(--sf-pick); max-width: 10rem; max-height: 10rem; } // the icons of the profile on a phone: two in a row, as big as the width allows (at most 10rem)
   .sf-choices:has(.sf-choice-round) { gap: 0.75rem 1rem; }
@@ -1606,7 +1566,7 @@ html[dir='rtl'] {
   input[type='tel']::placeholder, input[type='email']::placeholder { direction: ltr; }
   .sf-fingerprint, code, pre { direction: ltr; unicode-bidi: isolate; text-align: start; }
   // the arrows that point back / forward turn round
-  .sf-bar .sf-back::before, .sf-back-inline::before, .sf-back-row .btn::before { transform: rotate(-135deg); }
+  .sf-bar .sf-back::before { transform: rotate(-135deg); }
 }
 
 // Input groups (a field with a button or a label beside it): the joined edges are square and overlap by one border, set with LOGICAL
@@ -1667,8 +1627,6 @@ html[dir='rtl'] .sf-activity-go { transform: scaleX(-1); }
 .sf-box-list .sf-list-item .sf-msg-actions { gap: 0.25rem; } .sf-box-list .sf-list-item .sf-msg-actions.w-100 { justify-content: center !important; gap: 0.5rem; } .sf-box-list .sf-list-item .sf-msg-actions.w-100 .btn { padding: 0 0.75rem; min-height: 2rem; width: auto; } .sf-box-list .sf-list-item .sf-msg-actions .btn:has(> svg) { display: inline-grid; place-items: center; width: 2rem; height: 2rem; min-height: 0; padding: 0; svg { width: 1rem; height: 1rem; } } // small round icon buttons at the end of a row
 .sf-att-open .sf-box-thumb, .sf-att-open .sf-box-wait { position: absolute; inset: 0; width: auto; height: auto; } // a picture fills its square (a percentage height of a box sized by aspect-ratio collapses to nothing)
 
-.sf-page-head .sf-head-list { position: absolute; inset-inline-start: 0; top: 0.5rem; display: inline-grid; place-items: center; width: 2.25rem; height: 2.25rem; min-height: 0; padding: 0; color: var(--sf-primary); svg { width: 1.1rem; height: 1.1rem; } } // to the left of the title, on every page of one item of the safebox: straight back to the main list
-.sf-page-head .sf-head-delete { position: absolute; inset-inline-end: 0; top: 0.5rem; display: inline-grid; place-items: center; width: 2.25rem; height: 2.25rem; min-height: 0; padding: 0; color: var(--sf-red); svg { width: 1.1rem; height: 1.1rem; } } // the bin to the left of the title, on every page of one item of the safebox
 app-safebox-capture { display: contents; } // its buttons (Take a photo, Record a video, Record a voice message) are part of the row of the page that holds it
 .sf-box-new-list .sf-box-newnote { padding-inline-start: 0.625rem; gap: 0.125rem; min-height: 2.25rem; .sf-box-newnote-link { min-height: 2.25rem; gap: 0.25rem; svg { width: 1rem; height: 1rem; } } .sf-box-newnote-tick { width: 1.125rem; height: 1.125rem; margin: 0 0.625rem 0 0; } } // smaller pills and ticks in the New frame: they should not take the eye from the list
 .sf-box-new-list .sf-box-more { justify-content: center; gap: 0.25rem; padding-inline: 0.75rem; border-style: dashed; background: transparent; color: var(--sf-primary); font-weight: 600; font-size: var(--sf-fs-description); cursor: pointer; } // "More types" in the New frame: a dashed pill that opens the other kinds
@@ -1694,7 +1652,6 @@ app-capture-button { display: contents; } // the capture button is its button (o
 .sf-member-name { font-size: var(--sf-fs-text); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sf-member-dot img { width: 100%; height: 100%; object-fit: cover; }
 .sf-member .btn { margin-inline-start: auto; }
-.sf-page-head .sf-head-wake { position: absolute; inset-inline-end: 2.75rem; top: 0.5rem; display: inline-grid; place-items: center; width: 2.25rem; height: 2.25rem; min-height: 0; padding: 0; color: var(--sf-primary); svg { width: 1.1rem; height: 1.1rem; } } // wake a sleeping friend: left of the delete button
 
 // Sleep list: the seat strip, a card for each sleeper (Wake up, Open, Delete), the empty page
 .sf-sl-seats { display: flex; align-items: center; gap: 0.75rem; background: var(--sf-primary-soft, #e3eaf7); color: var(--sf-primary); border-radius: var(--sf-radius); padding: 0.75rem 1rem; }
@@ -1715,10 +1672,20 @@ app-capture-button { display: contents; } // the capture button is its button (o
 .sf-sl-row .sf-hs-ring { width: 3.25rem; height: 3.25rem; }
 .sf-sl-name { display: block; max-width: 100%; font-size: var(--sf-fs-description); line-height: 1.2; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: center; }
 .sf-sl-on .sf-hs-ring { box-shadow: 0 0 0 2px var(--sf-card), 0 0 0 4px var(--sf-primary); }
-.sf-sl-body { display: flex; flex-direction: column; gap: 1rem; padding-top: 1rem; } // the sleep list inside Home: the page around it already has the side room and the room for the bottom menu
+.sf-sl-body { display: flex; flex-direction: column; gap: 1rem; padding: 1rem var(--sf-gutter) calc(4.5rem + env(safe-area-inset-bottom)); } // the sleep list inside Home is a full page now: side room and room for the bottom menu
 .sf-sl-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
 .sf-sl-toolbar .sf-hint { flex: 1; min-width: 0; }
 .sf-sl-views .btn { display: grid; place-items: center; width: 2.25rem; padding: 0; } // the two views are icons: small circles and lines
 .sf-member-link { flex: 1; min-width: 0; display: flex; align-items: center; gap: 0.75rem; color: inherit; text-decoration: none; } // the picture and the name of a member: a link to the conversation with that friend when it is my friend
 .sf-sender { display: block; margin-bottom: 0.125rem; font-weight: 600; } // in a group feed: the name of the one who wrote the message, above the bubble
 .sf-add-choice { display: flex; align-items: center; flex-wrap: wrap; gap: 0.25rem 0.75rem; } // a friend to add to the group and, when it cannot be done, why
+
+// ---- The header of every page (app-page-bar): the one .sf-bar; icon, title, small line, and the page's own actions on the right ----
+button.sf-back { padding: 0; border: 0; background: none; } // a back arrow that is a button looks like the link one
+.sf-bar-heading { display: flex; align-items: center; gap: 0.5rem; min-width: 0; color: var(--sf-text); svg { flex: none; color: var(--sf-primary); } }
+.sf-bar-text > .sf-hint { display: block; line-height: 1.2; }
+.sf-bar-end { display: flex; align-items: center; gap: 0.25rem; margin-inline-start: auto; flex: none; }
+.sf-bar-icon { display: inline-grid; place-items: center; width: var(--sf-touch); height: var(--sf-touch); padding: 0; border: 0; border-radius: 50%; background: none; color: var(--sf-primary); text-decoration: none; svg { width: 1.25rem; height: 1.25rem; } &:hover, &:focus-visible { background: color-mix(in srgb, var(--sf-primary) 10%, transparent); } &:disabled { opacity: 0.5; } }
+.sf-bar-icon.sf-bar-danger { color: var(--sf-red); }
+.sf-bar-status { font-size: var(--sf-fs-description); color: var(--sf-muted, var(--bs-secondary-color)); margin: 0; max-width: 10rem; text-align: end; } // a short line on the right of the bar (the autosave state of Profile)
+.sf-bar.sf-bar-sub { position: static; min-height: var(--sf-touch); padding-top: 0; padding-bottom: 0; background: none; border-bottom: 0; box-shadow: none; } // a bar under another header (a friend's page): a plain title row, not sticky

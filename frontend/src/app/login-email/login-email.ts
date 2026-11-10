@@ -5,11 +5,12 @@ import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { tr } from '../core/i18n';
 import { authMessage } from '../core/auth-errors';
 import { AuthService } from '../core/auth.service';
+import { PageBar } from '../page-bar/page-bar';
 
 /** Sign in without a password: we email a link, and opening it signs the person in. */
 @Component({
   selector: 'app-login-email',
-  imports: [RouterLink, TranslocoDirective],
+  imports: [PageBar, RouterLink, TranslocoDirective],
   providers: [provideTranslocoScope('loginEmail', 'login')],
   templateUrl: './login-email.html',
 })

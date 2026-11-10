@@ -1,20 +1,17 @@
 <ng-container *transloco="let t">
-<div class="sf-page-head">
-
-  <!-- Everything on this page saves itself -->
-    <p class="sf-status" role="status" aria-live="polite" [class.text-danger]="state() === 'error'">
-      @switch (state()) {
-        @case ('dirty') { {{ t('profile.dirty') || 'Changes not saved yet…' }} }
-        @case ('saving') { {{ t('profile.saving') || 'Saving…' }} }
-        @case ('error') {
-          {{ error() }}
-          <button type="button" class="btn btn-link p-0 align-baseline" (click)="retry()">{{ t('profile.tryAgain') || 'Try again' }}</button>
-        }
-      }
-    </p>
-</div>
 
 <main class="sf-page">
+  <!-- Everything on this page saves itself -->
+  <p class="sf-status" role="status" aria-live="polite" [class.text-danger]="state() === 'error'">
+        @switch (state()) {
+          @case ('dirty') { {{ t('profile.dirty') || 'Changes not saved yet…' }} }
+          @case ('saving') { {{ t('profile.saving') || 'Saving…' }} }
+          @case ('error') {
+            {{ error() }}
+            <button type="button" class="btn btn-link p-0 align-baseline" (click)="retry()">{{ t('profile.tryAgain') || 'Try again' }}</button>
+          }
+        }
+      </p>
 
   <div class="card sf-unframed">
     <div class="card-body text-center">

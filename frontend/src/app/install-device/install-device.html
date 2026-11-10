@@ -1,18 +1,5 @@
 <ng-container *transloco="let t">
-<!-- signed out: no menu, so a way back to the welcome page -->
-@if (!auth.user()) {
-  <div class="sf-back-row">
-    <a routerLink="/welcome" class="btn btn-light" [attr.aria-label]="t('installDevice.back') || 'Back'">{{ t('installDevice.back2') || '‹ Back' }}</a>
-  </div>
-}
-
-<div class="sf-page-head">
-  @switch (device) {
-    @case ('android') { <h1>{{ t('installDevice.getTheAndroidApp') || 'Get the Android app' }}</h1> }
-    @case ('iphone') { <h1>{{ t('installDevice.addItToYour') || 'Add it to your home screen' }}</h1> }
-    @default { <h1>{{ t('installDevice.installItAsA') || 'Install it as a browser app' }}</h1> }
-  }
-</div>
+<app-page-bar [title]="device === 'android' ? (t('installDevice.getTheAndroidApp') || 'Get the Android app') : device === 'iphone' ? (t('installDevice.addItToYour') || 'Add it to your home screen') : (t('installDevice.installItAsA') || 'Install it as a browser app')" [backTo]="auth.user() ? null : '/welcome'" />
 
 <main class="sf-narrow vstack gap-3">
   @if (app.installed()) {

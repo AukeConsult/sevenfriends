@@ -9,6 +9,7 @@ import { AuthService } from '../core/auth.service';
 import { FriendsService } from '../core/friends.service';
 import { InviteLinkService } from '../core/invite-link.service';
 import { FriendDraft } from '../models';
+import { PageBar } from '../page-bar/page-bar';
 
 const emptyDraft = (): FriendDraft => ({ name: '', email: '', phone: '', message: '' });
 
@@ -18,7 +19,7 @@ const emptyDraft = (): FriendDraft => ({ name: '', email: '', phone: '', message
  */
 @Component({
   selector: 'app-add-friend',
-  imports: [RouterLink, Clearable, TranslocoDirective],
+  imports: [PageBar, RouterLink, Clearable, TranslocoDirective],
   templateUrl: './add-friend.html',
   providers: [provideTranslocoScope('addFriend')],
 })

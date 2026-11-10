@@ -1,27 +1,20 @@
 <ng-container *transloco="let t">
 <main class="sf-page sf-page-view">
   @if (loadError()) {
-    <a [routerLink]="back()" class="sf-back-inline" [attr.aria-label]="t('safebox.common.backToTheSafebox') || 'Back to the safebox'"></a>
+    <app-page-bar [sub]="true" [title]="t('safebox.common.safebox') || 'Safebox'" [backTo]="back()" [backLabel]="t('safebox.common.backToTheSafebox') || 'Back to the safebox'" />
     <div class="alert alert-danger" role="alert">{{ loadError() }}</div>
   } @else if (!box()) {
-    <a [routerLink]="back()" class="sf-back-inline" [attr.aria-label]="t('safebox.common.backToTheSafebox') || 'Back to the safebox'"></a>
+    <app-page-bar [sub]="true" [title]="t('safebox.common.safebox') || 'Safebox'" [backTo]="back()" [backLabel]="t('safebox.common.backToTheSafebox') || 'Back to the safebox'" />
     <p class="text-secondary text-center">{{ t('safebox.view.openingTheFile') || 'Opening the file…' }}</p>
   } @else if (!item(); as none) {
-    <a [routerLink]="back()" class="sf-back-inline" [attr.aria-label]="t('safebox.common.backToTheSafebox') || 'Back to the safebox'"></a>
+    <app-page-bar [sub]="true" [title]="t('safebox.common.safebox') || 'Safebox'" [backTo]="back()" [backLabel]="t('safebox.common.backToTheSafebox') || 'Back to the safebox'" />
     <p class="text-secondary text-center">{{ t('safebox.view.thisFileIsNot') || 'This file is not in the safebox any more.' }}</p>
   } @else {
-    <div class="sf-page-head">
-      <a [routerLink]="list" class="btn btn-light btn-sm sf-head-list" [attr.aria-label]="(t('safebox.common.allItems') || 'All items in the safebox')" [attr.title]="(t('safebox.common.allItems') || 'All items in the safebox')"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg></a>
-      <h1 class="m-0 mw-100">
-        <a [routerLink]="back()" (click)="goBack($event)" class="sf-title-link" [attr.aria-label]="t('safebox.common.backToTheSafebox') || 'Back to the safebox'">
-          <span class="sf-back-inline" aria-hidden="true"></span>
-          <span class="sf-ellipsis">{{ item()!.name }}</span>
-        </a>
-      </h1>
-      <p class="sf-hint m-0">{{ item()!.kind === 'document' ? docLabel() : item()!.kind === 'image' ? 'Picture' : item()!.kind === 'video' ? 'Video' : 'Sound' }} · {{ formatBytes(item()!.bytes) }}</p>
-      <button type="button" class="btn btn-light btn-sm sf-head-delete" (click)="confirmDelete.set(!confirmDelete())" [disabled]="busy()" [attr.aria-label]="t('safebox.common.takeItOutOfTheSafebox') || 'Take it out of the safebox'" [attr.title]="t('safebox.common.takeItOutOfTheSafebox') || 'Take it out of the safebox'"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6" /></svg></button>
+    <app-page-bar [sub]="true" [title]="item()!.name" [subtitle]="(item()!.kind === 'document' ? docLabel() : item()!.kind === 'image' ? 'Picture' : item()!.kind === 'video' ? 'Video' : 'Sound') + ' · ' + formatBytes(item()!.bytes)" [backTo]="back()" (backClick)="goBack($event)">
+      <a [routerLink]="list" class="sf-bar-icon" [attr.aria-label]="(t('safebox.common.allItems') || 'All items in the safebox')" [attr.title]="(t('safebox.common.allItems') || 'All items in the safebox')"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg></a>
+      <button type="button" class="sf-bar-icon sf-bar-danger" (click)="confirmDelete.set(!confirmDelete())" [disabled]="busy()" [attr.aria-label]="t('safebox.common.takeItOutOfTheSafebox') || 'Take it out of the safebox'" [attr.title]="t('safebox.common.takeItOutOfTheSafebox') || 'Take it out of the safebox'"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6" /></svg></button>
       <app-safebox-tell [path]="['/friends', friendId, 'safebox', itemId()]" [friendId]="friendId" [itemId]="itemId()" [friendName]="friendName()" [what]="item()!.kind === 'image' ? (t('safebox.link.picture') || 'Picture') : item()!.kind === 'video' ? 'Video' : item()!.kind === 'audio' ? (t('safebox.link.sound') || 'Sound') : 'File'" [title]="item()!.name" />
-    </div>
+    </app-page-bar>
 
     @if (confirmDelete()) {
       <div class="sf-expand">

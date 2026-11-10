@@ -1,10 +1,5 @@
 <ng-container *transloco="let t">
-<div class="sf-back-row">
-  <a routerLink="/login" class="btn btn-light" [attr.aria-label]="t('login.backToSignIn') || 'Back to sign in'">‹ {{ t('common.back') || 'Back' }}</a>
-</div>
-<div class="sf-page-head">
-  <h1>{{ t('loginLink.title') || 'Signing you in' }}</h1>
-</div>
+<app-page-bar [title]="t('loginLink.title') || 'Signing you in'" [backTo]="'/login'" />
 
 <main class="sf-narrow">
   @if (!valid) {

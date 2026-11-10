@@ -12,6 +12,7 @@ import { SafeboxService } from '../../core/safebox.service';
 import { UiPreferencesService } from '../../core/ui-preferences';
 import { FriendContext } from '../../friend-page/friend-context';
 import { NOTE_TEXT_MAX, NOTE_TITLE_MAX } from '../../models';
+import { PageBar } from '../../page-bar/page-bar';
 
 /**
  * One note of the safebox (design: docs/design/safebox-objects.md), new (`/friends/:id/safebox/note`) or opened to read and change
@@ -20,7 +21,7 @@ import { NOTE_TEXT_MAX, NOTE_TITLE_MAX } from '../../models';
  */
 @Component({
   selector: 'app-safebox-note',
-  imports: [SafeboxTell, RouterLink, SafeboxAttachments, SafeboxLinks, TranslocoDirective],
+  imports: [PageBar, SafeboxTell, RouterLink, SafeboxAttachments, SafeboxLinks, TranslocoDirective],
   templateUrl: './safebox-note.html',
   providers: [provideTranslocoScope('safebox')],
 })

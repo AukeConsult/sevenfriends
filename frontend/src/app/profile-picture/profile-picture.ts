@@ -7,6 +7,7 @@ import { AuthService } from '../core/auth.service';
 import { CaptureButton } from '../capture-button/capture-button';
 import { Decoded, decodeImage, sizeOf } from '../core/image';
 import { ProfileDetails } from '../models';
+import { PageBar } from '../page-bar/page-bar';
 
 /** The side of the square the picture is cropped in, in CSS pixels (the canvas is drawn at twice this for sharpness). */
 const VIEW = 280;
@@ -24,7 +25,7 @@ const MAX_FILE_BYTES = 20 * 1024 * 1024;
  */
 @Component({
   selector: 'app-profile-picture',
-  imports: [RouterLink, CaptureButton, TranslocoDirective],
+  imports: [PageBar, RouterLink, CaptureButton, TranslocoDirective],
   templateUrl: './profile-picture.html',
   providers: [provideTranslocoScope('profilePicture')],
 })

@@ -4,11 +4,12 @@ import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router
 import { InstallService } from '../core/install.service';
 import { SettingsTab, UiPreferencesService } from '../core/ui-preferences';
 import { tr } from '../core/i18n';
+import { PageBar } from '../page-bar/page-bar';
 
 /** The Settings page: one tab for each part (the part itself is the page shown under the tabs). */
 @Component({
   selector: 'app-settings-shell',
-  imports: [RouterLink, RouterOutlet, TranslocoDirective],
+  imports: [PageBar, RouterLink, RouterOutlet, TranslocoDirective],
   templateUrl: './settings-shell.html',
   providers: [provideTranslocoScope('settingsShell')],
 })

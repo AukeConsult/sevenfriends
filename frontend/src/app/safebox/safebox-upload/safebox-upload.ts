@@ -10,6 +10,7 @@ import { SafeboxService } from '../../core/safebox.service';
 import { UiPreferencesService } from '../../core/ui-preferences';
 import { FriendContext } from '../../friend-page/friend-context';
 import { BoxKeys, ChosenFile } from '../../models';
+import { PageBar } from '../../page-bar/page-bar';
 
 /**
  * Put files in the safebox (`/friends/:id/safebox/new/file`): choose or drop files (or take a photo), see the list, and Upload. Pictures are made smaller
@@ -18,7 +19,7 @@ import { BoxKeys, ChosenFile } from '../../models';
  */
 @Component({
   selector: 'app-safebox-upload',
-  imports: [RouterLink, SafeboxCapture, TranslocoDirective],
+  imports: [PageBar, RouterLink, SafeboxCapture, TranslocoDirective],
   templateUrl: './safebox-upload.html',
   providers: [provideTranslocoScope('safebox')],
 })

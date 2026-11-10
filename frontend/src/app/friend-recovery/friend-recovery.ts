@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { RecoveryState, readableFingerprint } from '../models';
 import { RecoveryService } from '../core/recovery.service';
 import { FriendContext } from '../friend-page/friend-context';
+import { PageBar } from '../page-bar/page-bar';
 
 const POLL_MS = 2500;
 
@@ -15,7 +16,7 @@ const POLL_MS = 2500;
  */
 @Component({
   selector: 'app-friend-recovery',
-  imports: [RouterLink, TranslocoDirective],
+  imports: [PageBar, RouterLink, TranslocoDirective],
   templateUrl: './friend-recovery.html',
   providers: [provideTranslocoScope('friendRecovery')],
 })

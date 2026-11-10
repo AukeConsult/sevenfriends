@@ -1,14 +1,5 @@
 <ng-container *transloco="let t">
-<div class="sf-page-head">
-  <h1 [class.d-flex]="embedded()" [class.align-items-center]="embedded()" [class.justify-content-center]="embedded()" [class.gap-1]="embedded()">
-    @if (embedded()) {
-      <button type="button" class="sf-back-inline" [attr.aria-label]="t('addFriend.backToHome') || 'Back to home'" (click)="closed.emit()"></button>
-      <span>{{ t('addFriend.addAOne', { one: w.one }) || 'Add a ' + w.one }}</span>
-    } @else {
-      <span class="sf-title-dot" aria-hidden="true"></span>{{ t('addFriend.addAOne', { one: w.one }) || 'Add a ' + w.one }}
-    }
-  </h1>
-</div>
+<app-page-bar [title]="t('addFriend.addAOne', { one: w.one }) || 'Add a ' + w.one" [backButton]="embedded()" [backTo]="embedded() ? null : '/'" [backLabel]="t('addFriend.backToHome') || 'Back to home'" (backClick)="closed.emit()" />
 
 @if (result(); as done) {
   <!-- the person has no account yet: the request is saved, and this is the link to send -->

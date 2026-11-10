@@ -16,6 +16,7 @@ import { REMIND_DEFAULT, REMIND_LEADS, objectKind, remindAt, safeUrl } from '../
 import { UiPreferencesService } from '../../core/ui-preferences';
 import { FriendContext } from '../../friend-page/friend-context';
 import { BoxKeys, CHECKLIST_ENTRIES_MAX, CHECKLIST_TEXT_MAX, ChecklistEntry, OBJECT_TITLE_MAX, ObjectField, ObjectKind, ObjectPayload, ReminderRequest, SAFEBOX_OBJECT_TYPES, SafeboxType } from '../../models';
+import { PageBar } from '../../page-bar/page-bar';
 
 /** A link under a field (open the address, call, write, show on a map). */
 interface ObjectAction {
@@ -39,7 +40,7 @@ interface FoundPlace {
  */
 @Component({
   selector: 'app-safebox-object',
-  imports: [SafeboxTell, RouterLink, SafeboxAttachments, SafeboxLinks, TranslocoDirective],
+  imports: [PageBar, SafeboxTell, RouterLink, SafeboxAttachments, SafeboxLinks, TranslocoDirective],
   templateUrl: './safebox-object.html',
   providers: [provideTranslocoScope('safebox')],
 })

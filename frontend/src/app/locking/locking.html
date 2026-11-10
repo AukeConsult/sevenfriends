@@ -1,12 +1,5 @@
 <ng-container *transloco="let t">
-@if (!auth.user()) {
-  <div class="sf-back-row">
-    <a routerLink="/login" class="btn btn-light" [attr.aria-label]="t('locking.backToSignIn') || 'Back to sign in'">{{ t('locking.back') || '‹ Back' }}</a>
-  </div>
-}
-<div class="sf-page-head">
-  <h1>{{ t('locking.lockingHowYourMessages') || 'Locking: how your messages stay private' }}</h1>
-</div>
+<app-page-bar [title]="t('locking.lockingHowYourMessages') || 'Locking: how your messages stay private'" [backTo]="auth.user() ? null : '/login'" />
 
 <main class="sf-narrow sf-reading vstack gap-3">
   @if (auth.user()) {

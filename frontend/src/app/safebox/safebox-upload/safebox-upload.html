@@ -1,18 +1,8 @@
 <ng-container *transloco="let t">
 <main class="sf-page sf-page-item">
-  <div class="sf-page-head">
-    <a [routerLink]="list" class="btn btn-light btn-sm sf-head-list" [attr.aria-label]="(t('safebox.common.allItems') || 'All items in the safebox')" [attr.title]="(t('safebox.common.allItems') || 'All items in the safebox')"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg></a>
-    <h1 class="m-0 mw-100">
-      <a [routerLink]="leave" (click)="leaveNow($event)" class="sf-title-link" [attr.aria-label]="t('safebox.common.backToTheSafebox') || 'Back to the safebox'">
-        <span class="sf-back-inline" aria-hidden="true"></span>
-        <span class="sf-ellipsis">{{ t('safebox.upload.newFile') || 'New file' }}</span>
-      </a>
-    </h1>
-    <p class="sf-hint m-0">
-      @if (locked()) { {{ t('safebox.upload.lockedOnThisDevice', { friendName: friendName() }) || 'Locked on this device. Only you and ' + friendName() + ' can open it.' }} }
-      @else { {{ t('safebox.upload.notLocked') || 'These files are stored without a lock.' }} }
-    </p>
-  </div>
+  <app-page-bar [sub]="true" [title]="t('safebox.upload.newFile') || 'New file'" [subtitle]="locked() ? (t('safebox.upload.lockedOnThisDevice', { friendName: friendName() }) || 'Locked on this device. Only you and ' + friendName() + ' can open it.') : (t('safebox.upload.notLocked') || 'These files are stored without a lock.')" [backTo]="leave" (backClick)="leaveNow($event)">
+    <a [routerLink]="list" class="sf-bar-icon" [attr.aria-label]="(t('safebox.common.allItems') || 'All items in the safebox')" [attr.title]="(t('safebox.common.allItems') || 'All items in the safebox')"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg></a>
+  </app-page-bar>
 
   <form class="sf-narrow-form d-grid gap-2" (submit)="$event.preventDefault(); upload()">
     <input #picker type="file" class="visually-hidden" multiple tabindex="-1" aria-hidden="true"

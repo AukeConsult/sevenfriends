@@ -1,13 +1,5 @@
 <ng-container *transloco="let t">
-<!-- signed out: no menu, so a way back to the sign-in page -->
-@if (!auth.user()) {
-  <div class="sf-back-row">
-    <a routerLink="/login" class="btn btn-light" [attr.aria-label]="t('privacy.backToSignIn') || 'Back to sign in'">{{ t('privacy.back') || '‹ Back' }}</a>
-  </div>
-}
-<div class="sf-page-head">
-  <h1>{{ t('privacy.yourDataAndPrivacy') || 'Your data and privacy' }}</h1>
-</div>
+<app-page-bar [title]="t('privacy.yourDataAndPrivacy') || 'Your data and privacy'" [backTo]="auth.user() ? null : '/login'" />
 
 <main class="sf-narrow sf-reading vstack gap-3">
   @if (auth.user()) {

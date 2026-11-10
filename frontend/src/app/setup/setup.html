@@ -1,9 +1,7 @@
 <ng-container *transloco="let t">
-<div class="sf-page-head">
-  <!-- one line, so the header is the same 44px band as on every other page -->
-  <h1>{{ t('setup.title') || 'Setup wizard' }}@if (step()) { <span class="sf-hint fw-normal"> · {{ t('setup.step', { n: stepNumber(), total: stepCount() }) || 'Step ' + stepNumber() + ' of ' + stepCount() }}</span> }</h1>
-  <button type="button" class="btn btn-link btn-sm position-absolute end-0 top-50 translate-middle-y" (click)="finish('/')">{{ t('common.finish') || 'Finish' }}</button>
-</div>
+<app-page-bar [title]="t('setup.title') || 'Setup wizard'" [subtitle]="step() ? (t('setup.step', { n: stepNumber(), total: stepCount() }) || 'Step ' + stepNumber() + ' of ' + stepCount()) : null">
+  <button type="button" class="btn btn-link btn-sm" (click)="finish('/')">{{ t('common.finish') || 'Finish' }}</button>
+</app-page-bar>
 <main class="sf-narrow">
   @switch (step()) {
     @case (null) { <p class="sf-hint m-0" role="status">{{ t('setup.getting') || 'Getting ready…' }}</p> }

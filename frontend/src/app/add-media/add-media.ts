@@ -14,6 +14,7 @@ import { MessageLockService } from '../core/message-lock.service';
 import { MAX_VIDEO_SECONDS, PreparedVideo, prepareRecorded, prepareVideo } from '../core/video';
 import { MediaUpload, MessageEncMedia } from '../models';
 import { ApiError } from '../core/api.service';
+import { PageBar } from '../page-bar/page-bar';
 
 type Prepared = PreparedImage | PreparedVideo | PreparedAudio;
 
@@ -40,7 +41,7 @@ const textOf = (kind: 'image' | 'video' | 'audio') => ({
  */
 @Component({
   selector: 'app-add-media',
-  imports: [Clearable, CaptureButton, TranslocoDirective],
+  imports: [PageBar, Clearable, CaptureButton, TranslocoDirective],
   templateUrl: './add-media.html',
   providers: [provideTranslocoScope('addMedia')],
 })

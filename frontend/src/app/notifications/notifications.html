@@ -1,7 +1,5 @@
 <ng-container *transloco="let t">
-<main class="sf-page">
-  <!-- a slim top: the small logo and the name, then a greeting and who is around -->
-  <app-home-top />
+<main [class.sf-page]="!silentOpen() && !addOpen()">
   @if (silentOpen()) {
     <!-- the silent list, from the top down: everything else is hidden -->
     <app-sleeping [embedded]="true" (closed)="silentOpen.set(false)" />
@@ -9,6 +7,8 @@
     <!-- add a friend, from the top down: everything else is hidden -->
     <app-add-friend [embedded]="true" (closed)="addOpen.set(false)" />
   } @else {
+  <!-- a slim top: the small logo and the name, then a greeting and who is around -->
+  <app-home-top />
   <h1 class="sf-home-hi">{{ greeting() }}</h1>
   <p class="sf-home-sub">{{ around() }}</p>
 

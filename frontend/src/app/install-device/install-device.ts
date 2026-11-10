@@ -6,6 +6,7 @@ import { fileExists } from '../core/download';
 import { FriendLinkService } from '../core/friend-link.service';
 import { InstallService } from '../core/install.service';
 import { WelcomeService } from '../core/welcome.service';
+import { PageBar } from '../page-bar/page-bar';
 
 /**
  * One install page for each kind of device (the route says which): Android (installed by download), iPhone (Add to Home Screen)
@@ -13,7 +14,7 @@ import { WelcomeService } from '../core/welcome.service';
  */
 @Component({
   selector: 'app-install-device',
-  imports: [RouterLink, TranslocoDirective],
+  imports: [PageBar, RouterLink, TranslocoDirective],
   templateUrl: './install-device.html',
   providers: [provideTranslocoScope('installDevice')],
 })

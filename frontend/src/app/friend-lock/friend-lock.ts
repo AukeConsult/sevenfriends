@@ -5,6 +5,7 @@ import { SafeboxService } from '../core/safebox.service';
 import { UiPreferencesService } from '../core/ui-preferences';
 import { FriendContext } from '../friend-page/friend-context';
 import { SafeboxItem } from '../models';
+import { PageBar } from '../page-bar/page-bar';
 
 /**
  * Locking and keys with one friend (`/friends/:id/lock`, from the menu of the friend page): whether messages and files are locked, who has a key,
@@ -13,7 +14,7 @@ import { SafeboxItem } from '../models';
  */
 @Component({
   selector: 'app-friend-lock',
-  imports: [RouterLink, TranslocoDirective],
+  imports: [PageBar, RouterLink, TranslocoDirective],
   templateUrl: './friend-lock.html',
   providers: [provideTranslocoScope('friendLock')],
 })

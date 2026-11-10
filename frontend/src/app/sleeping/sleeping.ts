@@ -10,6 +10,7 @@ import { FriendsService } from '../core/friends.service';
 import { MessagesService } from '../core/messages.service';
 import { timeAgo } from '../core/time-ago';
 import { Friend, profileColorHex } from '../models';
+import { PageBar } from '../page-bar/page-bar';
 
 const MAX_FRIENDS = 7; // seats (the same number as on the Friends page)
 
@@ -19,7 +20,7 @@ const MAX_FRIENDS = 7; // seats (the same number as on the Friends page)
  */
 @Component({
   selector: 'app-sleeping',
-  imports: [NgTemplateOutlet, RouterLink, FriendAvatar, TranslocoDirective],
+  imports: [PageBar, NgTemplateOutlet, RouterLink, FriendAvatar, TranslocoDirective],
   templateUrl: './sleeping.html',
   providers: [provideTranslocoScope('sleeping')],
 })

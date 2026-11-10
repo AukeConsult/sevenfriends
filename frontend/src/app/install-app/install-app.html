@@ -1,13 +1,5 @@
 <ng-container *transloco="let t">
-<!-- signed out (the link "Get the app" on the sign-in page): no menu, so a way back to the sign-in page -->
-@if (!auth.user()) {
-  <div class="sf-back-row">
-    <a routerLink="/login" class="btn btn-light" [attr.aria-label]="t('installApp.backToSignIn') || 'Back to sign in'">{{ t('installApp.back') || '‹ Back' }}</a>
-  </div>
-}
-<div class="sf-page-head">
-  <h1>{{ t('installApp.installTheApp') || 'Install the app' }}</h1>
-</div>
+<app-page-bar [title]="t('installApp.installTheApp') || 'Install the app'" [backTo]="auth.user() ? null : '/login'" />
 
 <main class="sf-narrow vstack gap-3">
   @if (app.installed()) {

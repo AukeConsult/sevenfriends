@@ -1,8 +1,6 @@
 <ng-container *transloco="let t">
 <main class="sf-lock-page">
-  <div class="sf-page-head">
-    <h1 class="m-0 mw-100"><span class="sf-ellipsis">{{ t('friendRecovery.recovery') || 'Recovery' }}</span></h1>
-  </div>
+  <app-page-bar [sub]="true" [title]="t('friendRecovery.recovery') || 'Recovery'" />
 
   @if (error()) { <p class="text-danger small" role="alert">{{ error() }}</p> }
 

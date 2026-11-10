@@ -4,11 +4,12 @@ import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { tr } from '../core/i18n';
 import { authMessage } from '../core/auth-errors';
 import { AuthService } from '../core/auth.service';
+import { PageBar } from '../page-bar/page-bar';
 
 /** The page the emailed link opens: it finishes the sign-in. */
 @Component({
   selector: 'app-login-link',
-  imports: [RouterLink, TranslocoDirective],
+  imports: [PageBar, RouterLink, TranslocoDirective],
   providers: [provideTranslocoScope('loginLink', 'loginEmail', 'login')],
   templateUrl: './login-link.html',
 })

@@ -2,15 +2,16 @@ import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { tr } from '../core/i18n';
 import { ActiveCircleService } from '../core/active-circle.service';
 import { Component, ElementRef, inject, signal, viewChild } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { authMessage } from '../core/auth-errors';
 import { AuthService } from '../core/auth.service';
 import { PhoneStep } from '../models/view';
+import { PageBar } from '../page-bar/page-bar';
 
 /** Phone number + SMS code. Used to sign in ('login') and to verify the phone of a signed-in account ('link'). */
 @Component({
   selector: 'app-phone-auth',
-  imports: [RouterLink, TranslocoDirective],
+  imports: [PageBar, TranslocoDirective],
   templateUrl: './phone-auth.html',
   providers: [provideTranslocoScope('phoneAuth')],
 })

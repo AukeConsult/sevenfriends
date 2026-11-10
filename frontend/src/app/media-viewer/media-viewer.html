@@ -1,13 +1,5 @@
 <ng-container *transloco="let t">
-<div class="sf-page-head">
-  <h1 class="m-0 mw-100">
-    <!-- the arrow and the name go back, like the title of the safebox pages -->
-    <button type="button" class="sf-title-link sf-title-button" (click)="back()" [attr.aria-label]="t('mediaViewer.back') || 'Back'">
-      <span class="sf-back-inline" aria-hidden="true"></span>
-      <span class="sf-ellipsis">{{ file()?.name ?? (t('mediaViewer.imageVideoOrAudio') || 'Image, video or audio') }}</span>
-    </button>
-  </h1>
-</div>
+<app-page-bar [title]="file()?.name ?? (t('mediaViewer.imageVideoOrAudio') || 'Image, video or audio')" [backButton]="true" [backLabel]="t('mediaViewer.back') || 'Back'" (backClick)="back()" />
 
 <main class="sf-viewer">
   @if (file(); as shown) {

@@ -4,6 +4,7 @@ import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ApiService } from '../core/api.service';
 import { AuthService } from '../core/auth.service';
+import { PageBar } from '../page-bar/page-bar';
 
 /** The word that must be typed, so nobody erases themselves by accident. */
 const CONFIRM_WORD = 'DELETE';
@@ -11,7 +12,7 @@ const CONFIRM_WORD = 'DELETE';
 /** A full page to erase yourself from the system, for good. */
 @Component({
   selector: 'app-delete-account',
-  imports: [RouterLink, TranslocoDirective],
+  imports: [PageBar, RouterLink, TranslocoDirective],
   templateUrl: './delete-account.html',
   providers: [provideTranslocoScope('deleteAccount')],
 })

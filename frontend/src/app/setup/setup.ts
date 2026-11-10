@@ -15,6 +15,7 @@ import { NoticesService } from '../core/notices.service';
 import { UiPreferencesService } from '../core/ui-preferences';
 import { KeySetup } from '../key-setup/key-setup';
 import { NoticeControls } from '../notice-controls/notice-controls';
+import { PageBar } from '../page-bar/page-bar';
 
 /** The steps of the setup wizard, in order. */
 type SetupStep = 'profile' | 'friend' | 'notify' | 'install' | 'key' | 'done';
@@ -32,7 +33,7 @@ type SetupStep = 'profile' | 'friend' | 'notify' | 'install' | 'key' | 'done';
  */
 @Component({
   selector: 'app-setup',
-  imports: [KeySetup, NoticeControls, TranslocoDirective],
+  imports: [PageBar, KeySetup, NoticeControls, TranslocoDirective],
   providers: [provideTranslocoScope('setup')],
   templateUrl: './setup.html',
 })

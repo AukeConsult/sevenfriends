@@ -2,10 +2,10 @@ import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { ActiveCircleService } from '../core/active-circle.service';
 import { AppDatePipe } from '../core/app-date.pipe';
 import { Component, computed, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { FriendsService } from '../core/friends.service';
 import { NotificationsService } from '../core/notifications.service';
 import { FriendRequest } from '../models';
+import { PageBar } from '../page-bar/page-bar';
 
 /**
  * Requests that cannot get a seat because all seats are taken.
@@ -13,7 +13,7 @@ import { FriendRequest } from '../models';
  */
 @Component({
   selector: 'app-pending',
-  imports: [AppDatePipe, RouterLink, TranslocoDirective],
+  imports: [PageBar, AppDatePipe, TranslocoDirective],
   templateUrl: './pending.html',
   providers: [provideTranslocoScope('pending')],
 })

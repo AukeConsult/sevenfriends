@@ -1,10 +1,5 @@
 <ng-container *transloco="let t">
-<div class="sf-back-row">
-  <a routerLink="/" class="btn btn-light" [attr.aria-label]="t('pending.backToHome') || 'Back to home'">{{ t('pending.back') || '‹ Back' }}</a>
-</div>
-<div class="sf-page-head">
-  <h1>{{ t('pending.waitingForASeat') || 'Waiting for a seat' }}</h1>
-</div>
+<app-page-bar [title]="t('pending.waitingForASeat') || 'Waiting for a seat'" [backTo]="'/'" />
 
 <main class="sf-page">
   <p class="text-secondary">

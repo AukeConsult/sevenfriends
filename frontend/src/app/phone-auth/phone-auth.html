@@ -1,10 +1,5 @@
 <ng-container *transloco="let t">
-<div class="sf-back-row">
-  <a [routerLink]="backLink" class="btn btn-light" [attr.aria-label]="t('phoneAuth.back') || 'Back'">{{ t('phoneAuth.back2') || '‹ Back' }}</a>
-</div>
-<div class="sf-page-head">
-  <h1>{{ linking ? (t('phoneAuth.verifyYourPhone') || 'Verify your phone') : (t('phoneAuth.signInWithPhone') || 'Sign in with phone') }}</h1>
-</div>
+<app-page-bar [title]="linking ? (t('phoneAuth.verifyYourPhone') || 'Verify your phone') : (t('phoneAuth.signInWithPhone') || 'Sign in with phone')" [backTo]="backLink" />
 
 <main class="sf-narrow">
   @if (step() === 'number') {

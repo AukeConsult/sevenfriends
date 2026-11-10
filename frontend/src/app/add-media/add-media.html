@@ -1,8 +1,6 @@
 <ng-container *transloco="let t">
 @if (!embedded) {
-  <div class="sf-page-head">
-    <h1>{{ cameraOpen() ? text.recording : text.title }}</h1>
-  </div>
+  <app-page-bar [title]="cameraOpen() ? text.recording : text.title" [backTo]="['/friends', friendId]" />
 }
 
 <main [class.sf-narrow]="!embedded" [class.sf-attach-panel]="embedded">
