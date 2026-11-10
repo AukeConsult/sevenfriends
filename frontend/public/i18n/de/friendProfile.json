@@ -31,5 +31,6 @@
   "addedBy": "hinzugefügt von {{ name }}",
   "owner": "Besitzer",
   "addedToSleepList": "{{ name }} hat keinen freien Platz, deshalb steht die Gruppe auf der Schlafliste.",
-  "wakeFname": "{{ fName }} aufwecken"
+  "wakeFname": "{{ fName }} aufwecken",
+  "openTheConversation": "Unterhaltung mit {{ name }} öffnen"
 }

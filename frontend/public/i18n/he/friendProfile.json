@@ -31,5 +31,6 @@
   "addedBy": "נוסף על ידי {{ name }}",
   "owner": "בעלים",
   "addedToSleepList": "ל{{ name }} אין מקום פנוי, ולכן הקבוצה ברשימת השינה שלו.",
-  "wakeFname": "להעיר את {{ fName }}"
+  "wakeFname": "להעיר את {{ fName }}",
+  "openTheConversation": "פתיחת השיחה עם {{ name }}"
 }

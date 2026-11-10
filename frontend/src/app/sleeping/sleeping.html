@@ -1,97 +1,114 @@
 <ng-container *transloco="let t">
-<ng-template #body>
-  <div class="sf-page-head">
-    <h1 class="d-flex align-items-center justify-content-center gap-1">
-      @if (embedded()) {
-        <button type="button" class="sf-back-inline" [attr.aria-label]="t('sleeping.backToHome') || 'Back to home'" (click)="closed.emit()"></button>
-      } @else {
-        <a routerLink="/" class="sf-back-inline" [attr.aria-label]="t('sleeping.backToMyFriends') || 'Back to my friends'"></a>
-      }
-      <span>{{ t('sleeping.sleepList') || '😴 Sleep list' }}</span>
+<ng-template #bar>
+  <header class="sf-bar">
+    @if (embedded()) {
+      <button type="button" class="sf-back" [attr.aria-label]="t('sleeping.backToHome') || 'Back to home'" (click)="closed.emit()">‹</button>
+    } @else {
+      <a routerLink="/" class="sf-back" [attr.aria-label]="t('sleeping.backToMyFriends') || 'Back to my friends'">‹</a>
+    }
+    <h1 class="sf-bar-title d-flex align-items-center gap-2">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      <span>{{ t('sleeping.sleepList') || 'Sleep list' }}</span>
     </h1>
+  </header>
+</ng-template>
+<ng-template #card let-friend="friend">
+    <article class="sf-sl-card" [style.--sf-friend]="colorOf(friend.color)">
+      <div class="sf-sl-card-head">
+        <span class="sf-sl-pic">
+          <app-friend-avatar [friend]="friend" [seat]="1" [size]="48" />
+          @if (unread().get(friend.id); as count) {
+            <span class="sf-hs-unread" [attr.aria-label]="(t('sleeping.countUnread', { count: count }) || count + ' unread')">{{ count }}</span>
+          }
+        </span>
+        <span class="sf-sl-card-text">
+          <a [routerLink]="['/friends', friend.id]" (click)="opened()" class="sf-sl-card-name">{{ friend.name }}</a>
+          <span class="sf-hint">{{ friend.group ? (t('friendProfile.group') || 'Group') + ' · ' + (friend.members ?? 1) + ' ' + (t('friendProfile.peopleCount') || 'people') : lastSpoken(friend) }}</span>
+        </span>
+        @if (unread().get(friend.id); as count) {
+          <span class="badge rounded-pill text-bg-danger">{{ count === 1 ? 'New message' : (t('sleeping.countNewMessages', { count: count }) || count + ' new messages') }}</span>
+        }
+      </div>
+      @if (deleting() === friend.id) {
+        <p class="sf-confirm-text m-0">{{ t('sleeping.deleteFriendnameForGood', { friendName: friend.name }) || 'Delete ' + friend.name + ' for good? This removes the connection and the whole conversation, for both of you.' }}</p>
+        <div class="sf-actions sf-compact">
+          <button type="button" class="btn btn-light btn-sm flex-fill text-nowrap" (click)="deleting.set(null)" [disabled]="busy()">{{ t('sleeping.cancel') || 'Cancel' }}</button>
+          <button type="button" class="btn btn-danger btn-sm flex-fill text-nowrap" (click)="remove(friend)" [disabled]="busy()">{{ t('sleeping.delete') || 'Delete' }}</button>
+        </div>
+      } @else {
+        <div class="sf-actions sf-compact">
+          <button type="button" class="btn btn-primary btn-sm flex-fill text-nowrap" (click)="wake(friend)" [disabled]="busy() || !seatFree()">{{ t('sleeping.wakeUp') || 'Wake up' }}</button>
+          <a [routerLink]="['/friends', friend.id]" (click)="opened()" class="btn btn-light btn-sm flex-fill text-nowrap">{{ t('sleeping.open') || 'Open' }}</a>
+          <button type="button" class="btn btn-outline-danger btn-sm text-nowrap" (click)="deleting.set(friend.id)" [disabled]="busy()">{{ t('sleeping.delete') || 'Delete' }}</button>
+        </div>
+      }
+    </article>
+</ng-template>
+<ng-template #body>
+  <div class="sf-sl-seats" role="status">
+    <span class="sf-sl-count">{{ taken() }} / {{ max }}</span>
+    <span class="sf-sl-seats-text">
+      @if (seatFree()) { <b>{{ t('sleeping.seatsFree', { count: max - taken() }) || (max - taken()) + ' seats are free.' }}</b> }
+      @else { <b>{{ t('sleeping.allSeatsTaken') || 'All seats are taken.' }}</b> {{ t('sleeping.freeASeatFirst') || 'Put someone to sleep to free a seat, then wake a sleeper here.' }} }
+    </span>
   </div>
-  <p class="text-secondary">
-    {{ t('sleeping.manyWhoSleepHave', { Many: w.Many, one: w.one }) || w.Many + ' who sleep have no seat. Your conversation with them is kept. Wake a ' + w.one + ' up to give them a seat again.' }}
-  </p>
-
-  @if (!seatFree() && sleeping().length) {
-    <div class="alert alert-info" role="status">{{ t('sleeping.allMaxSeatsAre', { max: max, one: w.one }) || 'All ' + max + ' seats are taken. Free a seat (put a ' + w.one + ' to sleep) before you wake someone up.' }}</div>
-  }
 
   @if (error()) {
     <div class="alert alert-danger" role="alert">{{ error() }}</div>
   }
 
   @if (!sleeping().length) {
-    <p class="text-secondary">{{ t('sleeping.nobodyIsAsleep') || 'Nobody is asleep.' }}</p>
-  } @else {
-    <!-- the sleepers as small circles that flow from left to right and wrap with the width of the view; tap one to see how it is and what you can do -->
-    <ul class="sf-sl-row list-unstyled m-0">
-      @for (friend of sleeping(); track friend.id) {
-        <li class="sf-sl-item" [class.sf-sl-on]="expanded() === friend.id">
-          <button type="button" class="sf-hs-friend sf-sl-btn" [style.--sf-friend]="colorOf(friend.color)" (click)="toggleProfile(friend)" [attr.aria-expanded]="expanded() === friend.id"
-                  [attr.aria-label]="friend.name + '. ' + (expanded() === friend.id ? 'Hide' : 'Show') + ' what you can do'">
-            <span class="sf-hs-ring">
-              <app-friend-avatar [friend]="friend" [seat]="1" [size]="42" />
-              @if (unread().get(friend.id); as count) {
-                <span class="sf-hs-unread" [attr.aria-label]="(t('sleeping.countUnread', { count: count }) || count + ' unread')">{{ count }}</span>
-              }
-            </span>
-            <span class="sf-sl-name">{{ friend.name }}</span>
-          </button>
-        </li>
+    <div class="sf-sl-empty">
+      <span class="sf-sl-empty-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></span>
+      <h2 class="sf-section-title m-0">{{ t('sleeping.nobodyIsAsleep') || 'Nobody is asleep' }}</h2>
+      <p class="sf-hint m-0">{{ t('sleeping.emptyHint') || 'A friend who sleeps gives the seat back. You keep the conversation and can wake them any time.' }}</p>
+      @if (embedded()) {
+        <button type="button" class="btn btn-outline-primary btn-sm" (click)="closed.emit()">{{ t('sleeping.goToFriends') || 'Go to Friends' }}</button>
+      } @else {
+        <a routerLink="/" class="btn btn-outline-primary btn-sm">{{ t('sleeping.goToFriends') || 'Go to Friends' }}</a>
       }
-    </ul>
-
-    @if (selected(); as friend) {
-      <article class="card sf-sl-detail mt-3" [class.sf-has-color]="!!colorOf(friend.color)" [style.--sf-friend]="colorOf(friend.color)" [style.--sf-friend-ink]="inkOf(friend.color)">
-        <div class="card-body sf-card">
-          <div class="d-flex align-items-center flex-wrap gap-2">
-            <a [routerLink]="['/friends', friend.id]" class="sf-name sf-friend-name text-decoration-none">{{ friend.name }}</a>
-            @if (unread().get(friend.id); as count) {
-              <span class="badge rounded-pill text-bg-danger">{{ count === 1 ? 'New message' : (t('sleeping.countNewMessages', { count: count }) || count + ' new messages') }}</span>
-            }
-          </div>
-          @if (lastSpoken(friend); as spoken) { <p class="sf-hint sf-spoken m-0">{{ spoken }}</p> }
-          @if (friend.sleepsMe) { <p class="sf-hint sf-spoken m-0">{{ t('sleeping.friendnameHasYouOn', { friendName: friend.name, pronoun: possessive(friend.pronoun) }) || '😴 ' + friend.name + ' has you on ' + possessive(friend.pronoun) + ' sleep list too' }}</p> }
-          @if (countryName(friend.country); as country) { <p class="sf-hint m-0">{{ country }}</p> }
-          @if (friend.mood; as mood) {
-            <p class="sf-profile-mood">
-              <img [src]="moodIcon(mood)" [alt]="''" width="24" height="24" />
-              <span>{{ moodLabel(mood) }}</span>
-            </p>
-          }
-          @if (friend.unverified.length) {
-            <p class="sf-hint text-warning-emphasis m-0">
-              {{ t('sleeping.friendnameHasNotVerified', { friendName: friend.name, phone: friend.unverified.length === 2 ? 'their email or phone' : friend.unverified[0] === 'email' ? 'their email' : 'their phone' }) || friend.name + ' has not verified ' + (friend.unverified.length === 2 ? 'their email or phone' : friend.unverified[0] === 'email' ? 'their email' : 'their phone') + ', so we cannot be sure it is really them.' }}
-            </p>
-          }
-          <dl class="sf-details">
-            @if (friend.phone) { <dt>{{ t('sleeping.phone') || 'Phone' }}</dt><dd>{{ friend.phone }}</dd> }
-            @if (friend.email) { <dt>{{ t('sleeping.email') || 'Email' }}</dt><dd>{{ friend.email }}</dd> }
-            @if (friend.createdAt) { <dt>{{ t('sleeping.added') || 'Added' }}</dt><dd>{{ friend.createdAt | appDate: 'mediumDate' }}</dd> }
-          </dl>
-          @if (deleting() === friend.id) {
-            <p class="sf-confirm-text m-0 mt-2">{{ t('sleeping.deleteFriendnameForGood', { friendName: friend.name }) || 'Delete ' + friend.name + ' for good? This removes the connection and the whole conversation, for both of you.' }}</p>
-            <div class="sf-actions sf-compact">
-              <button type="button" class="btn btn-light btn-sm flex-fill text-nowrap" (click)="deleting.set(null)" [disabled]="busy()">{{ t('sleeping.cancel') || 'Cancel' }}</button>
-              <button type="button" class="btn btn-danger btn-sm flex-fill text-nowrap" (click)="remove(friend)" [disabled]="busy()">{{ t('sleeping.delete') || 'Delete' }}</button>
-            </div>
-          } @else {
-            <div class="sf-actions sf-compact">
-              <a [routerLink]="['/friends', friend.id]" class="btn btn-light btn-sm flex-fill text-nowrap">{{ t('sleeping.open') || 'Open' }}</a>
-              <button type="button" class="btn btn-primary btn-sm flex-fill text-nowrap" (click)="wake(friend)" [disabled]="busy() || !seatFree()">{{ t('sleeping.wakeUp') || 'Wake up' }}</button>
-              <button type="button" class="btn btn-outline-danger btn-sm flex-fill text-nowrap" (click)="deleting.set(friend.id)" [disabled]="busy()">{{ t('sleeping.delete') || 'Delete' }}</button>
-            </div>
-          }
-        </div>
-      </article>
+    </div>
+  } @else {
+    <div class="sf-sl-toolbar">
+      <p class="sf-hint m-0">{{ t('sleeping.sleepingCount', { count: sleeping().length }) || 'Sleeping (' + sleeping().length + ') · conversations are kept' }}</p>
+      <div class="sf-sl-views" role="group" [attr.aria-label]="t('sleeping.view') || 'View'">
+      <button type="button" class="btn btn-sm" [class.btn-primary]="view() === 'circles'" [class.btn-outline-secondary]="view() !== 'circles'" [attr.aria-pressed]="view() === 'circles'" (click)="setView('circles')" [attr.aria-label]="t('sleeping.viewCircles') || 'Circles'" [attr.title]="t('sleeping.viewCircles') || 'Circles'"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="7" cy="7" r="3"/><circle cx="17" cy="7" r="3"/><circle cx="7" cy="17" r="3"/><circle cx="17" cy="17" r="3"/></svg></button>
+      <button type="button" class="btn btn-sm" [class.btn-primary]="view() === 'list'" [class.btn-outline-secondary]="view() !== 'list'" [attr.aria-pressed]="view() === 'list'" (click)="setView('list')" [attr.aria-label]="t('sleeping.viewList') || 'List'" [attr.title]="t('sleeping.viewList') || 'List'"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg></button>
+      </div>
+    </div>
+    @if (view() === 'circles') {
+      <ul class="sf-sl-row list-unstyled m-0">
+        @for (friend of sleeping(); track friend.id) {
+          <li class="sf-sl-item" [class.sf-sl-on]="expanded() === friend.id">
+            <button type="button" class="sf-hs-friend sf-sl-btn" [style.--sf-friend]="colorOf(friend.color)" (click)="toggleProfile(friend)" [attr.aria-expanded]="expanded() === friend.id" [attr.aria-label]="friend.name">
+              <span class="sf-hs-ring">
+                <app-friend-avatar [friend]="friend" [seat]="1" [size]="42" />
+                @if (unread().get(friend.id); as count) {
+                  <span class="sf-hs-unread" [attr.aria-label]="(t('sleeping.countUnread', { count: count }) || count + ' unread')">{{ count }}</span>
+                }
+              </span>
+              <span class="sf-sl-name">{{ friend.name }}</span>
+            </button>
+          </li>
+        }
+      </ul>
+      @if (selected(); as friend) { <ng-container [ngTemplateOutlet]="card" [ngTemplateOutletContext]="{ friend: friend }" /> }
+    } @else {
+      <ul class="sf-sl-cards list-unstyled m-0">
+        @for (friend of sleeping(); track friend.id) {
+          <li><ng-container [ngTemplateOutlet]="card" [ngTemplateOutletContext]="{ friend: friend }" /></li>
+        }
+      </ul>
     }
   }
 </ng-template>
 @if (embedded()) {
-  <section [attr.aria-label]="(t('sleeping.silentMany', { many: w.many }) || 'Sleeping ' + w.many)"><ng-container [ngTemplateOutlet]="body" /></section>
+  <section [attr.aria-label]="(t('sleeping.silentMany', { many: w.many }) || 'Sleeping ' + w.many)">
+    <ng-container [ngTemplateOutlet]="bar" />
+    <div class="sf-sl-body"><ng-container [ngTemplateOutlet]="body" /></div>
+  </section>
 } @else {
+  <ng-container [ngTemplateOutlet]="bar" />
   <main class="sf-page"><ng-container [ngTemplateOutlet]="body" /></main>
 }
 </ng-container>

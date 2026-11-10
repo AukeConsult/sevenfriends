@@ -24,5 +24,6 @@
   "messagesAndFilesAre": "Les messages et fichiers ne sont pas encore verrouillés : il vous faut tous les deux une clé",
   "theKeysAreNot": "Les clés ne sont pas encore connues",
   "lockingIsOnWhat": "Le verrouillage est activé. Ce que tu envoies à {{ who }} est verrouillé sur ton appareil, pour que vous seuls puissiez le lire. Même nous, nous ne pouvons pas.",
-  "lockingIsOffWhat": "Le verrouillage est désactivé. Ce que tu envoies à {{ who }} n'est pas verrouillé, donc notre système peut le lire. Ce qui a été envoyé avant reste tel quel."
+  "lockingIsOffWhat": "Le verrouillage est désactivé. Ce que tu envoies à {{ who }} n'est pas verrouillé, donc notre système peut le lire. Ce qui a été envoyé avant reste tel quel.",
+  "asleepNoSeat": "😴 En veille · sur votre liste de veille"
 }

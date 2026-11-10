@@ -24,5 +24,6 @@
   "messagesAndFilesAre": "Mensagens e arquivos ainda não estão trancados: vocês dois precisam de uma chave",
   "theKeysAreNot": "As chaves ainda não são conhecidas",
   "lockingIsOnWhat": "A tranca está ativada. O que você envia para {{ who }} é trancado no seu dispositivo, então só vocês dois podem ler. Nem nós conseguimos.",
-  "lockingIsOffWhat": "A tranca está desativada. O que você envia para {{ who }} não é trancado, então nosso sistema pode ler. O que foi enviado antes continua como foi enviado."
+  "lockingIsOffWhat": "A tranca está desativada. O que você envia para {{ who }} não é trancado, então nosso sistema pode ler. O que foi enviado antes continua como foi enviado.",
+  "asleepNoSeat": "😴 Dormindo · na sua lista do sono"
 }

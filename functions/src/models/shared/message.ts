@@ -57,6 +57,9 @@ export interface ChatMessage {
   mine: boolean;
   read: boolean;
   time: string | null;
+  /** in a GROUP feed: who wrote it (their user id and the name they gave), so every message shows its writer; absent in a feed with one friend */
+  fromUid?: string;
+  fromName?: string;
   /** true = the text was changed after it was sent */
   edited: boolean;
   /** true = I hid the picture / video in my feed (my copy only: the friend's feed is not affected) */

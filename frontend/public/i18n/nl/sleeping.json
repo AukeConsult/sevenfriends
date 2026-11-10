@@ -1,7 +1,7 @@
 {
   "backToHome": "Terug naar start",
   "backToMyFriends": "Terug naar mijn vrienden",
-  "sleepList": "😴 Slaaplijst",
+  "sleepList": "Slaaplijst",
   "manyWhoSleepHave": "{{ Many }} die slapen hebben geen plek. Je gesprek met hen blijft bewaard. Maak een {{ one }} wakker om weer een plek te geven.",
   "allMaxSeatsAre": "Alle {{ max }} plekken zijn bezet. Maak een plek vrij (zet een {{ one }} op slaap) voordat je iemand wakker maakt.",
   "nobodyIsAsleep": "Niemand slaapt.",
@@ -19,5 +19,14 @@
   "countUnread": "{{ count }} ongelezen",
   "countNewMessages": "{{ count }} nieuwe berichten",
   "friendnameHasNotVerified": "{{ friendName }} heeft {{ phone }} niet bevestigd, dus we kunnen er niet zeker van zijn dat zij het echt zijn.",
-  "silentMany": "Stille {{ many }}"
+  "silentMany": "Stille {{ many }}",
+  "seatsFree": "{{ count }} plaatsen zijn vrij.",
+  "allSeatsTaken": "Alle plaatsen zijn bezet.",
+  "freeASeatFirst": "Leg iemand te slapen om een plaats vrij te maken en maak hier dan een slaper wakker.",
+  "emptyHint": "Een vriend die slaapt geeft de plaats terug. Het gesprek blijft bewaard en je kunt hem altijd wakker maken.",
+  "goToFriends": "Naar Vrienden",
+  "sleepingCount": "Slapend ({{ count }}) · gesprekken blijven bewaard",
+  "view": "Weergave",
+  "viewCircles": "Cirkels",
+  "viewList": "Lijst"
 }

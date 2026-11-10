@@ -1,18 +1,15 @@
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
+import { ReturnTo } from '../core/return-to';
 import { tr } from '../core/i18n';
 import { NgTemplateOutlet } from '@angular/common';
 import { ActiveCircleService } from '../core/active-circle.service';
-import { AppDatePipe } from '../core/app-date.pipe';
 import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FriendAvatar } from '../friend-avatar/friend-avatar';
 import { FriendsService } from '../core/friends.service';
-import { countries } from '../core/countries';
-import { moodIcon, moodLabel } from '../core/moods';
-import { possessive } from '../core/pronoun';
 import { MessagesService } from '../core/messages.service';
 import { timeAgo } from '../core/time-ago';
-import { Friend, profileColorHex, profileColorInk } from '../models';
+import { Friend, profileColorHex } from '../models';
 
 const MAX_FRIENDS = 7; // seats (the same number as on the Friends page)
 
@@ -22,7 +19,7 @@ const MAX_FRIENDS = 7; // seats (the same number as on the Friends page)
  */
 @Component({
   selector: 'app-sleeping',
-  imports: [AppDatePipe, NgTemplateOutlet, RouterLink, FriendAvatar, TranslocoDirective],
+  imports: [NgTemplateOutlet, RouterLink, FriendAvatar, TranslocoDirective],
   templateUrl: './sleeping.html',
   providers: [provideTranslocoScope('sleeping')],
 })
@@ -47,29 +44,40 @@ export class Sleeping {
   /** waking up needs a free seat: fewer than 7 friends in a seat */
   private readonly router = inject(Router);
   protected readonly seatFree = computed(() => this.friendsService.awake().length < MAX_FRIENDS);
+  private readonly returnTo = inject(ReturnTo);
   protected readonly max = MAX_FRIENDS;
+
+  /** a friend is opened from the list (embedded in Home): its back arrow leads back here */
+  protected opened(): void {
+    if (this.embedded()) this.returnTo.fromSleepList();
+  }
   protected readonly error = signal<string | null>(null);
   protected readonly busy = signal(false);
   /** the friend whose "delete for good" question is open */
   protected readonly deleting = signal<string | null>(null);
 
-  /** the friend whose profile is open under the card */
-  protected readonly expanded = signal<string | null>(null);
-  private readonly countryNames = new Map(countries().map((c) => [c.code, c.name]));
-  protected readonly moodIcon = moodIcon;
-  protected readonly possessive = possessive;
-  protected readonly moodLabel = moodLabel;
+  /** friends in a seat */
+  protected readonly taken = computed(() => this.friendsService.awake().length);
 
-  /** the friend whose circle was tapped */
+  /** how the sleepers are shown: small circles (tap one to see its card) or a list of cards; remembered on this device */
+  protected readonly view = signal<'circles' | 'list'>(localStorage.getItem('sf-sleep-view') === 'list' ? 'list' : 'circles');
+  /** the sleeper whose card is open (circles view) */
+  protected readonly expanded = signal<string | null>(null);
   protected readonly selected = computed(() => this.sleeping().find((f) => f.id === this.expanded()) ?? null);
+
+  protected setView(view: 'circles' | 'list'): void {
+    this.view.set(view);
+    this.deleting.set(null);
+    try {
+      localStorage.setItem('sf-sleep-view', view);
+    } catch {
+      /* not saved: the choice holds until the page is closed */
+    }
+  }
 
   protected toggleProfile(friend: Friend): void {
     this.deleting.set(null);
     this.expanded.update((id) => (id === friend.id ? null : friend.id));
-  }
-
-  protected countryName(code: string | null): string {
-    return (code && this.countryNames.get(code)) || '';
   }
 
   constructor() {
@@ -81,10 +89,6 @@ export class Sleeping {
     return profileColorHex(key);
   }
 
-  protected inkOf(key: string | null): string | null {
-    return profileColorInk(key);
-  }
-
   protected lastSpoken(friend: Friend): string {
     return friend.lastSpokenAt ? tr('sleeping.lastSpoken', 'Last spoken to {{ when }}', { when: timeAgo(friend.lastSpokenAt) }) : '';
   }
@@ -92,7 +96,6 @@ export class Sleeping {
   protected async wake(friend: Friend): Promise<void> {
     const woken = await this.run(async () => void (await this.friendsService.sleep(friend.id, false)));
     if (!woken) return;
-    this.expanded.set(null);
     if (this.embedded()) this.closed.emit(); // awake again: back to Home, where the friend has a seat
     else void this.router.navigate(['/']);
   }

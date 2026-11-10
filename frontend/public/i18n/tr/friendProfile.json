@@ -31,5 +31,6 @@
   "addedBy": "ekleyen: {{ name }}",
   "owner": "sahip",
   "addedToSleepList": "{{ name }} kişisinin boş yeri yok, bu yüzden grup onun uyku listesinde.",
-  "wakeFname": "{{ fName }} kişisini uyandır"
+  "wakeFname": "{{ fName }} kişisini uyandır",
+  "openTheConversation": "{{ name }} ile sohbeti aç"
 }

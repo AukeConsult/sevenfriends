@@ -31,5 +31,6 @@
   "addedBy": "{{ name }}さんが追加",
   "owner": "オーナー",
   "addedToSleepList": "{{ name }}さんには空き席がないため、グループはスリープリストに入っています。",
-  "wakeFname": "{{ fName }}を起こす"
+  "wakeFname": "{{ fName }}を起こす",
+  "openTheConversation": "{{ name }}との会話を開く"
 }

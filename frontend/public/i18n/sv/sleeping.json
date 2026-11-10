@@ -1,7 +1,7 @@
 {
   "backToHome": "Tillbaka till startsidan",
   "backToMyFriends": "Tillbaka till mina vänner",
-  "sleepList": "😴 Vilolista",
+  "sleepList": "Vilolista",
   "manyWhoSleepHave": "{{ Many }} som sover har ingen plats. Din konversation med dem sparas. Väck någon ({{ one }}) för att ge hen en plats igen.",
   "allMaxSeatsAre": "Alla {{ max }} platser är upptagna. Frigör en plats (lägg någon på vilolistan: {{ one }}) innan du väcker någon.",
   "nobodyIsAsleep": "Ingen sover.",
@@ -19,5 +19,14 @@
   "countUnread": "{{ count }} olästa",
   "countNewMessages": "{{ count }} nya meddelanden",
   "friendnameHasNotVerified": "{{ friendName }} har inte verifierat {{ phone }}, så vi kan inte vara säkra på att det verkligen är hen.",
-  "silentMany": "Tysta {{ many }}"
+  "silentMany": "Tysta {{ many }}",
+  "seatsFree": "{{ count }} platser är lediga.",
+  "allSeatsTaken": "Alla platser är upptagna.",
+  "freeASeatFirst": "Lägg någon att sova för att frigöra en plats och väck sedan en sovande här.",
+  "emptyHint": "En vän som sover lämnar tillbaka platsen. Samtalet sparas och du kan väcka vännen när som helst.",
+  "goToFriends": "Gå till Vänner",
+  "sleepingCount": "Sover ({{ count }}) · samtal sparas",
+  "view": "Visning",
+  "viewCircles": "Cirklar",
+  "viewList": "Lista"
 }

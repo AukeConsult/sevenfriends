@@ -24,5 +24,6 @@
   "messagesAndFilesAre": "Los mensajes y archivos aún no están bloqueados: los dos necesitáis una clave",
   "theKeysAreNot": "Aún no se conocen las claves",
   "lockingIsOnWhat": "El bloqueo está activado. Lo que envías a {{ who }} se bloquea en tu dispositivo, así que solo podéis leerlo los dos. Ni siquiera nosotros.",
-  "lockingIsOffWhat": "El bloqueo está desactivado. Lo que envías a {{ who }} no se bloquea, así que nuestro sistema puede leerlo. Lo enviado antes se queda como se envió."
+  "lockingIsOffWhat": "El bloqueo está desactivado. Lo que envías a {{ who }} no se bloquea, así que nuestro sistema puede leerlo. Lo enviado antes se queda como se envió.",
+  "asleepNoSeat": "😴 Durmiendo · en tu lista de sueño"
 }

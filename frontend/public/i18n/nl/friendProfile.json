@@ -31,5 +31,6 @@
   "addedBy": "toegevoegd door {{ name }}",
   "owner": "eigenaar",
   "addedToSleepList": "{{ name }} heeft geen vrije plek, dus de groep staat op de slaaplijst.",
-  "wakeFname": "Maak {{ fName }} wakker"
+  "wakeFname": "Maak {{ fName }} wakker",
+  "openTheConversation": "Open het gesprek met {{ name }}"
 }

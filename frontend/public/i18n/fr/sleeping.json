@@ -1,7 +1,7 @@
 {
   "backToHome": "Retour à l'accueil",
   "backToMyFriends": "Retour à mes amis",
-  "sleepList": "😴 Liste de pause",
+  "sleepList": "Liste de pause",
   "manyWhoSleepHave": "{{ Many }} en pause : ils n'ont pas de place. Ta conversation avec eux est conservée. Réveille un {{ one }} pour lui redonner une place.",
   "allMaxSeatsAre": "Les {{ max }} places sont prises. Libère une place (mets un {{ one }} en pause) avant de réveiller quelqu'un.",
   "nobodyIsAsleep": "Personne n'est en pause.",
@@ -19,5 +19,14 @@
   "countUnread": "{{ count }} non lu(s)",
   "countNewMessages": "{{ count }} nouveaux messages",
   "friendnameHasNotVerified": "{{ friendName }} n'a pas vérifié {{ phone }}, donc on ne peut pas être sûr que ce soit bien cette personne.",
-  "silentMany": "{{ many }} en silence"
+  "silentMany": "{{ many }} en silence",
+  "seatsFree": "{{ count }} places sont libres.",
+  "allSeatsTaken": "Toutes les places sont prises.",
+  "freeASeatFirst": "Mettez quelqu'un en veille pour libérer une place, puis réveillez ici un endormi.",
+  "emptyHint": "Un ami en veille rend sa place. Vous gardez la conversation et pouvez le réveiller à tout moment.",
+  "goToFriends": "Aller aux amis",
+  "sleepingCount": "En veille ({{ count }}) · les conversations sont conservées",
+  "view": "Affichage",
+  "viewCircles": "Cercles",
+  "viewList": "Liste"
 }

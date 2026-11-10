@@ -31,5 +31,6 @@
   "addedBy": "由 {{ name }} 添加",
   "owner": "所有者",
   "addedToSleepList": "{{ name }} 没有空闲席位，所以该群组在 TA 的休眠列表中。",
-  "wakeFname": "唤醒 {{ fName }}"
+  "wakeFname": "唤醒 {{ fName }}",
+  "openTheConversation": "打开与 {{ name }} 的对话"
 }

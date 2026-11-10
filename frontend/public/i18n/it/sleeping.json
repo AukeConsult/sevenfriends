@@ -1,7 +1,7 @@
 {
   "backToHome": "Torna alla Home",
   "backToMyFriends": "Torna ai miei amici",
-  "sleepList": "😴 Lista del sonno",
+  "sleepList": "Lista del sonno",
   "manyWhoSleepHave": "{{ Many }} che dormono non hanno un posto. La conversazione con loro resta. Risveglia un {{ one }} per dargli di nuovo un posto.",
   "allMaxSeatsAre": "Tutti i {{ max }} posti sono occupati. Libera un posto (metti un {{ one }} a dormire) prima di risvegliare qualcuno.",
   "nobodyIsAsleep": "Nessuno dorme.",
@@ -19,5 +19,14 @@
   "countUnread": "{{ count }} da leggere",
   "countNewMessages": "{{ count }} nuovi messaggi",
   "friendnameHasNotVerified": "{{ friendName }} non ha verificato {{ phone }}, quindi non possiamo essere certi che sia davvero lui.",
-  "silentMany": "{{ many }} in silenzio"
+  "silentMany": "{{ many }} in silenzio",
+  "seatsFree": "{{ count }} posti sono liberi.",
+  "allSeatsTaken": "Tutti i posti sono occupati.",
+  "freeASeatFirst": "Metti qualcuno a dormire per liberare un posto, poi sveglia qui chi dorme.",
+  "emptyHint": "Un amico che dorme libera il posto. La conversazione resta e puoi svegliarlo quando vuoi.",
+  "goToFriends": "Vai agli amici",
+  "sleepingCount": "Dormono ({{ count }}) · le conversazioni restano",
+  "view": "Vista",
+  "viewCircles": "Cerchi",
+  "viewList": "Elenco"
 }

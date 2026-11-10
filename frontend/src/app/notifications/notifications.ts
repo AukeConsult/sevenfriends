@@ -1,4 +1,5 @@
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
+import { ReturnTo } from '../core/return-to';
 import { activeLang, tr } from '../core/i18n';
 import { ActiveCircleService } from '../core/active-circle.service';
 import { Capacitor } from '@capacitor/core';
@@ -65,7 +66,7 @@ export class Notifications {
 
   /** A click on an empty part of the home page (nothing that reacts to a click) opens the friend list. */
   /** the silent list is open: it takes the place of everything under the top of Home */
-  protected readonly silentOpen = signal(false);
+  protected readonly silentOpen = signal(inject(ReturnTo).takeSleepList());
   protected readonly addOpen = signal(false);
 
   protected emptySpaceClicked(event: Event): void {

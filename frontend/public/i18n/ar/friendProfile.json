@@ -31,5 +31,6 @@
   "addedBy": "أضافه {{ name }}",
   "owner": "المالك",
   "addedToSleepList": "ليس لدى {{ name }} مقعد شاغر، لذا فالمجموعة في قائمة النوم لديه.",
-  "wakeFname": "أيقظ {{ fName }}"
+  "wakeFname": "أيقظ {{ fName }}",
+  "openTheConversation": "فتح المحادثة مع {{ name }}"
 }

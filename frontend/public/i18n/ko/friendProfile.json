@@ -31,5 +31,6 @@
   "addedBy": "{{ name }}님이 추가함",
   "owner": "소유자",
   "addedToSleepList": "{{ name }}님은 빈 자리가 없어서 그룹이 수면 목록에 있습니다.",
-  "wakeFname": "{{ fName }} 깨우기"
+  "wakeFname": "{{ fName }} 깨우기",
+  "openTheConversation": "{{ name }}와의 대화 열기"
 }

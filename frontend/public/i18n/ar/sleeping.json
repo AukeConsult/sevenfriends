@@ -1,7 +1,7 @@
 {
   "backToHome": "العودة إلى الرئيسية",
   "backToMyFriends": "العودة إلى أصدقائي",
-  "sleepList": "😴 قائمة النوم",
+  "sleepList": "قائمة النوم",
   "manyWhoSleepHave": "من في قائمة النوم من {{ Many }} بلا مقعد. محادثتك معهم محفوظة. أيقظ {{ one }} ليحصل على مقعد من جديد.",
   "allMaxSeatsAre": "كل المقاعد الـ {{ max }} مشغولة. أخلِ مقعدًا (ضع {{ one }} للنوم) قبل أن توقظ أحدًا.",
   "nobodyIsAsleep": "لا أحد نائم.",
@@ -19,5 +19,14 @@
   "countUnread": "{{ count }} غير مقروءة",
   "countNewMessages": "{{ count }} رسائل جديدة",
   "friendnameHasNotVerified": "{{ friendName }} لم يوثّق {{ phone }}، لذا لا يمكننا التأكد أنه هو فعلًا.",
-  "silentMany": "{{ many }} الصامتون"
+  "silentMany": "{{ many }} الصامتون",
+  "seatsFree": "{{ count }} مقاعد شاغرة.",
+  "allSeatsTaken": "كل المقاعد مشغولة.",
+  "freeASeatFirst": "أنِم أحدًا لتحرير مقعد، ثم أيقظ نائمًا من هنا.",
+  "emptyHint": "الصديق النائم يعيد مقعده. تبقى المحادثة محفوظة ويمكنك إيقاظه في أي وقت.",
+  "goToFriends": "الذهاب إلى الأصدقاء",
+  "sleepingCount": "النائمون ({{ count }}) · المحادثات محفوظة",
+  "view": "العرض",
+  "viewCircles": "دوائر",
+  "viewList": "قائمة"
 }

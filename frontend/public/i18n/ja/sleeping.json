@@ -1,7 +1,7 @@
 {
   "backToHome": "ホームに戻る",
   "backToMyFriends": "友だちに戻る",
-  "sleepList": "😴 スリープリスト",
+  "sleepList": "スリープリスト",
   "manyWhoSleepHave": "スリープ中の{{ Many }}は席を持っていません。会話は残ります。{{ one }}を起こすと、また席に戻れます。",
   "allMaxSeatsAre": "{{ max }}席すべてが埋まっています。誰かを起こす前に、席を空けてください（{{ one }}をスリープにします）。",
   "nobodyIsAsleep": "スリープ中の人はいません。",
@@ -19,5 +19,14 @@
   "countUnread": "未読 {{ count }} 件",
   "countNewMessages": "新しいメッセージ {{ count }} 件",
   "friendnameHasNotVerified": "{{ friendName }}さんは{{ phone }}を確認していないため、本人かどうか確実ではありません。",
-  "silentMany": "サイレントの{{ many }}"
+  "silentMany": "サイレントの{{ many }}",
+  "seatsFree": "空席は{{ count }}つです。",
+  "allSeatsTaken": "すべての席が埋まっています。",
+  "freeASeatFirst": "誰かを眠らせて席を空けてから、ここで眠っている人を起こしてください。",
+  "emptyHint": "眠っている友達は席を空けます。会話は残り、いつでも起こせます。",
+  "goToFriends": "友達へ",
+  "sleepingCount": "睡眠中 ({{ count }}) · 会話は保存されます",
+  "view": "表示",
+  "viewCircles": "丸",
+  "viewList": "リスト"
 }

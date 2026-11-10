@@ -31,5 +31,6 @@
   "addedBy": "añadido por {{ name }}",
   "owner": "propietario",
   "addedToSleepList": "{{ name }} no tiene un asiento libre, así que el grupo está en su lista de descanso.",
-  "wakeFname": "Despertar a {{ fName }}"
+  "wakeFname": "Despertar a {{ fName }}",
+  "openTheConversation": "Abrir la conversación con {{ name }}"
 }

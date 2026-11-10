@@ -18,6 +18,7 @@
     <span class="sf-fs-text fw-semibold sf-bar-name" [attr.title]="ctx.headerName()" [attr.aria-label]="ctx.headerName() || (t('friendPage.conversation') || 'Conversation')">{{ ctx.headerText() }}</span>
     @if (ctx.friend(); as f) {
       <!-- on a phone the header has two rows: the status has the room under the name -->
+      @if (f.asleep) { <span class="sf-mood-line"><span>{{ t('friendPage.asleepNoSeat') || '😴 Asleep · on your sleep list' }}</span></span> }
       @if (f.sleepsMe) { <span class="sf-mood-line"><span>{{ t('friendPage.hasYouOnPronoun', { pronoun: possessive(f.pronoun) }) || '😴 Has you on ' + possessive(f.pronoun) + ' sleep list' }}</span></span> }
     }
   </div>

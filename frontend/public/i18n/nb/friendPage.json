@@ -24,5 +24,6 @@
   "messagesAndFilesAre": "Meldinger og filer er ikke låst ennå: dere trenger begge en nøkkel",
   "theKeysAreNot": "Nøklene er ikke kjent ennå",
   "lockingIsOnWhat": "Låsing er på. Det du sender til {{ who }}, låses på enheten din, så bare dere to kan lese det. Ikke engang vi kan.",
-  "lockingIsOffWhat": "Låsing er av. Det du sender til {{ who }}, er ikke låst, så systemet vårt kan lese det. Det som ble sendt tidligere, forblir som det ble sendt."
+  "lockingIsOffWhat": "Låsing er av. Det du sender til {{ who }}, er ikke låst, så systemet vårt kan lese det. Det som ble sendt tidligere, forblir som det ble sendt.",
+  "asleepNoSeat": "😴 Sover · på din sovende-liste"
 }

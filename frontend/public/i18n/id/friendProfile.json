@@ -31,5 +31,6 @@
   "addedBy": "ditambahkan oleh {{ name }}",
   "owner": "pemilik",
   "addedToSleepList": "{{ name }} tidak punya kursi kosong, jadi grup ada di daftar tidurnya.",
-  "wakeFname": "Bangunkan {{ fName }}"
+  "wakeFname": "Bangunkan {{ fName }}",
+  "openTheConversation": "Buka percakapan dengan {{ name }}"
 }

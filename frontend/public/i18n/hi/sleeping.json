@@ -1,7 +1,7 @@
 {
   "backToHome": "होम पर वापस",
   "backToMyFriends": "मेरे दोस्तों पर वापस",
-  "sleepList": "😴 स्लीप लिस्ट",
+  "sleepList": "स्लीप लिस्ट",
   "manyWhoSleepHave": "सोते हुए {{ Many }} के पास सीट नहीं होती। उनके साथ आपकी बातचीत रखी जाती है। सीट फिर देने के लिए किसी {{ one }} को जगाएँ।",
   "allMaxSeatsAre": "सभी {{ max }} सीटें भरी हैं। किसी को जगाने से पहले एक सीट खाली करें (किसी {{ one }} को सुला दें)।",
   "nobodyIsAsleep": "कोई सोया हुआ नहीं है।",
@@ -19,5 +19,14 @@
   "countUnread": "{{ count }} अनपढ़े",
   "countNewMessages": "{{ count }} नए संदेश",
   "friendnameHasNotVerified": "{{ friendName }} ने {{ phone }} सत्यापित नहीं किया है, इसलिए हम पक्का नहीं कह सकते कि यह सच में वही हैं।",
-  "silentMany": "शांत {{ many }}"
+  "silentMany": "शांत {{ many }}",
+  "seatsFree": "{{ count }} सीटें खाली हैं।",
+  "allSeatsTaken": "सभी सीटें भरी हुई हैं।",
+  "freeASeatFirst": "सीट खाली करने के लिए किसी को सुला दें, फिर यहाँ से किसी सोते हुए को जगाएँ।",
+  "emptyHint": "सोया हुआ दोस्त अपनी सीट लौटा देता है। बातचीत सुरक्षित रहती है और आप उसे कभी भी जगा सकते हैं।",
+  "goToFriends": "दोस्तों पर जाएँ",
+  "sleepingCount": "सो रहे ({{ count }}) · बातचीत सुरक्षित हैं",
+  "view": "दृश्य",
+  "viewCircles": "गोले",
+  "viewList": "सूची"
 }

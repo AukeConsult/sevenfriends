@@ -24,5 +24,6 @@
   "messagesAndFilesAre": "消息和文件还没有加锁：你们都需要有密钥",
   "theKeysAreNot": "密钥情况暂时未知",
   "lockingIsOnWhat": "加锁已开启。你发给 {{ who }} 的内容会在你的设备上加锁，只有你们两个人能读到，连我们也不能。",
-  "lockingIsOffWhat": "加锁已关闭。你发给 {{ who }} 的内容没有加锁，我们的系统可以读取。之前发送的内容保持原样。"
+  "lockingIsOffWhat": "加锁已关闭。你发给 {{ who }} 的内容没有加锁，我们的系统可以读取。之前发送的内容保持原样。",
+  "asleepNoSeat": "😴 休眠中 · 在你的休眠列表里"
 }

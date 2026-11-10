@@ -1,7 +1,7 @@
 {
   "backToHome": "Wróć na stronę główną",
   "backToMyFriends": "Wróć do moich przyjaciół",
-  "sleepList": "😴 Lista uśpionych",
+  "sleepList": "Lista uśpionych",
   "manyWhoSleepHave": "Uśpieni ({{ Many }}) nie mają miejsca. Twoja rozmowa z nimi zostaje zachowana. Obudź kogoś ({{ one }}), żeby znów dostał miejsce.",
   "allMaxSeatsAre": "Wszystkie miejsca ({{ max }}) są zajęte. Zwolnij miejsce (uśpij kogoś: {{ one }}), zanim kogoś obudzisz.",
   "nobodyIsAsleep": "Nikt nie śpi.",
@@ -19,5 +19,14 @@
   "countUnread": "Nieprzeczytane: {{ count }}",
   "countNewMessages": "Nowe wiadomości: {{ count }}",
   "friendnameHasNotVerified": "{{ friendName }} nie zweryfikował(a): {{ phone }}, więc nie mamy pewności, że to naprawdę ta osoba.",
-  "silentMany": "Ciche: {{ many }}"
+  "silentMany": "Ciche: {{ many }}",
+  "seatsFree": "Wolnych miejsc: {{ count }}.",
+  "allSeatsTaken": "Wszystkie miejsca są zajęte.",
+  "freeASeatFirst": "Uśpij kogoś, aby zwolnić miejsce, a potem obudź tutaj śpiącego.",
+  "emptyHint": "Śpiący znajomy oddaje miejsce. Rozmowa zostaje, a obudzić go możesz w każdej chwili.",
+  "goToFriends": "Przejdź do Znajomych",
+  "sleepingCount": "Śpią ({{ count }}) · rozmowy są zachowane",
+  "view": "Widok",
+  "viewCircles": "Kółka",
+  "viewList": "Lista"
 }

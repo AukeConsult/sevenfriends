@@ -1,7 +1,7 @@
 {
   "backToHome": "Kembali ke beranda",
   "backToMyFriends": "Kembali ke temanku",
-  "sleepList": "😴 Daftar tidur",
+  "sleepList": "Daftar tidur",
   "manyWhoSleepHave": "{{ Many }} yang tidur tidak punya kursi. Percakapanmu dengan mereka tetap tersimpan. Bangunkan {{ one }} untuk memberinya kursi lagi.",
   "allMaxSeatsAre": "Semua {{ max }} kursi terisi. Kosongkan satu kursi (tidurkan {{ one }}) sebelum membangunkan seseorang.",
   "nobodyIsAsleep": "Tidak ada yang tidur.",
@@ -19,5 +19,14 @@
   "countUnread": "{{ count }} belum dibaca",
   "countNewMessages": "{{ count }} pesan baru",
   "friendnameHasNotVerified": "{{ friendName }} belum memverifikasi {{ phone }}, jadi kami tidak bisa memastikan itu benar-benar dia.",
-  "silentMany": "{{ many }} senyap"
+  "silentMany": "{{ many }} senyap",
+  "seatsFree": "{{ count }} kursi kosong.",
+  "allSeatsTaken": "Semua kursi terisi.",
+  "freeASeatFirst": "Tidurkan seseorang untuk mengosongkan kursi, lalu bangunkan yang tidur di sini.",
+  "emptyHint": "Teman yang tidur mengembalikan kursinya. Percakapan tetap tersimpan dan kamu bisa membangunkannya kapan saja.",
+  "goToFriends": "Ke Teman",
+  "sleepingCount": "Tidur ({{ count }}) · percakapan tersimpan",
+  "view": "Tampilan",
+  "viewCircles": "Lingkaran",
+  "viewList": "Daftar"
 }

@@ -31,5 +31,6 @@
   "addedBy": "lisännyt {{ name }}",
   "owner": "omistaja",
   "addedToSleepList": "{{ name }}lla ei ole vapaata paikkaa, joten ryhmä on hänen lepolistallaan.",
-  "wakeFname": "Herätä {{ fName }}"
+  "wakeFname": "Herätä {{ fName }}",
+  "openTheConversation": "Avaa keskustelu: {{ name }}"
 }

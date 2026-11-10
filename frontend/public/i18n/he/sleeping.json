@@ -1,7 +1,7 @@
 {
   "backToHome": "חזרה לדף הבית",
   "backToMyFriends": "חזרה לחברים שלי",
-  "sleepList": "😴 רשימת שינה",
+  "sleepList": "רשימת שינה",
   "manyWhoSleepHave": "מי שבשינה ({{ Many }}) אין להם מקום. השיחה איתם נשמרת. אפשר להעיר מישהו ({{ one }}) כדי להחזיר לו מקום.",
   "allMaxSeatsAre": "כל {{ max }} המקומות תפוסים. כדי להעיר מישהו, קודם יש לפנות מקום (להעביר {{ one }} לשינה).",
   "nobodyIsAsleep": "אף אחד לא בשינה.",
@@ -19,5 +19,14 @@
   "countUnread": "{{ count }} שלא נקראו",
   "countNewMessages": "{{ count }} הודעות חדשות",
   "friendnameHasNotVerified": "{{ friendName }} לא אימת/ה את {{ phone }}, ולכן אי אפשר להיות בטוחים שזה באמת הוא/היא.",
-  "silentMany": "שקט: {{ many }}"
+  "silentMany": "שקט: {{ many }}",
+  "seatsFree": "{{ count }} מקומות פנויים.",
+  "allSeatsTaken": "כל המקומות תפוסים.",
+  "freeASeatFirst": "העבר מישהו לשינה כדי לפנות מקום, ואז העיר כאן מישהו.",
+  "emptyHint": "חבר שנמצא בשינה מחזיר את המקום. השיחה נשמרת ואפשר להעיר אותו בכל עת.",
+  "goToFriends": "לחברים",
+  "sleepingCount": "בשינה ({{ count }}) · השיחות נשמרות",
+  "view": "תצוגה",
+  "viewCircles": "עיגולים",
+  "viewList": "רשימה"
 }

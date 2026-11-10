@@ -31,5 +31,6 @@
   "addedBy": "додав(ла) {{ name }}",
   "owner": "власник",
   "addedToSleepList": "У {{ name }} немає вільного місця, тому група в його списку «сну».",
-  "wakeFname": "Розбудити: {{ fName }}"
+  "wakeFname": "Розбудити: {{ fName }}",
+  "openTheConversation": "Відкрити розмову з {{ name }}"
 }

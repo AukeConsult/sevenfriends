@@ -1,7 +1,7 @@
 {
   "backToHome": "Tilbake til start",
   "backToMyFriends": "Tilbake til vennene mine",
-  "sleepList": "😴 Sovelisten",
+  "sleepList": "Sovelisten",
   "manyWhoSleepHave": "{{ Many }} som sover, har ingen plass. Samtalen din med dem beholdes. Vekk {{ one }} for å gi dem en plass igjen.",
   "allMaxSeatsAre": "Alle {{ max }} plassene er tatt. Frigjør en plass (send {{ one }} til sovelisten) før du vekker noen.",
   "nobodyIsAsleep": "Ingen sover.",
@@ -19,5 +19,14 @@
   "countUnread": "{{ count }} uleste",
   "countNewMessages": "{{ count }} nye meldinger",
   "friendnameHasNotVerified": "{{ friendName }} har ikke bekreftet {{ phone }}, så vi kan ikke være sikre på at det virkelig er dem.",
-  "silentMany": "Stille {{ many }}"
+  "silentMany": "Stille {{ many }}",
+  "seatsFree": "{{ count }} plasser er ledige.",
+  "allSeatsTaken": "Alle plassene er opptatt.",
+  "freeASeatFirst": "Legg noen til å sove for å frigjøre en plass, og vekk så en sovende her.",
+  "emptyHint": "En venn som sover gir fra seg plassen. Samtalen beholdes, og du kan vekke vennen når som helst.",
+  "goToFriends": "Gå til Venner",
+  "sleepingCount": "Sover ({{ count }}) · samtaler beholdes",
+  "view": "Visning",
+  "viewCircles": "Sirkler",
+  "viewList": "Liste"
 }

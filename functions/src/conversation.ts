@@ -99,7 +99,7 @@ conversationRouter.get(
     const feed = messageCol(uid).where("connectionId", "==", connection.id);
     let docs: FirebaseFirestore.QueryDocumentSnapshot[];
     try {
-      docs = (await feed.orderBy("time", "desc").limit(FEED_LIMIT).select("text", "fromUid", "read", "time", "editedAt", "hidden", "inBox", "media", "link", "enc").get()).docs;
+      docs = (await feed.orderBy("time", "desc").limit(FEED_LIMIT).select("text", "fromUid", "fromName", "read", "time", "editedAt", "hidden", "inBox", "media", "link", "enc").get()).docs;
     } catch (err) {
       if (!missingIndex(err)) throw err;
       console.warn("The index messages(connectionId, time) is not there yet: reading the whole feed", err); // works, only slower, until the index is built
@@ -108,7 +108,7 @@ conversationRouter.get(
     const messages: ChatMessage[] = docs
       .map((d) => {
         const m = d.data();
-        return { id: d.id, text: m.text as string, mine: m.fromUid === uid, read: Boolean(m.read), time: iso(m.time), edited: Boolean(m.editedAt), hidden: Boolean(m.hidden), inBox: Boolean(m.inBox) || (!m.text && !m.media && !m.link), media: (m.media as MediaRef | undefined) ?? null, link: (m.link as MessageLink | undefined) ?? null, ...(m.enc ? { enc: m.enc as MessageEnc } : {}) };
+        return { id: d.id, text: m.text as string, mine: m.fromUid === uid, ...(connection.group ? { fromUid: m.fromUid as string, fromName: (m.fromName as string | undefined) ?? "" } : {}), read: Boolean(m.read), time: iso(m.time), edited: Boolean(m.editedAt), hidden: Boolean(m.hidden), inBox: Boolean(m.inBox) || (!m.text && !m.media && !m.link), media: (m.media as MediaRef | undefined) ?? null, link: (m.link as MessageLink | undefined) ?? null, ...(m.enc ? { enc: m.enc as MessageEnc } : {}) };
       })
       .sort((a, b) => (a.time ?? "").localeCompare(b.time ?? ""))
       .slice(-FEED_LIMIT);

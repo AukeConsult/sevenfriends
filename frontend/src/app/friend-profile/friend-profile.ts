@@ -1,7 +1,8 @@
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { AppDatePipe } from '../core/app-date.pipe';
 import { Component, computed, effect, inject, signal, untracked } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { NgTemplateOutlet } from '@angular/common';
 import { FriendsService } from '../core/friends.service';
 import { UiPreferencesService } from '../core/ui-preferences';
 import { Friend, GroupMember } from '../models';
@@ -11,7 +12,7 @@ import { moodIcon, moodLabel } from '../core/moods';
 import { presenceLabel } from '../core/presence';
 import { possessive } from '../core/pronoun';
 import { MyAvatarService } from '../core/my-avatar.service';
-import { FriendPictureService } from '../core/friend-picture.service';
+import { MemberPictureService } from '../core/member-picture.service';
 import { FriendAvatar } from '../friend-avatar/friend-avatar';
 import { FriendContext } from '../friend-page/friend-context';
 import { tr } from '../core/i18n';
@@ -22,7 +23,7 @@ import { tr } from '../core/i18n';
  */
 @Component({
   selector: 'app-friend-profile',
-  imports: [AppDatePipe, FriendAvatar, TranslocoDirective],
+  imports: [AppDatePipe, FriendAvatar, TranslocoDirective, RouterLink, NgTemplateOutlet],
   templateUrl: './friend-profile.html',
   providers: [provideTranslocoScope('friendProfile')],
 })
@@ -45,15 +46,10 @@ export class FriendProfile {
   protected readonly members = signal<GroupMember[]>([]);
   protected readonly adding = signal(false);
   private readonly myAvatar = inject(MyAvatarService);
-  private readonly pictures = inject(FriendPictureService);
-  /** The picture of a member: mine, else the picture (or seat icon) of my friend; null = the initial is shown (not my friend). */
+  private readonly memberPicture = inject(MemberPictureService);
+  /** The picture of a member: mine, else my friend's; null = the initial is shown. */
   protected pictureOf(m: GroupMember): string | null {
-    if (m.you) return this.myAvatar.src();
-    const friends = this.friendsService.friends();
-    const friend = friends.find((x) => x.id === m.friendId);
-    if (!friend) return null;
-    const seat = this.friendsService.awake().findIndex((x) => x.id === friend.id) + 1;
-    return this.pictures.src(friend.id, friend.pictureAt) ?? `icons/friends/friend${friend.icon ?? (seat || 1)}.svg`;
+    return this.memberPicture.of(m);
   }
   protected initial(name: string): string { return (name.trim()[0] ?? '?').toUpperCase(); }
   protected readonly canAdd = computed(() => {

@@ -31,5 +31,6 @@
   "addedBy": "tillagd av {{ name }}",
   "owner": "ägare",
   "addedToSleepList": "{{ name }} har ingen ledig plats, så gruppen ligger på deras vilolista.",
-  "wakeFname": "Väck {{ fName }}"
+  "wakeFname": "Väck {{ fName }}",
+  "openTheConversation": "Öppna samtalet med {{ name }}"
 }

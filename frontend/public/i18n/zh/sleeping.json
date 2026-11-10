@@ -1,7 +1,7 @@
 {
   "backToHome": "返回首页",
   "backToMyFriends": "返回我的朋友",
-  "sleepList": "😴 睡眠名单",
+  "sleepList": "睡眠名单",
   "manyWhoSleepHave": "睡眠中的{{ Many }}没有位置。你和他们的对话会保留。唤醒{{ one }}，就能再给他们一个位置。",
   "allMaxSeatsAre": "{{ max }} 个位置都满了。唤醒别人之前，请先腾出一个位置（让一位{{ one }}睡眠）。",
   "nobodyIsAsleep": "没有人在睡眠中。",
@@ -19,5 +19,14 @@
   "countUnread": "{{ count }} 条未读",
   "countNewMessages": "{{ count }} 条新消息",
   "friendnameHasNotVerified": "{{ friendName }} 还没有验证{{ phone }}，所以我们不能确定就是本人。",
-  "silentMany": "静音的{{ many }}"
+  "silentMany": "静音的{{ many }}",
+  "seatsFree": "有 {{ count }} 个空位。",
+  "allSeatsTaken": "所有座位都满了。",
+  "freeASeatFirst": "先让某人休眠以腾出座位，然后在这里唤醒休眠的人。",
+  "emptyHint": "休眠的朋友会让出座位。对话会保留，你随时可以唤醒他们。",
+  "goToFriends": "前往好友",
+  "sleepingCount": "休眠中 ({{ count }}) · 对话已保留",
+  "view": "视图",
+  "viewCircles": "圆圈",
+  "viewList": "列表"
 }

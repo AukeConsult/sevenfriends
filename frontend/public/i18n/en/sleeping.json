@@ -1,7 +1,7 @@
 {
   "backToHome": "Back to home",
   "backToMyFriends": "Back to my friends",
-  "sleepList": "😴 Sleep list",
+  "sleepList": "Sleep list",
   "manyWhoSleepHave": "{{ Many }} who sleep have no seat. Your conversation with them is kept. Wake a {{ one }} up to give them a seat again.",
   "allMaxSeatsAre": "All {{ max }} seats are taken. Free a seat (put a {{ one }} to sleep) before you wake someone up.",
   "nobodyIsAsleep": "Nobody is asleep.",
@@ -19,5 +19,14 @@
   "countUnread": "{{ count }} unread",
   "countNewMessages": "{{ count }} new messages",
   "friendnameHasNotVerified": "{{ friendName }} has not verified {{ phone }}, so we cannot be sure it is really them.",
-  "silentMany": "Sleeping {{ many }}"
+  "silentMany": "Sleeping {{ many }}",
+  "seatsFree": "{{ count }} seats are free.",
+  "allSeatsTaken": "All seats are taken.",
+  "freeASeatFirst": "Put someone to sleep to free a seat, then wake a sleeper here.",
+  "emptyHint": "A friend who sleeps gives the seat back. You keep the conversation and can wake them any time.",
+  "goToFriends": "Go to Friends",
+  "sleepingCount": "Sleeping ({{ count }}) · conversations are kept",
+  "view": "View",
+  "viewCircles": "Circles",
+  "viewList": "List"
 }

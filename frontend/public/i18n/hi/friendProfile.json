@@ -31,5 +31,6 @@
   "addedBy": "{{ name }} ने जोड़ा",
   "owner": "मालिक",
   "addedToSleepList": "{{ name }} के पास खाली सीट नहीं है, इसलिए समूह उनकी स्लीप सूची में है।",
-  "wakeFname": "{{ fName }} को जगाएँ"
+  "wakeFname": "{{ fName }} को जगाएँ",
+  "openTheConversation": "{{ name }} के साथ बातचीत खोलें"
 }

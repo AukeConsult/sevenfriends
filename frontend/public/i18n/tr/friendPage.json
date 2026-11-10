@@ -24,5 +24,6 @@
   "messagesAndFilesAre": "Mesajlar ve dosyalar henüz kilitli değil: ikinizin de anahtara ihtiyacı var",
   "theKeysAreNot": "Anahtarlar henüz bilinmiyor",
   "lockingIsOnWhat": "Kilitleme açık. {{ who }} kişisine gönderdiklerin cihazında kilitlenir, yani sadece ikiniz okuyabilirsiniz. Biz bile okuyamayız.",
-  "lockingIsOffWhat": "Kilitleme kapalı. {{ who }} kişisine gönderdiklerin kilitli değil, bu yüzden sistemimiz okuyabilir. Daha önce gönderilenler gönderildiği gibi kalır."
+  "lockingIsOffWhat": "Kilitleme kapalı. {{ who }} kişisine gönderdiklerin kilitli değil, bu yüzden sistemimiz okuyabilir. Daha önce gönderilenler gönderildiği gibi kalır.",
+  "asleepNoSeat": "😴 Uyuyor · uyku listende"
 }

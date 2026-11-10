@@ -187,19 +187,23 @@
     }
 
     @for (message of shown(); track message.id) {
-      <div class="sf-message" [attr.data-id]="message.id" [class.sf-mine]="message.mine" [class.sf-has-avatar]="feedIcons()" [class.sf-message-media]="message.media || (message.link && previewing().has(message.id))" [class.sf-message-wide]="message.link && previewing().has(message.id)" [class.sf-doomed]="doomed().has(message.id)" [class.sf-pending]="message.id.startsWith('pending-')">
-        @if (feedIcons()) {
+      <div class="sf-message" [attr.data-id]="message.id" [class.sf-mine]="message.mine" [class.sf-has-avatar]="feedIcons() || isGroup()" [class.sf-message-media]="message.media || (message.link && previewing().has(message.id))" [class.sf-message-wide]="message.link && previewing().has(message.id)" [class.sf-doomed]="doomed().has(message.id)" [class.sf-pending]="message.id.startsWith('pending-')">
+        @if (feedIcons() || isGroup()) {
           <!-- the picture of who wrote it: the friend's, or mine -->
           <span class="sf-feed-avatar" [attr.aria-hidden]="message.mine ? 'true' : null">
-            @if (!message.mine && friend(); as f) {
+            @if (message.mine) {
+              @if (myAvatar(); as mine) { <img [src]="mine" alt="" width="28" height="28" /> } @else { <span class="sf-feed-initials">{{ myInitials() }}</span> }
+            } @else if (isGroup()) {
+              <!-- a group: the picture of the one who wrote it, else the initials of the name -->
+              @if (senderPicture(message); as pic) { <img [src]="pic" [alt]="senderName(message)" width="28" height="28" /> } @else { <span class="sf-feed-initials" [attr.title]="senderName(message)">{{ initials(senderName(message)) }}</span> }
+            } @else if (friend(); as f) {
               <button type="button" class="sf-name-btn" (click)="showProfile()" [attr.aria-label]="(t('chat.showTheProfileOf', { fName: f.name }) || 'Show the profile of ' + f.name)">
                 <app-friend-avatar [friend]="f" [seat]="seat() || 1" [small]="true" [size]="28" />
               </button>
-            } @else if (message.mine) {
-              @if (myAvatar(); as mine) { <img [src]="mine" alt="" width="28" height="28" /> } @else { <span class="sf-feed-initials">{{ myInitials() }}</span> }
             }
           </span>
         }
+        @if (isGroup() && !message.mine) { <span class="sf-hint sf-sender">{{ senderName(message) }}</span> }
         <!-- my own message: tap it to edit or delete it -->
         <div class="sf-bubble" [class.sf-bubble-media]="message.media" [class.sf-bubble-hidden]="message.media && pictureHidden().has(message.id)" [class.sf-bubble-tap]="message.mine || message.inBox" [attr.role]="message.mine || message.inBox ? 'button' : null" [attr.tabindex]="message.mine || message.inBox ? 0 : null"
              [attr.aria-expanded]="message.mine || message.inBox ? selected() === message.id : null" (click)="select(message)" (keydown.enter)="select(message)">

@@ -1,7 +1,7 @@
 {
   "backToHome": "Takaisin etusivulle",
   "backToMyFriends": "Takaisin ystäviini",
-  "sleepList": "😴 Unilista",
+  "sleepList": "Unilista",
   "manyWhoSleepHave": "{{ Many }}, jotka nukkuvat, eivät käytä paikkaa. Keskustelunne säilyy. Herätä {{ one }}, niin hän saa paikan takaisin.",
   "allMaxSeatsAre": "Kaikki {{ max }} paikkaa ovat täynnä. Vapauta paikka (laita {{ one }} nukkumaan) ennen kuin herätät jonkun.",
   "nobodyIsAsleep": "Kukaan ei nuku.",
@@ -19,5 +19,14 @@
   "countUnread": "{{ count }} lukematonta",
   "countNewMessages": "{{ count }} uutta viestiä",
   "friendnameHasNotVerified": "{{ friendName }} ei ole vahvistanut tätä: {{ phone }}. Emme voi olla varmoja, että kyseessä on oikeasti hän.",
-  "silentMany": "Hiljaiset: {{ many }}"
+  "silentMany": "Hiljaiset: {{ many }}",
+  "seatsFree": "{{ count }} paikkaa on vapaana.",
+  "allSeatsTaken": "Kaikki paikat on täynnä.",
+  "freeASeatFirst": "Laita joku nukkumaan vapauttaaksesi paikan ja herätä sitten nukkuja täältä.",
+  "emptyHint": "Nukkuva ystävä vapauttaa paikkansa. Keskustelu säilyy ja voit herättää hänet milloin tahansa.",
+  "goToFriends": "Siirry Ystäviin",
+  "sleepingCount": "Nukkuvat ({{ count }}) · keskustelut säilyvät",
+  "view": "Näkymä",
+  "viewCircles": "Ympyrät",
+  "viewList": "Lista"
 }

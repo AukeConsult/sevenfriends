@@ -31,5 +31,6 @@
   "addedBy": "added by {{ name }}",
   "owner": "owner",
   "addedToSleepList": "{{ name }} has no free seat, so the group is on their sleep list.",
-  "wakeFname": "Wake {{ fName }} up"
+  "wakeFname": "Wake {{ fName }} up",
+  "openTheConversation": "Open the conversation with {{ name }}"
 }

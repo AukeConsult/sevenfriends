@@ -24,5 +24,6 @@
   "messagesAndFilesAre": "Berichten en bestanden zijn nog niet vergrendeld: jullie hebben allebei een sleutel nodig",
   "theKeysAreNot": "De sleutels zijn nog niet bekend",
   "lockingIsOnWhat": "Vergrendelen staat aan. Wat je naar {{ who }} stuurt wordt op jouw apparaat vergrendeld, zodat alleen jullie tweeën het kunnen lezen. Wij ook niet.",
-  "lockingIsOffWhat": "Vergrendelen staat uit. Wat je naar {{ who }} stuurt is niet vergrendeld, dus ons systeem kan het lezen. Wat eerder is verstuurd, blijft zoals het was."
+  "lockingIsOffWhat": "Vergrendelen staat uit. Wat je naar {{ who }} stuurt is niet vergrendeld, dus ons systeem kan het lezen. Wat eerder is verstuurd, blijft zoals het was.",
+  "asleepNoSeat": "😴 Slaapt · op je slaaplijst"
 }

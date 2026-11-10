@@ -28,8 +28,9 @@ import { UiPreferencesService } from '../core/ui-preferences';
 import { EMOJI_GROUPS } from '../core/emojis';
 import { FriendsService } from '../core/friends.service';
 import { initials } from '../core/initials';
+import { MemberPictureService } from '../core/member-picture.service';
 import { RealtimeService } from '../core/realtime.service';
-import { ChatMessage, MessageDeleteCriteria, MessageLink } from '../models';
+import { ChatMessage, GroupMember, MessageDeleteCriteria, MessageLink } from '../models';
 
 // New messages, edits and deletes arrive live (RealtimeService). This refresh is only a safety net.
 const SAFETY_REFRESH_MS = 30000;
@@ -218,7 +219,50 @@ export class Chat {
   /** the height of the message field with its panel: the feed keeps this much room at the bottom, so no message hides behind it */
   protected readonly composerHeight = signal(64);
 
+  /** In a group feed: who is who, so every message shows its writer (picture or initials, and the name). */
+  protected readonly isGroup = computed(() => !!this.friend()?.group);
+  private readonly memberPicture = inject(MemberPictureService);
+  private readonly members = signal<GroupMember[]>([]);
+  private membersFor = '';
+  private readonly unknownAsked = new Set<string>();
+  private readonly byUid = computed(() => new Map(this.members().map((m) => [m.uid, m])));
+
+  /** The member who wrote a message of a group feed (null = not in the group any more). */
+  protected senderOf(message: ChatMessage): GroupMember | null {
+    return (message.fromUid && this.byUid().get(message.fromUid)) || null;
+  }
+
+  protected senderName(message: ChatMessage): string {
+    return this.senderOf(message)?.name || message.fromName || '?';
+  }
+
+  protected senderPicture(message: ChatMessage): string | null {
+    const member = this.senderOf(message);
+    return member ? this.memberPicture.of(member) : null;
+  }
+
+  private async loadMembers(): Promise<void> {
+    const id = this.friendId;
+    try {
+      const list = await this.friendsService.groupMembers(id);
+      if (this.friendId === id) this.members.set(list);
+    } catch {
+      /* the initials of the name in the message are shown */
+    }
+  }
+
   constructor() {
+    effect(() => {
+      // a group feed: the people of the group are read once; a writer that is not known yet (just added) asks once more
+      if (!this.isGroup()) return;
+      const unknown = this.messages().find((m) => !m.mine && m.fromUid && !this.byUid().has(m.fromUid) && !this.unknownAsked.has(m.fromUid));
+      if (this.membersFor !== this.friendId || unknown) {
+        this.membersFor = this.friendId;
+        if (unknown?.fromUid) this.unknownAsked.add(unknown.fromUid);
+        void untracked(() => this.loadMembers());
+      }
+    });
+
     // the band under the header says how many messages of this friendship this device cannot open
     effect(() => this.ctx.lockedMessages.set(this.lockedCount()));
     inject(DestroyRef).onDestroy(() => this.ctx.lockedMessages.set(0));

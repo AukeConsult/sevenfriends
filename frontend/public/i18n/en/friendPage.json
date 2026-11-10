@@ -24,5 +24,6 @@
   "messagesAndFilesAre": "Messages and files are not locked yet: you both need a key",
   "theKeysAreNot": "The keys are not known yet",
   "lockingIsOnWhat": "Locking is on. What you send to {{ who }} is locked on your device, so only the two of you can read it. Not even we can.",
-  "lockingIsOffWhat": "Locking is off. What you send to {{ who }} is not locked, so our system can read it. What was sent earlier stays as it was sent."
+  "lockingIsOffWhat": "Locking is off. What you send to {{ who }} is not locked, so our system can read it. What was sent earlier stays as it was sent.",
+  "asleepNoSeat": "😴 Asleep · on your sleep list"
 }
