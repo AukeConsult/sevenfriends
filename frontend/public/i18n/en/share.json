@@ -2,15 +2,17 @@
   "share": "Share",
   "allYourSevenSeats": "All your seven seats are taken. Your link still works if you make room.",
   "installTheApp": "Install the app",
-  "strongInviteFriendsWith": "<strong>Invite friends with a link</strong>",
-  "sendThisLinkTo": "Send this link to the friends you would like to take part. When they open it, sign in (or create an account) and confirm, a friend request is sent to you.",
+  "strongInviteFriendsWith": "<strong>Invite as a friend</strong>",
+  "sendThisLinkTo": "Send this link to someone you want as a friend. When they open it, sign in (or create an account) and confirm, a friend request is sent to you.",
   "shareLink": "Share link",
   "copyLink": "Copy link",
   "seat": "seat",
   "seats": "seats",
   "youHaveFreeseatsFree": "You have {{ freeSeats }} free {{ seats }}. Invite the {{ many }} who matter to you.",
   "yourOneLink": "Your {{ one }} link",
-  "emailAddress": "email address",
-  "phoneNumber": "phone number",
-  "theLinkContainsYour": "The link contains your {{ number }}."
+  "linkHasPrivateCode": "The link has a private code. It does not contain your phone number or email.",
+  "strongShareTheApp": "<strong>Share the app</strong>",
+  "shareTheAppText": "Tell someone about the app. This link only opens the start page: no friend request is sent.",
+  "linkIsGeneral": "The link contains nothing personal.",
+  "appLink": "Link to the app"
 }

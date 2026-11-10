@@ -57,3 +57,5 @@ request with "Confirm request" instead of the form: no second request is made. T
 `InviteLinkService` (core/invite-link.service.ts) holds my link and the Share / Copy / New link buttons: used by the profile page and by Add a friend
 (there the link card appears as soon as an email or phone number is typed; "Send the link to them" is disabled on purpose: not built yet).
 The Home page has an expandable card ("Invite people with a link") under the band: the friend link `/welcome/<circle>?invite=<my code>` (no email address or phone number in it) with Share / Copy and a short explanation.
+
+- **Share page (two links):** "Invite as a friend" is the invite link with my private code (`/welcome/<circle>?invite=<code>`: whoever opens it, signs in and confirms sends me a friend request; the link holds no phone number or email). "Share the app" is the general link (`InviteLinkService.appLink`, `/welcome/<circle>`): it only opens the start page, no request is sent, nothing personal is in it. `share(url, general)` words the share text for each ("Be my friend on ..." / "Try ...").

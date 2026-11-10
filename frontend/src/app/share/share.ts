@@ -1,5 +1,5 @@
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { ActiveCircleService } from '../core/active-circle.service';
 import { Router, RouterLink } from '@angular/router';
 import { FriendsService } from '../core/friends.service';
@@ -7,7 +7,7 @@ import { InstallService } from '../core/install.service';
 import { InviteLinkService } from '../core/invite-link.service';
 import { HomeTop } from '../home-top/home-top';
 
-/** Share (a tab of the bottom menu): the link that invites friends, and the way to install the app on a phone. */
+/** Share (a tab of the bottom menu): the link that invites a friend (a friend request), the general link to the app, and the way to install the app on a phone. */
 @Component({
   selector: 'app-share',
   imports: [HomeTop, RouterLink, TranslocoDirective],
@@ -35,6 +35,21 @@ export class Share {
 
   /** the link to hand out: whoever opens it, signs in and confirms sends ME a friend request (my invite code, never my email address or phone number) */
   protected readonly friendLink = this.invite.link;
+
+  /** the general link: only opens the start page of the app */
+  protected readonly appLink = this.invite.appLink;
+  /** which card the last "Link copied" note belongs to */
+  protected readonly noteFor = signal<'invite' | 'app'>('invite');
+
+  protected async share(kind: 'invite' | 'app', url: string): Promise<void> {
+    this.noteFor.set(kind);
+    await this.invite.share(url, kind === 'app');
+  }
+
+  protected async copy(kind: 'invite' | 'app', url: string): Promise<void> {
+    this.noteFor.set(kind);
+    await this.invite.copy(url);
+  }
 
   constructor() {
     void this.invite.load();

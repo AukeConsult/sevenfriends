@@ -10,7 +10,9 @@
   "seats": "lugares livres",
   "youHaveFreeseatsFree": "Você tem {{ freeSeats }} {{ seats }}. Convide os {{ many }} que importam para você.",
   "yourOneLink": "Seu link de {{ one }}",
-  "emailAddress": "endereço de e-mail",
-  "phoneNumber": "número de telefone",
-  "theLinkContainsYour": "O link contém o seu {{ number }}."
+  "linkHasPrivateCode": "The link has a private code. It does not contain your phone number or email.",
+  "strongShareTheApp": "<strong>Share the app</strong>",
+  "shareTheAppText": "Tell someone about the app. This link only opens the start page: no friend request is sent.",
+  "linkIsGeneral": "The link contains nothing personal.",
+  "appLink": "Link to the app"
 }

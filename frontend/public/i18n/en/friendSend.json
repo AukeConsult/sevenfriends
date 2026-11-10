@@ -6,7 +6,7 @@
   "sendAVoiceMessage": "Send a voice message",
   "send": "Send",
   "add": "+ Add",
-  "messagesForFriendnameOnly": "Messages for {{ friendName }} only. They are kept on this device, and saved as you type.",
+  "messagesForFriendnameOnly": "Your draft is saved here, on this device, until you send it.",
   "forExampleIM": "For example: I'm on my way",
   "addAMessage": "+ Add a message",
   "couldNotSendThe": "Could not send the message",

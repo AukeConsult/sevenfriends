@@ -288,7 +288,9 @@
     "hasYouOnSleep": "あなたをスリープリストに入れています。",
     "pokeAnyway": "それでも送る",
     "makesASound": "音が鳴ります",
-    "activityIn": "{{ circle }} にアクティビティがあります"
+    "activityIn": "{{ circle }} にアクティビティがあります",
+    "tryApp": "Try {{ app }}: {{ url }}",
+    "tryApp2": "Try {{ app }}:"
   },
   "needsYourHelp": "{{ friendName }}さんがあなたの助けを必要としています",
   "openToUnlockTheir": "アプリを開くと、相手の過去のメッセージのロックをもう一度解除できます。",

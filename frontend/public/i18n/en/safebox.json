@@ -81,7 +81,7 @@
   },
   "object": {
     "unknownKind": "That kind of item is not known.",
-    "friendHasNoKey": "{{ friendName }} has no encryption key yet, so this cannot be locked for you both. Ask them to set one up in Settings → Keys.",
+    "friendHasNoKey": "{{ friendName }} has no encryption key yet, so this cannot be locked for you both. Ask them to set one up in Settings → Privacy lock.",
     "youHaveNoKey": "This is always locked, and you need an encryption key for that.",
     "friendSavedFirst": "{{ friendName }} changed this at the same time as you. If you show their version, what you wrote here is lost.",
     "hide": "Hide",
@@ -161,7 +161,7 @@
     "couldNotOpenThe": "Could not open the note",
     "couldNotSaveThe": "Could not save the note",
     "couldNotTakeThe": "Could not take the note out",
-    "friendHasNoKey": "{{ friendName }} has no encryption key yet, so a note cannot be locked for you both. Ask them to set one up in Settings → Keys.",
+    "friendHasNoKey": "{{ friendName }} has no encryption key yet, so a note cannot be locked for you both. Ask them to set one up in Settings → Privacy lock.",
     "friendSavedFirst": "{{ friendName }} changed this at the same time as you. If you show their version, what you wrote here is lost.",
     "savedWhenWritten": "It is saved when you have written something."
   },

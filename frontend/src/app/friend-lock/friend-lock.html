@@ -23,9 +23,9 @@
     @if (ctx.meHasKey() === false) {
       <p class="sf-hint">
         @if (keys.elsewhere()) {
-          {{ t('friendLock.youMadeAKey') || 'You made a key before, but it is not on this device (it is on another device, or this browser cleared it). You can bring it back with your 24 words in Settings → Keys.' }}
+          {{ t('friendLock.youMadeAKey') || 'You made a key before, but it is not on this device (it is on another device, or this browser cleared it). You can bring it back with your 24 words in Settings → Privacy lock.' }}
         } @else {
-          {{ t('friendLock.youCanMakeYour') || 'You can make your key in Settings → Keys.' }}
+          {{ t('friendLock.youCanMakeYour') || 'You can make your key in Settings → Privacy lock.' }}
         }
       </p>
       <a routerLink="/settings/encryption" class="btn btn-primary btn-sm">{{ t('friendLock.makeMyKey') || 'Make my key' }}</a>
@@ -73,7 +73,7 @@
     <section>
       <h2>{{ t('friendLock.isItReallyFriendname', { friendName: friendName() }) || 'Is it really ' + friendName() + '\'s key?' }}</h2>
       <p>
-        {{ t('friendLock.eachKeyHasA', { friendName: friendName() }) || 'Each key has a code. To be sure ' + friendName() + '\'s key is really theirs, ask them to read you the code under Settings → Keys on their device, or compare it in person. If it is the same as the code below, the key is theirs.' }}
+        {{ t('friendLock.eachKeyHasA', { friendName: friendName() }) || 'Each key has a code. To be sure ' + friendName() + '\'s key is really theirs, ask them to read you the code under Settings → Privacy lock on their device, or compare it in person. If it is the same as the code below, the key is theirs.' }}
       </p>
       @for (key of ctx.friendKeys(); track key.id) {
         <p class="sf-hint m-0">{{ friendName() }}: {{ key.label || 'a device' }}</p>
@@ -89,7 +89,7 @@
 
     <section>
       <h2>{{ t('friendLock.yourKeys') || 'Your keys' }}</h2>
-      <p>{{ t('friendLock.toSeeYourDevices') || 'To see your devices, make a new key, or restore your key with your 24 words, open' }} <a routerLink="/settings/encryption">{{ t('friendLock.settingsKeys') || 'Settings → Keys' }}</a>.</p>
+      <p>{{ t('friendLock.toSeeYourDevices') || 'To see your devices, make a new key, or restore your key with your 24 words, open' }} <a routerLink="/settings/encryption">{{ t('friendLock.settingsKeys') || 'Settings → Privacy lock' }}</a>.</p>
       @if (keys.diagnosis(); as d) {
         <p class="sf-hint">
           {{ t('friendLock.detailsForThisBrowser', { slice: d.account.slice(-6), no: d.localKeyId ? (t('friendLock.yesSlice', { slice: d.localKeyId.slice(0, 8) }) || 'yes (' + d.localKeyId.slice(0, 8) + ')') : (t('friendLock.no') || 'no'), published: d.localKeyId ? ', ' + (d.localPublished === 'yes' ? (t('friendLock.published') || 'published') : d.localPublished === 'removed' ? (t('friendLock.removed') || 'removed') : (t('friendLock.notPublished') || 'not published')) : '', mine: ctx.serverKeys().mine, friendName: friendName(), friend: ctx.serverKeys().friend }) || 'Details for this browser: account …' + d.account.slice(-6) + ' · key in this browser: ' + (d.localKeyId ? (t('friendLock.yesSlice', { slice: d.localKeyId.slice(0, 8) }) || 'yes (' + d.localKeyId.slice(0, 8) + ')') : (t('friendLock.no') || 'no')) + (d.localKeyId ? ', ' + (d.localPublished === 'yes' ? (t('friendLock.published') || 'published') : d.localPublished === 'removed' ? (t('friendLock.removed') || 'removed') : (t('friendLock.notPublished') || 'not published')) : '') + ' · keys in use on the server: you ' + ctx.serverKeys().mine + ', ' + friendName() + ' ' + ctx.serverKeys().friend }}

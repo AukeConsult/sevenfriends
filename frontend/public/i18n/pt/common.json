@@ -288,7 +288,9 @@
     "hasYouOnSleep": "Tem você na lista do sono.",
     "pokeAnyway": "Cutucar mesmo assim",
     "makesASound": "toca um som",
-    "activityIn": "Atividade em {{ circle }}"
+    "activityIn": "Atividade em {{ circle }}",
+    "tryApp": "Try {{ app }}: {{ url }}",
+    "tryApp2": "Try {{ app }}:"
   },
   "needsYourHelp": "{{ friendName }} precisa da sua ajuda",
   "openToUnlockTheir": "Abra o app para desbloquear de novo as mensagens antigas.",

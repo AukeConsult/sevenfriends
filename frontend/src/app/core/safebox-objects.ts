@@ -1,8 +1,8 @@
 import { CASE_DOCUMENTS_MAX, ChecklistEntry, ObjectKind, ObjectPayload, SafeboxType } from '../models';
 import { tr } from './i18n';
 
-/** The kinds the New frame always shows; the others are behind "More types" (and move up once the box holds an item of that kind). */
-export const STANDARD_KINDS = ['file', 'note', 'secret', 'link', 'checklist', 'album'];
+/** The kinds the New frame shows at the start: File, Note and Date; the others are behind "Hidden types" (and move up once the box holds an item of that kind). The person's own arrangement is kept on this device (`boxKindLayout`). */
+export const STANDARD_KINDS = ['file', 'note', 'date'];
 
 /** The kinds to show at once and the ones behind "More types". `used` are the kinds that already have an item: they count as standard. */
 export function splitKinds<T extends { type: string }>(kinds: T[], used: ReadonlySet<string> = new Set()): { main: T[]; more: T[] } {

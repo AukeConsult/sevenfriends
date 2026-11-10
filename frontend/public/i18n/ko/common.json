@@ -288,7 +288,9 @@
     "hasYouOnSleep": "나를 수면 목록에 두었어요.",
     "pokeAnyway": "그래도 콕 찌르기",
     "makesASound": "소리가 나요",
-    "activityIn": "{{ circle }}에 새 활동"
+    "activityIn": "{{ circle }}에 새 활동",
+    "tryApp": "Try {{ app }}: {{ url }}",
+    "tryApp2": "Try {{ app }}:"
   },
   "needsYourHelp": "{{ friendName }}님이 도움을 필요로 해요",
   "openToUnlockTheir": "앱을 열어 상대의 이전 메시지를 다시 잠금 해제하세요.",

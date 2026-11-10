@@ -288,7 +288,9 @@
     "hasYouOnSleep": "Тебе додано до списку сну.",
     "pokeAnyway": "Все одно штовхнути",
     "makesASound": "лунає звук",
-    "activityIn": "Активність: {{ circle }}"
+    "activityIn": "Активність: {{ circle }}",
+    "tryApp": "Try {{ app }}: {{ url }}",
+    "tryApp2": "Try {{ app }}:"
   },
   "needsYourHelp": "{{ friendName }} потрібна твоя допомога",
   "openToUnlockTheir": "Відкрий застосунок, щоб знову розблокувати старі повідомлення.",

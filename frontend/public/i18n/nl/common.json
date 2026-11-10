@@ -288,7 +288,9 @@
     "hasYouOnSleep": "Heeft je op de slaaplijst.",
     "pokeAnyway": "Toch aanstoten",
     "makesASound": "maakt geluid",
-    "activityIn": "Activiteit in {{ circle }}"
+    "activityIn": "Activiteit in {{ circle }}",
+    "tryApp": "Try {{ app }}: {{ url }}",
+    "tryApp2": "Try {{ app }}:"
   },
   "needsYourHelp": "{{ friendName }} heeft je hulp nodig",
   "openToUnlockTheir": "Open de app om hun oude berichten weer te ontgrendelen.",

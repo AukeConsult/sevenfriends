@@ -288,7 +288,9 @@
     "hasYouOnSleep": "لديه اسمك في قائمة النوم.",
     "pokeAnyway": "انكزه رغم ذلك",
     "makesASound": "يُصدر صوتًا",
-    "activityIn": "نشاط في {{ circle }}"
+    "activityIn": "نشاط في {{ circle }}",
+    "tryApp": "Try {{ app }}: {{ url }}",
+    "tryApp2": "Try {{ app }}:"
   },
   "needsYourHelp": "{{ friendName }} يحتاج إلى مساعدتك",
   "openToUnlockTheir": "افتح التطبيق لفك قفل رسائله القديمة مرة أخرى.",

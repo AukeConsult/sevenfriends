@@ -78,7 +78,7 @@ export class MessageLockService {
   /** A new text for a message that is locked: locked with the key the message already has, so the same keys (and nobody else) can read it. Throws when this device cannot open the message. */
   async reseal(friendId: string, message: ChatItem, text: string): Promise<{ text: string; iv: string }> {
     const mine = await this.myKey();
-    if (!message.enc || !mine) throw new Error(tr('core.thisMessageIsLocked3', 'This message is locked, and this device cannot open it. Get your old messages back under Settings → Keys.'));
+    if (!message.enc || !mine) throw new Error(tr('core.thisMessageIsLocked3', 'This message is locked, and this device cannot open it. Get your old messages back under Settings → Privacy lock.'));
     return resealText(friendId, message.enc, text, mine.keyId, mine.privateKey);
   }
 

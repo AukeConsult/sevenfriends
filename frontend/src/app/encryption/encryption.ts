@@ -12,7 +12,7 @@ import { wordsFromText } from '../core/recovery-code';
 import { PublishedKey } from '../models';
 import { tr } from '../core/i18n';
 
-/** Settings → Keys: the encryption key of this device (make it, see it), the keys of my other devices, a new key, and restoring a key from the 24 words. */
+/** Settings → Privacy lock: the encryption key of this device (make it, see it), the keys of my other devices, a new key, and restoring a key from the 24 words. */
 @Component({
   selector: 'app-encryption',
   imports: [AppDatePipe, KeySetup, NgTemplateOutlet, RouterLink, TranslocoDirective],

@@ -288,7 +288,9 @@
     "hasYouOnSleep": "Sinut on hänen unilistallaan.",
     "pokeAnyway": "Töni silti",
     "makesASound": "päästää äänen",
-    "activityIn": "Toimintaa: {{ circle }}"
+    "activityIn": "Toimintaa: {{ circle }}",
+    "tryApp": "Try {{ app }}: {{ url }}",
+    "tryApp2": "Try {{ app }}:"
   },
   "needsYourHelp": "{{ friendName }} tarvitsee apuasi",
   "openToUnlockTheir": "Avaa sovellus avataksesi hänen vanhat viestinsä uudelleen.",

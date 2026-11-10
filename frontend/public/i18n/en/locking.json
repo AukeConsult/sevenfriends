@@ -66,5 +66,5 @@
   "onANewDevice": "On a new device, messages locked earlier show “locked for another device” until you restore your key with the 24 words.",
   "searchingInLockedMessages": "Searching in locked messages works only on this device, among the messages already loaded.",
   "linkPreviewsAreNot": "Link previews are not made for locked messages.",
-  "youManageYourKeys": "You manage your keys under Settings → Keys."
+  "youManageYourKeys": "You manage your keys under Settings → Privacy lock."
 }

@@ -5,14 +5,14 @@
 
 <main class="sf-narrow">
   <div class="alert alert-danger" role="alert">
-    <span [innerHTML]="t('deleteAccount.strongThisCannotBe') || '<strong>This cannot be undone.</strong> You will be erased from Seven Friends, completely.'"></span>
+    <span [innerHTML]="t('deleteAccount.strongThisCannotBe') || '<strong>This cannot be undone.</strong>'"></span>
   </div>
 
-  <p class="m-0">{{ t('deleteAccount.everythingAboutYouIs') || 'Everything about you is deleted:' }}</p>
+  <p class="m-0">{{ t('deleteAccount.everythingAboutYouIs') || 'Deleting your account removes:' }}</p>
   <ul class="m-0">
     <li>{{ t('deleteAccount.yourAccountYourProfile') || 'your account, your profile and your login' }}</li>
-    <li>{{ t('deleteAccount.allYourFriendsAnd') || 'all your friends and every request, sent or received' }}</li>
-    <li>{{ t('deleteAccount.everyMessageYouSent') || 'every message you sent or received. Your friends lose the conversation too' }}</li>
+    <li>{{ t('deleteAccount.allYourFriendsAnd') || 'your friends and every request, sent or received' }}</li>
+    <li>{{ t('deleteAccount.everyMessageYouSent') || 'your messages, pictures and files, also in your safeboxes. Your friends lose the chat too' }}</li>
     <li>{{ t('deleteAccount.yourNameAndContact') || 'your name and contact details in other friends\' lists' }}</li>
   </ul>
   <p class="small text-secondary m-0">{{ t('deleteAccount.yourFriendsAreNot') || 'Your friends are not told. They simply no longer have you as a friend.' }}</p>
@@ -30,7 +30,7 @@
     <div class="d-flex gap-2">
       <a routerLink="/settings/profile" class="btn btn-light flex-fill">{{ t('deleteAccount.cancel') || 'Cancel' }}</a>
       <button type="submit" class="btn btn-danger flex-fill" [disabled]="!confirmed() || busy()">
-        {{ busy() ? (t('deleteAccount.deleting') || 'Deleting…') : (t('deleteAccount.deleteEverything') || 'Delete everything') }}
+        {{ busy() ? (t('deleteAccount.deleting') || 'Deleting…') : (t('deleteAccount.deleteEverything') || 'Delete my account') }}
       </button>
     </div>
   </form>

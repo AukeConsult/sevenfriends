@@ -288,7 +288,9 @@
     "hasYouOnSleep": "Har deg på sovelisten.",
     "pokeAnyway": "Dult likevel",
     "makesASound": "lager en lyd",
-    "activityIn": "Aktivitet i {{ circle }}"
+    "activityIn": "Aktivitet i {{ circle }}",
+    "tryApp": "Try {{ app }}: {{ url }}",
+    "tryApp2": "Try {{ app }}:"
   },
   "needsYourHelp": "{{ friendName }} trenger hjelp fra deg",
   "openToUnlockTheir": "Åpne appen for å låse opp de gamle meldingene deres igjen.",

@@ -10,7 +10,9 @@
   "seats": "位置",
   "youHaveFreeseatsFree": "你有 {{ freeSeats }} 个空{{ seats }}。邀请对你重要的{{ many }}吧。",
   "yourOneLink": "你的{{ one }}链接",
-  "emailAddress": "邮箱地址",
-  "phoneNumber": "手机号",
-  "theLinkContainsYour": "这个链接包含你的{{ number }}。"
+  "linkHasPrivateCode": "The link has a private code. It does not contain your phone number or email.",
+  "strongShareTheApp": "<strong>Share the app</strong>",
+  "shareTheAppText": "Tell someone about the app. This link only opens the start page: no friend request is sent.",
+  "linkIsGeneral": "The link contains nothing personal.",
+  "appLink": "Link to the app"
 }

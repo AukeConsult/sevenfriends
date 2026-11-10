@@ -1,9 +1,9 @@
 {
   "settings": "Settings",
   "profile": "Profile",
-  "preferences": "Preferences",
+  "preferences": "Display and chat",
   "notifications": "Notifications",
-  "keys": "Keys",
+  "keys": "Privacy lock",
   "install": "Install",
-  "info": "Info"
+  "info": "About and rules"
 }

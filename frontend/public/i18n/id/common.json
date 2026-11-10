@@ -288,7 +288,9 @@
     "hasYouOnSleep": "Menaruhmu di daftar tidur.",
     "pokeAnyway": "Colek saja",
     "makesASound": "mengeluarkan suara",
-    "activityIn": "Aktivitas di {{ circle }}"
+    "activityIn": "Aktivitas di {{ circle }}",
+    "tryApp": "Try {{ app }}: {{ url }}",
+    "tryApp2": "Try {{ app }}:"
   },
   "needsYourHelp": "{{ friendName }} butuh bantuanmu",
   "openToUnlockTheir": "Buka aplikasi untuk membuka kunci pesan lamanya lagi.",

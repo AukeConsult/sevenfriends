@@ -66,7 +66,7 @@ export class RecoveryService {
    */
   async help(friendId: string, request: RecoveryState, progress: (done: number) => void): Promise<HelpResult> {
     const [mine, keys] = await Promise.all([myDeviceKey(this.auth.user()?.uid), this.safebox.keys(friendId)]);
-    if (!mine) throw new Error(tr('core.thisDeviceHasNo2', 'This device has no key, so it cannot open your friend’s messages. Bring your key back in Settings, Keys.'));
+    if (!mine) throw new Error(tr('core.thisDeviceHasNo2', 'This device has no key, so it cannot open your friend’s messages. Bring your key back in Settings → Privacy lock.'));
     if (!keys.friend.length) throw new Error(tr('core.yourFriendHasNo', 'Your friend has no key in use any more. Ask them to ask again.'));
     const result: HelpResult = { done: 0, skipped: 0 };
 

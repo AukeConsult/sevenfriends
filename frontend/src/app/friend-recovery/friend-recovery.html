@@ -40,7 +40,7 @@
           @case ('declined') {
             <section>
               <h2>{{ t('friendRecovery.friendnameDeclined', { friendName: friendName() }) || friendName() + ' said no' }}</h2>
-              <p>{{ t('friendRecovery.theyDidNotOpen') || 'They did not open your old messages. You can ask again, or use one of your own devices or your 24 recovery words (Settings, Keys).' }}</p>
+              <p>{{ t('friendRecovery.theyDidNotOpen') || 'They did not open your old messages. You can ask again, or use one of your own devices or your 24 recovery words (Settings → Privacy lock).' }}</p>
               <div class="d-flex gap-2">
                 <button type="button" class="btn btn-primary btn-sm" (click)="ask()" [disabled]="busy()">{{ t('friendRecovery.askAgain') || 'Ask again' }}</button>
                 <button type="button" class="btn btn-outline-secondary btn-sm" (click)="dismiss()" [disabled]="busy()">{{ t('friendRecovery.dismiss') || 'Dismiss' }}</button>

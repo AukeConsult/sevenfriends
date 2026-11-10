@@ -12,7 +12,7 @@
   "cancel": "Not now",
   "savingAndChecking": "Turning on…",
   "saveMyKey": "Turn on privacy lock",
-  "cancelMakesNoKey": "Not now keeps privacy lock off. You can turn it on later under Settings → Keys.",
+  "cancelMakesNoKey": "Not now keeps privacy lock off. You can turn it on later under Settings → Privacy lock.",
   "thisBrowserCannotKeep": "This browser cannot turn on privacy lock (it needs a secure connection, and storage that is not blocked). Use another browser, or the app.",
   "yourKeyIsReady": "✓ Privacy lock is on for this device.",
   "yourKeyCode": "Your key code (for checking)",

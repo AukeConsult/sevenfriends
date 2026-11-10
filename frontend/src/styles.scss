@@ -648,7 +648,7 @@ router-outlet + * { display: block; min-height: 100dvh; }
   &.sf-on { border-color: var(--bs-success-border-subtle, #a3cfbb); background: var(--bs-success-bg-subtle, #d1e7dd); color: var(--bs-success-text-emphasis, #0a3622); } } // what the padlock just did: green for locked, amber for not locked; it fades out
 @keyframes sf-toast { 0%, 80% { opacity: 1; } 100% { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .sf-lock-toast { animation-duration: 5s; } }
-.sf-lock-btn { color: var(--bs-warning-text-emphasis, #997404); &.sf-on { color: var(--bs-success-text-emphasis, #0a3622); } } // the padlock in the conversation header: amber when open, green when locked
+.sf-lock-item { color: var(--bs-warning-text-emphasis, #997404); &.sf-on { color: var(--bs-success-text-emphasis, #0a3622); } } // the padlock in the ⋮ menu of a conversation: amber when open, green when locked
 .sf-tool-btn { // an action in the header with a text under its icon, so it is clear what it does
   flex: none;
   min-width: 3rem;

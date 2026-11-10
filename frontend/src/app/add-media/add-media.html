@@ -81,7 +81,7 @@
       <p class="sf-hint text-center m-0">{{ details(shown) }}</p>
     }
     @if (trimmed()) {
-      <p class="sf-hint text-center m-0">{{ t('addMedia.theVideoIsLonger', { maxSeconds: maxSeconds }) || 'The video is longer than ' + maxSeconds + ' seconds: only the first ' + maxSeconds + ' seconds are sent.' }}</p>
+      <div class="alert alert-warning m-0" role="status">{{ t('addMedia.theVideoIsLonger', { maxSeconds: maxSeconds }) || 'This video is longer than ' + maxSeconds + ' seconds, so only the first ' + maxSeconds + ' seconds will be sent.' }}</div>
     }
     @if (!hosted()) {
     <label class="sf-field"><span class="sf-hint">{{ t('addMedia.addATextOptional') || 'Add a text (optional)' }}</span>

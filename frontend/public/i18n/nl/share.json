@@ -10,7 +10,9 @@
   "seats": "plekken",
   "youHaveFreeseatsFree": "Je hebt {{ freeSeats }} vrije {{ seats }}. Nodig de {{ many }} uit die voor je belangrijk zijn.",
   "yourOneLink": "Jouw {{ one }}-link",
-  "emailAddress": "e-mailadres",
-  "phoneNumber": "telefoonnummer",
-  "theLinkContainsYour": "De link bevat je {{ number }}."
+  "linkHasPrivateCode": "The link has a private code. It does not contain your phone number or email.",
+  "strongShareTheApp": "<strong>Share the app</strong>",
+  "shareTheAppText": "Tell someone about the app. This link only opens the start page: no friend request is sent.",
+  "linkIsGeneral": "The link contains nothing personal.",
+  "appLink": "Link to the app"
 }

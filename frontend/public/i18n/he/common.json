@@ -288,7 +288,9 @@
     "hasYouOnSleep": "יש אותך ברשימת השינה.",
     "pokeAnyway": "לשלוח דחיפה בכל זאת",
     "makesASound": "משמיע צליל",
-    "activityIn": "פעילות ב{{ circle }}"
+    "activityIn": "פעילות ב{{ circle }}",
+    "tryApp": "Try {{ app }}: {{ url }}",
+    "tryApp2": "Try {{ app }}:"
   },
   "needsYourHelp": "{{ friendName }} צריך/ה את העזרה שלך",
   "openToUnlockTheir": "פתח/י את האפליקציה כדי לשחרר שוב את ההודעות הישנות שלו/ה.",

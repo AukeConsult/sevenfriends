@@ -15,11 +15,11 @@
   </svg>
 </ng-template>
 
-<!-- Expanding frame: clean up the conversation: remove several messages at once (by age and / or text) -->
+<!-- Expanding frame: delete messages of the conversation: remove several messages at once (by age and / or text) -->
 <div class="sf-expand" [class.open]="cleanupOpen()" [attr.inert]="cleanupOpen() ? null : ''">
   <div class="sf-expand-inner">
-    <section id="cleanup" class="sf-cleanup" [attr.aria-label]="t('chat.cleanUpMessages') || 'Clean up messages'">
-      <p class="sf-hint">{{ t('chat.cleanUpThisConversation') || 'Clean up this conversation. The messages you choose disappear for both of you.' }}</p>
+    <section id="cleanup" class="sf-cleanup" [attr.aria-label]="t('chat.cleanUpMessages') || 'Delete messages'">
+      <p class="sf-hint">{{ t('chat.cleanUpThisConversation') || 'Choose which messages to delete. They are deleted for both of you.' }}</p>
       <div role="radiogroup" [attr.aria-label]="t('chat.whoseMessages') || 'Whose messages'" class="sf-options">
         @for (choice of whoseChoices(); track choice.value) {
           <label class="sf-chip-radio">
@@ -41,11 +41,11 @@
       </label>
       @if (cleanupDone(); as done) { <p class="sf-hint text-success">{{ done }}</p> }
       @if (cleanupAsk()) {
-        <div class="sf-confirm" role="alertdialog" [attr.aria-label]="t('chat.cleanUpTheMessages') || 'Clean up the messages'">
-          <p class="sf-confirm-text">{{ t('chat.cleanUpCleanupcountMessages', { cleanupCount: cleanupCount(), messages: cleanupCount() === 1 ? (t('chat.messageOne') || 'message') : (t('chat.messageMany') || 'messages'), s: cleanupWhose() === 'both' ? (t('chat.alsoWhose', { name: name() || (t('chat.yourOne', { one: w.one }) || 'your ' + w.one) }) || ', also ' + (name() || (t('chat.yourOne', { one: w.one }) || 'your ' + w.one)) + '\'s,') : '' }) || 'Clean up ' + cleanupCount() + ' ' + (cleanupCount() === 1 ? 'message' : 'messages') + (cleanupWhose() === 'both' ? ', also ' + (name() || (t('chat.yourOne', { one: w.one }) || 'your ' + w.one)) + '\'s,' : '') + ' for both of you? This cannot be undone.' }}</p>
+        <div class="sf-confirm" role="alertdialog" [attr.aria-label]="t('chat.cleanUpTheMessages') || 'Delete the messages'">
+          <p class="sf-confirm-text">{{ t('chat.cleanUpCleanupcountMessages', { cleanupCount: cleanupCount(), messages: cleanupCount() === 1 ? (t('chat.messageOne') || 'message') : (t('chat.messageMany') || 'messages'), s: cleanupWhose() === 'both' ? (t('chat.alsoWhose', { name: name() || (t('chat.yourOne', { one: w.one }) || 'your ' + w.one) }) || ', also ' + (name() || (t('chat.yourOne', { one: w.one }) || 'your ' + w.one)) + '\'s,') : '' }) || 'Delete ' + cleanupCount() + ' ' + (cleanupCount() === 1 ? 'message' : 'messages') + (cleanupWhose() === 'both' ? ', also ' + (name() || (t('chat.yourOne', { one: w.one }) || 'your ' + w.one)) + '\'s,' : '') + ' for both of you? This cannot be undone.' }}</p>
           <div class="sf-confirm-actions">
             <button type="button" class="btn btn-light btn-sm" (click)="cleanupAsk.set(false)" [disabled]="cleanupBusy()">{{ t('chat.cancel') || 'Cancel' }}</button>
-            <button type="button" class="btn btn-danger btn-sm" (click)="deleteMatching()" [disabled]="cleanupBusy()">{{ cleanupBusy() ? 'Cleaning…' : 'Clean up' }}</button>
+            <button type="button" class="btn btn-danger btn-sm" (click)="deleteMatching()" [disabled]="cleanupBusy()">{{ cleanupBusy() ? 'Deleting…' : 'Delete' }}</button>
           </div>
         </div>
       } @else {
@@ -53,7 +53,7 @@
         <div class="sf-cleanup-row">
           <p class="sf-hint">{{ cleanupCount() === null ? 'Counting…' : cleanupCount() + (cleanupCount() === 1 ? ' message matches' : ' messages match') }}</p>
           @if (cleanupCount()) {
-            <button type="button" class="btn btn-outline-danger btn-sm" (click)="cleanupAsk.set(true)"><ng-container [ngTemplateOutlet]="pic" [ngTemplateOutletContext]="{ $implicit: 'clean' }" /> {{ t('chat.cleanTheseMessages') || 'Clean these messages…' }}</button>
+            <button type="button" class="btn btn-outline-danger btn-sm" (click)="cleanupAsk.set(true)"><ng-container [ngTemplateOutlet]="pic" [ngTemplateOutletContext]="{ $implicit: 'clean' }" /> {{ t('chat.cleanTheseMessages') || 'Delete these messages…' }}</button>
           }
         </div>
       }

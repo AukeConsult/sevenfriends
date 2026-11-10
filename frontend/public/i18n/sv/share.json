@@ -10,7 +10,9 @@
   "seats": "platser",
   "youHaveFreeseatsFree": "Du har {{ freeSeats }} {{ seats }} kvar. Bjud in {{ many }} som betyder något för dig.",
   "yourOneLink": "Din inbjudningslänk ({{ one }})",
-  "emailAddress": "din e-postadress",
-  "phoneNumber": "ditt telefonnummer",
-  "theLinkContainsYour": "Länken innehåller {{ number }}."
+  "linkHasPrivateCode": "The link has a private code. It does not contain your phone number or email.",
+  "strongShareTheApp": "<strong>Share the app</strong>",
+  "shareTheAppText": "Tell someone about the app. This link only opens the start page: no friend request is sent.",
+  "linkIsGeneral": "The link contains nothing personal.",
+  "appLink": "Link to the app"
 }

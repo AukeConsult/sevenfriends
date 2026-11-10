@@ -11,7 +11,7 @@ import { deviceLabel } from './device-name';
 /** How a restore from the recovery words ended. */
 export type RestoreResult = 'ok' | 'bad-words' | 'no-backup' | 'wrong-code' | 'no-key';
 
-/** What the last look at the key found (shown on Settings → Keys, so a missing key can be explained). */
+/** What the last look at the key found (shown on Settings → Privacy lock, so a missing key can be explained). */
 export interface KeyDiagnosis {
   /** the account (user id) this was looked up for */
   account: string;

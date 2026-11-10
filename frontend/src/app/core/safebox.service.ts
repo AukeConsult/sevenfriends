@@ -74,7 +74,7 @@ export class SafeboxService {
         const uid = this.auth.user()?.uid;
         const device = uid ? await getDeviceKey(uid) : null;
         const fingerprint = device ? await fingerprintOf(device.publicKey) : null;
-        if (!device || !fingerprint) throw new Error(tr('core.thereIsNoEncryption', 'There is no encryption key on this device. Set one up (or restore it) in Settings → Keys.'));
+        if (!device || !fingerprint) throw new Error(tr('core.thereIsNoEncryption', 'There is no encryption key on this device. Set one up (or restore it) in Settings → Privacy lock.'));
         return openFileKey(item.enc!, keyIdOf(fingerprint), device.privateKey);
       })();
       this.fileKeys.set(id, key);

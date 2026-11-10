@@ -37,7 +37,7 @@
   "couldNotReadThe": "Could not read the request",
   "thatDidNotWork": "That did not work",
   "friendnameDeclined": "{{ friendName }} said no",
-  "theyDidNotOpen": "They did not open your old messages. You can ask again, or use one of your own devices or your 24 secret words (Settings, Keys).",
+  "theyDidNotOpen": "They did not open your old messages. You can ask again, or use one of your own devices or your 24 secret words (Settings → Privacy lock).",
   "askAgain": "Ask again",
   "dismiss": "Dismiss",
   "decline": "Decline",

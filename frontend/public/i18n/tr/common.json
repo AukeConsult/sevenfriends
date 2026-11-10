@@ -288,7 +288,9 @@
     "hasYouOnSleep": "Seni uyku listesine almış.",
     "pokeAnyway": "Yine de dürt",
     "makesASound": "ses çıkarır",
-    "activityIn": "{{ circle }} içinde etkinlik"
+    "activityIn": "{{ circle }} içinde etkinlik",
+    "tryApp": "Try {{ app }}: {{ url }}",
+    "tryApp2": "Try {{ app }}:"
   },
   "needsYourHelp": "{{ friendName }} yardımına ihtiyaç duyuyor",
   "openToUnlockTheir": "Eski mesajlarının kilidini yeniden açmak için uygulamayı aç.",

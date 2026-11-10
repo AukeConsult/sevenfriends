@@ -64,7 +64,7 @@
 
     @if (addOpen()) {
       <div class="sf-send-addframe">
-        <p class="sf-hint m-0">{{ t('friendSend.messagesForFriendnameOnly', { friendName: friendName() }) || 'Messages for ' + friendName() + ' only. They are kept on this device, and saved as you type.' }}</p>
+        <p class="sf-hint m-0">{{ t('friendSend.messagesForFriendnameOnly', { friendName: friendName() }) || 'Your draft is saved here, on this device, until you send it.' }}</p>
         @for (row of rows(); track $index) {
           <div class="d-flex gap-2">
             <input type="text" class="form-control" [value]="row" [maxLength]="quickLength" [attr.placeholder]="t('friendSend.forExampleIM') || 'For example: I\'m on my way'"

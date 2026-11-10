@@ -5,7 +5,7 @@ import { readableFingerprint } from '../models';
 import { tr } from '../core/i18n';
 
 /**
- * Making the encryption key, in one piece used by the setup wizard and by Settings → Keys: shows whether this device has a key, makes one
+ * Making the encryption key, in one piece used by the setup wizard and by Settings → Privacy lock: shows whether this device has a key, makes one
  * (`makeKey`, also with `reset` for a new key) in memory, shows the 24 recovery words once, and asks for one of them back. Only when the person
  * presses Save is the key put on this device and on the server (and checked): leaving before that throws the new key away.
  * `finished` is sent when the key is saved and checked.

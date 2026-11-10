@@ -7,7 +7,7 @@
   "theVoiceMessageYou": "The voice message you are about to send",
   "turnLeft": "Turn left",
   "turnRight": "Turn right",
-  "theVideoIsLonger": "The video is longer than {{ maxSeconds }} seconds: only the first {{ maxSeconds }} seconds are sent.",
+  "theVideoIsLonger": "This video is longer than {{ maxSeconds }} seconds, so only the first {{ maxSeconds }} seconds will be sent.",
   "addATextOptional": "Add a text (optional)",
   "send": "Send",
   "thatGifIsToo": "That GIF is too big. Choose one under 10 MB.",

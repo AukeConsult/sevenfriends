@@ -288,7 +288,9 @@
     "hasYouOnSleep": "आपको स्लीप लिस्ट में रखा है।",
     "pokeAnyway": "फिर भी पोक करें",
     "makesASound": "आवाज़ करता है",
-    "activityIn": "{{ circle }} में गतिविधि"
+    "activityIn": "{{ circle }} में गतिविधि",
+    "tryApp": "Try {{ app }}: {{ url }}",
+    "tryApp2": "Try {{ app }}:"
   },
   "needsYourHelp": "{{ friendName }} को आपकी मदद चाहिए",
   "openToUnlockTheir": "उनके पुराने संदेश फिर से अनलॉक करने के लिए ऐप खोलें।",

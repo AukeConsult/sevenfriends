@@ -5,7 +5,7 @@
     <span class="sf-seat">
       @if (ctx.friend(); as f) {
         <button type="button" class="sf-name-btn" (click)="ctx.showProfile()" [attr.aria-label]="(t('friendPage.showTheProfileOf', { fName: f.name }) || 'Show the profile of ' + f.name)">
-          <app-friend-avatar [friend]="f" [seat]="ctx.seat() || 1" [small]="true" [size]="36" />
+          <app-friend-avatar [friend]="f" [seat]="ctx.seat() || 1" [small]="true" [size]="30" />
         </button>
         <span class="sf-dot" [class]="'sf-dot-' + f.presence" [title]="presenceLabel(f.presence)" role="img" [attr.aria-label]="presenceLabel(f.presence)"></span>
         @if (f.mood; as mood) {
@@ -15,7 +15,7 @@
     </span>
   }
   <div class="sf-bar-text">
-    <span class="sf-fs-description sf-bar-name" [attr.title]="ctx.headerName()" [attr.aria-label]="ctx.headerName() || (t('friendPage.conversation') || 'Conversation')">{{ ctx.headerText() }}</span>
+    <span class="sf-fs-text fw-semibold sf-bar-name" [attr.title]="ctx.headerName()" [attr.aria-label]="ctx.headerName() || (t('friendPage.conversation') || 'Conversation')">{{ ctx.headerText() }}</span>
     @if (ctx.friend(); as f) {
       <!-- on a phone the header has two rows: the status has the room under the name -->
       @if (f.sleepsMe) { <span class="sf-mood-line"><span>{{ t('friendPage.hasYouOnPronoun', { pronoun: possessive(f.pronoun) }) || '😴 Has you on ' + possessive(f.pronoun) + ' sleep list' }}</span></span> }
@@ -39,15 +39,6 @@
         </svg>
         <span class="sf-tool-label" aria-hidden="true">{{ t('friendPage.safebox') || 'Safebox' }}</span>
       </a>
-      <!-- the padlock: closed = new messages and files are locked; open = not. A tap switches it (when both of you have a key) and says what that means; without keys it opens the Locking and keys page. -->
-      <button type="button" class="sf-tool-btn sf-lock-btn" [class.sf-on]="ctx.messagesLocked()" (click)="ctx.toggleLock()" [attr.aria-pressed]="ctx.messagesLocked()" [attr.aria-label]="ctx.lockText()" [attr.title]="ctx.lockText()">
-        @if (ctx.messagesLocked()) {
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>
-        } @else {
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 7.75-1.4" /></svg>
-        }
-        <span class="sf-tool-label" aria-hidden="true">{{ ctx.messagesLocked() ? (t('friendPage.locked') || 'Locked') : (t('friendPage.notLocked') || 'Not locked') }}</span>
-      </button>
     </div>
     <div class="sf-add sf-more">
       <button type="button" class="sf-tool-btn" (click)="ctx.toggleMore()" [attr.aria-expanded]="ctx.moreOpen()" aria-haspopup="true" [attr.aria-label]="t('friendPage.more') || 'More'" [attr.title]="t('friendPage.more') || 'More'">
@@ -74,6 +65,15 @@
           </button>
           }
           @if (ctx.feed() || ctx.pageTool()) { <div class="sf-menu-sep" role="separator"></div> }
+          <!-- the padlock: closed = new messages and files are locked; open = not. A tap switches it (when both of you have a key) and says what that means; without keys it opens the Locking and keys page. -->
+          <button type="button" role="menuitem" class="sf-add-item sf-lock-item" [class.sf-on]="ctx.messagesLocked()" (click)="ctx.moreOpen.set(false); ctx.toggleLock()" [attr.aria-label]="ctx.lockText()" [attr.title]="ctx.lockText()">
+            @if (ctx.messagesLocked()) {
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>
+            } @else {
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 7.75-1.4" /></svg>
+            }
+            <span>{{ ctx.messagesLocked() ? (t('friendPage.locked') || 'Locked') : (t('friendPage.notLocked') || 'Not locked') }}</span>
+          </button>
           @if (!onFeed()) {
           <a role="menuitem" class="sf-add-item" [routerLink]="['/friends', ctx.friendId]" (click)="ctx.moreOpen.set(false)">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 8V6a2 2 0 012-2h8a2 2 0 012 2v5a2 2 0 01-2 2h-1" /><path d="M4 10a2 2 0 012-2h7a2 2 0 012 2v5a2 2 0 01-2 2H9l-3 3v-3a2 2 0 01-2-2z" /></svg>

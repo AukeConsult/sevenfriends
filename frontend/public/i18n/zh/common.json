@@ -288,7 +288,9 @@
     "hasYouOnSleep": "你在对方的睡眠名单里。",
     "pokeAnyway": "还是戳一下",
     "makesASound": "会发出声音",
-    "activityIn": "{{ circle }} 中有动态"
+    "activityIn": "{{ circle }} 中有动态",
+    "tryApp": "Try {{ app }}: {{ url }}",
+    "tryApp2": "Try {{ app }}:"
   },
   "needsYourHelp": "{{ friendName }} 需要你的帮助",
   "openToUnlockTheir": "打开应用，重新解锁对方的旧消息。",

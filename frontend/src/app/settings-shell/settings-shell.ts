@@ -36,10 +36,10 @@ export class SettingsShell {
 
   protected readonly tabs = [
     { path: 'profile', label: tr('settingsShell.profile', 'Profile') },
-    { path: 'preferences', label: tr('settingsShell.preferences', 'Preferences') },
+    { path: 'preferences', label: tr('settingsShell.preferences', 'Display and chat') },
     { path: 'notifications', label: tr('settingsShell.notifications', 'Notifications') },
-    { path: 'encryption', label: tr('settingsShell.keys', 'Keys') },
+    { path: 'encryption', label: tr('settingsShell.keys', 'Privacy lock') },
     { path: 'install', label: tr('settingsShell.install', 'Install'), browserOnly: true },
-    { path: 'about', label: tr('settingsShell.info', 'Info'), also: ['terms', 'privacy'] },
+    { path: 'about', label: tr('settingsShell.info', 'About and rules'), also: ['terms', 'privacy'] },
   ];
 }

@@ -4,7 +4,7 @@ import { tr } from '../core/i18n';
 
 /**
  * Under the header of a friend's page (messages and safebox): this device cannot open some of the messages or files of this friendship, and where to get them
- * back (Settings, Keys: my other devices, my 24 words, my friend). Design: docs/design/recovery-own-devices.md.
+ * back (Settings → Privacy lock: my other devices, my 24 words, my friend). Design: docs/design/recovery-own-devices.md.
  */
 @Component({
   selector: 'app-locked-band',

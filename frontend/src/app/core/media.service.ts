@@ -155,7 +155,7 @@ export class MediaService {
   /** A locked file (or preview) opened on this device. */
   private async openLocked(entry: LockedEntry, blob: Blob, thumb: boolean): Promise<StoredFile> {
     const mine = await myDeviceKey(this.auth.user()?.uid);
-    if (!mine) throw new Error(tr('core.thereIsNoEncryption', 'There is no encryption key on this device. Set one up (or restore it) in Settings → Keys.'));
+    if (!mine) throw new Error(tr('core.thereIsNoEncryption', 'There is no encryption key on this device. Set one up (or restore it) in Settings → Privacy lock.'));
     const media = entry.enc.media;
     if (!media) throw new Error(tr('core.thisFileCouldNot2', 'This file could not be opened.'));
     const key = await openMessageKey(entry.enc, mine.keyId, mine.privateKey);

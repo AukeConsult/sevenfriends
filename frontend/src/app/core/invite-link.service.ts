@@ -15,6 +15,8 @@ export class InviteLinkService {
   private readonly code = signal<string | null>(null);
   /** the link to give away; null until the code is loaded */
   readonly link = computed(() => (this.code() ? circleLink(this.active.type, `invite=${this.code()}`) : null));
+  /** the general link: only opens the start page of the app (no friend request, nothing personal) */
+  readonly appLink = computed(() => circleLink(this.active.type, ''));
   /** why the link could not be loaded (null = no problem); shown instead of the link, with a way to try again */
   readonly problem = signal<string | null>(null);
   /** what a button just did ("Link copied"), shown for a moment */
@@ -47,17 +49,17 @@ export class InviteLinkService {
   }
 
   /** Shares the link (the phone's share sheet), or copies it where there is none. */
-  async share(url: string | null = this.link()): Promise<void> {
+  async share(url: string | null = this.link(), general = false): Promise<void> {
     if (!url) return;
     try {
       // the Android app: its own share sheet (the WebView has no navigator.share; an older app without it copies, as before)
       const app = (window as unknown as { SevenFriendsAndroid?: { share?(title: string, text: string): void } }).SevenFriendsAndroid;
       if (app?.share) {
-        app.share(this.active.words.app, tr('core.beMyOn', 'Be my {{ one }} on {{ app }}: {{ url }}', { one: this.active.words.one, app: this.active.words.app, url }));
+        app.share(this.active.words.app, general ? tr('core.tryApp', 'Try {{ app }}: {{ url }}', { app: this.active.words.app, url }) : tr('core.beMyOn', 'Be my {{ one }} on {{ app }}: {{ url }}', { one: this.active.words.one, app: this.active.words.app, url }));
         return;
       }
       if (navigator.share) {
-        await navigator.share({ title: this.active.words.app, text: tr('core.beMyOn2', 'Be my {{ one }} on {{ app }}:', { one: this.active.words.one, app: this.active.words.app }), url });
+        await navigator.share({ title: this.active.words.app, text: general ? tr('core.tryApp2', 'Try {{ app }}:', { app: this.active.words.app }) : tr('core.beMyOn2', 'Be my {{ one }} on {{ app }}:', { one: this.active.words.one, app: this.active.words.app }), url });
         return;
       }
       await navigator.clipboard.writeText(url);
