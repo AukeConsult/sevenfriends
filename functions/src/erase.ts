@@ -1,7 +1,7 @@
 import { getAuth } from "firebase-admin/auth";
 import { DocumentReference, Transaction, getFirestore } from "firebase-admin/firestore";
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAIL_COLLECTION } from "./constants";
-import { circleCol, friendRequestCol, keyBackupDoc, keyCol, messageCol, profilePictureDoc, pushDeviceCol, signalCol, userDoc } from "./paths";
+import { circleCol, friendRequestCol, groupDoc, keyBackupDoc, keyCol, messageCol, profilePictureDoc, pushDeviceCol, signalCol, userDoc } from "./paths";
 import { MediaRef } from "./models";
 import { deleteBox } from "./safebox";
 import { deleteFolder, deleteObjects } from "./sf-cache";
@@ -85,6 +85,7 @@ async function eraseInTransaction(tx: Transaction, uid: string, files: Map<strin
       drop(entry.ref);
       const data = entry.data();
       note(entry.id, { uid: data.linkedUid, circleId: data.peerCircleId, signaled: data.signaledUids });
+      if (data.kind === "group") drop(groupDoc(entry.id)); // a group I made: only I am in it until members can join (then I leave it instead)
     }
   }
 

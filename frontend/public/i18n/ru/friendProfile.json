@@ -15,5 +15,18 @@
   "deleteFname": "Удалить: {{ fName }}…",
   "putToSleepLeaves": "Усыпить: {{ friendName }}? {{ friendName }} уйдёт из твоего списка, и место снова освободится. Разговор сохранится, а разбудить {{ friendName }} можно из списка сна.",
   "deleteThisRemovesThe": "Удалить: {{ friendName }}? Связь пропадёт из твоего списка и из списка этого человека.",
-  "removeFromYourCircle": "Убрать из твоего круга: {{ friendName }}?"
+  "removeFromYourCircle": "Убрать из твоего круга: {{ friendName }}?",
+  "groupName": "Name of the group",
+  "groupDescription": "What is the group for?",
+  "choosePicture": "Choose a picture",
+  "removePicture": "Remove the picture",
+  "people": "People in the group",
+  "you": "You",
+  "madeTheGroup": "made the group",
+  "remove": "Remove",
+  "noFriendsToAdd": "None of your friends can be added now.",
+  "addAPerson": "Add a friend to the group",
+  "group": "Group",
+  "peopleCount": "people",
+  "onlyYou": "only you"
 }

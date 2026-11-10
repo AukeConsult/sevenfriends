@@ -15,5 +15,18 @@
   "deleteFname": "Delete {{ fName }}…",
   "putToSleepLeaves": "Put {{ friendName }} to sleep? {{ friendName }} leaves your list and the seat is free again. Your conversation is kept, and you can wake {{ friendName }} up from the sleep list.",
   "deleteThisRemovesThe": "Delete {{ friendName }}? This removes the connection from your list and from theirs.",
-  "removeFromYourCircle": "Remove {{ friendName }} as a friend?"
+  "removeFromYourCircle": "Remove {{ friendName }} as a friend?",
+  "groupName": "Name of the group",
+  "groupDescription": "What is the group for?",
+  "choosePicture": "Choose a picture",
+  "removePicture": "Remove the picture",
+  "people": "People in the group",
+  "you": "You",
+  "madeTheGroup": "made the group",
+  "remove": "Remove",
+  "noFriendsToAdd": "None of your friends can be added now.",
+  "addAPerson": "Add a friend to the group",
+  "group": "Group",
+  "peopleCount": "people",
+  "onlyYou": "only you"
 }

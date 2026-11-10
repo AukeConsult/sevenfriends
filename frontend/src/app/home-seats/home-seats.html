@@ -16,7 +16,7 @@
                (pointerdown)="dragStart($event, slot.position)" (pointermove)="dragMove($event)" (pointerup)="dragEnd($event)" (pointercancel)="dragEnd($event, true)">
             <span class="sf-hs-ring">
               <app-friend-avatar [friend]="friend" [seat]="slot.position" [size]="56" />
-              @if (friend.status === 'confirmed') {
+              @if (friend.status === 'confirmed' && !friend.group) {
                 <span class="sf-dot" [class]="'sf-dot-' + friend.presence" [title]="presenceLabel(friend.presence)" role="img" [attr.aria-label]="presenceLabel(friend.presence)"></span>
               }
               @if (unread().get(friend.id); as count) {
@@ -27,6 +27,8 @@
             <span class="sf-hs-sub">
               @if (friend.status !== 'confirmed') {
                 {{ friend.waiting ? (t('homeSeats.waiting') || 'Waiting') : (t('homeSeats.pending') || 'Pending') }}
+              } @else if (friend.group) {
+                {{ (friend.members ?? 1) > 1 ? (t('homeSeats.groupCount', { count: friend.members }) || 'Group · ' + friend.members + ' people') : (t('homeSeats.groupOnlyYou') || 'Group · only you') }}
               } @else if (friend.mood; as mood) {
                 <img [src]="moodIcon(mood)" alt="" width="14" height="14" />{{ moodLabel(mood) }}
               } @else {

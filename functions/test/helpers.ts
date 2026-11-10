@@ -207,7 +207,8 @@ export async function fillCircle(owner: User, count = MAX_FRIENDS) {
  */
 export async function assertConsistent() {
   const db = getFirestore();
-  const entries: Entry[] = (await db.collectionGroup("friends").get()).docs.map((d) => {
+  // a group entry has no other person to be symmetric with (groups.test.ts checks them)
+  const entries: Entry[] = (await db.collectionGroup("friends").get()).docs.filter((d) => d.data().kind !== "group").map((d) => {
     const [, uid, , circle] = d.ref.path.split("/");
     return { uid, circle, id: d.id, data: d.data() };
   });

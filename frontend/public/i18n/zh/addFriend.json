@@ -21,5 +21,13 @@
   "isAlreadyYour": "{{ sameName }} 已经是你的{{ one }}了。",
   "youHaveAlreadyAdded": "你已经添加过 {{ sameName }}：请求正等着对方。",
   "thisPerson": "这个人",
-  "sendFailed": "无法发送请求。"
+  "sendFailed": "无法发送请求。",
+  "whatToAdd": "What do you want to add?",
+  "aPerson": "A person",
+  "aGroup": "A group",
+  "aGroupIsOne": "A group is one conversation and one safebox for several people. It takes a seat, like a friend.",
+  "nameOfTheGroup": "Name of the group",
+  "makeTheGroup": "Make the group",
+  "giveTheGroupA": "Give the group a name.",
+  "couldNotMakeThe": "Could not make the group."
 }

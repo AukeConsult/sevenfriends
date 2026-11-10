@@ -3,7 +3,7 @@ import { DecodedIdToken } from "firebase-admin/auth";
 import { DocumentReference, FieldValue, Timestamp, getFirestore } from "firebase-admin/firestore";
 import { asyncHandler } from "./auth";
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAX_UPLOAD_BYTES, SAFEBOX_MAX_BYTES, SAFEBOX_MAX_ITEMS, SAFEBOX_REMINDERS, boxOwner } from "./constants";
-import { connectionOf, sleepsMe } from "./conversation";
+import { Peer, connectionOf, peerEntryRef, peerSleeps } from "./conversation";
 import { ALBUM_PICTURES_MAX, ATTACHMENTS_MAX, CASE_DOCUMENTS_MAX, BoxKeys, ENC_HEADER_MAX, MediaRef, SAFEBOX_OBJECT_TYPES, Safebox, SafeboxItem } from "./models";
 import { ParsedReminder, lockedBytes, objectBytes, parseEncryptedUpload, parseNewObject, parseObjectChange, wrapsCover, wrapsFor } from "./box-encryption";
 import { publishedKeysOf } from "./keys";
@@ -140,7 +140,7 @@ safeboxRouter.get(
   asyncHandler(async (req, res) => {
     const connection = await connectionOf(req, res);
     if (!connection) return;
-    const [mine, friend] = await Promise.all([publishedKeysOf(uidOf(res)), publishedKeysOf(connection.peerUid)]);
+    const [mine, friend] = await Promise.all([publishedKeysOf(uidOf(res)), connection.group ? Promise.resolve([]) : publishedKeysOf(connection.peerUid)]); // a group: its other members come in a later step
     res.json({ friendUid: connection.peerUid, mine, friend } satisfies BoxKeys);
   }),
 );
@@ -148,7 +148,11 @@ safeboxRouter.get(
 type Connection = NonNullable<Awaited<ReturnType<typeof connectionOf>>>;
 
 /** Which circle each of the two friends has this friendship in, written on every file: a file never belongs to more than the friendship of its two circles, and cannot show up in another one. */
-const circlesOf = (connection: Connection, me: string): Record<string, string> => ({ [me]: connection.circleId, [connection.peerUid]: connection.peerCircleId });
+const circlesOf = (connection: Connection, me: string): Record<string, string> => ({ [me]: connection.circleId, ...Object.fromEntries(connection.peers.map((peer) => [peer.uid, peer.circleId])) });
+
+/** Me and the other people of the connection with the keys each has in use: what a locked file, item or message must carry a copy of the key for (`wrapsCover`). */
+const peopleOf = (connection: Connection, me: string): Promise<{ uid: string; keys: Awaited<ReturnType<typeof publishedKeysOf>> }[]> =>
+  Promise.all([me, ...connection.peers.map((peer) => peer.uid)].map(async (uid) => ({ uid, keys: await publishedKeysOf(uid) })));
 
 /** True when the file belongs to the circle I am looking from (a file stored before circles were written down counts as the default circle). */
 const inCircle = (data: FirebaseFirestore.DocumentData, uid: string, circleId: string): boolean => ((data.circles as Record<string, string> | undefined)?.[uid] ?? DEFAULT_CIRCLE_ID) === circleId;
@@ -219,8 +223,7 @@ safeboxRouter.post(
       return;
     }
     const me = uidOf(res);
-    const [mine, friend] = await Promise.all([publishedKeysOf(me), publishedKeysOf(connection.peerUid)]);
-    if (!wrapsCover(upload.header.enc, [{ uid: me, keys: mine }, { uid: connection.peerUid, keys: friend }])) {
+    if (!wrapsCover(upload.header.enc, await peopleOf(connection, me))) {
       res.status(409).json({ error: "The encryption keys changed while the file was sent. Try again." });
       return;
     }
@@ -339,13 +342,17 @@ safeboxRouter.post(
     const batch = getFirestore().batch();
     const fromName = await nameOf(uidOf(res), undefined, connection.circleId);
     batch.update(messageCol(uidOf(res)).doc(messageId), moved);
-    const theirs = messageCol(connection.peerUid).doc(messageId);
-    if ((await theirs.get()).exists) batch.update(theirs, { ...moved, read: false, fromName }); // my friend is told: unread again, on the home page too
+    for (const peer of connection.peers) {
+      const theirs = messageCol(peer.uid).doc(messageId);
+      if ((await theirs.get()).exists) batch.update(theirs, { ...moved, read: false, fromName }); // my friend is told: unread again, on the home page too
+    }
     touchFeed(batch, myEntry);
-    await touchFeedIfExists(batch, circleCol(connection.peerUid).doc(connection.peerCircleId).collection(FRIENDS_SUBCOLLECTION).doc(connection.id));
+    for (const peer of connection.peers) await touchFeedIfExists(batch, peerEntryRef(connection, peer));
     await batch.commit();
     await deleteObject(media.ownerId, media.objectId); // the file (and its preview) now lives in the box only
-    if (!(await sleepsMe(connection))) await sendPush(connection.peerUid, { circleId: connection.peerCircleId, id: `message-${messageId}-box`, title: fromName, body: "📦 Moved to the safebox", url: `/friends/${connection.id}/safebox`, kind: "message" });
+    for (const peer of connection.peers as Peer[]) {
+      if (!(await peerSleeps(connection, peer))) await sendPush(peer.uid, { circleId: peer.circleId, id: `message-${messageId}-box`, title: fromName, body: "📦 Moved to the safebox", url: `/friends/${connection.id}/safebox`, kind: "message" });
+    }
     res.status(201).json(item);
   }),
 );
@@ -378,7 +385,7 @@ async function setReminder(connection: Connection, itemId: string, me: string, r
     await ref.delete();
     return;
   }
-  const targets = [{ uid: me, circleId: connection.circleId, friendUid: connection.peerUid }, ...(remind.both ? [{ uid: connection.peerUid, circleId: connection.peerCircleId, friendUid: me }] : [])];
+  const targets = [{ uid: me, circleId: connection.circleId, friendUid: connection.peerUid }, ...(remind.both ? connection.peers.map((peer) => ({ uid: peer.uid, circleId: peer.circleId, friendUid: me })) : [])];
   await ref.set({ connectionId: connection.id, itemId, at: Timestamp.fromMillis(remind.at.getTime()), targets, setBy: me });
 }
 
@@ -398,8 +405,7 @@ safeboxRouter.post(
       return;
     }
     const me = uidOf(res);
-    const [mine, friend] = await Promise.all([publishedKeysOf(me), publishedKeysOf(connection.peerUid)]);
-    if (!wrapsCover(parsed.enc, [{ uid: me, keys: mine }, { uid: connection.peerUid, keys: friend }])) {
+    if (!wrapsCover(parsed.enc, await peopleOf(connection, me))) {
       res.status(409).json({ error: "The encryption keys changed while the item was sent. Try again." });
       return;
     }

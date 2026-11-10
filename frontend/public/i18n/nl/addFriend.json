@@ -21,5 +21,13 @@
   "isAlreadyYour": "{{ sameName }} is al je {{ one }}.",
   "youHaveAlreadyAdded": "Je hebt {{ sameName }} al toegevoegd: het verzoek wacht op hen.",
   "thisPerson": "Deze persoon",
-  "sendFailed": "Het verzoek kon niet worden verzonden."
+  "sendFailed": "Het verzoek kon niet worden verzonden.",
+  "whatToAdd": "What do you want to add?",
+  "aPerson": "A person",
+  "aGroup": "A group",
+  "aGroupIsOne": "A group is one conversation and one safebox for several people. It takes a seat, like a friend.",
+  "nameOfTheGroup": "Name of the group",
+  "makeTheGroup": "Make the group",
+  "giveTheGroupA": "Give the group a name.",
+  "couldNotMakeThe": "Could not make the group."
 }

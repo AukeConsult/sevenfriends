@@ -21,5 +21,13 @@
   "isAlreadyYour": "이미 내 {{ one }} 목록에 있어요: {{ sameName }}",
   "youHaveAlreadyAdded": "이미 {{ sameName }}님을 추가했어요. 요청은 상대를 기다려요.",
   "thisPerson": "이 사람",
-  "sendFailed": "요청을 보내지 못했어요."
+  "sendFailed": "요청을 보내지 못했어요.",
+  "whatToAdd": "What do you want to add?",
+  "aPerson": "A person",
+  "aGroup": "A group",
+  "aGroupIsOne": "A group is one conversation and one safebox for several people. It takes a seat, like a friend.",
+  "nameOfTheGroup": "Name of the group",
+  "makeTheGroup": "Make the group",
+  "giveTheGroupA": "Give the group a name.",
+  "couldNotMakeThe": "Could not make the group."
 }

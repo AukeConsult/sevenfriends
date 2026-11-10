@@ -15,5 +15,18 @@
   "deleteFname": "Slet {{ fName }}…",
   "putToSleepLeaves": "Lægge {{ friendName }} i dvale? {{ friendName }} forlader din liste, og pladsen er ledig igen. Jeres samtale bliver gemt, og du kan vække {{ friendName }} fra sovelisten.",
   "deleteThisRemovesThe": "Slette {{ friendName }}? Det fjerner forbindelsen fra din liste og fra deres.",
-  "removeFromYourCircle": "Fjerne {{ friendName }} fra din kreds?"
+  "removeFromYourCircle": "Fjerne {{ friendName }} fra din kreds?",
+  "groupName": "Name of the group",
+  "groupDescription": "What is the group for?",
+  "choosePicture": "Choose a picture",
+  "removePicture": "Remove the picture",
+  "people": "People in the group",
+  "you": "You",
+  "madeTheGroup": "made the group",
+  "remove": "Remove",
+  "noFriendsToAdd": "None of your friends can be added now.",
+  "addAPerson": "Add a friend to the group",
+  "group": "Group",
+  "peopleCount": "people",
+  "onlyYou": "only you"
 }

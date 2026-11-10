@@ -15,5 +15,18 @@
   "deleteFname": "حذف {{ fName }}…",
   "putToSleepLeaves": "هل تضع {{ friendName }} للنوم؟ يغادر {{ friendName }} قائمتك ويصبح المقعد شاغرًا من جديد. تبقى محادثتكما، ويمكنك إيقاظ {{ friendName }} من قائمة النوم.",
   "deleteThisRemovesThe": "حذف {{ friendName }}؟ هذا يزيل الصلة من قائمتك ومن قائمته.",
-  "removeFromYourCircle": "إزالة {{ friendName }} من دائرتك؟"
+  "removeFromYourCircle": "إزالة {{ friendName }} من دائرتك؟",
+  "groupName": "Name of the group",
+  "groupDescription": "What is the group for?",
+  "choosePicture": "Choose a picture",
+  "removePicture": "Remove the picture",
+  "people": "People in the group",
+  "you": "You",
+  "madeTheGroup": "made the group",
+  "remove": "Remove",
+  "noFriendsToAdd": "None of your friends can be added now.",
+  "addAPerson": "Add a friend to the group",
+  "group": "Group",
+  "peopleCount": "people",
+  "onlyYou": "only you"
 }

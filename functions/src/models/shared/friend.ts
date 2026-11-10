@@ -57,6 +57,17 @@ export interface Friend {
   unverified: ("email" | "phone")[];
   /** set when nobody with this email or phone has an account yet: the friend can be invited by email */
   invite: FriendInvite | null;
+  /** true = this "friend" is a group (several people, one conversation and one safebox); it sits in a seat like a friend */
+  group?: boolean;
+  /** a group: how many people are in it */
+  members?: number;
+  /** a group: what it is for (any member can change it) */
+  description?: string;
+}
+
+/** Make a group (it is made as a friend entry of mine: a seat, the sleep list and delete work the same). */
+export interface NewGroup {
+  name: string;
 }
 
 /** An invitation to Seven Friends for somebody who has no account yet. */
@@ -92,3 +103,20 @@ export type AcceptResult = "confirmed" | "no-seats";
  * 'passive' = signed in but the screen is hidden or off, 'offline' = signed out or not heard from for a while.
  */
 export type Presence = "active" | "passive" | "offline";
+
+/** What a member changes of a group: the name, the description and the picture (a data URL, `null` = remove it). Every member can; what is left out stays. */
+export interface GroupChange {
+  name?: string;
+  description?: string;
+  picture?: string | null;
+}
+
+/** One member of a group, for its profile page. `friendId`: my own friend entry for this person (null = not my friend, or me). */
+export interface GroupMember {
+  uid: string;
+  name: string;
+  you: boolean;
+  /** made the group: can remove the others */
+  creator: boolean;
+  friendId: string | null;
+}

@@ -9,10 +9,56 @@
       <app-friend-avatar [friend]="f" [seat]="ctx.seat() || 1" [size]="72" />
       <div>
         <h2 class="m-0">{{ f.name }}</h2>
-        <p class="sf-hint m-0">{{ presenceLabel(f.presence) }}</p>
+        @if (f.group) {
+          <p class="sf-hint m-0">{{ (t('friendProfile.group') || 'Group') + ' · ' + ((f.members ?? 1) > 1 ? f.members + ' ' + (t('friendProfile.peopleCount') || 'people') : (t('friendProfile.onlyYou') || 'only you')) }}</p>
+        } @else {
+          <p class="sf-hint m-0">{{ presenceLabel(f.presence) }}</p>
+        }
         @if (f.sleepsMe) { <p class="sf-hint m-0">{{ t('friendProfile.hasYouOnPronoun', { pronoun: possessive(f.pronoun) }) || '😴 Has you on ' + possessive(f.pronoun) + ' sleep list' }}</p> }
       </div>
     </section>
+
+    @if (f.group) {
+      <section>
+        <label class="sf-field">
+          <span class="sf-hint">{{ t('friendProfile.groupName') || 'Name of the group' }}</span>
+          <input class="form-control" type="text" maxlength="100" [value]="f.name" (change)="saveGroup(f, { name: $any($event.target).value })" [disabled]="busy()" />
+        </label>
+        <label class="sf-field">
+          <span class="sf-hint">{{ t('friendProfile.groupDescription') || 'What is the group for?' }}</span>
+          <textarea class="form-control" rows="2" maxlength="300" [value]="f.description ?? ''" (change)="saveGroup(f, { description: $any($event.target).value })" [disabled]="busy()"></textarea>
+        </label>
+        <div class="d-flex gap-2">
+          <label class="btn btn-outline-secondary btn-sm mb-0">
+            {{ t('friendProfile.choosePicture') || 'Choose a picture' }}
+            <input type="file" accept="image/*" class="d-none" (change)="choosePicture(f, $event)" [disabled]="busy()" />
+          </label>
+          @if (f.pictureAt) { <button type="button" class="btn btn-outline-secondary btn-sm" (click)="removePicture(f)" [disabled]="busy()">{{ t('friendProfile.removePicture') || 'Remove the picture' }}</button> }
+        </div>
+      </section>
+
+      <section>
+        <h2 class="sf-section-title m-0">{{ t('friendProfile.people') || 'People in the group' }}</h2>
+        <ul class="sf-list">
+          @for (m of members(); track m.uid) {
+            <li class="sf-list-item">
+              <span class="sf-list-text">{{ m.you ? (t('friendProfile.you') || 'You') + ' · ' + m.name : m.name }}@if (m.creator) { <span class="sf-hint"> · {{ t('friendProfile.madeTheGroup') || 'made the group' }}</span> }</span>
+              @if (!m.you && iMadeIt()) { <button type="button" class="btn btn-outline-danger btn-sm" (click)="removeMember(f, m)" [disabled]="busy()">{{ t('friendProfile.remove') || 'Remove' }}</button> }
+            </li>
+          }
+        </ul>
+        @if (adding()) {
+          @for (c of canAdd(); track c.id) {
+            <button type="button" class="btn btn-light btn-sm align-self-start" (click)="addMember(f, c.id)" [disabled]="busy()">{{ c.name }}</button>
+          } @empty {
+            <p class="sf-hint m-0">{{ t('friendProfile.noFriendsToAdd') || 'None of your friends can be added now.' }}</p>
+          }
+          <button type="button" class="btn btn-light btn-sm align-self-start" (click)="adding.set(false)">{{ t('friendProfile.cancel') || 'Cancel' }}</button>
+        } @else {
+          <button type="button" class="btn btn-outline-secondary btn-sm align-self-start" (click)="adding.set(true)">{{ t('friendProfile.addAPerson') || 'Add a friend to the group' }}</button>
+        }
+      </section>
+    }
 
     <section>
       @if (countryName(f.country); as country) { <p class="sf-hint m-0">{{ country }}</p> }

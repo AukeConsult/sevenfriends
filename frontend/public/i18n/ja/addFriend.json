@@ -21,5 +21,13 @@
   "isAlreadyYour": "{{ sameName }}さんはすでにあなたの{{ one }}です。",
   "youHaveAlreadyAdded": "{{ sameName }}さんはすでに追加済みです。リクエストは相手を待っています。",
   "thisPerson": "この人",
-  "sendFailed": "リクエストを送信できませんでした。"
+  "sendFailed": "リクエストを送信できませんでした。",
+  "whatToAdd": "What do you want to add?",
+  "aPerson": "A person",
+  "aGroup": "A group",
+  "aGroupIsOne": "A group is one conversation and one safebox for several people. It takes a seat, like a friend.",
+  "nameOfTheGroup": "Name of the group",
+  "makeTheGroup": "Make the group",
+  "giveTheGroupA": "Give the group a name.",
+  "couldNotMakeThe": "Could not make the group."
 }

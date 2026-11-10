@@ -15,5 +15,18 @@
   "deleteFname": "Sil: {{ fName }}…",
   "putToSleepLeaves": "{{ friendName }} uyutulsun mu? {{ friendName }} listenden çıkar ve yer yeniden boşalır. Sohbetiniz saklanır ve {{ friendName }} kişisini uyku listesinden tekrar uyandırabilirsin.",
   "deleteThisRemovesThe": "{{ friendName }} silinsin mi? Bağlantı hem senin hem onun listesinden kalkar.",
-  "removeFromYourCircle": "{{ friendName }} çevrenden çıkarılsın mı?"
+  "removeFromYourCircle": "{{ friendName }} çevrenden çıkarılsın mı?",
+  "groupName": "Name of the group",
+  "groupDescription": "What is the group for?",
+  "choosePicture": "Choose a picture",
+  "removePicture": "Remove the picture",
+  "people": "People in the group",
+  "you": "You",
+  "madeTheGroup": "made the group",
+  "remove": "Remove",
+  "noFriendsToAdd": "None of your friends can be added now.",
+  "addAPerson": "Add a friend to the group",
+  "group": "Group",
+  "peopleCount": "people",
+  "onlyYou": "only you"
 }

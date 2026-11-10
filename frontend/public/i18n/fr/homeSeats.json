@@ -14,5 +14,7 @@
   "dropOnASeat": "Dépose sur une place ou sur le cercle Silence",
   "dropOnASeat2": "Dépose sur une place",
   "pressAndHoldA": "Appuie longuement sur un {{ one }} pour le déplacer",
-  "seatsExplained": "7 seats, 7 close friends. Put a friend to sleep to free a seat: the chat is kept."
+  "seatsExplained": "7 seats, 7 close friends. Put a friend to sleep to free a seat: the chat is kept.",
+  "groupCount": "Group · {{ count }} people",
+  "groupOnlyYou": "Group · only you"
 }

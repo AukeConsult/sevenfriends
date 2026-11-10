@@ -14,5 +14,7 @@
   "dropOnASeat": "Auf einem Platz oder im stummen Kreis ablegen",
   "dropOnASeat2": "Auf einem Platz ablegen",
   "pressAndHoldA": "{{ one }} gedrückt halten, um zu verschieben",
-  "seatsExplained": "7 seats, 7 close friends. Put a friend to sleep to free a seat: the chat is kept."
+  "seatsExplained": "7 seats, 7 close friends. Put a friend to sleep to free a seat: the chat is kept.",
+  "groupCount": "Group · {{ count }} people",
+  "groupOnlyYou": "Group · only you"
 }

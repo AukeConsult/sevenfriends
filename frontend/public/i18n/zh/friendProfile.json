@@ -15,5 +15,18 @@
   "deleteFname": "删除 {{ fName }}…",
   "putToSleepLeaves": "要让 {{ friendName }} 睡眠吗？{{ friendName }} 会离开你的列表，位置重新空出来。你们的对话会保留，你可以随时从睡眠名单里唤醒 {{ friendName }}。",
   "deleteThisRemovesThe": "要删除 {{ friendName }} 吗？这会把这段关系从你的列表和对方的列表中移除。",
-  "removeFromYourCircle": "要把 {{ friendName }} 从你的圈子中移除吗？"
+  "removeFromYourCircle": "要把 {{ friendName }} 从你的圈子中移除吗？",
+  "groupName": "Name of the group",
+  "groupDescription": "What is the group for?",
+  "choosePicture": "Choose a picture",
+  "removePicture": "Remove the picture",
+  "people": "People in the group",
+  "you": "You",
+  "madeTheGroup": "made the group",
+  "remove": "Remove",
+  "noFriendsToAdd": "None of your friends can be added now.",
+  "addAPerson": "Add a friend to the group",
+  "group": "Group",
+  "peopleCount": "people",
+  "onlyYou": "only you"
 }

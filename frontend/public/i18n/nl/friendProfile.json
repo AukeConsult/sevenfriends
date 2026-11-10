@@ -15,5 +15,18 @@
   "deleteFname": "{{ fName }} verwijderen…",
   "putToSleepLeaves": "{{ friendName }} op slaap zetten? {{ friendName }} verdwijnt van je lijst en de plek is weer vrij. Jullie gesprek blijft bewaard en je kunt {{ friendName }} weer wakker maken vanaf de slaaplijst.",
   "deleteThisRemovesThe": "{{ friendName }} verwijderen? Hiermee verdwijnt de verbinding van jouw lijst en van de hunne.",
-  "removeFromYourCircle": "{{ friendName }} uit je kring halen?"
+  "removeFromYourCircle": "{{ friendName }} uit je kring halen?",
+  "groupName": "Name of the group",
+  "groupDescription": "What is the group for?",
+  "choosePicture": "Choose a picture",
+  "removePicture": "Remove the picture",
+  "people": "People in the group",
+  "you": "You",
+  "madeTheGroup": "made the group",
+  "remove": "Remove",
+  "noFriendsToAdd": "None of your friends can be added now.",
+  "addAPerson": "Add a friend to the group",
+  "group": "Group",
+  "peopleCount": "people",
+  "onlyYou": "only you"
 }

@@ -36,7 +36,18 @@
     </div>
   </main>
 } @else {
-  <form class="sf-narrow" (submit)="$event.preventDefault(); send()" [attr.aria-label]="(t('addFriend.addAOne', { one: w.one }) || 'Add a ' + w.one)">
+  <form class="sf-narrow" (submit)="$event.preventDefault(); mode() === 'group' ? makeGroup() : send()" [attr.aria-label]="(t('addFriend.addAOne', { one: w.one }) || 'Add a ' + w.one)">
+    <!-- a person, or a group (a group sits in a seat like a friend; the people are added to it afterwards) -->
+    <div class="d-flex gap-2" role="group" [attr.aria-label]="t('addFriend.whatToAdd') || 'What do you want to add?'">
+      <button type="button" class="btn btn-sm flex-fill" [class.btn-primary]="mode() === 'person'" [class.btn-light]="mode() !== 'person'" [attr.aria-pressed]="mode() === 'person'" (click)="mode.set('person'); error.set(null)">{{ t('addFriend.aPerson') || 'A person' }}</button>
+      <button type="button" class="btn btn-sm flex-fill" [class.btn-primary]="mode() === 'group'" [class.btn-light]="mode() !== 'group'" [attr.aria-pressed]="mode() === 'group'" (click)="mode.set('group'); error.set(null)">{{ t('addFriend.aGroup') || 'A group' }}</button>
+    </div>
+    @if (mode() === 'group') {
+      <p class="small text-secondary m-0">{{ t('addFriend.aGroupIsOne') || 'A group is one conversation and one safebox for several people. It takes a seat, like a friend.' }}</p>
+      <label class="sf-field"><span class="form-label small text-secondary m-0">{{ t('addFriend.nameOfTheGroup') || 'Name of the group' }}</span>
+        <input appClear type="text" class="form-control" [value]="groupName()" (input)="groupName.set($any($event.target).value)" autocomplete="off" maxlength="100" />
+      </label>
+    } @else {
     <p class="small text-secondary m-0">{{ t('addFriend.theirEmailOrPhone') || 'Their email or phone number is how they are found.' }}</p>
 
     <label class="sf-field"><span class="form-label small text-secondary m-0">{{ t('addFriend.email') || 'Email' }}</span>
@@ -56,6 +67,7 @@
                 (input)="setField('message', $any($event.target).value)"
                 [placeholder]="w.hello"></textarea>
     </label>
+    }
 
     @if (error()) {
       <div class="alert alert-danger" role="alert">{{ error() }}</div>
@@ -65,7 +77,7 @@
       @if (embedded()) { <button type="button" class="btn btn-light flex-fill" (click)="closed.emit()" [disabled]="sending()">{{ t('addFriend.cancel') || 'Cancel' }}</button> }
       @else { <a [routerLink]="backTo" [queryParams]="backParams" class="btn btn-light flex-fill" [class.disabled]="sending()">{{ t('addFriend.cancel') || 'Cancel' }}</a> }
       <button type="submit" class="btn btn-primary flex-fill" [disabled]="sending()">
-        {{ sending() ? (t('addFriend.sending') || 'Sending…') : (t('addFriend.addOne', { one: w.one }) || 'Add ' + w.one) }}
+        {{ sending() ? (t('addFriend.sending') || 'Sending…') : (mode() === 'group' ? (t('addFriend.makeTheGroup') || 'Make the group') : (t('addFriend.addOne', { one: w.one }) || 'Add ' + w.one)) }}
       </button>
     </div>
   </form>

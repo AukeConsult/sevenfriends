@@ -15,5 +15,18 @@
   "deleteFname": "{{ fName }}さんを削除…",
   "putToSleepLeaves": "{{ friendName }}さんをスリープにしますか？{{ friendName }}さんはリストから外れ、席が空きます。会話は残り、スリープリストから{{ friendName }}さんをいつでも呼び戻せます。",
   "deleteThisRemovesThe": "{{ friendName }}さんを削除しますか？あなたのリストと相手のリストの両方から、つながりが消えます。",
-  "removeFromYourCircle": "{{ friendName }}さんをサークルから外しますか？"
+  "removeFromYourCircle": "{{ friendName }}さんをサークルから外しますか？",
+  "groupName": "Name of the group",
+  "groupDescription": "What is the group for?",
+  "choosePicture": "Choose a picture",
+  "removePicture": "Remove the picture",
+  "people": "People in the group",
+  "you": "You",
+  "madeTheGroup": "made the group",
+  "remove": "Remove",
+  "noFriendsToAdd": "None of your friends can be added now.",
+  "addAPerson": "Add a friend to the group",
+  "group": "Group",
+  "peopleCount": "people",
+  "onlyYou": "only you"
 }

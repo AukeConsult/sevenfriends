@@ -13,6 +13,7 @@ The long parts of this guide live in `docs/guide/`. Read only the file for the a
 - `docs/design/safebox-encryption.md`: the proposed end-to-end encryption of the safebox (keys, data model, flows, rollout). Step 1 (the local device key, `core/device-key.ts`) is built; nothing uses it yet.
 - `docs/design/recovery-by-friend.md`: the plan for key recovery by a friend (Way 2; Way 1 is the own devices and the 24 words, both in `docs/design/message-encryption.md`, "Recovery: the two ways"). Nothing of the plan is built yet.
 - `docs/design/recovery-own-devices.md`: Way 1 of key recovery (my own other device "Allow", and my 24 words): how it works, what is weak, and the plan. Not built yet.
+- `docs/design/groups.md`: groups (a friend with several people): data, the functions (make, change, add and remove members), what is not done yet. Built and tested on the backend.
 - `docs/guide/apps-and-login.md`: Android / iPhone / Windows apps, login methods, first-time setup.
 - `docs/guide/testing.md`: the backend tests (`npm test`, the 60-person pool, the emulator). A UI-only change needs no backend test run.
 

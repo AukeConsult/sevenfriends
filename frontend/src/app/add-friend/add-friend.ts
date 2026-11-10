@@ -43,6 +43,10 @@ export class AddFriend {
   /** set when the person has no account yet: who it was for, and the link to send */
   protected readonly result = signal<{ to: string; link: string } | null>(null);
 
+  /** what is made: a person (an email or a phone number) or a group (a name; the people come in later) */
+  protected readonly mode = signal<'person' | 'group'>('person');
+  protected readonly groupName = signal('');
+
   protected readonly draft = signal<FriendDraft>(emptyDraft());
   protected readonly sending = signal(false);
   protected readonly error = signal<string | null>(null);
@@ -65,6 +69,27 @@ export class AddFriend {
 
   protected setField(field: keyof FriendDraft, value: string): void {
     this.draft.update((d) => ({ ...d, [field]: value }));
+  }
+
+  /** Make the group: it is a friend entry of mine, and its conversation opens. */
+  protected async makeGroup(): Promise<void> {
+    const name = this.groupName().trim();
+    if (this.sending()) return;
+    if (!name) {
+      this.error.set(tr('addFriend.giveTheGroupA', 'Give the group a name.'));
+      return;
+    }
+    this.sending.set(true);
+    this.error.set(null);
+    try {
+      const id = await this.friends.addGroup(name);
+      if (this.embedded()) this.closed.emit();
+      else await this.router.navigate(['/friends', id]);
+    } catch (err: any) {
+      this.error.set(err.message ?? tr('addFriend.couldNotMakeThe', 'Could not make the group.'));
+    } finally {
+      this.sending.set(false);
+    }
   }
 
   protected async send(): Promise<void> {

@@ -23,6 +23,7 @@ export class FriendAvatar {
 
   protected readonly src = computed(() => {
     const friend = this.friend();
+    if (friend.group) return this.pictures.src(friend.id, friend.pictureAt) ?? 'icons/friends/group.svg'; // a group: its picture, else the group icon (never a seat icon)
     const icon = friend.icon ?? this.seat();
     return this.pictures.src(friend.id, friend.pictureAt) ?? `icons/friends/friend${icon}.svg`;
   });

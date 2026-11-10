@@ -21,5 +21,13 @@
   "isAlreadyYour": "{{ sameName }} já é seu {{ one }}.",
   "youHaveAlreadyAdded": "Você já adicionou {{ sameName }}: o pedido fica esperando.",
   "thisPerson": "Esta pessoa",
-  "sendFailed": "Não foi possível enviar o pedido."
+  "sendFailed": "Não foi possível enviar o pedido.",
+  "whatToAdd": "What do you want to add?",
+  "aPerson": "A person",
+  "aGroup": "A group",
+  "aGroupIsOne": "A group is one conversation and one safebox for several people. It takes a seat, like a friend.",
+  "nameOfTheGroup": "Name of the group",
+  "makeTheGroup": "Make the group",
+  "giveTheGroupA": "Give the group a name.",
+  "couldNotMakeThe": "Could not make the group."
 }

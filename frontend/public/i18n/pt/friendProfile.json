@@ -15,5 +15,18 @@
   "deleteFname": "Excluir {{ fName }}…",
   "putToSleepLeaves": "Pôr {{ friendName }} para dormir? {{ friendName }} sai da sua lista e o lugar fica livre de novo. A conversa é mantida, e você pode acordar {{ friendName }} na lista do sono.",
   "deleteThisRemovesThe": "Excluir {{ friendName }}? Isso remove a conexão da sua lista e da lista dessa pessoa.",
-  "removeFromYourCircle": "Remover {{ friendName }} do seu círculo?"
+  "removeFromYourCircle": "Remover {{ friendName }} do seu círculo?",
+  "groupName": "Name of the group",
+  "groupDescription": "What is the group for?",
+  "choosePicture": "Choose a picture",
+  "removePicture": "Remove the picture",
+  "people": "People in the group",
+  "you": "You",
+  "madeTheGroup": "made the group",
+  "remove": "Remove",
+  "noFriendsToAdd": "None of your friends can be added now.",
+  "addAPerson": "Add a friend to the group",
+  "group": "Group",
+  "peopleCount": "people",
+  "onlyYou": "only you"
 }

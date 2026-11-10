@@ -24,6 +24,7 @@ import { deleteObjects } from "./sf-cache";
 import { tellFriendAsleep, touchSync } from "./sync";
 import { nameOf, sendPush } from "./push";
 import { findAccounts, signalRefsOf, writeSignal } from "./signals";
+import { addGroupMember, createGroup, groupPicture, leaveGroup, listGroupMembers, removeGroupMember, updateGroup } from "./groups";
 import { assignMissingSeats, freeSeat, seatOf, stampOwner } from "./seats";
 import {
   EMAIL_RE,
@@ -84,6 +85,7 @@ function toJson(doc: FirebaseFirestore.DocumentSnapshot): Friend {
     pictureAt: null,
     pictureId: null,
     unverified: [], // filled in by withUnverified (needs a look at the other accounts)
+    ...(data.kind === "group" ? { group: true, members: (data.members as number | undefined) ?? 1, description: (data.description as string | undefined) ?? "", pictureAt: (data.groupPictureAt as string | undefined) ?? null } : {}),
   };
 }
 
@@ -157,7 +159,21 @@ export const friendsRouter = Router({ mergeParams: true });
 // The message feed of a connection: /circles/:circleId/friends/:friendId/messages
 friendsRouter.use("/:friendId/messages", conversationRouter);
 friendsRouter.use("/:friendId/safebox", safeboxRouter);
-friendsRouter.use("/:friendId/recovery", recoveryRouter);
+// recovery by a friend is between two people: not for a group
+friendsRouter.use(
+  "/:friendId/recovery",
+  (req, res, next) => {
+    friendCol(res)
+      .doc(req.params.friendId)
+      .get()
+      .then((entry) => {
+        if (entry.data()?.kind === "group") res.status(403).json({ error: "A group has no recovery by a friend" });
+        else next();
+      })
+      .catch(next);
+  },
+  recoveryRouter,
+);
 
 /** List the friends in a circle. */
 friendsRouter.get(
@@ -176,6 +192,14 @@ friendsRouter.get(
 
 /** What a person in each circle is called (for the messages of the server). */
 const ONE_PERSON: Record<string, string> = { default: "friend", buddies: "buddy", work: "contact", family: "family member" };
+
+/** Make a group instead of adding a person: `{ name }` (see groups.ts). It sits in a seat of the circle like a friend. */
+friendsRouter.post("/group", asyncHandler(async (req, res) => createGroup(req, res)));
+/** Change a group (name, description, picture): any member. */
+friendsRouter.patch("/:friendId/group", asyncHandler(async (req, res) => updateGroup(req, res, req.params.friendId)));
+friendsRouter.get("/:friendId/group/members", asyncHandler(async (req, res) => listGroupMembers(req, res, req.params.friendId)));
+friendsRouter.post("/:friendId/group/members", asyncHandler(async (req, res) => addGroupMember(req, res, req.params.friendId)));
+friendsRouter.delete("/:friendId/group/members/:memberUid", asyncHandler(async (req, res) => removeGroupMember(req, res, req.params.friendId, req.params.memberUid)));
 
 /** Add a friend to the circle (max 7 per circle). */
 friendsRouter.post(
@@ -367,6 +391,10 @@ friendsRouter.get(
   "/:friendId/picture",
   asyncHandler(async (req, res) => {
     const entry = (await friendCol(res).doc(req.params.friendId).get()).data();
+    if (entry?.kind === "group") {
+      res.json({ image: await groupPicture((res.locals.token as DecodedIdToken).uid, req.params.friendId) } satisfies ProfilePicture);
+      return;
+    }
     if (!entry || entry.status !== "confirmed" || !entry.linkedUid) {
       res.status(404).json({ error: "Friend not found" });
       return;
@@ -443,6 +471,15 @@ friendsRouter.delete(
     const uid = (res.locals.token as DecodedIdToken).uid;
     const id = req.params.friendId;
     const ref = friendCol(res).doc(id);
+
+    // a group: deleting it from my list is leaving it (the others keep it), see groups.ts
+    const entryData = (await ref.get()).data();
+    if (entryData?.kind === "group") {
+      await leaveGroup(uid, ref, id);
+      await touchSync(uid, "requestsAt");
+      res.status(204).end();
+      return;
+    }
 
     // The files of the conversation go FIRST, before the transaction: if the database delete fails they are wiped anyway.
     const before = (await ref.get()).data();

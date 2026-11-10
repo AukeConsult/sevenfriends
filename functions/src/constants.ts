@@ -35,6 +35,7 @@ export const MESSAGE_COLLECTION = "messages";
  */
 export const INCOMING_SIGNAL_COLLECTION = "incoming-signal";
 
+export const MAX_GROUP_DESCRIPTION = 300;
 export const MAX_NAME_LENGTH = 100; // display name
 
 /** The moods (mood1.svg ... mood4.svg) and the short mood message a person can stick to their profile. */
@@ -85,6 +86,8 @@ export const KEY_BACKUP_DOC = "current";
 /** recovery-request/{connectionId}: a person with a new key asks their friend to unlock the old messages and files for it (docs/design/message-encryption.md, "Recovery") */
 export const RECOVERY_COLLECTION = "recovery-request";
 export const SAFEBOX_COLLECTION = "safebox";
+export const GROUP_COLLECTION = "friend-group"; // a group: { name, createdBy, members: { uid: circleId } }; each member has a friend entry with the id of the group
+export const MAX_GROUP_MEMBERS = 7; // the same as the seven of a circle: a group is as big as the people you keep close
 export const SAFEBOX_ITEMS = "items";
 /** safebox-reminders/{connectionId}_{itemId}: a reminder that waits to be pushed (the moment, who gets it); the document goes when it was sent, or the item goes */
 export const SAFEBOX_REMINDERS = "safebox-reminders";

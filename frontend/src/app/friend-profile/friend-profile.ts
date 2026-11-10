@@ -1,10 +1,11 @@
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { AppDatePipe } from '../core/app-date.pipe';
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal, untracked } from '@angular/core';
 import { Router } from '@angular/router';
 import { FriendsService } from '../core/friends.service';
 import { UiPreferencesService } from '../core/ui-preferences';
-import { Friend } from '../models';
+import { Friend, GroupMember } from '../models';
+import { squareJpeg } from '../core/resize-image';
 import { countries } from '../core/countries';
 import { moodIcon, moodLabel } from '../core/moods';
 import { presenceLabel } from '../core/presence';
@@ -37,6 +38,57 @@ export class FriendProfile {
   protected readonly error = signal<string | null>(null);
   protected readonly asking = signal(false);
   protected readonly busy = signal(false);
+
+  /** A group: the people in it, and which of my friends can still be added. */
+  protected readonly members = signal<GroupMember[]>([]);
+  protected readonly adding = signal(false);
+  protected readonly canAdd = computed(() => {
+    const inGroup = new Set(this.members().map((m) => m.friendId));
+    return this.friendsService.friends().filter((f) => !f.group && f.status === 'confirmed' && !f.asleep && !inGroup.has(f.id));
+  });
+  protected readonly iMadeIt = computed(() => this.members().some((m) => m.you && m.creator));
+
+  constructor() {
+    effect(() => {
+      const f = this.ctx.friend();
+      if (f?.group) void untracked(() => this.loadMembers(f.id));
+    });
+  }
+
+  private async loadMembers(id: string): Promise<void> {
+    try {
+      this.members.set(await this.friendsService.groupMembers(id));
+    } catch (err: any) {
+      this.error.set(err.message);
+    }
+  }
+
+  /** Autosave of a group's name or description (when the field is left). */
+  protected saveGroup(f: Friend, change: { name?: string; description?: string }): Promise<void> {
+    const name = change.name?.trim();
+    if (name === '' || (name !== undefined && name === f.name) || (change.description !== undefined && change.description === (f.description ?? ''))) return Promise.resolve();
+    return this.run(() => this.friendsService.updateGroup(f.id, { ...change, ...(name ? { name } : {}) }));
+  }
+
+  protected async choosePicture(f: Friend, event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = '';
+    if (file) await this.run(async () => this.friendsService.updateGroup(f.id, { picture: await squareJpeg(file) }));
+  }
+
+  protected removePicture(f: Friend): Promise<void> {
+    return this.run(() => this.friendsService.updateGroup(f.id, { picture: null }));
+  }
+
+  protected async addMember(f: Friend, friendId: string): Promise<void> {
+    await this.run(() => this.friendsService.addGroupMember(f.id, friendId), () => this.loadMembers(f.id));
+    this.adding.set(false);
+  }
+
+  protected removeMember(f: Friend, member: GroupMember): Promise<void> {
+    return this.run(() => this.friendsService.removeGroupMember(f.id, member.uid), () => this.loadMembers(f.id));
+  }
 
   /** A confirmed friend is put to sleep (the conversation is kept) when the sleep list is used; anything else is deleted. */
   protected sleepable(friend: Friend): boolean {

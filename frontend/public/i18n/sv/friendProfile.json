@@ -15,5 +15,18 @@
   "deleteFname": "Radera {{ fName }}…",
   "putToSleepLeaves": "Lägga {{ friendName }} på vilolistan? {{ friendName }} lämnar din lista och platsen blir ledig igen. Din konversation sparas, och du kan väcka {{ friendName }} från vilolistan.",
   "deleteThisRemovesThe": "Radera {{ friendName }}? Det tar bort kopplingen från din lista och från hens.",
-  "removeFromYourCircle": "Ta bort {{ friendName }} från din krets?"
+  "removeFromYourCircle": "Ta bort {{ friendName }} från din krets?",
+  "groupName": "Name of the group",
+  "groupDescription": "What is the group for?",
+  "choosePicture": "Choose a picture",
+  "removePicture": "Remove the picture",
+  "people": "People in the group",
+  "you": "You",
+  "madeTheGroup": "made the group",
+  "remove": "Remove",
+  "noFriendsToAdd": "None of your friends can be added now.",
+  "addAPerson": "Add a friend to the group",
+  "group": "Group",
+  "peopleCount": "people",
+  "onlyYou": "only you"
 }

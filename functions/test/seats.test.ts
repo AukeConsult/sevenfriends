@@ -85,7 +85,7 @@ describe("the seat numbers", () => {
     const mine = (await pool[1].friends()).find((f) => f.id === entry.id);
     expect(mine).toMatchObject({ status: "confirmed", asleep: true, seat: null });
     expect((await pool[1].friends()).filter((f) => !f.asleep)).toHaveLength(7); // the seven seats are unchanged
-    expect((await pool[0].friends()).find((f) => f.id === entry.id)).toMatchObject({ status: "confirmed", theyAsleep: true });
+    expect((await pool[0].friends()).find((f) => f.id === entry.id)).toMatchObject({ status: "confirmed", sleepsMe: true });
   });
 });
 

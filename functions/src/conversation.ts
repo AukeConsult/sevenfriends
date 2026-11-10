@@ -8,6 +8,7 @@ import { circleCol, messageCol, missingIndex, userFields } from "./paths";
 import { nameOf, sendPush } from "./push";
 import { findPeerEntry, shownNameOf } from "./circle-profile";
 import { linkOf } from "./link-preview";
+import { otherMembers } from "./group-members";
 import { Refused, parseMessageEnc, parseRelock, wrapsCover, wrapsFor } from "./box-encryption";
 import { publishedKeysOf } from "./keys";
 import { touchFeed, touchFeedIfExists } from "./sync";
@@ -29,8 +30,33 @@ export const conversationRouter = Router({ mergeParams: true });
 const uidOf = (res: Response) => (res.locals.token as DecodedIdToken).uid;
 const iso = (t: unknown) => (t instanceof Timestamp ? t.toDate().toISOString() : null);
 
+/**
+ * The other people of a connection and the circle each has it in. A friendship has ONE (the friend); a group has all the other members. Everything that
+ * is written for "the other side" (copies of a message, the keys a text is locked for, the push) goes over this list, so a friendship is simply a list of one.
+ */
+export interface Peer {
+  uid: string;
+  circleId: string;
+}
+
+/** The friend entry of a connection in the list of one of the other people (the entry has the id of the connection in every list). */
+export const peerEntryRef = (connection: { id: string }, peer: Peer): DocumentReference => circleCol(peer.uid).doc(peer.circleId).collection(FRIENDS_SUBCOLLECTION).doc(connection.id);
+
+/** A connection as the routes see it: who it is with, in which circle, and the list of the other people (see `Peer`). */
+export interface ConnectionInfo {
+  id: string;
+  /** the circle of MY entry */
+  circleId: string;
+  name: string;
+  /** a group: there is no single friend (`peerUid` and `peerCircleId` are empty): everything goes over `peers` */
+  group: boolean;
+  peerUid: string;
+  peerCircleId: string;
+  peers: Peer[];
+}
+
 /** My confirmed connection for :friendId, or answers with an error and returns null. */
-export async function connectionOf(req: Request, res: Response) {
+export async function connectionOf(req: Request, res: Response): Promise<ConnectionInfo | null> {
   const entry = await (res.locals.circleRef as DocumentReference)
     .collection(FRIENDS_SUBCOLLECTION)
     .doc(req.params.friendId)
@@ -40,16 +66,23 @@ export async function connectionOf(req: Request, res: Response) {
     res.status(404).json({ error: "Friend not found" });
     return null;
   }
-  if (data.status !== "confirmed" || !data.linkedUid) {
+  const group = data.kind === "group"; // a group: the other end is its other members (see groups.ts)
+  if (data.status !== "confirmed" || (!group && !data.linkedUid)) {
     res.status(403).json({ error: "You can message a friend once the connection is confirmed" });
     return null;
   }
+  if (group) {
+    const peers = await otherMembers(entry.id, (res.locals.token as DecodedIdToken).uid);
+    return { id: entry.id, circleId: (res.locals.circleRef as DocumentReference).id, name: data.name as string, group, peerUid: "", peerCircleId: "", peers };
+  }
   return {
+    group,
     id: entry.id,
     circleId: (res.locals.circleRef as DocumentReference).id, // the circle of MY entry
     name: await shownNameOf(data), // the real name of the friend, as in the list
-    peerUid: data.linkedUid as string,
+    peerUid: data.linkedUid as string, // the friend (the first of `peers`): for what only a friendship has (recovery, profile)
     peerCircleId: (data.peerCircleId as string | undefined) ?? DEFAULT_CIRCLE_ID,
+    peers: [{ uid: data.linkedUid as string, circleId: (data.peerCircleId as string | undefined) ?? DEFAULT_CIRCLE_ID }] as Peer[],
   };
 }
 
@@ -129,7 +162,7 @@ async function attachedMedia(uid: string, body: NewMedia, res: Response, lockedM
  * Answers with an error and returns null when it is not valid or when a key of me or my friend was added or retired while the person was sending (the
  * app then asks again for the keys and locks the text anew). Returns undefined when the body has no `enc`: a plain text, as before.
  */
-async function lockedText(body: unknown, myUid: string, peerUid: string, res: Response): Promise<{ text: string; enc: MessageEnc } | null | undefined> {
+async function lockedText(body: unknown, myUid: string, peerUids: string[], res: Response): Promise<{ text: string; enc: MessageEnc } | null | undefined> {
   const raw = body as { text?: unknown; enc?: unknown } | undefined;
   if (raw?.enc === undefined) return undefined;
   const parsed = parseMessageEnc(raw.text, raw.enc);
@@ -138,8 +171,8 @@ async function lockedText(body: unknown, myUid: string, peerUid: string, res: Re
     res.status(refused.status).json({ error: refused.error });
     return null;
   }
-  const [mine, friend] = await Promise.all([publishedKeysOf(myUid), publishedKeysOf(peerUid)]);
-  if (!wrapsCover(parsed.enc, [{ uid: myUid, keys: mine }, { uid: peerUid, keys: friend }])) {
+  const people = await Promise.all([myUid, ...peerUids].map(async (uid) => ({ uid, keys: await publishedKeysOf(uid) })));
+  if (!wrapsCover(parsed.enc, people)) {
     res.status(409).json({ error: "The encryption keys changed while the message was sent. Try again." });
     return null;
   }
@@ -147,13 +180,12 @@ async function lockedText(body: unknown, myUid: string, peerUid: string, res: Re
 }
 
 /**
- * True when my friend has ME on their sleep list (`asleep` on THEIR entry of the connection): what I write to them then arrives silently
+ * True when one of the other people of the connection (my friend; every member of a group) has ME on their sleep list (`asleep` on THEIR entry of the connection): what I write to them then arrives silently
  * (no push, no sound, no desktop notice; it is still unread) unless it is a poke. Best effort: when their entry cannot be read the answer is false (they are told).
  */
-export async function sleepsMe(connection: { id: string; peerUid: string; peerCircleId: string }): Promise<boolean> {
+export async function peerSleeps(connection: { id: string }, peer: Peer): Promise<boolean> {
   try {
-    const entry = await circleCol(connection.peerUid).doc(connection.peerCircleId).collection(FRIENDS_SUBCOLLECTION).doc(connection.id).get();
-    return entry.data()?.asleep === true;
+    return (await peerEntryRef(connection, peer).get()).data()?.asleep === true;
   } catch {
     return false;
   }
@@ -168,7 +200,7 @@ conversationRouter.post(
     const token = res.locals.token as DecodedIdToken;
 
     // `enc` = the text is locked on the sender's device (then `text` is the locked text and the server never reads it)
-    const locked = await lockedText(req.body, token.uid, connection.peerUid, res);
+    const locked = await lockedText(req.body, token.uid, connection.peers.map((p) => p.uid), res);
     if (locked === null) return;
     const text = locked ? locked.text : typeof req.body?.text === "string" ? req.body.text.trim() : "";
     if (!text && !req.body?.media) {
@@ -187,27 +219,29 @@ conversationRouter.post(
     if (req.body?.media && !media) return;
 
     // the other side of the connection must still be there and confirmed (the page of a link and my name are looked up at the same time: nothing waits for the others)
-    const [peerEntry, link, fromName] = await Promise.all([
-      findPeerEntry(token.uid, connection.circleId, connection.id, { linkedUid: connection.peerUid, peerCircleId: connection.peerCircleId }),
+    const [peerEntries, link, fromName] = await Promise.all([
+      Promise.all(connection.peers.map((peer) => findPeerEntry(token.uid, connection.circleId, connection.id, { linkedUid: peer.uid, peerCircleId: peer.circleId }))),
       locked ? null : linkOf(text), // the page of the link may be shown in a frame (checked once, here); a locked text cannot be read, so it has none
       nameOf(token.uid, token, connection.circleId), // the name I have in this circle
     ]);
-    if (peerEntry) connection.peerCircleId = peerEntry.ref.parent.parent?.id ?? connection.peerCircleId; // where their side really is
-    if (peerEntry?.data()?.status !== "confirmed") {
+    connection.peers.forEach((peer, i) => {
+      peer.circleId = peerEntries[i]?.ref.parent.parent?.id ?? peer.circleId; // where their side really is
+    });
+    if (connection.peers[0]) connection.peerCircleId = connection.peers[0].circleId;
+    if (peerEntries.some((entry) => entry?.data()?.status !== "confirmed")) {
       res.status(409).json({ error: "This connection is not confirmed on both sides" });
       return;
     }
 
     const poke = req.body?.poke === true; // "poke anyway": the friend is told with a sound even when they have me on their sleep list
-    const muted = peerEntry?.data()?.asleep === true && !poke;
+    const muted = peerEntries.map((entry) => entry?.data()?.asleep === true && !poke); // one for each of the other people
     const mine = media ? messageCol(token.uid).doc(media.objectId) : messageCol(token.uid).doc(); // a message with a file has the id of the file: that is how the receiver is let in
-    const theirs = messageCol(connection.peerUid).doc(mine.id); // same message id on both sides
     const sentAt = Timestamp.now(); // known here, so the answer needs no second read of the message
     const common = {
       connectionId: connection.id,
       fromUid: token.uid,
       fromName,
-      toUid: connection.peerUid,
+      ...(connection.group ? {} : { toUid: connection.peerUid }), // a group has no single receiver
       text,
       ...(media ? { media } : {}),
       ...(link ? { link } : {}),
@@ -217,17 +251,22 @@ conversationRouter.post(
     // each copy says which circle it belongs to FOR ITS OWNER: mine in my circle, the friend's in theirs
     // a locked message keeps in each copy only that person's copies of the message key
     batch.set(mine, { ...common, ...(locked ? { enc: wrapsFor(locked.enc, token.uid) } : {}), circleId: connection.circleId, read: true }); // my own message needs no reading
-    batch.set(theirs, { ...common, ...(locked ? { enc: wrapsFor(locked.enc, connection.peerUid) } : {}), ...(poke ? { poke: true } : {}), circleId: connection.peerCircleId, read: false });
+    for (const peer of connection.peers) {
+      // the same message id in every copy
+      batch.set(messageCol(peer.uid).doc(mine.id), { ...common, ...(locked ? { enc: wrapsFor(locked.enc, peer.uid) } : {}), ...(poke ? { poke: true } : {}), circleId: peer.circleId, read: false });
+    }
     // "last spoken to": both sides of the friendship remember when the last message was written
     const myEntry = (res.locals.circleRef as DocumentReference).collection(FRIENDS_SUBCOLLECTION).doc(connection.id);
     batch.update(myEntry, { lastMessageAt: FieldValue.serverTimestamp() });
     touchFeed(batch, myEntry); // my other devices reload this feed
-    batch.update(circleCol(connection.peerUid).doc(connection.peerCircleId).collection(FRIENDS_SUBCOLLECTION).doc(connection.id), { lastMessageAt: FieldValue.serverTimestamp() });
+    for (const peer of connection.peers) batch.update(peerEntryRef(connection, peer), { lastMessageAt: FieldValue.serverTimestamp() });
     await batch.commit();
 
     const created: ChatMessage = { id: mine.id, text, media, mine: true, read: true, time: iso(sentAt), edited: false, hidden: false, link, ...(locked ? { enc: wrapsFor(locked.enc, token.uid) } : {}) };
     // wake the other person's devices (before the answer: the function may stop right after it)
-    if (!muted) await sendPush(connection.peerUid, { circleId: connection.peerCircleId, id: `message-${mine.id}`, title: fromName, body: locked ? "🔒 New message" : text || mediaLabel(media!.kind), url: `/friends/${connection.id}`, kind: "message" });
+    for (const [i, peer] of connection.peers.entries()) {
+      if (!muted[i]) await sendPush(peer.uid, { circleId: peer.circleId, id: `message-${mine.id}`, title: fromName, body: locked ? "🔒 New message" : text || mediaLabel(media!.kind), url: `/friends/${connection.id}`, kind: "message" });
+    }
     res.status(201).json(created);
   }),
 );
@@ -276,11 +315,11 @@ conversationRouter.post(
         const batch = getFirestore().batch();
         for (const d of matching.slice(i, i + DELETE_CHUNK)) {
           batch.delete(d.ref);
-          batch.delete(messageCol(connection.peerUid).doc(d.id));
+          for (const peer of connection.peers) batch.delete(messageCol(peer.uid).doc(d.id));
         }
         deleted += Math.min(DELETE_CHUNK, matching.length - i);
         if (i + DELETE_CHUNK >= matching.length) {
-          await touchFeedIfExists(batch, peerEntryOf(connection));
+          for (const peer of connection.peers) await touchFeedIfExists(batch, peerEntryRef(connection, peer));
           touchFeed(batch, (res.locals.circleRef as DocumentReference).collection(FRIENDS_SUBCOLLECTION).doc(connection.id)); // my other devices reload the feed
         }
         await batch.commit();
@@ -310,12 +349,7 @@ async function ownMessage(req: Request, res: Response, allowMoved = false) {
     return null;
   }
   const myEntry = (res.locals.circleRef as DocumentReference).collection(FRIENDS_SUBCOLLECTION).doc(connection.id);
-  return { mine, theirs: messageCol(connection.peerUid).doc(mine.id), peerEntry: peerEntryOf(connection), myEntry, media: (data.media as MediaRef | undefined) ?? null, hidden: Boolean(data.hidden), enc: (data.enc as MessageEnc | undefined) ?? null, peerUid: connection.peerUid };
-}
-
-/** The friend's copy of the friendship. */
-function peerEntryOf(connection: { id: string; peerUid: string; peerCircleId: string }): DocumentReference {
-  return circleCol(connection.peerUid).doc(connection.peerCircleId).collection(FRIENDS_SUBCOLLECTION).doc(connection.id);
+  return { mine, peers: connection.peers, theirs: connection.peers.map((peer) => ({ peer, ref: messageCol(peer.uid).doc(mine.id) })), peerEntries: connection.peers.map((peer) => peerEntryRef(connection, peer)), myEntry, media: (data.media as MediaRef | undefined) ?? null, hidden: Boolean(data.hidden), enc: (data.enc as MessageEnc | undefined) ?? null, };
 }
 
 /** Edit one of my messages: { text } (the caption, for a message with a file). Both copies change; the message is marked as edited. */
@@ -332,11 +366,11 @@ conversationRouter.put(
         res.status(again.status).json({ error: again.error });
         return;
       }
-      const theirCopy = await own.theirs.get();
+      const theirCopies = await Promise.all(own.theirs.map(async (their) => ({ ref: their.ref, copy: await their.ref.get() })));
       const batch = getFirestore().batch();
       batch.update(own.mine, { text: again.text, enc: { ...own.enc, iv: again.iv }, editedAt: FieldValue.serverTimestamp() });
-      if (theirCopy.exists) batch.update(own.theirs, { text: again.text, enc: { ...(theirCopy.data()!.enc as MessageEnc), iv: again.iv }, editedAt: FieldValue.serverTimestamp() });
-      await touchFeedIfExists(batch, own.peerEntry);
+      for (const { ref, copy } of theirCopies) if (copy.exists) batch.update(ref, { text: again.text, enc: { ...(copy.data()!.enc as MessageEnc), iv: again.iv }, editedAt: FieldValue.serverTimestamp() });
+      for (const entry of own.peerEntries) await touchFeedIfExists(batch, entry);
       touchFeed(batch, own.myEntry); // my other devices reload the feed
       await batch.commit();
       const saved = (await own.mine.get()).data()!;
@@ -344,7 +378,7 @@ conversationRouter.put(
       res.json(edited);
       return;
     }
-    const locked = await lockedText(req.body, uid, own.peerUid, res); // a plain message may become a locked one: its text is locked with a new key
+    const locked = await lockedText(req.body, uid, own.peers.map((p) => p.uid), res); // a plain message may become a locked one: its text is locked with a new key
     if (locked === null) return;
     if (locked?.enc.media) {
       res.status(400).json({ error: "A file can be locked only when the message is sent" });
@@ -364,8 +398,8 @@ conversationRouter.put(
     const enc = (person: string) => (locked ? wrapsFor(locked.enc, person) : FieldValue.delete()); // each copy keeps only its owner's copies of the key
     const batch = getFirestore().batch();
     batch.update(own.mine, { ...change, enc: enc(uid) });
-    if ((await own.theirs.get()).exists) batch.update(own.theirs, { ...change, enc: enc(own.peerUid) });
-    await touchFeedIfExists(batch, own.peerEntry);
+    for (const their of own.theirs) if ((await their.ref.get()).exists) batch.update(their.ref, { ...change, enc: enc(their.peer.uid) });
+    for (const entry of own.peerEntries) await touchFeedIfExists(batch, entry);
     touchFeed(batch, own.myEntry); // my other devices reload the feed
     await batch.commit();
     const saved = (await own.mine.get()).data()!;
@@ -383,8 +417,8 @@ conversationRouter.delete(
     if (own.media) await deleteObject(own.media.ownerId, own.media.objectId); // the file goes FIRST: if the database delete fails it is wiped anyway
     const batch = getFirestore().batch();
     batch.delete(own.mine);
-    batch.delete(own.theirs); // deleting a copy that is not there is fine
-    await touchFeedIfExists(batch, own.peerEntry);
+    for (const their of own.theirs) batch.delete(their.ref); // deleting a copy that is not there is fine
+    for (const entry of own.peerEntries) await touchFeedIfExists(batch, entry);
     touchFeed(batch, own.myEntry); // my other devices reload the feed
     await batch.commit();
     res.status(204).end();

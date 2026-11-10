@@ -1,6 +1,6 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { ApiError, ApiService } from './api.service';
-import { AcceptResult, Circle, Friend, FriendRequest, NewFriend } from '../models';
+import { AcceptResult, Circle, Friend, FriendRequest, GroupChange, GroupMember, NewFriend } from '../models';
 import { UiPreferencesService } from './ui-preferences';
 import { ActiveCircleService } from './active-circle.service';
 import { tr } from './i18n';
@@ -100,6 +100,37 @@ export class FriendsService {
     });
     this.friends.update((list) => [...list, created]);
     return created;
+  }
+
+  /** Change a group: its name, description or picture (any member can). The list is loaded again, so every entry shows it. */
+  async updateGroup(id: string, change: GroupChange): Promise<void> {
+    await this.api.request(`${this.friendsPath()}/${id}/group`, { method: 'PATCH', body: JSON.stringify(change) });
+    await this.load();
+  }
+
+  groupMembers(id: string): Promise<GroupMember[]> {
+    return this.api.request<GroupMember[]>(`${this.friendsPath()}/${id}/group/members`);
+  }
+
+  /** Add one of my confirmed friends (my entry `friendId`) to the group. */
+  async addGroupMember(id: string, friendId: string): Promise<void> {
+    await this.api.request(`${this.friendsPath()}/${id}/group/members`, { method: 'POST', body: JSON.stringify({ friendId }) });
+    await this.load();
+  }
+
+  /** Remove a member (the maker removes others; anybody can remove themselves). */
+  async removeGroupMember(id: string, memberUid: string): Promise<void> {
+    await this.api.request(`${this.friendsPath()}/${id}/group/members/${memberUid}`, { method: 'DELETE' });
+    await this.load();
+  }
+
+  /** Make a group instead of adding a person: it is a friend entry of mine (a seat). Answers with its id. */
+  async addGroup(name: string): Promise<string> {
+    if (!this.circle()) await this.load();
+    if (!this.circle()) throw new ApiError(tr('core.couldNotLoadYour', 'Could not load your circle. Is the backend running?'), 503);
+    const made = await this.api.request<{ id: string }>(`${this.friendsPath()}/group`, { method: 'POST', body: JSON.stringify({ name }) });
+    await this.load(); // the list has the new entry (with its seat)
+    return made.id;
   }
 
   /** "This is really them": hides the unverified warning of a friend. */

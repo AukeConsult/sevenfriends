@@ -14,5 +14,7 @@
   "dropOnASeat": "किसी सीट या शांत सर्कल पर छोड़ें",
   "dropOnASeat2": "किसी सीट पर छोड़ें",
   "pressAndHoldA": "हिलाने के लिए {{ one }} को दबाकर रखें",
-  "seatsExplained": "7 seats, 7 close friends. Put a friend to sleep to free a seat: the chat is kept."
+  "seatsExplained": "7 seats, 7 close friends. Put a friend to sleep to free a seat: the chat is kept.",
+  "groupCount": "Group · {{ count }} people",
+  "groupOnlyYou": "Group · only you"
 }

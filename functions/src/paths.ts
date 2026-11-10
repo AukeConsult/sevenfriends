@@ -1,6 +1,7 @@
 import { DocumentData, DocumentReference, getFirestore } from "firebase-admin/firestore";
 import {
   FRIEND_CIRCLE_COLLECTION,
+  GROUP_COLLECTION,
   FRIEND_REQUEST_COLLECTION,
   INCOMING_SIGNAL_COLLECTION,
   KEY_BACKUP_COLLECTION,
@@ -19,6 +20,8 @@ import {
 /** safebox/{connectionId}/items: the files two friends share */
 export const safeboxItems = (connectionId: string) => getFirestore().collection(SAFEBOX_COLLECTION).doc(connectionId).collection(SAFEBOX_ITEMS);
 /** recovery-request/{connectionId} */
+/** friend-group/{groupId}: a group and who is in it */
+export const groupDoc = (groupId: string) => getFirestore().collection(GROUP_COLLECTION).doc(groupId);
 export const recoveryDoc = (connectionId: string) => getFirestore().collection(RECOVERY_COLLECTION).doc(connectionId);
 export const userDoc = (uid: string) => getFirestore().collection(USER_ACCOUNT_COLLECTION).doc(uid);
 export const circleCol = (uid: string) => userDoc(uid).collection(FRIEND_CIRCLE_COLLECTION);
