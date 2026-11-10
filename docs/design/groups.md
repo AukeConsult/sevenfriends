@@ -25,7 +25,7 @@ Each member keeps the group in a circle of the same kind as their friendship wit
 | Change name, description, picture | `PATCH /:id/group` `{ name?, description?, picture? }` (`picture: null` removes it) | any member |
 | See the members | `GET /:id/group/members` → `GroupMember[]` | any member |
 | Add a member | `POST /:id/group/members` `{ friendId }` | any member, one of **their own confirmed friends** |
-| Remove a member | `DELETE /:id/group/members/:memberUid` | the maker removes others; anybody removes themselves |
+| Remove a member | `DELETE /:id/group/members/:memberUid` | the maker removes anybody; whoever added a member removes that member; anybody removes themselves (`canRemove` in the member list) |
 | Leave / delete | `DELETE /:id` | the same as removing myself |
 | Sleep list, seat, messages, safebox | the same routes as for a friend | any member |
 | Picture | `GET /:id/picture` | any member |
@@ -43,12 +43,21 @@ Creates `friend-group/{id}` and my entry in one transaction. Refused with 409 wh
 
 ### Removing a member
 - Their entry and their copies of the messages go and they get no more safebox reminders; the others keep the group, the messages (also the ones the removed person wrote) and the safebox.
-- Only the maker may remove others (403 otherwise). Anybody may remove themselves.
+- Who may remove whom: the maker anybody (not themselves: they leave), a member the people they added, anybody themselves. The group remembers who added whom (`invitedBy` on the group document, shown in the member list as "added by"); when the person who added somebody leaves, that member has no inviter any more. Nobody removes the maker. Planned: any member can *request* a removal that the maker confirms (to be designed).
+- **Their items in the group's safebox go too**: every safebox item has an owner (the person who saved it, `addedBy`; an edit by someone else does not change it). When a member is removed or leaves, everything they saved is deleted with its files, previews, attachments and reminders (`deleteItemsOf` in `safebox.ts`). What others saved stays, and so does what others attached to their own items. Links between items (relations) are not looked at: they are locked, so the server cannot tell which items they join.
 - The **last** member to go deletes the group, its safebox and the files of the messages (`leaveGroup`).
 - Deleting my account does the same for every group I am in (`erase.ts`).
 
 ### Changing the group
 `updateGroup` writes the group document and copies the name, description and the time the picture changed into every member's entry, so every list shows it. The picture is a data URL (JPEG, PNG or WebP, at most `MAX_PICTURE_BYTES`) kept in the group document; the app asks for it once per version (`pictureAt`), like a friend's picture.
+
+## Keys and locking
+Same model as a friendship, over all members (see `docs/design/safebox-encryption.md`):
+- `GET .../safebox/keys` answers `BoxKeys`: my keys and `others`, every other person with their name and keys in use (a friendship: one person, and `friend` / `friendUid` as before; a group: `friendUid` is empty and `friend` is empty).
+- An item or message is locked with its own key, copied once for every key in use of me and every other member (`recipientsOf(me, keys)`, shared model `keys.ts`). The server checks the copies with `wrapsCover` over the current members: a member who joined or left, or a key that changed meanwhile, gives 409 and the app asks again.
+- Locking is on only when **everybody** has a key (`keyStatus` is `both`); otherwise the group works as before (readable by the server) and the Locking page names who has no key. A group of only me has nobody to wait for.
+- A new member's key is not used for what was written before they joined (they read from the day they joined); a removed member is no longer locked for.
+- Pinned by `functions/test/group-keys.test.ts`.
 
 ## What a group does not have
 A group is not a person: no presence, no mood, no country, no phone/email, no "not verified" warning, no key recovery by a friend (the recovery routes answer 403 for a group), no circle profile. Its picture is the group's own; without one the app shows `icons/friends/group.svg`, never a seat icon.
@@ -60,6 +69,6 @@ A group is not a person: no presence, no mood, no country, no phone/email, no "n
 
 ## Not done yet
 1. **Full seats when adding**: the person is refused (409). Options: a waiting list, a pending entry they accept, or the sleep list.
-2. **Locking for all members' keys**: the send path loops over all peers, but sending encrypted messages and safebox items with the keys of several people (`BoxKeys` for several others) is not tested beyond one member.
-3. **Open questions**: who may add and remove (now: anyone adds, only the maker removes), the size limit (now 20), whether joining needs consent or a key, history for new members (now: none).
+2. **Pinning of members' keys**: a group has no "did you change phone?" check yet (`friendFingerprints` is empty for a group), so a member's key is trusted when first seen, and members you are not friends with are not verified by you.
+3. **Open questions**: who may add and remove (now: anyone adds, the maker and the one who added a member remove), the size limit (now 20), whether joining needs consent or a key, history for new members (now: none).
 4. Push and sleep per member, the translations of the new texts (English only), and a check that a group a member is added to opens correctly on their device.

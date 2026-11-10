@@ -40,7 +40,7 @@
     } @else if (keyStatus() !== 'both') {
       <!-- never stored unlocked: both of us need a key -->
       <div class="alert alert-warning" role="status">
-        @if (keyStatus() === 'me') { {{ t('safebox.object.friendHasNoKey', { friendName: friendName() }) || friendName() + ' has no encryption key yet, so this cannot be locked for you both. Ask them to set one up in Settings → Privacy lock.' }} }
+        @if (keyStatus() === 'me') { {{ t('safebox.object.friendHasNoKey', { friendName: whoLacksKey() }) || whoLacksKey() + ' has no encryption key yet, so this cannot be locked for you both. Ask them to set one up in Settings → Privacy lock.' }} }
         @else { {{ t('safebox.object.youHaveNoKey') || 'This is always locked, and you need an encryption key for that.' }} <a routerLink="/settings/encryption">{{ t('safebox.common.setUpAKey') || 'Set up a key' }}</a> }
       </div>
     }

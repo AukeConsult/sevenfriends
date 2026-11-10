@@ -42,8 +42,8 @@
         <ul class="sf-list">
           @for (m of members(); track m.uid) {
             <li class="sf-list-item">
-              <span class="sf-list-text">{{ m.you ? (t('friendProfile.you') || 'You') + ' · ' + m.name : m.name }}@if (m.creator) { <span class="sf-hint"> · {{ t('friendProfile.madeTheGroup') || 'made the group' }}</span> }</span>
-              @if (!m.you && iMadeIt()) { <button type="button" class="btn btn-outline-danger btn-sm" (click)="removeMember(f, m)" [disabled]="busy()">{{ t('friendProfile.remove') || 'Remove' }}</button> }
+              <span class="sf-list-text">{{ m.you ? (t('friendProfile.you') || 'You') + ' · ' + m.name : m.name }}@if (m.creator) { <span class="sf-hint"> · {{ t('friendProfile.madeTheGroup') || 'made the group' }}</span> } @else if (inviterName(m); as by) { <span class="sf-hint"> · {{ t('friendProfile.addedBy', { name: by }) || 'added by ' + by }}</span> }</span>
+              @if (m.canRemove) { <button type="button" class="btn btn-outline-danger btn-sm" (click)="removeMember(f, m)" [disabled]="busy()">{{ t('friendProfile.remove') || 'Remove' }}</button> }
             </li>
           }
         </ul>

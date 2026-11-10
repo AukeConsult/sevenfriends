@@ -89,6 +89,7 @@ export class SafeboxObject {
   protected readonly conflict = signal(false);
   protected readonly confirmDelete = signal(false);
   protected readonly keyStatus = this.ctx.keyStatus;
+  protected readonly whoLacksKey = this.ctx.whoLacksKey;
   protected readonly boxKeys = this.ctx.boxKeys;
   private readonly attachments = viewChild(SafeboxAttachments);
   protected readonly list = ['/friends', this.friendId, 'safebox'];
@@ -143,11 +144,15 @@ export class SafeboxObject {
   private setPoint(lat: number, lng: number, fromMap: boolean, address?: string): void {
     this.fromMap = fromMap;
     this.values.update((v) => ({ ...v, lat: lat.toFixed(6), lng: lng.toFixed(6), ...(address !== undefined ? { address } : {}) }));
-    if (address !== undefined) this.autoAddress = true;
-    else void this.addressOf(lat, lng);
+    if (address !== undefined) {
+      this.autoAddress = true;
+      this.placeSet.update((n) => n + 1);
+    } else void this.addressOf(lat, lng);
   }
 
   private addressAsk = 0;
+  /** counts the places that were set (a tap, a drag, this device, a search result): a new item is made after the latest one is complete */
+  private readonly placeSet = signal(0);
 
   /** The address of a position, from OpenStreetMap's reverse lookup; only the answer for the latest tap is written in. */
   private async addressOf(lat: number, lng: number): Promise<void> {
@@ -159,9 +164,13 @@ export class SafeboxObject {
       if (name && ask === this.addressAsk) {
         this.autoAddress = true;
         this.values.update((v) => ({ ...v, address: name.slice(0, 500) }));
+        // a place needs a name to be saved: a place set on the map is called after the first part of its address, until the person writes another name
+        if (!this.title().trim()) this.title.set(name.split(',')[0].trim().slice(0, this.titleMax));
       }
     } catch {
       /* the address can be written by hand */
+    } finally {
+      if (ask === this.addressAsk) this.placeSet.update((n) => n + 1);
     }
   }
 
@@ -312,6 +321,14 @@ export class SafeboxObject {
     effect(() => {
       this.values(); // the pin follows the position
       this.showPin();
+    });
+    // a NEW place: a tap or a drag on the map, "Use my location" and a search result are not a field that is left, so nothing would make the item;
+    // once the place is set (and the name and the rest are there) it is made a moment later. Writing the name does not trigger it: that is saved when the field is left.
+    effect((onCleanup) => {
+      this.placeSet();
+      if (!this.isNew || this.loading() || !this.kind()?.located || !untracked(this.canSave)) return;
+      const timer = setTimeout(() => void this.save(), 800);
+      onCleanup(() => clearTimeout(timer));
     });
     // autosave: a change to an item that exists is saved a moment after the last key press (also once a save in progress is done)
     effect((onCleanup) => {

@@ -6,7 +6,7 @@ import { KeysService } from '../core/keys.service';
 import { SafeboxService } from '../core/safebox.service';
 import { UiPreferencesService } from '../core/ui-preferences';
 import { ApiError } from '../core/api.service';
-import { BoxKeys, SafeboxItem, profileColorHex, profileColorInk, readableFingerprint } from '../models';
+import { BoxKeys, BoxPerson, SafeboxItem, profileColorHex, profileColorInk, readableFingerprint } from '../models';
 import { tr } from '../core/i18n';
 
 /** What the conversation tells the header it can do (the sort order and the clean-up belong to the feed, so the menu shows them only while the feed is open). */
@@ -112,19 +112,31 @@ export class FriendContext {
     const state = this.keys.state();
     if (!box || state === 'checking') return 'checking';
     const mine = state === 'ready' && box.mine.some((k) => k.id === this.keys.thisKeyId());
-    const friend = box.friend.length > 0;
+    // everybody else must have a key: my friend, or every other member of a group (a group of only me has nobody else to wait for)
+    const friend = this.others().every((o) => o.keys.length > 0);
     return mine && friend ? 'both' : friend ? 'me' : mine ? 'friend' : 'none';
   });
   /** who has a key: me (on this device) and my friend (on any device); null while it is not known */
   readonly meHasKey = computed(() => (this.keyStatus() === 'checking' ? null : this.keyStatus() === 'both' || this.keyStatus() === 'friend'));
   readonly friendHasKey = computed(() => (this.keyStatus() === 'checking' ? null : this.keyStatus() === 'both' || this.keyStatus() === 'me'));
-  /** the keys in use of my friend (their codes are shown on the locking page, to compare with what they read from their own device) */
-  readonly friendKeys = computed(() => this.boxKeys()?.friend ?? []);
-  /** the fingerprints of my friend's keys (the question "did you change phone?" is asked when one is new on this device) */
-  readonly friendFingerprints = computed(() => this.friendKeys().filter((k) => !k.revoked).map((k) => k.fingerprint));
+  /** the other people of this connection with their keys: my friend, or the other members of a group */
+  readonly others = computed<BoxPerson[]>(() => {
+    const box = this.boxKeys();
+    return box ? (box.others ?? [{ uid: box.friendUid, name: '', keys: box.friend }]) : [];
+  });
+  /** this is a group (several people share the keys; see docs/design/groups.md) */
+  readonly isGroup = computed(() => this.friend()?.group === true);
+  /** the other people who have no key yet (for a group: the names to ask) */
+  readonly withoutKey = computed(() => this.others().filter((o) => o.keys.length === 0));
+  /** who must still make a key: my friend, or the names of the members of a group who have none */
+  readonly whoLacksKey = computed(() => (this.isGroup() ? this.withoutKey().map((o) => o.name).join(', ') || this.friendName() : this.friendName()));
+  /** the keys in use of my friend, or of all other members (their codes are shown on the locking page, to compare with what they read from their own device) */
+  readonly friendKeys = computed(() => this.others().flatMap((o) => o.keys));
+  /** the fingerprints of my friend's keys (the question "did you change phone?" is asked when one is new on this device). A group has no such check yet. */
+  readonly friendFingerprints = computed(() => (this.isGroup() ? [] : this.friendKeys().filter((k) => !k.revoked).map((k) => k.fingerprint)));
   readonly readable = readableFingerprint;
   /** how many keys in use the server lists for me and for my friend (for the details line) */
-  readonly serverKeys = computed(() => ({ mine: this.boxKeys()?.mine.length ?? 0, friend: this.boxKeys()?.friend.length ?? 0 }));
+  readonly serverKeys = computed(() => ({ mine: this.boxKeys()?.mine.length ?? 0, friend: this.friendKeys().length }));
   /** both of us have a key (mine on this device, my friend's on any device) */
   readonly bothHaveKeys = computed(() => this.keyStatus() === 'both');
   /** new messages are locked: both have a key and locking is not switched off (the same choice as for new files in the safebox) */

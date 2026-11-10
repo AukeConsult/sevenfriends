@@ -28,5 +28,6 @@
   "addAPerson": "Add a friend to the group",
   "group": "Group",
   "peopleCount": "people",
-  "onlyYou": "only you"
+  "onlyYou": "only you",
+  "addedBy": "added by {{ name }}"
 }

@@ -53,6 +53,7 @@ export class SafeboxNote {
   protected readonly conflict = signal(false);
   protected readonly confirmDelete = signal(false);
   protected readonly keyStatus = this.ctx.keyStatus;
+  protected readonly whoLacksKey = this.ctx.whoLacksKey;
   protected readonly boxKeys = this.ctx.boxKeys;
   private readonly attachments = viewChild(SafeboxAttachments);
 

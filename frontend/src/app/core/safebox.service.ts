@@ -1,6 +1,6 @@
 import { ActiveCircleService } from './active-circle.service';
 import { Injectable, inject } from '@angular/core';
-import { BoxKeys, NotePayload, ObjectPayload, ReminderRequest, SafeboxType, Safebox, SafeboxItem, fingerprintOf, keyIdOf } from '../models';
+import { BoxKeys, NotePayload, ObjectPayload, ReminderRequest, SafeboxType, Safebox, SafeboxItem, fingerprintOf, keyIdOf, recipientsOf } from '../models';
 import { ApiService } from './api.service';
 import { AuthService } from './auth.service';
 import { dueRange, isObjectType, summaryOf, whenOf } from './safebox-objects';
@@ -193,7 +193,7 @@ export class SafeboxService {
   async addNote(friendId: string, title: string, text: string, keys: BoxKeys): Promise<SafeboxItem> {
     const me = this.auth.user()?.uid;
     if (!me) throw new Error(tr('core.notSignedIn', 'Not signed in'));
-    const body = await sealNote(friendId, { v: 1, title, text }, this.noteHead(title, text), [{ uid: me, keys: keys.mine }, { uid: keys.friendUid, keys: keys.friend }]);
+    const body = await sealNote(friendId, { v: 1, title, text }, this.noteHead(title, text), recipientsOf(me, keys));
     return this.reveal(friendId, await this.api.request<SafeboxItem>(`${this.base(friendId)}/items`, { method: 'POST', body: JSON.stringify(body) }));
   }
 
@@ -217,7 +217,7 @@ export class SafeboxService {
   async addObject(friendId: string, type: SafeboxType, payload: ObjectPayload, keys: BoxKeys, remind: ReminderRequest | null = null): Promise<SafeboxItem> {
     const me = this.auth.user()?.uid;
     if (!me) throw new Error(tr('core.notSignedIn', 'Not signed in'));
-    const body = { ...(await sealObject(friendId, type, payload, type === 'relation' ? null : this.objectHead(type, payload), [{ uid: me, keys: keys.mine }, { uid: keys.friendUid, keys: keys.friend }])), remind };
+    const body = { ...(await sealObject(friendId, type, payload, type === 'relation' ? null : this.objectHead(type, payload), recipientsOf(me, keys))), remind };
     return this.reveal(friendId, await this.api.request<SafeboxItem>(`${this.base(friendId)}/items`, { method: 'POST', body: JSON.stringify(body) }));
   }
 
@@ -292,7 +292,7 @@ export class SafeboxService {
       kind,
       mime,
       thumb: kind === 'image' ? thumb : null,
-      recipients: [{ uid: me, keys: keys.mine }, { uid: keys.friendUid, keys: keys.friend }],
+      recipients: recipientsOf(me, keys),
     });
     const item = await this.api.request<SafeboxItem>(`${this.base(friendId)}/encrypted${parentId ? `?parent=${encodeURIComponent(parentId)}` : ''}`, { method: 'POST', body, headers: { 'Content-Type': 'application/octet-stream' } });
     return this.reveal(friendId, item);
@@ -309,7 +309,7 @@ export class SafeboxService {
     const file = (await this.api.file(`${this.base(friendId)}/${item.id}`)).blob;
     const thumb = item.hasThumb ? (await this.api.file(`${this.base(friendId)}/${item.id}/thumb`)).blob : null;
     const { kind, mime } = await classify(file, item.name);
-    const body = await sealFile({ connectionId: friendId, file, name: item.name, kind, mime, thumb, recipients: [{ uid: me, keys: keys.mine }, { uid: keys.friendUid, keys: keys.friend }] });
+    const body = await sealFile({ connectionId: friendId, file, name: item.name, kind, mime, thumb, recipients: recipientsOf(me, keys) });
     const locked = await this.api.request<SafeboxItem>(`${this.base(friendId)}/encrypted?replaces=${encodeURIComponent(item.id)}`, { method: 'POST', body, headers: { 'Content-Type': 'application/octet-stream' } });
     this.forget(friendId, item.id);
     return this.reveal(friendId, locked);

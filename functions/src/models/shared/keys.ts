@@ -29,11 +29,27 @@ export interface MyKeys {
 
 /** What GET .../safebox/keys returns: the keys in use (not retired) of me and of my friend. Files can be locked only when both lists have a key. */
 export interface BoxKeys {
-  /** the user id of my friend (the copies of a file key are filed under it) */
+  /** the user id of my friend (the copies of a file key are filed under it); empty for a group */
   friendUid: string;
   mine: PublishedKey[];
+  /** the keys of my friend; empty for a group (see `others`) */
   friend: PublishedKey[];
+  /** every OTHER person of the connection with the keys in use of each: my friend (one person), or the other members of a group (none, when I am alone in it) */
+  others: BoxPerson[];
 }
+
+/** One other person of a connection and their keys in use (`name`: as I know them). */
+export interface BoxPerson {
+  uid: string;
+  name: string;
+  keys: PublishedKey[];
+}
+
+/** Who a file, item or message is locked for: me and every other person, each with all their keys in use (one copy of the file key per key). */
+export const recipientsOf = (me: string, keys: BoxKeys): { uid: string; keys: PublishedKey[] }[] => [
+  { uid: me, keys: keys.mine },
+  ...(keys.others ?? (keys.friendUid ? [{ uid: keys.friendUid, name: '', keys: keys.friend }] : [])).map((o) => ({ uid: o.uid, keys: o.keys })),
+];
 
 /** The private key of a device, scrambled with the recovery key (AES-256-GCM): all three parts are base64. The server stores it and cannot open it. */
 export interface KeyBackup {

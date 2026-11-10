@@ -44,5 +44,8 @@
   "published": "publicerad",
   "removed": "borttagen",
   "notPublished": "inte publicerad",
-  "detailsForThisBrowser": "Detaljer för den här webbläsaren: konto …{{ slice }} · nyckel i den här webbläsaren: {{ no }}{{ published }} · nycklar i bruk på servern: du {{ mine }}, {{ friendName }} {{ friend }}"
+  "detailsForThisBrowser": "Detaljer för den här webbläsaren: konto …{{ slice }} · nyckel i den här webbläsaren: {{ no }}{{ published }} · nycklar i bruk på servern: du {{ mine }}, {{ friendName }} {{ friend }}",
+  "groupLocked": "Messages and files are locked: only the people in this group can open them.",
+  "groupSomeoneNoKey": "Not everybody has a key yet ({{ names }}). Until everyone has one, what you send can be read by our system.",
+  "groupNobodyHasAKey": "Nobody in this group has a key yet. Until everyone has one, what you send can be read by our system."
 }

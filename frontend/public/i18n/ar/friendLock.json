@@ -44,5 +44,8 @@
   "published": "منشور",
   "removed": "مُزال",
   "notPublished": "غير منشور",
-  "detailsForThisBrowser": "تفاصيل هذا المتصفح: الحساب …{{ slice }} · المفتاح في هذا المتصفح: {{ no }}{{ published }} · المفاتيح قيد الاستخدام على الخادم: أنت {{ mine }}، {{ friendName }} {{ friend }}"
+  "detailsForThisBrowser": "تفاصيل هذا المتصفح: الحساب …{{ slice }} · المفتاح في هذا المتصفح: {{ no }}{{ published }} · المفاتيح قيد الاستخدام على الخادم: أنت {{ mine }}، {{ friendName }} {{ friend }}",
+  "groupLocked": "Messages and files are locked: only the people in this group can open them.",
+  "groupSomeoneNoKey": "Not everybody has a key yet ({{ names }}). Until everyone has one, what you send can be read by our system.",
+  "groupNobodyHasAKey": "Nobody in this group has a key yet. Until everyone has one, what you send can be read by our system."
 }

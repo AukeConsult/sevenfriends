@@ -46,7 +46,6 @@ export class FriendProfile {
     const inGroup = new Set(this.members().map((m) => m.friendId));
     return this.friendsService.friends().filter((f) => !f.group && f.status === 'confirmed' && !f.asleep && !inGroup.has(f.id));
   });
-  protected readonly iMadeIt = computed(() => this.members().some((m) => m.you && m.creator));
 
   constructor() {
     effect(() => {
@@ -84,6 +83,12 @@ export class FriendProfile {
   protected async addMember(f: Friend, friendId: string): Promise<void> {
     await this.run(() => this.friendsService.addGroupMember(f.id, friendId), () => this.loadMembers(f.id));
     this.adding.set(false);
+  }
+
+  /** Who added this member ("You" for me), or '' when it is not known. */
+  protected inviterName(member: GroupMember): string {
+    const by = this.members().find((m) => m.uid === member.invitedBy);
+    return by ? (by.you ? tr('friendProfile.you', 'You') : by.name) : '';
   }
 
   protected removeMember(f: Friend, member: GroupMember): Promise<void> {

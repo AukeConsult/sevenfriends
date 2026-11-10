@@ -1,6 +1,6 @@
 import { ActiveCircleService } from './active-circle.service';
 import { Injectable, inject } from '@angular/core';
-import { ChatMessage, MediaRef, MessageEnc, MessageEncMedia } from '../models';
+import { ChatMessage, MediaRef, MessageEnc, MessageEncMedia, recipientsOf } from '../models';
 import { AuthService } from './auth.service';
 import { newMessageKey, openMessageKey, openMessageMeta, openTextWith, resealText, sealText, sealTextWith } from './box-crypto';
 import { LocalLink, localLink } from './link-embed';
@@ -55,7 +55,7 @@ export class MessageLockService {
       if (force) throw new Error(tr('core.thisMessageIsLocked', 'This message is locked, so the new text must be locked too. You and your friend both need privacy lock turned on.'));
       return null;
     }
-    return sealText(friendId, text, [{ uid: mine.uid, keys: keys.mine }, { uid: keys.friendUid, keys: keys.friend }]);
+    return sealText(friendId, text, recipientsOf(mine.uid, keys));
   }
 
   /**
@@ -72,7 +72,7 @@ export class MessageLockService {
   async sealWith(friendId: string, key: CryptoKey, text: string, media: MessageEncMedia): Promise<SealedText> {
     const [keys, mine] = await Promise.all([this.safebox.keys(friendId), this.myKey()]);
     if (!mine || !keys.mine.some((k) => k.id === mine.keyId) || !keys.friend.length) throw new Error(tr('core.thisMessageIsLocked2', 'This message is locked, so you and your friend both need privacy lock turned on. Try again in a moment.'));
-    return sealTextWith(friendId, key, text, [{ uid: mine.uid, keys: keys.mine }, { uid: keys.friendUid, keys: keys.friend }], media);
+    return sealTextWith(friendId, key, text, recipientsOf(mine.uid, keys), media);
   }
 
   /** A new text for a message that is locked: locked with the key the message already has, so the same keys (and nobody else) can read it. Throws when this device cannot open the message. */

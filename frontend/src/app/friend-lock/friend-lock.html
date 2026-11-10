@@ -6,6 +6,15 @@
 
   <section>
     <p>
+      @if (ctx.isGroup()) {
+        @switch (ctx.keyStatus()) {
+          @case ('both') { {{ t('friendLock.groupLocked') || 'Messages and files are locked: only the people in this group can open them.' }} }
+          @case ('me') { {{ ctx.withoutKey().length ? (t('friendLock.groupSomeoneNoKey', { names: ctx.whoLacksKey() }) || 'Not everybody has a key yet (' + ctx.whoLacksKey() + '). Until everyone has one, what you send can be read by our system.') : (t('friendLock.friendnameHasAKey', { friendName: friendName() }) || 'The others are ready, but you are not. Make or restore your key on this device. Until then, what you send can be read by our system.') }} }
+          @case ('friend') { {{ t('friendLock.groupSomeoneNoKey', { names: ctx.whoLacksKey() }) || 'Not everybody has a key yet (' + ctx.whoLacksKey() + '). Until everyone has one, what you send can be read by our system.' }} }
+          @case ('none') { {{ t('friendLock.groupNobodyHasAKey') || 'Nobody in this group has a key yet. Until everyone has one, what you send can be read by our system.' }} }
+          @default { {{ t('friendLock.checkingTheKeys') || 'Checking the keys…' }} }
+        }
+      } @else {
       @switch (ctx.keyStatus()) {
         @case ('both') { {{ t('friendLock.yourMessagesAndFiles', { friendName: friendName() }) || 'Your messages and files are locked: only you and ' + friendName() + ' can open them.' }} }
         @case ('me') { {{ t('friendLock.friendnameHasAKey', { friendName: friendName() }) || friendName() + ' is ready, but you are not. Make or restore your key on this device. Until then, what you send can be read by our system.' }} }
@@ -13,11 +22,18 @@
         @case ('none') { {{ t('friendLock.neitherOfYouHas') || 'Neither of you has a key yet. Until you both have one, what you send can be read by our system.' }} }
         @default { {{ t('friendLock.checkingTheKeys') || 'Checking the keys…' }} }
       }
+      }
     </p>
     @if (ctx.keyStatus() !== 'checking') {
       <ul class="sf-box-keystatus list-unstyled" [attr.aria-label]="t('friendLock.whoHasAnEncryption') || 'Who has an encryption key'">
         <li [class.sf-has]="ctx.meHasKey()"><span aria-hidden="true">{{ ctx.meHasKey() ? '✓' : '✗' }}</span> {{ t('friendLock.youYet', { yet: ctx.meHasKey() ? (t('friendLock.hasAKey') || 'has a key') : (t('friendLock.noKeyYet') || 'no key yet') }) || 'You: ' + (ctx.meHasKey() ? (t('friendLock.hasAKey') || 'has a key') : (t('friendLock.noKeyYet') || 'no key yet')) }}</li>
+        @if (ctx.isGroup()) {
+          @for (o of ctx.others(); track o.uid) {
+            <li [class.sf-has]="o.keys.length > 0"><span aria-hidden="true">{{ o.keys.length ? '✓' : '✗' }}</span> {{ o.name }}: {{ o.keys.length ? (t('friendLock.hasAKey') || 'has a key') : (t('friendLock.noKeyYet') || 'no key yet') }}</li>
+          }
+        } @else {
         <li [class.sf-has]="ctx.friendHasKey()"><span aria-hidden="true">{{ ctx.friendHasKey() ? '✓' : '✗' }}</span> {{ friendName() }}: {{ ctx.friendHasKey() ? 'has a key' : 'no key yet' }}</li>
+        }
       </ul>
     }
     @if (ctx.meHasKey() === false) {
@@ -75,9 +91,13 @@
       <p>
         {{ t('friendLock.eachKeyHasA', { friendName: friendName() }) || 'Each key has a code. To be sure ' + friendName() + '\'s key is really theirs, ask them to read you the code under Settings → Privacy lock on their device, or compare it in person. If it is the same as the code below, the key is theirs.' }}
       </p>
-      @for (key of ctx.friendKeys(); track key.id) {
-        <p class="sf-hint m-0">{{ friendName() }}: {{ key.label || 'a device' }}</p>
+      @for (person of ctx.others(); track person.uid) {
+      @for (key of person.keys; track key.id) {
+        <p class="sf-hint m-0">{{ person.name || friendName() }}: {{ key.label || 'a device' }}</p>
         <pre class="sf-fingerprint">{{ ctx.readable(key.fingerprint) }}</pre>
+      } @empty {
+        <p class="sf-hint">{{ t('friendLock.friendnameHasNoKey', { friendName: person.name || friendName() }) || (person.name || friendName()) + ' has no key yet.' }}</p>
+      }
       } @empty {
         <p class="sf-hint">{{ t('friendLock.friendnameHasNoKey', { friendName: friendName() }) || friendName() + ' has no key yet.' }}</p>
       }

@@ -44,5 +44,8 @@
   "published": "已发布",
   "removed": "已移除",
   "notPublished": "未发布",
-  "detailsForThisBrowser": "这个浏览器的详情：账号 …{{ slice }} · 此浏览器中的密钥：{{ no }}{{ published }} · 服务器上在用的密钥：你 {{ mine }} 把，{{ friendName }} {{ friend }} 把"
+  "detailsForThisBrowser": "这个浏览器的详情：账号 …{{ slice }} · 此浏览器中的密钥：{{ no }}{{ published }} · 服务器上在用的密钥：你 {{ mine }} 把，{{ friendName }} {{ friend }} 把",
+  "groupLocked": "Messages and files are locked: only the people in this group can open them.",
+  "groupSomeoneNoKey": "Not everybody has a key yet ({{ names }}). Until everyone has one, what you send can be read by our system.",
+  "groupNobodyHasAKey": "Nobody in this group has a key yet. Until everyone has one, what you send can be read by our system."
 }

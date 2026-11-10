@@ -44,5 +44,8 @@
   "published": "opublikowany",
   "removed": "usunięty",
   "notPublished": "nieopublikowany",
-  "detailsForThisBrowser": "Szczegóły dla tej przeglądarki: konto …{{ slice }} · klucz w tej przeglądarce: {{ no }}{{ published }} · klucze w użyciu na serwerze: Ty {{ mine }}, {{ friendName }} {{ friend }}"
+  "detailsForThisBrowser": "Szczegóły dla tej przeglądarki: konto …{{ slice }} · klucz w tej przeglądarce: {{ no }}{{ published }} · klucze w użyciu na serwerze: Ty {{ mine }}, {{ friendName }} {{ friend }}",
+  "groupLocked": "Messages and files are locked: only the people in this group can open them.",
+  "groupSomeoneNoKey": "Not everybody has a key yet ({{ names }}). Until everyone has one, what you send can be read by our system.",
+  "groupNobodyHasAKey": "Nobody in this group has a key yet. Until everyone has one, what you send can be read by our system."
 }

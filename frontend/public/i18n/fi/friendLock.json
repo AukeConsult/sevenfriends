@@ -44,5 +44,8 @@
   "published": "julkaistu",
   "removed": "poistettu",
   "notPublished": "ei julkaistu",
-  "detailsForThisBrowser": "Tämän selaimen tiedot: tili …{{ slice }} · avain tässä selaimessa: {{ no }}{{ published }} · palvelimella käytössä olevat avaimet: sinä {{ mine }}, {{ friendName }} {{ friend }}"
+  "detailsForThisBrowser": "Tämän selaimen tiedot: tili …{{ slice }} · avain tässä selaimessa: {{ no }}{{ published }} · palvelimella käytössä olevat avaimet: sinä {{ mine }}, {{ friendName }} {{ friend }}",
+  "groupLocked": "Messages and files are locked: only the people in this group can open them.",
+  "groupSomeoneNoKey": "Not everybody has a key yet ({{ names }}). Until everyone has one, what you send can be read by our system.",
+  "groupNobodyHasAKey": "Nobody in this group has a key yet. Until everyone has one, what you send can be read by our system."
 }

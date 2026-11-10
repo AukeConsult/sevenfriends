@@ -44,5 +44,8 @@
   "published": "yayımlandı",
   "removed": "kaldırıldı",
   "notPublished": "yayımlanmadı",
-  "detailsForThisBrowser": "Bu tarayıcının ayrıntıları: hesap …{{ slice }} · bu tarayıcıdaki anahtar: {{ no }}{{ published }} · sunucuda kullanımdaki anahtarlar: sen {{ mine }}, {{ friendName }} {{ friend }}"
+  "detailsForThisBrowser": "Bu tarayıcının ayrıntıları: hesap …{{ slice }} · bu tarayıcıdaki anahtar: {{ no }}{{ published }} · sunucuda kullanımdaki anahtarlar: sen {{ mine }}, {{ friendName }} {{ friend }}",
+  "groupLocked": "Messages and files are locked: only the people in this group can open them.",
+  "groupSomeoneNoKey": "Not everybody has a key yet ({{ names }}). Until everyone has one, what you send can be read by our system.",
+  "groupNobodyHasAKey": "Nobody in this group has a key yet. Until everyone has one, what you send can be read by our system."
 }

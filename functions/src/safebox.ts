@@ -7,7 +7,7 @@ import { Peer, connectionOf, peerEntryRef, peerSleeps } from "./conversation";
 import { ALBUM_PICTURES_MAX, ATTACHMENTS_MAX, CASE_DOCUMENTS_MAX, BoxKeys, ENC_HEADER_MAX, MediaRef, SAFEBOX_OBJECT_TYPES, Safebox, SafeboxItem } from "./models";
 import { ParsedReminder, lockedBytes, objectBytes, parseEncryptedUpload, parseNewObject, parseObjectChange, wrapsCover, wrapsFor } from "./box-encryption";
 import { publishedKeysOf } from "./keys";
-import { circleCol, messageCol, safeboxItems } from "./paths";
+import { circleCol, messageCol, safeboxItems, userFields } from "./paths";
 import { nameOf, sendPush } from "./push";
 import { touchFeed, touchFeedIfExists } from "./sync";
 import { checkBytes, checkSafeboxFile, cleanFileName, deleteFolder, deleteObject, isObjectId, objectInfo, putObject, readAll, readObject } from "./sf-cache";
@@ -140,8 +140,18 @@ safeboxRouter.get(
   asyncHandler(async (req, res) => {
     const connection = await connectionOf(req, res);
     if (!connection) return;
-    const [mine, friend] = await Promise.all([publishedKeysOf(uidOf(res)), connection.group ? Promise.resolve([]) : publishedKeysOf(connection.peerUid)]); // a group: its other members come in a later step
-    res.json({ friendUid: connection.peerUid, mine, friend } satisfies BoxKeys);
+    const [mine, others] = await Promise.all([
+      publishedKeysOf(uidOf(res)),
+      Promise.all(
+        connection.peers.map(async (peer) => ({
+          uid: peer.uid,
+          name: connection.group ? (((await userFields(peer.uid, "displayName"))?.displayName as string | undefined) ?? "Someone") : connection.name,
+          keys: await publishedKeysOf(peer.uid),
+        })),
+      ),
+    ]);
+    // a friendship: `friendUid` and `friend` as before (and the friend is the one entry of `others`); a group: only `others`
+    res.json({ friendUid: connection.group ? "" : connection.peerUid, mine, friend: connection.group ? [] : (others[0]?.keys ?? []), others } satisfies BoxKeys);
   }),
 );
 
@@ -605,6 +615,29 @@ async function sendFile(req: Request, res: Response, thumb: boolean): Promise<vo
 }
 safeboxRouter.get("/:itemId/thumb", asyncHandler((req, res) => sendFile(req, res, true)));
 safeboxRouter.get("/:itemId", asyncHandler((req, res) => sendFile(req, res, false)));
+
+/**
+ * A person who leaves a group (or is removed) takes their items out of its box: everything they saved, with the files, the previews, the attachments of
+ * their objects and the reminders. What others saved stays (also what the others attached to their own items). Never raises.
+ */
+export async function deleteItemsOf(connectionId: string, uid: string): Promise<void> {
+  try {
+    const owner = boxOwner(connectionId);
+    const mine = (await safeboxItems(connectionId).where("addedBy", "==", uid).select().get()).docs;
+    const doomed = new Map(mine.map((d) => [d.id, d.ref]));
+    for (const item of mine) {
+      for (const child of (await safeboxItems(connectionId).where("parentId", "==", item.id).select().get()).docs) doomed.set(child.id, child.ref);
+    }
+    for (const [id, ref] of doomed) {
+      await deleteObject(owner, id); // an object has no stored file: nothing is found, nothing fails
+      await deleteObject(owner, `${id}.thumb`);
+      await ref.delete();
+      await reminderRef(connectionId, id).delete();
+    }
+  } catch (err) {
+    console.error(`Could not remove the items of ${uid} from the safebox of ${connectionId}`, err);
+  }
+}
 
 /** The whole box of a friendship goes: the list and the files (when the friendship ends or an account is erased). Never raises. */
 export async function deleteBox(connectionId: string): Promise<void> {

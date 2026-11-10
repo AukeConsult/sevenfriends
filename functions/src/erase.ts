@@ -1,7 +1,8 @@
 import { getAuth } from "firebase-admin/auth";
 import { DocumentReference, Transaction, getFirestore } from "firebase-admin/firestore";
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAIL_COLLECTION } from "./constants";
-import { circleCol, friendRequestCol, groupDoc, keyBackupDoc, keyCol, messageCol, profilePictureDoc, pushDeviceCol, signalCol, userDoc } from "./paths";
+import { circleCol, friendRequestCol, keyBackupDoc, keyCol, messageCol, profilePictureDoc, pushDeviceCol, signalCol, userDoc } from "./paths";
+import { leaveGroup } from "./groups";
 import { MediaRef } from "./models";
 import { deleteBox } from "./safebox";
 import { deleteFolder, deleteObjects } from "./sf-cache";
@@ -35,6 +36,7 @@ type Peer = { uid: string | null; circleId: string | null; signaled: string[] };
  * the data is already gone and the request can simply be repeated (safe to run twice).
  */
 export async function eraseUser(uid: string): Promise<void> {
+  await leaveGroups(uid); // first: the groups go on without me (the last one out deletes the group), and nothing below treats a group as a friendship
   const files = new Map<string, MediaRef>(); // the files of the messages that go (they may be in the friends' folders)
   const boxes = new Set<string>(); // the connections of the person: each has a safebox
   await getFirestore().runTransaction((tx) => eraseInTransaction(tx, uid, files, false, boxes)); // read only: which files will go
@@ -52,6 +54,13 @@ export async function eraseUser(uid: string): Promise<void> {
     await getAuth().deleteUser(uid);
   } catch (err: any) {
     if (err?.code !== "auth/user-not-found") throw err; // "not found" is fine (a repeated erase)
+  }
+}
+
+/** Leave every group the person is in: their entry, their copies of the messages and their items in its box go, the others keep the group. */
+async function leaveGroups(uid: string): Promise<void> {
+  for (const circle of (await circleCol(uid).get()).docs) {
+    for (const entry of (await circle.ref.collection(FRIENDS_SUBCOLLECTION).where("kind", "==", "group").get()).docs) await leaveGroup(uid, entry.ref, entry.id);
   }
 }
 
@@ -84,8 +93,8 @@ async function eraseInTransaction(tx: Transaction, uid: string, files: Map<strin
     for (const entry of (await tx.get(circle.ref.collection(FRIENDS_SUBCOLLECTION))).docs) {
       drop(entry.ref);
       const data = entry.data();
+      if (data.kind === "group") continue; // left before (`leaveGroups`); a group is never wiped for the others here
       note(entry.id, { uid: data.linkedUid, circleId: data.peerCircleId, signaled: data.signaledUids });
-      if (data.kind === "group") drop(groupDoc(entry.id)); // a group I made: only I am in it until members can join (then I leave it instead)
     }
   }
 

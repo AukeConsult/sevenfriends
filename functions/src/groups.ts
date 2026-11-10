@@ -8,7 +8,7 @@ import { parsePicture } from "./avatar";
 import { GroupMember, MediaRef } from "./models";
 import { touchSync } from "./sync";
 import { deleteObjects } from "./sf-cache";
-import { deleteBox } from "./safebox";
+import { deleteBox, deleteItemsOf } from "./safebox";
 import { text } from "./validation";
 
 /**
@@ -70,16 +70,20 @@ export async function leaveGroup(uid: string, entryRef: DocumentReference, group
   const group = groupDoc(groupId);
   let last = false;
   await getFirestore().runTransaction(async (tx) => {
-    const members = { ...(((await tx.get(group)).data()?.members ?? {}) as Record<string, string>) };
+    const data = (await tx.get(group)).data();
+    const members = { ...((data?.members ?? {}) as Record<string, string>) };
     delete members[uid];
+    // nobody is "invited by" a person who has left, and the one who left was invited by nobody any more
+    const invitedBy = Object.fromEntries(Object.entries((data?.invitedBy ?? {}) as Record<string, string>).filter(([member, by]) => member !== uid && by !== uid));
     last = Object.keys(members).length === 0;
     tx.delete(entryRef);
     mine.docs.forEach((d) => tx.delete(d.ref));
     if (last) tx.delete(group);
-    else tx.update(group, { members: { ...members } });
+    else tx.update(group, { members: { ...members }, invitedBy });
   });
   if (!last) {
     await syncMemberCount(groupId);
+    await deleteItemsOf(groupId, uid);
     await dropReminders(groupId, uid);
   }
   if (last) {
@@ -175,6 +179,8 @@ export async function listGroupMembers(req: Request, res: Response, groupId: str
       you: memberUid === uid,
       creator: data.createdBy === memberUid,
       friendId: friend?.id ?? null,
+      invitedBy: ((data.invitedBy ?? {}) as Record<string, string>)[memberUid] ?? null,
+      canRemove: memberUid !== uid && canRemove(data, uid, memberUid),
     });
   }
   res.json(out);
@@ -235,7 +241,7 @@ export async function addGroupMember(req: Request, res: Response, groupId: strin
       members: Object.keys(members).length + 1,
       createdAt: FieldValue.serverTimestamp(),
     });
-    tx.update(group, { [`members.${newUid}`]: circleId });
+    tx.update(group, { [`members.${newUid}`]: circleId, [`invitedBy.${newUid}`]: uid });
     return true;
   });
   if (!added) {
@@ -247,7 +253,7 @@ export async function addGroupMember(req: Request, res: Response, groupId: strin
   res.status(204).end();
 }
 
-/** Remove a member: `memberUid` is me (leave), or somebody else when I made the group. Their copies of the messages go; the others keep everything. */
+/** Remove a member: `memberUid` is me (leave), or somebody else: the maker of the group can remove anybody, and a person can remove the members they invited (see `canRemove`). Their copies of the messages go; the others keep everything. */
 export async function removeGroupMember(req: Request, res: Response, groupId: string, memberUid: string): Promise<void> {
   const uid = (res.locals.token as DecodedIdToken).uid;
   const data = (await groupDoc(groupId).get()).data();
@@ -256,8 +262,8 @@ export async function removeGroupMember(req: Request, res: Response, groupId: st
     res.status(404).json({ error: "Group not found" });
     return;
   }
-  if (memberUid !== uid && data.createdBy !== uid) {
-    res.status(403).json({ error: "Only the person who made the group can remove others" });
+  if (!canRemove(data, uid, memberUid)) {
+    res.status(403).json({ error: "Only the person who made the group, or the person who added this member, can remove them" });
     return;
   }
   const ref = circleCol(memberUid).doc(members[memberUid]).collection(FRIENDS_SUBCOLLECTION).doc(groupId);
@@ -275,3 +281,7 @@ async function dropReminders(groupId: string, uid: string): Promise<void> {
     else await doc.ref.delete();
   }
 }
+
+/** May `me` remove `memberUid`? Anybody may leave; the maker removes anybody; whoever added a member removes that member. */
+const canRemove = (group: FirebaseFirestore.DocumentData, me: string, memberUid: string): boolean =>
+  memberUid === me || group.createdBy === me || (group.invitedBy as Record<string, string> | undefined)?.[memberUid] === me;

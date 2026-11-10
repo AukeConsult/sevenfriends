@@ -130,6 +130,20 @@ describe("erasing the account of the one who made it", () => {
   });
 });
 
+describe("erasing the account of a member of a group with others", () => {
+  it("the group goes on for the others: messages they can read, their items, the count; the erased person's own are gone", async () => {
+    const friendId = await connect(u(0), u(1));
+    const made = (await makeGroup(u(0), "Stays").expect(201)).body;
+    await u(0).raw("post", `/circles/default/friends/${made.id}/group/members`, { friendId }).expect(204);
+    await u(1).send(made.id, "from the one who stays");
+    await u(0).raw("delete", "/users/me", { confirm: "DELETE" }).expect(204);
+    expect(await groupDocOf(made.id)).toMatchObject({ members: { [u(1).p.uid]: "default" } });
+    expect(await entryOf(u(1), made.id)).toMatchObject({ group: true, members: 1 });
+    const feed = (await u(1).feed(made.id).expect(200)).body.messages.map((m: { text: string }) => m.text);
+    expect(feed).toEqual(["from the one who stays"]);
+  });
+});
+
 describe("the profile of a group and its members", () => {
   it("any member can change the name and the description; every member's entry follows", async () => {
     const friendId = await connect(u(0), u(1));
@@ -193,17 +207,42 @@ describe("the profile of a group and its members", () => {
     expect((await entryOf(u(0), made.id)).members).toBe(7);
   });
 
-  it("removes a member: only the maker removes others, anyone leaves; the seat is freed and the count falls", async () => {
+  it("removes a member: the maker removes anybody, whoever added a member removes that member, anybody leaves; the seat is freed and the count falls", async () => {
     const f1 = await connect(u(0), u(1));
     const f2 = await connect(u(0), u(2));
     const made = (await makeGroup(u(0), "Club").expect(201)).body;
     for (const f of [f1, f2]) await u(0).raw("post", `/circles/default/friends/${made.id}/group/members`, { friendId: f }).expect(204);
-    expect((await u(1).raw("delete", `/circles/default/friends/${made.id}/group/members/${u(2).p.uid}`)).status).toBe(403);
-    await u(0).raw("delete", `/circles/default/friends/${made.id}/group/members/${u(1).p.uid}`).expect(204);
-    expect(await entryOf(u(1), made.id)).toBeUndefined();
+    const remove = (by: User, who: User) => by.raw("delete", `/circles/default/friends/${made.id}/group/members/${who.p.uid}`);
+    expect((await remove(u(5), u(2))).status).toBe(404); // somebody outside the group
+    expect((await remove(u(2), u(1))).status).toBe(403); // added by the maker, not by this member
+    expect((await remove(u(1), u(0))).status).toBe(403); // nobody removes the maker
+    // u(1) brings u(3): u(1) removes u(3), u(2) cannot, the maker can
+    const f3 = await connect(u(1), u(3));
+    await u(1).raw("post", `/circles/default/friends/${made.id}/group/members`, { friendId: f3 }).expect(204);
+    const list = (await u(0).raw("get", `/circles/default/friends/${made.id}/group/members`).expect(200)).body;
+    expect(list.find((m: { uid: string }) => m.uid === u(3).p.uid)).toMatchObject({ invitedBy: u(1).p.uid, canRemove: true }); // the maker may
+    expect(list.find((m: { uid: string }) => m.uid === u(1).p.uid)).toMatchObject({ invitedBy: u(0).p.uid, canRemove: true });
+    expect(list.find((m: { you: boolean }) => m.you)).toMatchObject({ canRemove: false, invitedBy: null });
+    const asSecond = (await u(2).raw("get", `/circles/default/friends/${made.id}/group/members`).expect(200)).body;
+    expect(asSecond.find((m: { uid: string }) => m.uid === u(3).p.uid).canRemove).toBe(false);
+    expect((await remove(u(2), u(3))).status).toBe(403);
+    await remove(u(1), u(3)).expect(204);
+    expect(await entryOf(u(3), made.id)).toBeUndefined();
+    await remove(u(0), u(1)).expect(204); // the maker
     expect((await entryOf(u(0), made.id)).members).toBe(2);
-    await u(2).raw("delete", `/circles/default/friends/${made.id}/group/members/${u(2).p.uid}`).expect(204);
+    await remove(u(2), u(2)).expect(204); // leaving
     expect((await entryOf(u(0), made.id)).members).toBe(1);
     expect(Object.keys((await groupDocOf(made.id))?.members)).toEqual([u(0).p.uid]);
+  });
+
+  it("when the person who added somebody leaves, that member has no inviter any more (the maker can still remove them)", async () => {
+    const f1 = await connect(u(0), u(1));
+    const made = (await makeGroup(u(0), "Club").expect(201)).body;
+    await u(0).raw("post", `/circles/default/friends/${made.id}/group/members`, { friendId: f1 }).expect(204);
+    const f3 = await connect(u(1), u(3));
+    await u(1).raw("post", `/circles/default/friends/${made.id}/group/members`, { friendId: f3 }).expect(204);
+    await u(1).raw("delete", `/circles/default/friends/${made.id}/group/members/${u(1).p.uid}`).expect(204);
+    const list = (await u(0).raw("get", `/circles/default/friends/${made.id}/group/members`).expect(200)).body;
+    expect(list.find((m: { uid: string }) => m.uid === u(3).p.uid)).toMatchObject({ invitedBy: null, canRemove: true });
   });
 });

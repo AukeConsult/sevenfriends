@@ -44,5 +44,8 @@
   "published": "등록됨",
   "removed": "삭제됨",
   "notPublished": "등록 안 됨",
-  "detailsForThisBrowser": "이 브라우저의 상세 정보: 계정 …{{ slice }} · 이 브라우저의 키: {{ no }}{{ published }} · 서버에서 사용 중인 키: 나 {{ mine }}, {{ friendName }} {{ friend }}"
+  "detailsForThisBrowser": "이 브라우저의 상세 정보: 계정 …{{ slice }} · 이 브라우저의 키: {{ no }}{{ published }} · 서버에서 사용 중인 키: 나 {{ mine }}, {{ friendName }} {{ friend }}",
+  "groupLocked": "Messages and files are locked: only the people in this group can open them.",
+  "groupSomeoneNoKey": "Not everybody has a key yet ({{ names }}). Until everyone has one, what you send can be read by our system.",
+  "groupNobodyHasAKey": "Nobody in this group has a key yet. Until everyone has one, what you send can be read by our system."
 }

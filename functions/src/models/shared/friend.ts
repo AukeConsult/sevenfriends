@@ -119,4 +119,8 @@ export interface GroupMember {
   /** made the group: can remove the others */
   creator: boolean;
   friendId: string | null;
+  /** who added this person (null: the maker, or not known) */
+  invitedBy: string | null;
+  /** I may remove this person (the maker removes anybody, and whoever added a member removes that member) */
+  canRemove: boolean;
 }
