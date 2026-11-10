@@ -51,6 +51,7 @@ const toItem = (id: string, d: FirebaseFirestore.DocumentData, uid: string): Saf
   createdAt: iso(d.createdAt),
   parentId: (d.parentId as string | undefined) ?? null,
   hasThumb: Boolean(d.hasThumb),
+  order: (d.order as number | undefined) ?? null,
   ...(d.enc ? { enc: wrapsFor(d.enc, uid) } : {}), // an encrypted file: only my copies of the file key are sent
 });
 
@@ -58,18 +59,75 @@ const toItem = (id: string, d: FirebaseFirestore.DocumentData, uid: string): Saf
  * What the list asks of each item: everything but the whole content of an object (`enc.body`: it is read when the item is opened, see
  * `GET /items/:itemId`). Firestore sends only these fields.
  */
-const LIST_FIELDS = ["type", "revision", "updatedAt", "name", "kind", "mime", "bytes", "addedBy", "circles", "createdAt", "parentId", "hasThumb", "enc.v", "enc.iv", "enc.metaIv", "enc.meta", "enc.thumbIv", "enc.wraps", "enc.bodyIv"];
+const LIST_FIELDS = ["type", "revision", "updatedAt", "name", "kind", "mime", "bytes", "addedBy", "circles", "createdAt", "parentId", "hasThumb", "order", "enc.v", "enc.iv", "enc.metaIv", "enc.meta", "enc.thumbIv", "enc.wraps", "enc.bodyIv"];
 
-/** The files in the box, newest first, with how much room is left. */
+/** An item that stands on its own has a number; an attachment and a link between two items do not. */
+const isNumbered = (i: { parentId: string | null; type: string }): boolean => !i.parentId && i.type !== "relation";
+
+/** Writes `order` on the items in the given order (1, 2, 3 ...), in batches. */
+async function writeOrder(connectionId: string, ids: string[], only?: Set<string>): Promise<void> {
+  const todo = ids.map((id, i) => ({ id, order: i + 1 })).filter((x) => !only || only.has(x.id));
+  for (let from = 0; from < todo.length; from += 400) {
+    const batch = getFirestore().batch();
+    for (const x of todo.slice(from, from + 400)) batch.update(safeboxItems(connectionId).doc(x.id), { order: x.order });
+    await batch.commit();
+  }
+}
+
+/**
+ * The list in the order of the numbers. Items from before there were numbers, a gap left by a deleted item and two items with the same number
+ * are put right here: the items are numbered 1, 2, 3 ... (an item without a number comes after the numbered ones, oldest first) and the new
+ * numbers are stored. Numbering is best effort: if the write fails the list is still returned numbered.
+ */
+async function numberItems(connectionId: string, items: SafeboxItem[]): Promise<SafeboxItem[]> {
+  const top = items.filter(isNumbered).sort((a, b) => (a.order ?? Infinity) - (b.order ?? Infinity) || (a.createdAt ?? "").localeCompare(b.createdAt ?? ""));
+  const changed = new Set(top.filter((item, i) => item.order !== i + 1).map((item) => item.id));
+  top.forEach((item, i) => (item.order = i + 1));
+  if (changed.size) await writeOrder(connectionId, top.map((item) => item.id), changed).catch(() => undefined);
+  return [...top, ...items.filter((i) => !isNumbered(i)).sort((a, b) => (a.createdAt ?? "").localeCompare(b.createdAt ?? ""))];
+}
+
+/** The number a new item gets: one more than the biggest (and than how many there are, for items that have none yet). */
+async function nextOrder(connectionId: string): Promise<number> {
+  const top = (await safeboxItems(connectionId).select("order", "parentId", "type").get()).docs.map((d) => d.data()).filter((d) => !d.parentId && d.type !== "relation");
+  return Math.max(top.length, ...top.map((d) => (d.order as number | undefined) ?? 0)) + 1;
+}
+
+/** The files in the box, in the order of their numbers, with how much room is left. */
 safeboxRouter.get(
   "/",
   asyncHandler(async (req, res) => {
     const connection = await connectionOf(req, res);
     if (!connection) return;
     const uid = uidOf(res);
-    const items = (await safeboxItems(connection.id).select(...LIST_FIELDS).get()).docs.filter((d) => inCircle(d.data(), uid, connection.circleId)).map((d) => toItem(d.id, d.data(), uid)).sort((a, b) => (b.createdAt ?? "").localeCompare(a.createdAt ?? ""));
+    const found = (await safeboxItems(connection.id).select(...LIST_FIELDS).get()).docs.filter((d) => inCircle(d.data(), uid, connection.circleId)).map((d) => toItem(d.id, d.data(), uid));
+    const items = await numberItems(connection.id, found);
     const box: Safebox = { items, usedBytes: items.reduce((sum, i) => sum + i.bytes, 0), maxBytes: SAFEBOX_MAX_BYTES, maxFileBytes: MAX_FILE_BYTES };
     res.json(box);
+  }),
+);
+
+/**
+ * The new order of the items, as the ids of the items (dragged in the app): they get the numbers 1, 2, 3 ... in that order. An item that is not
+ * named keeps its place after the named ones. Both friends may do it.
+ */
+safeboxRouter.put(
+  "/order",
+  asyncHandler(async (req, res) => {
+    const connection = await connectionOf(req, res);
+    if (!connection) return;
+    const uid = uidOf(res);
+    const ids = (req.body as { ids?: unknown } | undefined)?.ids;
+    if (!Array.isArray(ids) || ids.length > 5000 || ids.some((id) => typeof id !== "string")) {
+      res.status(400).json({ error: "Send the ids of the items in their new order." });
+      return;
+    }
+    const docs = (await safeboxItems(connection.id).select("parentId", "type", "circles", "order").get()).docs.filter((d) => inCircle(d.data(), uid, connection.circleId) && !d.data().parentId && d.data().type !== "relation");
+    const known = new Set(docs.map((d) => d.id));
+    const named = [...new Set(ids as string[])].filter((id) => known.has(id));
+    const rest = docs.filter((d) => !named.includes(d.id)).sort((a, b) => ((a.data().order as number | undefined) ?? Infinity) - ((b.data().order as number | undefined) ?? Infinity)).map((d) => d.id);
+    await writeOrder(connection.id, [...named, ...rest]);
+    res.status(204).end();
   }),
 );
 
@@ -120,7 +178,7 @@ async function storeInBox(res: Response, connection: Connection, bytes: Buffer, 
   const owner = uidOf(res);
   await putObject(boxOwner(connection.id), ref.id, bytes, checked.kind, checked.mime, name, owner);
   if (thumb) await putObject(boxOwner(connection.id), `${ref.id}.thumb`, thumb, "thumb", "image/jpeg", null, owner);
-  await ref.set({ name, kind: checked.kind, mime: checked.mime, bytes: bytes.length, addedBy: owner, circles: circlesOf(connection, owner), ...(originalSender ? { originalSender } : {}), hasThumb: Boolean(thumb), createdAt: FieldValue.serverTimestamp() });
+  await ref.set({ name, kind: checked.kind, mime: checked.mime, bytes: bytes.length, addedBy: owner, circles: circlesOf(connection, owner), ...(originalSender ? { originalSender } : {}), hasThumb: Boolean(thumb), order: await nextOrder(connection.id), createdAt: FieldValue.serverTimestamp() });
   return toItem(ref.id, (await ref.get()).data()!, uidOf(res));
 }
 
@@ -228,12 +286,12 @@ safeboxRouter.post(
     if (!(await boxHasRoom(res, connection, upload.file.length, old?.id ?? null))) return;
     const ref = safeboxItems(connection.id).doc();
     const { kind, enc } = upload.header;
-    const replaced = old ? { createdAt: old.data.createdAt ?? FieldValue.serverTimestamp(), ...(old.data.originalSender ? { originalSender: old.data.originalSender } : {}) } : null; // it keeps the owner, the date and who first sent it
+    const replaced = old ? { ...(old.data.order ? { order: old.data.order } : {}), createdAt: old.data.createdAt ?? FieldValue.serverTimestamp(), ...(old.data.originalSender ? { originalSender: old.data.originalSender } : {}) } : null; // it keeps the owner, the date and who first sent it
     const owner = (old?.data.addedBy as string | undefined) ?? me;
     const name = boxOwner(connection.id);
     await putObject(name, ref.id, upload.file, kind, "application/octet-stream", null, owner);
     if (upload.thumb) await putObject(name, `${ref.id}.thumb`, upload.thumb, "thumb", "application/octet-stream", null, owner);
-    const fields = { name: "Encrypted file", kind, mime: "application/octet-stream", bytes: upload.file.length, addedBy: owner, circles: circlesOf(connection, owner), hasThumb: Boolean(upload.thumb), enc, ...(parent ? { parentId: parent.id } : {}), ...(replaced ?? { createdAt: FieldValue.serverTimestamp() }) };
+    const fields = { name: "Encrypted file", kind, mime: "application/octet-stream", bytes: upload.file.length, addedBy: owner, circles: circlesOf(connection, owner), hasThumb: Boolean(upload.thumb), enc, ...(parent ? { parentId: parent.id } : {}), ...(replaced ?? { createdAt: FieldValue.serverTimestamp() }), ...(!parent && !old ? { order: await nextOrder(connection.id) } : {}) };
     if (old) {
       // ONE atomic step: the locked item appears and the plain item goes in the same transaction (it still must be there and still plain), so the
       // list never shows both or neither. If it fails, the locked file just stored is taken away again and the plain file stays.
@@ -374,7 +432,7 @@ safeboxRouter.post(
     const bytes = objectBytes(parsed.enc);
     if (!(await boxHasRoom(res, connection, bytes))) return;
     const ref = safeboxItems(connection.id).doc();
-    await ref.set({ type: parsed.type, name: "Encrypted item", kind: "document", mime: "application/octet-stream", bytes, addedBy: me, circles: circlesOf(connection, me), hasThumb: false, enc: parsed.enc, revision: 1, createdAt: FieldValue.serverTimestamp(), updatedAt: FieldValue.serverTimestamp() });
+    await ref.set({ type: parsed.type, name: "Encrypted item", kind: "document", mime: "application/octet-stream", bytes, addedBy: me, circles: circlesOf(connection, me), hasThumb: false, enc: parsed.enc, revision: 1, ...(parsed.type === "relation" ? {} : { order: await nextOrder(connection.id) }), createdAt: FieldValue.serverTimestamp(), updatedAt: FieldValue.serverTimestamp() });
     await setReminder(connection, ref.id, me, parsed.remind);
     if (parsed.type !== "relation") await announceItem(res, connection); // a link between two items is no news
     res.status(201).json(toItem(ref.id, (await ref.get()).data()!, me));

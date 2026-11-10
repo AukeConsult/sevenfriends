@@ -46,7 +46,10 @@ export interface UiPreferences {
   /** how the safebox shows its items: a list (default) or small icons floating side by side */
   boxView: 'list' | 'icons';
   /** the kinds of safebox item (`note`, `secret` ...) that are ticked off in the New frame and so left out of the list; none = everything shows */
-  boxHidden: string[];
+  /** how the New frame of the safebox is arranged by the person (kinds dragged to another place or into "More types"): the kinds shown at once and the ones behind More, each in order; null = the standard arrangement */
+  boxKindLayout: { main: string[]; more: string[] } | null;
+  /** the "Hidden types" of the New frame of the safebox are showing (open) or folded away */
+  boxHiddenOpen: boolean;
   /** the clean-up frame of a conversation: whose messages and how old they must be are remembered (the words to look for are not) */
   cleanupWhose: 'mine' | 'both';
   cleanupDays: number | null;
@@ -85,7 +88,10 @@ export const TEXT_SCALES: Record<UiPreferences['textSize'], number> = { tiny: 0.
 /** The same on a phone (a screen up to 575 px wide): one step up, so Small is what Normal was, Normal is what Big was, and Big is 15% more. */
 export const PHONE_TEXT_SCALES: Record<UiPreferences['textSize'], number> = { tiny: 0.9, small: 1, normal: 1.15, big: 1.3225, huge: 1.55 };
 
-export const DEFAULTS: UiPreferences = { theme: 'light', textSize: 'normal', settingsTab: 'profile', emojiTab: 'People', chatOrder: 'oldest', enterSends: true, sleepList: true, quickMessages: [], feedIcons: true, language: '', setup: 'new', lastPage: null, micRaw: false, pendingFriend: null, welcomeUntil: null, boxPlain: false, boxView: 'list', boxHidden: [], cleanupWhose: 'mine', cleanupDays: 30, friendQuick: {} };
+const kindIds = (v: unknown): string[] => (Array.isArray(v) ? v.filter((k: unknown): k is string => typeof k === 'string') : []);
+const layoutOf = (v: any): { main: string[]; more: string[] } | null => (v && typeof v === 'object' ? { main: kindIds(v.main), more: kindIds(v.more) } : null);
+
+export const DEFAULTS: UiPreferences = { theme: 'light', textSize: 'normal', settingsTab: 'profile', emojiTab: 'People', chatOrder: 'oldest', enterSends: true, sleepList: true, quickMessages: [], feedIcons: true, language: '', setup: 'new', lastPage: null, micRaw: false, pendingFriend: null, welcomeUntil: null, boxPlain: false, boxView: 'list', boxKindLayout: null, boxHiddenOpen: false, cleanupWhose: 'mine', cleanupDays: 30, friendQuick: {} };
 
 /** The ready-made messages as stored: only texts, trimmed, not empty, not too long, not too many. */
 export function quickOf(value: unknown): string[] {
@@ -147,7 +153,8 @@ function read(): UiPreferences {
       welcomeUntil: typeof saved.welcomeUntil === 'number' && Number.isFinite(saved.welcomeUntil) ? saved.welcomeUntil : null,
       boxPlain: saved.boxPlain === true,
       boxView: saved.boxView === 'icons' ? 'icons' : 'list',
-      boxHidden: Array.isArray(saved.boxHidden) ? saved.boxHidden.filter((k: unknown): k is string => typeof k === 'string') : [],
+      boxKindLayout: layoutOf(saved.boxKindLayout),
+      boxHiddenOpen: saved.boxHiddenOpen === true,
       cleanupWhose: saved.cleanupWhose === 'both' ? 'both' : 'mine',
       friendQuick: friendQuickOf(saved.friendQuick),
       cleanupDays: saved.cleanupDays === null || (typeof saved.cleanupDays === 'number' && Number.isInteger(saved.cleanupDays) && saved.cleanupDays > 0) ? saved.cleanupDays : 30,

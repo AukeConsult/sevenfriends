@@ -1,9 +1,9 @@
 {
   "lockingAndKeys": "Locking and keys",
   "yourMessagesAndFiles": "Your messages and files are locked: only you and {{ friendName }} can open them.",
-  "friendnameHasAKey": "{{ friendName }} has a key, but you have none on this device, so messages and files are not locked yet.",
-  "youHaveAKey": "You have a key, but {{ friendName }} has not made one yet, so messages and files are not locked yet.",
-  "neitherOfYouHas": "Neither of you has a key yet, so messages and files are not locked yet.",
+  "friendnameHasAKey": "{{ friendName }} is ready, but you are not. Make or restore your key on this device. Until then, what you send can be read by our system.",
+  "youHaveAKey": "You are ready, but {{ friendName }} is not yet. Until {{ friendName }} makes a key, what you send can be read by our system.",
+  "neitherOfYouHas": "Neither of you has a key yet. Until you both have one, what you send can be read by our system.",
   "checkingTheKeys": "Checking the keys…",
   "whoHasAnEncryption": "Who has an encryption key",
   "youMadeAKey": "You made a key before, but it is not on this device (it is on another device, or this browser cleared it). You can bring it back with your 24 words in Settings → Keys.",

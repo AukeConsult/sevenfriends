@@ -318,7 +318,7 @@ export class SafeboxObject {
     });
     inject(DestroyRef).onDestroy(() => {
       this.map?.remove();
-      if (this.canSave()) void this.save(); // leaving the page keeps what was typed
+      if (!this.isNew && this.canSave()) void this.save(); // leaving the page keeps what was typed (a new item is made with Save)
     });
     if (!this.friends.friends().length) void this.friends.load().catch(() => undefined);
     if (!this.isNew) void this.open(true);
@@ -424,7 +424,6 @@ export class SafeboxObject {
         const keys = this.ctx.boxKeys();
         if (!keys) throw new Error(tr('safebox.common.keysNotKnown', 'The keys are not known yet. Try again in a moment.'));
         const created = await this.service.addObject(this.friendId, kind.type, payload, keys, remind);
-        this.prefs.set('boxHidden', this.prefs.value('boxHidden')().filter((k) => k !== kind.type));
         // the files chosen before it was saved go to the new object now; the page of the object opens, and goes on saving by itself
         await this.attachments()?.uploadPending(created.id);
         const from = await this.linkNew(created.id, keys);

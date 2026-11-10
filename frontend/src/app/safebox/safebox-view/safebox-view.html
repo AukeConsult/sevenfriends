@@ -24,7 +24,7 @@
 
     @if (confirmDelete()) {
       <div class="sf-expand">
-        <p class="sf-confirm-text">{{ t('safebox.view.takeThisFileOut') || 'Take this file out of the safebox? It disappears for both of you and cannot be got back.' }}</p>
+        <p class="sf-confirm-text">{{ t('safebox.common.deleteAsk') || 'Delete this? It is deleted for both of you and cannot be brought back.' }}</p>
         <div class="sf-msg-actions justify-content-center">
           <button type="button" class="btn btn-light btn-sm" (click)="confirmDelete.set(false)" [disabled]="busy()">{{ t('safebox.common.cancel') || 'Cancel' }}</button>
           <button type="button" class="btn btn-danger btn-sm" (click)="remove()" [disabled]="busy()">{{ t('safebox.common.takeItOut') || 'Take it out' }}</button>

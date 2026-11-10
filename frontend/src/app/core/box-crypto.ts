@@ -154,6 +154,8 @@ export interface BoxHead {
   title: string;
   line: string;
   when: string;
+  /** when the item is due, in milliseconds (from the start of its reminder period to the end of its day): the list can show what is due without opening the content; absent on an item with no date */
+  due?: { from: number; to: number } | null;
 }
 
 /** The content of an object locked: with a head the head goes in `meta` and the content in `body`; without one (a link between two items) the content is all in `meta`. */
@@ -184,7 +186,8 @@ export async function openHead(connectionId: string, enc: SafeboxEnc, key: Crypt
   if (!enc.bodyIv) return null;
   const h = JSON.parse(new TextDecoder().decode(await unlock(key, connectionId, 'meta', enc.metaIv, fromBase64(enc.meta)))) as Partial<BoxHead>;
   if (typeof h.title !== 'string') throw new Error(tr('core.thisItemCouldNot', 'This item could not be opened: it was changed or damaged.'));
-  return { title: h.title, line: typeof h.line === 'string' ? h.line : '', when: typeof h.when === 'string' ? h.when : '' };
+  const due = h.due && Number.isFinite(h.due.from) && Number.isFinite(h.due.to) ? { from: h.due.from, to: h.due.to } : null;
+  return { title: h.title, line: typeof h.line === 'string' ? h.line : '', when: typeof h.when === 'string' ? h.when : '', due };
 }
 
 /**

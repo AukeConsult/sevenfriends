@@ -1,7 +1,7 @@
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { tr } from '../core/i18n';
 import { AppDatePipe } from '../core/app-date.pipe';
-import { isObjectType, objectIcon, objectKind, objectKinds } from '../core/safebox-objects';
+import { arrangeKinds, isObjectType, objectIcon, objectKind, objectKinds } from '../core/safebox-objects';
 import { NgTemplateOutlet } from '@angular/common';
 import { Component, DestroyRef, computed, effect, inject, input, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -11,6 +11,7 @@ import { formatBytes } from '../core/image';
 import { SafeboxService } from '../core/safebox.service';
 import { UiPreferencesService } from '../core/ui-preferences';
 import { FriendContext } from '../friend-page/friend-context';
+import { HoldDrag } from '../core/hold-drag';
 import { Safebox as SafeboxData, SafeboxItem } from '../models';
 
 /** The small preview picture of an image in the box (only the preview is read, never the file; a file without one shows an icon instead). */
@@ -76,19 +77,22 @@ export class Safebox {
 
   protected readonly keyStatus = this.ctx.keyStatus;
   protected readonly newOpen = signal(false);
+  /** "Hidden types" in the New frame: showing or folded away (remembered on this device) */
+  protected readonly moreOpen = this.prefs.value('boxHiddenOpen');
   /** files are stored encrypted (both of us have a key) */
   protected readonly canEncrypt = computed(() => this.keyStatus() === 'both');
   /** ticked on the page (and remembered on this device): the files added now are stored unencrypted even though both of us have a key */
   protected readonly plain = this.prefs.value('boxPlain');
   protected readonly boxView = this.prefs.value('boxView');
-  protected readonly hidden = this.prefs.value('boxHidden');
-  /** the items of the kinds that are ticked (a file always shows) */
+  /** the items in the list, searched and filtered */
   protected readonly shown = computed(() => {
+    this.dueTick(); // read again when the dates of older items have been found
     const words = this.query().toLowerCase().split(/\s+/).filter(Boolean);
     const attached = new Map<string, string[]>(); // the names of the attachments of each item: an item is found by them too
     if (words.length) for (const item of this.items()) if (item.parentId) attached.set(item.parentId, [...(attached.get(item.parentId) ?? []), item.name ?? '']);
     return this.items().filter((item) => {
-      if (item.parentId || item.type === 'relation' || this.hidden().includes(item.type)) return false;
+      if (item.parentId || item.type === 'relation') return false;
+      if (this.dueOnly() && !this.service.isDue(this.friendId, item.id)) return false;
       if (!words.length) return true;
       // only what the list holds is searched (title, first line, date, kind, file type and attachment names): the content of an item is read only when it is opened
       const text = [item.name, this.snippet(item), this.when(item), this.kindLabel(item), item.mime, ...(attached.get(item.id) ?? [])].join(' ').toLowerCase();
@@ -97,6 +101,13 @@ export class Safebox {
   });
   /** the words typed in the search field */
   protected readonly query = signal('');
+  /** the flag "Due" in the search field: only what is due (its reminder period has begun, or its day) */
+  protected readonly dueOnly = signal(false);
+  private readonly dueTick = signal(0);
+  protected readonly dueCount = computed(() => {
+    this.dueTick();
+    return this.items().filter((item) => !item.parentId && item.type !== 'relation' && this.service.isDue(this.friendId, item.id)).length;
+  });
   /** how many attachments each object has, and the first picture of an album (its cover) */
   private readonly attachmentsOf = computed(() => {
     const map = new Map<string, SafeboxItem[]>();
@@ -112,16 +123,13 @@ export class Safebox {
     return item.type === 'album' ? (this.attachmentsOf().get(item.id)?.find((i) => i.kind === 'image' && i.hasThumb) ?? null) : null;
   }
 
-  /** Tick or untick a kind in the New frame: ticked = its items are in the list. */
-  protected toggleKind(type: string, on: boolean): void {
-    const rest = this.hidden().filter((k) => k !== type);
-    this.prefs.set('boxHidden', on ? rest : [...rest, type]);
-  }
   constructor() {
     this.service.setLinkFrom(null); // a new item made from the top of the list is linked with nothing
     // the band under the header says how many files of this friendship this device cannot open
     effect(() => this.ctx.lockedFiles.set(this.shutCount()));
     inject(DestroyRef).onDestroy(() => {
+      this.cards.destroy();
+      this.kindDrag.destroy();
       this.ctx.lockedFiles.set(0);
       // left for a page outside the safebox: everything opened for this friend is let go (a page of the safebox, like an item, still needs it)
       const friendId = this.friendId;
@@ -133,10 +141,34 @@ export class Safebox {
     this.ctx.setPageTool({ label: tr('safebox.common.addFiles', 'Add files'), kind: 'files', run: () => void this.router.navigate(['/friends', this.friendId, 'safebox', 'new', 'file']) }, inject(DestroyRef));
   }
 
+  // ---- the order of the items: hold an item (a card or a row) and drag it onto another one
+
+  /** the cards and rows: picked up by holding, and dropped on another one */
+  protected readonly cards = new HoldDrag({ selector: '[data-item-id]', key: 'itemId', onDrop: (from, to) => void this.moveItem(from, to), canStart: () => !this.busy(), });
+  private async moveItem(id: string, targetId: string): Promise<void> {
+    const box = this.box();
+    if (!box) return;
+    const top = box.items.filter((i) => !i.parentId && i.type !== 'relation');
+    const rest = box.items.filter((i) => i.parentId || i.type === 'relation');
+    const from = top.findIndex((i) => i.id === id);
+    const to = top.findIndex((i) => i.id === targetId);
+    if (from < 0 || to < 0 || from === to) return;
+    top.splice(to, 0, ...top.splice(from, 1));
+    const numbered = top.map((item, i) => ({ ...item, order: i + 1 }));
+    this.box.set({ ...box, items: [...numbered, ...rest] });
+    try {
+      await this.service.reorder(this.friendId, numbered.map((i) => i.id));
+    } catch (err: any) {
+      this.error.set(err.message ?? tr('safebox.list.couldNotSaveTheOrder', 'Could not save the order'));
+      await this.reload();
+    }
+  }
+
   protected async reload(): Promise<void> {
     this.loadError.set(null);
     try {
       this.box.set(await this.service.load(this.friendId));
+      void this.service.loadDues(this.friendId, this.items()).then(() => this.dueTick.update((n) => n + 1)); // the items made before heads said when they are due
     } catch (err: any) {
       this.loadError.set(err.message ?? tr('safebox.common.couldNotOpenTheSafebox', 'Could not open the safebox'));
     }
@@ -247,7 +279,31 @@ export class Safebox {
   }
 
   /** What the "New" frame offers: a file (the upload page), then the kinds of object; a note has its own page. */
+  protected readonly split = computed(() => arrangeKinds(this.kinds, this.layout(), new Set(this.items().map((item) => item.type))));
+  protected readonly layout = this.prefs.value('boxKindLayout');
+  /** the kinds the New frame shows now: the first group, then the rest when "More types" is open */
+  protected readonly newKinds = computed(() => [...this.split().main, ...(this.moreOpen() ? this.split().more : [])]);
+  /** the kinds of the New frame: picked up by holding, dropped on another kind (it takes its place) or on "More types" (it goes in there); the choice is remembered */
+  protected readonly kindDrag = new HoldDrag({ selector: '[data-kind-id]', key: 'kindId', onDrop: (from, to) => this.moveKind(from, to) });
   protected readonly kinds: { type: string; label: string; icon: string }[] = [{ type: 'file', label: tr('safebox.common.file', 'File'), icon: 'M12 16V4M7 9l5-5 5 5M4 20h16' }, ...objectKinds()];
+
+  /**
+   * Puts a kind where another kind is: it joins the group of that kind (visible or hidden) in its place, the others move aside. Dropped on the
+   * Hidden types / Visible types button it goes to the other group, at the end. The arrangement is remembered.
+   */
+  private moveKind(id: string, targetId: string): void {
+    if (id === 'more' || id === targetId) return;
+    const groups = { main: this.split().main.map((k) => k.type), more: this.split().more.map((k) => k.type) };
+    const open = this.moreOpen();
+    const fromKey = groups.main.includes(id) ? 'main' : 'more';
+    const toKey = targetId === 'more' ? (open ? 'main' : 'more') : groups.main.includes(targetId) ? 'main' : 'more';
+    if (targetId === 'more' && fromKey === toKey) return; // already there
+    const at = targetId === 'more' ? groups[toKey].length : groups[toKey].indexOf(targetId);
+    groups[fromKey].splice(groups[fromKey].indexOf(id), 1);
+    groups[toKey].splice(Math.min(at, groups[toKey].length), 0, id);
+    this.prefs.set('boxKindLayout', groups);
+    if (targetId === 'more' && open) this.prefs.set('boxHiddenOpen', false); // dropped on "Visible types" (the hidden ones are showing): the list closes again
+  }
 
   protected newLink(type: string): string[] {
     return type === 'note' ? ['/friends', this.friendId, 'safebox', 'note'] : ['/friends', this.friendId, 'safebox', 'new', type];

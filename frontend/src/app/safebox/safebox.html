@@ -3,7 +3,10 @@
   <!-- the title and the way back are in the header of the friend page (the Safebox icon) -->
   <p class="sf-hint text-center m-0">{{ t('safebox.list.onlyYouAndFriendname', { friendName: friendName() }) || 'Only you and ' + friendName() + ' can see these files.' }}</p>
   @if (canEncrypt() && plainItems().length) {
-    <p class="sf-hint text-center m-0">{{ t('safebox.list.areNotLocked', { are: plainItems().length === 1 ? '1 file is' : (t('safebox.list.plainitemslengthFilesAre', { plainItemsLength: plainItems().length }) || plainItems().length + ' files are') }) || (plainItems().length === 1 ? '1 file is' : (t('safebox.list.plainitemslengthFilesAre', { plainItemsLength: plainItems().length }) || plainItems().length + ' files are')) + ' not locked.' }} <a [routerLink]="['/friends', friendId, 'lock']">{{ t('safebox.list.lockThem', { them: plainItems().length === 1 ? 'it' : 'them' }) || 'Lock ' + (plainItems().length === 1 ? 'it' : 'them') }}</a></p>
+    <p class="sf-hint text-center m-0">{{ plainItems().length === 1
+      ? (t('safebox.list.unlockedOne', { friendName: friendName() }) || 'One file is not locked, so our system can read it. Lock it so only you and ' + friendName() + ' can open it.')
+      : (t('safebox.list.unlockedMany', { count: plainItems().length, friendName: friendName() }) || plainItems().length + ' files are not locked, so our system can read them. Lock them so only you and ' + friendName() + ' can open them.') }}
+      <a [routerLink]="['/friends', friendId, 'lock']">{{ plainItems().length === 1 ? (t('safebox.list.lockIt') || 'Lock it') : (t('safebox.list.lockThemNow') || 'Lock them') }}</a></p>
   }
 
   <!-- the padlock and the Add files frame side by side: both are a round icon while closed, and each takes the whole width when it is open -->
@@ -15,23 +18,32 @@
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
         <span>{{ t('safebox.common.newItem') || 'New item' }}</span>
       </summary>
-      <div class="sf-box-security-body sf-box-new-list">
-        @for (kind of kinds; track kind.type) {
-          <!-- the pill opens a new item of this kind; the tick says whether items of this kind are in the list (on by default, and on again when one is added) -->
-          <div class="sf-box-newnote">
-            <a class="sf-box-newnote-link" [routerLink]="newLink(kind.type)">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path [attr.d]="kind.icon" /></svg>
-              <span>{{ kind.label }}</span>
-            </a>
-            <input type="checkbox" class="form-check-input sf-box-newnote-tick" [checked]="!hidden().includes(kind.type)" (change)="toggleKind(kind.type, $any($event.target).checked)"
-                   [attr.aria-label]="(t('safebox.list.showKindInTheList', { kind: kind.label }) || 'Show ' + kind.label + ' in the list')" [attr.title]="t('safebox.list.showInTheList') || 'Show in the list'" />
-          </div>
+      <!-- hold a kind, then drag it onto another kind (it takes its place) or onto "More types" (it goes in there); the arrangement is remembered on this device -->
+      <div class="sf-box-security-body sf-box-new-list" (touchmove)="kindDrag.scroll($event)">
+        <!-- the hidden types are showing: the "Visible types" button comes first and the hidden kinds last; otherwise the "Hidden types" button comes last -->
+        @if (moreOpen()) {
+          <ng-container *ngTemplateOutlet="toggle" />
         }
+        @for (kind of split().main; track kind.type) {
+          <ng-container *ngTemplateOutlet="pill; context: { $implicit: kind, hidden: false }" />
+        }
+        @if (moreOpen()) {
+          @for (kind of split().more; track kind.type) {
+            <ng-container *ngTemplateOutlet="pill; context: { $implicit: kind, hidden: true }" />
+          }
+        } @else if (split().more.length || kindDrag.dragId()) {
+          <ng-container *ngTemplateOutlet="toggle" />
+        }
+        <p class="sf-hint m-0 sf-box-hint">{{ moreOpen() ? (t('safebox.list.hintTypesShown') || 'Hold a type and drag it onto another to move it, or onto Visible types to show it.') : (t('safebox.list.hintTypes') || 'Hold a type and drag it onto another to move it, or onto Hidden types to hide it.') }}</p>
       </div>
     </details>
     @if (items().length) {
       <!-- search: filters the list while typing, on the title, the first line, the date, the kind and the file names -->
-      <input type="search" class="form-control sf-box-search" [value]="query()" (input)="query.set($any($event.target).value)" [placeholder]="t('safebox.list.search') || 'Search the safebox'" [attr.aria-label]="t('safebox.list.search') || 'Search the safebox'" autocomplete="off" spellcheck="false" />
+<div class="sf-box-search-wrap">
+        <input type="search" class="form-control sf-box-search" [value]="query()" (input)="query.set($any($event.target).value)" [placeholder]="t('safebox.list.search') || 'Search the safebox'" [attr.aria-label]="t('safebox.list.search') || 'Search the safebox'" autocomplete="off" spellcheck="false" />
+        <!-- the flag "Due": only what is due, the reminder period included -->
+        <button type="button" class="sf-box-due" [class.active]="dueOnly()" [attr.aria-pressed]="dueOnly()" (click)="dueOnly.set(!dueOnly())" [attr.title]="t('safebox.list.dueOnly') || 'Show only what is due, including the reminder period'" [attr.aria-label]="t('safebox.list.dueOnly') || 'Show only what is due, including the reminder period'">{{ t('safebox.list.due') || 'Due' }}@if (dueCount()) { <span class="sf-box-due-count">{{ dueCount() }}</span> }</button>
+      </div>
     }
     <!-- how the items are shown: list or small icons (remembered on this device) -->
     <div class="sf-box-view-switch" role="group" [attr.aria-label]="t('safebox.list.view') || 'View'">
@@ -65,6 +77,11 @@
     }
 
 
+    @if (shown().length > 1) {
+      <!-- always visible: how to change the order -->
+      <p class="sf-box-drag-hint"><span aria-hidden="true">{{ boxView() === 'list' ? '⠿' : '☝' }}</span> {{ boxView() === 'list' ? (t('safebox.list.dragHint') || 'Press and drag ⠿ to move an item') : (t('safebox.list.dragHintHold') || 'Press and hold an item, then drag it to a new place') }}</p>
+    }
+
     @if (!items().length) {
       <p class="sf-box-empty text-secondary text-center">
         <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -73,13 +90,13 @@
         <span>{{ t('safebox.list.nothingHereYetAdd', { friendName: friendName() }) || 'Nothing here yet. Tap New to add a file, a note or something else you want to share with only ' + friendName() + '.' }}</span>
       </p>
     } @else if (!shown().length) {
-      <p class="sf-hint text-center">{{ query().trim() ? (t('safebox.list.noMatch') || 'Nothing matches your search.') : t('safebox.list.allKindsAreOff') || 'Nothing to show: every kind is switched off. Tick a kind in the New frame to see its items again.' }}</p>
+      <p class="sf-hint text-center">{{ t('safebox.list.noMatch') || 'Nothing matches your search.' }}</p>
     } @else if (boxView() === 'icons') {
       <!-- small icons floating side by side: a picture shows itself, anything else its sign, with the name under it -->
-      <ul class="sf-box-grid">
+      <ul class="sf-box-grid" (touchmove)="cards.scroll($event)">
         @for (item of shown(); track item.id) {
-          <li>
-            <a class="sf-box-tile" [routerLink]="openLink(item)" [attr.aria-label]="item.name">
+          <li [attr.data-item-id]="item.id" (pointerdown)="cards.down($event, item.id)" (dragstart)="$event.preventDefault()" (contextmenu)="cards.menu($event)" [class.sf-holding]="cards.pressId() === item.id || cards.dragId() === item.id" [class.sf-dragging]="cards.dragId() === item.id" [class.sf-drop-target]="cards.dropId() === item.id">
+            <a class="sf-box-tile" draggable="false" [routerLink]="openLink(item)" [attr.aria-label]="item.name">
               <span class="sf-box-open"><ng-container *ngTemplateOutlet="visual; context: { $implicit: item }" /></span>
               @if (item.enc) {
                 <span class="sf-box-tile-lock" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg></span>
@@ -91,11 +108,13 @@
         }
       </ul>
     } @else {
-      <ul class="sf-list sf-box-list">
+      <ul class="sf-list sf-box-list" (touchmove)="cards.scroll($event)">
         @for (item of shown(); track item.id) {
-          <li class="sf-list-item flex-wrap gap-2">
+          <li class="sf-list-item flex-wrap gap-2" [attr.data-item-id]="item.id" (pointerdown)="cards.down($event, item.id)" (dragstart)="$event.preventDefault()" (contextmenu)="cards.menu($event)"
+              [class.sf-holding]="cards.pressId() === item.id || cards.dragId() === item.id" [class.sf-dragging]="cards.dragId() === item.id" [class.sf-drop-target]="cards.dropId() === item.id">
+            <span class="sf-box-grip" role="img" [attr.aria-label]="t('safebox.list.moveItem', { itemName: item.name }) || 'Move ' + item.name" (pointerdown)="cards.grab($event, item.id)">⠿</span>
             <!-- a picture shows itself; anything else shows a sign for what it is -->
-            <a class="sf-box-open" [routerLink]="openLink(item)" [attr.aria-label]="(t('safebox.list.openItemname', { itemName: item.name }) || 'Open ' + item.name)">
+            <a class="sf-box-open" draggable="false" [routerLink]="openLink(item)" [attr.aria-label]="(t('safebox.list.openItemname', { itemName: item.name }) || 'Open ' + item.name)">
               <ng-container *ngTemplateOutlet="visual; context: { $implicit: item }" />
             </a>
             <span class="sf-list-text">
@@ -114,7 +133,7 @@
             </span>
 
             @if (deleting() === item.id) {
-              <p class="sf-confirm-text w-100 m-0">{{ t('safebox.list.takeItemnameOutOf', { itemName: item.name }) || 'Take “' + item.name + '” out of the safebox? It disappears for both of you and cannot be got back.' }}</p>
+              <p class="sf-confirm-text w-100 m-0">{{ t('safebox.common.deleteAskNamed', { itemName: item.name }) || 'Delete “' + item.name + '”? It is deleted for both of you and cannot be brought back.' }}</p>
               <div class="sf-msg-actions w-100 justify-content-end">
                 <button type="button" class="btn btn-light btn-sm" (click)="deleting.set(null)" [disabled]="busy()">{{ t('safebox.common.cancel') || 'Cancel' }}</button>
                 <button type="button" class="btn btn-danger btn-sm" (click)="remove(item)" [disabled]="busy()">{{ t('safebox.common.takeItOut') || 'Take it out' }}</button>
@@ -145,6 +164,22 @@
   } @else if (!loadError()) {
     <p class="text-secondary text-center">{{ t('safebox.list.openingTheSafebox') || 'Opening the safebox…' }}</p>
   }
+<ng-template #toggle>
+  <button type="button" class="sf-box-newnote sf-box-more" data-kind-id="more" [class.sf-drop-target]="kindDrag.dropId() === 'more'" (click)="prefs.set('boxHiddenOpen', !moreOpen())" [attr.aria-expanded]="moreOpen()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path [attr.d]="moreOpen() ? 'M6 15l6-6 6 6' : 'M6 9l6 6 6-6'" /></svg>
+    <span>{{ (t('safebox.list.hiddenTypes') || 'Hidden types') + ' (' + split().more.length + ')' }}</span>
+  </button>
+</ng-template>
+<ng-template #pill let-kind let-hiddenKind="hidden">
+  <!-- the pill opens a new item of this kind -->
+  <div class="sf-box-newnote" [class.sf-kind-hidden]="hiddenKind" [class.sf-kind-masked]="!hiddenKind && moreOpen()" [attr.data-kind-id]="kind.type" [class.sf-holding]="kindDrag.pressId() === kind.type || kindDrag.dragId() === kind.type" [class.sf-drop-target]="kindDrag.dropId() === kind.type"
+       (pointerdown)="kindDrag.down($event, kind.type)" (contextmenu)="kindDrag.menu($event)" (dragstart)="$event.preventDefault()">
+    <a class="sf-box-newnote-link" draggable="false" [routerLink]="newLink(kind.type)">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path [attr.d]="kind.icon" /></svg>
+      <span>{{ kind.label }}</span>
+    </a>
+  </div>
+</ng-template>
 <ng-template #visual let-item>
               @if (cover(item); as pic) {
                 <!-- an album shows its first picture -->

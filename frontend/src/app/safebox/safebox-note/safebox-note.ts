@@ -111,7 +111,6 @@ export class SafeboxNote {
         const keys = this.ctx.boxKeys();
         if (!keys) throw new Error(tr('safebox.common.keysNotKnown', 'The keys are not known yet. Try again in a moment.'));
         const created = await this.service.addNote(this.friendId, title, this.text(), keys);
-        this.prefs.set('boxHidden', this.prefs.value('boxHidden')().filter((k) => k !== 'note')); // a kind that has an item is shown again
         await this.attachments()?.uploadPending(created.id);
         const from = this.linkFrom; // made from "Add a new item and link it"
         this.linkFrom = null;

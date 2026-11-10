@@ -1,10 +1,11 @@
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
-import { Location } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Location, NgTemplateOutlet } from '@angular/common';
+import { Component, computed, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { tr } from '../../core/i18n';
 import { SafeboxService } from '../../core/safebox.service';
-import { objectKinds } from '../../core/safebox-objects';
+import { UiPreferencesService } from '../../core/ui-preferences';
+import { arrangeKinds, objectKinds } from '../../core/safebox-objects';
 
 /**
  * Add a new item and link it (`/friends/:id/safebox/link/:itemId/new`): the kinds to choose from, like the New frame of the list. The choice opens the page
@@ -12,7 +13,7 @@ import { objectKinds } from '../../core/safebox-objects';
  */
 @Component({
   selector: 'app-safebox-link-new',
-  imports: [RouterLink, TranslocoDirective],
+  imports: [NgTemplateOutlet, RouterLink, TranslocoDirective],
   templateUrl: './safebox-link-new.html',
   providers: [provideTranslocoScope('safebox')],
 })
@@ -23,6 +24,10 @@ export class SafeboxLinkNew {
   protected readonly itemId = inject(ActivatedRoute).snapshot.paramMap.get('itemId') ?? '';
   protected readonly list = ['/friends', this.friendId, 'safebox'];
   private readonly service = inject(SafeboxService);
+  protected readonly prefs = inject(UiPreferencesService);
+  protected readonly moreOpen = this.prefs.value('boxHiddenOpen');
+  protected readonly split = computed(() => arrangeKinds(this.kinds, this.prefs.value('boxKindLayout')()));
+  protected readonly newKinds = computed(() => [...this.split().main, ...(this.moreOpen() ? this.split().more : [])]);
   protected readonly kinds: { type: string; label: string; icon: string }[] = [{ type: 'file', label: tr('safebox.common.file', 'File'), icon: 'M12 16V4M7 9l5-5 5 5M4 20h16' }, ...objectKinds()];
 
   /** The new item is made linked with this one: remembered until its page has taken it. */

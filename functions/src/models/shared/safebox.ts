@@ -152,6 +152,8 @@ export interface SafeboxItem {
   parentId: string | null;
   /** true = there is a small preview at `/thumb` */
   hasThumb: boolean;
+  /** the number of the item in the box, from 1 upwards (the order of the list; both friends can change it by dragging). null for an attachment and for a link between two items. */
+  order: number | null;
   /** present = the file is stored encrypted: `name` and `mime` are then only a placeholder until the app opens `enc` and reads the real ones */
   enc?: SafeboxEnc;
 }

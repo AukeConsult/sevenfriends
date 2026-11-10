@@ -8,9 +8,9 @@
     <p>
       @switch (ctx.keyStatus()) {
         @case ('both') { {{ t('friendLock.yourMessagesAndFiles', { friendName: friendName() }) || 'Your messages and files are locked: only you and ' + friendName() + ' can open them.' }} }
-        @case ('me') { {{ t('friendLock.friendnameHasAKey', { friendName: friendName() }) || friendName() + ' has a key, but you have none on this device, so messages and files are not locked yet.' }} }
-        @case ('friend') { {{ t('friendLock.youHaveAKey', { friendName: friendName() }) || 'You have a key, but ' + friendName() + ' has not made one yet, so messages and files are not locked yet.' }} }
-        @case ('none') { {{ t('friendLock.neitherOfYouHas') || 'Neither of you has a key yet, so messages and files are not locked yet.' }} }
+        @case ('me') { {{ t('friendLock.friendnameHasAKey', { friendName: friendName() }) || friendName() + ' is ready, but you are not. Make or restore your key on this device. Until then, what you send can be read by our system.' }} }
+        @case ('friend') { {{ t('friendLock.youHaveAKey', { friendName: friendName() }) || 'You are ready, but ' + friendName() + ' is not yet. Until ' + friendName() + ' makes a key, what you send can be read by our system.' }} }
+        @case ('none') { {{ t('friendLock.neitherOfYouHas') || 'Neither of you has a key yet. Until you both have one, what you send can be read by our system.' }} }
         @default { {{ t('friendLock.checkingTheKeys') || 'Checking the keys…' }} }
       }
     </p>

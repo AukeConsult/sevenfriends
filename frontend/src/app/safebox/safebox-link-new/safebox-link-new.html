@@ -13,15 +13,34 @@
 
   <div class="sf-narrow-form">
     <div class="sf-box-security-body sf-box-new-list">
-      @for (kind of kinds; track kind.type) {
-        <div class="sf-box-newnote">
-          <a class="sf-box-newnote-link pe-3" [routerLink]="path(kind.type)" [replaceUrl]="true" (click)="choose()">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path [attr.d]="kind.icon" /></svg>
-            <span>{{ kind.label }}</span>
-          </a>
-        </div>
+      @if (moreOpen()) {
+        <ng-container *ngTemplateOutlet="toggle" />
+      }
+      @for (kind of split().main; track kind.type) {
+        <ng-container *ngTemplateOutlet="pill; context: { $implicit: kind, hidden: false }" />
+      }
+      @if (moreOpen()) {
+        @for (kind of split().more; track kind.type) {
+          <ng-container *ngTemplateOutlet="pill; context: { $implicit: kind, hidden: true }" />
+        }
+      } @else if (split().more.length) {
+        <ng-container *ngTemplateOutlet="toggle" />
       }
     </div>
   </div>
+<ng-template #toggle>
+  <button type="button" class="sf-box-newnote sf-box-more" (click)="prefs.set('boxHiddenOpen', !moreOpen())" [attr.aria-expanded]="moreOpen()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path [attr.d]="moreOpen() ? 'M6 15l6-6 6 6' : 'M6 9l6 6 6-6'" /></svg>
+    <span>{{ (t('safebox.list.hiddenTypes') || 'Hidden types') + ' (' + split().more.length + ')' }}</span>
+  </button>
+</ng-template>
+<ng-template #pill let-kind let-hiddenKind="hidden">
+  <div class="sf-box-newnote" [class.sf-kind-hidden]="hiddenKind">
+    <a class="sf-box-newnote-link pe-3" [routerLink]="path(kind.type)" [replaceUrl]="true" (click)="choose()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path [attr.d]="kind.icon" /></svg>
+      <span>{{ kind.label }}</span>
+    </a>
+  </div>
+</ng-template>
 </main>
 </ng-container>

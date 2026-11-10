@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { BoxKeys, NotePayload, ObjectPayload, ReminderRequest, SafeboxType, Safebox, SafeboxItem, fingerprintOf, keyIdOf } from '../models';
 import { ApiService } from './api.service';
 import { AuthService } from './auth.service';
-import { isObjectType, summaryOf, whenOf } from './safebox-objects';
+import { dueRange, isObjectType, summaryOf, whenOf } from './safebox-objects';
 import { BoxHead, classify, needsBody, openFileKey, openHead, openMeta, openNote, openObject, openPart, resealNote, resealObject, sealFile, sealMeta, sealNote, sealObject } from './box-crypto';
 import { getDeviceKey } from './device-key';
 import { FriendsService } from './friends.service';
@@ -35,6 +35,8 @@ export class SafeboxService {
   private readonly relations = new Map<string, Map<string, { a: string; b: string }>>();
   /** when each date and ticket is, for the list and the badges */
   private readonly whens = new Map<string, string>();
+  /** when each item with a date is due (from the start of its reminder period to the end of its day) */
+  private readonly dues = new Map<string, { from: number; to: number } | null>();
 
   constructor() {
     // another circle: the files, the opened keys and the previews of the old circle are let go (the object URLs too)
@@ -93,6 +95,9 @@ export class SafeboxService {
         const head = await openHead(friendId, item.enc, await this.fileKey(friendId, item));
         this.snippets.set(`${friendId}/${item.id}`, head?.line ?? '');
         this.whens.set(`${friendId}/${item.id}`, head?.when ?? '');
+        if (head?.due) this.dues.set(`${friendId}/${item.id}`, head.due);
+        else if (DATED_TYPES.includes(item.type)) this.dues.delete(`${friendId}/${item.id}`); // made before heads said when it is due: read once by `loadDues`
+        else this.dues.set(`${friendId}/${item.id}`, null);
         return { ...item, name: head?.title ?? '' };
       } catch {
         return { ...item, name: item.type === 'note' ? tr('core.lockedNote', 'Locked note') : tr('core.lockedItem', 'Locked item') };
@@ -124,6 +129,7 @@ export class SafeboxService {
         const object = await openObject(friendId, item.enc, await this.fileKey(friendId, item));
         this.snippets.set(`${friendId}/${item.id}`, summaryOf(item.type, object));
         this.whens.set(`${friendId}/${item.id}`, whenOf(item.type, object));
+        this.dues.set(`${friendId}/${item.id}`, dueRange(object));
         return { ...item, name: object.title };
       } catch {
         return { ...item, name: tr('core.lockedItem', 'Locked item') };
@@ -142,6 +148,31 @@ export class SafeboxService {
     return this.whens.get(`${friendId}/${itemId}`) ?? '';
   }
 
+  /** True when the item is due now: its reminder period has begun (or its day has) and its day is not over. An item with no date is never due. */
+  isDue(friendId: string, itemId: string): boolean {
+    const due = this.dues.get(`${friendId}/${itemId}`) ?? null;
+    const now = Date.now();
+    return !!due && now >= due.from && now <= due.to;
+  }
+
+  /**
+   * Finds out when the items made before heads carried it are due (their content is read once, one at a time, and not kept): only the kinds that can have
+   * a date, and only the first time. The page asks again for what is due when this is done.
+   */
+  async loadDues(friendId: string, items: SafeboxItem[]): Promise<void> {
+    for (const item of items) {
+      const key = `${friendId}/${item.id}`;
+      if (!DATED_TYPES.includes(item.type) || !item.enc || this.dues.has(key)) continue;
+      try {
+        const raw = this.raw.get(key);
+        const full = raw ? await this.withBody(friendId, raw) : undefined;
+        this.dues.set(key, full?.enc ? dueRange(await openObject(friendId, full.enc, await this.fileKey(friendId, full))) : null);
+      } catch {
+        this.dues.set(key, null);
+      }
+    }
+  }
+
   /** The first line of a note, for the list ('' for anything else). */
   snippet(friendId: string, itemId: string): string {
     return this.snippets.get(`${friendId}/${itemId}`) ?? '';
@@ -150,7 +181,7 @@ export class SafeboxService {
   /** Makes a new note (both of us must have a key: a note is never stored unlocked). Answers with the note as the list shows it. */
   /** What the list shows of a note / of another object, locked apart from the content. */
   private noteHead = (title: string, text: string): BoxHead => ({ title, line: firstLine(text), when: '' });
-  private objectHead = (type: SafeboxType, payload: ObjectPayload): BoxHead => ({ title: payload.title, line: summaryOf(type, payload), when: whenOf(type, payload) });
+  private objectHead = (type: SafeboxType, payload: ObjectPayload): BoxHead => ({ title: payload.title, line: summaryOf(type, payload), when: whenOf(type, payload), due: dueRange(payload) });
 
   /** The item with its whole content: the list sends only the head of a note or object, so the content is asked for the first time it is opened. */
   private async withBody(friendId: string, item: SafeboxItem | undefined): Promise<SafeboxItem | undefined> {
@@ -305,6 +336,11 @@ export class SafeboxService {
     return this.api.request<SafeboxItem>(`${this.base(friendId)}/${itemId}`, { method: 'PUT', body: JSON.stringify({ name }) });
   }
 
+  /** Saves the new order of the items (their ids, first to last): they get the numbers 1, 2, 3 ... in that order. */
+  async reorder(friendId: string, ids: string[]): Promise<void> {
+    await this.api.request<void>(`${this.base(friendId)}/order`, { method: 'PUT', body: JSON.stringify({ ids }) });
+  }
+
   async remove(friendId: string, itemId: string): Promise<void> {
     await this.dropLinks(friendId, (pair) => pair.a === itemId || pair.b === itemId).catch(() => undefined); // its links go with it
     await this.api.request<void>(`${this.base(friendId)}/${itemId}`, { method: 'DELETE' });
@@ -397,7 +433,7 @@ export class SafeboxService {
   /** Let go of everything kept for one friend (the items, keys, previews with their object URLs): called when the safebox pages are left. */
   release(friendId: string): void {
     const own = (id: string) => id.startsWith(`${friendId}/`);
-    for (const map of [this.raw, this.fileKeys, this.snippets, this.whens] as Map<string, unknown>[]) for (const id of [...map.keys()]) if (own(id)) map.delete(id);
+    for (const map of [this.raw, this.fileKeys, this.snippets, this.whens, this.dues] as Map<string, unknown>[]) for (const id of [...map.keys()]) if (own(id)) map.delete(id);
     for (const [id, preview] of [...this.previews]) if (own(id)) { void preview.then((file) => URL.revokeObjectURL(file.url), () => undefined); this.previews.delete(id); }
     this.relations.delete(friendId);
   }
@@ -407,6 +443,7 @@ export class SafeboxService {
     void this.previews.get(`${friendId}/${itemId}`)?.then((file) => URL.revokeObjectURL(file.url), () => undefined);
     this.snippets.delete(`${friendId}/${itemId}`);
     this.whens.delete(`${friendId}/${itemId}`);
+    this.dues.delete(`${friendId}/${itemId}`);
     this.previews.delete(`${friendId}/${itemId}`);
     this.raw.delete(`${friendId}/${itemId}`);
     this.fileKeys.delete(`${friendId}/${itemId}`);
@@ -414,6 +451,9 @@ export class SafeboxService {
 }
 
 const PREVIEWS_KEPT = 60;
+
+/** The kinds of item that can have a date (and so can be due). */
+const DATED_TYPES: string[] = ['date', 'ticket', 'case', 'checklist'];
 
 /** The first non-empty line of a text, cut to fit a list row. */
 function firstLine(text: string): string {

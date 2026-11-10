@@ -114,7 +114,6 @@ export class SafeboxUpload {
     }
     this.busy.set(false);
     if (this.chosen().every((c) => c.state === 'done')) {
-      this.prefs.set('boxHidden', this.prefs.value('boxHidden')().filter((k) => k !== 'file')); // files are shown again
       this.leaveNow();
     }
   }

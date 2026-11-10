@@ -51,3 +51,18 @@ Merge a checklist by entry id, more reminder kinds (repeat every year); who may 
 - The app reads all relations when the box is loaded (`SafeboxService.relations`); `linkedWith(friend, item)` gives the other end of every link that touches an item, so a link shows on BOTH items. `addLink` makes one, `removeLink` deletes the record, `remove` (taking an item out) deletes its links first.
 - UI: the component `safebox-links/` (note page, object page, file page): chips with the linked items (tap = open, x = take the link away) and **Link to another item**, which opens the full-screen page `safebox-link/` (`/friends/:id/safebox/link/:itemId`): the other items of the box with a search field; a tap makes the link and goes back. Attachments are not offered (they belong to their object). A link to an item that was taken out is simply not shown.
 - Limits: a relation counts as one of the 500 items of the box (an item with many links uses many).
+
+## Standard and advanced kinds (New frame)
+The New frame shows the **standard** kinds first: File, Note, Secret, Link, Checklist and Album (`STANDARD_KINDS` in `core/safebox-objects.ts`). The rest (Place, Contact, Date, Case, Ticket) are behind a dashed **More types** pill that opens and closes them. A kind that already has an item in the box counts as standard and stays in the first row. The page "Add a new item and link it" uses the same split (`splitKinds`). The tick that hides a kind from the list is unchanged.
+
+### Arranging the New frame (hold and drag)
+Hold a kind in the New frame (or press it with a mouse for a moment), then drag it onto another kind (it takes its place) or onto the **More types** button (it goes in there; dropping a kind from More onto the button, or onto a kind in the first group, brings it out). The arrangement is the UI preference `boxKindLayout` (`{ main, more }`, each in order; null = the standard split of `splitKinds`); `arrangeKinds` applies it, also on the "new linked item" page. The cards of the icon view use the same helper (`core/hold-drag.ts`, `HoldDrag`) to change the number order of the items.
+
+### The "Due" flag in the search field
+A flag inside the search field of the list shows only what is **due**: an item with a date (date, ticket, case, checklist deadline) is due from the start of its reminder period ("Remind me", the lead before the date and time; a date without a time counts as 09:00) or the start of its day, whichever is first, to the end of its day. `dueRange` (`core/safebox-objects.ts`) makes that range; the locked head of an item carries it as `due` (`BoxHead`), so the list needs no content to know it. Items made before heads had `due` are read once by `SafeboxService.loadDues` (one at a time, nothing kept). The flag shows how many items are due.
+
+## Update: usability fixes (not built or run)
+- The New frame has no ticks and no per-kind list filter any more; the toggle is always "Hidden types (n)" with a chevron. Kinds are still arranged by hold and drag.
+- The order of items: every item has a big handle (⠿) that picks it up at once, plus an always-visible hint above the list (no Change order button, no arrows). Press-and-hold on the item still works.
+- Date and ticket: "Remind {friend} too" is under "Remind me". Delete questions say "Delete" (`safebox.common.deleteAsk`, `deleteAskNamed`).
+- The item page has an explicit **Save** button (a new item is made only with it; an existing one is also saved by itself after 800 ms). The list/icons buttons show text. The search flag says "Coming up".

@@ -17,7 +17,7 @@
 
     @if (!isNew && confirmDelete()) {
       <div class="sf-expand">
-        <p class="sf-confirm-text">{{ t('safebox.object.takeThisOut') || 'Take this out of the safebox? It disappears for both of you and cannot be got back.' }}</p>
+        <p class="sf-confirm-text">{{ t('safebox.common.deleteAsk') || 'Delete this? It is deleted for both of you and cannot be brought back.' }}</p>
         <div class="sf-msg-actions justify-content-center">
           <button type="button" class="btn btn-light btn-sm" (click)="confirmDelete.set(false)" [disabled]="busy()">{{ t('safebox.common.cancel') || 'Cancel' }}</button>
           <button type="button" class="btn btn-danger btn-sm" (click)="remove()" [disabled]="busy()">{{ t('safebox.common.takeItOut') || 'Take it out' }}</button>
@@ -53,19 +53,10 @@
       </div>
     }
 
-    <form class="sf-narrow-form d-grid gap-2" (submit)="$event.preventDefault(); save()" (focusout)="isNew && canSave() && save()">
+    <form class="sf-narrow-form d-grid gap-2" (submit)="$event.preventDefault(); save()">
       @if (type() !== 'link') {
       <div class="d-grid gap-1">
-        <div class="d-flex align-items-center justify-content-between gap-2">
-          <label for="obj-title">{{ kind()!.titleLabel }}</label>
-          @if (kind()!.timed && lead() !== 'none') {
-            <!-- the same place on every item with a date: to the right of the name -->
-            <label class="form-check d-flex align-items-center gap-2 m-0 sf-fs-description">
-              <input type="checkbox" class="form-check-input m-0" [checked]="remindFriend()" (change)="remindFriend.set($any($event.target).checked)" />
-              <span>{{ t('safebox.object.remindFriendToo', { friendName: friendName() }) || 'Remind ' + friendName() + ' too' }}</span>
-            </label>
-          }
-        </div>
+        <label for="obj-title">{{ kind()!.titleLabel }}</label>
         <input id="obj-title" type="text" class="form-control" [maxLength]="titleMax" autocomplete="off" [value]="title()" (input)="title.set($any($event.target).value)" />
       </div>
       }
@@ -127,6 +118,12 @@
             @for (l of leads; track l.value) { <option [value]="l.value" [selected]="l.value === lead()">{{ l.label }}</option> }
           </select>
           @if (lead() !== 'none') {
+            @if (kind()!.timed) {
+              <label class="form-check d-flex align-items-center gap-2 m-0">
+                <input type="checkbox" class="form-check-input m-0" [checked]="remindFriend()" (change)="remindFriend.set($any($event.target).checked)" />
+                <span>{{ t('safebox.object.remindFriendToo', { friendName: friendName() }) || 'Remind ' + friendName() + ' too' }}</span>
+              </label>
+            }
             <span class="sf-hint">{{ t('safebox.object.reminderHint') || 'The reminder says only that something in your safebox is due. What it is stays locked.' }}</span>
           }
         </div>
@@ -185,8 +182,8 @@
 
       @if (error()) { <div class="alert alert-danger m-0" role="alert">{{ error() }}</div> }
 
-      <!-- no Save button: an item that exists is saved by itself; a new one is made when you leave a field and the title (and what is needed) is filled in -->
-      <p class="sf-hint text-center m-0" role="status">{{ busy() ? (t('safebox.common.saving') || 'Saving…') : (isNew ? (t('safebox.object.savedWhenFilledIn') || 'It is saved when you have filled in what is needed.') : (changed() ? '' : (t('safebox.common.saved') || 'Saved'))) }}</p>
+      <!-- an explicit Save; an item that exists is also saved by itself a moment after a change -->
+      <button type="submit" class="btn btn-primary" [disabled]="!canSave() || (!isNew && !changed())">{{ busy() ? (t('safebox.common.saving') || 'Saving…') : (!isNew && !changed() ? (t('safebox.common.saved') || 'Saved') : (t('safebox.common.save') || 'Save')) }}</button>
     </form>
 
   }

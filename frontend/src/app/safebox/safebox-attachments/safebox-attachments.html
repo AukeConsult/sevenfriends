@@ -39,7 +39,7 @@
   @if (toRemove(); as item) {
     <!-- taking one out: an expandable question, not a pop-up -->
     <div class="sf-expand">
-      <p class="sf-confirm-text">{{ t('safebox.attachments.takeThisOut', { itemName: item.name }) || 'Take “' + item.name + '” out? It disappears for both of you.' }}</p>
+      <p class="sf-confirm-text">{{ t('safebox.common.deleteAskNamed', { itemName: item.name }) || 'Delete “' + item.name + '”? It is deleted for both of you and cannot be brought back.' }}</p>
       <div class="sf-msg-actions justify-content-center">
         <button type="button" class="btn btn-light btn-sm" (click)="confirm.set(null)">{{ t('safebox.common.cancel') || 'Cancel' }}</button>
         <button type="button" class="btn btn-danger btn-sm" (click)="remove(item)">{{ t('safebox.common.takeItOut') || 'Take it out' }}</button>
