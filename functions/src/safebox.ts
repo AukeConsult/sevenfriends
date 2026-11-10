@@ -699,16 +699,25 @@ safeboxRouter.get("/:itemId", asyncHandler((req, res) => sendFile(req, res, fals
 export async function deleteItemsOf(connectionId: string, uid: string): Promise<void> {
   try {
     const owner = boxOwner(connectionId);
-    const mine = (await safeboxItems(connectionId).where("addedBy", "==", uid).select().get()).docs;
+    const items = safeboxItems(connectionId);
+    const mine = (await items.where("addedBy", "==", uid).select().get()).docs;
     const doomed = new Map(mine.map((d) => [d.id, d.ref]));
-    for (const item of mine) {
-      for (const child of (await safeboxItems(connectionId).where("parentId", "==", item.id).select().get()).docs) doomed.set(child.id, child.ref);
+    // what is attached to those items goes with them: one query for 30 items at a time (the limit of `in`), not one for each
+    for (let i = 0; i < mine.length; i += 30) {
+      const ids = mine.slice(i, i + 30).map((d) => d.id);
+      for (const child of (await items.where("parentId", "in", ids).select().get()).docs) doomed.set(child.id, child.ref);
     }
-    for (const [id, ref] of doomed) {
-      await deleteObject(owner, id); // an object has no stored file: nothing is found, nothing fails
-      await deleteObject(owner, `${id}.thumb`);
-      await ref.delete();
-      await reminderRef(connectionId, id).delete();
+    // ten at a time, so a big box does not take one round trip after another
+    const all = [...doomed];
+    for (let i = 0; i < all.length; i += 10) {
+      await Promise.all(
+        all.slice(i, i + 10).map(async ([id, ref]) => {
+          await deleteObject(owner, id); // an object has no stored file: nothing is found, nothing fails
+          await deleteObject(owner, `${id}.thumb`);
+          await ref.delete();
+          await reminderRef(connectionId, id).delete();
+        }),
+      );
     }
   } catch (err) {
     console.error(`Could not remove the items of ${uid} from the safebox of ${connectionId}`, err);

@@ -137,6 +137,26 @@
       "collectionGroup": "items",
       "fieldPath": "circles",
       "indexes": []
+    },
+    {
+      "collectionGroup": "friend-group",
+      "fieldPath": "picture",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "friend-group",
+      "fieldPath": "members",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "friend-group",
+      "fieldPath": "invitedBy",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "friend-group",
+      "fieldPath": "memberOrder",
+      "indexes": []
     }
   ]
 }

@@ -11,6 +11,7 @@ import { GroupMember, MediaRef } from "./models";
 import { touchSync } from "./sync";
 import { deleteObjects } from "./sf-cache";
 import { deleteBox, deleteItemsOf } from "./safebox";
+import { GROUP_HEAD, groupHead } from "./group-members";
 import { text } from "./validation";
 
 /**
@@ -32,7 +33,7 @@ export async function createGroup(req: Request, res: Response): Promise<void> {
   const ref = col.doc();
   await assignMissingSeats(col);
   const made = await getFirestore().runTransaction(async (tx) => {
-    const existing = await tx.get(col);
+    const existing = await tx.get(col.select("asleep", "seat"));
     if (existing.docs.filter((d) => d.data().asleep !== true).length >= MAX_FRIENDS) return false; // a group needs a seat like a friend
     tx.set(groupDoc(ref.id), { name, createdBy: uid, members: { [uid]: circle.id }, memberOrder: [uid], createdAt: FieldValue.serverTimestamp() });
     tx.set(ref, {
@@ -74,7 +75,7 @@ export async function leaveGroup(uid: string, entryRef: DocumentReference, group
   let remaining: Record<string, string> = {};
   let groupName = "the group";
   await getFirestore().runTransaction(async (tx) => {
-    const data = (await tx.get(group)).data();
+    const data = (await tx.getAll(group, { fieldMask: GROUP_HEAD }))[0].data();
     const members = { ...((data?.members ?? {}) as Record<string, string>) };
     delete members[uid];
     remaining = members;
@@ -94,9 +95,9 @@ export async function leaveGroup(uid: string, entryRef: DocumentReference, group
     await dropReminders(groupId, uid);
     // the others are told: what the person wrote and put in the safebox is gone with them
     const who = ((await userFields(uid, "displayName"))?.displayName as string | undefined) || "Someone";
-    for (const [memberUid, circleId] of Object.entries(remaining)) {
-      await sendPush(memberUid, { circleId, id: `group-${groupId}-${how}-${uid}`, title: `${who} ${how === "left" ? "left" : "was removed from"} ${groupName}`, body: "Their messages and safebox items in the group are gone.", url: `/friends/${groupId}`, kind: "removed" });
-    }
+    await Promise.all(Object.entries(remaining).map(([memberUid, circleId]) =>
+      sendPush(memberUid, { circleId, id: `group-${groupId}-${how}-${uid}`, title: `${who} ${how === "left" ? "left" : "was removed from"} ${groupName}`, body: "Their messages and safebox items in the group are gone.", url: `/friends/${groupId}`, kind: "removed" }),
+    ));
   }
   if (last) {
     await deleteObjects(mine.docs.flatMap((d) => (d.data().media as MediaRef | undefined) ?? []));
@@ -112,7 +113,7 @@ export async function updateGroup(req: Request, res: Response, groupId: string):
   const uid = (res.locals.token as DecodedIdToken).uid;
   const body = (req.body ?? {}) as Record<string, unknown>;
   const group = groupDoc(groupId);
-  const data = (await group.get()).data();
+  const data = await groupHead(groupId, ["members"]);
   const members = (data?.members ?? {}) as Record<string, string>;
   if (!data || !(uid in members)) {
     res.status(404).json({ error: "Group not found" });
@@ -148,44 +149,44 @@ export async function updateGroup(req: Request, res: Response, groupId: string):
   }
   if (Object.keys(change).length) {
     await group.update(change);
-    for (const [memberUid, circleId] of Object.entries(members)) {
-      await circleCol(memberUid).doc(circleId).collection(FRIENDS_SUBCOLLECTION).doc(groupId).update(copy);
-    }
+    await Promise.all(Object.entries(members).map(([memberUid, circleId]) => circleCol(memberUid).doc(circleId).collection(FRIENDS_SUBCOLLECTION).doc(groupId).update(copy)));
   }
   res.status(204).end();
 }
 
 /** The picture of a group (a data URL), or null. Only a member gets it. */
 export async function groupPicture(uid: string, groupId: string): Promise<string | null> {
-  const data = (await groupDoc(groupId).get()).data();
+  const data = await groupHead(groupId, ["members", "picture"]);
   if (!data || !(uid in ((data.members ?? {}) as Record<string, string>))) return null;
   return (data.picture as string | null | undefined) ?? null;
 }
 
 /** Every member's entry says how many people the group has. */
 async function syncMemberCount(groupId: string): Promise<void> {
-  const members = ((await groupDoc(groupId).get()).data()?.members ?? {}) as Record<string, string>;
+  const members = ((await groupHead(groupId, ["members"]))?.members ?? {}) as Record<string, string>;
   const count = Object.keys(members).length;
-  for (const [uid, circleId] of Object.entries(members)) {
-    await circleCol(uid).doc(circleId).collection(FRIENDS_SUBCOLLECTION).doc(groupId).update({ members: count });
-  }
+  await Promise.all(Object.entries(members).map(([uid, circleId]) => circleCol(uid).doc(circleId).collection(FRIENDS_SUBCOLLECTION).doc(groupId).update({ members: count })));
 }
 
 /** The members of a group, for a member: who they are, who made it, and which of them are my own friends. */
 export async function listGroupMembers(req: Request, res: Response, groupId: string): Promise<void> {
   const uid = (res.locals.token as DecodedIdToken).uid;
-  const data = (await groupDoc(groupId).get()).data();
+  const data = await groupHead(groupId);
   const members = (data?.members ?? {}) as Record<string, string>;
   if (!data || !(uid in members)) {
     res.status(404).json({ error: "Group not found" });
     return;
   }
-  const mine = await (res.locals.circleRef as DocumentReference).collection(FRIENDS_SUBCOLLECTION).where("status", "==", "confirmed").get();
-  const out: GroupMember[] = [];
-  for (const memberUid of orderOf(data)) {
-    const friend = mine.docs.find((d) => d.data().linkedUid === memberUid && d.data().kind !== "group");
-    const account = await userFields(memberUid, "displayName");
-    out.push({
+  const order = orderOf(data);
+  // only my entries for the people of this group (at most 7, so one `in` query), and only the three fields used; the accounts are read at the same time
+  const [mine, accounts] = await Promise.all([
+    (res.locals.circleRef as DocumentReference).collection(FRIENDS_SUBCOLLECTION).where("linkedUid", "in", order).select("linkedUid", "name", "kind", "status").get(),
+    Promise.all(order.map((memberUid) => userFields(memberUid, "displayName"))),
+  ]);
+  const out: GroupMember[] = order.map((memberUid, i) => {
+    const friend = mine.docs.find((d) => d.data().linkedUid === memberUid && d.data().kind !== "group" && d.data().status === "confirmed");
+    const account = accounts[i];
+    return {
       uid: memberUid,
       name: memberUid === uid ? ((account?.displayName as string | undefined) ?? "You") : ((friend?.data().name as string | undefined) ?? (account?.displayName as string | undefined) ?? "Someone"),
       you: memberUid === uid,
@@ -193,8 +194,8 @@ export async function listGroupMembers(req: Request, res: Response, groupId: str
       friendId: friend?.id ?? null,
       invitedBy: ((data.invitedBy ?? {}) as Record<string, string>)[memberUid] ?? null,
       canRemove: memberUid !== uid && canRemove(data, uid, memberUid),
-    });
-  }
+    };
+  });
   res.json(out);
 }
 
@@ -205,7 +206,7 @@ export async function listGroupMembers(req: Request, res: Response, groupId: str
 export async function addGroupMember(req: Request, res: Response, groupId: string): Promise<void> {
   const uid = (res.locals.token as DecodedIdToken).uid;
   const group = groupDoc(groupId);
-  const data = (await group.get()).data();
+  const data = await groupHead(groupId);
   const members = (data?.members ?? {}) as Record<string, string>;
   if (!data || !(uid in members)) {
     res.status(404).json({ error: "Group not found" });
@@ -231,8 +232,8 @@ export async function addGroupMember(req: Request, res: Response, groupId: strin
   const sleepListOn = settingsOf((await circleCol(newUid).doc(circleId).get()).data()?.settings).sleepList !== false; // on unless they switched it off
   const mineEntry = (await (res.locals.circleRef as DocumentReference).collection(FRIENDS_SUBCOLLECTION).doc(groupId).get()).data() ?? {};
   const added = await getFirestore().runTransaction(async (tx): Promise<"ok" | "asleep" | "full"> => {
-    const existing = await tx.get(col);
-    const current = (await tx.get(group)).data() ?? data; // read again here: the order of the list is written back whole
+    const existing = await tx.get(col.select("asleep", "seat"));
+    const current = (await tx.getAll(group, { fieldMask: GROUP_HEAD }))[0].data() ?? data; // read again here: the order of the list is written back whole
     const full = existing.docs.filter((d) => d.data().asleep !== true).length >= MAX_FRIENDS;
     if (full && !sleepListOn) return "full";
     tx.set(col.doc(groupId), {
@@ -273,7 +274,7 @@ export async function addGroupMember(req: Request, res: Response, groupId: strin
 /** Remove a member: `memberUid` is me (leave), or somebody else: the maker of the group can remove anybody, and a person can remove the members they invited (see `canRemove`). Their copies of the messages go; the others keep everything. */
 export async function removeGroupMember(req: Request, res: Response, groupId: string, memberUid: string): Promise<void> {
   const uid = (res.locals.token as DecodedIdToken).uid;
-  const data = (await groupDoc(groupId).get()).data();
+  const data = await groupHead(groupId);
   const members = (data?.members ?? {}) as Record<string, string>;
   if (!data || !(uid in members) || !(memberUid in members)) {
     res.status(404).json({ error: "Group not found" });
