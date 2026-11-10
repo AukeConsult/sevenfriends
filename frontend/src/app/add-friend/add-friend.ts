@@ -34,7 +34,7 @@ export class AddFriend {
   /** opened from the setup wizard: Done, Cancel and a friend with an account go on to the wizard's last step instead of the friends page */
   private readonly fromSetup = inject(ActivatedRoute).snapshot.queryParamMap.has('setup');
   protected readonly backTo = this.fromSetup ? '/setup' : '/';
-  protected readonly backParams = this.fromSetup ? { step: 'install' } : null;
+  protected readonly backParams = this.fromSetup ? { step: 'friend' } : null;
   protected readonly invite = inject(InviteLinkService);
   private readonly user = inject(AuthService).user;
 
