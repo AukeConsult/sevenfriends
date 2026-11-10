@@ -105,7 +105,13 @@
     "phoneSignIn": "Telefonla giriş",
     "signingIn": "Giriş yapılıyor",
     "verifyPhone": "Telefonu doğrula",
-    "deleteMyAccount": "Hesabımı sil"
+    "deleteMyAccount": "Hesabımı sil",
+    "link": "Bağlantı",
+    "newLinkedItem": "Yeni bağlı öğe",
+    "newNote": "Yeni not",
+    "newFile": "Yeni dosya",
+    "new": "Yeni",
+    "note": "Not"
   },
   "time": {
     "justNow": "az önce"
@@ -163,6 +169,11 @@
     "theKeyCouldNot2": "Anahtar sunucuya kaydedilemedi. Tekrar dene.",
     "theKeyOnThis": "Bu cihazdaki anahtar kontrol edilemedi. Tekrar dene.",
     "androidApp": "Android uygulaması",
+    "iphoneApp": "iPhone uygulaması",
+    "windowsApp": "Windows uygulaması",
+    "browser": "Tarayıcı",
+    "browserApp": "Tarayıcı uygulaması",
+    "browserOnDevice": "{{ device }} üzerinde {{ browser }}",
     "thereIsNoEncryption": "Bu cihazda şifreleme anahtarı yok. Ayarlar → Anahtarlar bölümünden bir tane kur (ya da geri yükle).",
     "thisFileCouldNot2": "Bu dosya açılamadı.",
     "thisFileIsLocked": "Bu dosya kilitli. Önce sohbeti aç, sonra tekrar dene.",
@@ -278,5 +289,17 @@
     "pokeAnyway": "Yine de dürt",
     "makesASound": "ses çıkarır",
     "activityIn": "{{ circle }} içinde etkinlik"
-  }
+  },
+  "needsYourHelp": "{{ friendName }} yardımına ihtiyaç duyuyor",
+  "openToUnlockTheir": "Eski mesajlarının kilidini yeniden açmak için uygulamayı aç.",
+  "openedYourHistory": "{{ friendName }} geçmişini açtı",
+  "declinedYourRequest": "{{ friendName }} isteğini reddetti",
+  "getThemBack": "Geri al",
+  "lockedMessagesAndFiles": "{{ name }} ile {{ messages }} mesaj ve {{ files }} dosya bu cihazda kilitli.",
+  "lockedFilesWith": "{{ name }} ile {{ count }} dosya bu cihazda kilitli.",
+  "lockedMessagesWith": "{{ name }} ile {{ count }} mesaj bu cihazda kilitli.",
+  "removeThisKeyNotYou": "Bu anahtar kaldırılsın mı? O zaman o cihaz mesajlarını artık açamaz. Bu sen değilsen girişini de değiştir.",
+  "removeIt": "Kaldır",
+  "cancel": "İptal",
+  "notMe": "Ben değilim"
 }

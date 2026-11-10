@@ -105,7 +105,13 @@
     "phoneSignIn": "Log ind med telefon",
     "signingIn": "Logger ind",
     "verifyPhone": "Bekræft telefon",
-    "deleteMyAccount": "Slet min konto"
+    "deleteMyAccount": "Slet min konto",
+    "link": "Link",
+    "newLinkedItem": "Nyt sammenkædet element",
+    "newNote": "Ny note",
+    "newFile": "Ny fil",
+    "new": "Ny",
+    "note": "Note"
   },
   "time": {
     "justNow": "lige nu"
@@ -163,6 +169,11 @@
     "theKeyCouldNot2": "Nøglen kunne ikke gemmes på serveren. Prøv igen.",
     "theKeyOnThis": "Nøglen på denne enhed kunne ikke tjekkes. Prøv igen.",
     "androidApp": "Android-app",
+    "iphoneApp": "iPhone-app",
+    "windowsApp": "Windows-app",
+    "browser": "Browser",
+    "browserApp": "Browser-app",
+    "browserOnDevice": "{{ browser }} på {{ device }}",
     "thereIsNoEncryption": "Der er ingen krypteringsnøgle på denne enhed. Opret en (eller gendan den) under Indstillinger → Nøgler.",
     "thisFileCouldNot2": "Denne fil kunne ikke åbnes.",
     "thisFileIsLocked": "Denne fil er låst. Åbn først samtalen, og prøv så igen.",
@@ -278,5 +289,17 @@
     "pokeAnyway": "Giv et skub alligevel",
     "makesASound": "afgiver en lyd",
     "activityIn": "Aktivitet i {{ circle }}"
-  }
+  },
+  "needsYourHelp": "{{ friendName }} har brug for din hjælp",
+  "openToUnlockTheir": "Åbn appen for at låse deres gamle beskeder op igen.",
+  "openedYourHistory": "{{ friendName }} åbnede din historik",
+  "declinedYourRequest": "{{ friendName }} afslog din anmodning",
+  "getThemBack": "Få dem tilbage",
+  "lockedMessagesAndFiles": "{{ messages }} beskeder og {{ files }} filer med {{ name }} er låst på denne enhed.",
+  "lockedFilesWith": "{{ count }} filer med {{ name }} er låst på denne enhed.",
+  "lockedMessagesWith": "{{ count }} beskeder med {{ name }} er låst på denne enhed.",
+  "removeThisKeyNotYou": "Fjern denne nøgle? Så kan den enhed ikke længere åbne dine beskeder. Hvis det ikke var dig, så skift også dit login.",
+  "removeIt": "Fjern den",
+  "cancel": "Annuller",
+  "notMe": "Ikke mig"
 }

@@ -167,7 +167,18 @@ export class DocSnap {
 /** A snapshot with only the asked fields (what `select` and a field mask do). */
 const projected = (snap: DocSnap, fields: string[]) => {
   const data = snap.data();
-  return new DocSnap(snap.ref, data === undefined ? undefined : Object.fromEntries(fields.filter((f) => f in data).map((f) => [f, data[f]])));
+  if (data === undefined) return new DocSnap(snap.ref, undefined);
+  const out: Record<string, any> = {};
+  for (const f of fields) {
+    const path = f.split("."); // a nested field ("enc.meta") comes back nested, without its other fields
+    let from: any = data;
+    for (const key of path) from = from !== null && typeof from === "object" && key in from ? from[key] : undefined;
+    if (from === undefined) continue;
+    let to = out;
+    path.slice(0, -1).forEach((key) => (to = to[key] ??= {}));
+    to[path[path.length - 1]] = from;
+  }
+  return new DocSnap(snap.ref, out);
 };
 
 export class QuerySnap {

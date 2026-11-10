@@ -35,5 +35,12 @@
   "askFriendnameToHelp": "Be {{ friendName }} om hjelp",
   "checking": "Sjekker…",
   "couldNotReadThe": "Kunne ikke lese forespørselen",
-  "thatDidNotWork": "Det virket ikke"
+  "thatDidNotWork": "Det virket ikke",
+  "friendnameDeclined": "{{ friendName }} sa nei",
+  "theyDidNotOpen": "De åpnet ikke de gamle meldingene dine. Du kan spørre igjen, eller bruke en av dine egne enheter eller de 24 gjenopprettingsordene dine (Innstillinger, Nøkler).",
+  "askAgain": "Spør igjen",
+  "dismiss": "Lukk",
+  "decline": "Avslå",
+  "youDeclined": "Du sa nei. {{ friendName }} har fått beskjed.",
+  "alsoWhenNothing": "Du kan spørre når som helst, også når ingenting er låst for deg: {{ friendName }} låser da alt på nytt for alle nøklene dine, og må si ja hver gang."
 }

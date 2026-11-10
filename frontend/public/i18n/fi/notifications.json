@@ -50,5 +50,16 @@
   "unverifiedPhone": "puhelinnumero",
   "unverifiedAnd": "{{ a }} ja {{ b }}",
   "waitingOne": "1 pyyntö odottaa vapaata paikkaa",
-  "waitingMany": "{{ count }} pyyntöä odottaa vapaata paikkaa"
+  "waitingMany": "{{ count }} pyyntöä odottaa vapaata paikkaa",
+  "recoveryAsksYou": "pyytää sinua auttamaan avaamaan vanhat viestinsä",
+  "recoveryYouHelp": "autat avaamaan heidän vanhat viestinsä",
+  "recoveryDecline": "Hylkää",
+  "recoveryDeclined": "hylkäsi pyyntösi avata vanhat viestisi",
+  "recoveryAskAgain": "Pyydä uudelleen",
+  "recoveryDismiss": "Ohita",
+  "openedYourHistory": "{{ friendName }} avasi historiasi.",
+  "openedYourHistoryMany": "{{ friendNames }} avasivat historiasi.",
+  "lockedOnThisDevice": "Lukittu tällä laitteella",
+  "lockedCounts": "{{ messages }} viestiä ja {{ files }} tiedostoa ei voi vielä avata täällä",
+  "getThemBack": "Hae ne takaisin"
 }

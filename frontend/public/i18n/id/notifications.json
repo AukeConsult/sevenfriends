@@ -50,5 +50,16 @@
   "unverifiedPhone": "nomor telepon",
   "unverifiedAnd": "{{ a }} dan {{ b }}",
   "waitingOne": "1 permintaan menunggu tempat kosong",
-  "waitingMany": "{{ count }} permintaan menunggu tempat kosong"
+  "waitingMany": "{{ count }} permintaan menunggu tempat kosong",
+  "recoveryAsksYou": "meminta bantuanmu untuk membuka pesan lamanya",
+  "recoveryYouHelp": "kamu sedang membantu membuka pesan lamanya",
+  "recoveryDecline": "Tolak",
+  "recoveryDeclined": "menolak permintaanmu untuk membuka pesan lamamu",
+  "recoveryAskAgain": "Minta lagi",
+  "recoveryDismiss": "Tutup",
+  "openedYourHistory": "{{ friendName }} membuka riwayatmu.",
+  "openedYourHistoryMany": "{{ friendNames }} membuka riwayatmu.",
+  "lockedOnThisDevice": "Terkunci di perangkat ini",
+  "lockedCounts": "{{ messages }} pesan dan {{ files }} file belum bisa dibuka di sini",
+  "getThemBack": "Pulihkan"
 }

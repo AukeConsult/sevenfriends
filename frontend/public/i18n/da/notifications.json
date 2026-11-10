@@ -50,5 +50,16 @@
   "unverifiedPhone": "telefonnummer",
   "unverifiedAnd": "{{ a }} og {{ b }}",
   "waitingOne": "1 anmodning venter på en ledig plads",
-  "waitingMany": "{{ count }} anmodninger venter på en ledig plads"
+  "waitingMany": "{{ count }} anmodninger venter på en ledig plads",
+  "recoveryAsksYou": "beder dig om at hjælpe med at åbne deres gamle beskeder",
+  "recoveryYouHelp": "du hjælper med at åbne deres gamle beskeder",
+  "recoveryDecline": "Afslå",
+  "recoveryDeclined": "afslog din anmodning om at åbne dine gamle beskeder",
+  "recoveryAskAgain": "Spørg igen",
+  "recoveryDismiss": "Afvis",
+  "openedYourHistory": "{{ friendName }} åbnede din historik.",
+  "openedYourHistoryMany": "{{ friendNames }} åbnede din historik.",
+  "lockedOnThisDevice": "Låst på denne enhed",
+  "lockedCounts": "{{ messages }} beskeder og {{ files }} filer kan ikke åbnes her endnu",
+  "getThemBack": "Få dem tilbage"
 }

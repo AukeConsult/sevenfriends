@@ -50,5 +50,16 @@
   "unverifiedPhone": "फ़ोन नंबर",
   "unverifiedAnd": "{{ a }} और {{ b }}",
   "waitingOne": "1 अनुरोध खाली जगह का इंतज़ार कर रहा है",
-  "waitingMany": "{{ count }} अनुरोध खाली जगह का इंतज़ार कर रहे हैं"
+  "waitingMany": "{{ count }} अनुरोध खाली जगह का इंतज़ार कर रहे हैं",
+  "recoveryAsksYou": "आपसे उनके पुराने संदेश खोलने में मदद माँग रहे हैं",
+  "recoveryYouHelp": "आप उनके पुराने संदेश खोलने में मदद कर रहे हैं",
+  "recoveryDecline": "मना करें",
+  "recoveryDeclined": "आपके पुराने संदेश खोलने का अनुरोध ठुकरा दिया",
+  "recoveryAskAgain": "दोबारा कहें",
+  "recoveryDismiss": "खारिज करें",
+  "openedYourHistory": "{{ friendName }} ने आपका इतिहास खोला।",
+  "openedYourHistoryMany": "{{ friendNames }} ने आपका इतिहास खोला।",
+  "lockedOnThisDevice": "इस डिवाइस पर लॉक",
+  "lockedCounts": "{{ messages }} संदेश और {{ files }} फ़ाइलें अभी यहाँ नहीं खोली जा सकतीं",
+  "getThemBack": "उन्हें वापस पाएँ"
 }

@@ -35,5 +35,12 @@
   "askFriendnameToHelp": "{{ friendName }}님에게 도움 요청",
   "checking": "확인하는 중…",
   "couldNotReadThe": "요청을 읽을 수 없어요",
-  "thatDidNotWork": "잘 안 됐어요"
+  "thatDidNotWork": "잘 안 됐어요",
+  "friendnameDeclined": "{{ friendName }}님이 거절했어요",
+  "theyDidNotOpen": "이전 메시지를 열지 않았어요. 다시 요청하거나, 내 다른 기기 또는 복구 단어 24개를 사용할 수 있어요 (설정, 키).",
+  "askAgain": "다시 요청",
+  "dismiss": "닫기",
+  "decline": "거절",
+  "youDeclined": "거절했어요. {{ friendName }}님에게 알렸어요.",
+  "alsoWhenNothing": "내게 잠긴 것이 없어도 언제든 요청할 수 있어요. 그러면 {{ friendName }}님이 내 모든 키에 대해 다시 전부 잠그고, 매번 승인해야 해요."
 }

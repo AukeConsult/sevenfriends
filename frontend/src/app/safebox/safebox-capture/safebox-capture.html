@@ -1,0 +1,19 @@
+<ng-container *transloco="let t">
+@if (open() === 'image') {
+  <div class="w-100 d-grid gap-2"><app-camera mode="photo" (photo)="photo($event)" (closed)="open.set(null)" (failed)="problem($event)" /></div>
+} @else if (open() === 'video') {
+  <div class="w-100 d-grid gap-2"><app-camera mode="video" (recorded)="filmed($event)" (closed)="open.set(null)" (failed)="problem($event)" /></div>
+} @else if (open() === 'audio') {
+  <div class="w-100 d-grid gap-2"><app-voice (recorded)="voice($event)" (closed)="open.set(null)" (failed)="problem($event)" /></div>
+} @else {
+  <input #photoInput type="file" class="visually-hidden" accept="image/*" capture="environment" tabindex="-1" aria-hidden="true" (change)="pick(photoInput)" />
+  <input #videoInput type="file" class="visually-hidden" accept="video/*" capture="environment" tabindex="-1" aria-hidden="true" (change)="pick(videoInput)" />
+  <button type="button" class="btn btn-light btn-sm" [disabled]="disabled()" (click)="start('image', photoInput)">{{ t('safebox.capture.image') || 'Image' }}</button>
+  @if (canVideo) {
+    <button type="button" class="btn btn-light btn-sm" [disabled]="disabled()" (click)="start('video', videoInput)">{{ t('safebox.capture.video') || 'Video' }}</button>
+  }
+  @if (!noVoice() && canVoice) {
+    <button type="button" class="btn btn-light btn-sm" [disabled]="disabled()" (click)="start('audio', null)">{{ t('safebox.capture.voice') || 'Voice' }}</button>
+  }
+}
+</ng-container>

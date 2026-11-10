@@ -105,7 +105,13 @@
     "phoneSignIn": "電話でログイン",
     "signingIn": "ログイン中",
     "verifyPhone": "電話番号を確認",
-    "deleteMyAccount": "アカウントを削除"
+    "deleteMyAccount": "アカウントを削除",
+    "link": "リンク",
+    "newLinkedItem": "新しいリンク先の項目",
+    "newNote": "新しいメモ",
+    "newFile": "新しいファイル",
+    "new": "新規",
+    "note": "メモ"
   },
   "time": {
     "justNow": "たった今"
@@ -163,6 +169,11 @@
     "theKeyCouldNot2": "キーをサーバーに保存できませんでした。もう一度お試しください。",
     "theKeyOnThis": "このデバイスのキーを確認できませんでした。もう一度お試しください。",
     "androidApp": "Androidアプリ",
+    "iphoneApp": "iPhoneアプリ",
+    "windowsApp": "Windowsアプリ",
+    "browser": "ブラウザ",
+    "browserApp": "ブラウザアプリ",
+    "browserOnDevice": "{{ device }}の{{ browser }}",
     "thereIsNoEncryption": "このデバイスには暗号化キーがありません。設定 → キー で作成（または復元）してください。",
     "thisFileCouldNot2": "このファイルを開けませんでした。",
     "thisFileIsLocked": "このファイルはロックされています。先に会話を開いてから、もう一度お試しください。",
@@ -278,5 +289,17 @@
     "pokeAnyway": "それでも送る",
     "makesASound": "音が鳴ります",
     "activityIn": "{{ circle }} にアクティビティがあります"
-  }
+  },
+  "needsYourHelp": "{{ friendName }}さんがあなたの助けを必要としています",
+  "openToUnlockTheir": "アプリを開くと、相手の過去のメッセージのロックをもう一度解除できます。",
+  "openedYourHistory": "{{ friendName }}さんがあなたの履歴を開きました",
+  "declinedYourRequest": "{{ friendName }}さんがあなたのリクエストを断りました",
+  "getThemBack": "取り戻す",
+  "lockedMessagesAndFiles": "{{ name }}さんとのメッセージ{{ messages }}件とファイル{{ files }}件は、この端末でロックされています。",
+  "lockedFilesWith": "{{ name }}さんとのファイル{{ count }}件は、この端末でロックされています。",
+  "lockedMessagesWith": "{{ name }}さんとのメッセージ{{ count }}件は、この端末でロックされています。",
+  "removeThisKeyNotYou": "このキーを削除しますか？ そうすると、その端末ではあなたのメッセージを開けなくなります。あなたではない場合は、ログイン情報も変更してください。",
+  "removeIt": "削除する",
+  "cancel": "キャンセル",
+  "notMe": "私ではない"
 }

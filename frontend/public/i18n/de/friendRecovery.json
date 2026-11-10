@@ -35,5 +35,12 @@
   "askFriendnameToHelp": "{{ friendName }} um Hilfe bitten",
   "checking": "Wird geprüft …",
   "couldNotReadThe": "Die Anfrage konnte nicht gelesen werden",
-  "thatDidNotWork": "Das hat nicht geklappt"
+  "thatDidNotWork": "Das hat nicht geklappt",
+  "friendnameDeclined": "{{ friendName }} hat Nein gesagt",
+  "theyDidNotOpen": "Die alten Nachrichten wurden nicht geöffnet. Du kannst erneut fragen oder eines deiner eigenen Geräte oder deine 24 Wiederherstellungswörter verwenden (Einstellungen, Schlüssel).",
+  "askAgain": "Erneut fragen",
+  "dismiss": "Verwerfen",
+  "decline": "Ablehnen",
+  "youDeclined": "Du hast Nein gesagt. {{ friendName }} wurde informiert.",
+  "alsoWhenNothing": "Du kannst jederzeit fragen, auch wenn für dich nichts gesperrt ist: {{ friendName }} sperrt dann alles erneut für alle deine Schlüssel und muss jedes Mal zustimmen."
 }

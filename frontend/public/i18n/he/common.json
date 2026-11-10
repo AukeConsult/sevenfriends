@@ -105,7 +105,13 @@
     "phoneSignIn": "התחברות בטלפון",
     "signingIn": "מתחברים",
     "verifyPhone": "אימות טלפון",
-    "deleteMyAccount": "מחיקת החשבון שלי"
+    "deleteMyAccount": "מחיקת החשבון שלי",
+    "link": "קישור",
+    "newLinkedItem": "פריט מקושר חדש",
+    "newNote": "פתק חדש",
+    "newFile": "קובץ חדש",
+    "new": "חדש",
+    "note": "פתק"
   },
   "time": {
     "justNow": "הרגע"
@@ -163,6 +169,11 @@
     "theKeyCouldNot2": "לא ניתן היה לשמור את המפתח בשרת. כדאי לנסות שוב.",
     "theKeyOnThis": "לא ניתן היה לבדוק את המפתח במכשיר הזה. כדאי לנסות שוב.",
     "androidApp": "אפליקציית Android",
+    "iphoneApp": "אפליקציית iPhone",
+    "windowsApp": "אפליקציית Windows",
+    "browser": "דפדפן",
+    "browserApp": "אפליקציית דפדפן",
+    "browserOnDevice": "{{ browser }} ב-{{ device }}",
     "thereIsNoEncryption": "אין מפתח הצפנה במכשיר הזה. אפשר להגדיר מפתח (או לשחזר אותו) ב-הגדרות → מפתחות.",
     "thisFileCouldNot2": "לא ניתן היה לפתוח את הקובץ הזה.",
     "thisFileIsLocked": "הקובץ הזה נעול. קודם יש לפתוח את השיחה ואז לנסות שוב.",
@@ -278,5 +289,17 @@
     "pokeAnyway": "לשלוח דחיפה בכל זאת",
     "makesASound": "משמיע צליל",
     "activityIn": "פעילות ב{{ circle }}"
-  }
+  },
+  "needsYourHelp": "{{ friendName }} צריך/ה את העזרה שלך",
+  "openToUnlockTheir": "פתח/י את האפליקציה כדי לשחרר שוב את ההודעות הישנות שלו/ה.",
+  "openedYourHistory": "{{ friendName }} פתח/ה את ההיסטוריה שלך",
+  "declinedYourRequest": "{{ friendName }} דחה/תה את הבקשה שלך",
+  "getThemBack": "להחזיר אותן",
+  "lockedMessagesAndFiles": "{{ messages }} הודעות ו-{{ files }} קבצים עם {{ name }} נעולים במכשיר הזה.",
+  "lockedFilesWith": "{{ count }} קבצים עם {{ name }} נעולים במכשיר הזה.",
+  "lockedMessagesWith": "{{ count }} הודעות עם {{ name }} נעולות במכשיר הזה.",
+  "removeThisKeyNotYou": "להסיר את המפתח הזה? אז המכשיר ההוא לא יוכל יותר לפתוח את ההודעות שלך. אם זה לא היית את/ה, שנה/י גם את ההתחברות שלך.",
+  "removeIt": "הסר",
+  "cancel": "ביטול",
+  "notMe": "זה לא אני"
 }

@@ -105,7 +105,13 @@
     "phoneSignIn": "Phone sign-in",
     "signingIn": "Signing in",
     "verifyPhone": "Verify phone",
-    "deleteMyAccount": "Delete my account"
+    "deleteMyAccount": "Delete my account",
+    "link": "Link",
+    "newLinkedItem": "New linked item",
+    "newNote": "New note",
+    "newFile": "New file",
+    "new": "New",
+    "note": "Note"
   },
   "time": {
     "justNow": "just now"

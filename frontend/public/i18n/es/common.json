@@ -105,7 +105,13 @@
     "phoneSignIn": "Inicio con teléfono",
     "signingIn": "Iniciando sesión",
     "verifyPhone": "Verificar teléfono",
-    "deleteMyAccount": "Eliminar mi cuenta"
+    "deleteMyAccount": "Eliminar mi cuenta",
+    "link": "Enlace",
+    "newLinkedItem": "Nuevo elemento vinculado",
+    "newNote": "Nueva nota",
+    "newFile": "Nuevo archivo",
+    "new": "Nuevo",
+    "note": "Nota"
   },
   "time": {
     "justNow": "ahora mismo"
@@ -163,6 +169,11 @@
     "theKeyCouldNot2": "No se pudo guardar la clave en el servidor. Inténtalo de nuevo.",
     "theKeyOnThis": "No se pudo comprobar la clave de este dispositivo. Inténtalo de nuevo.",
     "androidApp": "App para Android",
+    "iphoneApp": "App de iPhone",
+    "windowsApp": "App de Windows",
+    "browser": "Navegador",
+    "browserApp": "App del navegador",
+    "browserOnDevice": "{{ browser }} en {{ device }}",
     "thereIsNoEncryption": "No hay ninguna clave de cifrado en este dispositivo. Crea una (o restáurala) en Ajustes → Claves.",
     "thisFileCouldNot2": "No se pudo abrir este archivo.",
     "thisFileIsLocked": "Este archivo está bloqueado. Abre primero la conversación y vuelve a intentarlo.",
@@ -278,5 +289,17 @@
     "pokeAnyway": "Avisar de todos modos",
     "makesASound": "hace un sonido",
     "activityIn": "Actividad en {{ circle }}"
-  }
+  },
+  "needsYourHelp": "{{ friendName }} necesita tu ayuda",
+  "openToUnlockTheir": "Abre la app para desbloquear de nuevo sus mensajes antiguos.",
+  "openedYourHistory": "{{ friendName }} abrió tu historial",
+  "declinedYourRequest": "{{ friendName }} rechazó tu solicitud",
+  "getThemBack": "Recuperarlos",
+  "lockedMessagesAndFiles": "{{ messages }} mensajes y {{ files }} archivos con {{ name }} están bloqueados en este dispositivo.",
+  "lockedFilesWith": "{{ count }} archivos con {{ name }} están bloqueados en este dispositivo.",
+  "lockedMessagesWith": "{{ count }} mensajes con {{ name }} están bloqueados en este dispositivo.",
+  "removeThisKeyNotYou": "¿Quitar esta clave? Entonces ese dispositivo ya no podrá abrir tus mensajes. Si no fuiste tú, cambia también tu acceso.",
+  "removeIt": "Quitarla",
+  "cancel": "Cancelar",
+  "notMe": "No fui yo"
 }

@@ -105,7 +105,13 @@
     "phoneSignIn": "Anmeldung per Telefon",
     "signingIn": "Anmeldung läuft",
     "verifyPhone": "Telefon bestätigen",
-    "deleteMyAccount": "Mein Konto löschen"
+    "deleteMyAccount": "Mein Konto löschen",
+    "link": "Link",
+    "newLinkedItem": "Neues verknüpftes Element",
+    "newNote": "Neue Notiz",
+    "newFile": "Neue Datei",
+    "new": "Neu",
+    "note": "Notiz"
   },
   "time": {
     "justNow": "gerade eben"
@@ -163,6 +169,11 @@
     "theKeyCouldNot2": "Der Schlüssel konnte nicht auf dem Server gespeichert werden. Versuch es noch einmal.",
     "theKeyOnThis": "Der Schlüssel auf diesem Gerät konnte nicht geprüft werden. Versuch es noch einmal.",
     "androidApp": "Android-App",
+    "iphoneApp": "iPhone-App",
+    "windowsApp": "Windows-App",
+    "browser": "Browser",
+    "browserApp": "Browser-App",
+    "browserOnDevice": "{{ browser }} auf {{ device }}",
     "thereIsNoEncryption": "Auf diesem Gerät gibt es keinen Verschlüsselungsschlüssel. Richte einen ein (oder stell ihn wieder her) unter Einstellungen → Schlüssel.",
     "thisFileCouldNot2": "Diese Datei konnte nicht geöffnet werden.",
     "thisFileIsLocked": "Diese Datei ist gesperrt. Öffne zuerst die Unterhaltung und versuch es dann noch einmal.",
@@ -278,5 +289,17 @@
     "pokeAnyway": "Trotzdem anstupsen",
     "makesASound": "macht einen Ton",
     "activityIn": "Aktivität in {{ circle }}"
-  }
+  },
+  "needsYourHelp": "{{ friendName }} braucht deine Hilfe",
+  "openToUnlockTheir": "Öffne die App, um die alten Nachrichten wieder zu entsperren.",
+  "openedYourHistory": "{{ friendName }} hat deinen Verlauf geöffnet",
+  "declinedYourRequest": "{{ friendName }} hat deine Anfrage abgelehnt",
+  "getThemBack": "Wiederherstellen",
+  "lockedMessagesAndFiles": "{{ messages }} Nachrichten und {{ files }} Dateien mit {{ name }} sind auf diesem Gerät gesperrt.",
+  "lockedFilesWith": "{{ count }} Dateien mit {{ name }} sind auf diesem Gerät gesperrt.",
+  "lockedMessagesWith": "{{ count }} Nachrichten mit {{ name }} sind auf diesem Gerät gesperrt.",
+  "removeThisKeyNotYou": "Diesen Schlüssel entfernen? Dann kann dieses Gerät deine Nachrichten nicht mehr öffnen. Wenn du das nicht warst, ändere auch deine Anmeldung.",
+  "removeIt": "Entfernen",
+  "cancel": "Abbrechen",
+  "notMe": "Nicht ich"
 }

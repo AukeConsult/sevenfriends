@@ -35,5 +35,12 @@
   "askFriendnameToHelp": "{{ friendName }}さんに手伝ってもらう",
   "checking": "確認中…",
   "couldNotReadThe": "リクエストを読み込めませんでした",
-  "thatDidNotWork": "うまくいきませんでした"
+  "thatDidNotWork": "うまくいきませんでした",
+  "friendnameDeclined": "{{ friendName }}さんは断りました",
+  "theyDidNotOpen": "古いメッセージは開かれませんでした。もう一度頼むか、自分の端末の1つ、または24個の復元ワードを使えます（設定、キー）。",
+  "askAgain": "もう一度頼む",
+  "dismiss": "閉じる",
+  "decline": "断る",
+  "youDeclined": "あなたは断りました。{{ friendName }}さんに伝えてあります。",
+  "alsoWhenNothing": "自分にロックされたものがなくても、いつでも頼めます。その場合、{{ friendName }}さんはあなたのすべてのキー用にもう一度すべてをロックし、毎回承認する必要があります。"
 }

@@ -50,5 +50,16 @@
   "unverifiedPhone": "電話番号",
   "unverifiedAnd": "{{ a }}と{{ b }}",
   "waitingOne": "1件のリクエストが空き席を待っています",
-  "waitingMany": "{{ count }}件のリクエストが空き席を待っています"
+  "waitingMany": "{{ count }}件のリクエストが空き席を待っています",
+  "recoveryAsksYou": "相手の古いメッセージを開くのを手伝ってほしいそうです",
+  "recoveryYouHelp": "相手の古いメッセージを開くのを手伝っています",
+  "recoveryDecline": "断る",
+  "recoveryDeclined": "古いメッセージを開くあなたのリクエストを断りました",
+  "recoveryAskAgain": "もう一度頼む",
+  "recoveryDismiss": "閉じる",
+  "openedYourHistory": "{{ friendName }}さんがあなたの履歴を開きました。",
+  "openedYourHistoryMany": "{{ friendNames }}があなたの履歴を開きました。",
+  "lockedOnThisDevice": "この端末でロック中",
+  "lockedCounts": "メッセージ{{ messages }}件とファイル{{ files }}件は、まだここでは開けません",
+  "getThemBack": "取り戻す"
 }

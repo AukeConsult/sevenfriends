@@ -105,7 +105,13 @@
     "phoneSignIn": "Connexion par téléphone",
     "signingIn": "Connexion en cours",
     "verifyPhone": "Vérifier le téléphone",
-    "deleteMyAccount": "Supprimer mon compte"
+    "deleteMyAccount": "Supprimer mon compte",
+    "link": "Lien",
+    "newLinkedItem": "Nouvel élément lié",
+    "newNote": "Nouvelle note",
+    "newFile": "Nouveau fichier",
+    "new": "Nouveau",
+    "note": "Note"
   },
   "time": {
     "justNow": "à l'instant"
@@ -163,6 +169,11 @@
     "theKeyCouldNot2": "Impossible d'enregistrer la clé sur le serveur. Réessaie.",
     "theKeyOnThis": "Impossible de vérifier la clé de cet appareil. Réessaie.",
     "androidApp": "Appli Android",
+    "iphoneApp": "App iPhone",
+    "windowsApp": "App Windows",
+    "browser": "Navigateur",
+    "browserApp": "App navigateur",
+    "browserOnDevice": "{{ browser }} sur {{ device }}",
     "thereIsNoEncryption": "Il n'y a pas de clé de chiffrement sur cet appareil. Configure-en une (ou restaure-la) dans Réglages → Clés.",
     "thisFileCouldNot2": "Impossible d'ouvrir ce fichier.",
     "thisFileIsLocked": "Ce fichier est verrouillé. Ouvre d'abord la conversation, puis réessaie.",
@@ -278,5 +289,17 @@
     "pokeAnyway": "Pinger quand même",
     "makesASound": "fait un son",
     "activityIn": "Activité dans {{ circle }}"
-  }
+  },
+  "needsYourHelp": "{{ friendName }} a besoin de ton aide",
+  "openToUnlockTheir": "Ouvre l'app pour déverrouiller de nouveau ses anciens messages.",
+  "openedYourHistory": "{{ friendName }} a ouvert ton historique",
+  "declinedYourRequest": "{{ friendName }} a refusé ta demande",
+  "getThemBack": "Les récupérer",
+  "lockedMessagesAndFiles": "{{ messages }} messages et {{ files }} fichiers avec {{ name }} sont verrouillés sur cet appareil.",
+  "lockedFilesWith": "{{ count }} fichiers avec {{ name }} sont verrouillés sur cet appareil.",
+  "lockedMessagesWith": "{{ count }} messages avec {{ name }} sont verrouillés sur cet appareil.",
+  "removeThisKeyNotYou": "Supprimer cette clé ? Cet appareil ne pourra plus ouvrir tes messages. Si ce n'était pas toi, change aussi ton identifiant de connexion.",
+  "removeIt": "La supprimer",
+  "cancel": "Annuler",
+  "notMe": "Pas moi"
 }

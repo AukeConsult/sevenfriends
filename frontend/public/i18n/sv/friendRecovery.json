@@ -35,5 +35,12 @@
   "askFriendnameToHelp": "Be {{ friendName }} om hjälp",
   "checking": "Kontrollerar…",
   "couldNotReadThe": "Kunde inte läsa förfrågan",
-  "thatDidNotWork": "Det funkade inte"
+  "thatDidNotWork": "Det funkade inte",
+  "friendnameDeclined": "{{ friendName }} sa nej",
+  "theyDidNotOpen": "De öppnade inte dina gamla meddelanden. Du kan fråga igen, eller använda en av dina egna enheter eller dina 24 återställningsord (Inställningar, Nycklar).",
+  "askAgain": "Fråga igen",
+  "dismiss": "Avfärda",
+  "decline": "Avslå",
+  "youDeclined": "Du sa nej. {{ friendName }} har fått veta det.",
+  "alsoWhenNothing": "Du kan fråga när som helst, även när inget är låst för dig: {{ friendName }} låser då allt på nytt för alla dina nycklar och måste säga ja varje gång."
 }

@@ -105,7 +105,13 @@
     "phoneSignIn": "전화번호 로그인",
     "signingIn": "로그인 중",
     "verifyPhone": "전화번호 인증",
-    "deleteMyAccount": "내 계정 삭제"
+    "deleteMyAccount": "내 계정 삭제",
+    "link": "링크",
+    "newLinkedItem": "새 연결 항목",
+    "newNote": "새 메모",
+    "newFile": "새 파일",
+    "new": "새로 만들기",
+    "note": "메모"
   },
   "time": {
     "justNow": "방금"
@@ -163,6 +169,11 @@
     "theKeyCouldNot2": "키를 서버에 저장할 수 없어요. 다시 해 주세요.",
     "theKeyOnThis": "이 기기의 키를 확인할 수 없어요. 다시 해 주세요.",
     "androidApp": "Android 앱",
+    "iphoneApp": "iPhone 앱",
+    "windowsApp": "Windows 앱",
+    "browser": "브라우저",
+    "browserApp": "브라우저 앱",
+    "browserOnDevice": "{{ device }}의 {{ browser }}",
     "thereIsNoEncryption": "이 기기에 암호화 키가 없어요. 설정 → 키에서 설정(또는 복원)해 주세요.",
     "thisFileCouldNot2": "이 파일을 열 수 없어요.",
     "thisFileIsLocked": "이 파일은 잠겨 있어요. 먼저 대화를 열고 다시 해 주세요.",
@@ -278,5 +289,17 @@
     "pokeAnyway": "그래도 콕 찌르기",
     "makesASound": "소리가 나요",
     "activityIn": "{{ circle }}에 새 활동"
-  }
+  },
+  "needsYourHelp": "{{ friendName }}님이 도움을 필요로 해요",
+  "openToUnlockTheir": "앱을 열어 상대의 이전 메시지를 다시 잠금 해제하세요.",
+  "openedYourHistory": "{{ friendName }}님이 내 기록을 열었어요",
+  "declinedYourRequest": "{{ friendName }}님이 내 요청을 거절했어요",
+  "getThemBack": "되찾기",
+  "lockedMessagesAndFiles": "{{ name }}님과의 메시지 {{ messages }}개와 파일 {{ files }}개가 이 기기에서 잠겨 있어요.",
+  "lockedFilesWith": "{{ name }}님과의 파일 {{ count }}개가 이 기기에서 잠겨 있어요.",
+  "lockedMessagesWith": "{{ name }}님과의 메시지 {{ count }}개가 이 기기에서 잠겨 있어요.",
+  "removeThisKeyNotYou": "이 키를 삭제할까요? 그러면 그 기기는 더 이상 내 메시지를 열 수 없어요. 내가 한 일이 아니라면 로그인 정보도 바꾸세요.",
+  "removeIt": "삭제",
+  "cancel": "취소",
+  "notMe": "내가 아니에요"
 }

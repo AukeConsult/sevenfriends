@@ -50,5 +50,16 @@
   "unverifiedPhone": "номер телефону",
   "unverifiedAnd": "{{ a }} і {{ b }}",
   "waitingOne": "1 запит чекає на вільне місце",
-  "waitingMany": "Запитів, що чекають на вільне місце: {{ count }}"
+  "waitingMany": "Запитів, що чекають на вільне місце: {{ count }}",
+  "recoveryAsksYou": "просить тебе допомогти відкрити старі повідомлення",
+  "recoveryYouHelp": "ти допомагаєш відкрити старі повідомлення",
+  "recoveryDecline": "Відхилити",
+  "recoveryDeclined": "відхилив(-ла) твій запит на відкриття старих повідомлень",
+  "recoveryAskAgain": "Запитати ще раз",
+  "recoveryDismiss": "Сховати",
+  "openedYourHistory": "{{ friendName }} відкрив(-ла) твою історію.",
+  "openedYourHistoryMany": "{{ friendNames }} відкрили твою історію.",
+  "lockedOnThisDevice": "Заблоковано на цьому пристрої",
+  "lockedCounts": "Повідомлень: {{ messages }} і файлів: {{ files }} поки що не можна відкрити тут",
+  "getThemBack": "Повернути їх"
 }

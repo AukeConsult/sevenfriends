@@ -105,7 +105,13 @@
     "phoneSignIn": "Вход по телефону",
     "signingIn": "Входим",
     "verifyPhone": "Подтвердить телефон",
-    "deleteMyAccount": "Удалить мой аккаунт"
+    "deleteMyAccount": "Удалить мой аккаунт",
+    "link": "Ссылка",
+    "newLinkedItem": "Новый связанный элемент",
+    "newNote": "Новая заметка",
+    "newFile": "Новый файл",
+    "new": "Новый",
+    "note": "Заметка"
   },
   "time": {
     "justNow": "только что"
@@ -163,6 +169,11 @@
     "theKeyCouldNot2": "Не удалось сохранить ключ на сервере. Попробуй ещё раз.",
     "theKeyOnThis": "Не удалось проверить ключ на этом устройстве. Попробуй ещё раз.",
     "androidApp": "Приложение для Android",
+    "iphoneApp": "Приложение для iPhone",
+    "windowsApp": "Приложение для Windows",
+    "browser": "Браузер",
+    "browserApp": "Приложение в браузере",
+    "browserOnDevice": "{{ browser }} на устройстве {{ device }}",
     "thereIsNoEncryption": "На этом устройстве нет ключа шифрования. Создай его (или восстанови) в Настройки → Ключи.",
     "thisFileCouldNot2": "Не удаётся открыть этот файл.",
     "thisFileIsLocked": "Этот файл заблокирован. Сначала открой разговор, потом попробуй снова.",
@@ -278,5 +289,17 @@
     "pokeAnyway": "Всё равно потревожить",
     "makesASound": "издаёт звук",
     "activityIn": "Активность: {{ circle }}"
-  }
+  },
+  "needsYourHelp": "{{ friendName }} нужна твоя помощь",
+  "openToUnlockTheir": "Открой приложение, чтобы снова разблокировать старые сообщения.",
+  "openedYourHistory": "{{ friendName }} открыл(а) твою историю",
+  "declinedYourRequest": "{{ friendName }} отклонил(а) твой запрос",
+  "getThemBack": "Вернуть их",
+  "lockedMessagesAndFiles": "Сообщений: {{ messages }} и файлов: {{ files }} с {{ name }} заблокированы на этом устройстве.",
+  "lockedFilesWith": "Файлов: {{ count }} с {{ name }} заблокированы на этом устройстве.",
+  "lockedMessagesWith": "Сообщений: {{ count }} с {{ name }} заблокированы на этом устройстве.",
+  "removeThisKeyNotYou": "Удалить этот ключ? Тогда то устройство больше не сможет открывать твои сообщения. Если это был не ты, смени и свой вход.",
+  "removeIt": "Удалить",
+  "cancel": "Отмена",
+  "notMe": "Это не я"
 }

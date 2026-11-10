@@ -4,7 +4,7 @@ import { BoxKeys, NotePayload, ObjectPayload, ReminderRequest, SafeboxType, Safe
 import { ApiService } from './api.service';
 import { AuthService } from './auth.service';
 import { isObjectType, summaryOf, whenOf } from './safebox-objects';
-import { classify, openFileKey, openMeta, openNote, openObject, openPart, resealNote, resealObject, sealFile, sealMeta, sealNote, sealObject } from './box-crypto';
+import { BoxHead, classify, needsBody, openFileKey, openHead, openMeta, openNote, openObject, openPart, resealNote, resealObject, sealFile, sealMeta, sealNote, sealObject } from './box-crypto';
 import { getDeviceKey } from './device-key';
 import { FriendsService } from './friends.service';
 import { PreparedImage } from './image';
@@ -31,6 +31,8 @@ export class SafeboxService {
   private readonly previews = new Map<string, Promise<BoxFile>>();
   /** the first line of each opened note, for the list (kept with the items: a note is opened once when the box is read) */
   private readonly snippets = new Map<string, string>();
+  /** the links between items, by friend: the id of the record (a `relation` item) and the two items it joins */
+  private readonly relations = new Map<string, Map<string, { a: string; b: string }>>();
   /** when each date and ticket is, for the list and the badges */
   private readonly whens = new Map<string, string>();
 
@@ -40,6 +42,7 @@ export class SafeboxService {
       this.raw.clear();
       this.fileKeys.clear();
       this.snippets.clear();
+      this.relations.clear();
       for (const preview of this.previews.values()) void preview.then((file) => URL.revokeObjectURL(file.url), () => undefined);
       this.previews.clear();
     });
@@ -56,6 +59,7 @@ export class SafeboxService {
 
   async load(friendId: string): Promise<Safebox> {
     const box = await this.api.request<Safebox>(this.base(friendId));
+    this.relations.delete(friendId); // read again with the items
     return { ...box, items: await Promise.all(box.items.map((item) => this.reveal(friendId, item))) };
   }
 
@@ -79,8 +83,21 @@ export class SafeboxService {
 
   /** An item as the app shows it: an encrypted file gets its real name and type from inside (or the name "Locked file" when this device cannot open it). */
   private async reveal(friendId: string, item: SafeboxItem): Promise<SafeboxItem> {
-    this.raw.set(`${friendId}/${item.id}`, item);
+    // kept without the whole content of a note or object (it is read again when the item is opened), so big contents do not stay in memory
+    if (item.enc?.body) { const { body: _body, ...enc } = item.enc; this.raw.set(`${friendId}/${item.id}`, { ...item, enc }); }
+    else this.raw.set(`${friendId}/${item.id}`, item);
     if (!item.enc) return item;
+    if (item.type !== 'file' && item.type !== 'relation' && item.enc.bodyIv) {
+      // a note or object made by the newer app: the list has only its small head (title, a line, the date); the whole content is read when it is opened
+      try {
+        const head = await openHead(friendId, item.enc, await this.fileKey(friendId, item));
+        this.snippets.set(`${friendId}/${item.id}`, head?.line ?? '');
+        this.whens.set(`${friendId}/${item.id}`, head?.when ?? '');
+        return { ...item, name: head?.title ?? '' };
+      } catch {
+        return { ...item, name: item.type === 'note' ? tr('core.lockedNote', 'Locked note') : tr('core.lockedItem', 'Locked item') };
+      }
+    }
     if (item.type === 'note') {
       // a note has no file: its title and text are inside; the list shows the title (as the name) and the first line
       try {
@@ -90,6 +107,16 @@ export class SafeboxService {
       } catch {
         return { ...item, name: tr('core.lockedNote', 'Locked note') };
       }
+    }
+    if (item.type === 'relation') {
+      // "A is linked with B": never shown as an item, it only joins two
+      try {
+        const object = await openObject(friendId, item.enc, await this.fileKey(friendId, item));
+        const map = this.relations.get(friendId) ?? new Map();
+        map.set(item.id, { a: object.fields['from'] ?? '', b: object.fields['to'] ?? '' });
+        this.relations.set(friendId, map);
+      } catch { /* a link that cannot be read is left out */ }
+      return { ...item, name: 'Link' };
     }
     if (isObjectType(item.type)) {
       // a secret, link, checklist ...: the title and fields are inside; the list shows the title and a short line made from the fields
@@ -121,17 +148,28 @@ export class SafeboxService {
   }
 
   /** Makes a new note (both of us must have a key: a note is never stored unlocked). Answers with the note as the list shows it. */
+  /** What the list shows of a note / of another object, locked apart from the content. */
+  private noteHead = (title: string, text: string): BoxHead => ({ title, line: firstLine(text), when: '' });
+  private objectHead = (type: SafeboxType, payload: ObjectPayload): BoxHead => ({ title: payload.title, line: summaryOf(type, payload), when: whenOf(type, payload) });
+
+  /** The item with its whole content: the list sends only the head of a note or object, so the content is asked for the first time it is opened. */
+  private async withBody(friendId: string, item: SafeboxItem | undefined): Promise<SafeboxItem | undefined> {
+    if (!item || !needsBody(item.enc)) return item;
+    // the whole item is NOT kept: it lives only while the page that opened it uses it, so big contents do not pile up in memory
+    return this.api.request<SafeboxItem>(`${this.base(friendId)}/items/${item.id}`);
+  }
+
   async addNote(friendId: string, title: string, text: string, keys: BoxKeys): Promise<SafeboxItem> {
     const me = this.auth.user()?.uid;
     if (!me) throw new Error(tr('core.notSignedIn', 'Not signed in'));
-    const body = await sealNote(friendId, { v: 1, title, text }, [{ uid: me, keys: keys.mine }, { uid: keys.friendUid, keys: keys.friend }]);
+    const body = await sealNote(friendId, { v: 1, title, text }, this.noteHead(title, text), [{ uid: me, keys: keys.mine }, { uid: keys.friendUid, keys: keys.friend }]);
     return this.reveal(friendId, await this.api.request<SafeboxItem>(`${this.base(friendId)}/items`, { method: 'POST', body: JSON.stringify(body) }));
   }
 
   /** A note opened, with the revision it is at (read from the server again when `fresh`: after a conflict or when the page opens). */
   async readNote(friendId: string, itemId: string, fresh = false): Promise<{ note: NotePayload; revision: number; mine: boolean; updatedAt: string | null }> {
     if (fresh) this.raw.delete(`${friendId}/${itemId}`);
-    const item = await this.rawItem(friendId, itemId);
+    const item = await this.withBody(friendId, await this.rawItem(friendId, itemId));
     if (!item || item.type !== 'note' || !item.enc) throw new Error(tr('core.thatNoteIsGone', 'That note is not there any more.'));
     return { note: await openNote(friendId, item.enc, await this.fileKey(friendId, item)), revision: item.revision, mine: item.mine, updatedAt: item.updatedAt ?? item.createdAt };
   }
@@ -140,7 +178,7 @@ export class SafeboxService {
   async updateNote(friendId: string, itemId: string, title: string, text: string, revision: number): Promise<SafeboxItem> {
     const raw = await this.rawItem(friendId, itemId);
     if (!raw?.enc) throw new Error(tr('core.thatNoteIsGone', 'That note is not there any more.'));
-    const sealed = await resealNote(friendId, await this.fileKey(friendId, raw), { v: 1, title, text });
+    const sealed = await resealNote(friendId, await this.fileKey(friendId, raw), { v: 1, title, text }, this.noteHead(title, text));
     return this.reveal(friendId, await this.api.request<SafeboxItem>(`${this.base(friendId)}/items/${itemId}`, { method: 'PUT', body: JSON.stringify({ revision, ...sealed }) }));
   }
 
@@ -148,14 +186,14 @@ export class SafeboxService {
   async addObject(friendId: string, type: SafeboxType, payload: ObjectPayload, keys: BoxKeys, remind: ReminderRequest | null = null): Promise<SafeboxItem> {
     const me = this.auth.user()?.uid;
     if (!me) throw new Error(tr('core.notSignedIn', 'Not signed in'));
-    const body = { ...(await sealObject(friendId, type, payload, [{ uid: me, keys: keys.mine }, { uid: keys.friendUid, keys: keys.friend }])), remind };
+    const body = { ...(await sealObject(friendId, type, payload, type === 'relation' ? null : this.objectHead(type, payload), [{ uid: me, keys: keys.mine }, { uid: keys.friendUid, keys: keys.friend }])), remind };
     return this.reveal(friendId, await this.api.request<SafeboxItem>(`${this.base(friendId)}/items`, { method: 'POST', body: JSON.stringify(body) }));
   }
 
   /** An object opened, with its type and the revision it is at. */
   async readObject(friendId: string, itemId: string, fresh = false): Promise<{ type: SafeboxType; payload: ObjectPayload; revision: number; mine: boolean; updatedAt: string | null }> {
     if (fresh) this.raw.delete(`${friendId}/${itemId}`);
-    const item = await this.rawItem(friendId, itemId);
+    const item = await this.withBody(friendId, await this.rawItem(friendId, itemId));
     if (!item || !isObjectType(item.type) || !item.enc) throw new Error(tr('core.thatItemIsGone', 'That item is not there any more.'));
     return { type: item.type, payload: await openObject(friendId, item.enc, await this.fileKey(friendId, item)), revision: item.revision, mine: item.mine, updatedAt: item.updatedAt ?? item.createdAt };
   }
@@ -164,7 +202,7 @@ export class SafeboxService {
   async updateObject(friendId: string, itemId: string, payload: ObjectPayload, revision: number, remind: ReminderRequest | null = null): Promise<SafeboxItem> {
     const raw = await this.rawItem(friendId, itemId);
     if (!raw?.enc) throw new Error(tr('core.thatItemIsGone', 'That item is not there any more.'));
-    const sealed = await resealObject(friendId, await this.fileKey(friendId, raw), payload);
+    const sealed = await resealObject(friendId, await this.fileKey(friendId, raw), payload, raw.type === 'relation' ? null : this.objectHead(raw.type, payload));
     return this.reveal(friendId, await this.api.request<SafeboxItem>(`${this.base(friendId)}/items/${itemId}`, { method: 'PUT', body: JSON.stringify({ revision, ...sealed, remind }) }));
   }
 
@@ -267,8 +305,62 @@ export class SafeboxService {
     return this.api.request<SafeboxItem>(`${this.base(friendId)}/${itemId}`, { method: 'PUT', body: JSON.stringify({ name }) });
   }
 
-  remove(friendId: string, itemId: string): Promise<void> {
-    return this.api.request<void>(`${this.base(friendId)}/${itemId}`, { method: 'DELETE' });
+  async remove(friendId: string, itemId: string): Promise<void> {
+    await this.dropLinks(friendId, (pair) => pair.a === itemId || pair.b === itemId).catch(() => undefined); // its links go with it
+    await this.api.request<void>(`${this.base(friendId)}/${itemId}`, { method: 'DELETE' });
+  }
+
+  // ---- links between items (a locked `relation` item for each: nothing about it is readable on the server)
+
+  /** "Add a new item and link it": the item the next new item is to be linked with. Set by the page that chooses the kind, taken (and so cleared) by the page of the new item, cleared by the list. */
+  private linkFrom: string | null = null;
+  setLinkFrom(itemId: string | null): void {
+    this.linkFrom = itemId;
+  }
+  takeLinkFrom(): string | null {
+    const from = this.linkFrom;
+    this.linkFrom = null;
+    return from;
+  }
+
+  /** The page of an item of this box (as the box was read last): where a link to it goes. Null when the item is not known. */
+  openPath(friendId: string, itemId: string): string[] | null {
+    const item = this.raw.get(`${friendId}/${itemId}`);
+    if (!item) return null;
+    const base = ['/friends', friendId, 'safebox'];
+    if (item.type === 'note') return [...base, 'note', item.id];
+    return item.type === 'file' ? [...base, item.id] : [...base, 'object', item.id];
+  }
+
+  /** The ids of the items this one is linked with (from the box as it was read last; either end of a link counts). */
+  linkedWith(friendId: string, itemId: string): string[] {
+    const out = new Set<string>();
+    for (const pair of this.relations.get(friendId)?.values() ?? []) {
+      if (pair.a === pair.b) continue; // an item is never linked with itself
+      if (pair.a === itemId) out.add(pair.b);
+      else if (pair.b === itemId) out.add(pair.a);
+    }
+    return [...out];
+  }
+
+  async addLink(friendId: string, a: string, b: string, keys: BoxKeys): Promise<void> {
+    if (!a || !b || a === b || this.linkedWith(friendId, a).includes(b)) return; // never with itself, never twice
+    await this.addObject(friendId, 'relation', { v: 1, title: 'link', fields: { from: a, to: b } }, keys, null);
+  }
+
+  removeLink(friendId: string, a: string, b: string): Promise<void> {
+    return this.dropLinks(friendId, (pair) => (pair.a === a && pair.b === b) || (pair.a === b && pair.b === a));
+  }
+
+  private async dropLinks(friendId: string, which: (pair: { a: string; b: string }) => boolean): Promise<void> {
+    const map = this.relations.get(friendId);
+    if (!map) return;
+    for (const [id, pair] of [...map]) {
+      if (!which(pair)) continue;
+      await this.api.request<void>(`${this.base(friendId)}/${id}`, { method: 'DELETE' });
+      map.delete(id);
+      this.forget(friendId, id);
+    }
   }
 
   /** The file (`thumb`: its small preview) as an object URL. Previews are kept; a whole file is read again each time it is opened. */
@@ -291,18 +383,37 @@ export class SafeboxService {
     if (!preview) {
       preview = read();
       this.previews.set(key, preview);
+      // only the newest previews are kept; an older one is let go with its object URL
+      while (this.previews.size > PREVIEWS_KEPT) {
+        const oldest = this.previews.keys().next().value as string;
+        void this.previews.get(oldest)?.then((file) => URL.revokeObjectURL(file.url), () => undefined);
+        this.previews.delete(oldest);
+      }
       preview.catch(() => this.previews.delete(key));
     }
     return preview;
   }
 
+  /** Let go of everything kept for one friend (the items, keys, previews with their object URLs): called when the safebox pages are left. */
+  release(friendId: string): void {
+    const own = (id: string) => id.startsWith(`${friendId}/`);
+    for (const map of [this.raw, this.fileKeys, this.snippets, this.whens] as Map<string, unknown>[]) for (const id of [...map.keys()]) if (own(id)) map.delete(id);
+    for (const [id, preview] of [...this.previews]) if (own(id)) { void preview.then((file) => URL.revokeObjectURL(file.url), () => undefined); this.previews.delete(id); }
+    this.relations.delete(friendId);
+  }
+
   /** Forget the kept preview of a file that was taken out. */
   forget(friendId: string, itemId: string): void {
+    void this.previews.get(`${friendId}/${itemId}`)?.then((file) => URL.revokeObjectURL(file.url), () => undefined);
+    this.snippets.delete(`${friendId}/${itemId}`);
+    this.whens.delete(`${friendId}/${itemId}`);
     this.previews.delete(`${friendId}/${itemId}`);
     this.raw.delete(`${friendId}/${itemId}`);
     this.fileKeys.delete(`${friendId}/${itemId}`);
   }
 }
+
+const PREVIEWS_KEPT = 60;
 
 /** The first non-empty line of a text, cut to fit a list row. */
 function firstLine(text: string): string {

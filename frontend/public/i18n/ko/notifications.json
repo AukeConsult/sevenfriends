@@ -50,5 +50,16 @@
   "unverifiedPhone": "전화번호",
   "unverifiedAnd": "{{ a }} 및 {{ b }}",
   "waitingOne": "요청 1개가 빈 자리를 기다리고 있어요",
-  "waitingMany": "요청 {{ count }}개가 빈 자리를 기다리고 있어요"
+  "waitingMany": "요청 {{ count }}개가 빈 자리를 기다리고 있어요",
+  "recoveryAsksYou": "이전 메시지를 여는 걸 도와 달라고 해요",
+  "recoveryYouHelp": "상대의 이전 메시지를 여는 걸 돕고 있어요",
+  "recoveryDecline": "거절",
+  "recoveryDeclined": "이전 메시지를 열어 달라는 내 요청을 거절했어요",
+  "recoveryAskAgain": "다시 요청",
+  "recoveryDismiss": "닫기",
+  "openedYourHistory": "{{ friendName }}님이 내 기록을 열었어요.",
+  "openedYourHistoryMany": "{{ friendNames }}님이 내 기록을 열었어요.",
+  "lockedOnThisDevice": "이 기기에서 잠김",
+  "lockedCounts": "메시지 {{ messages }}개와 파일 {{ files }}개는 아직 여기서 열 수 없어요",
+  "getThemBack": "되찾기"
 }

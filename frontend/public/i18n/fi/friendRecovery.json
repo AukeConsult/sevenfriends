@@ -35,5 +35,12 @@
   "askFriendnameToHelp": "Pyydä käyttäjää {{ friendName }} auttamaan",
   "checking": "Tarkistetaan…",
   "couldNotReadThe": "Pyyntöä ei voitu lukea",
-  "thatDidNotWork": "Se ei onnistunut"
+  "thatDidNotWork": "Se ei onnistunut",
+  "friendnameDeclined": "{{ friendName }} sanoi ei",
+  "theyDidNotOpen": "He eivät avanneet vanhoja viestejäsi. Voit pyytää uudelleen tai käyttää omaa laitettasi tai 24 palautussanaasi (Asetukset, Avaimet).",
+  "askAgain": "Pyydä uudelleen",
+  "dismiss": "Ohita",
+  "decline": "Hylkää",
+  "youDeclined": "Sanoit ei. {{ friendName }} on saanut tiedon.",
+  "alsoWhenNothing": "Voit pyytää milloin tahansa, myös silloin kun mitään ei ole sinulle lukittu: {{ friendName }} lukitsee silloin kaiken uudelleen kaikille avaimillesi ja hänen täytyy sanoa kyllä joka kerta."
 }

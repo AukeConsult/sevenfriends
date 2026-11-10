@@ -127,6 +127,16 @@
           "queryScope": "COLLECTION_GROUP"
         }
       ]
+    },
+    {
+      "collectionGroup": "items",
+      "fieldPath": "enc",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "items",
+      "fieldPath": "circles",
+      "indexes": []
     }
   ]
 }

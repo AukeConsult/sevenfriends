@@ -83,7 +83,20 @@ export class Safebox {
   protected readonly boxView = this.prefs.value('boxView');
   protected readonly hidden = this.prefs.value('boxHidden');
   /** the items of the kinds that are ticked (a file always shows) */
-  protected readonly shown = computed(() => this.items().filter((item) => !item.parentId && !this.hidden().includes(item.type)));
+  protected readonly shown = computed(() => {
+    const words = this.query().toLowerCase().split(/\s+/).filter(Boolean);
+    const attached = new Map<string, string[]>(); // the names of the attachments of each item: an item is found by them too
+    if (words.length) for (const item of this.items()) if (item.parentId) attached.set(item.parentId, [...(attached.get(item.parentId) ?? []), item.name ?? '']);
+    return this.items().filter((item) => {
+      if (item.parentId || item.type === 'relation' || this.hidden().includes(item.type)) return false;
+      if (!words.length) return true;
+      // only what the list holds is searched (title, first line, date, kind, file type and attachment names): the content of an item is read only when it is opened
+      const text = [item.name, this.snippet(item), this.when(item), this.kindLabel(item), item.mime, ...(attached.get(item.id) ?? [])].join(' ').toLowerCase();
+      return words.every((w) => text.includes(w));
+    });
+  });
+  /** the words typed in the search field */
+  protected readonly query = signal('');
   /** how many attachments each object has, and the first picture of an album (its cover) */
   private readonly attachmentsOf = computed(() => {
     const map = new Map<string, SafeboxItem[]>();
@@ -105,13 +118,19 @@ export class Safebox {
     this.prefs.set('boxHidden', on ? rest : [...rest, type]);
   }
   constructor() {
+    this.service.setLinkFrom(null); // a new item made from the top of the list is linked with nothing
     // the band under the header says how many files of this friendship this device cannot open
     effect(() => this.ctx.lockedFiles.set(this.shutCount()));
-    inject(DestroyRef).onDestroy(() => this.ctx.lockedFiles.set(0));
+    inject(DestroyRef).onDestroy(() => {
+      this.ctx.lockedFiles.set(0);
+      // left for a page outside the safebox: everything opened for this friend is let go (a page of the safebox, like an item, still needs it)
+      const friendId = this.friendId;
+      setTimeout(() => { if (!location.pathname.includes('/safebox')) this.service.release(friendId); }, 0);
+    });
     if (!this.friends.friends().length) void this.friends.load().catch(() => undefined); // for the friend's name
     void this.reload();
     // the menu of the header: Add files opens the page to upload them
-    this.ctx.setPageTool({ label: tr('safebox.addFiles', 'Add files'), kind: 'files', run: () => void this.router.navigate(['/friends', this.friendId, 'safebox', 'new', 'file']) }, inject(DestroyRef));
+    this.ctx.setPageTool({ label: tr('safebox.common.addFiles', 'Add files'), kind: 'files', run: () => void this.router.navigate(['/friends', this.friendId, 'safebox', 'new', 'file']) }, inject(DestroyRef));
   }
 
   protected async reload(): Promise<void> {
@@ -119,7 +138,7 @@ export class Safebox {
     try {
       this.box.set(await this.service.load(this.friendId));
     } catch (err: any) {
-      this.loadError.set(err.message ?? tr('safebox.couldNotOpenThe', 'Could not open the safebox'));
+      this.loadError.set(err.message ?? tr('safebox.common.couldNotOpenTheSafebox', 'Could not open the safebox'));
     }
   }
 
@@ -159,7 +178,7 @@ export class Safebox {
     try {
       this.save((await this.service.file(this.friendId, item.id)).url, item.name);
     } catch (err: any) {
-      this.error.set(err.message ?? tr('safebox.couldNotDownloadThe', 'Could not download the file'));
+      this.error.set(err.message ?? tr('safebox.list.couldNotDownloadThe', 'Could not download the file'));
     } finally {
       this.busy.set(false);
     }
@@ -189,7 +208,7 @@ export class Safebox {
       this.renaming.set(null);
       await this.reload();
     } catch (err: any) {
-      this.error.set(err.message ?? tr('safebox.couldNotRenameThe', 'Could not rename the file'));
+      this.error.set(err.message ?? tr('safebox.common.couldNotRename', 'Could not rename the file'));
     } finally {
       this.busy.set(false);
     }
@@ -204,7 +223,7 @@ export class Safebox {
       this.deleting.set(null);
       await this.reload();
     } catch (err: any) {
-      this.error.set(err.message ?? tr('safebox.couldNotTakeThe', 'Could not take the file out'));
+      this.error.set(err.message ?? tr('safebox.list.couldNotTakeThe', 'Could not take the file out'));
     } finally {
       this.busy.set(false);
     }
@@ -228,7 +247,7 @@ export class Safebox {
   }
 
   /** What the "New" frame offers: a file (the upload page), then the kinds of object; a note has its own page. */
-  protected readonly kinds: { type: string; label: string; icon: string }[] = [{ type: 'file', label: tr('safebox.file', 'File'), icon: 'M12 16V4M7 9l5-5 5 5M4 20h16' }, ...objectKinds()];
+  protected readonly kinds: { type: string; label: string; icon: string }[] = [{ type: 'file', label: tr('safebox.common.file', 'File'), icon: 'M12 16V4M7 9l5-5 5 5M4 20h16' }, ...objectKinds()];
 
   protected newLink(type: string): string[] {
     return type === 'note' ? ['/friends', this.friendId, 'safebox', 'note'] : ['/friends', this.friendId, 'safebox', 'new', type];

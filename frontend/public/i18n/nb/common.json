@@ -105,7 +105,13 @@
     "phoneSignIn": "Logg inn med telefon",
     "signingIn": "Logger inn",
     "verifyPhone": "Bekreft telefon",
-    "deleteMyAccount": "Slett kontoen min"
+    "deleteMyAccount": "Slett kontoen min",
+    "link": "Lenke",
+    "newLinkedItem": "Nytt koblet element",
+    "newNote": "Nytt notat",
+    "newFile": "Ny fil",
+    "new": "Ny",
+    "note": "Notat"
   },
   "time": {
     "justNow": "akkurat nå"
@@ -163,6 +169,11 @@
     "theKeyCouldNot2": "Nøkkelen kunne ikke lagres på serveren. Prøv igjen.",
     "theKeyOnThis": "Nøkkelen på denne enheten kunne ikke sjekkes. Prøv igjen.",
     "androidApp": "Android-app",
+    "iphoneApp": "iPhone-app",
+    "windowsApp": "Windows-app",
+    "browser": "Nettleser",
+    "browserApp": "Nettleser-app",
+    "browserOnDevice": "{{ browser }} på {{ device }}",
     "thereIsNoEncryption": "Det er ingen krypteringsnøkkel på denne enheten. Sett opp en (eller gjenopprett den) i Innstillinger → Nøkler.",
     "thisFileCouldNot2": "Filen kunne ikke åpnes.",
     "thisFileIsLocked": "Denne filen er låst. Åpne samtalen først, og prøv igjen.",
@@ -278,5 +289,17 @@
     "pokeAnyway": "Dult likevel",
     "makesASound": "lager en lyd",
     "activityIn": "Aktivitet i {{ circle }}"
-  }
+  },
+  "needsYourHelp": "{{ friendName }} trenger hjelp fra deg",
+  "openToUnlockTheir": "Åpne appen for å låse opp de gamle meldingene deres igjen.",
+  "openedYourHistory": "{{ friendName }} åpnet historikken din",
+  "declinedYourRequest": "{{ friendName }} avslo forespørselen din",
+  "getThemBack": "Få dem tilbake",
+  "lockedMessagesAndFiles": "{{ messages }} meldinger og {{ files }} filer med {{ name }} er låst på denne enheten.",
+  "lockedFilesWith": "{{ count }} filer med {{ name }} er låst på denne enheten.",
+  "lockedMessagesWith": "{{ count }} meldinger med {{ name }} er låst på denne enheten.",
+  "removeThisKeyNotYou": "Fjerne denne nøkkelen? Da kan ikke den enheten åpne meldingene dine lenger. Hvis det ikke var deg, bør du også endre innloggingen din.",
+  "removeIt": "Fjern den",
+  "cancel": "Avbryt",
+  "notMe": "Ikke meg"
 }

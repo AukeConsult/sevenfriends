@@ -35,5 +35,12 @@
   "askFriendnameToHelp": "Vraag {{ friendName }} om te helpen",
   "checking": "Controleren…",
   "couldNotReadThe": "Kon het verzoek niet lezen",
-  "thatDidNotWork": "Dat is niet gelukt"
+  "thatDidNotWork": "Dat is niet gelukt",
+  "friendnameDeclined": "{{ friendName }} zei nee",
+  "theyDidNotOpen": "Ze hebben je oude berichten niet geopend. Je kunt het opnieuw vragen, of een van je eigen apparaten of je 24 herstelwoorden gebruiken (Instellingen, Sleutels).",
+  "askAgain": "Opnieuw vragen",
+  "dismiss": "Sluiten",
+  "decline": "Afwijzen",
+  "youDeclined": "Je zei nee. {{ friendName }} is op de hoogte gebracht.",
+  "alsoWhenNothing": "Je kunt altijd vragen, ook als er niets voor je vergrendeld is: {{ friendName }} vergrendelt dan alles opnieuw voor al je sleutels en moet elke keer ja zeggen."
 }

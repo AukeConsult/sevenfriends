@@ -176,7 +176,7 @@ describe("a note in the safebox", () => {
 });
 
 describe("every kind of object", () => {
-  it.each(["note", "secret", "link", "checklist", "place", "contact", "date", "ticket", "album", "case"])("%s is stored as an object, and a made-up kind is refused", async (type) => {
+  it.each(["note", "secret", "link", "checklist", "place", "contact", "date", "ticket", "album", "case", "relation"])("%s is stored as an object, and a made-up kind is refused", async (type) => {
     const { id, wraps } = await twoWithKeys();
     const item = (await pool[0].raw("post", box(id, "/items"), note(wraps, { type })).expect(201)).body;
     expect(item).toMatchObject({ type, revision: 1, hasThumb: false });
@@ -256,5 +256,28 @@ describe("attachments of an object", () => {
     const album = (await pool[0].raw("post", box(id, "/items"), note(wraps, { type: "album" })).expect(201)).body;
     await attach(pool[0], id, album.id, file(wraps, "document")).expect(400);
     await attach(pool[0], id, album.id, file(wraps, "image", true)).expect(201);
+  });
+
+  it("keeps a small head in the list and the whole content apart: the list does not send the body, reading the item does, and an older change brings it back whole", async () => {
+    const { id, wraps } = await twoWithKeys();
+    const split = (head = 200, body = 3000) => {
+      const enc = note(wraps, { meta: b64(head) }).enc as Record<string, unknown>;
+      return { type: "note", enc: { ...enc, bodyIv: b64(12), body: b64(body) } };
+    };
+    const made = (await pool[0].raw("post", box(id, "/items"), split()).expect(201)).body;
+    expect(made.bytes).toBe(3200); // the head and the body both count
+    const listed = (await pool[1].raw("get", box(id)).expect(200)).body.items[0];
+    expect(listed.enc.body).toBeUndefined();
+    expect(listed.enc.bodyIv).toBeTruthy();
+    expect(listed.enc.meta).toBeTruthy(); // the head
+    const whole = (await pool[1].raw("get", box(id, `/items/${made.id}`)).expect(200)).body;
+    expect(whole.enc.body).toBeTruthy();
+    await pool[0].raw("post", box(id, "/items"), split(5000)).expect(400); // a head is small
+    await pool[0].raw("post", box(id, "/items"), { type: "note", enc: { ...note(wraps).enc, body: b64(100) } }).expect(400); // a body needs its iv
+    // changed by an app that sends the content whole in meta: the body goes away
+    const change = (await pool[1].raw("put", box(id, `/items/${made.id}`), { revision: 1, metaIv: b64(12), meta: b64(500) }).expect(200)).body;
+    expect(change.enc.body).toBeUndefined();
+    expect(change.bytes).toBe(500);
+    expect((await pool[0].raw("get", box(id)).expect(200)).body.items[0].enc.bodyIv).toBeUndefined();
   });
 });

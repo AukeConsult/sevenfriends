@@ -35,5 +35,12 @@
   "askFriendnameToHelp": "לבקש עזרה מ{{ friendName }}",
   "checking": "בודקים…",
   "couldNotReadThe": "לא ניתן היה לקרוא את הבקשה",
-  "thatDidNotWork": "זה לא עבד"
+  "thatDidNotWork": "זה לא עבד",
+  "friendnameDeclined": "{{ friendName }} אמר/ה לא",
+  "theyDidNotOpen": "הם לא פתחו את ההודעות הישנות שלך. אפשר לבקש שוב, או להשתמש באחד המכשירים שלך או ב-24 מילות השחזור (הגדרות, מפתחות).",
+  "askAgain": "לבקש שוב",
+  "dismiss": "התעלם",
+  "decline": "דחה",
+  "youDeclined": "אמרת לא. {{ friendName }} קיבל/ה הודעה.",
+  "alsoWhenNothing": "אפשר לבקש בכל עת, גם כשאין שום דבר נעול בשבילך: {{ friendName }} ינעל אז הכול מחדש לכל המפתחות שלך, ויצטרך/תצטרך לאשר בכל פעם."
 }

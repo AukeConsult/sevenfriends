@@ -105,7 +105,13 @@
     "phoneSignIn": "Masuk dengan telepon",
     "signingIn": "Sedang masuk",
     "verifyPhone": "Verifikasi telepon",
-    "deleteMyAccount": "Hapus akunku"
+    "deleteMyAccount": "Hapus akunku",
+    "link": "Tautan",
+    "newLinkedItem": "Item tertaut baru",
+    "newNote": "Catatan baru",
+    "newFile": "File baru",
+    "new": "Baru",
+    "note": "Catatan"
   },
   "time": {
     "justNow": "baru saja"
@@ -163,6 +169,11 @@
     "theKeyCouldNot2": "Kunci tidak bisa disimpan di server. Coba lagi.",
     "theKeyOnThis": "Kunci di perangkat ini tidak bisa diperiksa. Coba lagi.",
     "androidApp": "Aplikasi Android",
+    "iphoneApp": "Aplikasi iPhone",
+    "windowsApp": "Aplikasi Windows",
+    "browser": "Browser",
+    "browserApp": "Aplikasi browser",
+    "browserOnDevice": "{{ browser }} di {{ device }}",
     "thereIsNoEncryption": "Tidak ada kunci enkripsi di perangkat ini. Buat satu (atau pulihkan) di Pengaturan → Kunci.",
     "thisFileCouldNot2": "File ini tidak bisa dibuka.",
     "thisFileIsLocked": "File ini terkunci. Buka percakapannya dulu, lalu coba lagi.",
@@ -278,5 +289,17 @@
     "pokeAnyway": "Colek saja",
     "makesASound": "mengeluarkan suara",
     "activityIn": "Aktivitas di {{ circle }}"
-  }
+  },
+  "needsYourHelp": "{{ friendName }} butuh bantuanmu",
+  "openToUnlockTheir": "Buka aplikasi untuk membuka kunci pesan lamanya lagi.",
+  "openedYourHistory": "{{ friendName }} membuka riwayatmu",
+  "declinedYourRequest": "{{ friendName }} menolak permintaanmu",
+  "getThemBack": "Pulihkan",
+  "lockedMessagesAndFiles": "{{ messages }} pesan dan {{ files }} file dengan {{ name }} terkunci di perangkat ini.",
+  "lockedFilesWith": "{{ count }} file dengan {{ name }} terkunci di perangkat ini.",
+  "lockedMessagesWith": "{{ count }} pesan dengan {{ name }} terkunci di perangkat ini.",
+  "removeThisKeyNotYou": "Hapus kunci ini? Perangkat itu tidak akan bisa lagi membuka pesanmu. Kalau itu bukan kamu, ganti juga login-mu.",
+  "removeIt": "Hapus",
+  "cancel": "Batal",
+  "notMe": "Bukan aku"
 }

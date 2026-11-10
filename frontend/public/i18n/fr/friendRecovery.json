@@ -35,5 +35,12 @@
   "askFriendnameToHelp": "Demander de l'aide à {{ friendName }}",
   "checking": "Vérification…",
   "couldNotReadThe": "Impossible de lire la demande",
-  "thatDidNotWork": "Ça n'a pas marché"
+  "thatDidNotWork": "Ça n'a pas marché",
+  "friendnameDeclined": "{{ friendName }} a dit non",
+  "theyDidNotOpen": "Ils n'ont pas ouvert tes anciens messages. Tu peux demander de nouveau, ou utiliser un de tes propres appareils ou tes 24 mots de récupération (Réglages, Clés).",
+  "askAgain": "Redemander",
+  "dismiss": "Ignorer",
+  "decline": "Refuser",
+  "youDeclined": "Tu as dit non. {{ friendName }} en a été informé.",
+  "alsoWhenNothing": "Tu peux demander à tout moment, même quand rien n'est verrouillé pour toi : {{ friendName }} verrouille alors tout de nouveau pour toutes tes clés, et doit accepter à chaque fois."
 }

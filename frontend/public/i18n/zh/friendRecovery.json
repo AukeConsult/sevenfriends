@@ -35,5 +35,12 @@
   "askFriendnameToHelp": "请 {{ friendName }} 帮忙",
   "checking": "检查中…",
   "couldNotReadThe": "无法读取请求",
-  "thatDidNotWork": "没成功"
+  "thatDidNotWork": "没成功",
+  "friendnameDeclined": "{{ friendName }} 拒绝了",
+  "theyDidNotOpen": "对方没有打开你的旧消息。你可以再次请求，或使用你自己的某台设备或 24 个恢复词（设置，密钥）。",
+  "askAgain": "再次请求",
+  "dismiss": "忽略",
+  "decline": "拒绝",
+  "youDeclined": "你拒绝了。已通知 {{ friendName }}。",
+  "alsoWhenNothing": "即使没有任何内容对你锁定，你也可以随时请求：{{ friendName }} 会为你的所有密钥重新锁定全部内容，并且每次都必须同意。"
 }

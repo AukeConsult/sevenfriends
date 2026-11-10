@@ -35,5 +35,12 @@
   "askFriendnameToHelp": "اطلب مساعدة {{ friendName }}",
   "checking": "جارٍ الفحص…",
   "couldNotReadThe": "تعذّرت قراءة الطلب",
-  "thatDidNotWork": "لم ينجح ذلك"
+  "thatDidNotWork": "لم ينجح ذلك",
+  "friendnameDeclined": "قال {{ friendName }} لا",
+  "theyDidNotOpen": "لم يفتحوا رسائلك القديمة. يمكنك أن تطلب مرة أخرى، أو تستخدم أحد أجهزتك أو كلمات الاسترداد الـ24 (الإعدادات، المفاتيح).",
+  "askAgain": "اطلب مرة أخرى",
+  "dismiss": "تجاهل",
+  "decline": "ارفض",
+  "youDeclined": "قلت لا. تم إبلاغ {{ friendName }}.",
+  "alsoWhenNothing": "يمكنك الطلب في أي وقت، حتى عندما لا يكون شيء مقفلًا لك: يقفل {{ friendName }} حينها كل شيء من جديد لجميع مفاتيحك، وعليه أن يوافق في كل مرة."
 }

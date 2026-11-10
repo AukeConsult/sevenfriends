@@ -50,5 +50,16 @@
   "unverifiedPhone": "номер телефона",
   "unverifiedAnd": "{{ a }} и {{ b }}",
   "waitingOne": "1 запрос ждёт свободного места",
-  "waitingMany": "Запросов, ждущих свободного места: {{ count }}"
+  "waitingMany": "Запросов, ждущих свободного места: {{ count }}",
+  "recoveryAsksYou": "просит тебя помочь открыть старые сообщения",
+  "recoveryYouHelp": "ты помогаешь открыть старые сообщения",
+  "recoveryDecline": "Отклонить",
+  "recoveryDeclined": "отклонил(а) твой запрос на открытие старых сообщений",
+  "recoveryAskAgain": "Спросить ещё раз",
+  "recoveryDismiss": "Скрыть",
+  "openedYourHistory": "{{ friendName }} открыл(а) твою историю.",
+  "openedYourHistoryMany": "{{ friendNames }} открыли твою историю.",
+  "lockedOnThisDevice": "Заблокировано на этом устройстве",
+  "lockedCounts": "Сообщений: {{ messages }} и файлов: {{ files }} пока нельзя открыть здесь",
+  "getThemBack": "Вернуть их"
 }

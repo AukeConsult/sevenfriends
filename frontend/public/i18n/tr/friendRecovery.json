@@ -35,5 +35,12 @@
   "askFriendnameToHelp": "Yardım etmesini iste: {{ friendName }}",
   "checking": "Kontrol ediliyor…",
   "couldNotReadThe": "İstek okunamadı",
-  "thatDidNotWork": "Olmadı"
+  "thatDidNotWork": "Olmadı",
+  "friendnameDeclined": "{{ friendName }} hayır dedi",
+  "theyDidNotOpen": "Eski mesajlarını açmadılar. Yeniden isteyebilir ya da kendi cihazlarından birini veya 24 kurtarma kelimeni kullanabilirsin (Ayarlar, Anahtarlar).",
+  "askAgain": "Yeniden iste",
+  "dismiss": "Kapat",
+  "decline": "Reddet",
+  "youDeclined": "Hayır dedin. {{ friendName }}'a bildirildi.",
+  "alsoWhenNothing": "İstediğin zaman isteyebilirsin, senin için hiçbir şey kilitli olmasa da: {{ friendName }} o zaman her şeyi tüm anahtarların için yeniden kilitler ve her seferinde evet demesi gerekir."
 }

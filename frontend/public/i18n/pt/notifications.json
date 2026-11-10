@@ -50,5 +50,16 @@
   "unverifiedPhone": "número de telefone",
   "unverifiedAnd": "{{ a }} e {{ b }}",
   "waitingOne": "1 pedido aguarda um lugar livre",
-  "waitingMany": "{{ count }} pedidos aguardam um lugar livre"
+  "waitingMany": "{{ count }} pedidos aguardam um lugar livre",
+  "recoveryAsksYou": "pede a sua ajuda para abrir as mensagens antigas",
+  "recoveryYouHelp": "você está ajudando a abrir as mensagens antigas",
+  "recoveryDecline": "Recusar",
+  "recoveryDeclined": "recusou o seu pedido para abrir as suas mensagens antigas",
+  "recoveryAskAgain": "Pedir de novo",
+  "recoveryDismiss": "Dispensar",
+  "openedYourHistory": "{{ friendName }} abriu o seu histórico.",
+  "openedYourHistoryMany": "{{ friendNames }} abriram o seu histórico.",
+  "lockedOnThisDevice": "Bloqueado neste dispositivo",
+  "lockedCounts": "{{ messages }} mensagens e {{ files }} arquivos ainda não podem ser abertos aqui",
+  "getThemBack": "Recuperá-las"
 }

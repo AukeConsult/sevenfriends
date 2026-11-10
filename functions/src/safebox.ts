@@ -5,7 +5,7 @@ import { asyncHandler } from "./auth";
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAX_UPLOAD_BYTES, SAFEBOX_MAX_BYTES, SAFEBOX_MAX_ITEMS, SAFEBOX_REMINDERS, boxOwner } from "./constants";
 import { connectionOf, sleepsMe } from "./conversation";
 import { ALBUM_PICTURES_MAX, ATTACHMENTS_MAX, CASE_DOCUMENTS_MAX, BoxKeys, ENC_HEADER_MAX, MediaRef, SAFEBOX_OBJECT_TYPES, Safebox, SafeboxItem } from "./models";
-import { ParsedReminder, lockedBytes, parseEncryptedUpload, parseNewObject, parseObjectChange, wrapsCover, wrapsFor } from "./box-encryption";
+import { ParsedReminder, lockedBytes, objectBytes, parseEncryptedUpload, parseNewObject, parseObjectChange, wrapsCover, wrapsFor } from "./box-encryption";
 import { publishedKeysOf } from "./keys";
 import { circleCol, messageCol, safeboxItems } from "./paths";
 import { nameOf, sendPush } from "./push";
@@ -54,6 +54,12 @@ const toItem = (id: string, d: FirebaseFirestore.DocumentData, uid: string): Saf
   ...(d.enc ? { enc: wrapsFor(d.enc, uid) } : {}), // an encrypted file: only my copies of the file key are sent
 });
 
+/**
+ * What the list asks of each item: everything but the whole content of an object (`enc.body`: it is read when the item is opened, see
+ * `GET /items/:itemId`). Firestore sends only these fields.
+ */
+const LIST_FIELDS = ["type", "revision", "updatedAt", "name", "kind", "mime", "bytes", "addedBy", "circles", "createdAt", "parentId", "hasThumb", "enc.v", "enc.iv", "enc.metaIv", "enc.meta", "enc.thumbIv", "enc.wraps", "enc.bodyIv"];
+
 /** The files in the box, newest first, with how much room is left. */
 safeboxRouter.get(
   "/",
@@ -61,7 +67,7 @@ safeboxRouter.get(
     const connection = await connectionOf(req, res);
     if (!connection) return;
     const uid = uidOf(res);
-    const items = (await safeboxItems(connection.id).get()).docs.filter((d) => inCircle(d.data(), uid, connection.circleId)).map((d) => toItem(d.id, d.data(), uid)).sort((a, b) => (b.createdAt ?? "").localeCompare(a.createdAt ?? ""));
+    const items = (await safeboxItems(connection.id).select(...LIST_FIELDS).get()).docs.filter((d) => inCircle(d.data(), uid, connection.circleId)).map((d) => toItem(d.id, d.data(), uid)).sort((a, b) => (b.createdAt ?? "").localeCompare(a.createdAt ?? ""));
     const box: Safebox = { items, usedBytes: items.reduce((sum, i) => sum + i.bytes, 0), maxBytes: SAFEBOX_MAX_BYTES, maxFileBytes: MAX_FILE_BYTES };
     res.json(box);
   }),
@@ -185,7 +191,7 @@ safeboxRouter.post(
       res.status(409).json({ error: "The encryption keys changed while the file was sent. Try again." });
       return;
     }
-    // `?parent=<object id>`: this locked file is an ATTACHMENT of that object (at most ATTACHMENTS_MAX; an album holds only pictures, up to ALBUM_PICTURES_MAX)
+    // `?parent=<object id>`: this locked file is an ATTACHMENT of that object (at most ATTACHMENTS_MAX; an album holds only pictures and videos, up to ALBUM_PICTURES_MAX)
     let parent: { ref: DocumentReference; id: string; data: FirebaseFirestore.DocumentData } | null = null;
     if (req.query.parent !== undefined) {
       if (req.query.replaces !== undefined) {
@@ -199,13 +205,13 @@ safeboxRouter.post(
         return;
       }
       const album = parent.data.type === "album";
-      if (album && upload.header.kind !== "image") {
-        res.status(400).json({ error: "An album holds only pictures" });
+      if (album && upload.header.kind !== "image" && upload.header.kind !== "video") {
+        res.status(400).json({ error: "An album holds only pictures and videos" });
         return;
       }
       const max = album ? ALBUM_PICTURES_MAX : parent.data.type === "case" ? CASE_DOCUMENTS_MAX : ATTACHMENTS_MAX;
-      if ((await safeboxItems(connection.id).where("parentId", "==", parent.id).get()).size >= max) {
-        res.status(409).json({ error: `At most ${max} ${album ? "pictures" : "attachments"} on one item` });
+      if ((await safeboxItems(connection.id).where("parentId", "==", parent.id).count().get()).data().count >= max) {
+        res.status(409).json({ error: `At most ${max} ${album ? "pictures and videos" : "attachments"} on one item` });
         return;
       }
     }
@@ -365,12 +371,12 @@ safeboxRouter.post(
       res.status(409).json({ error: "The encryption keys changed while the item was sent. Try again." });
       return;
     }
-    const bytes = lockedBytes(parsed.enc.meta);
+    const bytes = objectBytes(parsed.enc);
     if (!(await boxHasRoom(res, connection, bytes))) return;
     const ref = safeboxItems(connection.id).doc();
     await ref.set({ type: parsed.type, name: "Encrypted item", kind: "document", mime: "application/octet-stream", bytes, addedBy: me, circles: circlesOf(connection, me), hasThumb: false, enc: parsed.enc, revision: 1, createdAt: FieldValue.serverTimestamp(), updatedAt: FieldValue.serverTimestamp() });
     await setReminder(connection, ref.id, me, parsed.remind);
-    await announceItem(res, connection);
+    if (parsed.type !== "relation") await announceItem(res, connection); // a link between two items is no news
     res.status(201).json(toItem(ref.id, (await ref.get()).data()!, me));
   }),
 );
@@ -379,6 +385,17 @@ safeboxRouter.post(
  * Change an OBJECT: `PUT .../safebox/items/:id` `{ revision, metaIv, meta }`, the new locked content and the revision the app started from. If the other
  * friend saved in between the revision is not the current one: 409, and the app reads the item again. The key and its copies stay as they are.
  */
+safeboxRouter.get(
+  "/items/:itemId",
+  asyncHandler(async (req, res) => {
+    const connection = await connectionOf(req, res);
+    if (!connection) return;
+    const item = await itemOf(req, res, connection.id);
+    if (!item) return;
+    res.json(toItem(item.id, item.data, uidOf(res))); // the whole item, with the content of an object
+  }),
+);
+
 safeboxRouter.put(
   "/items/:itemId",
   asyncHandler(async (req, res) => {
@@ -399,7 +416,7 @@ safeboxRouter.put(
       res.status(change.status).json({ error: change.error });
       return;
     }
-    const bytes = lockedBytes(change.meta);
+    const bytes = objectBytes({ meta: change.meta, body: change.body });
     // the new size must fit (the old content of this object does not count)
     if (!(await boxHasRoom(res, connection, bytes, item.id))) return;
     let saved: FirebaseFirestore.DocumentData | null = null;
@@ -407,7 +424,8 @@ safeboxRouter.put(
       const current = await tx.get(item.ref);
       const data = current.data();
       if (!data || ((data.revision as number | undefined) ?? 1) !== change.revision) return; // somebody else saved first (or it is gone): saved stays null
-      saved = { ...data, enc: { ...data.enc, iv: change.metaIv, metaIv: change.metaIv, meta: change.meta }, bytes, revision: change.revision + 1, updatedAt: Timestamp.now() };
+      const { body: _oldBody, bodyIv: _oldBodyIv, ...kept } = data.enc; // the content comes from this change, an older app sends it whole in `meta`
+      saved = { ...data, enc: { ...kept, iv: change.metaIv, metaIv: change.metaIv, meta: change.meta, ...(change.body ? { bodyIv: change.bodyIv, body: change.body } : {}) }, bytes, revision: change.revision + 1, updatedAt: Timestamp.now() };
       tx.update(item.ref, { enc: saved.enc, bytes, revision: saved.revision, updatedAt: FieldValue.serverTimestamp() });
     });
     if (!saved) {

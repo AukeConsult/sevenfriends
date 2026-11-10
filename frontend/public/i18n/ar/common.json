@@ -105,7 +105,13 @@
     "phoneSignIn": "الدخول بالهاتف",
     "signingIn": "جارٍ تسجيل الدخول",
     "verifyPhone": "توثيق الهاتف",
-    "deleteMyAccount": "حذف حسابي"
+    "deleteMyAccount": "حذف حسابي",
+    "link": "رابط",
+    "newLinkedItem": "عنصر مرتبط جديد",
+    "newNote": "ملاحظة جديدة",
+    "newFile": "ملف جديد",
+    "new": "جديد",
+    "note": "ملاحظة"
   },
   "time": {
     "justNow": "الآن"
@@ -163,6 +169,11 @@
     "theKeyCouldNot2": "تعذّر حفظ المفتاح على الخادم. حاول مرة أخرى.",
     "theKeyOnThis": "تعذّر فحص المفتاح الموجود على هذا الجهاز. حاول مرة أخرى.",
     "androidApp": "تطبيق Android",
+    "iphoneApp": "تطبيق iPhone",
+    "windowsApp": "تطبيق Windows",
+    "browser": "المتصفح",
+    "browserApp": "تطبيق المتصفح",
+    "browserOnDevice": "{{ browser }} على {{ device }}",
     "thereIsNoEncryption": "لا يوجد مفتاح تشفير على هذا الجهاز. أنشئ مفتاحًا (أو استعده) من الإعدادات → المفاتيح.",
     "thisFileCouldNot2": "تعذّر فتح هذا الملف.",
     "thisFileIsLocked": "هذا الملف مقفل. افتح المحادثة أولًا ثم حاول مرة أخرى.",
@@ -278,5 +289,17 @@
     "pokeAnyway": "انكزه رغم ذلك",
     "makesASound": "يُصدر صوتًا",
     "activityIn": "نشاط في {{ circle }}"
-  }
+  },
+  "needsYourHelp": "{{ friendName }} يحتاج إلى مساعدتك",
+  "openToUnlockTheir": "افتح التطبيق لفك قفل رسائله القديمة مرة أخرى.",
+  "openedYourHistory": "فتح {{ friendName }} سجلّك",
+  "declinedYourRequest": "رفض {{ friendName }} طلبك",
+  "getThemBack": "استعدها",
+  "lockedMessagesAndFiles": "{{ messages }} رسالة و{{ files }} ملف مع {{ name }} مقفلة على هذا الجهاز.",
+  "lockedFilesWith": "{{ count }} ملف مع {{ name }} مقفلة على هذا الجهاز.",
+  "lockedMessagesWith": "{{ count }} رسالة مع {{ name }} مقفلة على هذا الجهاز.",
+  "removeThisKeyNotYou": "هل تريد إزالة هذا المفتاح؟ عندها لن يتمكن ذلك الجهاز من فتح رسائلك. إذا لم تكن أنت، فغيّر أيضًا بيانات تسجيل دخولك.",
+  "removeIt": "أزله",
+  "cancel": "إلغاء",
+  "notMe": "لست أنا"
 }

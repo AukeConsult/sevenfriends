@@ -50,5 +50,16 @@
   "unverifiedPhone": "telefon numarası",
   "unverifiedAnd": "{{ a }} ve {{ b }}",
   "waitingOne": "1 istek boş bir yer bekliyor",
-  "waitingMany": "{{ count }} istek boş bir yer bekliyor"
+  "waitingMany": "{{ count }} istek boş bir yer bekliyor",
+  "recoveryAsksYou": "eski mesajlarını açmasına yardım etmeni istiyor",
+  "recoveryYouHelp": "eski mesajlarını açmasına yardım ediyorsun",
+  "recoveryDecline": "Reddet",
+  "recoveryDeclined": "eski mesajlarını açma isteğini reddetti",
+  "recoveryAskAgain": "Yeniden iste",
+  "recoveryDismiss": "Kapat",
+  "openedYourHistory": "{{ friendName }} geçmişini açtı.",
+  "openedYourHistoryMany": "{{ friendNames }} geçmişini açtı.",
+  "lockedOnThisDevice": "Bu cihazda kilitli",
+  "lockedCounts": "{{ messages }} mesaj ve {{ files }} dosya burada henüz açılamıyor",
+  "getThemBack": "Geri al"
 }

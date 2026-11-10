@@ -35,5 +35,12 @@
   "askFriendnameToHelp": "Bed {{ friendName }} om hjælp",
   "checking": "Tjekker…",
   "couldNotReadThe": "Anmodningen kunne ikke læses",
-  "thatDidNotWork": "Det virkede ikke"
+  "thatDidNotWork": "Det virkede ikke",
+  "friendnameDeclined": "{{ friendName }} sagde nej",
+  "theyDidNotOpen": "De åbnede ikke dine gamle beskeder. Du kan spørge igen eller bruge en af dine egne enheder eller dine 24 gendannelsesord (Indstillinger, Nøgler).",
+  "askAgain": "Spørg igen",
+  "dismiss": "Afvis",
+  "decline": "Afslå",
+  "youDeclined": "Du sagde nej. {{ friendName }} har fået besked.",
+  "alsoWhenNothing": "Du kan spørge når som helst, også når intet er låst for dig: {{ friendName }} låser så alt igen for alle dine nøgler og skal sige ja hver gang."
 }

@@ -1,0 +1,25 @@
+<ng-container *transloco="let t">
+@if (itemId()) {
+  <section class="sf-links-frame">
+    @if (linked().length) {
+      <span>{{ t('safebox.links.linkedItems') || 'Linked items' }}</span>
+      <ul class="sf-links">
+        @for (item of linked(); track item.id) {
+          <li class="sf-link-chip">
+            <a [routerLink]="open(item)" class="sf-link-chip-open">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path [attr.d]="icon(item) || 'M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8zM14 3v5h5'" /></svg>
+              <span class="sf-ellipsis">{{ item.name }}</span>
+            </a>
+            <button type="button" class="sf-link-chip-x" (click)="unlink(item)" [attr.aria-label]="(t('safebox.links.takeTheLinkTo', { itemName: item.name }) || 'Take the link to ' + item.name + ' away')">✕</button>
+          </li>
+        }
+      </ul>
+    }
+    @if (error()) { <div class="alert alert-danger m-0" role="alert">{{ error() }}</div> }
+    <div class="d-flex flex-wrap justify-content-center gap-2">
+      <a [routerLink]="pickLink()" class="btn btn-light btn-sm">{{ linked().length ? (t('safebox.links.linkAnother') || 'Link another item') : (t('safebox.links.linkToAnItem') || 'Link to another item') }}</a>
+      <a [routerLink]="newLink()" class="btn btn-light btn-sm">{{ t('safebox.common.addAndLink') || 'Add a new item and link it' }}</a>
+    </div>
+  </section>
+}
+</ng-container>

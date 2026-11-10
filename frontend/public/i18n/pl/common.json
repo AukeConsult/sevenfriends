@@ -105,7 +105,13 @@
     "phoneSignIn": "Logowanie telefonem",
     "signingIn": "Logowanie",
     "verifyPhone": "Zweryfikuj telefon",
-    "deleteMyAccount": "Usuń moje konto"
+    "deleteMyAccount": "Usuń moje konto",
+    "link": "Link",
+    "newLinkedItem": "Nowy powiązany element",
+    "newNote": "Nowa notatka",
+    "newFile": "Nowy plik",
+    "new": "Nowy",
+    "note": "Notatka"
   },
   "time": {
     "justNow": "przed chwilą"
@@ -163,6 +169,11 @@
     "theKeyCouldNot2": "Nie udało się zapisać klucza na serwerze. Spróbuj ponownie.",
     "theKeyOnThis": "Nie udało się sprawdzić klucza na tym urządzeniu. Spróbuj ponownie.",
     "androidApp": "Aplikacja na Androida",
+    "iphoneApp": "Aplikacja na iPhone'a",
+    "windowsApp": "Aplikacja na Windows",
+    "browser": "Przeglądarka",
+    "browserApp": "Aplikacja w przeglądarce",
+    "browserOnDevice": "{{ browser }} na urządzeniu {{ device }}",
     "thereIsNoEncryption": "Na tym urządzeniu nie ma klucza szyfrowania. Skonfiguruj go (lub przywróć) w Ustawienia → Klucze.",
     "thisFileCouldNot2": "Nie można otworzyć tego pliku.",
     "thisFileIsLocked": "Ten plik jest zablokowany. Najpierw otwórz rozmowę, potem spróbuj ponownie.",
@@ -278,5 +289,17 @@
     "pokeAnyway": "Szturchnij mimo to",
     "makesASound": "wydaje dźwięk",
     "activityIn": "Aktywność: {{ circle }}"
-  }
+  },
+  "needsYourHelp": "{{ friendName }} potrzebuje Twojej pomocy",
+  "openToUnlockTheir": "Otwórz aplikację, żeby znów odblokować jej stare wiadomości.",
+  "openedYourHistory": "{{ friendName }} otworzył(a) Twoją historię",
+  "declinedYourRequest": "{{ friendName }} odrzucił(a) Twoją prośbę",
+  "getThemBack": "Odzyskaj je",
+  "lockedMessagesAndFiles": "Wiadomości: {{ messages }} i pliki: {{ files }} z {{ name }} są zablokowane na tym urządzeniu.",
+  "lockedFilesWith": "Pliki ({{ count }}) z {{ name }} są zablokowane na tym urządzeniu.",
+  "lockedMessagesWith": "Wiadomości ({{ count }}) z {{ name }} są zablokowane na tym urządzeniu.",
+  "removeThisKeyNotYou": "Usunąć ten klucz? Wtedy to urządzenie nie otworzy już Twoich wiadomości. Jeśli to nie Ty, zmień też swoje logowanie.",
+  "removeIt": "Usuń",
+  "cancel": "Anuluj",
+  "notMe": "To nie ja"
 }

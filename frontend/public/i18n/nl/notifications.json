@@ -50,5 +50,16 @@
   "unverifiedPhone": "telefoonnummer",
   "unverifiedAnd": "{{ a }} en {{ b }}",
   "waitingOne": "1 verzoek wacht op een vrije plek",
-  "waitingMany": "{{ count }} verzoeken wachten op een vrije plek"
+  "waitingMany": "{{ count }} verzoeken wachten op een vrije plek",
+  "recoveryAsksYou": "vraagt je te helpen hun oude berichten te openen",
+  "recoveryYouHelp": "je helpt hun oude berichten te openen",
+  "recoveryDecline": "Afwijzen",
+  "recoveryDeclined": "heeft je verzoek om je oude berichten te openen afgewezen",
+  "recoveryAskAgain": "Opnieuw vragen",
+  "recoveryDismiss": "Sluiten",
+  "openedYourHistory": "{{ friendName }} heeft je geschiedenis geopend.",
+  "openedYourHistoryMany": "{{ friendNames }} hebben je geschiedenis geopend.",
+  "lockedOnThisDevice": "Vergrendeld op dit apparaat",
+  "lockedCounts": "{{ messages }} berichten en {{ files }} bestanden kunnen hier nog niet worden geopend",
+  "getThemBack": "Haal ze terug"
 }

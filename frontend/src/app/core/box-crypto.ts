@@ -16,7 +16,7 @@ import { tr } from './i18n';
 const RSA: RsaHashedImportParams = { name: 'RSA-OAEP', hash: 'SHA-256' };
 const FILE_KEY_USAGES: KeyUsage[] = ['encrypt', 'decrypt'];
 
-export type Part = 'file' | 'thumb' | 'meta' | 'text';
+export type Part = 'file' | 'thumb' | 'meta' | 'text' | 'body';
 
 /** What is locked in `meta`: the real name and type of the file. */
 export interface BoxMeta {
@@ -147,44 +147,82 @@ export async function sealMeta(connectionId: string, fileKey: CryptoKey, meta: B
 }
 
 /**
- * A new note (design: docs/design/safebox-objects.md): a new key for it, the title and text locked with it (part "meta": for an object `meta` is the whole
- * payload; the iv of the file is only a placeholder and is the same as `metaIv`), the key locked for every key in use of both friends. Returns the body of
- * `POST .../safebox/items`.
+ * What the list shows of a note or another object, locked apart from its whole content so the list does not have to read the content: the title, one
+ * short line and the date (all three can be empty). For an object made like this `meta` is the head and `body` the whole content.
  */
-export async function sealNote(connectionId: string, payload: NotePayload, recipients: Recipient[]): Promise<{ type: 'note'; enc: SafeboxEnc }> {
+export interface BoxHead {
+  title: string;
+  line: string;
+  when: string;
+}
+
+/** The content of an object locked: with a head the head goes in `meta` and the content in `body`; without one (a link between two items) the content is all in `meta`. */
+async function sealContent(connectionId: string, key: CryptoKey, payload: unknown, head: BoxHead | null): Promise<{ metaIv: string; meta: string; bodyIv?: string; body?: string }> {
+  if (!head) {
+    const sealed = await lock(key, connectionId, 'meta', encoder.encode(JSON.stringify(payload)));
+    return { metaIv: toBase64(sealed.iv), meta: toBase64(sealed.data) };
+  }
+  const sealedHead = await lock(key, connectionId, 'meta', encoder.encode(JSON.stringify(head)));
+  const sealedBody = await lock(key, connectionId, 'body', encoder.encode(JSON.stringify(payload)));
+  return { metaIv: toBase64(sealedHead.iv), meta: toBase64(sealedHead.data), bodyIv: toBase64(sealedBody.iv), body: toBase64(sealedBody.data) };
+}
+
+/** The whole content of an object, as JSON; throws when it is not read yet (the list does not carry it: see `needsBody`). */
+async function openContent(connectionId: string, enc: SafeboxEnc, key: CryptoKey): Promise<unknown> {
+  if (enc.bodyIv) {
+    if (!enc.body) throw new Error('The content of this item is not read yet.');
+    return JSON.parse(new TextDecoder().decode(await unlock(key, connectionId, 'body', enc.bodyIv, fromBase64(enc.body))));
+  }
+  return JSON.parse(new TextDecoder().decode(await unlock(key, connectionId, 'meta', enc.metaIv, fromBase64(enc.meta))));
+}
+
+/** True when the whole content of an object has to be asked for before it can be opened (the list sends only the head). */
+export const needsBody = (enc: SafeboxEnc | undefined): boolean => !!enc?.bodyIv && !enc.body;
+
+/** The head of an object made with one (null for an older object: open it whole). */
+export async function openHead(connectionId: string, enc: SafeboxEnc, key: CryptoKey): Promise<BoxHead | null> {
+  if (!enc.bodyIv) return null;
+  const h = JSON.parse(new TextDecoder().decode(await unlock(key, connectionId, 'meta', enc.metaIv, fromBase64(enc.meta)))) as Partial<BoxHead>;
+  if (typeof h.title !== 'string') throw new Error(tr('core.thisItemCouldNot', 'This item could not be opened: it was changed or damaged.'));
+  return { title: h.title, line: typeof h.line === 'string' ? h.line : '', when: typeof h.when === 'string' ? h.when : '' };
+}
+
+/**
+ * A new note (design: docs/design/safebox-objects.md): a new key for it, the title and text locked with it, the key locked for every key in use of both
+ * friends. Returns the body of `POST .../safebox/items`. See `BoxHead` for what is in `meta` and what in `body`; the iv of the file is only a placeholder and is
+ * the same as `metaIv`.
+ */
+export async function sealNote(connectionId: string, payload: NotePayload, head: BoxHead | null, recipients: Recipient[]): Promise<{ type: 'note'; enc: SafeboxEnc }> {
   const key = await newKey();
-  const sealed = await lock(key, connectionId, 'meta', encoder.encode(JSON.stringify(payload)));
-  const iv = toBase64(sealed.iv);
-  return { type: 'note', enc: { v: 1, iv, metaIv: iv, meta: toBase64(sealed.data), thumbIv: null, wraps: await wrapKeyFor(key, recipients) } };
+  const sealed = await sealContent(connectionId, key, payload, head);
+  return { type: 'note', enc: { v: 1, iv: sealed.metaIv, ...sealed, thumbIv: null, wraps: await wrapKeyFor(key, recipients) } };
 }
 
 /** The new content of a note, locked again with the key it already has: what `PUT .../safebox/items/:id` takes (the copies of the key stay as they are). */
-export async function resealNote(connectionId: string, key: CryptoKey, payload: NotePayload): Promise<{ metaIv: string; meta: string }> {
-  const sealed = await lock(key, connectionId, 'meta', encoder.encode(JSON.stringify(payload)));
-  return { metaIv: toBase64(sealed.iv), meta: toBase64(sealed.data) };
+export async function resealNote(connectionId: string, key: CryptoKey, payload: NotePayload, head: BoxHead | null): Promise<{ metaIv: string; meta: string; bodyIv?: string; body?: string }> {
+  return sealContent(connectionId, key, payload, head);
 }
 
 /** A note opened; throws when it was changed or is not a note. */
 export async function openNote(connectionId: string, enc: SafeboxEnc, key: CryptoKey): Promise<NotePayload> {
-  const payload = JSON.parse(new TextDecoder().decode(await unlock(key, connectionId, 'meta', enc.metaIv, fromBase64(enc.meta)))) as Partial<NotePayload>;
+  const payload = (await openContent(connectionId, enc, key)) as Partial<NotePayload>;
   if (payload.v !== 1 || typeof payload.title !== 'string' || typeof payload.text !== 'string') throw new Error(tr('core.thisNoteCouldNot', 'This note could not be opened: it was changed or damaged.'));
   return { v: 1, title: payload.title, text: payload.text };
 }
 
 /** A new object other than a note (a secret, link, checklist ...): the same as a note, with its type and its fields/entries as the payload. */
-export async function sealObject(connectionId: string, type: SafeboxType, payload: ObjectPayload, recipients: Recipient[]): Promise<{ type: SafeboxType; enc: SafeboxEnc }> {
+export async function sealObject(connectionId: string, type: SafeboxType, payload: ObjectPayload, head: BoxHead | null, recipients: Recipient[]): Promise<{ type: SafeboxType; enc: SafeboxEnc }> {
   const key = await newKey();
-  const sealed = await lock(key, connectionId, 'meta', encoder.encode(JSON.stringify(payload)));
-  const iv = toBase64(sealed.iv);
-  return { type, enc: { v: 1, iv, metaIv: iv, meta: toBase64(sealed.data), thumbIv: null, wraps: await wrapKeyFor(key, recipients) } };
+  const sealed = await sealContent(connectionId, key, payload, head);
+  return { type, enc: { v: 1, iv: sealed.metaIv, ...sealed, thumbIv: null, wraps: await wrapKeyFor(key, recipients) } };
 }
 
 /** The new content of such an object, locked again with its key (what `PUT .../safebox/items/:id` takes). */
-export const resealObject = (connectionId: string, key: CryptoKey, payload: ObjectPayload): Promise<{ metaIv: string; meta: string }> => resealNote(connectionId, key, payload as unknown as NotePayload);
+export const resealObject = (connectionId: string, key: CryptoKey, payload: ObjectPayload, head: BoxHead | null): Promise<{ metaIv: string; meta: string; bodyIv?: string; body?: string }> => sealContent(connectionId, key, payload, head);
 
 /** An object opened; throws when it was changed or is not what it says. */
 export async function openObject(connectionId: string, enc: SafeboxEnc, key: CryptoKey): Promise<ObjectPayload> {
-  const p = JSON.parse(new TextDecoder().decode(await unlock(key, connectionId, 'meta', enc.metaIv, fromBase64(enc.meta)))) as Partial<ObjectPayload>;
+  const p = (await openContent(connectionId, enc, key)) as Partial<ObjectPayload>;
   if (p.v !== 1 || typeof p.title !== 'string' || !p.fields || typeof p.fields !== 'object') throw new Error(tr('core.thisItemCouldNot', 'This item could not be opened: it was changed or damaged.'));
   const fields: Record<string, string> = {};
   for (const [k, v] of Object.entries(p.fields)) if (typeof v === 'string') fields[k] = v;

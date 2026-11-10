@@ -105,7 +105,13 @@
     "phoneSignIn": "Login por telefone",
     "signingIn": "Entrando",
     "verifyPhone": "Verificar telefone",
-    "deleteMyAccount": "Excluir minha conta"
+    "deleteMyAccount": "Excluir minha conta",
+    "link": "Link",
+    "newLinkedItem": "Novo item vinculado",
+    "newNote": "Nova nota",
+    "newFile": "Novo arquivo",
+    "new": "Novo",
+    "note": "Nota"
   },
   "time": {
     "justNow": "agora mesmo"
@@ -163,6 +169,11 @@
     "theKeyCouldNot2": "Não foi possível guardar a chave no servidor. Tente de novo.",
     "theKeyOnThis": "Não foi possível verificar a chave deste dispositivo. Tente de novo.",
     "androidApp": "App Android",
+    "iphoneApp": "App para iPhone",
+    "windowsApp": "App para Windows",
+    "browser": "Navegador",
+    "browserApp": "App do navegador",
+    "browserOnDevice": "{{ browser }} em {{ device }}",
     "thereIsNoEncryption": "Não há chave de criptografia neste dispositivo. Crie uma (ou restaure-a) em Ajustes → Chaves.",
     "thisFileCouldNot2": "Não foi possível abrir este arquivo.",
     "thisFileIsLocked": "Este arquivo está trancado. Abra primeiro a conversa e tente de novo.",
@@ -278,5 +289,17 @@
     "pokeAnyway": "Cutucar mesmo assim",
     "makesASound": "toca um som",
     "activityIn": "Atividade em {{ circle }}"
-  }
+  },
+  "needsYourHelp": "{{ friendName }} precisa da sua ajuda",
+  "openToUnlockTheir": "Abra o app para desbloquear de novo as mensagens antigas.",
+  "openedYourHistory": "{{ friendName }} abriu o seu histórico",
+  "declinedYourRequest": "{{ friendName }} recusou o seu pedido",
+  "getThemBack": "Recuperá-las",
+  "lockedMessagesAndFiles": "{{ messages }} mensagens e {{ files }} arquivos com {{ name }} estão bloqueados neste dispositivo.",
+  "lockedFilesWith": "{{ count }} arquivos com {{ name }} estão bloqueados neste dispositivo.",
+  "lockedMessagesWith": "{{ count }} mensagens com {{ name }} estão bloqueadas neste dispositivo.",
+  "removeThisKeyNotYou": "Remover esta chave? Aí esse dispositivo não poderá mais abrir as suas mensagens. Se não foi você, troque também o seu login.",
+  "removeIt": "Remover",
+  "cancel": "Cancelar",
+  "notMe": "Não fui eu"
 }

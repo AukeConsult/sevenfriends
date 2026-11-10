@@ -105,7 +105,13 @@
     "phoneSignIn": "Inloggen met telefoon",
     "signingIn": "Bezig met inloggen",
     "verifyPhone": "Telefoon bevestigen",
-    "deleteMyAccount": "Mijn account verwijderen"
+    "deleteMyAccount": "Mijn account verwijderen",
+    "link": "Link",
+    "newLinkedItem": "Nieuw gekoppeld item",
+    "newNote": "Nieuwe notitie",
+    "newFile": "Nieuw bestand",
+    "new": "Nieuw",
+    "note": "Notitie"
   },
   "time": {
     "justNow": "zojuist"
@@ -163,6 +169,11 @@
     "theKeyCouldNot2": "De sleutel kon niet op de server worden opgeslagen. Probeer het opnieuw.",
     "theKeyOnThis": "De sleutel op dit apparaat kon niet worden gecontroleerd. Probeer het opnieuw.",
     "androidApp": "Android-app",
+    "iphoneApp": "iPhone-app",
+    "windowsApp": "Windows-app",
+    "browser": "Browser",
+    "browserApp": "Browser-app",
+    "browserOnDevice": "{{ browser }} op {{ device }}",
     "thereIsNoEncryption": "Er is geen versleutelingssleutel op dit apparaat. Stel er een in (of haal hem terug) bij Instellingen → Sleutels.",
     "thisFileCouldNot2": "Dit bestand kon niet worden geopend.",
     "thisFileIsLocked": "Dit bestand is vergrendeld. Open eerst het gesprek en probeer het dan opnieuw.",
@@ -278,5 +289,17 @@
     "pokeAnyway": "Toch aanstoten",
     "makesASound": "maakt geluid",
     "activityIn": "Activiteit in {{ circle }}"
-  }
+  },
+  "needsYourHelp": "{{ friendName }} heeft je hulp nodig",
+  "openToUnlockTheir": "Open de app om hun oude berichten weer te ontgrendelen.",
+  "openedYourHistory": "{{ friendName }} heeft je geschiedenis geopend",
+  "declinedYourRequest": "{{ friendName }} heeft je verzoek afgewezen",
+  "getThemBack": "Haal ze terug",
+  "lockedMessagesAndFiles": "{{ messages }} berichten en {{ files }} bestanden met {{ name }} zijn vergrendeld op dit apparaat.",
+  "lockedFilesWith": "{{ count }} bestanden met {{ name }} zijn vergrendeld op dit apparaat.",
+  "lockedMessagesWith": "{{ count }} berichten met {{ name }} zijn vergrendeld op dit apparaat.",
+  "removeThisKeyNotYou": "Deze sleutel verwijderen? Dan kan dat apparaat je berichten niet meer openen. Als jij het niet was, wijzig dan ook je login.",
+  "removeIt": "Verwijderen",
+  "cancel": "Annuleren",
+  "notMe": "Niet ik"
 }

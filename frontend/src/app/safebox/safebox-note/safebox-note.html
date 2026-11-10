@@ -1,0 +1,74 @@
+<ng-container *transloco="let t">
+<main class="sf-page sf-page-item">
+  <div class="sf-page-head">
+    <a [routerLink]="list" class="btn btn-light btn-sm sf-head-list" [attr.aria-label]="(t('safebox.common.allItems') || 'All items in the safebox')" [attr.title]="(t('safebox.common.allItems') || 'All items in the safebox')"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg></a>
+    <h1 class="m-0 mw-100">
+      <a [routerLink]="list" (click)="back($event)" class="sf-title-link" [attr.aria-label]="t('safebox.common.backToTheSafebox') || 'Back to the safebox'">
+        <span class="sf-back-inline" aria-hidden="true"></span>
+        <span class="sf-ellipsis">{{ isNew ? (t('safebox.common.newNote') || 'New note') : (title() || (t('safebox.common.note') || 'Note')) }}</span>
+      </a>
+    </h1>
+    <p class="sf-hint m-0">{{ t('safebox.common.lockedOnThisDevice', { friendName: friendName() }) || 'Locked on this device. Only you and ' + friendName() + ' can read it.' }}</p>
+    @if (!isNew) {
+      <!-- taking it out: the bin to the left of the title; the question opens under the title, not in a pop-up -->
+      <button type="button" class="btn btn-light btn-sm sf-head-delete" (click)="confirmDelete.set(!confirmDelete())" [disabled]="busy()" [attr.aria-label]="t('safebox.common.takeItOutOfTheSafebox') || 'Take it out of the safebox'" [attr.title]="t('safebox.common.takeItOutOfTheSafebox') || 'Take it out of the safebox'"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6" /></svg></button>
+    }
+  </div>
+
+    @if (!isNew && confirmDelete()) {
+      <div class="sf-expand">
+        <p class="sf-confirm-text">{{ t('safebox.note.takeThisNoteOut') || 'Take this note out of the safebox? It disappears for both of you and cannot be got back.' }}</p>
+        <div class="sf-msg-actions justify-content-center">
+          <button type="button" class="btn btn-light btn-sm" (click)="confirmDelete.set(false)" [disabled]="busy()">{{ t('safebox.common.cancel') || 'Cancel' }}</button>
+          <button type="button" class="btn btn-danger btn-sm" (click)="remove()" [disabled]="busy()">{{ t('safebox.common.takeItOut') || 'Take it out' }}</button>
+        </div>
+      </div>
+    }
+
+  @if (loadError()) {
+    <div class="alert alert-danger" role="alert">{{ loadError() }}</div>
+    <a [routerLink]="list" class="btn btn-light btn-sm align-self-start">{{ t('safebox.common.back') || 'Back' }}</a>
+  } @else if (loading()) {
+    <p class="text-secondary text-center">{{ t('safebox.note.openingTheNote') || 'Opening the note…' }}</p>
+  } @else {
+    @if (keyStatus() === 'checking') {
+      <p class="text-secondary">{{ t('safebox.common.checkingTheKeys') || 'Checking the keys…' }}</p>
+    } @else if (keyStatus() !== 'both') {
+      <!-- a note is never stored unlocked: both of us need a key -->
+      <div class="alert alert-warning" role="status">
+        @if (keyStatus() === 'me' ) { {{ t('safebox.note.friendHasNoKey', { friendName: friendName() }) || friendName() + ' has no encryption key yet, so a note cannot be locked for you both. Ask them to set one up in Settings → Keys.' }} }
+        @else { {{ t('safebox.note.youHaveNoKey') || 'A note is always locked, and you need an encryption key for that.' }} <a routerLink="/settings/encryption">{{ t('safebox.common.setUpAKey') || 'Set up a key' }}</a> }
+      </div>
+    }
+
+    @if (conflict()) {
+      <div class="alert alert-warning" role="alert">
+        <div>{{ t('safebox.note.friendSavedFirst', { friendName: friendName() }) || friendName() + ' saved this note while you were writing. Their version replaces yours if you load it. Copy your text first if you want to keep it.' }}</div>
+        <div class="d-flex gap-2 mt-2">
+          <button type="button" class="btn btn-warning btn-sm" (click)="loadTheirs()">{{ t('safebox.common.loadTheirVersion') || 'Load their version' }}</button>
+        </div>
+      </div>
+    }
+
+    <form class="sf-narrow-form d-grid gap-2" (submit)="$event.preventDefault(); save()" (focusout)="isNew && canSave() && save()">
+      <label class="d-grid gap-1" for="note-title"><span>{{ t('safebox.common.title') || 'Title' }}</span>
+        <input id="note-title" type="text" class="form-control" [maxLength]="titleMax" autocomplete="off" [value]="title()" (input)="title.set($any($event.target).value)" />
+      </label>
+      <label class="d-grid gap-1" for="note-text"><span>{{ t('safebox.common.text') || 'Text' }}</span>
+        <textarea id="note-text" class="form-control" rows="5" [maxLength]="textMax" [value]="text()" (input)="text.set($any($event.target).value)"></textarea>
+      </label>
+      <span class="sf-hint text-end">{{ text().length }} / {{ textMax }}</span>
+
+      <app-safebox-links [friendId]="friendId" [itemId]="itemId" />
+
+      <app-safebox-attachments [friendId]="friendId" [parentId]="itemId" [keys]="keyStatus() === 'both' ? boxKeys() : null" />
+
+      @if (error()) { <div class="alert alert-danger m-0" role="alert">{{ error() }}</div> }
+
+      <!-- no Save button: a note that exists is saved by itself; a new one is made when you leave a field and there is a title or a text -->
+      <p class="sf-hint text-center m-0" role="status">{{ busy() ? (t('safebox.common.saving') || 'Saving…') : (isNew ? (t('safebox.note.savedWhenWritten') || 'It is saved when you have written something.') : (changed() ? '' : (t('safebox.common.saved') || 'Saved'))) }}</p>
+    </form>
+
+  }
+</main>
+</ng-container>

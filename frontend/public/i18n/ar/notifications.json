@@ -50,5 +50,16 @@
   "unverifiedPhone": "رقم الهاتف",
   "unverifiedAnd": "{{ a }} و{{ b }}",
   "waitingOne": "طلب واحد ينتظر مقعدًا شاغرًا",
-  "waitingMany": "عدد الطلبات التي تنتظر مقعدًا شاغرًا: {{ count }}"
+  "waitingMany": "عدد الطلبات التي تنتظر مقعدًا شاغرًا: {{ count }}",
+  "recoveryAsksYou": "يطلب مساعدتك لفتح رسائله القديمة",
+  "recoveryYouHelp": "أنت تساعد في فتح رسائله القديمة",
+  "recoveryDecline": "ارفض",
+  "recoveryDeclined": "رفض طلبك لفتح رسائلك القديمة",
+  "recoveryAskAgain": "اطلب مرة أخرى",
+  "recoveryDismiss": "تجاهل",
+  "openedYourHistory": "فتح {{ friendName }} سجلّك.",
+  "openedYourHistoryMany": "فتح {{ friendNames }} سجلّك.",
+  "lockedOnThisDevice": "مقفل على هذا الجهاز",
+  "lockedCounts": "لا يمكن فتح {{ messages }} رسالة و{{ files }} ملف هنا بعد",
+  "getThemBack": "استعدها"
 }

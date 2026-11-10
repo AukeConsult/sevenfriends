@@ -4,12 +4,13 @@ export type SafeboxKind = "image" | "video" | "audio" | "document";
 /**
  * What an item of the safebox is (design: docs/design/safebox-objects.md): `file` is everything the box held before (a stored file, with
  * `kind`), the others are small typed objects with NO stored file, whose content is a locked JSON payload. More types are added here, one at a time
- * (all ten are built: note, secret, link, checklist, place, contact, date, ticket, album, case).
+ * (all ten are built: note, secret, link, checklist, place, contact, date, ticket, album, case). `relation` is not shown in the list: it is the locked
+ * record "item A is linked with item B" (payload fields `from` and `to`), so the server never learns which items belong together.
  */
-export type SafeboxType = "file" | "note" | "secret" | "link" | "checklist" | "place" | "contact" | "date" | "ticket" | "album" | "case";
+export type SafeboxType = "file" | "note" | "secret" | "link" | "checklist" | "place" | "contact" | "date" | "ticket" | "album" | "case" | "relation";
 
 /** The types that are objects (no stored file): their content is the locked payload in `enc.meta`. */
-export const SAFEBOX_OBJECT_TYPES: readonly SafeboxType[] = ["note", "secret", "link", "checklist", "place", "contact", "date", "ticket", "album", "case"];
+export const SAFEBOX_OBJECT_TYPES: readonly SafeboxType[] = ["note", "secret", "link", "checklist", "place", "contact", "date", "ticket", "album", "case", "relation"];
 
 /** The most a payload may be, before it is locked (JSON, in bytes). */
 export const SAFEBOX_PAYLOAD_MAX_BYTES = 16 * 1024;
@@ -43,7 +44,7 @@ export const OBJECT_TITLE_MAX = 100;
 export const OBJECT_FIELD_MAX = 2000;
 export const CHECKLIST_ENTRIES_MAX = 100;
 export const CHECKLIST_TEXT_MAX = 200;
-/** How many attachments an object may have, and an album (which holds only pictures). */
+/** How many attachments an object may have, and an album (which holds only pictures and videos). */
 export const ATTACHMENTS_MAX = 10;
 export const ALBUM_PICTURES_MAX = 100;
 /** A case (a file of documents) may have this many attachments. */
@@ -74,6 +75,13 @@ export interface SafeboxEnc {
   /** the iv of the preview, when there is one */
   thumbIv: string | null;
   wraps: SafeboxWrap[];
+  /**
+   * An object (a note, a place ...) made by a newer app: `meta` is then only its small HEAD (title, one line, date: what the list shows) and the whole
+   * content is `body` (locked with `bodyIv`). The list does not send `body`, only `bodyIv`: the app asks for the item when it is opened. An object without
+   * these (an older one, and a link between two items) has its whole content in `meta`.
+   */
+  bodyIv?: string;
+  body?: string;
 }
 
 /** The most the front part of an encrypted upload (see `EncryptedUploadHeader`) may be. */
@@ -112,7 +120,10 @@ export interface NewObject {
 export interface ObjectChange {
   revision: number;
   metaIv: string;
+  /** the head (with `body`) or the whole content (without) */
   meta: string;
+  bodyIv?: string;
+  body?: string;
   /** absent = the reminder stays as it is; null = no reminder any more; otherwise the new one */
   remind?: ReminderRequest | null;
 }

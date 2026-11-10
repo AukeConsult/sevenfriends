@@ -50,5 +50,16 @@
   "unverifiedPhone": "手机号",
   "unverifiedAnd": "{{ a }}和{{ b }}",
   "waitingOne": "有 1 个请求在等空位",
-  "waitingMany": "有 {{ count }} 个请求在等空位"
+  "waitingMany": "有 {{ count }} 个请求在等空位",
+  "recoveryAsksYou": "请你帮忙打开对方的旧消息",
+  "recoveryYouHelp": "你正在帮忙打开对方的旧消息",
+  "recoveryDecline": "拒绝",
+  "recoveryDeclined": "拒绝了你打开旧消息的请求",
+  "recoveryAskAgain": "再次请求",
+  "recoveryDismiss": "忽略",
+  "openedYourHistory": "{{ friendName }} 打开了你的历史记录。",
+  "openedYourHistoryMany": "{{ friendNames }} 打开了你的历史记录。",
+  "lockedOnThisDevice": "已在此设备上锁定",
+  "lockedCounts": "{{ messages }} 条消息和 {{ files }} 个文件暂时无法在此打开",
+  "getThemBack": "找回"
 }

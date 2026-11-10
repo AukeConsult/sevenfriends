@@ -38,10 +38,16 @@ function wrapsValid(wraps: unknown): wraps is SafeboxWrap[] {
 
 /** A locked payload (base64): at least the 16-byte lock plus one byte, whole base64 groups, and not more than the biggest payload plus its lock. */
 const MAX_LOCKED_PAYLOAD_LENGTH = Math.ceil((SAFEBOX_PAYLOAD_MAX_BYTES + 16) / 3) * 4;
+/** The small head of an object (what the list shows): a locked title, line and date. */
+const MAX_HEAD_LENGTH = 4096;
+const lockedHeadOk = (value: unknown): value is string => isBase64(value) && value.length >= 24 && value.length <= MAX_HEAD_LENGTH && value.length % 4 === 0;
 const lockedPayloadOk = (value: unknown): value is string => isBase64(value) && value.length >= 24 && value.length <= MAX_LOCKED_PAYLOAD_LENGTH && value.length % 4 === 0;
 
 /** How many bytes a locked payload is (the length of the base64 text decoded): what the object counts in the box. */
 export const lockedBytes = (meta: string): number => Math.floor((meta.length * 3) / 4) - (meta.endsWith("==") ? 2 : meta.endsWith("=") ? 1 : 0);
+
+/** What an object counts in the box: its whole content (the body, or the meta of an older one) and its head. */
+export const objectBytes = (enc: { meta: string; body?: string }): number => (enc.body ? lockedBytes(enc.body) + lockedBytes(enc.meta) : lockedBytes(enc.meta));
 
 /** A reminder as the server keeps it. */
 export interface ParsedReminder {
@@ -71,20 +77,28 @@ export function parseNewObject(body: unknown): { type: SafeboxType; enc: Safebox
   const enc = o?.enc as Partial<SafeboxEnc> | undefined;
   if (!o || typeof o !== "object" || !enc || typeof enc !== "object" || enc.v !== 1) return bad("The new item is not valid");
   if (!SAFEBOX_OBJECT_TYPES.includes(o.type as SafeboxType)) return bad("That kind of item is not known");
-  if (!isBase64(enc.metaIv, IV_LENGTH) || enc.iv !== enc.metaIv || !lockedPayloadOk(enc.meta) || enc.thumbIv !== null || !wrapsValid(enc.wraps)) return bad("The new item is not valid");
+  const split = enc.body !== undefined || enc.bodyIv !== undefined; // a head in `meta` and the whole content in `body`
+  const contentOk = split ? lockedHeadOk(enc.meta) && isBase64(enc.bodyIv, IV_LENGTH) && lockedPayloadOk(enc.body) : lockedPayloadOk(enc.meta);
+  if (!isBase64(enc.metaIv, IV_LENGTH) || enc.iv !== enc.metaIv || !contentOk || enc.thumbIv !== null || !wrapsValid(enc.wraps)) return bad("The new item is not valid");
   const remind = parseReminder(o.remind);
   if (remind && "error" in remind) return remind;
-  return { remind, type: o.type as SafeboxType, enc: { v: 1, iv: enc.metaIv, metaIv: enc.metaIv, meta: enc.meta, thumbIv: null, wraps: enc.wraps.map((w) => ({ uid: w.uid, keyId: w.keyId, wrappedKey: w.wrappedKey })) } };
+  return {
+    remind,
+    type: o.type as SafeboxType,
+    enc: { v: 1, iv: enc.metaIv, metaIv: enc.metaIv, meta: enc.meta as string, thumbIv: null, wraps: enc.wraps.map((w) => ({ uid: w.uid, keyId: w.keyId, wrappedKey: w.wrappedKey })), ...(split ? { bodyIv: enc.bodyIv, body: enc.body } : {}) },
+  };
 }
 
 /** A change of an object: the new locked content and the revision it started from. */
-export function parseObjectChange(body: unknown): { revision: number; metaIv: string; meta: string; remind: ParsedReminder | null | undefined } | Refused {
+export function parseObjectChange(body: unknown): { revision: number; metaIv: string; meta: string; bodyIv?: string; body?: string; remind: ParsedReminder | null | undefined } | Refused {
   const c = body as Partial<ObjectChange> | null;
   if (!c || typeof c !== "object" || !Number.isInteger(c.revision) || (c.revision as number) < 1) return bad("The change is not valid");
-  if (!isBase64(c.metaIv, IV_LENGTH) || !lockedPayloadOk(c.meta)) return bad("The change is not valid");
+  const split = c.body !== undefined || c.bodyIv !== undefined;
+  const contentOk = split ? lockedHeadOk(c.meta) && isBase64(c.bodyIv, IV_LENGTH) && lockedPayloadOk(c.body) : lockedPayloadOk(c.meta);
+  if (!isBase64(c.metaIv, IV_LENGTH) || !contentOk) return bad("The change is not valid");
   const remind = parseReminder(c.remind);
   if (remind && "error" in remind) return remind;
-  return { revision: c.revision as number, metaIv: c.metaIv, meta: c.meta, remind };
+  return { revision: c.revision as number, metaIv: c.metaIv as string, meta: c.meta as string, ...(split ? { bodyIv: c.bodyIv, body: c.body } : {}), remind };
 }
 
 /** Cuts the request body into header, file and preview, and checks the header's shape. */

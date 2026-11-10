@@ -3,31 +3,31 @@ import { tr } from './i18n';
 
 /** The kinds of object a safebox holds besides files (design: docs/design/safebox-objects.md), in the order of the "New" frame. */
 export function objectKinds(): ObjectKind[] {
-  const note = tr('safebox.note', 'Note');
-  const textLabel = tr('safeboxObject.note', 'Note');
+  const note = tr('safebox.common.note', 'Note');
+  const textLabel = tr('safebox.common.note', 'Note');
   return [
-    { type: 'note', label: note, icon: 'M5 4h14v16H5zM8 9h8M8 13h8M8 17h5', titleLabel: tr('safeboxObject.title', 'Title'), fields: [] },
-    { type: 'secret', label: tr('safebox.secret', 'Secret'), icon: 'M21 2l-2 2m-7.6 7.6a5.5 5.5 0 1 1-7.8 7.8 5.5 5.5 0 0 1 7.8-7.8zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4', titleLabel: tr('safeboxObject.whatIsItFor', 'What is it for?'),
-      fields: [{ key: 'value', label: tr('safeboxObject.secretValue', 'Password, code or PIN'), input: 'secret', max: 500, copy: true }, { key: 'note', label: textLabel, input: 'textarea', max: 2000 }] },
-    { type: 'link', label: tr('safebox.link', 'Link'), icon: 'M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71', titleLabel: tr('safeboxObject.title', 'Title'),
-      fields: [{ key: 'url', label: tr('safeboxObject.webAddress', 'Web address'), input: 'url', max: 2000, copy: true }, { key: 'note', label: textLabel, input: 'textarea', max: 2000 }] },
-    { type: 'checklist', label: tr('safebox.checklist', 'Checklist'), icon: 'M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11', titleLabel: tr('safeboxObject.title', 'Title'), fields: [], checklist: true },
-    { type: 'place', label: tr('safebox.place', 'Place'), icon: 'M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0zM12 7a3 3 0 1 0 0 6 3 3 0 0 0 0-6z', titleLabel: tr('safeboxObject.name', 'Name'),
-      located: true, fields: [{ key: 'address', label: tr('safeboxObject.address', 'Address'), input: 'textarea', max: 500, copy: true }, { key: 'note', label: textLabel, input: 'textarea', max: 2000 }] },
-    { type: 'contact', label: tr('safebox.contact', 'Contact'), icon: 'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8z', titleLabel: tr('safeboxObject.name', 'Name'),
-      fields: [{ key: 'phone', label: tr('safeboxObject.phone', 'Phone'), input: 'tel', max: 50, copy: true }, { key: 'email', label: tr('safeboxObject.email', 'Email'), input: 'email', max: 200, copy: true }, { key: 'note', label: textLabel, input: 'textarea', max: 2000 }] },
-    { type: 'date', label: tr('safebox.date', 'Date'), icon: 'M3 6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM16 2v4M8 2v4M3 10h18', titleLabel: tr('safeboxObject.whatIsIt', 'What is it?'),
-      timed: true, fields: [{ key: 'date', label: tr('safeboxObject.date', 'Date'), input: 'date', max: 10, required: true }, { key: 'time', label: tr('safeboxObject.time', 'Time'), input: 'time', max: 5, required: true }, { key: 'note', label: textLabel, input: 'textarea', max: 2000 }] },
-    { type: 'album', label: tr('safebox.album', 'Album'), icon: 'M3 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM8.5 10a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM21 15l-5-5L5 21', titleLabel: tr('safeboxObject.albumName', 'Name of the album'), album: true,
+    { type: 'note', label: note, icon: 'M5 4h14v16H5zM8 9h8M8 13h8M8 17h5', titleLabel: tr('safebox.common.title', 'Title'), fields: [] },
+    { type: 'secret', label: tr('safebox.list.secret', 'Secret'), icon: 'M21 2l-2 2m-7.6 7.6a5.5 5.5 0 1 1-7.8 7.8 5.5 5.5 0 0 1 7.8-7.8zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4', titleLabel: tr('safebox.object.whatIsItFor', 'What is it for?'),
+      fields: [{ key: 'value', label: tr('safebox.object.secretValue', 'Password, code or PIN'), input: 'secret', max: 500, copy: true }, { key: 'note', label: textLabel, input: 'textarea', max: 2000 }] },
+    { type: 'link', label: tr('safebox.list.link', 'Link'), icon: 'M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71', titleLabel: tr('safebox.common.title', 'Title'),
+      fields: [{ key: 'url', label: tr('safebox.object.webAddress', 'Web address'), input: 'url', max: 2000, copy: true }, { key: 'note', label: textLabel, input: 'textarea', max: 2000 }] },
+    { type: 'checklist', label: tr('safebox.list.checklist', 'Checklist'), icon: 'M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11', titleLabel: tr('safebox.common.title', 'Title'), fields: [], checklist: true },
+    { type: 'place', label: tr('safebox.list.place', 'Place'), icon: 'M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0zM12 7a3 3 0 1 0 0 6 3 3 0 0 0 0-6z', titleLabel: tr('safebox.common.name', 'Name'),
+      located: true, fields: [{ key: 'address', label: tr('safebox.object.address', 'Address'), input: 'textarea', max: 500, copy: true }, { key: 'note', label: textLabel, input: 'textarea', max: 2000 }] },
+    { type: 'contact', label: tr('safebox.list.contact', 'Contact'), icon: 'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8z', titleLabel: tr('safebox.common.name', 'Name'),
+      fields: [{ key: 'phone', label: tr('safebox.object.phone', 'Phone'), input: 'tel', max: 50, copy: true }, { key: 'email', label: tr('safebox.object.email', 'Email'), input: 'email', max: 200, copy: true }, { key: 'note', label: textLabel, input: 'textarea', max: 2000 }] },
+    { type: 'date', label: tr('safebox.common.date', 'Date'), icon: 'M3 6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM16 2v4M8 2v4M3 10h18', titleLabel: tr('safebox.object.whatIsIt', 'What is it?'),
+      timed: true, fields: [{ key: 'date', label: tr('safebox.common.date', 'Date'), input: 'date', max: 10, required: true }, { key: 'time', label: tr('safebox.object.time', 'Time'), input: 'time', max: 5, required: true }, { key: 'note', label: textLabel, input: 'textarea', max: 2000 }] },
+    { type: 'album', label: tr('safebox.list.album', 'Album'), icon: 'M3 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM8.5 10a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM21 15l-5-5L5 21', titleLabel: tr('safebox.object.albumName', 'Name of the album'), album: true,
       fields: [{ key: 'note', label: textLabel, input: 'textarea', max: 2000 }] },
-    { type: 'case', label: tr('safebox.case', 'Case'), icon: 'M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16', titleLabel: tr('safeboxObject.caseName', 'Name of the case'), timed: true, attachmentsMax: CASE_DOCUMENTS_MAX,
-      fields: [{ key: 'reference', label: tr('safeboxObject.caseNumber', 'Case number or reference'), input: 'text', max: 200, copy: true }, { key: 'party', label: tr('safeboxObject.caseParty', 'With (authority, company or person)'), input: 'text', max: 300 },
-        { key: 'status', label: tr('safeboxObject.status', 'Status'), input: 'select', max: 20, options: [{ value: 'open', label: tr('safeboxObject.statusOpen', 'Open') }, { value: 'waiting', label: tr('safeboxObject.statusWaiting', 'Waiting for an answer') }, { value: 'closed', label: tr('safeboxObject.statusClosed', 'Closed') }] },
-        { key: 'date', label: tr('safeboxObject.deadline', 'Deadline'), input: 'date', max: 10 }, { key: 'time', label: tr('safeboxObject.deadlineTime', 'Time of the deadline'), input: 'time', max: 5 },
-        { key: 'note', label: tr('safeboxObject.caseNotes', 'Summary and notes'), input: 'textarea', max: 2000 }] },
-    { type: 'ticket', label: tr('safebox.ticket', 'Ticket'), icon: 'M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2zM13 5v2M13 17v2M13 11v2', titleLabel: tr('safeboxObject.ticketFor', 'Ticket to what?'),
-      timed: true, fields: [{ key: 'where', label: tr('safeboxObject.where', 'Where'), input: 'text', max: 300, copy: true }, { key: 'date', label: tr('safeboxObject.date', 'Date'), input: 'date', max: 10, required: true }, { key: 'time', label: tr('safeboxObject.time', 'Time'), input: 'time', max: 5, required: true },
-        { key: 'reference', label: tr('safeboxObject.reference', 'Seat, booking reference or code'), input: 'text', max: 200, copy: true }, { key: 'note', label: textLabel, input: 'textarea', max: 2000 }] },
+    { type: 'case', label: tr('safebox.list.case', 'Case'), icon: 'M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16', titleLabel: tr('safebox.object.caseName', 'Name of the case'), timed: true, attachmentsMax: CASE_DOCUMENTS_MAX,
+      fields: [{ key: 'reference', label: tr('safebox.object.caseNumber', 'Case number or reference'), input: 'text', max: 200, copy: true }, { key: 'party', label: tr('safebox.object.caseParty', 'With (authority, company or person)'), input: 'text', max: 300 },
+        { key: 'status', label: tr('safebox.object.status', 'Status'), input: 'select', max: 20, options: [{ value: 'open', label: tr('safebox.object.statusOpen', 'Open') }, { value: 'waiting', label: tr('safebox.object.statusWaiting', 'Waiting for an answer') }, { value: 'closed', label: tr('safebox.object.statusClosed', 'Closed') }] },
+        { key: 'date', label: tr('safebox.object.deadline', 'Deadline'), input: 'date', max: 10 }, { key: 'time', label: tr('safebox.object.deadlineTime', 'Time of the deadline'), input: 'time', max: 5 },
+        { key: 'note', label: tr('safebox.object.caseNotes', 'Summary and notes'), input: 'textarea', max: 2000 }] },
+    { type: 'ticket', label: tr('safebox.list.ticket', 'Ticket'), icon: 'M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2zM13 5v2M13 17v2M13 11v2', titleLabel: tr('safebox.object.ticketFor', 'Ticket to what?'),
+      timed: true, fields: [{ key: 'where', label: tr('safebox.object.where', 'Where'), input: 'text', max: 300, copy: true }, { key: 'date', label: tr('safebox.common.date', 'Date'), input: 'date', max: 10, required: true }, { key: 'time', label: tr('safebox.object.time', 'Time'), input: 'time', max: 5, required: true },
+        { key: 'reference', label: tr('safebox.object.reference', 'Seat, booking reference or code'), input: 'text', max: 200, copy: true }, { key: 'note', label: textLabel, input: 'textarea', max: 2000 }] },
   ];
 }
 
@@ -67,7 +67,7 @@ export function summaryOf(type: SafeboxType, p: ObjectPayload): string {
   switch (type) {
     case 'album': return '';
     case 'case': {
-      const status = f['status'] === 'closed' ? tr('safeboxObject.statusClosed', 'Closed') : f['status'] === 'waiting' ? tr('safeboxObject.statusWaiting', 'Waiting for an answer') : tr('safeboxObject.statusOpen', 'Open');
+      const status = f['status'] === 'closed' ? tr('safebox.object.statusClosed', 'Closed') : f['status'] === 'waiting' ? tr('safebox.object.statusWaiting', 'Waiting for an answer') : tr('safebox.object.statusOpen', 'Open');
       return [status, f['reference'], daysLeft(f['date'] ?? '')].filter(Boolean).join(' · ');
     }
     case 'link': return (f['url'] ?? '').replace(/^https?:\/\//i, '');
@@ -75,7 +75,7 @@ export function summaryOf(type: SafeboxType, p: ObjectPayload): string {
     case 'contact': return [f['phone'], f['email']].filter(Boolean).join(' · ');
     case 'checklist': {
       const items = p.items ?? [];
-      return items.length ? tr('safeboxObject.doneOfTotal', '{{ done }} of {{ total }} done', { done: items.filter((i: ChecklistEntry) => i.done).length, total: items.length }) : '';
+      return items.length ? tr('safebox.object.doneOfTotal', '{{ done }} of {{ total }} done', { done: items.filter((i: ChecklistEntry) => i.done).length, total: items.length }) : '';
     }
     case 'date': return daysLeft(f['date'] ?? '');
     case 'ticket': return [daysLeft(f['date'] ?? ''), f['where']].filter(Boolean).join(' · ');
@@ -91,7 +91,7 @@ function firstLine(text: string): string {
 function daysLeft(date: string): string {
   const days = daysUntil(date);
   if (days === null) return '';
-  return days === 0 ? tr('safeboxObject.today', 'today') : days > 0 ? tr('safeboxObject.inDays', 'in {{ days }} days', { days }) : tr('safeboxObject.daysAgo', '{{ days }} days ago', { days: -days });
+  return days === 0 ? tr('safebox.object.today', 'today') : days > 0 ? tr('safebox.object.inDays', 'in {{ days }} days', { days }) : tr('safebox.object.daysAgo', '{{ days }} days ago', { days: -days });
 }
 
 /** When a date or a ticket is, for the list and the badges: the day (in the person's language) and the time. '' for the others. */

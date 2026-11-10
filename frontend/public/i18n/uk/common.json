@@ -105,7 +105,13 @@
     "phoneSignIn": "Вхід за телефоном",
     "signingIn": "Вхід…",
     "verifyPhone": "Підтвердити телефон",
-    "deleteMyAccount": "Видалити мій обліковий запис"
+    "deleteMyAccount": "Видалити мій обліковий запис",
+    "link": "Посилання",
+    "newLinkedItem": "Новий пов'язаний елемент",
+    "newNote": "Нова нотатка",
+    "newFile": "Новий файл",
+    "new": "Новий",
+    "note": "Нотатка"
   },
   "time": {
     "justNow": "щойно"
@@ -163,6 +169,11 @@
     "theKeyCouldNot2": "Не вдалося зберегти ключ на сервері. Спробуй ще раз.",
     "theKeyOnThis": "Не вдалося перевірити ключ на цьому пристрої. Спробуй ще раз.",
     "androidApp": "Застосунок для Android",
+    "iphoneApp": "Застосунок для iPhone",
+    "windowsApp": "Застосунок для Windows",
+    "browser": "Браузер",
+    "browserApp": "Застосунок у браузері",
+    "browserOnDevice": "{{ browser }} на пристрої {{ device }}",
     "thereIsNoEncryption": "На цьому пристрої немає ключа шифрування. Налаштуй його (або відновити) в Налаштування → Ключі.",
     "thisFileCouldNot2": "Цей файл не вдалося відкрити.",
     "thisFileIsLocked": "Цей файл заблоковано. Спершу відкрий розмову, а потім спробуй ще раз.",
@@ -278,5 +289,17 @@
     "pokeAnyway": "Все одно штовхнути",
     "makesASound": "лунає звук",
     "activityIn": "Активність: {{ circle }}"
-  }
+  },
+  "needsYourHelp": "{{ friendName }} потрібна твоя допомога",
+  "openToUnlockTheir": "Відкрий застосунок, щоб знову розблокувати старі повідомлення.",
+  "openedYourHistory": "{{ friendName }} відкрив(-ла) твою історію",
+  "declinedYourRequest": "{{ friendName }} відхилив(-ла) твій запит",
+  "getThemBack": "Повернути їх",
+  "lockedMessagesAndFiles": "Повідомлень: {{ messages }} і файлів: {{ files }} з {{ name }} заблоковано на цьому пристрої.",
+  "lockedFilesWith": "Файлів: {{ count }} з {{ name }} заблоковано на цьому пристрої.",
+  "lockedMessagesWith": "Повідомлень: {{ count }} з {{ name }} заблоковано на цьому пристрої.",
+  "removeThisKeyNotYou": "Видалити цей ключ? Тоді той пристрій більше не зможе відкривати твої повідомлення. Якщо це був не ти, зміни також свій вхід.",
+  "removeIt": "Видалити",
+  "cancel": "Скасувати",
+  "notMe": "Це не я"
 }

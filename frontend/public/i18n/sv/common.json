@@ -105,7 +105,13 @@
     "phoneSignIn": "Logga in med telefon",
     "signingIn": "Loggar in",
     "verifyPhone": "Verifiera telefon",
-    "deleteMyAccount": "Radera mitt konto"
+    "deleteMyAccount": "Radera mitt konto",
+    "link": "Länk",
+    "newLinkedItem": "Nytt länkat objekt",
+    "newNote": "Ny anteckning",
+    "newFile": "Ny fil",
+    "new": "Ny",
+    "note": "Anteckning"
   },
   "time": {
     "justNow": "nyss"
@@ -163,6 +169,11 @@
     "theKeyCouldNot2": "Nyckeln kunde inte sparas på servern. Försök igen.",
     "theKeyOnThis": "Nyckeln på den här enheten kunde inte kontrolleras. Försök igen.",
     "androidApp": "Android-app",
+    "iphoneApp": "iPhone-app",
+    "windowsApp": "Windows-app",
+    "browser": "Webbläsare",
+    "browserApp": "Webbläsarapp",
+    "browserOnDevice": "{{ browser }} på {{ device }}",
     "thereIsNoEncryption": "Det finns ingen krypteringsnyckel på den här enheten. Skapa en (eller återställ den) under Inställningar → Nycklar.",
     "thisFileCouldNot2": "Filen kunde inte öppnas.",
     "thisFileIsLocked": "Filen är låst. Öppna konversationen först och försök sedan igen.",
@@ -278,5 +289,17 @@
     "pokeAnyway": "Pinga ändå",
     "makesASound": "låter",
     "activityIn": "Aktivitet i {{ circle }}"
-  }
+  },
+  "needsYourHelp": "{{ friendName }} behöver din hjälp",
+  "openToUnlockTheir": "Öppna appen för att låsa upp deras gamla meddelanden igen.",
+  "openedYourHistory": "{{ friendName }} öppnade din historik",
+  "declinedYourRequest": "{{ friendName }} avslog din begäran",
+  "getThemBack": "Få tillbaka dem",
+  "lockedMessagesAndFiles": "{{ messages }} meddelanden och {{ files }} filer med {{ name }} är låsta på den här enheten.",
+  "lockedFilesWith": "{{ count }} filer med {{ name }} är låsta på den här enheten.",
+  "lockedMessagesWith": "{{ count }} meddelanden med {{ name }} är låsta på den här enheten.",
+  "removeThisKeyNotYou": "Ta bort den här nyckeln? Då kan den enheten inte längre öppna dina meddelanden. Om det inte var du, byt även din inloggning.",
+  "removeIt": "Ta bort den",
+  "cancel": "Avbryt",
+  "notMe": "Inte jag"
 }

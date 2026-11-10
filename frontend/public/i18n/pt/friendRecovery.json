@@ -35,5 +35,12 @@
   "askFriendnameToHelp": "Pedir ajuda a {{ friendName }}",
   "checking": "Verificando…",
   "couldNotReadThe": "Não foi possível ler o pedido",
-  "thatDidNotWork": "Não funcionou"
+  "thatDidNotWork": "Não funcionou",
+  "friendnameDeclined": "{{ friendName }} disse não",
+  "theyDidNotOpen": "Elas não abriram as suas mensagens antigas. Você pode pedir de novo, ou usar um dos seus próprios dispositivos ou as suas 24 palavras de recuperação (Configurações, Chaves).",
+  "askAgain": "Pedir de novo",
+  "dismiss": "Dispensar",
+  "decline": "Recusar",
+  "youDeclined": "Você disse não. {{ friendName }} foi avisado.",
+  "alsoWhenNothing": "Você pode pedir a qualquer momento, mesmo quando nada está bloqueado para você: {{ friendName }} bloqueia tudo de novo para todas as suas chaves e precisa dizer sim a cada vez."
 }

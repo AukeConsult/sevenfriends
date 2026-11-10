@@ -105,7 +105,13 @@
     "phoneSignIn": "Kirjautuminen puhelimella",
     "signingIn": "Kirjaudutaan sisään",
     "verifyPhone": "Vahvista puhelin",
-    "deleteMyAccount": "Poista tilini"
+    "deleteMyAccount": "Poista tilini",
+    "link": "Linkki",
+    "newLinkedItem": "Uusi linkitetty kohde",
+    "newNote": "Uusi muistiinpano",
+    "newFile": "Uusi tiedosto",
+    "new": "Uusi",
+    "note": "Muistiinpano"
   },
   "time": {
     "justNow": "juuri nyt"
@@ -163,6 +169,11 @@
     "theKeyCouldNot2": "Avainta ei voitu tallentaa palvelimelle. Yritä uudelleen.",
     "theKeyOnThis": "Tämän laitteen avainta ei voitu tarkistaa. Yritä uudelleen.",
     "androidApp": "Android-sovellus",
+    "iphoneApp": "iPhone-sovellus",
+    "windowsApp": "Windows-sovellus",
+    "browser": "Selain",
+    "browserApp": "Selainsovellus",
+    "browserOnDevice": "{{ browser }} laitteella {{ device }}",
     "thereIsNoEncryption": "Tällä laitteella ei ole salausavainta. Ota se käyttöön (tai palauta se) kohdassa Asetukset → Avaimet.",
     "thisFileCouldNot2": "Tiedostoa ei voitu avata.",
     "thisFileIsLocked": "Tämä tiedosto on lukittu. Avaa ensin keskustelu ja yritä sitten uudelleen.",
@@ -278,5 +289,17 @@
     "pokeAnyway": "Töni silti",
     "makesASound": "päästää äänen",
     "activityIn": "Toimintaa: {{ circle }}"
-  }
+  },
+  "needsYourHelp": "{{ friendName }} tarvitsee apuasi",
+  "openToUnlockTheir": "Avaa sovellus avataksesi hänen vanhat viestinsä uudelleen.",
+  "openedYourHistory": "{{ friendName }} avasi historiasi",
+  "declinedYourRequest": "{{ friendName }} hylkäsi pyyntösi",
+  "getThemBack": "Hae ne takaisin",
+  "lockedMessagesAndFiles": "{{ messages }} viestiä ja {{ files }} tiedostoa käyttäjän {{ name }} kanssa on lukittu tällä laitteella.",
+  "lockedFilesWith": "{{ count }} tiedostoa käyttäjän {{ name }} kanssa on lukittu tällä laitteella.",
+  "lockedMessagesWith": "{{ count }} viestiä käyttäjän {{ name }} kanssa on lukittu tällä laitteella.",
+  "removeThisKeyNotYou": "Poistetaanko tämä avain? Silloin kyseinen laite ei enää voi avata viestejäsi. Jos se et ollut sinä, vaihda myös kirjautumistapasi.",
+  "removeIt": "Poista",
+  "cancel": "Peruuta",
+  "notMe": "Ei minä"
 }

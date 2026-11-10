@@ -105,7 +105,13 @@
     "phoneSignIn": "手机登录",
     "signingIn": "正在登录",
     "verifyPhone": "验证手机",
-    "deleteMyAccount": "删除我的账号"
+    "deleteMyAccount": "删除我的账号",
+    "link": "链接",
+    "newLinkedItem": "新的关联项目",
+    "newNote": "新笔记",
+    "newFile": "新文件",
+    "new": "新建",
+    "note": "笔记"
   },
   "time": {
     "justNow": "刚刚"
@@ -163,6 +169,11 @@
     "theKeyCouldNot2": "密钥无法保存到服务器。请再试一次。",
     "theKeyOnThis": "无法检查这台设备上的密钥。请再试一次。",
     "androidApp": "Android 应用",
+    "iphoneApp": "iPhone 应用",
+    "windowsApp": "Windows 应用",
+    "browser": "浏览器",
+    "browserApp": "浏览器应用",
+    "browserOnDevice": "{{ device }} 上的 {{ browser }}",
     "thereIsNoEncryption": "这台设备上没有加密密钥。请在 设置 → 密钥 里创建一把（或恢复）。",
     "thisFileCouldNot2": "无法打开这个文件。",
     "thisFileIsLocked": "这个文件已加锁。请先打开对话，再试一次。",
@@ -278,5 +289,17 @@
     "pokeAnyway": "还是戳一下",
     "makesASound": "会发出声音",
     "activityIn": "{{ circle }} 中有动态"
-  }
+  },
+  "needsYourHelp": "{{ friendName }} 需要你的帮助",
+  "openToUnlockTheir": "打开应用，重新解锁对方的旧消息。",
+  "openedYourHistory": "{{ friendName }} 打开了你的历史记录",
+  "declinedYourRequest": "{{ friendName }} 拒绝了你的请求",
+  "getThemBack": "找回",
+  "lockedMessagesAndFiles": "与 {{ name }} 的 {{ messages }} 条消息和 {{ files }} 个文件已在此设备上锁定。",
+  "lockedFilesWith": "与 {{ name }} 的 {{ count }} 个文件已在此设备上锁定。",
+  "lockedMessagesWith": "与 {{ name }} 的 {{ count }} 条消息已在此设备上锁定。",
+  "removeThisKeyNotYou": "要删除这个密钥吗？删除后，那台设备将无法再打开你的消息。如果不是你本人操作，请同时更改你的登录方式。",
+  "removeIt": "删除",
+  "cancel": "取消",
+  "notMe": "不是我"
 }

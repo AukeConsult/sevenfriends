@@ -35,5 +35,12 @@
   "askFriendnameToHelp": "Minta {{ friendName }} membantu",
   "checking": "Memeriksa…",
   "couldNotReadThe": "Tidak bisa membaca permintaan",
-  "thatDidNotWork": "Itu tidak berhasil"
+  "thatDidNotWork": "Itu tidak berhasil",
+  "friendnameDeclined": "{{ friendName }} bilang tidak",
+  "theyDidNotOpen": "Mereka tidak membuka pesan lamamu. Kamu bisa meminta lagi, atau pakai salah satu perangkatmu sendiri atau 24 kata pemulihanmu (Pengaturan, Kunci).",
+  "askAgain": "Minta lagi",
+  "dismiss": "Tutup",
+  "decline": "Tolak",
+  "youDeclined": "Kamu bilang tidak. {{ friendName }} sudah diberi tahu.",
+  "alsoWhenNothing": "Kamu bisa meminta kapan saja, juga saat tidak ada yang terkunci untukmu: {{ friendName }} lalu mengunci semuanya lagi untuk semua kuncimu, dan harus menjawab ya setiap kali."
 }

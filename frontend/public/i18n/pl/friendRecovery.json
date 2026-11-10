@@ -35,5 +35,12 @@
   "askFriendnameToHelp": "Poproś o pomoc: {{ friendName }}",
   "checking": "Sprawdzam…",
   "couldNotReadThe": "Nie udało się odczytać prośby",
-  "thatDidNotWork": "To nie zadziałało"
+  "thatDidNotWork": "To nie zadziałało",
+  "friendnameDeclined": "{{ friendName }} odmówił(a)",
+  "theyDidNotOpen": "Twoje stare wiadomości nie zostały otwarte. Możesz poprosić ponownie albo użyć jednego z własnych urządzeń lub 24 słów odzyskiwania (Ustawienia, Klucze).",
+  "askAgain": "Poproś ponownie",
+  "dismiss": "Odrzuć",
+  "decline": "Odmów",
+  "youDeclined": "Odmówiono. {{ friendName }} został(a) powiadomiony(-a).",
+  "alsoWhenNothing": "Możesz poprosić w każdej chwili, także gdy dla Ciebie nic nie jest zablokowane: {{ friendName }} zablokuje wtedy wszystko ponownie dla wszystkich Twoich kluczy i za każdym razem musi się zgodzić."
 }

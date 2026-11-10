@@ -1,9 +1,9 @@
 <ng-container *transloco="let t">
 <main class="sf-page sf-page-wide sf-box-page">
   <!-- the title and the way back are in the header of the friend page (the Safebox icon) -->
-  <p class="sf-hint text-center m-0">{{ t('safebox.onlyYouAndFriendname', { friendName: friendName() }) || 'Only you and ' + friendName() + ' can see these files.' }}</p>
+  <p class="sf-hint text-center m-0">{{ t('safebox.list.onlyYouAndFriendname', { friendName: friendName() }) || 'Only you and ' + friendName() + ' can see these files.' }}</p>
   @if (canEncrypt() && plainItems().length) {
-    <p class="sf-hint text-center m-0">{{ t('safebox.areNotLocked', { are: plainItems().length === 1 ? '1 file is' : (t('safebox.plainitemslengthFilesAre', { plainItemsLength: plainItems().length }) || plainItems().length + ' files are') }) || (plainItems().length === 1 ? '1 file is' : (t('safebox.plainitemslengthFilesAre', { plainItemsLength: plainItems().length }) || plainItems().length + ' files are')) + ' not locked.' }} <a [routerLink]="['/friends', friendId, 'lock']">{{ t('safebox.lockThem', { them: plainItems().length === 1 ? 'it' : 'them' }) || 'Lock ' + (plainItems().length === 1 ? 'it' : 'them') }}</a></p>
+    <p class="sf-hint text-center m-0">{{ t('safebox.list.areNotLocked', { are: plainItems().length === 1 ? '1 file is' : (t('safebox.list.plainitemslengthFilesAre', { plainItemsLength: plainItems().length }) || plainItems().length + ' files are') }) || (plainItems().length === 1 ? '1 file is' : (t('safebox.list.plainitemslengthFilesAre', { plainItemsLength: plainItems().length }) || plainItems().length + ' files are')) + ' not locked.' }} <a [routerLink]="['/friends', friendId, 'lock']">{{ t('safebox.list.lockThem', { them: plainItems().length === 1 ? 'it' : 'them' }) || 'Lock ' + (plainItems().length === 1 ? 'it' : 'them') }}</a></p>
   }
 
   <!-- the padlock and the Add files frame side by side: both are a round icon while closed, and each takes the whole width when it is open -->
@@ -11,9 +11,9 @@
   @if (box()) {
     <!-- a note, secret, link, checklist, place, contact or date: written in the app, locked on the device, in the same list as the files -->
     <details class="sf-box-security sf-box-new" [open]="newOpen()" (toggle)="newOpen.set($any($event.target).open)">
-      <summary [attr.aria-label]="t('safebox.newItem') || 'New item'">
+      <summary [attr.aria-label]="t('safebox.common.newItem') || 'New item'">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
-        <span>{{ t('safebox.new') || 'New' }}</span>
+        <span>{{ t('safebox.common.newItem') || 'New item' }}</span>
       </summary>
       <div class="sf-box-security-body sf-box-new-list">
         @for (kind of kinds; track kind.type) {
@@ -24,17 +24,21 @@
               <span>{{ kind.label }}</span>
             </a>
             <input type="checkbox" class="form-check-input sf-box-newnote-tick" [checked]="!hidden().includes(kind.type)" (change)="toggleKind(kind.type, $any($event.target).checked)"
-                   [attr.aria-label]="(t('safebox.showKindInTheList', { kind: kind.label }) || 'Show ' + kind.label + ' in the list')" [attr.title]="t('safebox.showInTheList') || 'Show in the list'" />
+                   [attr.aria-label]="(t('safebox.list.showKindInTheList', { kind: kind.label }) || 'Show ' + kind.label + ' in the list')" [attr.title]="t('safebox.list.showInTheList') || 'Show in the list'" />
           </div>
         }
       </div>
     </details>
+    @if (items().length) {
+      <!-- search: filters the list while typing, on the title, the first line, the date, the kind and the file names -->
+      <input type="search" class="form-control sf-box-search" [value]="query()" (input)="query.set($any($event.target).value)" [placeholder]="t('safebox.list.search') || 'Search the safebox'" [attr.aria-label]="t('safebox.list.search') || 'Search the safebox'" autocomplete="off" spellcheck="false" />
+    }
     <!-- how the items are shown: list or small icons (remembered on this device) -->
-    <div class="sf-box-view-switch" role="group" [attr.aria-label]="t('safebox.view') || 'View'">
-      <button type="button" class="btn btn-light btn-sm" [class.active]="boxView() === 'list'" [attr.aria-pressed]="boxView() === 'list'" (click)="prefs.set('boxView', 'list')" [attr.aria-label]="t('safebox.list') || 'List'" [attr.title]="t('safebox.list') || 'List'">
+    <div class="sf-box-view-switch" role="group" [attr.aria-label]="t('safebox.list.view') || 'View'">
+      <button type="button" class="btn btn-light btn-sm" [class.active]="boxView() === 'list'" [attr.aria-pressed]="boxView() === 'list'" (click)="prefs.set('boxView', 'list')" [attr.aria-label]="t('safebox.list.list') || 'List'" [attr.title]="t('safebox.list.list') || 'List'">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" /></svg>
       </button>
-      <button type="button" class="btn btn-light btn-sm" [class.active]="boxView() === 'icons'" [attr.aria-pressed]="boxView() === 'icons'" (click)="prefs.set('boxView', 'icons')" [attr.aria-label]="t('safebox.icons') || 'Icons'" [attr.title]="t('safebox.icons') || 'Icons'">
+      <button type="button" class="btn btn-light btn-sm" [class.active]="boxView() === 'icons'" [attr.aria-pressed]="boxView() === 'icons'" (click)="prefs.set('boxView', 'icons')" [attr.aria-label]="t('safebox.list.icons') || 'Icons'" [attr.title]="t('safebox.list.icons') || 'Icons'">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" /></svg>
       </button>
     </div>
@@ -43,7 +47,7 @@
   @if (loadError()) {
     <div class="alert alert-danger d-flex align-items-center justify-content-between" role="alert">
       <span>{{ loadError() }}</span>
-      <button type="button" class="btn btn-link" (click)="reload()">{{ t('safebox.retry') || 'Retry' }}</button>
+      <button type="button" class="btn btn-link" (click)="reload()">{{ t('safebox.list.retry') || 'Retry' }}</button>
     </div>
   }
 
@@ -54,9 +58,9 @@
   @if (box(); as data) {
     <!-- how full the box is -->
     @if (percent() >= 80) { <!-- only shown when the box is nearly full -->
-      <div class="sf-box-usage" role="img" [attr.aria-label]="(t('safebox.percentPercentFull', { percent: percent() }) || percent() + ' percent full')">
+      <div class="sf-box-usage" role="img" [attr.aria-label]="(t('safebox.list.percentPercentFull', { percent: percent() }) || percent() + ' percent full')">
         <div class="progress" aria-hidden="true"><div class="progress-bar" [class.bg-danger]="percent() >= 95" [class.bg-warning]="percent() < 95" [style.width.%]="percent()"></div></div>
-        <span class="sf-hint">{{ t('safebox.usedOfMaxbytes', { used: formatBytes(used()), maxBytes: formatBytes(data.maxBytes) }) || formatBytes(used()) + ' of ' + formatBytes(data.maxBytes) }}</span>
+        <span class="sf-hint">{{ t('safebox.list.usedOfMaxbytes', { used: formatBytes(used()), maxBytes: formatBytes(data.maxBytes) }) || formatBytes(used()) + ' of ' + formatBytes(data.maxBytes) }}</span>
       </div>
     }
 
@@ -66,10 +70,10 @@
         <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="12" cy="12" r="3" /><path d="M12 15v2M7 20v1M17 20v1" />
         </svg>
-        <span>{{ t('safebox.nothingHereYetAdd', { friendName: friendName() }) || 'Nothing here yet. Tap New to add a file, a note or something else you want to share with only ' + friendName() + '.' }}</span>
+        <span>{{ t('safebox.list.nothingHereYetAdd', { friendName: friendName() }) || 'Nothing here yet. Tap New to add a file, a note or something else you want to share with only ' + friendName() + '.' }}</span>
       </p>
     } @else if (!shown().length) {
-      <p class="sf-hint text-center">{{ t('safebox.allKindsAreOff') || 'Nothing to show: every kind is switched off. Tick a kind in the New frame to see its items again.' }}</p>
+      <p class="sf-hint text-center">{{ query().trim() ? (t('safebox.list.noMatch') || 'Nothing matches your search.') : t('safebox.list.allKindsAreOff') || 'Nothing to show: every kind is switched off. Tick a kind in the New frame to see its items again.' }}</p>
     } @else if (boxView() === 'icons') {
       <!-- small icons floating side by side: a picture shows itself, anything else its sign, with the name under it -->
       <ul class="sf-box-grid">
@@ -91,13 +95,13 @@
         @for (item of shown(); track item.id) {
           <li class="sf-list-item flex-wrap gap-2">
             <!-- a picture shows itself; anything else shows a sign for what it is -->
-            <a class="sf-box-open" [routerLink]="openLink(item)" [attr.aria-label]="(t('safebox.openItemname', { itemName: item.name }) || 'Open ' + item.name)">
+            <a class="sf-box-open" [routerLink]="openLink(item)" [attr.aria-label]="(t('safebox.list.openItemname', { itemName: item.name }) || 'Open ' + item.name)">
               <ng-container *ngTemplateOutlet="visual; context: { $implicit: item }" />
             </a>
             <span class="sf-list-text">
               @if (renaming(); as edit) {
                 @if (edit.id === item.id) {
-                  <input type="text" class="form-control" maxlength="100" [value]="edit.name" [attr.aria-label]="t('safebox.newName') || 'New name'"
+                  <input type="text" class="form-control" maxlength="100" [value]="edit.name" [attr.aria-label]="t('safebox.common.newName') || 'New name'"
                          (input)="renaming.set({ id: item.id, name: $any($event.target).value })" (keydown.enter)="rename()" (keydown.escape)="renaming.set(null)" />
                 } @else {
                   <a class="sf-ellipsis sf-fs-text sf-box-name" [routerLink]="openLink(item)">{{ item.name }}</a>
@@ -105,43 +109,31 @@
               } @else {
                 <a class="sf-ellipsis sf-fs-text sf-box-name" [routerLink]="openLink(item)">{{ item.name }}</a>
               }
-              @if (when(item)) { <small class="sf-ellipsis sf-box-when">🗓 {{ when(item) }}</small> }
-              @if (attachments(item)) { <small class="sf-ellipsis">📎 {{ attachments(item) }}</small> }
-              @if (isObject(item) && snippet(item)) { <small class="sf-ellipsis">{{ snippet(item) }}</small> }
-              <small>{{ kindLabel(item) }}@if (!isObject(item)) { · {{ formatBytes(item.bytes) }} }@if (item.enc) { · 🔒 } · {{ item.mine ? 'you' : friendName() }}@if (item.updatedAt || item.createdAt) { · {{ (item.updatedAt || item.createdAt) | appDate: 'd MMM yyyy' }} }</small>
+              <!-- two lines at most: the name, and one line of details that is cut with … when it is too long -->
+              <small class="sf-box-meta">@if (when(item)) { <span class="sf-box-when">🗓 {{ when(item) }}</span> · }@if (attachments(item)) { 📎 {{ attachments(item) }} · }@if (isObject(item) && snippet(item)) { {{ snippet(item) }} · }{{ kindLabel(item) }}@if (!isObject(item)) { · {{ formatBytes(item.bytes) }} }@if (item.enc) { · 🔒 } · {{ item.mine ? 'you' : friendName() }}@if (item.updatedAt || item.createdAt) { · {{ (item.updatedAt || item.createdAt) | appDate: 'd MMM yy' }} }</small>
             </span>
 
             @if (deleting() === item.id) {
-              <p class="sf-confirm-text w-100 m-0">{{ t('safebox.takeItemnameOutOf', { itemName: item.name }) || 'Take “' + item.name + '” out of the safebox? It disappears for both of you and cannot be got back.' }}</p>
+              <p class="sf-confirm-text w-100 m-0">{{ t('safebox.list.takeItemnameOutOf', { itemName: item.name }) || 'Take “' + item.name + '” out of the safebox? It disappears for both of you and cannot be got back.' }}</p>
               <div class="sf-msg-actions w-100 justify-content-end">
-                <button type="button" class="btn btn-light btn-sm" (click)="deleting.set(null)" [disabled]="busy()">{{ t('safebox.cancel') || 'Cancel' }}</button>
-                <button type="button" class="btn btn-danger btn-sm" (click)="remove(item)" [disabled]="busy()">{{ t('safebox.takeItOut') || 'Take it out' }}</button>
+                <button type="button" class="btn btn-light btn-sm" (click)="deleting.set(null)" [disabled]="busy()">{{ t('safebox.common.cancel') || 'Cancel' }}</button>
+                <button type="button" class="btn btn-danger btn-sm" (click)="remove(item)" [disabled]="busy()">{{ t('safebox.common.takeItOut') || 'Take it out' }}</button>
               </div>
             } @else if (renaming()?.id === item.id) {
               <div class="sf-msg-actions w-100 justify-content-end">
-                <button type="button" class="btn btn-light btn-sm" (click)="renaming.set(null)" [disabled]="busy()">{{ t('safebox.cancel') || 'Cancel' }}</button>
-                <button type="button" class="btn btn-primary btn-sm" (click)="rename()" [disabled]="busy() || !renaming()?.name?.trim()">{{ t('safebox.saveName') || 'Save name' }}</button>
+                <button type="button" class="btn btn-light btn-sm" (click)="renaming.set(null)" [disabled]="busy()">{{ t('safebox.common.cancel') || 'Cancel' }}</button>
+                <button type="button" class="btn btn-primary btn-sm" (click)="rename()" [disabled]="busy() || !renaming()?.name?.trim()">{{ t('safebox.common.saveName') || 'Save name' }}</button>
               </div>
             } @else {
-              <div class="sf-msg-actions flex-nowrap mt-0 w-100 justify-content-end">
-                @if (isObject(item)) {
-                  <a class="btn btn-light btn-sm" [routerLink]="openLink(item)" [attr.aria-label]="(t('safebox.openItemname', { itemName: item.name }) || 'Open ' + item.name)" [attr.title]="t('safebox.edit') || 'Open and edit'">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z" /><path d="M13.5 6.5l4 4" /></svg>
-                  </a>
-                } @else {
-                <button type="button" class="btn btn-light btn-sm" (click)="download(item)" [disabled]="busy()" [attr.aria-label]="(t('safebox.downloadItemname', { itemName: item.name }) || 'Download ' + item.name)" [attr.title]="t('safebox.download') || 'Download'">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 11l5 5 5-5M5 20h14" /></svg>
-                </button>
+              <div class="sf-msg-actions flex-nowrap mt-0 ms-auto">
+                @if (!isObject(item)) {
                 @if (!item.enc && canEncrypt()) {
-                  <button type="button" class="btn btn-light btn-sm" (click)="encryptOne(item)" [disabled]="busy()" [attr.aria-label]="(t('safebox.encryptItemname', { itemName: item.name }) || 'Encrypt ' + item.name)" [attr.title]="t('safebox.encryptThisFile') || 'Encrypt this file'">
+                  <button type="button" class="btn btn-light btn-sm" (click)="encryptOne(item)" [disabled]="busy()" [attr.aria-label]="(t('safebox.list.encryptItemname', { itemName: item.name }) || 'Encrypt ' + item.name)" [attr.title]="t('safebox.list.encryptThisFile') || 'Encrypt this file'">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>
                   </button>
                 }
-                <button type="button" class="btn btn-light btn-sm" (click)="startRename(item)" [disabled]="busy()" [attr.aria-label]="(t('safebox.renameItemname', { itemName: item.name }) || 'Rename ' + item.name)" [attr.title]="t('safebox.rename') || 'Rename'">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z" /><path d="M13.5 6.5l4 4" /></svg>
-                </button>
                 }
-                <button type="button" class="btn btn-light btn-sm" (click)="renaming.set(null); deleting.set(item.id)" [disabled]="busy()" [attr.aria-label]="(t('safebox.takeItemnameOut', { itemName: item.name }) || 'Take ' + item.name + ' out')" [attr.title]="t('safebox.takeOut') || 'Take out'">
+                <button type="button" class="btn btn-light btn-sm" (click)="renaming.set(null); deleting.set(item.id)" [disabled]="busy()" [attr.aria-label]="(t('safebox.list.takeItemnameOut', { itemName: item.name }) || 'Take ' + item.name + ' out')" [attr.title]="t('safebox.list.takeOut') || 'Take out'">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 11v6M14 11v6" /></svg>
                 </button>
               </div>
@@ -151,7 +143,7 @@
       </ul>
     }
   } @else if (!loadError()) {
-    <p class="text-secondary text-center">{{ t('safebox.openingTheSafebox') || 'Opening the safebox…' }}</p>
+    <p class="text-secondary text-center">{{ t('safebox.list.openingTheSafebox') || 'Opening the safebox…' }}</p>
   }
 <ng-template #visual let-item>
               @if (cover(item); as pic) {

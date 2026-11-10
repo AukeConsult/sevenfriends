@@ -105,7 +105,13 @@
     "phoneSignIn": "Accesso con il telefono",
     "signingIn": "Accesso in corso",
     "verifyPhone": "Verifica il telefono",
-    "deleteMyAccount": "Elimina il mio account"
+    "deleteMyAccount": "Elimina il mio account",
+    "link": "Link",
+    "newLinkedItem": "Nuovo elemento collegato",
+    "newNote": "Nuova nota",
+    "newFile": "Nuovo file",
+    "new": "Nuovo",
+    "note": "Nota"
   },
   "time": {
     "justNow": "proprio ora"
@@ -163,6 +169,11 @@
     "theKeyCouldNot2": "Non è stato possibile salvare la chiave sul server. Riprova.",
     "theKeyOnThis": "Non è stato possibile controllare la chiave di questo dispositivo. Riprova.",
     "androidApp": "App Android",
+    "iphoneApp": "App per iPhone",
+    "windowsApp": "App per Windows",
+    "browser": "Browser",
+    "browserApp": "App del browser",
+    "browserOnDevice": "{{ browser }} su {{ device }}",
     "thereIsNoEncryption": "Su questo dispositivo non c'è nessuna chiave di cifratura. Creane una (o ripristinala) in Impostazioni → Chiavi.",
     "thisFileCouldNot2": "Non è stato possibile aprire questo file.",
     "thisFileIsLocked": "Questo file è bloccato. Apri prima la conversazione, poi riprova.",
@@ -278,5 +289,17 @@
     "pokeAnyway": "Disturba lo stesso",
     "makesASound": "emette un suono",
     "activityIn": "Attività in {{ circle }}"
-  }
+  },
+  "needsYourHelp": "{{ friendName }} ha bisogno del tuo aiuto",
+  "openToUnlockTheir": "Apri l'app per sbloccare di nuovo i suoi vecchi messaggi.",
+  "openedYourHistory": "{{ friendName }} ha aperto la tua cronologia",
+  "declinedYourRequest": "{{ friendName }} ha rifiutato la tua richiesta",
+  "getThemBack": "Riprendili",
+  "lockedMessagesAndFiles": "{{ messages }} messaggi e {{ files }} file con {{ name }} sono bloccati su questo dispositivo.",
+  "lockedFilesWith": "{{ count }} file con {{ name }} sono bloccati su questo dispositivo.",
+  "lockedMessagesWith": "{{ count }} messaggi con {{ name }} sono bloccati su questo dispositivo.",
+  "removeThisKeyNotYou": "Rimuovere questa chiave? Allora quel dispositivo non potrà più aprire i tuoi messaggi. Se non sei stato tu, cambia anche il tuo accesso.",
+  "removeIt": "Rimuovila",
+  "cancel": "Annulla",
+  "notMe": "Non sono io"
 }

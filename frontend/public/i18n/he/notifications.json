@@ -50,5 +50,16 @@
   "unverifiedPhone": "מספר טלפון",
   "unverifiedAnd": "{{ a }} ו{{ b }}",
   "waitingOne": "בקשה אחת ממתינה למקום פנוי",
-  "waitingMany": "{{ count }} בקשות ממתינות למקום פנוי"
+  "waitingMany": "{{ count }} בקשות ממתינות למקום פנוי",
+  "recoveryAsksYou": "מבקש/ת ממך לעזור לפתוח את ההודעות הישנות שלו/ה",
+  "recoveryYouHelp": "את/ה עוזר/ת לפתוח את ההודעות הישנות שלו/ה",
+  "recoveryDecline": "דחה",
+  "recoveryDeclined": "דחה/תה את בקשתך לפתוח את ההודעות הישנות שלך",
+  "recoveryAskAgain": "לבקש שוב",
+  "recoveryDismiss": "התעלם",
+  "openedYourHistory": "{{ friendName }} פתח/ה את ההיסטוריה שלך.",
+  "openedYourHistoryMany": "{{ friendNames }} פתחו את ההיסטוריה שלך.",
+  "lockedOnThisDevice": "נעול במכשיר הזה",
+  "lockedCounts": "{{ messages }} הודעות ו-{{ files }} קבצים עדיין לא ניתן לפתוח כאן",
+  "getThemBack": "להחזיר אותן"
 }

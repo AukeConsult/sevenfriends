@@ -1,0 +1,60 @@
+<ng-container *transloco="let t">
+<main class="sf-page sf-page-item">
+  <div class="sf-page-head">
+    <a [routerLink]="list" class="btn btn-light btn-sm sf-head-list" [attr.aria-label]="(t('safebox.common.allItems') || 'All items in the safebox')" [attr.title]="(t('safebox.common.allItems') || 'All items in the safebox')"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg></a>
+    <h1 class="m-0 mw-100">
+      <a [routerLink]="leave" (click)="leaveNow($event)" class="sf-title-link" [attr.aria-label]="t('safebox.common.backToTheSafebox') || 'Back to the safebox'">
+        <span class="sf-back-inline" aria-hidden="true"></span>
+        <span class="sf-ellipsis">{{ t('safebox.upload.newFile') || 'New file' }}</span>
+      </a>
+    </h1>
+    <p class="sf-hint m-0">
+      @if (locked()) { {{ t('safebox.upload.lockedOnThisDevice', { friendName: friendName() }) || 'Locked on this device. Only you and ' + friendName() + ' can open it.' }} }
+      @else { {{ t('safebox.upload.notLocked') || 'These files are stored without a lock.' }} }
+    </p>
+  </div>
+
+  <form class="sf-narrow-form d-grid gap-2" (submit)="$event.preventDefault(); upload()">
+    <input #picker type="file" class="visually-hidden" multiple tabindex="-1" aria-hidden="true"
+           accept="image/*,video/*,audio/*,.pdf,.txt,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.odt,.ods,.odp,.zip,.csv" (change)="pick(picker)" />
+
+    <div class="sf-box-dropzone" [class.sf-over]="over()" [class.sf-busy]="busy()" role="button" tabindex="0"
+         [attr.aria-label]="t('safebox.upload.chooseFiles') || 'Choose files, or drop them here'"
+         (click)="!busy() && picker.click()" (keydown.enter)="!busy() && picker.click()" (keydown.space)="$event.preventDefault(); !busy() && picker.click()"
+         (dragover)="dragOver($event)" (dragleave)="over.set(false)" (drop)="dropped($event)">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5M4 20h16" /></svg>
+      <span [innerHTML]="t('safebox.upload.strongChooseFilesStrong') || '<strong>Choose files</strong>'"></span>
+      <span class="sf-hint">{{ t('safebox.common.dropFilesHereOr') || 'Drop files here, or tap to choose them' }}</span>
+    </div>
+    <div class="d-flex flex-wrap gap-2 justify-content-center">
+      <app-safebox-capture [disabled]="busy()" (captured)="captured($event)" (failed)="cameraError.set($event)" />
+    </div>
+    @if (cameraError()) { <div class="alert alert-danger m-0" role="alert">{{ cameraError() }}</div> }
+
+    @if (chosen().length) {
+      <ul class="sf-list">
+        @for (c of chosen(); track $index) {
+          <li class="sf-list-item">
+            <span class="sf-list-text">
+              <span class="sf-ellipsis sf-fs-text">{{ c.file.name }}</span>
+              <small class="sf-hint">{{ formatBytes(c.file.size) }}@switch (c.state) {
+                @case ('sending') { · {{ t('safebox.upload.sending') || 'sending…' }} }
+                @case ('done') { · ✓ {{ t('safebox.upload.done') || 'in the safebox' }} }
+                @case ('failed') { · {{ c.error }} }
+              }</small>
+            </span>
+            @if (c.state !== 'done' && c.state !== 'sending') {
+              <button type="button" class="btn btn-light btn-sm" (click)="drop($index)" [disabled]="busy()" [attr.aria-label]="(t('safebox.upload.removeItemname', { itemName: c.file.name }) || 'Remove ' + c.file.name)">✕</button>
+            }
+          </li>
+        }
+      </ul>
+    }
+
+    <div class="sf-actions justify-content-center">
+      <a [routerLink]="leave" (click)="leaveNow($event)" class="btn btn-light btn-sm">{{ t('safebox.common.cancel') || 'Cancel' }}</a>
+      <button type="submit" class="btn btn-primary" [disabled]="busy() || !waiting()">{{ busy() ? (t('safebox.upload.uploading') || 'Uploading…') : (t('safebox.upload.upload') || 'Upload') }}</button>
+    </div>
+  </form>
+</main>
+</ng-container>
