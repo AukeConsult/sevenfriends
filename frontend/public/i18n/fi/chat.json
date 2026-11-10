@@ -64,5 +64,5 @@
   "messageOne": "viesti",
   "messageMany": "viestiä",
   "alsoWhose": ", myös käyttäjän {{ name }},",
-  "openTheItem": "Open the item"
+  "openTheItem": "Avaa kohde"
 }

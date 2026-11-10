@@ -22,12 +22,12 @@
   "youHaveAlreadyAdded": "Du har allerede lagt til {{ sameName }}: forespørselen venter på dem.",
   "thisPerson": "Denne personen",
   "sendFailed": "Kunne ikke sende forespørselen.",
-  "whatToAdd": "What do you want to add?",
-  "aPerson": "A person",
-  "aGroup": "A group",
-  "aGroupIsOne": "A group is one conversation and one safebox for several people. It takes a seat, like a friend.",
-  "nameOfTheGroup": "Name of the group",
-  "makeTheGroup": "Make the group",
-  "giveTheGroupA": "Give the group a name.",
-  "couldNotMakeThe": "Could not make the group."
+  "whatToAdd": "Hva vil du legge til?",
+  "aPerson": "En person",
+  "aGroup": "En gruppe",
+  "aGroupIsOne": "En gruppe er én samtale og ett safe-skap for flere personer. Den tar en plass, som en venn.",
+  "nameOfTheGroup": "Navn på gruppen",
+  "makeTheGroup": "Lag gruppen",
+  "giveTheGroupA": "Gi gruppen et navn.",
+  "couldNotMakeThe": "Kunne ikke lage gruppen."
 }

@@ -22,12 +22,12 @@
   "youHaveAlreadyAdded": "Je hebt {{ sameName }} al toegevoegd: het verzoek wacht op hen.",
   "thisPerson": "Deze persoon",
   "sendFailed": "Het verzoek kon niet worden verzonden.",
-  "whatToAdd": "What do you want to add?",
-  "aPerson": "A person",
-  "aGroup": "A group",
-  "aGroupIsOne": "A group is one conversation and one safebox for several people. It takes a seat, like a friend.",
-  "nameOfTheGroup": "Name of the group",
-  "makeTheGroup": "Make the group",
-  "giveTheGroupA": "Give the group a name.",
-  "couldNotMakeThe": "Could not make the group."
+  "whatToAdd": "Wat wil je toevoegen?",
+  "aPerson": "Een persoon",
+  "aGroup": "Een groep",
+  "aGroupIsOne": "Een groep is één gesprek en één kluis voor meerdere mensen. Hij neemt een plek in, net als een vriend.",
+  "nameOfTheGroup": "Naam van de groep",
+  "makeTheGroup": "Groep maken",
+  "giveTheGroupA": "Geef de groep een naam.",
+  "couldNotMakeThe": "De groep kon niet worden gemaakt."
 }

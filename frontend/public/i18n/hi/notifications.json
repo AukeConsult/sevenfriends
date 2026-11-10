@@ -62,7 +62,7 @@
   "lockedOnThisDevice": "इस डिवाइस पर लॉक",
   "lockedCounts": "{{ messages }} संदेश और {{ files }} फ़ाइलें अभी यहाँ नहीं खोली जा सकतीं",
   "getThemBack": "उन्हें वापस पाएँ",
-  "privacyLockIsOff": "Privacy lock is off, so what you send can be read by our system.",
-  "turnItOn": "Turn it on",
-  "unverifiedRequestHint": "Do you know them? Then confirm. If not, reject."
+  "privacyLockIsOff": "गोपनीयता लॉक बंद है, इसलिए आप जो भेजते हैं उसे हमारा सिस्टम पढ़ सकता है।",
+  "turnItOn": "चालू करें",
+  "unverifiedRequestHint": "क्या आप इन्हें जानते हैं? तो पुष्टि करें। नहीं तो अस्वीकार करें।"
 }

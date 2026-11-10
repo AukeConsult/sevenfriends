@@ -10,9 +10,9 @@
   "seats": "सीटें",
   "youHaveFreeseatsFree": "आपके पास {{ freeSeats }} {{ seats }} खाली हैं। जो {{ many }} आपके लिए ख़ास हैं, उन्हें बुलाएँ।",
   "yourOneLink": "आपका {{ one }} लिंक",
-  "linkHasPrivateCode": "The link has a private code. It does not contain your phone number or email.",
-  "strongShareTheApp": "<strong>Share the app</strong>",
-  "shareTheAppText": "Tell someone about the app. This link only opens the start page: no friend request is sent.",
-  "linkIsGeneral": "The link contains nothing personal.",
-  "appLink": "Link to the app"
+  "linkHasPrivateCode": "लिंक में एक निजी कोड है। इसमें आपका फ़ोन नंबर या ईमेल नहीं है।",
+  "strongShareTheApp": "<strong>ऐप साझा करें</strong>",
+  "shareTheAppText": "किसी को ऐप के बारे में बताएँ। यह लिंक सिर्फ़ शुरुआती पेज खोलता है: कोई दोस्ती का अनुरोध नहीं भेजा जाता।",
+  "linkIsGeneral": "लिंक में कुछ भी निजी नहीं है।",
+  "appLink": "ऐप का लिंक"
 }

@@ -14,7 +14,7 @@
   "dropOnASeat": "Кинь на місце або в коло «Тихі»",
   "dropOnASeat2": "Кинь на місце",
   "pressAndHoldA": "Натисни й утримуй, щоб перемістити ({{ one }})",
-  "seatsExplained": "7 seats, 7 close friends. Put a friend to sleep to free a seat: the chat is kept.",
-  "groupCount": "Group · {{ count }} people",
-  "groupOnlyYou": "Group · only you"
+  "seatsExplained": "7 місць, 7 близьких друзів. Відправте друга «спати», щоб звільнити місце: чат збережеться.",
+  "groupCount": "Група · {{ count }} осіб",
+  "groupOnlyYou": "Група · лише ви"
 }

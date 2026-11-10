@@ -45,7 +45,7 @@
   "removed": "已移除",
   "notPublished": "未发布",
   "detailsForThisBrowser": "这个浏览器的详情：账号 …{{ slice }} · 此浏览器中的密钥：{{ no }}{{ published }} · 服务器上在用的密钥：你 {{ mine }} 把，{{ friendName }} {{ friend }} 把",
-  "groupLocked": "Messages and files are locked: only the people in this group can open them.",
-  "groupSomeoneNoKey": "Not everybody has a key yet ({{ names }}). Until everyone has one, what you send can be read by our system.",
-  "groupNobodyHasAKey": "Nobody in this group has a key yet. Until everyone has one, what you send can be read by our system."
+  "groupLocked": "消息和文件已锁定：只有这个群组里的人能打开。",
+  "groupSomeoneNoKey": "还不是每个人都有密钥（{{ names }}）。在所有人都有之前，我们的系统可以读取你发送的内容。",
+  "groupNobodyHasAKey": "这个群组里还没有人有密钥。在所有人都有之前，我们的系统可以读取你发送的内容。"
 }

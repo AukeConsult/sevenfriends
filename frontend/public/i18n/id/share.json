@@ -10,9 +10,9 @@
   "seats": "kursi",
   "youHaveFreeseatsFree": "Kamu punya {{ freeSeats }} {{ seats }} kosong. Undang {{ many }} yang berarti bagimu.",
   "yourOneLink": "Tautan {{ one }}mu",
-  "linkHasPrivateCode": "The link has a private code. It does not contain your phone number or email.",
-  "strongShareTheApp": "<strong>Share the app</strong>",
-  "shareTheAppText": "Tell someone about the app. This link only opens the start page: no friend request is sent.",
-  "linkIsGeneral": "The link contains nothing personal.",
-  "appLink": "Link to the app"
+  "linkHasPrivateCode": "Tautan ini memiliki kode pribadi. Tidak berisi nomor telepon atau email kamu.",
+  "strongShareTheApp": "<strong>Bagikan aplikasi</strong>",
+  "shareTheAppText": "Ceritakan tentang aplikasi ini kepada seseorang. Tautan ini hanya membuka halaman awal: tidak ada permintaan pertemanan yang dikirim.",
+  "linkIsGeneral": "Tautan ini tidak berisi apa pun yang bersifat pribadi.",
+  "appLink": "Tautan ke aplikasi"
 }

@@ -37,6 +37,6 @@
   "skipStep": "Lewati langkah ini",
   "doneText": "Semuanya sudah diatur di browser ini.",
   "saveFailed": "Tidak bisa menyimpan. Coba lagi, atau pilih \"Nanti saja\".",
-  "notifyNeedsApp": "Notifications only work when the app is on your home screen. Do the next steps to add it.",
-  "hideTextNote": "Safer: the text of a message is hidden on your lock screen, so only you see what it says. You can change this with the switch above."
+  "notifyNeedsApp": "Notifikasi hanya berfungsi jika aplikasi ada di layar utama. Ikuti langkah berikutnya untuk menambahkannya.",
+  "hideTextNote": "Lebih aman: teks pesan disembunyikan di layar kunci, jadi hanya kamu yang melihat isinya. Kamu bisa mengubahnya dengan sakelar di atas."
 }

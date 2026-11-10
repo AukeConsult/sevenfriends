@@ -22,12 +22,12 @@
   "youHaveAlreadyAdded": "{{ sameName }} kişisini zaten eklemiştin: isteğin onu bekliyor.",
   "thisPerson": "Bu kişi",
   "sendFailed": "İstek gönderilemedi.",
-  "whatToAdd": "What do you want to add?",
-  "aPerson": "A person",
-  "aGroup": "A group",
-  "aGroupIsOne": "A group is one conversation and one safebox for several people. It takes a seat, like a friend.",
-  "nameOfTheGroup": "Name of the group",
-  "makeTheGroup": "Make the group",
-  "giveTheGroupA": "Give the group a name.",
-  "couldNotMakeThe": "Could not make the group."
+  "whatToAdd": "Ne eklemek istiyorsun?",
+  "aPerson": "Bir kişi",
+  "aGroup": "Bir grup",
+  "aGroupIsOne": "Grup, birden çok kişi için tek bir sohbet ve tek bir kasadır. Bir arkadaş gibi bir yer kaplar.",
+  "nameOfTheGroup": "Grubun adı",
+  "makeTheGroup": "Grubu oluştur",
+  "giveTheGroupA": "Gruba bir ad ver.",
+  "couldNotMakeThe": "Grup oluşturulamadı."
 }

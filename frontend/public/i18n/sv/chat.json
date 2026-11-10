@@ -64,5 +64,5 @@
   "messageOne": "meddelande",
   "messageMany": "meddelanden",
   "alsoWhose": ", även {{ name }}s,",
-  "openTheItem": "Open the item"
+  "openTheItem": "Öppna objektet"
 }

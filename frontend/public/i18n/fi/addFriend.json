@@ -22,12 +22,12 @@
   "youHaveAlreadyAdded": "Olet jo lisännyt käyttäjän {{ sameName }}: pyyntö odottaa häntä.",
   "thisPerson": "Tämä henkilö",
   "sendFailed": "Pyyntöä ei voitu lähettää.",
-  "whatToAdd": "What do you want to add?",
-  "aPerson": "A person",
-  "aGroup": "A group",
-  "aGroupIsOne": "A group is one conversation and one safebox for several people. It takes a seat, like a friend.",
-  "nameOfTheGroup": "Name of the group",
-  "makeTheGroup": "Make the group",
-  "giveTheGroupA": "Give the group a name.",
-  "couldNotMakeThe": "Could not make the group."
+  "whatToAdd": "Mitä haluat lisätä?",
+  "aPerson": "Henkilö",
+  "aGroup": "Ryhmä",
+  "aGroupIsOne": "Ryhmä on yksi keskustelu ja yksi holvi usealle henkilölle. Se vie paikan, kuten ystävä.",
+  "nameOfTheGroup": "Ryhmän nimi",
+  "makeTheGroup": "Luo ryhmä",
+  "giveTheGroupA": "Anna ryhmälle nimi.",
+  "couldNotMakeThe": "Ryhmää ei voitu luoda."
 }

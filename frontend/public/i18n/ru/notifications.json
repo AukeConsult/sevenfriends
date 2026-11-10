@@ -62,7 +62,7 @@
   "lockedOnThisDevice": "Заблокировано на этом устройстве",
   "lockedCounts": "Сообщений: {{ messages }} и файлов: {{ files }} пока нельзя открыть здесь",
   "getThemBack": "Вернуть их",
-  "privacyLockIsOff": "Privacy lock is off, so what you send can be read by our system.",
-  "turnItOn": "Turn it on",
-  "unverifiedRequestHint": "Do you know them? Then confirm. If not, reject."
+  "privacyLockIsOff": "Защита приватности выключена, поэтому наша система может читать то, что вы отправляете.",
+  "turnItOn": "Включить",
+  "unverifiedRequestHint": "Вы знаете этого человека? Тогда подтвердите. Если нет, отклоните."
 }

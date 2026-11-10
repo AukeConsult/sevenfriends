@@ -62,7 +62,7 @@
   "lockedOnThisDevice": "Vergrendeld op dit apparaat",
   "lockedCounts": "{{ messages }} berichten en {{ files }} bestanden kunnen hier nog niet worden geopend",
   "getThemBack": "Haal ze terug",
-  "privacyLockIsOff": "Privacy lock is off, so what you send can be read by our system.",
-  "turnItOn": "Turn it on",
-  "unverifiedRequestHint": "Do you know them? Then confirm. If not, reject."
+  "privacyLockIsOff": "De privacyvergrendeling staat uit, dus ons systeem kan lezen wat je verstuurt.",
+  "turnItOn": "Zet aan",
+  "unverifiedRequestHint": "Ken je die persoon? Bevestig dan. Zo niet, wijs af."
 }

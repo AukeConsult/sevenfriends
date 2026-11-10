@@ -62,7 +62,7 @@
   "lockedOnThisDevice": "已在此设备上锁定",
   "lockedCounts": "{{ messages }} 条消息和 {{ files }} 个文件暂时无法在此打开",
   "getThemBack": "找回",
-  "privacyLockIsOff": "Privacy lock is off, so what you send can be read by our system.",
-  "turnItOn": "Turn it on",
-  "unverifiedRequestHint": "Do you know them? Then confirm. If not, reject."
+  "privacyLockIsOff": "隐私锁已关闭，因此我们的系统可以读取你发送的内容。",
+  "turnItOn": "开启",
+  "unverifiedRequestHint": "你认识对方吗？认识就确认，不认识就拒绝。"
 }

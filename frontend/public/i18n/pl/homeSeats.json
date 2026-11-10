@@ -14,7 +14,7 @@
   "dropOnASeat": "Upuść na miejscu lub w kręgu Ciche",
   "dropOnASeat2": "Upuść na miejscu",
   "pressAndHoldA": "Przytrzymaj ({{ one }}), żeby przenieść",
-  "seatsExplained": "7 seats, 7 close friends. Put a friend to sleep to free a seat: the chat is kept.",
-  "groupCount": "Group · {{ count }} people",
-  "groupOnlyYou": "Group · only you"
+  "seatsExplained": "7 miejsc, 7 bliskich znajomych. Uśpij znajomego, aby zwolnić miejsce: czat zostaje zachowany.",
+  "groupCount": "Grupa · {{ count }} osób",
+  "groupOnlyYou": "Grupa · tylko ty"
 }

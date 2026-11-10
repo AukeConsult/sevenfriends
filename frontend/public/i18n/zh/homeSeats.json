@@ -14,7 +14,7 @@
   "dropOnASeat": "放到一个位置上，或放进“静音”圈",
   "dropOnASeat2": "放到一个位置上",
   "pressAndHoldA": "长按{{ one }}可移动",
-  "seatsExplained": "7 seats, 7 close friends. Put a friend to sleep to free a seat: the chat is kept.",
-  "groupCount": "Group · {{ count }} people",
-  "groupOnlyYou": "Group · only you"
+  "seatsExplained": "7 个席位，7 位亲密朋友。让朋友进入休眠即可空出席位：聊天记录会保留。",
+  "groupCount": "群组 · {{ count }} 人",
+  "groupOnlyYou": "群组 · 只有你"
 }

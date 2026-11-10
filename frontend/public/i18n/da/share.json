@@ -10,9 +10,9 @@
   "seats": "ledige pladser",
   "youHaveFreeseatsFree": "Du har {{ freeSeats }} {{ seats }}. Inviter de {{ many }}, der betyder noget for dig.",
   "yourOneLink": "Dit link til {{ one }}",
-  "linkHasPrivateCode": "The link has a private code. It does not contain your phone number or email.",
-  "strongShareTheApp": "<strong>Share the app</strong>",
-  "shareTheAppText": "Tell someone about the app. This link only opens the start page: no friend request is sent.",
-  "linkIsGeneral": "The link contains nothing personal.",
-  "appLink": "Link to the app"
+  "linkHasPrivateCode": "Linket har en privat kode. Det indeholder hverken dit telefonnummer eller din e-mail.",
+  "strongShareTheApp": "<strong>Del appen</strong>",
+  "shareTheAppText": "Fortæl nogen om appen. Dette link åbner kun startsiden: Der sendes ingen venneanmodning.",
+  "linkIsGeneral": "Linket indeholder ikke noget personligt.",
+  "appLink": "Link til appen"
 }

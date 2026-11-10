@@ -70,5 +70,5 @@
   "notificationsAreBlockedFor2": "このサイトの通知がブロックされています。ブラウザの設定（アドレスの左にあるロックまたはスライダーのアイコン）で許可してから、もう一度お試しください。",
   "thisBrowserCannotShow": "このブラウザではデスクトップ通知を表示できません。",
   "thisIsHowA": "通知はこのように表示されます。",
-  "orUseTheBrowser": "Or use the browser: 3 steps"
+  "orUseTheBrowser": "またはブラウザを使う：3ステップ"
 }

@@ -14,7 +14,7 @@
   "dropOnASeat": "أفلت على مقعد أو على دائرة الصامتين",
   "dropOnASeat2": "أفلت على مقعد",
   "pressAndHoldA": "اضغط مطولًا على {{ one }} لنقله",
-  "seatsExplained": "7 seats, 7 close friends. Put a friend to sleep to free a seat: the chat is kept.",
-  "groupCount": "Group · {{ count }} people",
-  "groupOnlyYou": "Group · only you"
+  "seatsExplained": "7 مقاعد، 7 أصدقاء مقرّبين. ضع صديقًا في وضع النوم لتحرير مقعد: تبقى المحادثة محفوظة.",
+  "groupCount": "مجموعة · {{ count }} أشخاص",
+  "groupOnlyYou": "مجموعة · أنت فقط"
 }

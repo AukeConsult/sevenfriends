@@ -62,7 +62,7 @@
   "lockedOnThisDevice": "Terkunci di perangkat ini",
   "lockedCounts": "{{ messages }} pesan dan {{ files }} file belum bisa dibuka di sini",
   "getThemBack": "Pulihkan",
-  "privacyLockIsOff": "Privacy lock is off, so what you send can be read by our system.",
-  "turnItOn": "Turn it on",
-  "unverifiedRequestHint": "Do you know them? Then confirm. If not, reject."
+  "privacyLockIsOff": "Kunci privasi mati, jadi sistem kami dapat membaca apa yang kamu kirim.",
+  "turnItOn": "Nyalakan",
+  "unverifiedRequestHint": "Apakah kamu mengenalnya? Jika ya, konfirmasi. Jika tidak, tolak."
 }

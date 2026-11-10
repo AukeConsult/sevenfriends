@@ -62,7 +62,7 @@
   "lockedOnThisDevice": "Låst på denne enheten",
   "lockedCounts": "{{ messages }} meldinger og {{ files }} filer kan ikke åpnes her ennå",
   "getThemBack": "Få dem tilbake",
-  "privacyLockIsOff": "Privacy lock is off, so what you send can be read by our system.",
-  "turnItOn": "Turn it on",
-  "unverifiedRequestHint": "Do you know them? Then confirm. If not, reject."
+  "privacyLockIsOff": "Personvernlåsen er av, så systemet vårt kan lese det du sender.",
+  "turnItOn": "Slå på",
+  "unverifiedRequestHint": "Kjenner du dem? Da bekrefter du. Hvis ikke, avslå."
 }

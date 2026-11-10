@@ -14,7 +14,7 @@
   "dropOnASeat": "Bir yere ya da Sessiz çevreye bırak",
   "dropOnASeat2": "Bir yere bırak",
   "pressAndHoldA": "Taşımak için basılı tut: {{ one }}",
-  "seatsExplained": "7 seats, 7 close friends. Put a friend to sleep to free a seat: the chat is kept.",
-  "groupCount": "Group · {{ count }} people",
-  "groupOnlyYou": "Group · only you"
+  "seatsExplained": "7 yer, 7 yakın arkadaş. Bir yer açmak için bir arkadaşı uyut: sohbet saklanır.",
+  "groupCount": "Grup · {{ count }} kişi",
+  "groupOnlyYou": "Grup · yalnızca sen"
 }

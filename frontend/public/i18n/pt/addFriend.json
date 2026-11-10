@@ -22,12 +22,12 @@
   "youHaveAlreadyAdded": "Você já adicionou {{ sameName }}: o pedido fica esperando.",
   "thisPerson": "Esta pessoa",
   "sendFailed": "Não foi possível enviar o pedido.",
-  "whatToAdd": "What do you want to add?",
-  "aPerson": "A person",
-  "aGroup": "A group",
-  "aGroupIsOne": "A group is one conversation and one safebox for several people. It takes a seat, like a friend.",
-  "nameOfTheGroup": "Name of the group",
-  "makeTheGroup": "Make the group",
-  "giveTheGroupA": "Give the group a name.",
-  "couldNotMakeThe": "Could not make the group."
+  "whatToAdd": "O que você quer adicionar?",
+  "aPerson": "Uma pessoa",
+  "aGroup": "Um grupo",
+  "aGroupIsOne": "Um grupo é uma conversa e um cofre para várias pessoas. Ele ocupa um lugar, como um amigo.",
+  "nameOfTheGroup": "Nome do grupo",
+  "makeTheGroup": "Criar o grupo",
+  "giveTheGroupA": "Dê um nome ao grupo.",
+  "couldNotMakeThe": "Não foi possível criar o grupo."
 }

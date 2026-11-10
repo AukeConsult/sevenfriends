@@ -45,7 +45,7 @@
   "removed": "fjernet",
   "notPublished": "ikke udgivet",
   "detailsForThisBrowser": "Detaljer for denne browser: konto …{{ slice }} · nøgle i denne browser: {{ no }}{{ published }} · nøgler i brug på serveren: dig {{ mine }}, {{ friendName }} {{ friend }}",
-  "groupLocked": "Messages and files are locked: only the people in this group can open them.",
-  "groupSomeoneNoKey": "Not everybody has a key yet ({{ names }}). Until everyone has one, what you send can be read by our system.",
-  "groupNobodyHasAKey": "Nobody in this group has a key yet. Until everyone has one, what you send can be read by our system."
+  "groupLocked": "Beskeder og filer er låst: Kun personerne i denne gruppe kan åbne dem.",
+  "groupSomeoneNoKey": "Ikke alle har en nøgle endnu ({{ names }}). Indtil alle har en, kan vores system læse det, du sender.",
+  "groupNobodyHasAKey": "Ingen i denne gruppe har en nøgle endnu. Indtil alle har en, kan vores system læse det, du sender."
 }

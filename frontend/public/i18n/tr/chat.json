@@ -64,5 +64,5 @@
   "messageOne": "mesaj",
   "messageMany": "mesaj",
   "alsoWhose": ", ayrıca {{ name }} adlı kişinin,",
-  "openTheItem": "Open the item"
+  "openTheItem": "Öğeyi aç"
 }

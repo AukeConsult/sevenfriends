@@ -64,5 +64,5 @@
   "messageOne": "wiadomość",
   "messageMany": "wiadomości",
   "alsoWhose": ", także od: {{ name }},",
-  "openTheItem": "Open the item"
+  "openTheItem": "Otwórz element"
 }

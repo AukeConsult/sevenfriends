@@ -22,12 +22,12 @@
   "youHaveAlreadyAdded": "כבר הוספת את {{ sameName }}: הבקשה ממתינה להם.",
   "thisPerson": "האדם הזה",
   "sendFailed": "לא ניתן היה לשלוח את הבקשה.",
-  "whatToAdd": "What do you want to add?",
-  "aPerson": "A person",
-  "aGroup": "A group",
-  "aGroupIsOne": "A group is one conversation and one safebox for several people. It takes a seat, like a friend.",
-  "nameOfTheGroup": "Name of the group",
-  "makeTheGroup": "Make the group",
-  "giveTheGroupA": "Give the group a name.",
-  "couldNotMakeThe": "Could not make the group."
+  "whatToAdd": "מה ברצונך להוסיף?",
+  "aPerson": "אדם",
+  "aGroup": "קבוצה",
+  "aGroupIsOne": "קבוצה היא שיחה אחת וכספת אחת לכמה אנשים. היא תופסת מקום, כמו חבר.",
+  "nameOfTheGroup": "שם הקבוצה",
+  "makeTheGroup": "יצירת הקבוצה",
+  "giveTheGroupA": "תן שם לקבוצה.",
+  "couldNotMakeThe": "לא ניתן ליצור את הקבוצה."
 }

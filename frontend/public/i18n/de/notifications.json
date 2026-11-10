@@ -62,7 +62,7 @@
   "lockedOnThisDevice": "Auf diesem Gerät gesperrt",
   "lockedCounts": "{{ messages }} Nachrichten und {{ files }} Dateien können hier noch nicht geöffnet werden",
   "getThemBack": "Wiederherstellen",
-  "privacyLockIsOff": "Privacy lock is off, so what you send can be read by our system.",
-  "turnItOn": "Turn it on",
-  "unverifiedRequestHint": "Do you know them? Then confirm. If not, reject."
+  "privacyLockIsOff": "Die Datenschutzsperre ist aus, deshalb kann unser System lesen, was du sendest.",
+  "turnItOn": "Einschalten",
+  "unverifiedRequestHint": "Kennst du die Person? Dann bestätige. Wenn nicht, lehne ab."
 }

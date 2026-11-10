@@ -45,7 +45,7 @@
   "removed": "supprimée",
   "notPublished": "non publiée",
   "detailsForThisBrowser": "Détails pour ce navigateur : compte …{{ slice }} · clé dans ce navigateur : {{ no }}{{ published }} · clés actives sur le serveur : toi {{ mine }}, {{ friendName }} {{ friend }}",
-  "groupLocked": "Messages and files are locked: only the people in this group can open them.",
-  "groupSomeoneNoKey": "Not everybody has a key yet ({{ names }}). Until everyone has one, what you send can be read by our system.",
-  "groupNobodyHasAKey": "Nobody in this group has a key yet. Until everyone has one, what you send can be read by our system."
+  "groupLocked": "Les messages et fichiers sont verrouillés : seules les personnes de ce groupe peuvent les ouvrir.",
+  "groupSomeoneNoKey": "Tout le monde n’a pas encore de clé ({{ names }}). Tant que chacun n’en a pas, notre système peut lire ce que vous envoyez.",
+  "groupNobodyHasAKey": "Personne dans ce groupe n’a encore de clé. Tant que chacun n’en a pas, notre système peut lire ce que vous envoyez."
 }

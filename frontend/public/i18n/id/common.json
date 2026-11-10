@@ -304,7 +304,7 @@
   "removeIt": "Hapus",
   "cancel": "Batal",
   "notMe": "Bukan aku",
-  "newKeyQuestion": "{{ name }} seems to have a new phone or a new key. Call {{ name }} and ask: did you change phone?",
-  "newKeyYes": "Yes, it is {{ name }}",
-  "newKeyUnsure": "I am not sure"
+  "newKeyQuestion": "{{ name }} sepertinya punya ponsel baru atau kunci baru. Telepon {{ name }} dan tanyakan: apakah kamu ganti ponsel?",
+  "newKeyYes": "Ya, ini {{ name }}",
+  "newKeyUnsure": "Saya tidak yakin"
 }

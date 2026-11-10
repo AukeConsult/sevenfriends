@@ -61,7 +61,10 @@ Same model as a friendship, over all members (see `docs/design/safebox-encryptio
 - Pinned by `functions/test/group-keys.test.ts`.
 
 ## History in the safebox
-Items in the box are locked for the keys that were there when they were saved. When somebody joins (or a member makes a new key) their keys have no copy. The first member's device that has the group open and a key **does it by itself**: `GET .../safebox/share-todo` lists the items that lack a copy for a key in use of a member (with that device's own copies), the device opens each item's key and locks it again for those keys (`SafeboxService.shareWithMembers`), `POST .../safebox/share` files the copies (accepted only for a member and one of their keys in use; nothing is ever taken away). One member is enough; it is quiet and safe to repeat. This is also the "trust" of a new member's key: a member who opens the group vouches for it by locking for it. A member with no key yet gets their copies as soon as they have one and somebody opens the group. Messages are not shared this way: no history.
+Items in the box are locked for the keys that were there when they were saved. When somebody joins (or a member makes a new key) their keys have no copy. The first member's device that has the group open and a key **does it by itself**: `GET .../safebox/share-todo` lists the items that lack a copy for a key in use of a member (with that device's own copies), the device opens each item's key and locks it again for those keys (`SafeboxService.shareWithMembers`), `POST .../safebox/share` files the copies (accepted only for a member and one of their keys in use; nothing is ever taken away). One member is enough; it is quiet and safe to repeat. The trust that allows this is the one described under "Trust". A member with no key yet gets their copies as soon as they have one and somebody opens the group. Messages are not shared this way: no history.
+
+## Trust
+A member is only ever added by a member who has **already accepted that person as a friend, with their keys** (the adder's own friendship, with its check of the friend's keys). So every membership rests on a friendship somebody in the group already trusts, and the others trust the adder: nobody can be put into a group by the server, or by a stranger, and nobody joins by asking. Because of this a group needs no pinning of members' keys of its own, and a member who opens the box locks existing items for a new member's keys without asking anybody (see "History in the safebox"). The same limits as for a friendship stay: the server cannot read anything, and a key that changes for somebody you are not friends with is not asked about.
 
 ## What a group does not have
 A group is not a person: no presence, no mood, no country, no phone/email, no "not verified" warning, no key recovery by a friend (the recovery routes answer 403 for a group), no circle profile. Its picture is the group's own; without one the app shows `icons/friends/group.svg`, never a seat icon.
@@ -72,7 +75,6 @@ A group is not a person: no presence, no mood, no country, no phone/email, no "n
 - Everything else (conversation, safebox, sleep list, delete) is the page of a friend.
 
 ## Not done yet
-1. **Verifying a member's key**: a group has no "did you change phone?" check (`friendFingerprints` is empty for a group), so a member's key is trusted when it is first seen.
-2. **Open questions**: "ask to remove" that the owner confirms (only discussed), the size limit (now 7).
-3. **Not checked in the app**: the sleeping list, the notification cards and the friend page header for a group; the app does not clear its local copy of a group a member was removed from.
-4. The translations of the new texts (English only).
+1. **Open questions**: "ask to remove" that the owner confirms (only discussed).
+2. **Not checked in the app**: the sleeping list, the notification cards and the friend page header for a group; the app does not clear its local copy of a group a member was removed from.
+3. The "did you change phone?" check is only between direct friends; a member's new key in a group is not asked about by the others (see "Trust").

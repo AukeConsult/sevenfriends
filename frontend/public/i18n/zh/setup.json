@@ -37,6 +37,6 @@
   "skipStep": "跳过这一步",
   "doneText": "这个浏览器里的一切都已设置好。",
   "saveFailed": "无法保存。请再试一次，或选择“稍后再说”。",
-  "notifyNeedsApp": "Notifications only work when the app is on your home screen. Do the next steps to add it.",
-  "hideTextNote": "Safer: the text of a message is hidden on your lock screen, so only you see what it says. You can change this with the switch above."
+  "notifyNeedsApp": "只有当应用添加到主屏幕时，通知才能工作。请按后面的步骤添加。",
+  "hideTextNote": "更安全：消息内容会在锁屏上隐藏，只有你能看到内容。你可以用上方的开关更改。"
 }

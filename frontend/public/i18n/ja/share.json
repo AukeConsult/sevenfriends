@@ -10,9 +10,9 @@
   "seats": "席",
   "youHaveFreeseatsFree": "空いている{{ seats }}が {{ freeSeats }} つあります。大切な{{ many }}を招待しましょう。",
   "yourOneLink": "あなたの{{ one }}リンク",
-  "linkHasPrivateCode": "The link has a private code. It does not contain your phone number or email.",
-  "strongShareTheApp": "<strong>Share the app</strong>",
-  "shareTheAppText": "Tell someone about the app. This link only opens the start page: no friend request is sent.",
-  "linkIsGeneral": "The link contains nothing personal.",
-  "appLink": "Link to the app"
+  "linkHasPrivateCode": "このリンクには非公開のコードが含まれます。電話番号やメールアドレスは含まれません。",
+  "strongShareTheApp": "<strong>アプリを共有</strong>",
+  "shareTheAppText": "アプリのことを誰かに伝えましょう。このリンクはスタートページを開くだけで、友だちリクエストは送られません。",
+  "linkIsGeneral": "このリンクには個人情報は含まれません。",
+  "appLink": "アプリへのリンク"
 }

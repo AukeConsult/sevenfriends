@@ -304,7 +304,7 @@
   "removeIt": "Kaldır",
   "cancel": "İptal",
   "notMe": "Ben değilim",
-  "newKeyQuestion": "{{ name }} seems to have a new phone or a new key. Call {{ name }} and ask: did you change phone?",
-  "newKeyYes": "Yes, it is {{ name }}",
-  "newKeyUnsure": "I am not sure"
+  "newKeyQuestion": "{{ name }} yeni bir telefon ya da yeni bir anahtar almış gibi görünüyor. {{ name }} kişisini ara ve sor: telefonunu mu değiştirdin?",
+  "newKeyYes": "Evet, bu {{ name }}",
+  "newKeyUnsure": "Emin değilim"
 }

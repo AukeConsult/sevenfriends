@@ -62,7 +62,7 @@
   "lockedOnThisDevice": "مقفل على هذا الجهاز",
   "lockedCounts": "لا يمكن فتح {{ messages }} رسالة و{{ files }} ملف هنا بعد",
   "getThemBack": "استعدها",
-  "privacyLockIsOff": "Privacy lock is off, so what you send can be read by our system.",
-  "turnItOn": "Turn it on",
-  "unverifiedRequestHint": "Do you know them? Then confirm. If not, reject."
+  "privacyLockIsOff": "قفل الخصوصية متوقف، لذا يمكن لنظامنا قراءة ما ترسله.",
+  "turnItOn": "تشغيله",
+  "unverifiedRequestHint": "هل تعرفه؟ إذن أكّد. وإن لم تعرفه فارفض."
 }

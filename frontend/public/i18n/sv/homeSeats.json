@@ -14,7 +14,7 @@
   "dropOnASeat": "Släpp på en plats eller på den tysta kretsen",
   "dropOnASeat2": "Släpp på en plats",
   "pressAndHoldA": "Tryck och håll på {{ one }} för att flytta",
-  "seatsExplained": "7 seats, 7 close friends. Put a friend to sleep to free a seat: the chat is kept.",
-  "groupCount": "Group · {{ count }} people",
-  "groupOnlyYou": "Group · only you"
+  "seatsExplained": "7 platser, 7 nära vänner. Lägg en vän i vila för att frigöra en plats: Chatten sparas.",
+  "groupCount": "Grupp · {{ count }} personer",
+  "groupOnlyYou": "Grupp · bara du"
 }

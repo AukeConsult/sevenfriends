@@ -22,12 +22,12 @@
   "youHaveAlreadyAdded": "你已经添加过 {{ sameName }}：请求正等着对方。",
   "thisPerson": "这个人",
   "sendFailed": "无法发送请求。",
-  "whatToAdd": "What do you want to add?",
-  "aPerson": "A person",
-  "aGroup": "A group",
-  "aGroupIsOne": "A group is one conversation and one safebox for several people. It takes a seat, like a friend.",
-  "nameOfTheGroup": "Name of the group",
-  "makeTheGroup": "Make the group",
-  "giveTheGroupA": "Give the group a name.",
-  "couldNotMakeThe": "Could not make the group."
+  "whatToAdd": "你想添加什么？",
+  "aPerson": "一个人",
+  "aGroup": "一个群组",
+  "aGroupIsOne": "群组是供多人共用的一个对话和一个保险箱。它像朋友一样占用一个席位。",
+  "nameOfTheGroup": "群组名称",
+  "makeTheGroup": "创建群组",
+  "giveTheGroupA": "请给群组起个名字。",
+  "couldNotMakeThe": "无法创建群组。"
 }

@@ -10,9 +10,9 @@
   "seats": "자리",
   "youHaveFreeseatsFree": "빈 {{ seats }}: {{ freeSeats }}개. 소중한 사람({{ many }})을 초대하세요.",
   "yourOneLink": "내 {{ one }} 링크",
-  "linkHasPrivateCode": "The link has a private code. It does not contain your phone number or email.",
-  "strongShareTheApp": "<strong>Share the app</strong>",
-  "shareTheAppText": "Tell someone about the app. This link only opens the start page: no friend request is sent.",
-  "linkIsGeneral": "The link contains nothing personal.",
-  "appLink": "Link to the app"
+  "linkHasPrivateCode": "링크에 비공개 코드가 들어 있습니다. 전화번호나 이메일은 들어 있지 않아요.",
+  "strongShareTheApp": "<strong>앱 공유</strong>",
+  "shareTheAppText": "누군가에게 앱을 알려 주세요. 이 링크는 시작 페이지만 열며, 친구 요청은 보내지지 않습니다.",
+  "linkIsGeneral": "링크에는 개인 정보가 들어 있지 않습니다.",
+  "appLink": "앱 링크"
 }

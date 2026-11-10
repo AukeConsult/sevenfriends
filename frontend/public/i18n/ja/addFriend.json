@@ -22,12 +22,12 @@
   "youHaveAlreadyAdded": "{{ sameName }}さんはすでに追加済みです。リクエストは相手を待っています。",
   "thisPerson": "この人",
   "sendFailed": "リクエストを送信できませんでした。",
-  "whatToAdd": "What do you want to add?",
-  "aPerson": "A person",
-  "aGroup": "A group",
-  "aGroupIsOne": "A group is one conversation and one safebox for several people. It takes a seat, like a friend.",
-  "nameOfTheGroup": "Name of the group",
-  "makeTheGroup": "Make the group",
-  "giveTheGroupA": "Give the group a name.",
-  "couldNotMakeThe": "Could not make the group."
+  "whatToAdd": "何を追加しますか？",
+  "aPerson": "個人",
+  "aGroup": "グループ",
+  "aGroupIsOne": "グループは、複数の人で共有する1つの会話と1つの金庫です。友だちと同じように1つの席を使います。",
+  "nameOfTheGroup": "グループ名",
+  "makeTheGroup": "グループを作成",
+  "giveTheGroupA": "グループに名前を付けてください。",
+  "couldNotMakeThe": "グループを作成できませんでした。"
 }

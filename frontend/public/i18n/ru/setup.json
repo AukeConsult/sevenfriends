@@ -37,6 +37,6 @@
   "skipStep": "Пропустить этот шаг",
   "doneText": "В этом браузере всё настроено.",
   "saveFailed": "Не удалось сохранить. Попробуй ещё раз или выбери «Позже».",
-  "notifyNeedsApp": "Notifications only work when the app is on your home screen. Do the next steps to add it.",
-  "hideTextNote": "Safer: the text of a message is hidden on your lock screen, so only you see what it says. You can change this with the switch above."
+  "notifyNeedsApp": "Уведомления работают, только когда приложение добавлено на главный экран. Выполните следующие шаги, чтобы добавить его.",
+  "hideTextNote": "Безопаснее: текст сообщения скрыт на экране блокировки, поэтому только вы видите, что в нём написано. Это можно изменить переключателем выше."
 }

@@ -37,6 +37,6 @@
   "skipStep": "Saltar este paso",
   "doneText": "Todo está configurado en este navegador.",
   "saveFailed": "No se pudo guardar. Inténtalo de nuevo o elige \"Hacerlo más tarde\".",
-  "notifyNeedsApp": "Notifications only work when the app is on your home screen. Do the next steps to add it.",
-  "hideTextNote": "Safer: the text of a message is hidden on your lock screen, so only you see what it says. You can change this with the switch above."
+  "notifyNeedsApp": "Las notificaciones solo funcionan cuando la app está en tu pantalla de inicio. Sigue los pasos para añadirla.",
+  "hideTextNote": "Más seguro: el texto de un mensaje se oculta en la pantalla de bloqueo, así que solo tú ves lo que dice. Puedes cambiarlo con el interruptor de arriba."
 }

@@ -304,7 +304,7 @@
   "removeIt": "Fjern den",
   "cancel": "Avbryt",
   "notMe": "Ikke meg",
-  "newKeyQuestion": "{{ name }} seems to have a new phone or a new key. Call {{ name }} and ask: did you change phone?",
-  "newKeyYes": "Yes, it is {{ name }}",
-  "newKeyUnsure": "I am not sure"
+  "newKeyQuestion": "{{ name }} ser ut til å ha en ny telefon eller en ny nøkkel. Ring {{ name }} og spør: Har du byttet telefon?",
+  "newKeyYes": "Ja, det er {{ name }}",
+  "newKeyUnsure": "Jeg er ikke sikker"
 }

@@ -37,6 +37,6 @@
   "skipStep": "Spring dette trin over",
   "doneText": "Alt er sat op i denne browser.",
   "saveFailed": "Kunne ikke gemme. Prøv igen, eller vælg \"Gør det senere\".",
-  "notifyNeedsApp": "Notifications only work when the app is on your home screen. Do the next steps to add it.",
-  "hideTextNote": "Safer: the text of a message is hidden on your lock screen, so only you see what it says. You can change this with the switch above."
+  "notifyNeedsApp": "Notifikationer virker kun, når appen ligger på din startskærm. Følg de næste trin for at tilføje den.",
+  "hideTextNote": "Mere sikkert: Teksten i en besked skjules på låseskærmen, så kun du kan se, hvad der står. Du kan ændre det med kontakten ovenfor."
 }

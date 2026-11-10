@@ -14,7 +14,7 @@
   "dropOnASeat": "לשחרר על מקום או על מעגל השקט",
   "dropOnASeat2": "לשחרר על מקום",
   "pressAndHoldA": "לחיצה ארוכה על {{ one }} כדי להזיז",
-  "seatsExplained": "7 seats, 7 close friends. Put a friend to sleep to free a seat: the chat is kept.",
-  "groupCount": "Group · {{ count }} people",
-  "groupOnlyYou": "Group · only you"
+  "seatsExplained": "7 מקומות, 7 חברים קרובים. העבר חבר למצב שינה כדי לפנות מקום: השיחה נשמרת.",
+  "groupCount": "קבוצה · {{ count }} אנשים",
+  "groupOnlyYou": "קבוצה · רק אתה"
 }

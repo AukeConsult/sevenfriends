@@ -45,7 +45,7 @@
   "removed": "削除済み",
   "notPublished": "未公開",
   "detailsForThisBrowser": "このブラウザの詳細: アカウント …{{ slice }} · このブラウザのキー: {{ no }}{{ published }} · サーバーで使用中のキー: あなた {{ mine }}、{{ friendName }}さん {{ friend }}",
-  "groupLocked": "Messages and files are locked: only the people in this group can open them.",
-  "groupSomeoneNoKey": "Not everybody has a key yet ({{ names }}). Until everyone has one, what you send can be read by our system.",
-  "groupNobodyHasAKey": "Nobody in this group has a key yet. Until everyone has one, what you send can be read by our system."
+  "groupLocked": "メッセージとファイルはロックされています。このグループのメンバーだけが開けます。",
+  "groupSomeoneNoKey": "まだ全員が鍵を持っていません（{{ names }}）。全員が持つまで、送信した内容は当社のシステムから読み取れます。",
+  "groupNobodyHasAKey": "このグループでは、まだ誰も鍵を持っていません。全員が持つまで、送信した内容は当社のシステムから読み取れます。"
 }

@@ -37,6 +37,6 @@
   "skipStep": "Pomiń ten krok",
   "doneText": "Wszystko jest ustawione w tej przeglądarce.",
   "saveFailed": "Nie udało się zapisać. Spróbuj ponownie albo wybierz „Zrobię to później”.",
-  "notifyNeedsApp": "Notifications only work when the app is on your home screen. Do the next steps to add it.",
-  "hideTextNote": "Safer: the text of a message is hidden on your lock screen, so only you see what it says. You can change this with the switch above."
+  "notifyNeedsApp": "Powiadomienia działają tylko wtedy, gdy aplikacja jest na ekranie głównym. Wykonaj kolejne kroki, aby ją dodać.",
+  "hideTextNote": "Bezpieczniej: treść wiadomości jest ukryta na ekranie blokady, więc tylko ty widzisz, co w niej jest. Możesz to zmienić przełącznikiem powyżej."
 }

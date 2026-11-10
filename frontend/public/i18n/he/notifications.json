@@ -62,7 +62,7 @@
   "lockedOnThisDevice": "נעול במכשיר הזה",
   "lockedCounts": "{{ messages }} הודעות ו-{{ files }} קבצים עדיין לא ניתן לפתוח כאן",
   "getThemBack": "להחזיר אותן",
-  "privacyLockIsOff": "Privacy lock is off, so what you send can be read by our system.",
-  "turnItOn": "Turn it on",
-  "unverifiedRequestHint": "Do you know them? Then confirm. If not, reject."
+  "privacyLockIsOff": "נעילת הפרטיות כבויה, ולכן המערכת שלנו יכולה לקרוא את מה שאתה שולח.",
+  "turnItOn": "הפעל",
+  "unverifiedRequestHint": "אתה מכיר אותו? אז אשר. אם לא, דחה."
 }

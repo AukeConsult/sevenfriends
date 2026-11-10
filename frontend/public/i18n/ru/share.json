@@ -10,9 +10,9 @@
   "seats": "Места",
   "youHaveFreeseatsFree": "{{ seats }}: свободно {{ freeSeats }}. Пригласи тех, кто тебе важен ({{ many }}).",
   "yourOneLink": "Твоя ссылка ({{ one }})",
-  "linkHasPrivateCode": "The link has a private code. It does not contain your phone number or email.",
-  "strongShareTheApp": "<strong>Share the app</strong>",
-  "shareTheAppText": "Tell someone about the app. This link only opens the start page: no friend request is sent.",
-  "linkIsGeneral": "The link contains nothing personal.",
-  "appLink": "Link to the app"
+  "linkHasPrivateCode": "В ссылке есть личный код. Она не содержит ваш номер телефона или e-mail.",
+  "strongShareTheApp": "<strong>Поделиться приложением</strong>",
+  "shareTheAppText": "Расскажите о приложении кому-нибудь. Эта ссылка открывает только стартовую страницу: запрос в друзья не отправляется.",
+  "linkIsGeneral": "Ссылка не содержит ничего личного.",
+  "appLink": "Ссылка на приложение"
 }

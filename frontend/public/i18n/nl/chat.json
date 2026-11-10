@@ -64,5 +64,5 @@
   "messageOne": "bericht",
   "messageMany": "berichten",
   "alsoWhose": ", ook die van {{ name }},",
-  "openTheItem": "Open the item"
+  "openTheItem": "Item openen"
 }

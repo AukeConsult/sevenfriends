@@ -14,7 +14,7 @@
   "dropOnASeat": "席かサイレントサークルにドロップ",
   "dropOnASeat2": "席にドロップ",
   "pressAndHoldA": "{{ one }}を長押しして移動",
-  "seatsExplained": "7 seats, 7 close friends. Put a friend to sleep to free a seat: the chat is kept.",
-  "groupCount": "Group · {{ count }} people",
-  "groupOnlyYou": "Group · only you"
+  "seatsExplained": "7つの席、7人の親しい友だち。席を空けるには友だちをスリープにします。チャットは残ります。",
+  "groupCount": "グループ · {{ count }}人",
+  "groupOnlyYou": "グループ · あなただけ"
 }

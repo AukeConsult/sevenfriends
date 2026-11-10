@@ -64,5 +64,5 @@
   "messageOne": "消息",
   "messageMany": "消息",
   "alsoWhose": "（也包括 {{ name }} 的）",
-  "openTheItem": "Open the item"
+  "openTheItem": "打开该项目"
 }

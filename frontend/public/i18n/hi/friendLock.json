@@ -45,7 +45,7 @@
   "removed": "हटाई गई",
   "notPublished": "प्रकाशित नहीं",
   "detailsForThisBrowser": "इस ब्राउज़र का ब्योरा: खाता …{{ slice }} · इस ब्राउज़र में कुंजी: {{ no }}{{ published }} · सर्वर पर उपयोग में कुंजियाँ: आप {{ mine }}, {{ friendName }} {{ friend }}",
-  "groupLocked": "Messages and files are locked: only the people in this group can open them.",
-  "groupSomeoneNoKey": "Not everybody has a key yet ({{ names }}). Until everyone has one, what you send can be read by our system.",
-  "groupNobodyHasAKey": "Nobody in this group has a key yet. Until everyone has one, what you send can be read by our system."
+  "groupLocked": "संदेश और फ़ाइलें लॉक हैं: केवल इस समूह के लोग ही उन्हें खोल सकते हैं।",
+  "groupSomeoneNoKey": "अभी सभी के पास कुंजी नहीं है ({{ names }})। जब तक सभी के पास न हो, आप जो भेजते हैं उसे हमारा सिस्टम पढ़ सकता है।",
+  "groupNobodyHasAKey": "इस समूह में अभी किसी के पास कुंजी नहीं है। जब तक सभी के पास न हो, आप जो भेजते हैं उसे हमारा सिस्टम पढ़ सकता है।"
 }

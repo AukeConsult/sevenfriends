@@ -45,7 +45,7 @@
   "removed": "удалён",
   "notPublished": "не опубликован",
   "detailsForThisBrowser": "Подробности для этого браузера: аккаунт …{{ slice }} · ключ в этом браузере: {{ no }}{{ published }} · ключи в работе на сервере: у тебя — {{ mine }}, у {{ friendName }} — {{ friend }}",
-  "groupLocked": "Messages and files are locked: only the people in this group can open them.",
-  "groupSomeoneNoKey": "Not everybody has a key yet ({{ names }}). Until everyone has one, what you send can be read by our system.",
-  "groupNobodyHasAKey": "Nobody in this group has a key yet. Until everyone has one, what you send can be read by our system."
+  "groupLocked": "Сообщения и файлы заблокированы: открыть их могут только участники этой группы.",
+  "groupSomeoneNoKey": "Ключ есть не у всех ({{ names }}). Пока он не появится у каждого, наша система может читать то, что вы отправляете.",
+  "groupNobodyHasAKey": "Ни у кого в этой группе пока нет ключа. Пока он не появится у каждого, наша система может читать то, что вы отправляете."
 }

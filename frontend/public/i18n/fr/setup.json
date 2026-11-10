@@ -37,6 +37,6 @@
   "skipStep": "Passer cette étape",
   "doneText": "Tout est configuré dans ce navigateur.",
   "saveFailed": "Impossible d'enregistrer. Réessaie, ou choisis « Plus tard ».",
-  "notifyNeedsApp": "Notifications only work when the app is on your home screen. Do the next steps to add it.",
-  "hideTextNote": "Safer: the text of a message is hidden on your lock screen, so only you see what it says. You can change this with the switch above."
+  "notifyNeedsApp": "Les notifications ne fonctionnent que si l’app est sur votre écran d’accueil. Suivez les étapes suivantes pour l’ajouter.",
+  "hideTextNote": "Plus sûr : le texte d’un message est masqué sur l’écran de verrouillage, seul vous voyez ce qu’il dit. Vous pouvez changer cela avec l’interrupteur ci-dessus."
 }

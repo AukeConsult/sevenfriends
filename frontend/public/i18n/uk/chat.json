@@ -64,5 +64,5 @@
   "messageOne": "повідомлення",
   "messageMany": "повідомлень",
   "alsoWhose": ", також від {{ name }},",
-  "openTheItem": "Open the item"
+  "openTheItem": "Відкрити елемент"
 }

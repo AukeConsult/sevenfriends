@@ -64,5 +64,5 @@
   "messageOne": "messaggio",
   "messageMany": "messaggi",
   "alsoWhose": ", anche di {{ name }},",
-  "openTheItem": "Open the item"
+  "openTheItem": "Apri l’elemento"
 }

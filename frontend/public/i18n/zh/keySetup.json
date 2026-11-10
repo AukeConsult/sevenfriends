@@ -23,6 +23,6 @@
   "makeMyKey": "创建我的密钥",
   "theKeyCouldNot": "无法创建密钥。请再试一次。",
   "theKeyCouldNot2": "无法保存密钥。请再试一次。",
-  "saveAsFile": "Save as a file",
-  "fileTitle": "Seven Friends: my 24 secret words. Keep this file safe and private."
+  "saveAsFile": "保存为文件",
+  "fileTitle": "Seven Friends：我的 24 个秘密单词。请安全、私密地保管此文件。"
 }

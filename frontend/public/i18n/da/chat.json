@@ -64,5 +64,5 @@
   "messageOne": "besked",
   "messageMany": "beskeder",
   "alsoWhose": ", også {{ name }}s,",
-  "openTheItem": "Open the item"
+  "openTheItem": "Åbn emnet"
 }

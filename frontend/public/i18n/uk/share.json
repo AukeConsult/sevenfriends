@@ -10,9 +10,9 @@
   "seats": "Вільні місця",
   "youHaveFreeseatsFree": "{{ seats }}: {{ freeSeats }}. Запроси тих ({{ many }}), хто важливий для тебе.",
   "yourOneLink": "Твоє посилання ({{ one }})",
-  "linkHasPrivateCode": "The link has a private code. It does not contain your phone number or email.",
-  "strongShareTheApp": "<strong>Share the app</strong>",
-  "shareTheAppText": "Tell someone about the app. This link only opens the start page: no friend request is sent.",
-  "linkIsGeneral": "The link contains nothing personal.",
-  "appLink": "Link to the app"
+  "linkHasPrivateCode": "У посиланні є особистий код. Воно не містить вашого номера телефону чи e-mail.",
+  "strongShareTheApp": "<strong>Поділитися застосунком</strong>",
+  "shareTheAppText": "Розкажіть про застосунок комусь. Це посилання відкриває лише стартову сторінку: запит у друзі не надсилається.",
+  "linkIsGeneral": "Посилання не містить нічого особистого.",
+  "appLink": "Посилання на застосунок"
 }

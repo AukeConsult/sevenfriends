@@ -62,7 +62,7 @@
   "lockedOnThisDevice": "Bu cihazda kilitli",
   "lockedCounts": "{{ messages }} mesaj ve {{ files }} dosya burada henüz açılamıyor",
   "getThemBack": "Geri al",
-  "privacyLockIsOff": "Privacy lock is off, so what you send can be read by our system.",
-  "turnItOn": "Turn it on",
-  "unverifiedRequestHint": "Do you know them? Then confirm. If not, reject."
+  "privacyLockIsOff": "Gizlilik kilidi kapalı, bu yüzden sistemimiz gönderdiklerini okuyabilir.",
+  "turnItOn": "Aç",
+  "unverifiedRequestHint": "Onu tanıyor musun? O zaman onayla. Değilse reddet."
 }

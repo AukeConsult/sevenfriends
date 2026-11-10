@@ -304,7 +304,7 @@
   "removeIt": "削除する",
   "cancel": "キャンセル",
   "notMe": "私ではない",
-  "newKeyQuestion": "{{ name }} seems to have a new phone or a new key. Call {{ name }} and ask: did you change phone?",
-  "newKeyYes": "Yes, it is {{ name }}",
-  "newKeyUnsure": "I am not sure"
+  "newKeyQuestion": "{{ name }}さんは新しい携帯電話か新しい鍵を使っているようです。{{ name }}さんに電話して「機種変更した？」と聞いてみてください。",
+  "newKeyYes": "はい、{{ name }}さんです",
+  "newKeyUnsure": "わかりません"
 }

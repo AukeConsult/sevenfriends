@@ -70,5 +70,5 @@
   "notificationsAreBlockedFor2": "这个网站的通知被屏蔽了。请在浏览器设置中允许（地址栏左侧的锁形或滑块图标），然后再试一次。",
   "thisBrowserCannotShow": "这个浏览器无法显示桌面通知。",
   "thisIsHowA": "通知就是这个样子。",
-  "orUseTheBrowser": "Or use the browser: 3 steps"
+  "orUseTheBrowser": "或使用浏览器：3 个步骤"
 }

@@ -22,12 +22,12 @@
   "youHaveAlreadyAdded": "Ты уже добавил(а) {{ sameName }}: запрос ждёт ответа.",
   "thisPerson": "Этот человек",
   "sendFailed": "Не удалось отправить запрос.",
-  "whatToAdd": "What do you want to add?",
-  "aPerson": "A person",
-  "aGroup": "A group",
-  "aGroupIsOne": "A group is one conversation and one safebox for several people. It takes a seat, like a friend.",
-  "nameOfTheGroup": "Name of the group",
-  "makeTheGroup": "Make the group",
-  "giveTheGroupA": "Give the group a name.",
-  "couldNotMakeThe": "Could not make the group."
+  "whatToAdd": "Что вы хотите добавить?",
+  "aPerson": "Человека",
+  "aGroup": "Группу",
+  "aGroupIsOne": "Группа — это один разговор и один сейф для нескольких людей. Она занимает место, как друг.",
+  "nameOfTheGroup": "Название группы",
+  "makeTheGroup": "Создать группу",
+  "giveTheGroupA": "Дайте группе название.",
+  "couldNotMakeThe": "Не удалось создать группу."
 }

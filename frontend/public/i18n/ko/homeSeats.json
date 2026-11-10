@@ -14,7 +14,7 @@
   "dropOnASeat": "자리 또는 조용히 서클에 놓으세요",
   "dropOnASeat2": "자리에 놓으세요",
   "pressAndHoldA": "길게 눌러 옮기기 ({{ one }})",
-  "seatsExplained": "7 seats, 7 close friends. Put a friend to sleep to free a seat: the chat is kept.",
-  "groupCount": "Group · {{ count }} people",
-  "groupOnlyYou": "Group · only you"
+  "seatsExplained": "자리 7개, 가까운 친구 7명. 친구를 잠재우면 자리가 비어요. 채팅은 그대로 남습니다.",
+  "groupCount": "그룹 · {{ count }}명",
+  "groupOnlyYou": "그룹 · 나만"
 }

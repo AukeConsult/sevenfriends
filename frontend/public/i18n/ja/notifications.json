@@ -62,7 +62,7 @@
   "lockedOnThisDevice": "この端末でロック中",
   "lockedCounts": "メッセージ{{ messages }}件とファイル{{ files }}件は、まだここでは開けません",
   "getThemBack": "取り戻す",
-  "privacyLockIsOff": "Privacy lock is off, so what you send can be read by our system.",
-  "turnItOn": "Turn it on",
-  "unverifiedRequestHint": "Do you know them? Then confirm. If not, reject."
+  "privacyLockIsOff": "プライバシーロックがオフのため、送信した内容は当社のシステムから読み取れます。",
+  "turnItOn": "オンにする",
+  "unverifiedRequestHint": "知っている人ですか？ そうなら承認、違うなら拒否してください。"
 }

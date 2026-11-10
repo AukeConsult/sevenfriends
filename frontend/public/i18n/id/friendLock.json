@@ -45,7 +45,7 @@
   "removed": "dihapus",
   "notPublished": "tidak dipublikasikan",
   "detailsForThisBrowser": "Detail untuk browser ini: akun …{{ slice }} · kunci di browser ini: {{ no }}{{ published }} · kunci yang dipakai di server: kamu {{ mine }}, {{ friendName }} {{ friend }}",
-  "groupLocked": "Messages and files are locked: only the people in this group can open them.",
-  "groupSomeoneNoKey": "Not everybody has a key yet ({{ names }}). Until everyone has one, what you send can be read by our system.",
-  "groupNobodyHasAKey": "Nobody in this group has a key yet. Until everyone has one, what you send can be read by our system."
+  "groupLocked": "Pesan dan file dikunci: hanya orang di grup ini yang bisa membukanya.",
+  "groupSomeoneNoKey": "Belum semua orang punya kunci ({{ names }}). Sampai semuanya punya, sistem kami dapat membaca apa yang kamu kirim.",
+  "groupNobodyHasAKey": "Belum ada yang punya kunci di grup ini. Sampai semuanya punya, sistem kami dapat membaca apa yang kamu kirim."
 }

@@ -62,7 +62,7 @@
   "lockedOnThisDevice": "Låst på denne enhed",
   "lockedCounts": "{{ messages }} beskeder og {{ files }} filer kan ikke åbnes her endnu",
   "getThemBack": "Få dem tilbage",
-  "privacyLockIsOff": "Privacy lock is off, so what you send can be read by our system.",
-  "turnItOn": "Turn it on",
-  "unverifiedRequestHint": "Do you know them? Then confirm. If not, reject."
+  "privacyLockIsOff": "Privatlivslåsen er slået fra, så vores system kan læse det, du sender.",
+  "turnItOn": "Slå til",
+  "unverifiedRequestHint": "Kender du dem? Så bekræft. Hvis ikke, så afvis."
 }

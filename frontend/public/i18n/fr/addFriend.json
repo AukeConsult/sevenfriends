@@ -22,12 +22,12 @@
   "youHaveAlreadyAdded": "Tu as déjà ajouté {{ sameName }} : la demande l'attend.",
   "thisPerson": "Cette personne",
   "sendFailed": "Impossible d'envoyer la demande.",
-  "whatToAdd": "What do you want to add?",
-  "aPerson": "A person",
-  "aGroup": "A group",
-  "aGroupIsOne": "A group is one conversation and one safebox for several people. It takes a seat, like a friend.",
-  "nameOfTheGroup": "Name of the group",
-  "makeTheGroup": "Make the group",
-  "giveTheGroupA": "Give the group a name.",
-  "couldNotMakeThe": "Could not make the group."
+  "whatToAdd": "Que voulez-vous ajouter ?",
+  "aPerson": "Une personne",
+  "aGroup": "Un groupe",
+  "aGroupIsOne": "Un groupe est une conversation et un coffre pour plusieurs personnes. Il occupe une place, comme un ami.",
+  "nameOfTheGroup": "Nom du groupe",
+  "makeTheGroup": "Créer le groupe",
+  "giveTheGroupA": "Donnez un nom au groupe.",
+  "couldNotMakeThe": "Impossible de créer le groupe."
 }

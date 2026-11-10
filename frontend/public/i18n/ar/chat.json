@@ -64,5 +64,5 @@
   "messageOne": "رسالة",
   "messageMany": "رسائل",
   "alsoWhose": "، وكذلك رسائل {{ name }}،",
-  "openTheItem": "Open the item"
+  "openTheItem": "فتح العنصر"
 }

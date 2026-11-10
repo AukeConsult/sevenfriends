@@ -62,7 +62,7 @@
   "lockedOnThisDevice": "Bloqueado neste dispositivo",
   "lockedCounts": "{{ messages }} mensagens e {{ files }} arquivos ainda não podem ser abertos aqui",
   "getThemBack": "Recuperá-las",
-  "privacyLockIsOff": "Privacy lock is off, so what you send can be read by our system.",
-  "turnItOn": "Turn it on",
-  "unverifiedRequestHint": "Do you know them? Then confirm. If not, reject."
+  "privacyLockIsOff": "O bloqueio de privacidade está desativado, então o nosso sistema pode ler o que você envia.",
+  "turnItOn": "Ativar",
+  "unverifiedRequestHint": "Você a conhece? Então confirme. Se não, rejeite."
 }

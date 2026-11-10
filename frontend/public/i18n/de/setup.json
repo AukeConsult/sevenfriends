@@ -37,6 +37,6 @@
   "skipStep": "Diesen Schritt überspringen",
   "doneText": "In diesem Browser ist alles eingerichtet.",
   "saveFailed": "Konnte nicht gespeichert werden. Versuch es noch einmal oder wähl „Später“.",
-  "notifyNeedsApp": "Notifications only work when the app is on your home screen. Do the next steps to add it.",
-  "hideTextNote": "Safer: the text of a message is hidden on your lock screen, so only you see what it says. You can change this with the switch above."
+  "notifyNeedsApp": "Benachrichtigungen funktionieren nur, wenn die App auf deinem Startbildschirm liegt. Folge den nächsten Schritten, um sie hinzuzufügen.",
+  "hideTextNote": "Sicherer: Der Text einer Nachricht wird auf dem Sperrbildschirm verborgen, damit nur du siehst, was darin steht. Du kannst das mit dem Schalter oben ändern."
 }

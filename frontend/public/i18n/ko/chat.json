@@ -64,5 +64,5 @@
   "messageOne": "메시지",
   "messageMany": "메시지",
   "alsoWhose": " ({{ name }}의 메시지 포함)",
-  "openTheItem": "Open the item"
+  "openTheItem": "항목 열기"
 }

@@ -37,6 +37,6 @@
   "skipStep": "تخطي هذه الخطوة",
   "doneText": "تم إعداد كل شيء في هذا المتصفح.",
   "saveFailed": "تعذّر الحفظ. حاول مرة أخرى، أو اختر \"لاحقًا\".",
-  "notifyNeedsApp": "Notifications only work when the app is on your home screen. Do the next steps to add it.",
-  "hideTextNote": "Safer: the text of a message is hidden on your lock screen, so only you see what it says. You can change this with the switch above."
+  "notifyNeedsApp": "تعمل الإشعارات فقط عندما يكون التطبيق على شاشتك الرئيسية. اتبع الخطوات التالية لإضافته.",
+  "hideTextNote": "أكثر أمانًا: يُخفى نص الرسالة على شاشة القفل، فلا يراه سواك. يمكنك تغيير ذلك بالمفتاح أعلاه."
 }

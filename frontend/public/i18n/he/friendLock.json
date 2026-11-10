@@ -45,7 +45,7 @@
   "removed": "הוסר",
   "notPublished": "לא פורסם",
   "detailsForThisBrowser": "פרטים על הדפדפן הזה: חשבון …{{ slice }} · מפתח בדפדפן הזה: {{ no }}{{ published }} · מפתחות בשימוש בשרת: אצלך {{ mine }}, אצל {{ friendName }} {{ friend }}",
-  "groupLocked": "Messages and files are locked: only the people in this group can open them.",
-  "groupSomeoneNoKey": "Not everybody has a key yet ({{ names }}). Until everyone has one, what you send can be read by our system.",
-  "groupNobodyHasAKey": "Nobody in this group has a key yet. Until everyone has one, what you send can be read by our system."
+  "groupLocked": "ההודעות והקבצים נעולים: רק האנשים בקבוצה הזו יכולים לפתוח אותם.",
+  "groupSomeoneNoKey": "לא לכולם יש מפתח עדיין ({{ names }}). עד שיהיה לכולם, המערכת שלנו יכולה לקרוא את מה שאתה שולח.",
+  "groupNobodyHasAKey": "לאף אחד בקבוצה הזו אין מפתח עדיין. עד שיהיה לכולם, המערכת שלנו יכולה לקרוא את מה שאתה שולח."
 }

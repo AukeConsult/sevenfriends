@@ -37,6 +37,6 @@
   "skipStep": "Hoppa över det här steget",
   "doneText": "Allt är inställt i den här webbläsaren.",
   "saveFailed": "Kunde inte spara. Försök igen, eller välj \"Gör det senare\".",
-  "notifyNeedsApp": "Notifications only work when the app is on your home screen. Do the next steps to add it.",
-  "hideTextNote": "Safer: the text of a message is hidden on your lock screen, so only you see what it says. You can change this with the switch above."
+  "notifyNeedsApp": "Aviseringar fungerar bara när appen ligger på din startskärm. Följ nästa steg för att lägga till den.",
+  "hideTextNote": "Säkrare: Texten i ett meddelande döljs på låsskärmen, så bara du ser vad det står. Du kan ändra detta med reglaget ovan."
 }

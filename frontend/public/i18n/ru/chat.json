@@ -64,5 +64,5 @@
   "messageOne": "сообщение",
   "messageMany": "сообщения",
   "alsoWhose": ", в том числе от {{ name }},",
-  "openTheItem": "Open the item"
+  "openTheItem": "Открыть элемент"
 }
