@@ -12,7 +12,7 @@ import { otherMembers } from "./group-members";
 import { Refused, parseMessageEnc, parseRelock, wrapsCover, wrapsFor } from "./box-encryption";
 import { publishedKeysOf } from "./keys";
 import { touchFeed, touchFeedIfExists } from "./sync";
-import { LOCKED_MIME, deleteObject, deleteObjects, isObjectId, mediaLabel, objectInfo } from "./sf-cache";
+import { LOCKED_MIME, cleanFileName, deleteObject, deleteObjects, isObjectId, mediaLabel, objectInfo, renameObject } from "./sf-cache";
 
 export const MAX_MESSAGE_LENGTH = 2000;
 const FEED_LIMIT = 200; // the feed shows the latest 200 messages
@@ -351,6 +351,61 @@ async function ownMessage(req: Request, res: Response, allowMoved = false) {
   const myEntry = (res.locals.circleRef as DocumentReference).collection(FRIENDS_SUBCOLLECTION).doc(connection.id);
   return { mine, peers: connection.peers, theirs: connection.peers.map((peer) => ({ peer, ref: messageCol(peer.uid).doc(mine.id) })), peerEntries: connection.peers.map((peer) => peerEntryRef(connection, peer)), myEntry, media: (data.media as MediaRef | undefined) ?? null, hidden: Boolean(data.hidden), enc: (data.enc as MessageEnc | undefined) ?? null, };
 }
+
+/** The ending of a file name (".jpg"), lower case; "" when there is none. */
+const endingOf = (name: string): string => /\.[A-Za-z0-9]{1,8}$/.exec(name)?.[0].toLowerCase() ?? "";
+const BASE64 = /^[A-Za-z0-9+/=_-]+$/;
+
+/**
+ * Rename the file of a message (an image, a video or a voice message): either of the friends can do it, and both copies of the message change (the
+ * name is not a part of the text, so the message is not marked as edited). The ending of the name (the file type) cannot change.
+ *   - a plain file: { name }, which also becomes the name the file is saved under
+ *   - a locked file: { meta, metaIv }, the file's meta (with the new name inside) locked again by the app with the key the message already has
+ */
+conversationRouter.put(
+  "/:messageId/media-name",
+  asyncHandler(async (req, res) => {
+    const connection = await connectionOf(req, res);
+    if (!connection) return;
+    const mine = messageCol(uidOf(res)).doc(req.params.messageId);
+    const data = (await mine.get()).data();
+    const media = data?.media as MediaRef | undefined;
+    if (!data || data.connectionId !== connection.id || !media) {
+      res.status(404).json({ error: "Message not found" });
+      return;
+    }
+    const enc = data.enc as MessageEnc | undefined;
+    let change: Record<string, string>;
+    let name: string | null = null;
+    if (enc?.media) {
+      const { meta, metaIv } = req.body ?? {};
+      if (typeof meta !== "string" || typeof metaIv !== "string" || !meta || !metaIv || meta.length > 4096 || metaIv.length > 64 || !BASE64.test(meta) || !BASE64.test(metaIv)) {
+        res.status(400).json({ error: "The new locked name is not valid" });
+        return;
+      }
+      change = { "enc.media.meta": meta, "enc.media.metaIv": metaIv };
+    } else {
+      name = cleanFileName(req.body?.name);
+      if (!name) {
+        res.status(400).json({ error: "Write a name" });
+        return;
+      }
+      if (media.name && endingOf(media.name) !== endingOf(name)) {
+        res.status(400).json({ error: "The type of the file cannot be changed" });
+        return;
+      }
+      change = { "media.name": name };
+      await renameObject(media.ownerId, media.objectId, name);
+    }
+    const copies = [mine, ...connection.peers.map((peer) => messageCol(peer.uid).doc(mine.id))];
+    const batch = getFirestore().batch();
+    for (const ref of copies) if ((await ref.get()).exists) batch.update(ref, change);
+    for (const peer of connection.peers) await touchFeedIfExists(batch, peerEntryRef(connection, peer));
+    touchFeed(batch, (res.locals.circleRef as DocumentReference).collection(FRIENDS_SUBCOLLECTION).doc(connection.id)); // my other devices reload the feed
+    await batch.commit();
+    res.json({ name });
+  }),
+);
 
 /** Edit one of my messages: { text } (the caption, for a message with a file). Both copies change; the message is marked as edited. */
 conversationRouter.put(

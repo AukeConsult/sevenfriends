@@ -1,8 +1,9 @@
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
-import { Component, ElementRef, effect, inject, input, signal, viewChild } from '@angular/core';
+import { Component, DestroyRef, ElementRef, effect, inject, input, signal, viewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { formatBytes } from '../core/image';
 import { MediaService } from '../core/media.service';
+import { whenNearScreen } from '../core/near-screen';
 import { MediaRef } from '../models';
 
 /**
@@ -19,6 +20,8 @@ export class MediaVideo {
   private readonly service = inject(MediaService);
 
   readonly media = input.required<MediaRef>();
+  /** the friendship of the message: the full-size page needs it to rename the file */
+  readonly friendId = input<string | null>(null);
   protected readonly poster = signal<string | null>(null);
   protected readonly src = signal<string | null>(null);
   protected readonly loading = signal(false);
@@ -31,16 +34,25 @@ export class MediaVideo {
   protected readonly current = signal(0);
   protected readonly duration = signal(0);
 
+  private readonly box = viewChild<ElementRef<HTMLElement>>('box');
+  private gone = false;
+
   constructor() {
-    effect(() => {
+    inject(DestroyRef).onDestroy(() => (this.gone = true));
+    effect((onCleanup) => {
       const media = this.media();
+      const box = this.box()?.nativeElement;
       this.poster.set(null);
       this.src.set(null);
-      if (!media.hasThumb) return;
-      this.service
-        .object(media.ownerId, `${media.objectId}.thumb`)
-        .then((file) => this.media() === media && this.poster.set(file.url))
-        .catch(() => undefined); // no picture: the play button is enough
+      if (!media.hasThumb || !box) return;
+      onCleanup(
+        whenNearScreen(box, () =>
+          this.service
+            .objectLater(media.ownerId, `${media.objectId}.thumb`, () => this.media() === media && !this.gone)
+            .then((file) => this.media() === media && this.poster.set(file.url))
+            .catch(() => undefined), // no picture: the play button is enough
+        ),
+      );
     });
   }
 

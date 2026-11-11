@@ -8,5 +8,11 @@
   "video": "Vídeo",
   "image": "Imagen",
   "fullSize": "Tamaño completo",
-  "fitToScreen": "Ajustar a la pantalla"
+  "fitToScreen": "Ajustar a la pantalla",
+  "rename": "Cambiar nombre",
+  "name": "Nombre",
+  "save": "Guardar",
+  "cancel": "Cancelar",
+  "writeAName": "Escribe un nombre",
+  "couldNotRenameThe": "No se pudo cambiar el nombre del archivo"
 }

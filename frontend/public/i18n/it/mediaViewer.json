@@ -8,5 +8,11 @@
   "video": "Video",
   "image": "Immagine",
   "fullSize": "Dimensione reale",
-  "fitToScreen": "Adatta allo schermo"
+  "fitToScreen": "Adatta allo schermo",
+  "rename": "Rinomina",
+  "name": "Nome",
+  "save": "Salva",
+  "cancel": "Annulla",
+  "writeAName": "Scrivi un nome",
+  "couldNotRenameThe": "Impossibile rinominare il file"
 }

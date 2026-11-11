@@ -8,5 +8,11 @@
   "video": "Video",
   "image": "Billede",
   "fullSize": "Fuld størrelse",
-  "fitToScreen": "Tilpas til skærm"
+  "fitToScreen": "Tilpas til skærm",
+  "rename": "Omdøb",
+  "name": "Navn",
+  "save": "Gem",
+  "cancel": "Annuller",
+  "writeAName": "Skriv et navn",
+  "couldNotRenameThe": "Filen kunne ikke omdøbes"
 }

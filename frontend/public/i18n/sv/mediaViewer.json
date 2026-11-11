@@ -8,5 +8,11 @@
   "video": "Video",
   "image": "Bild",
   "fullSize": "Full storlek",
-  "fitToScreen": "Anpassa till skärmen"
+  "fitToScreen": "Anpassa till skärmen",
+  "rename": "Byt namn",
+  "name": "Namn",
+  "save": "Spara",
+  "cancel": "Avbryt",
+  "writeAName": "Skriv ett namn",
+  "couldNotRenameThe": "Filen kunde inte byta namn"
 }

@@ -8,5 +8,11 @@
   "video": "Video",
   "image": "Kuva",
   "fullSize": "Koko koko",
-  "fitToScreen": "Sovita näyttöön"
+  "fitToScreen": "Sovita näyttöön",
+  "rename": "Nimeä uudelleen",
+  "name": "Nimi",
+  "save": "Tallenna",
+  "cancel": "Peruuta",
+  "writeAName": "Kirjoita nimi",
+  "couldNotRenameThe": "Tiedoston nimeäminen uudelleen epäonnistui"
 }

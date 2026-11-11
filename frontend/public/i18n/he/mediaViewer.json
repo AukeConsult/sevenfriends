@@ -8,5 +8,11 @@
   "video": "סרטון",
   "image": "תמונה",
   "fullSize": "גודל מלא",
-  "fitToScreen": "התאם למסך"
+  "fitToScreen": "התאם למסך",
+  "rename": "שנה שם",
+  "name": "שם",
+  "save": "שמור",
+  "cancel": "ביטול",
+  "writeAName": "כתוב שם",
+  "couldNotRenameThe": "לא ניתן היה לשנות את שם הקובץ"
 }

@@ -215,16 +215,15 @@
             </a>
           }
           @if (message.media; as media) {
-            <!-- a friend's image opens at once; on my own message the tap opens Edit / Delete (and Open) -->
+            <!-- an image opens at once when it is tapped; Edit / Delete of my own message are under its time -->
             @if (media.kind === 'audio') {
-              <app-media-audio [media]="media" />
+              <app-media-audio [media]="media" [friendId]="friendId" />
             } @else if (!pictureHidden().has(message.id)) {
               @if (media.kind === 'video') {
-                <app-media-video [media]="media" />
-              } @else if (message.mine) {
-                <app-media-image [media]="media" />
+                <app-media-video [media]="media" [friendId]="friendId" />
               } @else {
-                <a [routerLink]="['/media', media.ownerId, media.objectId]" class="sf-media-link" [attr.aria-label]="t('chat.openTheImage') || 'Open the image'"><app-media-image [media]="media" /></a>
+                <!-- a tap on any image opens it in full (mine too: Edit / Delete are under the time of the message) -->
+                <a [routerLink]="['/media', media.ownerId, media.objectId]" [queryParams]="{ f: friendId }" class="sf-media-link" (click)="$event.stopPropagation()" [attr.aria-label]="t('chat.openTheImage') || 'Open the image'"><app-media-image [media]="media" /></a>
               }
             }
           }
@@ -267,8 +266,8 @@
                 @if (!message.enc?.media) { <button type="button" class="btn btn-light btn-sm" (click)="moving.set(message.id)">{{ t('chat.toTheSafebox') || 'To the safebox' }}</button> }
               }
             }
-            <a [routerLink]="['/media', media.ownerId, media.objectId]" class="btn btn-light btn-sm">{{ t('chat.open') || 'Open' }}</a>
-            <button type="button" class="btn btn-light btn-sm" (click)="download(media)">{{ t('chat.download') || 'Download' }}</button>
+            @if (media.kind !== 'image') { <a [routerLink]="['/media', media.ownerId, media.objectId]" [queryParams]="{ f: friendId }" class="btn btn-light btn-sm">{{ t('chat.open') || 'Open' }}</a> }
+            @if (media.kind === 'audio') { <button type="button" class="btn btn-light btn-sm" (click)="download(media)">{{ t('chat.download') || 'Download' }}</button> }
           </div>
           }
         }
@@ -301,12 +300,12 @@
             } @else {
               @if (message.media; as media) {
                 @if (media) {
-                  <a [routerLink]="['/media', media.ownerId, media.objectId]" class="btn btn-light btn-sm">{{ t('chat.open') || 'Open' }}</a>
-                  <button type="button" class="btn btn-light btn-sm" (click)="download(media)">{{ t('chat.download') || 'Download' }}</button>
+                  @if (media.kind !== 'image') { <a [routerLink]="['/media', media.ownerId, media.objectId]" [queryParams]="{ f: friendId }" class="btn btn-light btn-sm">{{ t('chat.open') || 'Open' }}</a> }
+                  @if (media.kind === 'audio') { <button type="button" class="btn btn-light btn-sm" (click)="download(media)">{{ t('chat.download') || 'Download' }}</button> }
                 }
               }
               @if (message.text) { <button type="button" class="btn btn-light btn-sm" (click)="copy(message)">{{ t('chat.copy') || 'Copy' }}</button> }
-              @if (message.mine && !message.inBox) { <button type="button" class="btn btn-light btn-sm" (click)="startEdit(message)">{{ t('chat.edit') || 'Edit' }}</button> }
+              @if (message.mine && !message.inBox && !message.media) { <button type="button" class="btn btn-light btn-sm" (click)="startEdit(message)">{{ t('chat.edit') || 'Edit' }}</button> }
               <button type="button" class="btn btn-outline-danger btn-sm" (click)="deleting.set(message.id)">{{ t('chat.delete') || 'Delete' }}</button>
             }
           </div>

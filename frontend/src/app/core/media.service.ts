@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { MediaUpload, MessageEnc, MessageEncMedia } from '../models';
 import { ApiError, ApiService } from './api.service';
 import { AuthService } from './auth.service';
-import { MessageMediaMeta, openMessageKey, openMessageMedia, openMessageMeta, sealMessageMedia } from './box-crypto';
+import { MessageMediaMeta, openMessageKey, resealMediaName, openMessageMedia, openMessageMeta, sealMessageMedia } from './box-crypto';
 import { myDeviceKey } from './my-key';
 import { PreparedAudio } from './audio';
 import { PreparedImage } from './image';
@@ -37,6 +37,7 @@ const LOCKED_STORE = 'sf-locked-media';
 export class MediaService {
   private readonly api = inject(ApiService);
   private readonly auth = inject(AuthService);
+  private readonly active = inject(ActiveCircleService);
   private readonly files = new Map<string, Promise<StoredFile>>();
   /** the files that are locked (by `ownerId/objectId`), told by the conversation when it opens the messages; kept for this tab so the full-size page can open them after a reload */
   private locked: Map<string, LockedEntry> | null = null;
@@ -167,6 +168,27 @@ export class MediaService {
   }
 
   /**
+   * Gives the file of a message a new name (either of the friends may): the server changes both copies of the message. A locked file is locked
+   * again on this device with the key of the message (the server cannot read the name). The file that was read is kept with the new name.
+   */
+  async rename(friendId: string, messageId: string, ownerId: string, objectId: string, name: string): Promise<void> {
+    const url = `/circles/${this.active.id}/friends/${friendId}/messages/${messageId}/media-name`;
+    const locked = this.lockedFiles().get(`${ownerId}/${objectId}`);
+    if (locked?.enc.media) {
+      const mine = await myDeviceKey(this.auth.user()?.uid);
+      if (!mine) throw new Error(tr('core.thereIsNoEncryption', 'There is no encryption key on this device. Set one up (or restore it) in Settings → Privacy lock.'));
+      const sealed = await resealMediaName(locked.friendId, locked.enc, locked.enc.media, name, mine.keyId, mine.privateKey);
+      await this.api.request<unknown>(url, { method: 'PUT', body: JSON.stringify(sealed) });
+      locked.enc.media = { ...locked.enc.media, ...sealed };
+    } else {
+      await this.api.request<unknown>(url, { method: 'PUT', body: JSON.stringify({ name }) });
+    }
+    const key = `${ownerId}/${objectId}`;
+    const read = this.files.get(key);
+    if (read) this.files.set(key, read.then((file) => ({ ...file, name })));
+  }
+
+  /**
    * `getObject(userid/objectid)`: reads the file from the server (`name` is the object id, or `<object id>.thumb` for the small preview).
    * A file never changes under its name, so one that was read is kept for as long as the app is open.
    */
@@ -184,5 +206,44 @@ export class MediaService {
       file.catch(() => this.files.delete(key)); // the next time, it asks again
     }
     return file;
+  }
+
+  /** the pictures of a feed that wait to be read, one at a time (see `objectLater`) */
+  private readonly waiting: { ownerId: string; name: string; wanted: () => boolean; done: (file: StoredFile) => void; fail: () => void }[] = [];
+  private reading = false;
+
+  /**
+   * Like `object`, for the pictures that are shown in a feed: they are NOT read together with the messages, but one by one afterwards, so the
+   * text of the feed is shown at once and the connection is not filled by 30 pictures at the same time. The one that came last (the
+   * newest, at the bottom of the feed, where the person looks first) is read first. A file that is already read comes at once; a picture that is
+   * no longer on the screen (`wanted()` is false) is skipped.
+   */
+  objectLater(ownerId: string, name: string, wanted: () => boolean): Promise<StoredFile> {
+    const known = this.files.get(`${ownerId}/${name}`);
+    if (known) return known;
+    return new Promise<StoredFile>((done, fail) => {
+      this.waiting.push({ ownerId, name, wanted, done, fail: () => fail(new Error('not wanted')) });
+      setTimeout(() => void this.readNext(), 0); // after the feed is drawn
+    });
+  }
+
+  private async readNext(): Promise<void> {
+    if (this.reading) return;
+    this.reading = true;
+    try {
+      for (let next = this.waiting.pop(); next; next = this.waiting.pop()) {
+        if (!next.wanted()) {
+          next.fail();
+          continue;
+        }
+        try {
+          next.done(await this.object(next.ownerId, next.name));
+        } catch {
+          next.fail();
+        }
+      }
+    } finally {
+      this.reading = false;
+    }
   }
 }

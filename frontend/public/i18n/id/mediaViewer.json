@@ -8,5 +8,11 @@
   "video": "Video",
   "image": "Gambar",
   "fullSize": "Ukuran penuh",
-  "fitToScreen": "Sesuaikan layar"
+  "fitToScreen": "Sesuaikan layar",
+  "rename": "Ganti nama",
+  "name": "Nama",
+  "save": "Simpan",
+  "cancel": "Batal",
+  "writeAName": "Tulis nama",
+  "couldNotRenameThe": "Tidak bisa mengganti nama berkas"
 }

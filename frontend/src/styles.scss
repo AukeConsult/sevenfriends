@@ -46,6 +46,9 @@
 
   // ---- Basic dimensions (phone defaults) ----
   --sf-max-width: 1000px;
+  --sf-feed-max: 40rem; // the widest the list of messages is (640 px at the base size: easy to read); the message field under it keeps the whole width of the app
+  --sf-picture-max: 200px; // the widest a picture is in the feed (the full picture is on its own page)
+  --sf-video-max: 320px; // the widest a video is in the feed: a quarter of the area it had (the video is played, or opened in full, from there)
   --sf-media-max: 640px; // the widest an image, video or audio in a message gets: a mobile screen (pixels, so it does not grow with the text size on wide screens)
   --sf-gutter: 1rem; // side padding of pages
   --sf-gap: 0.75rem; // space between items
@@ -320,7 +323,7 @@ router-outlet + * { display: block; min-height: 100dvh; }
 .sf-page.sf-page-view { max-width: 50rem; padding-inline: 0.75rem; } // the view of a file: wider, for pictures, documents and sheets
 .sf-page.sf-box-page { padding: 0.5rem 1.5rem calc(4.5rem + env(safe-area-inset-bottom)); gap: 0.375rem; } // the safebox list: room on both sides and at the bottom, clear of the bottom menu // a file view uses the whole width of the screen
 .sf-content { padding-top: 0.75rem; }
-.sf-feed { display: flex; flex-direction: column; gap: 0.5rem; padding-top: 0.75rem; padding-bottom: calc(3.5rem + 4rem + env(safe-area-inset-bottom)); } // + the composer
+.sf-feed { width: 100%; max-width: var(--sf-feed-max); margin-inline: auto; display: flex; flex-direction: column; gap: 0.5rem; padding-top: 0.75rem; padding-bottom: calc(3.5rem + 4rem + env(safe-area-inset-bottom)); } // + the composer
 .sf-landing {
   min-height: 100dvh;
   display: flex;
@@ -725,12 +728,16 @@ router-outlet + * { display: block; min-height: 100dvh; }
   background: var(--sf-bg);
   img { display: block; width: 100%; height: 100%; object-fit: contain; }
 }
+// a picture in the feed is small (at most 200 px wide and 16 rem high): the whole picture is on its own page
+.sf-media-picture { --sf-media-height: 16rem; width: min(calc(var(--sf-media-height) * var(--sf-ratio, 1.5)), var(--sf-picture-max)); cursor: zoom-in; }
 .sf-media-link { display: block; line-height: 0; }
 .sf-attach-preview { display: block; max-width: 100%; max-height: 60dvh; margin: 0 auto; border-radius: var(--sf-radius); object-fit: contain; }
 .sf-camera { position: relative; background: #000; border-radius: var(--sf-radius); overflow: hidden; video { display: block; width: 100%; max-height: 65dvh; object-fit: contain; transform: scaleX(-1); } } // the view is mirrored like a mirror; the photo is not
 app-camera { display: contents; }
 .sf-rec { position: absolute; top: 0.5rem; inset-inline-start: 0.5rem; padding: 0.125rem 0.5rem; border-radius: 1rem; background: rgba(220, 38, 38, 0.9); color: #fff; font-size: var(--sf-fs-description); }
 .sf-media-video {
+  --sf-media-height: 16rem;
+  width: min(calc(var(--sf-media-height) * var(--sf-ratio, 1.5)), var(--sf-video-max), calc((100vw - 2 * var(--sf-gutter)) * 0.94));
   position: relative;
   background: #000;
   img { opacity: 0.9; }
@@ -756,7 +763,7 @@ app-camera { display: contents; }
   background: rgba(0, 0, 0, 0.55);
   color: #fff;
 }
-.sf-media-open { position: absolute; z-index: 1; top: 0.5rem; inset-inline-end: 0.5rem; width: 2rem; height: 2rem; display: grid; place-items: center; border-radius: 50%; background: rgba(0, 0, 0, 0.55); color: #fff; text-decoration: none; font-size: 1.1rem; line-height: 1; }
+.sf-media-open { position: absolute; z-index: 1; top: 0.5rem; inset-inline-end: 0.5rem; width: var(--sf-touch); height: var(--sf-touch); display: grid; place-items: center; border-radius: 50%; background: rgba(0, 0, 0, 0.55); color: #fff; text-decoration: none; font-size: 1.1rem; line-height: 1; }
 .sf-viewer video { display: block; width: 100%; max-height: calc(100dvh - 12rem); background: #000; }
 .sf-media-audio { min-width: min(16rem, 100%); display: flex; align-items: center; gap: 0.5rem; width: 100%; audio { flex: 1; min-width: 0; height: 2.5rem; } }
 .sf-play-small { position: static; margin: 0; width: 2.25rem; height: 2.25rem; flex: none; background: var(--sf-primary); }
@@ -1712,3 +1719,5 @@ button.sf-back { padding: 0; border: 0; background: none; } // a back arrow that
 .sf-pings-scene { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; animation: sf-ping-in 0.6s ease; }
 @keyframes sf-ping-in { from { opacity: 0; transform: translateY(0.25rem); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .sf-pings-scene { animation: none; } }
+
+.sf-bar-text[role=button] { cursor: pointer; } // a title that goes back like the arrow (see PageBar `titleBack`)

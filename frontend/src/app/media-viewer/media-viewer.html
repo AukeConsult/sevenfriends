@@ -1,8 +1,26 @@
 <ng-container *transloco="let t">
-<app-page-bar [title]="file()?.name ?? (t('mediaViewer.imageVideoOrAudio') || 'Image, video or audio')" [backButton]="true" [backLabel]="t('mediaViewer.back') || 'Back'" (backClick)="back()" />
+<app-page-bar [title]="file()?.name ?? (t('mediaViewer.imageVideoOrAudio') || 'Image, video or audio')" [backButton]="true" [titleBack]="true" [backLabel]="t('mediaViewer.back') || 'Back'" (backClick)="back()">
+  @if (friendId && file(); as named) {
+    <button type="button" class="sf-bar-icon" (click)="startRename(named)" [attr.aria-label]="t('mediaViewer.rename') || 'Rename'" [attr.title]="t('mediaViewer.rename') || 'Rename'">✎</button>
+  }
+</app-page-bar>
 
 <main class="sf-viewer">
   @if (file(); as shown) {
+    @if (friendId && renaming()) {
+        <div class="sf-field">
+        <label class="form-label" for="media-name">{{ t('mediaViewer.name') || 'Name' }}</label>
+        <div class="d-flex align-items-center gap-2">
+          <input id="media-name" class="form-control" type="text" maxlength="90" [value]="newName()" (input)="newName.set($any($event.target).value)" (keydown.enter)="saveRename(shown)" />
+          <span class="sf-hint">{{ endingOf(shown) }}</span>
+        </div>
+        @if (renameError(); as problem) { <p class="sf-hint text-danger m-0">{{ problem }}</p> }
+        <div class="d-flex gap-2">
+          <button type="button" class="btn btn-light btn-sm flex-fill" (click)="renaming.set(false)" [disabled]="saving()">{{ t('mediaViewer.cancel') || 'Cancel' }}</button>
+          <button type="button" class="btn btn-primary btn-sm flex-fill" (click)="saveRename(shown)" [disabled]="saving()">{{ t('mediaViewer.save') || 'Save' }}</button>
+        </div>
+      </div>
+    }
     @if (isAudio(shown)) {
       <audio [src]="shown.url" controls autoplay [attr.aria-label]="shown.name ?? (t('mediaViewer.audio') || 'Audio')"></audio>
     } @else if (isVideo(shown)) {

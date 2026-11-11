@@ -8,5 +8,11 @@
   "video": "Video",
   "image": "Bilde",
   "fullSize": "Full størrelse",
-  "fitToScreen": "Tilpass til skjermen"
+  "fitToScreen": "Tilpass til skjermen",
+  "rename": "Endre navn",
+  "name": "Navn",
+  "save": "Lagre",
+  "cancel": "Avbryt",
+  "writeAName": "Skriv et navn",
+  "couldNotRenameThe": "Kunne ikke endre navn på filen"
 }

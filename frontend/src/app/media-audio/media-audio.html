@@ -15,6 +15,6 @@
     </button>
     <span class="sf-audio-info">🎤 {{ failed() ? 'Could not load the audio' : info() }}</span>
   }
-  <a class="sf-audio-open" [routerLink]="['/media', media().ownerId, media().objectId]" (click)="stop($event)" [attr.aria-label]="t('mediaAudio.openTheAudioTo') || 'Open the audio to download it'">⤓</a>
+  <a class="sf-audio-open" [routerLink]="['/media', media().ownerId, media().objectId]" [queryParams]="friendId() ? { f: friendId() } : null" (click)="stop($event)" [attr.aria-label]="t('mediaAudio.openTheAudioTo') || 'Open the audio to download it'">⤓</a>
 </span>
 </ng-container>

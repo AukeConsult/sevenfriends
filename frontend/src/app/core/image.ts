@@ -92,7 +92,7 @@ export function sizeOf(image: Decoded | HTMLVideoElement | HTMLCanvasElement): {
 
 /** The longest side of a picture that is sent, and of its small preview, in pixels. */
 const FULL_SIDE = 2048;
-const THUMB_SIDE = 720;
+const THUMB_SIDE = 480;
 /** A picture that is sent is squeezed (lower JPEG quality) until it is no bigger than this, as long as the quality stays good enough. */
 const TARGET_BYTES = 800 * 1024;
 const BEST_QUALITY = 0.85;
@@ -111,7 +111,7 @@ export interface PreparedImage {
 
 /**
  * Makes a chosen image ready to send, in the browser: it is scaled down to 2048 pixels and saved as a good quality JPEG of about 800 KB at most (a picture for a conversation or the safebox, not an
- * archive: the small print of a ticket stays readable; the position and other details stored in the photo are left behind), with a 720 pixel preview made from the big picture.
+ * archive: the small print of a ticket stays readable; the position and other details stored in the photo are left behind), with a 480 pixel preview made from the big picture.
  * A GIF is sent as it is, so it keeps moving.
  */
 export async function prepareImage(file: File): Promise<PreparedImage> {

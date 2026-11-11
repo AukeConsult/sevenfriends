@@ -145,6 +145,11 @@ export async function putObject(owner: string, name: string, data: Buffer, kind:
 /** A file name from the app, made safe to store and to send back in a header: no folders, no control characters, at most 100 characters. */
 export const cleanFileName = (v: unknown): string | null => (typeof v === "string" ? v.replace(/[\\/\u0000-\u001f]/g, "").trim().slice(0, 100) || null : null);
 
+/** Gives a stored file a new name (the name it is saved under on a device); the bytes stay. */
+export async function renameObject(owner: string, name: string, fileName: string): Promise<void> {
+  await bucket().file(path(owner, name)).setMetadata({ metadata: { fileName } });
+}
+
 export interface ObjectInfo {
   bytes: number;
   mime: string;

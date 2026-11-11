@@ -8,5 +8,11 @@
   "video": "Video",
   "image": "Image",
   "fullSize": "Full size",
-  "fitToScreen": "Fit to screen"
+  "fitToScreen": "Fit to screen",
+  "rename": "Rename",
+  "name": "Name",
+  "save": "Save",
+  "cancel": "Cancel",
+  "writeAName": "Write a name",
+  "couldNotRenameThe": "Could not rename the file"
 }

@@ -18,7 +18,7 @@ import { tr } from '../core/i18n';
       } @else if (backButton()) {
         <button type="button" class="sf-back" (click)="backClick.emit($event)" [attr.aria-label]="label()">‹</button>
       }
-      <div class="sf-bar-text">
+      <div class="sf-bar-text" [attr.role]="titleBack() ? 'button' : null" [attr.tabindex]="titleBack() ? 0 : null" (click)="titleBack() && backClick.emit($event)" (keydown.enter)="titleBack() && backClick.emit($event)">
         <h1 class="sf-bar-title sf-bar-heading"><ng-content select="[barIcon]" /><span class="sf-ellipsis">{{ title() }}</span></h1>
         @if (subtitle()) { <span class="sf-hint sf-ellipsis">{{ subtitle() }}</span> }
       </div>
@@ -32,6 +32,8 @@ export class PageBar {
   readonly subtitle = input<string | null>(null);
   /** the back arrow is a link to this address */
   readonly backTo = input<string | unknown[] | null>(null);
+  /** the title goes back too, like the arrow (a page that only shows one thing, like a picture: a tap on its name leaves it); needs `backButton` */
+  readonly titleBack = input(false);
   /** the back arrow is a button (it closes something on the same page, or does its own going back): see `backClick` */
   readonly backButton = input(false);
   /** a bar under another header (a friend's page): not sticky, no tint */

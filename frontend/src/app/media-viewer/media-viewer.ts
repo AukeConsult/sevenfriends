@@ -26,9 +26,23 @@ export class MediaViewer {
   protected readonly full = signal(false);
   protected readonly formatBytes = formatBytes;
 
+  private readonly media = inject(MediaService);
+  private readonly ownerId: string;
+  private readonly objectId: string;
+  /** the friendship the message belongs to (from the link in the conversation); without it the name cannot be changed here */
+  protected readonly friendId: string | null;
+  protected readonly renaming = signal(false);
+  protected readonly newName = signal('');
+  protected readonly saving = signal(false);
+  protected readonly renameError = signal<string | null>(null);
+
   constructor() {
-    const params = inject(ActivatedRoute).snapshot.paramMap;
-    inject(MediaService)
+    const route = inject(ActivatedRoute).snapshot;
+    const params = route.paramMap;
+    this.ownerId = params.get('ownerId') ?? '';
+    this.objectId = params.get('objectId') ?? '';
+    this.friendId = route.queryParamMap.get('f');
+    this.media
       .object(params.get('ownerId') ?? '', params.get('objectId') ?? '')
       .then((file) => this.file.set(file))
       .catch((err) => this.error.set(err.message ?? tr('mediaViewer.couldNotLoadThe', 'Could not load the file')));
@@ -40,6 +54,47 @@ export class MediaViewer {
 
   protected isVideo(file: StoredFile): boolean {
     return file.type.startsWith('video/');
+  }
+
+  /** the ending of the file name (".jpg"): from the name, or else from the type; it is never changed by a rename */
+  protected endingOf(file: StoredFile): string {
+    const name = file.name ?? '';
+    const own = /\.[A-Za-z0-9]{1,8}$/.exec(name)?.[0];
+    if (own) return own;
+    const extension = file.type.split('/')[1]?.split(';')[0].replace('jpeg', 'jpg').replace('quicktime', 'mov');
+    return extension ? `.${extension}` : '';
+  }
+
+  protected baseOf(file: StoredFile): string {
+    const name = file.name ?? '';
+    const ending = /\.[A-Za-z0-9]{1,8}$/.exec(name)?.[0] ?? '';
+    return name.slice(0, name.length - ending.length);
+  }
+
+  protected startRename(file: StoredFile): void {
+    this.newName.set(this.baseOf(file));
+    this.renameError.set(null);
+    this.renaming.set(true);
+  }
+
+  protected async saveRename(file: StoredFile): Promise<void> {
+    const base = this.newName().replace(/[\\/]/g, '').trim();
+    if (!base || !this.friendId) {
+      this.renameError.set(tr('mediaViewer.writeAName', 'Write a name'));
+      return;
+    }
+    this.saving.set(true);
+    this.renameError.set(null);
+    try {
+      const name = base.slice(0, 100 - this.endingOf(file).length) + this.endingOf(file);
+      await this.media.rename(this.friendId, this.objectId, this.ownerId, this.objectId, name);
+      this.file.set({ ...file, name });
+      this.renaming.set(false);
+    } catch (err) {
+      this.renameError.set((err as Error).message || tr('mediaViewer.couldNotRenameThe', 'Could not rename the file'));
+    } finally {
+      this.saving.set(false);
+    }
   }
 
   /** The name to save under: the file name of the message, with an extension if it has none. */

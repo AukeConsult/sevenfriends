@@ -8,5 +8,11 @@
   "video": "動画",
   "image": "画像",
   "fullSize": "原寸大",
-  "fitToScreen": "画面に合わせる"
+  "fitToScreen": "画面に合わせる",
+  "rename": "名前を変更",
+  "name": "名前",
+  "save": "保存",
+  "cancel": "キャンセル",
+  "writeAName": "名前を入力してください",
+  "couldNotRenameThe": "ファイル名を変更できませんでした"
 }

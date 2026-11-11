@@ -16,6 +16,8 @@ export class MediaAudio {
   private readonly service = inject(MediaService);
 
   readonly media = input.required<MediaRef>();
+  /** the friendship of the message: the full-size page needs it to rename the file */
+  readonly friendId = input<string | null>(null);
   protected readonly src = signal<string | null>(null);
   protected readonly loading = signal(false);
   protected readonly failed = signal(false);

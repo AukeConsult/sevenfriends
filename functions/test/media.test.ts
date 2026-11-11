@@ -97,7 +97,7 @@ describe("the preview of an image or video", () => {
     await u(1).file("put", `/sf-cache/${image.objectId}/thumb`, jpeg(500)).expect(404);
     await u(0).file("put", "/sf-cache/doesnotexist1234/thumb", jpeg(500)).expect(404);
     await u(0).file("put", `/sf-cache/${image.objectId}/thumb`, mp4(500)).expect(415);
-    await u(0).file("put", `/sf-cache/${image.objectId}/thumb`, jpeg(200 * 1024)).expect(413);
+    await u(0).file("put", `/sf-cache/${image.objectId}/thumb`, jpeg(300 * 1024)).expect(413);
   });
 });
 
@@ -165,6 +165,41 @@ describe("sending a file in a message", () => {
     expect((await u(0).raw("put", url, { text: "" }).expect(200)).body.text).toBe("");
     const plain = (await u(0).send(id, "plain").expect(201)).body.id;
     await u(0).raw("put", `/circles/default/friends/${id}/messages/${plain}`, { text: "" }).expect(400);
+  });
+});
+
+describe("renaming the file of a message", () => {
+  const sent = async () => {
+    const id = await connect(u(0), u(1));
+    const file = await uploaded(u(0), "image", png(), "me.png");
+    await sendMedia(u(0), id, { objectId: file.objectId }).expect(201);
+    return { id, file };
+  };
+  const rename = (user: User, id: string, messageId: string, body: object) => user.raw("put", `/circles/default/friends/${id}/messages/${messageId}/media-name`, body);
+
+  it("either friend can rename it: both copies and the stored file get the new name, and the message is not marked as edited", async () => {
+    const { id, file } = await sent();
+    await rename(u(1), id, file.objectId, { name: "holiday.png" }).expect(200);
+    for (const user of [u(0), u(1)]) {
+      const message = (await feedOf(user, id))[0];
+      expect(message.media.name).toBe("holiday.png");
+      expect(message.edited).toBe(false);
+    }
+    const res = await u(1).getObject("uid00", file.objectId).expect(200);
+    expect(res.headers["content-disposition"]).toBe("inline; filename*=UTF-8''holiday.png");
+  });
+
+  it("the type of the file cannot change, and a name is needed", async () => {
+    const { id, file } = await sent();
+    await rename(u(0), id, file.objectId, { name: "holiday.jpg" }).expect(400);
+    await rename(u(0), id, file.objectId, { name: "   " }).expect(400);
+    expect(((await feedOf(u(0), id))[0]).media.name).toBe("me.png");
+  });
+
+  it("a stranger and a missing message get 404", async () => {
+    const { id, file } = await sent();
+    await rename(u(2), id, file.objectId, { name: "x.png" }).expect(404);
+    await rename(u(0), id, "nothere", { name: "x.png" }).expect(404);
   });
 });
 

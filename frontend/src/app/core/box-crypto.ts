@@ -301,6 +301,17 @@ export async function resealText(connectionId: string, enc: MessageEnc, text: st
   return { text: toBase64(sealed.data), iv: toBase64(sealed.iv) };
 }
 
+/**
+ * The meta of a locked file (its name, type and size) locked again with a new name, with the key the message already has (opened with the key of
+ * this device) and a new iv: a rename of a locked file. Nobody else is let in and the file itself is not touched.
+ */
+export async function resealMediaName(connectionId: string, enc: MessageEnc, media: MessageEncMedia, name: string, myKeyId: string, privateKey: CryptoKey): Promise<{ meta: string; metaIv: string }> {
+  const key = await openFileKey(enc, myKeyId, privateKey, 'message');
+  const meta = await openMessageMeta(connectionId, media, key);
+  const sealed = await lock(key, connectionId, 'meta', encoder.encode(JSON.stringify({ ...meta, name })));
+  return { meta: toBase64(sealed.data), metaIv: toBase64(sealed.iv) };
+}
+
 /** The text of a locked message, opened with the private key of this device; throws when no copy was locked for this key or the text was changed. */
 export async function openText(connectionId: string, enc: MessageEnc, text: string, myKeyId: string, privateKey: CryptoKey): Promise<string> {
   return openTextWith(connectionId, enc, text, await openFileKey(enc, myKeyId, privateKey, 'message'));
