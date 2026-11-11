@@ -22,5 +22,7 @@
   "useASleepList": "Use a sleep list",
   "offAOneYou": "Off: a {{ one }} you remove is deleted, and the sleep list row is hidden while it is empty.",
   "readyMadeMessageIndex": "Ready-made message {{ index }}",
-  "removeMessageIndex": "Remove message {{ index }}"
+  "removeMessageIndex": "Remove message {{ index }}",
+  "tellWhenIAdd": "Tell them when I add something to the safebox",
+  "aMessageTellsYour": "A message tells your friend or group that a note, item or file is there, with a link to open it. Off: nothing is sent; the bell in an item can still tell them."
 }

@@ -23,8 +23,6 @@
   "noApp": "Uygulama yok: tarayıcıda devam et",
   "notifyTitle": "Bildirimler",
   "notifyText": "Kullandığın cihaz türü için Ayarlar → Bildirimler'deki aynı seçimler. Mesaj kaçırmamak için aç.",
-  "keyTitle": "Dosyalarını bir anahtarla kilitle",
-  "keyText": "Anahtar, kasandaki dosyaları bizden bile gizli tutar. Şimdi oluştur ve gösterilen 24 kelimeyi not et.",
   "yourMany": "Çevren: {{ many }}",
   "allSet": "Her şey hazır",
   "haveMany": "Zaten çevren hazır: {{ many }}. Her şey tamam.",

@@ -57,6 +57,7 @@ export class Safebox {
   private readonly router = inject(Router);
   protected readonly prefs = inject(UiPreferencesService);
 
+  protected readonly unsaved = this.service.unsaved;
   protected readonly friendId = inject(ActivatedRoute).snapshot.paramMap.get('id') ?? '';
   protected readonly friendName = computed(() => this.friends.friends().find((f) => f.id === this.friendId)?.name ?? 'your friend');
   protected readonly box = signal<SafeboxData | null>(null);

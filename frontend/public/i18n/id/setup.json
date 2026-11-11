@@ -23,8 +23,6 @@
   "noApp": "Tanpa aplikasi: lanjut di browser",
   "notifyTitle": "Notifikasi",
   "notifyText": "Pilihan yang sama seperti di Pengaturan → Notifikasi, untuk jenis perangkat yang kamu pakai. Aktifkan supaya tidak ketinggalan pesan.",
-  "keyTitle": "Kunci file-mu dengan sebuah kunci",
-  "keyText": "Kunci ini menjaga file di safeboxmu tetap pribadi, bahkan dari kami. Buat sekarang, dan catat 24 kata yang ditampilkan.",
   "yourMany": "{{ many }}mu",
   "allSet": "Semua sudah siap",
   "haveMany": "Kamu sudah punya {{ many }}. Semuanya siap.",

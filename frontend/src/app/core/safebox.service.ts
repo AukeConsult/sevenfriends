@@ -1,6 +1,6 @@
 import { ActiveCircleService } from './active-circle.service';
-import { Injectable, inject } from '@angular/core';
-import { BoxKeys, GroupShareItem, NotePayload, ObjectPayload, ReminderRequest, SafeboxType, Safebox, SafeboxItem, fingerprintOf, keyIdOf, recipientsOf } from '../models';
+import { Injectable, inject, signal } from '@angular/core';
+import { BoxKeys, GroupShareItem, NotePayload, ObjectPayload, PersonKeyLists, ReminderRequest, SafeboxType, Safebox, SafeboxItem, fingerprintOf, keyIdOf, recipientsOf } from '../models';
 import { ApiService } from './api.service';
 import { AuthService } from './auth.service';
 import { dueRange, isObjectType, summaryOf, whenOf } from './safebox-objects';
@@ -26,6 +26,8 @@ export class SafeboxService {
   private readonly friends = inject(FriendsService);
   private readonly auth = inject(AuthService);
   /** the items as the server sent them (an encrypted one still has its `enc`), and the opened file keys of the encrypted ones */
+  /** An item that was NOT saved (the page was left, or the save failed): shown on the list so the person knows. Cleared when the person closes it or an item is saved. */
+  readonly unsaved = signal<{ title: string; reason: string } | null>(null);
   private readonly raw = new Map<string, SafeboxItem>();
   private readonly fileKeys = new Map<string, Promise<CryptoKey>>();
   /** the previews that were read (a file never changes under its id): kept while the app is open */
@@ -53,6 +55,11 @@ export class SafeboxService {
 
   private base(friendId: string): string {
     return `/circles/${this.friends.circle()?.id ?? this.active.id}/friends/${friendId}/safebox`;
+  }
+
+  /** The signed device lists of the other people of this friend or group (checked and pinned by `FriendListsService`). */
+  keyLists(friendId: string): Promise<{ people: PersonKeyLists[] }> {
+    return this.api.request<{ people: PersonKeyLists[] }>(`${this.base(friendId)}/key-lists`);
   }
 
   /** The keys in use of me and of this friend: files can be locked only when both of us have one. */

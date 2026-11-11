@@ -23,8 +23,6 @@
   "noApp": "Keine App: im Browser weitermachen",
   "notifyTitle": "Benachrichtigungen",
   "notifyText": "Dieselben Einstellungen wie unter Einstellungen → Benachrichtigungen, passend zu deiner Art von Gerät. Schalte sie ein, damit du keine Nachricht verpasst.",
-  "keyTitle": "Dateien mit einem Schlüssel sperren",
-  "keyText": "Der Schlüssel hält die Dateien in deinem Tresor privat, sogar vor uns. Erstell ihn jetzt und schreib die 24 Wörter auf, die dir gezeigt werden.",
   "yourMany": "Deine {{ many }}",
   "allSet": "Alles bereit",
   "haveMany": "Du hast schon {{ many }}. Alles ist bereit.",

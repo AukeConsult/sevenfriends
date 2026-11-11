@@ -1,4 +1,6 @@
 import { circleLink } from './friend-link.service';
+import { FriendListsService } from './friend-lists.service';
+import { pinFragment } from './list-pin';
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { ActiveCircleService } from './active-circle.service';
 import { ApiService } from './api.service';
@@ -12,9 +14,12 @@ import { tr } from './i18n';
 export class InviteLinkService {
   private readonly api = inject(ApiService);
   private readonly active = inject(ActiveCircleService);
+  private readonly lists = inject(FriendListsService);
+  /** `#u=...&v=...&h=...`: my uid and the newest version of my device list, so whoever follows the link pins it (a browser never sends the part after # to a server); '' = I have no list */
+  private readonly fragment = signal('');
   private readonly code = signal<string | null>(null);
   /** the link to give away; null until the code is loaded */
-  readonly link = computed(() => (this.code() ? circleLink(this.active.type, `invite=${this.code()}`) : null));
+  readonly link = computed(() => (this.code() ? circleLink(this.active.type, `invite=${this.code()}`) + this.fragment() : null));
   /** the general link: only opens the start page of the app (no friend request, nothing personal) */
   readonly appLink = computed(() => circleLink(this.active.type, ''));
   /** why the link could not be loaded (null = no problem); shown instead of the link, with a way to try again */
@@ -24,6 +29,7 @@ export class InviteLinkService {
 
   /** Loads my code (once; later calls do nothing). */
   async load(): Promise<void> {
+    void this.lists.myHead().then((head) => this.fragment.set(head ? pinFragment(head.uid, head.version, head.hash) : ''));
     if (this.code()) return;
     this.problem.set(null);
     try {

@@ -4,10 +4,10 @@ import { DocumentReference, FieldValue, Timestamp, getFirestore } from "firebase
 import { asyncHandler } from "./auth";
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAX_UPLOAD_BYTES, SAFEBOX_MAX_BYTES, SAFEBOX_MAX_ITEMS, SAFEBOX_REMINDERS, boxOwner } from "./constants";
 import { Peer, connectionOf, peerEntryRef, peerSleeps } from "./conversation";
-import { ALBUM_PICTURES_MAX, ATTACHMENTS_MAX, CASE_DOCUMENTS_MAX, BoxKeys, ENC_HEADER_MAX, GroupShareItem, MediaRef, SAFEBOX_OBJECT_TYPES, Safebox, SafeboxItem } from "./models";
+import { ALBUM_PICTURES_MAX, ATTACHMENTS_MAX, CASE_DOCUMENTS_MAX, BoxKeys, DeviceList, PersonKeyLists, ENC_HEADER_MAX, GroupShareItem, MediaRef, SAFEBOX_OBJECT_TYPES, Safebox, SafeboxItem } from "./models";
 import { MAX_WRAPS, ParsedReminder, lockedBytes, objectBytes, parseEncryptedUpload, parseNewObject, parseObjectChange, wrapValid, wrapsCover, wrapsFor } from "./box-encryption";
 import { publishedKeysOf } from "./keys";
-import { circleCol, messageCol, safeboxItems, userFields } from "./paths";
+import { circleCol, keyListCol, messageCol, safeboxItems, userFields } from "./paths";
 import { nameOf, sendPush } from "./push";
 import { touchFeed, touchFeedIfExists } from "./sync";
 import { checkBytes, checkSafeboxFile, cleanFileName, deleteFolder, deleteObject, isObjectId, objectInfo, putObject, readAll, readObject } from "./sf-cache";
@@ -128,6 +128,30 @@ safeboxRouter.put(
     const rest = docs.filter((d) => !named.includes(d.id)).sort((a, b) => ((a.data().order as number | undefined) ?? Infinity) - ((b.data().order as number | undefined) ?? Infinity)).map((d) => d.id);
     await writeOrder(connection.id, [...named, ...rest]);
     res.status(204).end();
+  }),
+);
+
+/**
+ * The signed device lists (every version, oldest first) of every OTHER person of this connection (a CONFIRMED friendship or group only):
+ * the app pins them and checks the chain and the signatures of messages and items against them (docs/design/default-key.md).
+ * The server only hands them over; a list it changed or made up fails the check on the device.
+ */
+safeboxRouter.get(
+  "/key-lists",
+  asyncHandler(async (req, res) => {
+    const connection = await connectionOf(req, res);
+    if (!connection) return;
+    const people: PersonKeyLists[] = await Promise.all(
+      connection.peers.map(async (peer) => {
+        const snap = await keyListCol(peer.uid).get();
+        const lists = snap.docs.map((d) => {
+          const { version, devices, prev, signedBy, signature, since } = d.data() as DeviceList;
+          return { version, devices, prev, signedBy, signature, ...(since ? { since } : {}) } satisfies DeviceList;
+        });
+        return { uid: peer.uid, lists: lists.sort((a, b) => a.version - b.version) };
+      }),
+    );
+    res.json({ people });
   }),
 );
 
@@ -557,6 +581,46 @@ safeboxRouter.put(
     }
     await setReminder(connection, item.id, uidOf(res), change.remind);
     res.json(toItem(item.id, saved, uidOf(res)));
+  }),
+);
+
+/**
+ * Lock an OBJECT anew (design: docs/design/default-key.md, step 5b): `PUT .../safebox/items/:id/reencrypt` `{ revision, enc }` with a fresh content key and the copies
+ * for every key in use of every member (`wrapsCover`). The revision goes up, so a change started with the old key is refused (409) and cannot be saved under the new one.
+ */
+safeboxRouter.put(
+  "/items/:itemId/reencrypt",
+  asyncHandler(async (req, res) => {
+    const connection = await connectionOf(req, res);
+    if (!connection) return;
+    const item = await itemOf(req, res, connection.id);
+    if (!item) return;
+    if (!isObject(item.data) || !item.data.enc || !Number.isInteger(req.body?.revision)) {
+      res.status(400).json({ error: "That item cannot be locked again" });
+      return;
+    }
+    const parsed = parseNewObject({ type: item.data.type, enc: req.body.enc });
+    if ("error" in parsed) {
+      res.status(parsed.status).json({ error: parsed.error });
+      return;
+    }
+    if (!wrapsCover(parsed.enc, await peopleOf(connection, uidOf(res)))) {
+      res.status(409).json({ error: "The encryption keys changed. Try again." });
+      return;
+    }
+    const bytes = objectBytes({ meta: parsed.enc.meta, body: parsed.enc.body });
+    let ok = false;
+    await getFirestore().runTransaction(async (tx) => {
+      const data = (await tx.get(item.ref)).data();
+      if (!data || ((data.revision as number | undefined) ?? 1) !== req.body.revision) return;
+      tx.update(item.ref, { enc: parsed.enc, bytes, revision: req.body.revision + 1 });
+      ok = true;
+    });
+    if (!ok) {
+      res.status(409).json({ error: "This item changed. Try again." });
+      return;
+    }
+    res.status(204).end();
   }),
 );
 

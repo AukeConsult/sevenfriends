@@ -116,6 +116,7 @@
     </div>
   }
 </header>
+<app-lock-chain-band [friendId]="ctx.friendId" [name]="ctx.friendName()" />
 <app-key-changed-band [friendId]="ctx.friendId" [name]="ctx.friendName()" [fingerprints]="ctx.friendFingerprints()" />
 @if (ctx.lockedMessages() + ctx.lockedFiles() > 0) { <app-locked-band [friendId]="ctx.friendId" [name]="ctx.friendName()" [messages]="ctx.lockedMessages()" [files]="ctx.lockedFiles()" /> }
 

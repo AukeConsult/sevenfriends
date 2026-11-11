@@ -5,6 +5,7 @@ import { Component, DestroyRef, computed, effect, inject, signal, viewChild } fr
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ApiError } from '../../core/api.service';
 import { FriendsService } from '../../core/friends.service';
+import { SafeboxAnnounceService } from '../../core/safebox-announce.service';
 import { tr } from '../../core/i18n';
 import { SafeboxLinks } from '../safebox-links/safebox-links';
 import { SafeboxAttachments } from '../safebox-attachments/safebox-attachments';
@@ -31,12 +32,19 @@ export class SafeboxNote {
   private readonly location = inject(Location);
   private readonly ctx = inject(FriendContext);
   private readonly prefs = inject(UiPreferencesService);
+  private readonly announce = inject(SafeboxAnnounceService);
   private readonly friends = inject(FriendsService);
 
   private readonly route = inject(ActivatedRoute);
   protected readonly friendId = this.route.snapshot.paramMap.get('id') ?? '';
-  protected readonly itemId = inject(ActivatedRoute).snapshot.paramMap.get('itemId');
-  protected readonly isNew = this.itemId === null;
+  /** the id of the note; a new note gets it when it is first saved, and the page stays as it is (no reload) */
+  private readonly id = signal<string | null>(inject(ActivatedRoute).snapshot.paramMap.get('itemId'));
+  protected get itemId(): string | null {
+    return this.id();
+  }
+  protected get isNew(): boolean {
+    return this.id() === null;
+  }
   protected readonly titleMax = NOTE_TITLE_MAX;
   protected readonly textMax = NOTE_TEXT_MAX;
   protected readonly friendName = computed(() => this.friends.friends().find((f) => f.id === this.friendId)?.name ?? tr('safebox.common.yourFriend', 'your friend'));
@@ -72,7 +80,7 @@ export class SafeboxNote {
       this.title();
       this.text();
       this.busy();
-      if (this.isNew || this.loading() || this.conflict() || !this.changed()) return;
+      if (this.loading() || this.conflict() || (this.isNew ? !this.canSave() : !this.changed())) return; // a new note is made by itself too, once there is something to keep
       const timer = setTimeout(() => void this.save(), 800);
       onCleanup(() => clearTimeout(timer));
     });
@@ -109,11 +117,13 @@ export class SafeboxNote {
     this.busy.set(true);
     this.error.set(null);
     const title = this.title().trim() || firstWords(this.text()) || tr('safebox.common.note', 'Note');
+    const sent = { title: this.title(), text: this.text() }; // what goes now: a change made while it goes is saved by the next round
     try {
       if (this.isNew) {
-        const keys = this.ctx.boxKeys();
-        if (!keys) throw new Error(tr('safebox.common.keysNotKnown', 'The keys are not known yet. Try again in a moment.'));
+        const keys = await this.ctx.freshKeys(); // what the server lists now (a friend may have made a new key since the page opened)
         const created = await this.service.addNote(this.friendId, title, this.text(), keys);
+        this.service.unsaved.set(null);
+        void this.announce.added(this.friendId, tr('safebox.common.note', 'Note'), title, ['/friends', this.friendId, 'safebox', 'note', created.id]); // tells the friend or group (when the person wants that)
         if (leaving) {
           if (this.linkFrom) await this.service.addLink(this.friendId, this.linkFrom, created.id, keys).catch(() => undefined);
           return; // the person is leaving: nothing to open
@@ -122,15 +132,23 @@ export class SafeboxNote {
         const from = this.linkFrom; // made from "Add a new item and link it"
         this.linkFrom = null;
         if (from) await this.service.addLink(this.friendId, from, created.id, keys).catch(() => undefined);
-        await this.router.navigate(['/friends', this.friendId, 'safebox', 'note', created.id], { replaceUrl: true, state: from ? { backTo: from } : undefined }); // the page of the note opens, and goes on saving by itself
+        // the same page goes on as the note that exists: the address changes, nothing is loaded again
+        this.id.set(created.id);
+        this.revision.set(created.revision);
+        this.saved.set(sent);
+        this.location.replaceState(`/friends/${this.friendId}/safebox/note/${created.id}`, '', { ...history.state, ...(from ? { backTo: from } : {}) });
         return;
       }
       const updated = await this.service.updateNote(this.friendId, this.itemId!, title, this.text(), this.revision());
       this.revision.set(updated.revision);
-      this.saved.set({ title: this.title(), text: this.text() });
+      this.saved.set(sent);
     } catch (err: any) {
       if (err instanceof ApiError && err.status === 409 && !this.isNew) this.conflict.set(true);
-      else this.error.set(err?.message || tr('safebox.note.couldNotSaveThe', 'Could not save the note'));
+      else {
+        const reason = err?.message || tr('safebox.note.couldNotSaveThe', 'Could not save the note');
+        this.error.set(reason);
+        this.service.unsaved.set({ title, reason }); // also shown on the list, in case the page is already left
+      }
     } finally {
       this.busy.set(false);
     }

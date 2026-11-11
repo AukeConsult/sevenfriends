@@ -8,6 +8,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ApiError } from '../../core/api.service';
 import { ChatService } from '../../core/chat.service';
 import { FriendsService } from '../../core/friends.service';
+import { SafeboxAnnounceService } from '../../core/safebox-announce.service';
 import { tr, translationsLoaded } from '../../core/i18n';
 import { SafeboxLinks } from '../safebox-links/safebox-links';
 import { SafeboxAttachments } from '../safebox-attachments/safebox-attachments';
@@ -50,14 +51,21 @@ export class SafeboxObject {
   private readonly location = inject(Location);
   private readonly ctx = inject(FriendContext);
   private readonly prefs = inject(UiPreferencesService);
+  private readonly announce = inject(SafeboxAnnounceService);
   private readonly friends = inject(FriendsService);
   private readonly chat = inject(ChatService);
   private readonly sanitizer = inject(DomSanitizer);
   private readonly route = inject(ActivatedRoute);
 
   protected readonly friendId = this.route.snapshot.paramMap.get('id') ?? '';
-  protected readonly itemId = this.route.snapshot.paramMap.get('itemId');
-  protected readonly isNew = this.itemId === null;
+  /** the id of the item; a new item gets it when it is first saved, and the page stays as it is (no reload) */
+  private readonly id = signal<string | null>(this.route.snapshot.paramMap.get('itemId'));
+  protected get itemId(): string | null {
+    return this.id();
+  }
+  protected get isNew(): boolean {
+    return this.id() === null;
+  }
   protected readonly titleMax = OBJECT_TITLE_MAX;
   protected readonly entryMax = CHECKLIST_TEXT_MAX;
   protected readonly friendName = computed(() => this.friends.friends().find((f) => f.id === this.friendId)?.name ?? tr('safebox.common.yourFriend', 'your friend'));
@@ -335,7 +343,7 @@ export class SafeboxObject {
     effect((onCleanup) => {
       this.snapshot();
       this.busy();
-      if (this.isNew || this.loading() || this.conflict() || !this.changed()) return;
+      if (this.loading() || this.conflict() || (this.isNew ? !this.canSave() : !this.changed())) return; // a new item is made by itself too, once the needed fields are filled
       const timer = setTimeout(() => void this.save(), 800);
       onCleanup(() => clearTimeout(timer));
     });
@@ -444,22 +452,32 @@ export class SafeboxObject {
     const snapshot = this.snapshot(); // what is saved now: a change made while it goes is saved by the next round
     try {
       if (this.isNew) {
-        const keys = this.ctx.boxKeys();
-        if (!keys) throw new Error(tr('safebox.common.keysNotKnown', 'The keys are not known yet. Try again in a moment.'));
+        const keys = await this.ctx.freshKeys(); // what the server lists now (a friend may have made a new key since the page opened)
         const created = await this.service.addObject(this.friendId, kind.type, payload, keys, remind);
+        this.service.unsaved.set(null);
+        void this.announce.added(this.friendId, kind.label, payload.title, ['/friends', this.friendId, 'safebox', 'object', created.id]); // tells the friend or group (when the person wants that)
         if (leaving) { this.linkNew(created.id, keys).catch(() => undefined); return; } // the person is leaving: nothing to open
         // the files chosen before it was saved go to the new object now; the page of the object opens, and goes on saving by itself
         await this.attachments()?.uploadPending(created.id);
         const from = await this.linkNew(created.id, keys);
-        await this.router.navigate(['/friends', this.friendId, 'safebox', 'object', created.id], { replaceUrl: true, state: from ? { backTo: from } : undefined });
+        // the same page goes on as the item that exists: the address changes, nothing is loaded again
+        this.id.set(created.id);
+        this.revision.set(created.revision);
+        this.saved.set(snapshot);
+        this.location.replaceState(`/friends/${this.friendId}/safebox/object/${created.id}`, '', { ...history.state, ...(from ? { backTo: from } : {}) });
         return;
       }
       const updated = await this.service.updateObject(this.friendId, this.itemId!, payload, this.revision(), remind);
       this.revision.set(updated.revision);
       this.saved.set(snapshot);
+      this.service.unsaved.set(null);
     } catch (err: any) {
       if (err instanceof ApiError && err.status === 409 && !this.isNew) this.conflict.set(true);
-      else this.error.set(err?.message || tr('safebox.object.couldNotSaveIt', 'Could not save it'));
+      else {
+        const reason = err?.message || tr('safebox.object.couldNotSaveIt', 'Could not save it');
+        this.error.set(reason);
+        this.service.unsaved.set({ title: payload.title, reason }); // also shown on the list, in case the page is already left
+      }
     } finally {
       this.busy.set(false);
     }

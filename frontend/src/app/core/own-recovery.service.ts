@@ -3,6 +3,7 @@ import { OwnRecoveryRequest, PublishedKey, RecoveryTodoItem, SafeboxWrap } from 
 import { ApiService } from './api.service';
 import { AuthService } from './auth.service';
 import { rewrapKey } from './box-crypto';
+import { DeviceListService } from './device-list.service';
 import { myDeviceKey } from './my-key';
 import { tr } from './i18n';
 
@@ -14,6 +15,7 @@ import { tr } from './i18n';
 export class OwnRecoveryService {
   private readonly api = inject(ApiService);
   private readonly auth = inject(AuthService);
+  private readonly deviceList = inject(DeviceListService);
 
   /** the keys waiting to be allowed by this device (empty when this device's key cannot help, or nothing waits) */
   readonly waiting = signal<PublishedKey[]>([]);
@@ -73,6 +75,7 @@ export class OwnRecoveryService {
   async notMe(target: PublishedKey): Promise<void> {
     const mine = await myDeviceKey(this.auth.user()?.uid);
     if (!mine) throw new Error(tr('core.thisDeviceHasNo', 'This device has no key.'));
+    await this.deviceList.publishNext({ removeId: target.id }); // in case it was in the list
     await this.api.request<unknown>('/own-recovery/decline', { method: 'POST', body: JSON.stringify({ key: target.id, me: mine.keyId }) });
     await this.check();
   }
@@ -91,9 +94,11 @@ export class OwnRecoveryService {
   }
 
   /** Gives `target` its copies of every message and file key of mine (100 at a time). Returns how many were done and how many this device could not open. */
-  async allow(target: PublishedKey, progress: (done: number) => void): Promise<{ done: number; skipped: number }> {
-    const mine = await myDeviceKey(this.auth.user()?.uid);
+  async allow(target: PublishedKey, progress: (done: number) => void, as?: { uid: string; keyId: string; privateKey: CryptoKey }): Promise<{ done: number; skipped: number }> {
+    // `as`: a rotation on this device hands over from the OLD key, which is still in memory while the new one is not yet the key of this device (it also makes the list itself)
+    const mine = as ?? (await myDeviceKey(this.auth.user()?.uid));
     if (!mine) throw new Error(tr('core.thisDeviceHasNo', 'This device has no key.'));
+    if (!as) await this.deviceList.publishNext({ add: target }); // the person allowed it: it joins the signed list, so friends lock new messages for it too (quiet when this device can not sign)
     await this.api.request<unknown>('/own-recovery/start', { method: 'POST', body: JSON.stringify({ key: target.id, me: mine.keyId }) }); // the asking device sees that the work has begun
     const result = { done: 0, skipped: 0 };
     for (const part of ['messages', 'box'] as const) {

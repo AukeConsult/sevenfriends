@@ -4,6 +4,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { SafeboxCapture } from '../safebox-capture/safebox-capture';
 import { FriendsService } from '../../core/friends.service';
+import { SafeboxAnnounceService } from '../../core/safebox-announce.service';
 import { tr } from '../../core/i18n';
 import { formatBytes, prepareImage } from '../../core/image';
 import { SafeboxService } from '../../core/safebox.service';
@@ -30,6 +31,7 @@ export class SafeboxUpload {
   private readonly ctx = inject(FriendContext);
   private readonly friends = inject(FriendsService);
   private readonly prefs = inject(UiPreferencesService);
+  private readonly announce = inject(SafeboxAnnounceService);
 
   protected readonly friendId = inject(ActivatedRoute).snapshot.paramMap.get('id') ?? '';
   protected readonly friendName = computed(() => this.friends.friends().find((f) => f.id === this.friendId)?.name ?? tr('safebox.common.yourFriend', 'your friend'));
@@ -101,6 +103,7 @@ export class SafeboxUpload {
     this.busy.set(true);
     const keys = this.keys();
     const files = this.chosen();
+    const told = { names: [] as string[], path: [] as string[] }; // the files added now: one message tells about them
     for (let i = 0; i < files.length; i++) {
       if (files[i].state === 'done') continue;
       this.mark(i, { state: 'sending', error: undefined });
@@ -109,10 +112,13 @@ export class SafeboxUpload {
         const made = file.type.startsWith('image/') ? await this.service.addImage(this.friendId, await prepareImage(file), keys) : await this.service.add(this.friendId, file, file.name, undefined, keys);
         if (this.linkTo && keys) await this.service.addLink(this.friendId, this.linkTo, made.id, keys).catch(() => undefined); // made from "Add a new item and link it"
         this.mark(i, { state: 'done' });
+        told.names.push(file.name);
+        told.path = ['/friends', this.friendId, 'safebox', made.id];
       } catch (err: any) {
         this.mark(i, { state: 'failed', error: err?.message ?? tr('safebox.upload.couldNotAdd', 'Could not add this file') });
       }
     }
+    void this.announce.addedFiles(this.friendId, told.names, told.path);
     this.busy.set(false);
     if (this.chosen().every((c) => c.state === 'done')) {
       this.leaveNow();

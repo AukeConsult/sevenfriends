@@ -1,6 +1,6 @@
 <ng-container *transloco="let t">
 <app-page-bar [title]="t('setup.title') || 'Setup wizard'" [subtitle]="step() ? (t('setup.step', { n: stepNumber(), total: stepCount() }) || 'Step ' + stepNumber() + ' of ' + stepCount()) : null">
-  @if (step() && !showingWords()) {
+  @if (step()) {
     <button type="button" class="btn btn-light btn-sm" [disabled]="busy() || stepNumber() === 1" (click)="previous()">{{ t('common.back') || 'Back' }}</button>
     <button type="button" class="btn btn-primary btn-sm" [disabled]="busy()" (click)="headerNext()">{{ isLast() ? (t('common.finish') || 'Finish') : (t('common.next') || 'Next') }}</button>
   }
@@ -80,16 +80,6 @@
       <div class="d-flex flex-wrap gap-3 justify-content-center">
         <button type="button" class="btn btn-link" (click)="later()">{{ t('common.doItLater') || 'Do it later' }}</button>
       </div>
-    }
-    @case ('key') {
-      <h2 class="sf-section-title m-0">{{ t('setup.keyTitle') || 'Turn on privacy lock' }}</h2>
-      <p class="small text-secondary m-0">{{ t('setup.keyText') || 'Privacy lock keeps your files private, even from us. Turn it on now, and write down the 24 secret words you are shown.' }}</p>
-      <app-key-setup (finished)="isLast() ? finish('/') : next()" (cancelled)="isLast() ? finish('/') : next()" />
-      @if (!showingWords()) {
-        <div class="d-flex flex-wrap gap-3 justify-content-center">
-          <button type="button" class="btn btn-link" (click)="later()">{{ t('common.doItLater') || 'Do it later' }}</button>
-        </div>
-      }
     }
     @case ('friend') {
       <div class="text-center vstack gap-3 align-items-center">

@@ -23,8 +23,6 @@
   "noApp": "Bez aplikacji: kontynuuj w przeglądarce",
   "notifyTitle": "Powiadomienia",
   "notifyText": "Te same wybory co w Ustawienia → Powiadomienia, dla rodzaju urządzenia, którego używasz. Włącz je, żeby nie przegapić wiadomości.",
-  "keyTitle": "Zablokuj pliki kluczem",
-  "keyText": "Klucz chroni pliki w Twoim sejfie, nawet przed nami. Utwórz go teraz i zapisz 24 słowa, które zobaczysz.",
   "yourMany": "Twoi bliscy ({{ many }})",
   "allSet": "Wszystko gotowe",
   "haveMany": "Masz już bliskich ({{ many }}). Wszystko jest gotowe.",

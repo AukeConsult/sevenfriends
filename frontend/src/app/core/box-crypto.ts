@@ -323,3 +323,22 @@ export async function rewrapKey(enc: { wraps: SafeboxWrap[] }, myKeyId: string, 
   const wrapped = await crypto.subtle.wrapKey('raw', key, publicKey, { name: 'RSA-OAEP' });
   return { uid: target.uid, keyId: target.key.id, wrappedKey: toBase64(wrapped) };
 }
+
+/**
+ * Re-locking (design: docs/design/default-key.md, step 5b): my copy of a locked text opened with this device's key and locked again with a FRESH message key, copies only
+ * for `recipients` (the keys in use now). What the old key could open, it can no longer open. The text (with its signature envelope) is kept exactly as it was.
+ */
+export async function relockText(connectionId: string, enc: MessageEnc, text: string, myKeyId: string, privateKey: CryptoKey, recipients: Recipient[]): Promise<{ text: string; enc: MessageEnc }> {
+  const plain = await openTextWith(connectionId, enc, text, await openMessageKey(enc, myKeyId, privateKey));
+  return sealTextWith(connectionId, await newKey(), plain, recipients);
+}
+
+/** The same for an object of the box (a note ...): its head (`meta`) and body are opened and locked again with a fresh key, the copies for `recipients`. */
+export async function relockObject(connectionId: string, enc: SafeboxEnc, myKeyId: string, privateKey: CryptoKey, recipients: Recipient[]): Promise<SafeboxEnc> {
+  const old = await openFileKey(enc, myKeyId, privateKey);
+  const key = await newKey();
+  const meta = await lock(key, connectionId, 'meta', await unlock(old, connectionId, 'meta', enc.metaIv, fromBase64(enc.meta)));
+  const body = enc.bodyIv && enc.body ? await lock(key, connectionId, 'body', await unlock(old, connectionId, 'body', enc.bodyIv, fromBase64(enc.body))) : null;
+  if (enc.bodyIv && !body) throw new Error('The content of this item is not read yet.');
+  return { v: 1, iv: toBase64(meta.iv), metaIv: toBase64(meta.iv), meta: toBase64(meta.data), thumbIv: null, wraps: await wrapKeyFor(key, recipients), ...(body ? { bodyIv: toBase64(body.iv), body: toBase64(body.data) } : {}) };
+}

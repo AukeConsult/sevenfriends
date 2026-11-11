@@ -64,5 +64,6 @@
   "messageOne": "message",
   "messageMany": "messages",
   "alsoWhose": ", also {{ name }}'s,",
-  "openTheItem": "Open the item"
+  "openTheItem": "Open the item",
+  "signatureBad": "⚠ Could not check who wrote this message. Do not trust it."
 }

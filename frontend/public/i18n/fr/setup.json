@@ -23,8 +23,6 @@
   "noApp": "Pas d'appli : continuer dans le navigateur",
   "notifyTitle": "Notifications",
   "notifyText": "Les mêmes choix que dans Réglages → Notifications, pour le type d'appareil que tu utilises. Active-les pour ne manquer aucun message.",
-  "keyTitle": "Verrouille tes fichiers avec une clé",
-  "keyText": "La clé garde les fichiers de ton coffre-fort privés, même vis-à-vis de nous. Crée-la maintenant, et note les 24 mots qui s'affichent.",
   "yourMany": "Tes {{ many }}",
   "allSet": "Tout est prêt",
   "haveMany": "Tu as déjà des {{ many }}. Tout est prêt.",

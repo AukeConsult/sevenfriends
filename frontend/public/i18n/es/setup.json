@@ -23,8 +23,6 @@
   "noApp": "Sin app: continuar en el navegador",
   "notifyTitle": "Notificaciones",
   "notifyText": "Las mismas opciones que en Ajustes → Notificaciones, para el tipo de dispositivo que usas. Actívalas para no perderte ningún mensaje.",
-  "keyTitle": "Bloquea tus archivos con una clave",
-  "keyText": "La clave mantiene privados los archivos de tu caja fuerte, incluso para nosotros. Créala ahora y anota las 24 palabras que se te muestran.",
   "yourMany": "Tus {{ many }}",
   "allSet": "Todo listo",
   "haveMany": "Ya tienes {{ many }}. Todo está listo.",

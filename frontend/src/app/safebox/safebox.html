@@ -63,6 +63,13 @@
     </div>
   }
 
+  @if (unsaved(); as u) {
+    <div class="alert alert-danger d-flex align-items-center justify-content-between gap-2" role="alert">
+      <span><strong>{{ t('safebox.list.notSaved') || 'Not saved:' }}</strong> {{ u.title }}. {{ u.reason }}</span>
+      <button type="button" class="btn btn-outline-secondary btn-sm" (click)="unsaved.set(null)">{{ t('safebox.list.close') || 'Close' }}</button>
+    </div>
+  }
+
   @if (error()) {
     <div class="alert alert-danger" role="alert">{{ error() }}</div>
   }

@@ -1,4 +1,5 @@
 import { KeyChangedBand } from '../key-changed-band/key-changed-band';
+import { LockChainBand } from '../lock-chain-band/lock-chain-band';
 import { LockedBand } from '../locked-band/locked-band';
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { computed, Component, DestroyRef, ElementRef, HostListener, effect, inject, untracked, viewChild } from '@angular/core';
@@ -22,7 +23,7 @@ import { FriendContext } from './friend-context';
  */
 @Component({
   selector: 'app-friend-page',
-  imports: [KeyChangedBand, LockedBand, FriendAvatar, RouterLink, RouterLinkActive, RouterOutlet, TranslocoDirective],
+  imports: [KeyChangedBand, LockChainBand, LockedBand, FriendAvatar, RouterLink, RouterLinkActive, RouterOutlet, TranslocoDirective],
   providers: [provideTranslocoScope('friendPage'), FriendContext],
   templateUrl: './friend-page.html',
   // every page under the header has the look of the conversation: a light tint of the friend's colour, and my own colour for what is mine

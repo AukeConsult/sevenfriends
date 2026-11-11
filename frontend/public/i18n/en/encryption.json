@@ -1,6 +1,6 @@
 {
   "encryptionKeys": "Encryption keys",
-  "yourKeyStaysOn": "Your key stays on this device. Files in the safebox are locked with it, so that only you and your friend can read them. Not even we can. Messages are locked with it too, with their pictures, videos and voice messages, when you and your friend both have a key.",
+  "yourKeyStaysOn": "Your lock is made by itself on this device and stays here. Files and messages are locked in our storage with it, and we do not hold a key to open them. In a browser the lock is weaker than in the app, because the web page is loaded from our server each time.",
   "yourDevices": "Your devices",
   "checkWhatIsStill": "Check what is still locked here",
   "everythingCanBeOpened": "Everything can be opened on this device.",
@@ -17,7 +17,7 @@
   "remove": "Remove",
   "aRemovedKeyIs": "A removed key is not used for new files. Files already locked for it can then no longer be opened on that device.",
   "makeANewKey": "Make a new key",
-  "useThisIfYou": "Use this if you lost your secret words. This device gets a new key and new secret words, and the key it has now is removed. Files that are already locked for the old key can no longer be opened.",
+  "useThisIfYou": "Use this to add a rescue code, if you lost your secret words, or if you suspect this device. This device gets a new lock and 24 new secret words. Your history is moved to the new lock first, then the old lock is removed. Old messages are not locked again with new keys yet: if the old lock was stolen, it could still open what was locked for it.",
   "makeANewKey2": "Make a new key…",
   "whyIsMyKey": "Why can I not open my old messages?",
   "accountSlice": "Account: …{{ slice }}",
@@ -63,5 +63,10 @@
   "askFriend": "Ask",
   "noFriendsInThis": "No friends in this circle yet.",
   "askOrTryRecovery": "Get my old messages back",
-  "openTheAppOn": "Open Seven Friends on one of these devices (it must be logged in and show the same account). A banner asks you to Allow. It does not matter which one."
+  "openTheAppOn": "Open Seven Friends on one of these devices (it must be logged in and show the same account). A banner asks you to Allow. It does not matter which one.",
+  "noRescueCode": "No rescue code yet",
+  "noRescueCodeText": "If you lose every phone and computer of yours, your old messages and files cannot be opened again. A rescue code is 24 words on paper that bring your lock back on a new device. It makes a new lock on this device and moves your history to it; it takes a moment.",
+  "addARescueCode": "Add a rescue code",
+  "lockingOldThings": "Locking your older messages and notes with the new key. You can keep using the app.",
+  "someCouldNotBeLocked": "Some older items could not be opened on this device. Open the app on another device of yours to finish them."
 }

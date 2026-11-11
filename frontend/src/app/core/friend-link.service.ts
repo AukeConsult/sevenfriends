@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { CIRCLE_CHOICES } from './active-circle.service';
 import { PendingFriend, UiPreferencesService } from './ui-preferences';
 import { APP_ORIGIN } from './app-origin';
+import { keepLinkPin, parsePinFragment } from './list-pin';
 
 /** A contact from a link: an email (has an @) or a phone number. null = not usable. */
 export function parseContact(value: string): { email: string | null; phone: string | null } | null {
@@ -59,12 +60,14 @@ export class FriendLinkService {
     if (!params.has('invite') && !params.has('from') && !params.has('friend')) return;
     const pending = pendingFromParams(params, location.pathname);
     if (pending) this.prefs.set('pendingFriend', pending);
+    const pin = parsePinFragment(location.hash); // the list of the person who made the link, as it was then: kept on this device only (never in the preferences, which may be synced)
+    if (pin) keepLinkPin(pin);
     params.delete('invite');
     params.delete('from');
     params.delete('friend');
     params.delete('circle');
     const rest = params.toString();
-    history.replaceState(history.state, '', location.pathname + (rest ? `?${rest}` : '') + location.hash);
+    history.replaceState(history.state, '', location.pathname + (rest ? `?${rest}` : '') + (pin ? '' : location.hash));
   }
 
   /** The link as text again (to copy it: the welcome page does, before an app is downloaded, so it can be pasted in the app). */
@@ -85,6 +88,8 @@ export class FriendLinkService {
       try {
         const url = new URL(/^https?:/i.test(value) ? value : `https://${value}`);
         pending = pendingFromParams(url.searchParams, url.pathname);
+        const pin = pending ? parsePinFragment(url.hash) : null;
+        if (pin) keepLinkPin(pin);
       } catch {
         /* not a link */
       }

@@ -36,6 +36,11 @@ export interface StoredDeviceKey {
   privateKey: CryptoKey;
   createdAt: string;
   version: number;
+  /**
+   * The signing key of this device (ECDSA P-256), only on a key made silently (docs/design/default-key.md). The private part is sealed and cannot be
+   * read. A key without it is an older lock: it is used as it is and gets a signing key only when it is replaced.
+   */
+  signKey?: { publicKey: JsonWebKey; privateKey: CryptoKey };
 }
 
 /** What a new key gives back: the key itself, and (only when asked for) the private key as bytes for the backup. */
@@ -129,7 +134,7 @@ export async function getDeviceKey(uid: string, store: KeyStore = indexedDbKeySt
 }
 
 /** Makes a key pair in memory: the private key sealed (it cannot be read), and its bytes for the backup. Nothing is saved. */
-async function generate(): Promise<{ key: StoredDeviceKey; pkcs8: ArrayBuffer }> {
+async function generate(withSign = false): Promise<{ key: StoredDeviceKey; pkcs8: ArrayBuffer; signPkcs8?: ArrayBuffer }> {
   if (!deviceKeySupported()) throw new Error(tr('core.thisBrowserCannotKeep', 'This browser cannot keep an encryption key (it needs a secure page).'));
   const pair = await crypto.subtle.generateKey(DEVICE_KEY_ALGORITHM, true, ['encrypt', 'decrypt', 'wrapKey', 'unwrapKey']);
   const pkcs8 = await crypto.subtle.exportKey('pkcs8', pair.privateKey);
@@ -140,7 +145,55 @@ async function generate(): Promise<{ key: StoredDeviceKey; pkcs8: ArrayBuffer }>
     createdAt: new Date().toISOString(),
     version: VERSION,
   };
-  return { key, pkcs8 };
+  if (!withSign) return { key, pkcs8 };
+  // the signing key is made extractable for this moment only, like the lock key: both go into the backup (the rescue code), the saved ones can not be read
+  const sign = await crypto.subtle.generateKey(SIGN_KEY_ALGORITHM, true, ['sign', 'verify']);
+  const signPkcs8 = await crypto.subtle.exportKey('pkcs8', sign.privateKey);
+  key.signKey = { publicKey: await crypto.subtle.exportKey('jwk', sign.publicKey), privateKey: await sealSign(signPkcs8) };
+  return { key, pkcs8, signPkcs8 };
+}
+
+/** The sealed signing key from its bytes. */
+const sealSign = (pkcs8: ArrayBuffer): Promise<CryptoKey> => crypto.subtle.importKey('pkcs8', pkcs8, SIGN_KEY_ALGORITHM, false, ['sign']);
+
+const toB64 = (bytes: ArrayBuffer | Uint8Array): string => btoa(String.fromCharCode(...new Uint8Array(bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes))));
+const fromB64 = (text: string): Uint8Array => Uint8Array.from(atob(text), (c) => c.charCodeAt(0));
+
+/**
+ * What goes into the backup: for a lock key alone (an older lock) the PKCS#8 bytes as they are; for a device with a signing key a small JSON
+ * `{"v":2,"lock":<base64>,"sign":<base64>}` as bytes (it starts with "{", which a PKCS#8 key never does). The caller scrambles it with the recovery key.
+ */
+function packBackup(lock: ArrayBuffer, sign?: ArrayBuffer): Uint8Array {
+  return sign ? new TextEncoder().encode(JSON.stringify({ v: 2, lock: toB64(lock), sign: toB64(sign) })) : new Uint8Array(lock);
+}
+
+/** The lock key bytes and (when there are any) the signing key bytes of an unscrambled backup. */
+export function unpackBackup(bytes: Uint8Array): { lock: Uint8Array; sign?: Uint8Array } {
+  if (bytes[0] !== 0x7b) return { lock: bytes };
+  const parsed = JSON.parse(new TextDecoder().decode(bytes)) as { v?: number; lock?: string; sign?: string };
+  if (parsed.v !== 2 || !parsed.lock) throw new Error(tr('core.thatBackupDoesNot', 'That backup does not belong to this key.'));
+  return { lock: fromB64(parsed.lock), ...(parsed.sign ? { sign: fromB64(parsed.sign) } : {}) };
+}
+
+/** The algorithm of the signing key: ECDSA on the P-256 curve with SHA-256. */
+export const SIGN_KEY_ALGORITHM: EcKeyGenParams = { name: 'ECDSA', namedCurve: 'P-256' };
+
+/**
+ * Makes the lock key AND the signing key of this device for the silent first sign-in, and does NOT save them. Neither private key can ever be read:
+ * they are made unextractable from the start (so there is no backup; a rescue code comes later, with a rotation that makes new keys for it).
+ */
+export async function generateIdentityKey(): Promise<StoredDeviceKey> {
+  if (!deviceKeySupported()) throw new Error(tr('core.thisBrowserCannotKeep', 'This browser cannot keep an encryption key (it needs a secure page).'));
+  const lock = await crypto.subtle.generateKey(DEVICE_KEY_ALGORITHM, false, ['encrypt', 'decrypt', 'wrapKey', 'unwrapKey']);
+  const sign = await crypto.subtle.generateKey(SIGN_KEY_ALGORITHM, false, ['sign', 'verify']);
+  return {
+    id: randomId(),
+    publicKey: await crypto.subtle.exportKey('jwk', lock.publicKey),
+    privateKey: lock.privateKey,
+    createdAt: new Date().toISOString(),
+    version: VERSION,
+    signKey: { publicKey: await crypto.subtle.exportKey('jwk', sign.publicKey), privateKey: sign.privateKey },
+  };
 }
 
 /**
@@ -148,8 +201,8 @@ async function generate(): Promise<{ key: StoredDeviceKey; pkcs8: ArrayBuffer }>
  * person has written down the recovery words and pressed Save). `backup` is the private key as PKCS#8 bytes: scramble it with the recovery code and let go of it.
  */
 export async function generateDeviceKey(): Promise<CreatedDeviceKey> {
-  const { key, pkcs8 } = await generate();
-  return { key, backup: new Uint8Array(pkcs8) };
+  const { key, pkcs8, signPkcs8 } = await generate(true); // with a signing key: a lock made with the 24 words has the same parts as a silent one
+  return { key, backup: packBackup(pkcs8, signPkcs8) };
 }
 
 /** Puts a key on this device (it replaces the key this person had here). */
@@ -194,7 +247,7 @@ export async function createDeviceKey(uid: string, options: { forBackup?: boolea
  * Puts a key back on a new device from the bytes of its backup (the caller has unscrambled them with the recovery code), sealed again.
  * `publicKey` is the one published for it; the bytes must belong to it, or this throws.
  */
-export async function restoreDeviceKey(uid: string, id: string, pkcs8: Uint8Array, publicKey: JsonWebKey, store: KeyStore = indexedDbKeyStore): Promise<StoredDeviceKey> {
+export async function restoreDeviceKey(uid: string, id: string, pkcs8: Uint8Array, publicKey: JsonWebKey, store: KeyStore = indexedDbKeyStore, sign?: { pkcs8: Uint8Array; publicKey: JsonWebKey }): Promise<StoredDeviceKey> {
   if (!deviceKeySupported()) throw new Error(tr('core.thisBrowserCannotKeep', 'This browser cannot keep an encryption key (it needs a secure page).'));
   const bytes = pkcs8.buffer.slice(pkcs8.byteOffset, pkcs8.byteOffset + pkcs8.byteLength) as ArrayBuffer;
   const privateKey = await seal(bytes);
@@ -210,6 +263,15 @@ export async function restoreDeviceKey(uid: string, id: string, pkcs8: Uint8Arra
   }
   if (opened.length !== probe.length || opened.some((b, i) => b !== probe[i])) throw new Error(tr('core.thatBackupDoesNot', 'That backup does not belong to this key.'));
   const key: StoredDeviceKey = { id, publicKey, privateKey, createdAt: new Date().toISOString(), version: VERSION };
+  if (sign) {
+    // the signing key must belong to the published signing key: what it signs, the public key must verify
+    const signPrivate = await sealSign(sign.pkcs8.buffer.slice(sign.pkcs8.byteOffset, sign.pkcs8.byteOffset + sign.pkcs8.byteLength) as ArrayBuffer);
+    const probe = crypto.getRandomValues(new Uint8Array(32));
+    const signature = await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, signPrivate, probe);
+    const verifier = await crypto.subtle.importKey('jwk', sign.publicKey, SIGN_KEY_ALGORITHM, false, ['verify']);
+    if (!(await crypto.subtle.verify({ name: 'ECDSA', hash: 'SHA-256' }, verifier, signature, probe))) throw new Error(tr('core.thatBackupDoesNot', 'That backup does not belong to this key.'));
+    key.signKey = { publicKey: sign.publicKey, privateKey: signPrivate };
+  }
   await store.write(uid, key);
   return key;
 }

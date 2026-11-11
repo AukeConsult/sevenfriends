@@ -1,4 +1,4 @@
-import { StoredDeviceKey, createDeviceKey, deleteDeviceKey, deviceKeySupported, deviceKeyWorks, generateDeviceKey, getDeviceKey, keepDeviceKey, restoreDeviceKey, saveDeviceKey } from './device-key';
+import { unpackBackup, StoredDeviceKey, createDeviceKey, deleteDeviceKey, deviceKeySupported, deviceKeyWorks, generateDeviceKey, getDeviceKey, keepDeviceKey, restoreDeviceKey, saveDeviceKey } from './device-key';
 
 /** These run in Chrome (karma), with the real Web Crypto and the real IndexedDB; every test uses its own person, which is removed again. */
 describe('device key', () => {
@@ -80,7 +80,7 @@ describe('device key', () => {
     expect(backup instanceof Uint8Array && backup.length > 1000).toBeTrue();
     // a new device: the same key put back from the backup, sealed again
     const fresh = person();
-    const restored = await restoreDeviceKey(fresh, key.id, backup as Uint8Array, key.publicKey);
+    const restored = await restoreDeviceKey(fresh, key.id, unpackBackup(backup as Uint8Array).lock, key.publicKey);
     expect(restored.privateKey.extractable).toBeFalse();
     expect((await getDeviceKey(fresh))?.id).toBe(key.id);
     const secret = crypto.getRandomValues(new Uint8Array(32));
@@ -110,10 +110,31 @@ describe('device key', () => {
   it('refuses a backup that belongs to another key', async () => {
     const { backup } = await createDeviceKey(person(), { forBackup: true });
     const other = (await createDeviceKey(person())).key;
-    await expectAsync(restoreDeviceKey(person(), other.id, backup as Uint8Array, other.publicKey)).toBeRejectedWithError('That backup does not belong to this key.');
+    await expectAsync(restoreDeviceKey(person(), other.id, unpackBackup(backup as Uint8Array).lock, other.publicKey)).toBeRejectedWithError('That backup does not belong to this key.');
   });
 
   it('can ask the browser to keep the data, and answers yes or no', async () => {
     expect(typeof (await keepDeviceKey())).toBe('boolean');
+  });
+
+  it('a key made for a rescue code has a signing key, and the backup brings both back on a new device', async () => {
+    const { key, backup } = await generateDeviceKey();
+    expect(key.signKey).toBeTruthy();
+    const parts = unpackBackup(backup as Uint8Array);
+    expect(parts.sign).toBeTruthy();
+    const fresh = person();
+    const restored = await restoreDeviceKey(fresh, key.id, parts.lock, key.publicKey, undefined, { pkcs8: parts.sign!, publicKey: key.signKey!.publicKey });
+    expect(restored.signKey).toBeTruthy();
+    const signature = await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, restored.signKey!.privateKey, new Uint8Array([1, 2, 3]));
+    const verifier = await crypto.subtle.importKey('jwk', key.signKey!.publicKey, { name: 'ECDSA', namedCurve: 'P-256' }, false, ['verify']);
+    expect(await crypto.subtle.verify({ name: 'ECDSA', hash: 'SHA-256' }, verifier, signature, new Uint8Array([1, 2, 3]))).toBeTrue();
+    // a signing key of another device is refused
+    const other = await generateDeviceKey();
+    await expectAsync(restoreDeviceKey(person(), key.id, parts.lock, key.publicKey, undefined, { pkcs8: unpackBackup(other.backup as Uint8Array).sign!, publicKey: key.signKey!.publicKey })).toBeRejected();
+  });
+
+  it('an older backup (the lock key alone) is read as it is', async () => {
+    const { backup } = await createDeviceKey(person(), { forBackup: true });
+    expect(unpackBackup(backup as Uint8Array).sign).toBeUndefined();
   });
 });

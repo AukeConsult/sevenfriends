@@ -81,6 +81,7 @@ export const CACHE_ROOT = "sf-cache";
  */
 /** users/{uid}/keys/{keyId}: the public keys of a person's devices; users/{uid}/key-backup/current: the scrambled backup of the private key (docs/design/safebox-encryption.md) */
 export const KEY_COLLECTION = "keys";
+export const KEY_LIST_COLLECTION = "key-list";
 export const KEY_BACKUP_COLLECTION = "key-backup";
 export const KEY_BACKUP_DOC = "current";
 /** recovery-request/{connectionId}: a person with a new key asks their friend to unlock the old messages and files for it (docs/design/message-encryption.md, "Recovery") */

@@ -2,9 +2,9 @@ import { Router } from "express";
 import { DecodedIdToken } from "firebase-admin/auth";
 import { FieldValue, Timestamp, getFirestore } from "firebase-admin/firestore";
 import { asyncHandler, requireAuth } from "./auth";
-import { MyKeys, KeyBackup, MAX_KEYS_PER_PERSON, MAX_KEY_LABEL, PublicKeyJwk, PublishedKey, canonicalPublicKey, fingerprintOf, keyIdOf } from "./models";
+import { MyKeys, KeyBackup, MAX_KEYS_PER_PERSON, MAX_KEY_LABEL, PublicKeyJwk, PublishedKey, SignKeyJwk, DeviceList, canonicalPublicKey, canonicalSignKey, checkedDeviceList, deviceListHash, fingerprintOf, keyIdOf } from "./models";
 import { openRequest } from "./own-request";
-import { keyBackupDoc, keyCol } from "./paths";
+import { keyBackupDoc, keyCol, keyListCol } from "./paths";
 import { text } from "./validation";
 
 const uidOf = (res: { locals: Record<string, unknown> }) => (res.locals.token as DecodedIdToken).uid;
@@ -23,6 +23,7 @@ export const publishedOf = (id: string, data: FirebaseFirestore.DocumentData): P
   createdAt: data.createdAt instanceof Timestamp ? data.createdAt.toDate().toISOString() : null,
   revoked: data.revoked === true,
   publicKey: data.publicKey as PublicKeyJwk,
+  ...(data.signKey ? { signKey: data.signKey as SignKeyJwk } : {}),
 });
 
 /** The keys of a person that are in use (not retired), oldest first. */
@@ -76,6 +77,13 @@ keysRouter.post(
       res.status(400).json({ error: "That is not a key backup" });
       return;
     }
+    // a NEW key may come with the public signing key of the same device (ECDSA P-256); a key already published never gets one later: an older lock stays as it is
+    const rawSign = (req.body ?? {}).signKey;
+    const signKey = rawSign === undefined ? null : canonicalSignKey(rawSign);
+    if (rawSign !== undefined && !signKey) {
+      res.status(400).json({ error: "That is not a P-256 signing key" });
+      return;
+    }
     const existing = await keyCol(uid).get();
     const already = existing.docs.find((d) => d.id === id);
     if (!already && existing.docs.filter((d) => d.data().revoked !== true).length >= MAX_KEYS_PER_PERSON) {
@@ -86,13 +94,68 @@ keysRouter.post(
     const batch = getFirestore().batch();
     // `ownShared`: a key that is the first of the person has everything it needs; a key added next to another one waits until a device of the same person allows it (own-recovery.ts)
     const first = !existing.docs.some((d) => d.data().revoked !== true);
-    batch.set(ref, already ? { label } : { publicKey: key, fingerprint, label, revoked: false, ownShared: first, createdAt: FieldValue.serverTimestamp() }, { merge: true });
+    batch.set(ref, already ? { label } : { publicKey: key, ...(signKey ? { signKey } : {}), fingerprint, label, revoked: false, ownShared: first, createdAt: FieldValue.serverTimestamp() }, { merge: true });
     if (backup) batch.set(keyBackupDoc(uid), { ...backup, savedAt: FieldValue.serverTimestamp() });
     await batch.commit();
     // a key added next to other keys waits for a device of mine to allow it: that is a request, shown on my other devices (docs/design/recovery-own-devices.md)
     if (!already && !first) await openRequest(uid, { id, label, fingerprint });
     // the answer is what is stored (read back), not what was sent
     res.status(already ? 200 : 201).json(publishedOf(id, (await ref.get()).data() ?? {}));
+  }),
+);
+
+/** My signed device lists, every version, oldest first (the app and my friends check the chain; the server only keeps it). */
+keysRouter.get(
+  "/list",
+  asyncHandler(async (_req, res) => {
+    const snap = await keyListCol(uidOf(res)).get();
+    const lists = snap.docs
+      .map((d) => ({ ...(d.data() as DeviceList), createdAt: d.data().createdAt instanceof Timestamp ? d.data().createdAt.toDate().toISOString() : null }))
+      .sort((a, b) => a.version - b.version);
+    res.json({ lists });
+  }),
+);
+
+/**
+ * Publish the next version of my device list. Append-only: the version must be one more than the newest (1 when there is none), `prev` must be the
+ * hash of the newest, and a version that exists is never replaced. The server checks the STRUCTURE (well-formed keys, key IDs that fit, a
+ * signer); it cannot and does not check the signature. Devices do that, so a list the server made up would be refused by them.
+ */
+keysRouter.post(
+  "/list",
+  asyncHandler(async (req, res) => {
+    const uid = uidOf(res);
+    const checked = await checkedDeviceList(req.body);
+    if ("problem" in checked) {
+      res.status(400).json({ error: checked.problem });
+      return;
+    }
+    const list = checked.list;
+    const [newest, published] = await Promise.all([keyListCol(uid).orderBy("version", "desc").limit(1).get(), keyCol(uid).get()]);
+    const head = newest.docs[0]?.data() as DeviceList | undefined;
+    let refusal: string | null = null;
+    // every device of the list is a key of this person that is in use, with exactly these public keys (a list can not name a key that was never published)
+    const inUse = new Map(published.docs.filter((d) => d.data().revoked !== true).map((d) => [d.id, d.data()]));
+    const known = (d: DeviceList["devices"][number]) => {
+      const k = inUse.get(d.keyId);
+      return !!k && JSON.stringify(canonicalPublicKey(k.publicKey)) === JSON.stringify(d.lockKey) && JSON.stringify(canonicalSignKey(k.signKey)) === JSON.stringify(d.signKey);
+    };
+    if (list.version !== (head?.version ?? 0) + 1) refusal = "The version is not the next one";
+    else if (head && list.prev !== (await deviceListHash(head))) refusal = "The link to the version before is wrong";
+    else if (head && !head.devices.some((d) => d.keyId === list.signedBy)) refusal = "The signer is not a device of the version before";
+    else if (!list.devices.every(known)) refusal = "A device in the list is not a published key of yours";
+    else {
+      try {
+        await keyListCol(uid).doc(String(list.version)).create({ ...list, createdAt: FieldValue.serverTimestamp() }); // create: a version that exists is never replaced
+      } catch {
+        refusal = "The version is not the next one";
+      }
+    }
+    if (refusal) {
+      res.status(409).json({ error: refusal });
+      return;
+    }
+    res.status(201).json(list);
   }),
 );
 

@@ -147,7 +147,7 @@ describe("the keys of a safebox", () => {
 
   it("show my keys and my friend's, each from its own side, and none that are retired", async () => {
     const id = await connect(pool[0], pool[1]);
-    expect((await keysOf(pool[0], id).expect(200)).body).toEqual({ friendUid: pool[1].p.uid, mine: [], friend: [] });
+    expect((await keysOf(pool[0], id).expect(200)).body).toMatchObject({ friendUid: pool[1].p.uid, mine: [], friend: [] });
     const mineId = (await pool[0].raw("post", "/keys", { publicKey: jwk }).expect(201)).body.id;
     const a = (await keysOf(pool[0], id)).body;
     expect(a.mine.map((k: { id: string }) => k.id)).toEqual([mineId]);

@@ -7,6 +7,7 @@ import {
   KEY_BACKUP_COLLECTION,
   KEY_BACKUP_DOC,
   KEY_COLLECTION,
+  KEY_LIST_COLLECTION,
   MESSAGE_COLLECTION,
   PROFILE_PICTURE_COLLECTION,
   PROFILE_PICTURE_DOC,
@@ -30,6 +31,8 @@ export const messageCol = (uid: string) => userDoc(uid).collection(MESSAGE_COLLE
 export const signalCol = (uid: string) => userDoc(uid).collection(INCOMING_SIGNAL_COLLECTION);
 /** the public keys of a person's devices (the document id is the key ID) */
 export const keyCol = (uid: string) => userDoc(uid).collection(KEY_COLLECTION);
+/** the signed device lists of a person, one document per version (append-only) */
+export const keyListCol = (uid: string) => userDoc(uid).collection(KEY_LIST_COLLECTION);
 /** the scrambled backup of the private key */
 /** the requests of my devices to open my old messages for them (docs/design/recovery-own-devices.md) */
 export const ownRequestCol = (uid: string) => userDoc(uid).collection("own-recovery-request");

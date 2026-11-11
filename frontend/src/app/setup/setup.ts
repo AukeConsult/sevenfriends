@@ -1,5 +1,5 @@
 import { ActiveCircleService } from '../core/active-circle.service';
-import { Component, computed, effect, inject, signal, viewChild } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { tr } from '../core/i18n';
@@ -7,18 +7,16 @@ import { LanguageService, deviceCountry } from '../core/language.service';
 import { ApiService } from '../core/api.service';
 import { AuthService } from '../core/auth.service';
 import { InviteLinkService } from '../core/invite-link.service';
-import { KeysService } from '../core/keys.service';
 import { ProfileDetails, ProfilePicture, profileColorHex } from '../models';
 import { FriendsService } from '../core/friends.service';
 import { InstallService } from '../core/install.service';
 import { NoticesService } from '../core/notices.service';
 import { UiPreferencesService } from '../core/ui-preferences';
-import { KeySetup } from '../key-setup/key-setup';
 import { NoticeControls } from '../notice-controls/notice-controls';
 import { PageBar } from '../page-bar/page-bar';
 
 /** The steps of the setup wizard, in order. */
-type SetupStep = 'profile' | 'friend' | 'notify' | 'install' | 'key' | 'done';
+type SetupStep = 'profile' | 'friend' | 'notify' | 'install' | 'done';
 
 /**
  * The setup wizard: only what a first start needs, the rest is in Settings (sounds, text size and theme, country and language, colour, the email check
@@ -33,7 +31,7 @@ type SetupStep = 'profile' | 'friend' | 'notify' | 'install' | 'key' | 'done';
  */
 @Component({
   selector: 'app-setup',
-  imports: [PageBar, KeySetup, NoticeControls, TranslocoDirective],
+  imports: [PageBar, NoticeControls, TranslocoDirective],
   providers: [provideTranslocoScope('setup')],
   templateUrl: './setup.html',
 })
@@ -47,7 +45,6 @@ export class Setup {
   private readonly api = inject(ApiService);
   private readonly lang = inject(LanguageService);
   private readonly auth = inject(AuthService);
-  private readonly keys = inject(KeysService);
   private readonly notices = inject(NoticesService);
   /** I already have a friend: the last step says so and lets me finish */
   private readonly friendsService = inject(FriendsService);
@@ -105,16 +102,15 @@ export class Setup {
     } catch {
       /* offline: the steps are all shown, and saving tells what is wrong */
     }
-    await Promise.race([this.keys.refresh(), new Promise((resolve) => setTimeout(resolve, 3000))]); // do not wait for ever on the key
     // Everything that can be done in the browser is done there first; then the app is installed and the setup continues in it (a key, a notification
     // permission and a microphone permission belong to the place they were made in). A step that is already done is still shown, marked as done.
     const steps: SetupStep[] = [];
     if (this.install.separateApp) {
-      steps.push('notify', 'friend', 'key'); // in the app: only what belongs to this device
+      steps.push('notify', 'friend'); // in the app: only what belongs to this device
     } else if (this.install.mobile) {
       steps.push('profile', 'friend', 'install'); // a phone browser: the account steps, then the app; notifications and the key follow in the app
     } else {
-      steps.push('profile', 'friend', 'notify', 'key', ...(this.install.installed() ? [] : (['install'] as SetupStep[]))); // a computer: all of it, the app last
+      steps.push('profile', 'friend', 'notify', ...(this.install.installed() ? [] : (['install'] as SetupStep[]))); // a computer: all of it, the app last
     }
     if (!this.friendsService.circle()) await this.friendsService.load().catch(() => undefined); // opened directly: the friends are not loaded yet
     // coming back from choosing a sound: the wizard opens at that step again
@@ -162,7 +158,7 @@ export class Setup {
 
   /** A phone browser, and the person does not want the app: the steps that belong to this device are done here in the browser. */
   protected continueInBrowser(): void {
-    this.steps.update((list) => (list ? [...list, 'notify', 'key', 'done'] : list));
+    this.steps.update((list) => (list ? [...list, 'notify', 'done'] : list));
     this.next();
   }
 
@@ -200,10 +196,6 @@ export class Setup {
   protected next(): void {
     this.index.update((i) => Math.min(i + 1, this.stepCount() - 1));
   }
-
-  /** the encryption key step: while the secret words are on the screen there is no way to leave it */
-  private readonly keySetup = viewChild(KeySetup);
-  protected readonly showingWords = computed(() => this.keySetup()?.showingWords() ?? false);
 
   /** "Do it later": Home offers the setup again. */
   protected later(): void {

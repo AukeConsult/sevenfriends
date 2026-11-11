@@ -23,8 +23,6 @@
   "noApp": "Ingen app: fortsæt i browseren",
   "notifyTitle": "Notifikationer",
   "notifyText": "De samme valg som under Indstillinger → Notifikationer, for den slags enhed du bruger. Slå dem til, så du ikke går glip af en besked.",
-  "keyTitle": "Lås dine filer med en nøgle",
-  "keyText": "Nøglen holder filerne i dit pengeskab private, også for os. Opret den nu, og skriv de 24 ord ned, du får vist.",
   "yourMany": "Dine {{ many }}",
   "allSet": "Du er klar",
   "haveMany": "Du har allerede {{ many }}. Alt er klar.",

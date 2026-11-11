@@ -202,6 +202,13 @@ export class FriendContext {
     return null;
   }
 
+  /** The keys read from the server now (and kept): a new item is locked for what the server lists at this moment, not for what was known when the page opened. */
+  async freshKeys(): Promise<BoxKeys> {
+    const keys = await this.safebox.keys(this.friendId);
+    this.boxKeys.set(keys);
+    return keys;
+  }
+
   /** Locks a file that was put in the box before locking was possible; when the keys changed while it was sent (409) the keys are read again and it is tried once more. */
   async lockExisting(item: SafeboxItem): Promise<void> {
     for (let attempt = 0; ; attempt++) {

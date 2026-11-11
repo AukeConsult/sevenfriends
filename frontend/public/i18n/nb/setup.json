@@ -23,8 +23,6 @@
   "noApp": "Ingen app: fortsett i nettleseren",
   "notifyTitle": "Varsler",
   "notifyText": "De samme valgene som under Innstillinger → Varsler, for typen enhet du bruker. Slå dem på, så du ikke går glipp av en melding.",
-  "keyTitle": "Lås filene dine med en nøkkel",
-  "keyText": "Nøkkelen holder filene i safeboksen din private, selv for oss. Lag den nå, og skriv ned de 24 ordene du får se.",
   "yourMany": "Dine {{ many }}",
   "allSet": "Alt er klart",
   "haveMany": "Du har allerede {{ many }}. Alt er klart.",

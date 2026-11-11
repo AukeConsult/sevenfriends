@@ -10,8 +10,9 @@ The long parts of this guide live in `docs/guide/`. Read only the file for the a
 - `docs/guide/messages-and-profile.md`: the message feed, profile, links in messages, friend links, sleep list, UI preferences.
 - `docs/guide/media-and-safebox.md`: the media cache, the safebox, pictures and memory.
 - `docs/design/safebox-objects.md`: notes, secrets, links, checklists, places, contacts and dates in the safebox next to files: locked payload, revision, routes, pages. All are built.
+- `docs/design/default-key.md`: the proposed lock by default that the provider cannot open: silent device keys and a signed device list, signed messages, pairing by link secret, a rotation that re-encrypts old items, the rescue code, and bundled app code. Step 1 (silent keys, signing key, signed device list) is built; the rest is a proposal.
 - `docs/design/resources.md`: the proposed Resources (something of value that is lent, given, booked or shared inside a friendship or a group): words, data model, the five things, rules, API, steps. Proposal only; nothing is built.
-- `docs/design/safebox-encryption.md`: the proposed end-to-end encryption of the safebox (keys, data model, flows, rollout). Step 1 (the local device key, `core/device-key.ts`) is built; nothing uses it yet.
+- `docs/design/safebox-encryption.md`: the proposed end-to-end encryption of the safebox (keys, data model, flows, rollout). Steps 1 and 2 are built. The lock by default (`docs/design/default-key.md`) now makes keys silently.
 - `docs/design/recovery-by-friend.md`: the plan for key recovery by a friend (Way 2; Way 1 is the own devices and the 24 words, both in `docs/design/message-encryption.md`, "Recovery: the two ways"). Nothing of the plan is built yet.
 - `docs/design/recovery-own-devices.md`: Way 1 of key recovery (my own other device "Allow", and my 24 words): how it works, what is weak, and the plan. Not built yet.
 - `docs/design/groups.md`: groups (a friend with several people): data, the functions (make, change, add and remove members), what is not done yet. Built and tested on the backend.

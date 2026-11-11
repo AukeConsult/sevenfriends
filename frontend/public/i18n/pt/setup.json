@@ -23,8 +23,6 @@
   "noApp": "Sem app: continuar no navegador",
   "notifyTitle": "Notificações",
   "notifyText": "As mesmas escolhas de Ajustes → Notificações, para o tipo de dispositivo que você usa. Ative-as para não perder nenhuma mensagem.",
-  "keyTitle": "Tranque seus arquivos com uma chave",
-  "keyText": "A chave mantém privados os arquivos do seu cofre, até de nós. Crie agora e anote as 24 palavras que aparecerem.",
   "yourMany": "Seus {{ many }}",
   "allSet": "Tudo pronto",
   "haveMany": "Você já tem {{ many }}. Está tudo pronto.",

@@ -23,8 +23,6 @@
   "noApp": "Ei sovellusta: jatka selaimessa",
   "notifyTitle": "Ilmoitukset",
   "notifyText": "Samat valinnat kuin kohdassa Asetukset → Ilmoitukset, käyttämäsi laitteen mukaan. Laita ne päälle, ettet missaa viestiä.",
-  "keyTitle": "Lukitse tiedostosi avaimella",
-  "keyText": "Avain pitää kassakaappisi tiedostot yksityisinä, jopa meiltä. Tee se nyt ja kirjoita muistiin 24 sanaa, jotka sinulle näytetään.",
   "yourMany": "Läheisesi: {{ many }}",
   "allSet": "Kaikki valmista",
   "haveMany": "Sinulla on jo läheisiä ({{ many }}). Kaikki on valmista.",

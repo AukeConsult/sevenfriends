@@ -8,6 +8,7 @@ import { LockedItemsService } from '../core/locked-items.service';
 import { OwnRecoveryService } from '../core/own-recovery.service';
 import { KeySetup } from '../key-setup/key-setup';
 import { KeysService, RestoreResult } from '../core/keys.service';
+import { ReencryptService } from '../core/reencrypt.service';
 import { wordsFromText } from '../core/recovery-code';
 import { PublishedKey } from '../models';
 import { tr } from '../core/i18n';
@@ -23,6 +24,7 @@ export class Encryption {
   /** the page shows the key status and the way to make or restore a key; the devices, the details and a new key are behind the Advanced button */
   protected readonly advanced = signal(false);
   protected readonly keys = inject(KeysService);
+  protected readonly reencrypt = inject(ReencryptService);
   private readonly keySetup = viewChild.required(KeySetup);
   protected readonly own = inject(OwnRecoveryService);
   /** the key being given its copies now, and how far it got */

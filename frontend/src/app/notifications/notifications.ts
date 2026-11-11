@@ -95,7 +95,7 @@ export class Notifications {
   protected readonly declined = this.recovery.declined;
   /** the first-time setup was left for later: Home offers it again */
   protected readonly setupLeft = computed(() => this.prefs.value('setup')() === 'skipped');
-  /** no key on this device and the setup is not offering it: a small reminder stays until privacy lock is turned on */
+  /** no key on this device and the setup is not offering it: a small reminder stays (the lock is made by itself at sign-in; this is only when this browser cannot keep one) */
   protected readonly lockOff = computed(() => this.keys.state() === 'none' && !this.setupLeft());
 
   private readonly user = inject(AuthService).user;
@@ -240,9 +240,7 @@ export class Notifications {
     void this.keys.refresh(); // the reminder "privacy lock is off" needs to know
     // a freshly installed app has nothing of what was set up in the browser (key, notifications, microphone): the setup wizard continues here, once
     if (this.install.separateApp && this.prefs.get('setup') === 'new') {
-      void this.keys.refresh().then(() => {
-        if (this.keys.state() === 'none' && this.prefs.get('setup') === 'new') void this.router.navigateByUrl('/setup');
-      });
+      void this.router.navigateByUrl('/setup');
     }
     // the person may have changed the browser's permission in its settings: look again when the page comes back
     const recheck = () => this.permission.set(typeof Notification === 'undefined' ? 'denied' : Notification.permission);

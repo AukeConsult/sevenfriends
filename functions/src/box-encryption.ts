@@ -11,8 +11,8 @@ const IV_LENGTH = 16;
 const WRAP_LENGTH = 512;
 const MAX_META_LENGTH = 1500;
 export const MAX_WRAPS = 40;
-/** The most a locked message text may be (base64): 2000 characters are at most 6000 bytes, plus the 16 bytes of the lock. */
-const MAX_LOCKED_TEXT_LENGTH = Math.ceil((6000 + 16) / 3) * 4;
+/** The most a locked message text may be (base64): 2000 characters are at most 6000 bytes, plus the signed envelope (about 500 bytes) and the 16 bytes of the lock. */
+const MAX_LOCKED_TEXT_LENGTH = Math.ceil((7000 + 16) / 3) * 4;
 
 export interface EncryptedUpload {
   header: EncryptedUploadHeader;

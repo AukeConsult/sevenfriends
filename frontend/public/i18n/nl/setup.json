@@ -23,8 +23,6 @@
   "noApp": "Geen app: doorgaan in de browser",
   "notifyTitle": "Meldingen",
   "notifyText": "Dezelfde keuzes als onder Instellingen → Meldingen, voor het soort apparaat dat je gebruikt. Zet ze aan, zodat je geen bericht mist.",
-  "keyTitle": "Vergrendel je bestanden met een sleutel",
-  "keyText": "De sleutel houdt de bestanden in je kluis privé, zelfs voor ons. Maak hem nu en schrijf de 24 woorden op die je te zien krijgt.",
   "yourMany": "Je {{ many }}",
   "allSet": "Alles is klaar",
   "haveMany": "Je hebt al {{ many }}. Alles is klaar.",

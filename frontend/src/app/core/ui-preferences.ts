@@ -27,6 +27,8 @@ export interface UiPreferences {
   sleepList: boolean;
   /** a picture next to every message in a conversation (mine too); off = only the bubbles */
   feedIcons: boolean;
+  /** when I add something to the safebox, a message tells my friend or group (default); off = nothing is sent (the bell in the item still can) */
+  boxTellNew: boolean;
   /** ready-made messages: they are listed in the + menu of a conversation and sent with one tap (at most QUICK_MAX, each at most QUICK_LENGTH characters) */
   quickMessages: string[];
   /** the language of the texts of the app (a code of languages.ts); '' = not chosen on this device yet: the language of the account, the country or the browser is used (see language.service.ts) */
@@ -91,7 +93,7 @@ export const PHONE_TEXT_SCALES: Record<UiPreferences['textSize'], number> = { ti
 const kindIds = (v: unknown): string[] => (Array.isArray(v) ? v.filter((k: unknown): k is string => typeof k === 'string') : []);
 const layoutOf = (v: any): { main: string[]; more: string[] } | null => (v && typeof v === 'object' ? { main: kindIds(v.main), more: kindIds(v.more) } : null);
 
-export const DEFAULTS: UiPreferences = { theme: 'light', textSize: 'normal', settingsTab: 'profile', emojiTab: 'People', chatOrder: 'oldest', enterSends: true, sleepList: true, quickMessages: [], feedIcons: true, language: '', setup: 'new', lastPage: null, micRaw: false, pendingFriend: null, welcomeUntil: null, boxPlain: false, boxView: 'list', boxKindLayout: null, boxHiddenOpen: false, cleanupWhose: 'mine', cleanupDays: 30, friendQuick: {} };
+export const DEFAULTS: UiPreferences = { boxTellNew: true, theme: 'light', textSize: 'normal', settingsTab: 'profile', emojiTab: 'People', chatOrder: 'oldest', enterSends: true, sleepList: true, quickMessages: [], feedIcons: true, language: '', setup: 'new', lastPage: null, micRaw: false, pendingFriend: null, welcomeUntil: null, boxPlain: false, boxView: 'list', boxKindLayout: null, boxHiddenOpen: false, cleanupWhose: 'mine', cleanupDays: 30, friendQuick: {} };
 
 /** The ready-made messages as stored: only texts, trimmed, not empty, not too long, not too many. */
 export function quickOf(value: unknown): string[] {
@@ -145,6 +147,7 @@ function read(): UiPreferences {
       sleepList: saved.sleepList !== false,
       quickMessages: quickOf(saved.quickMessages),
       feedIcons: saved.feedIcons !== false,
+      boxTellNew: saved.boxTellNew !== false,
       language: typeof saved.language === 'string' && isLanguage(saved.language) ? saved.language : '',
       setup: saved.setup === 'done' || saved.setup === 'skipped' ? saved.setup : 'new',
       lastPage: typeof saved.lastPage === 'string' && saved.lastPage.startsWith('/') ? saved.lastPage : null,

@@ -1,12 +1,17 @@
 import { Injectable, effect, inject, signal, untracked } from '@angular/core';
-import { KeyBackup, MyKeys, PublishedKey, canonicalPublicKey, fingerprintOf, keyIdOf } from '../models';
+import { DeviceList, KeyBackup, MyKeys, PublishedKey, canonicalPublicKey, canonicalSignKey, fingerprintOf, keyIdOf } from '../models';
 import { ApiService } from './api.service';
 import { AuthService } from './auth.service';
-import { StoredDeviceKey, deleteDeviceKey, deviceKeySupported, deviceKeyWorks, generateDeviceKey, getDeviceKey, keepDeviceKey, restoreDeviceKey, saveDeviceKey, storedKeyOwners } from './device-key';
+import { StoredDeviceKey, unpackBackup, deleteDeviceKey, deviceKeySupported, deviceKeyWorks, generateDeviceKey, generateIdentityKey, getDeviceKey, keepDeviceKey, restoreDeviceKey, saveDeviceKey, storedKeyOwners } from './device-key';
 import { lockBackup, unlockBackup } from './key-backup';
 import { keyOf, newRecoveryKey, wordsOf } from './recovery-code';
 import { tr } from './i18n';
 import { deviceLabel } from './device-name';
+import { firstDeviceList } from './device-list';
+import { myDeviceKey } from './my-key';
+import { DeviceListService } from './device-list.service';
+import { OwnRecoveryService } from './own-recovery.service';
+import { ReencryptService } from './reencrypt.service';
 
 /** How a restore from the recovery words ended. */
 export type RestoreResult = 'ok' | 'bad-words' | 'no-backup' | 'wrong-code' | 'no-key';
@@ -43,6 +48,9 @@ export type EncryptionState = 'checking' | 'unsupported' | 'none' | 'ready';
 export class KeysService {
   private readonly api = inject(ApiService);
   private readonly auth = inject(AuthService);
+  private readonly deviceList = inject(DeviceListService);
+  private readonly ownRecovery = inject(OwnRecoveryService);
+  private readonly reencrypt = inject(ReencryptService);
 
   readonly state = signal<EncryptionState>('checking');
   /** the fingerprint of this device's key (64 hex characters), once it is ready */
@@ -56,6 +64,8 @@ export class KeysService {
 
   /** true = no usable key is on THIS device, but keys of mine are published (made on another device, or the key of this browser was cleared): restoring it with the 24 words brings it back */
   readonly elsewhere = signal(false);
+  /** a recovery backup of a key of mine is stored (a key made with the 24 words); false = the keys of this person were made silently and can not be restored, only approved */
+  readonly hasBackup = signal(false);
 
   constructor() {
     // another person signs in (or the person signs out) in this open app: what was known about the key of the one before is dropped
@@ -110,9 +120,16 @@ export class KeysService {
       this.fingerprint.set(ready ? fingerprint : null);
       this.thisKeyId.set(ready ? id : null);
       this.elsewhere.set(!ready && mine.keys.some((k) => !k.revoked));
+      this.hasBackup.set(mine.hasBackup);
       this.state.set(ready ? 'ready' : 'none');
+      if (ready && mine.keys.some((k) => k.revoked)) void this.reencrypt.run(); // what a retired key could open is locked anew (quiet, at most every 10 minutes)
       if (ready) void keepDeviceKey(); // ask again on every visit: the browser may grant it later, and then it does not clear the key
       if (ready && local && found && found.label !== deviceLabel()) void this.relabel(local.publicKey, found.id);
+      // a person with no key at all gets one without being asked (docs/design/default-key.md); a key that is elsewhere, or one on this device, is never replaced
+      // (also on a second device of a person whose keys were made silently: there is no backup to restore, so this device makes its own key and asks the others to approve it)
+      if (!ready && !local && (!this.elsewhere() || !mine.hasBackup)) {
+        if (await this.makeIdentity()) return;
+      } else if (ready && local?.signKey) void this.ensureList(local);
     } catch {
       // the server (or the key store) could not be asked: a key that was known to be ready stays; otherwise the person can still try to set up
       if (this.state() !== 'ready') this.state.set('none');
@@ -121,8 +138,55 @@ export class KeysService {
     }
   }
 
+  private readonly identityTried = new Set<string>();
+  private readonly listChecked = new Set<string>();
+
+  /**
+   * The silent first sign-in: makes the lock key and the signing key on this device (neither can be read out), publishes them, and publishes
+   * version 1 of the device list. Nothing is shown. Tried once per person per start of the app; if it fails the person simply has no key
+   * (as before) and Settings → Privacy lock still offers one. Returns true when the key is in place.
+   */
+  private async makeIdentity(): Promise<boolean> {
+    const uid = this.uid;
+    if (this.identityTried.has(uid)) return false;
+    this.identityTried.add(uid);
+    const key = await generateIdentityKey().catch(() => null);
+    const publicKey = key ? canonicalPublicKey(key.publicKey) : null;
+    const signKey = key ? canonicalSignKey(key.signKey?.publicKey) : null;
+    if (!key || !publicKey || !signKey) return false;
+    try {
+      await saveDeviceKey(uid, key);
+      await this.api.request('/keys', { method: 'POST', body: JSON.stringify({ publicKey, signKey, label: deviceLabel() }) });
+      await this.refresh();
+      if (this.thisKeyId() !== keyIdOf((await fingerprintOf(publicKey))!) || !(await deviceKeyWorks(uid, key.publicKey))) throw new Error('The key could not be checked');
+      return true;
+    } catch {
+      // put this device back as it was: no key (the server may hold a public key that no device has; it is retired so it is not used)
+      await deleteDeviceKey(uid).catch(() => undefined);
+      const id = keyIdOf((await fingerprintOf(publicKey)) ?? '');
+      if (id) await this.api.request(`/keys/${id}/revoke`, { method: 'POST' }).catch(() => undefined);
+      await this.refresh();
+      return false;
+    }
+  }
+
+  /** Publishes version 1 of the device list when there is none and this device is the only one (also when an earlier try was cut off). */
+  private async ensureList(local: StoredDeviceKey): Promise<void> {
+    const uid = this.uid;
+    if (this.listChecked.has(uid)) return;
+    this.listChecked.add(uid);
+    try {
+      const { lists } = await this.api.request<{ lists: DeviceList[] }>('/keys/list');
+      if (lists.length || this.published().filter((k) => !k.revoked).length !== 1) return;
+      const list = await firstDeviceList(local, deviceLabel());
+      if (list) await this.api.request('/keys/list', { method: 'POST', body: JSON.stringify(list) });
+    } catch {
+      this.listChecked.delete(uid); // the next refresh tries again
+    }
+  }
+
   /** A key that has been made and shown with its recovery words but is not saved yet: it only exists here, in memory. */
-  private pending: { uid: string; key: StoredDeviceKey; publicKey: NonNullable<ReturnType<typeof canonicalPublicKey>>; backup: KeyBackup; replaces: string | null } | null = null;
+  private pending: { uid: string; key: StoredDeviceKey; publicKey: NonNullable<ReturnType<typeof canonicalPublicKey>>; signKey: ReturnType<typeof canonicalSignKey>; backup: KeyBackup; replaces: string | null } | null = null;
 
   /**
    * Step 1 of making a key: makes it in memory and returns the 24 recovery words (the only place they ever exist besides the person's own
@@ -139,7 +203,7 @@ export class KeysService {
       if (!publicKey || !created.backup) throw new Error(tr('core.theKeyCouldNot', 'The key could not be made.'));
       const backup = await lockBackup(created.backup, recoveryKey);
       const words = await wordsOf(recoveryKey);
-      this.pending = { uid, key: created.key, publicKey, backup, replaces: replace ? this.thisKeyId() : null };
+      this.pending = { uid, key: created.key, publicKey, signKey: canonicalSignKey(created.key.signKey?.publicKey), backup, replaces: replace ? this.thisKeyId() : null };
       return words;
     } finally {
       recoveryKey.fill(0);
@@ -165,26 +229,47 @@ export class KeysService {
       throw new Error(tr('core.youSignedInAs', 'You signed in as someone else. Start again.'));
     }
     const before = await getDeviceKey(uid); // what this device had, to put it back if saving fails
+    const replacing = pending.replaces && before ? before : null; // a rotation: the old key is still here and hands its history over before it goes
+    const newId = keyIdOf((await fingerprintOf(pending.publicKey))!);
+    let published = false;
     try {
-      await saveDeviceKey(uid, pending.key);
-      // the key and its backup are stored in ONE step on the server: a key is never published without its backup (nor a backup without its key)
-      await this.api.request('/keys', { method: 'POST', body: JSON.stringify({ publicKey: pending.publicKey, label: deviceLabel(), backup: pending.backup }) });
+      const body = JSON.stringify({ publicKey: pending.publicKey, ...(pending.signKey ? { signKey: pending.signKey } : {}), label: deviceLabel(), backup: pending.backup });
+      if (replacing) {
+        // 1. the new key and its backup go to the server in ONE step, while the old key is still the key of this device
+        const added = await this.api.request<PublishedKey>('/keys', { method: 'POST', body });
+        published = true;
+        // 2. the old key gives the new one its copies of every message and file key (it is the only one that can; the new key is not on this device yet)
+        const old = await myDeviceKey(uid);
+        if (old) await this.ownRecovery.allow(added, () => undefined, old);
+        // 3. the next version of the signed device list: the new device in place of the old one, signed by the old key (version 1 for a person who had no list)
+        await this.deviceList.rotate(replacing, pending.key, added);
+        // 4. only now is the new key the key of this device
+        await saveDeviceKey(uid, pending.key);
+      } else {
+        await saveDeviceKey(uid, pending.key);
+        // the key and its backup are stored in ONE step on the server: a key is never published without its backup (nor a backup without its key)
+        await this.api.request('/keys', { method: 'POST', body });
+        published = true;
+      }
       // and it is read back: the key counts as made only when the server lists it as in use ...
       await this.refresh();
-      const id = keyIdOf((await fingerprintOf(pending.publicKey))!);
-      if (this.thisKeyId() !== id) throw new Error(tr('core.theKeyCouldNot2', 'The key could not be saved on the server. Try again.'));
+      if (this.thisKeyId() !== newId) throw new Error(tr('core.theKeyCouldNot2', 'The key could not be saved on the server. Try again.'));
       // ... and the key on this device is the same one and works
       if (!(await deviceKeyWorks(uid, pending.key.publicKey))) throw new Error(tr('core.theKeyOnThis', 'The key on this device could not be checked. Try again.'));
     } catch (err) {
       if (before) await saveDeviceKey(uid, before);
       else await deleteDeviceKey(uid);
+      if (published && replacing) await this.api.request(`/keys/${newId}/revoke`, { method: 'POST' }).catch(() => undefined); // the new key was never the key of this device: it does not count
       await this.refresh();
       throw err;
     }
     this.pending = null;
     void keepDeviceKey(); // ask the browser not to clear the key when it is short of room
     // a key this one replaces is retired only now that the new one is safe
-    if (pending.replaces && pending.replaces !== this.thisKeyId()) await this.revoke(pending.replaces);
+    if (pending.replaces && pending.replaces !== this.thisKeyId()) {
+      await this.revoke(pending.replaces, !replacing); // a rotation has already taken it out of the list
+      void this.reencrypt.run(true); // and what only it could open is locked anew
+    }
   }
 
   private relabelled = new Set<string>();
@@ -205,7 +290,8 @@ export class KeysService {
   }
 
   /** Retires a key of mine (a lost or replaced device): it is no longer used for new files. */
-  async revoke(id: string): Promise<void> {
+  async revoke(id: string, listed = true): Promise<void> {
+    if (listed) await this.deviceList.publishNext({ removeId: id }); // out of the signed list first, so friends stop locking for it (quiet when this device can not sign)
     await this.api.request(`/keys/${id}/revoke`, { method: 'POST' });
     await this.refresh();
   }
@@ -227,10 +313,17 @@ export class KeysService {
     recoveryKey.fill(0);
     if (!pkcs8) return 'wrong-code';
     try {
+      let parts: ReturnType<typeof unpackBackup>;
+      try {
+        parts = unpackBackup(pkcs8); // an older backup holds the lock key only; a newer one the lock key and the signing key
+      } catch {
+        return 'wrong-code';
+      }
+      const { lock, sign } = parts;
       const mine = await this.api.request<MyKeys>('/keys');
       for (const key of mine.keys.filter((k) => !k.revoked)) {
         try {
-          await restoreDeviceKey(this.uid, key.id, pkcs8, key.publicKey);
+          await restoreDeviceKey(this.uid, key.id, lock, key.publicKey, undefined, sign && key.signKey ? { pkcs8: sign, publicKey: key.signKey } : undefined);
           void keepDeviceKey();
           await this.refresh();
           return 'ok';

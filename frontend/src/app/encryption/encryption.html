@@ -6,9 +6,22 @@
 
   <app-key-setup (finished)="keys.refresh()" />
 
+  @if (reencrypt.running()) {
+    <div class="alert alert-info m-0" role="status">{{ t('encryption.lockingOldThings') || 'Locking your older messages and notes with the new key. You can keep using the app.' }} ({{ reencrypt.done() }})</div>
+  } @else if (reencrypt.skipped() > 0) {
+    <div class="alert alert-warning m-0" role="status">{{ t('encryption.someCouldNotBeLocked') || 'Some older items could not be opened on this device. Open the app on another device of yours to finish them.' }}</div>
+  }
+
   @if (!showingWords()) {
     <!-- does this device have a working key, and can it open everything? what to do when not -->
     @if (finished()) { <div class="alert alert-success m-0" role="status">{{ t('encryption.doneYourHistoryIs') || 'Done. Your history is open on this device.' }}</div> }
+    @if (keys.state() === 'ready' && !keys.hasBackup()) {
+      <div class="alert alert-info m-0 d-flex flex-column gap-2" role="status">
+        <strong>{{ t('encryption.noRescueCode') || 'No rescue code yet' }}</strong>
+        <span>{{ t('encryption.noRescueCodeText') || 'If you lose every phone and computer of yours, your old messages and files cannot be opened again. A rescue code is 24 words on paper that bring your lock back on a new device. It makes a new lock on this device and moves your history to it; it takes a moment.' }}</span>
+        <span><button type="button" class="btn btn-primary btn-sm" [disabled]="busy()" (click)="newKey()">{{ t('encryption.addARescueCode') || 'Add a rescue code' }}</button></span>
+      </div>
+    }
     @if (keys.state() === 'ready') {
       @if (lockedTotal() > 0) {
         <div class="alert alert-warning m-0" role="status">
