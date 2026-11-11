@@ -6,5 +6,7 @@
   "couldNotLoadThe": "Kunne ikke laste filen",
   "audio": "Lyd",
   "video": "Video",
-  "image": "Bilde"
+  "image": "Bilde",
+  "fullSize": "Full størrelse",
+  "fitToScreen": "Tilpass til skjermen"
 }

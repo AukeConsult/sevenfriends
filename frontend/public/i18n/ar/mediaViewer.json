@@ -6,5 +6,7 @@
   "couldNotLoadThe": "تعذّر تحميل الملف",
   "audio": "صوت",
   "video": "فيديو",
-  "image": "صورة"
+  "image": "صورة",
+  "fullSize": "الحجم الكامل",
+  "fitToScreen": "ملاءمة الشاشة"
 }

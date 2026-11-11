@@ -6,5 +6,7 @@
   "couldNotLoadThe": "Tiedostoa ei voitu ladata",
   "audio": "Ääni",
   "video": "Video",
-  "image": "Kuva"
+  "image": "Kuva",
+  "fullSize": "Koko koko",
+  "fitToScreen": "Sovita näyttöön"
 }

@@ -6,5 +6,7 @@
   "couldNotLoadThe": "파일을 불러올 수 없어요",
   "audio": "오디오",
   "video": "동영상",
-  "image": "이미지"
+  "image": "이미지",
+  "fullSize": "원본 크기",
+  "fitToScreen": "화면에 맞추기"
 }

@@ -774,8 +774,10 @@ app-voice { display: contents; }
   flex-direction: column;
   gap: 0.5rem;
   padding: 0.75rem var(--sf-gutter) calc(4.5rem + env(safe-area-inset-bottom));
-  img { display: block; max-width: 100%; max-height: calc(100dvh - 12rem); margin: 0 auto; object-fit: contain; }
+  img { display: block; max-width: 100%; max-height: calc(100dvh - 12rem); margin: 0 auto; object-fit: contain; cursor: zoom-in; }
 }
+/* an image can be shown at its full size: it scrolls inside this frame (a tap or the button turns it back) */
+.sf-viewer-pic.sf-viewer-full { overflow: auto; max-height: calc(100dvh - 12rem); touch-action: pan-x pan-y pinch-zoom; img { max-width: none; max-height: none; width: auto; margin: 0; cursor: zoom-out; } }
 .sf-bubble-tap:focus-visible { outline: 2px solid var(--sf-primary); outline-offset: 2px; }
 .sf-msg-actions-row:not(:has(*)) { display: none; } // a message without buttons has no row, and so no empty room under its time
 .sf-meta-line { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 0.375rem; margin: 0.125rem 0 0.375rem; max-width: calc(100vw - 2 * var(--sf-gutter));

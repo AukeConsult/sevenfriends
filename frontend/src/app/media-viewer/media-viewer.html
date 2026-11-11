@@ -8,7 +8,10 @@
     } @else if (isVideo(shown)) {
       <video [src]="shown.url" controls autoplay playsinline [attr.aria-label]="shown.name ?? (t('mediaViewer.video') || 'Video')"></video>
     } @else {
-      <img [src]="shown.url" [alt]="shown.name ?? (t('mediaViewer.image') || 'Image')" />
+      <div class="sf-viewer-pic" [class.sf-viewer-full]="full()">
+        <img [src]="shown.url" [alt]="shown.name ?? (t('mediaViewer.image') || 'Image')" (click)="full.set(!full())" />
+      </div>
+      <button type="button" class="btn btn-outline-primary btn-sm align-self-center" (click)="full.set(!full())">{{ full() ? (t('mediaViewer.fitToScreen') || 'Fit to screen') : (t('mediaViewer.fullSize') || 'Full size') }}</button>
     }
     <p class="sf-hint text-center m-0">{{ shown.type }} · {{ formatBytes(shown.bytes) }}</p>
     <a class="btn btn-primary align-self-center" [href]="shown.url" [download]="saveName(shown)">{{ t('mediaViewer.download') || 'Download' }}</a>

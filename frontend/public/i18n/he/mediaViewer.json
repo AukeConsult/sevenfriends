@@ -6,5 +6,7 @@
   "couldNotLoadThe": "לא ניתן היה לטעון את הקובץ",
   "audio": "אודיו",
   "video": "סרטון",
-  "image": "תמונה"
+  "image": "תמונה",
+  "fullSize": "גודל מלא",
+  "fitToScreen": "התאם למסך"
 }

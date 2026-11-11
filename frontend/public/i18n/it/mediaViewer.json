@@ -6,5 +6,7 @@
   "couldNotLoadThe": "Impossibile caricare il file",
   "audio": "Audio",
   "video": "Video",
-  "image": "Immagine"
+  "image": "Immagine",
+  "fullSize": "Dimensione reale",
+  "fitToScreen": "Adatta allo schermo"
 }

@@ -6,5 +6,7 @@
   "couldNotLoadThe": "ファイルを読み込めませんでした",
   "audio": "音声",
   "video": "動画",
-  "image": "画像"
+  "image": "画像",
+  "fullSize": "原寸大",
+  "fitToScreen": "画面に合わせる"
 }

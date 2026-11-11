@@ -6,5 +6,7 @@
   "couldNotLoadThe": "Filen kunne ikke indlæses",
   "audio": "Lyd",
   "video": "Video",
-  "image": "Billede"
+  "image": "Billede",
+  "fullSize": "Fuld størrelse",
+  "fitToScreen": "Tilpas til skærm"
 }

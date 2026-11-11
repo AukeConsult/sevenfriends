@@ -91,12 +91,12 @@ export function sizeOf(image: Decoded | HTMLVideoElement | HTMLCanvasElement): {
 }
 
 /** The longest side of a picture that is sent, and of its small preview, in pixels. */
-const FULL_SIDE = 1024;
-const THUMB_SIDE = 320;
+const FULL_SIDE = 2048;
+const THUMB_SIDE = 720;
 /** A picture that is sent is squeezed (lower JPEG quality) until it is no bigger than this, as long as the quality stays good enough. */
-const TARGET_BYTES = 200 * 1024;
-const BEST_QUALITY = 0.8;
-const WORST_QUALITY = 0.5;
+const TARGET_BYTES = 800 * 1024;
+const BEST_QUALITY = 0.85;
+const WORST_QUALITY = 0.7;
 /** The backend takes at most 10 MB for an image. */
 export const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
 
@@ -110,8 +110,8 @@ export interface PreparedImage {
 }
 
 /**
- * Makes a chosen image ready to send, in the browser: it is scaled down to 1024 pixels and saved as a JPEG of about 200 KB at most (a big phone
- * photo is never sent, and the position and other details stored in the photo are left behind), with a 320 pixel preview.
+ * Makes a chosen image ready to send, in the browser: it is scaled down to 2048 pixels and saved as a good quality JPEG of about 800 KB at most (a picture for a conversation or the safebox, not an
+ * archive: the small print of a ticket stays readable; the position and other details stored in the photo are left behind), with a 720 pixel preview made from the big picture.
  * A GIF is sent as it is, so it keeps moving.
  */
 export async function prepareImage(file: File): Promise<PreparedImage> {
@@ -123,12 +123,18 @@ export async function prepareImage(file: File): Promise<PreparedImage> {
       const thumb = await scaled(source, THUMB_SIDE, 0.8);
       return { blob: file, thumb: thumb.blob, width, height, name: file.name };
     }
-    const full = drawn(source, FULL_SIDE);
+    let full = drawn(source, FULL_SIDE);
     canvases.push(full);
-    const fullBlob = await jpegUnder(full, TARGET_BYTES);
-    const small = drawn(full, THUMB_SIDE); // the preview is made from the small picture, not from the big one again
+    let fullBlob = await jpegUnder(full, TARGET_BYTES);
+    if (fullBlob.size > MAX_IMAGE_BYTES * 0.9) {
+      // a very busy picture: smaller, so that the server accepts it
+      full = drawn(source, FULL_SIDE * 0.66);
+      canvases.push(full);
+      fullBlob = await jpegUnder(full, TARGET_BYTES);
+    }
+    const small = drawn(source, THUMB_SIDE);
     canvases.push(small);
-    return { blob: fullBlob, thumb: await jpeg(small, 0.8), width: full.width, height: full.height, name: file.name.replace(/\.[^./\\]*$/, '') + '.jpg' };
+    return { blob: fullBlob, thumb: await thumbJpeg(small), width: full.width, height: full.height, name: file.name.replace(/\.[^./\\]*$/, '') + '.jpg' };
   } finally {
     if (!(source instanceof HTMLImageElement)) source.close();
     canvases.forEach(release);
@@ -160,7 +166,14 @@ async function jpeg(canvas: HTMLCanvasElement, quality: number): Promise<Blob> {
 /** The picture as a JPEG: the best quality that fits `maxBytes`, but never worse than WORST_QUALITY (a busy picture may stay a bit bigger). */
 async function jpegUnder(canvas: HTMLCanvasElement, maxBytes: number): Promise<Blob> {
   let blob = await jpeg(canvas, BEST_QUALITY);
-  for (let quality = BEST_QUALITY - 0.09; blob.size > maxBytes && quality >= WORST_QUALITY; quality -= 0.09) blob = await jpeg(canvas, quality);
+  for (let quality = BEST_QUALITY - 0.05; blob.size > maxBytes && quality >= WORST_QUALITY; quality -= 0.05) blob = await jpeg(canvas, quality);
+  return blob;
+}
+
+/** The preview as a JPEG: quality 0.8, lower only when it would be bigger than the server takes (250 KB) with some room. */
+async function thumbJpeg(canvas: HTMLCanvasElement): Promise<Blob> {
+  let blob = await jpeg(canvas, 0.8);
+  for (let quality = 0.7; blob.size > 180 * 1024 && quality >= 0.5; quality -= 0.1) blob = await jpeg(canvas, quality);
   return blob;
 }
 
@@ -200,7 +213,7 @@ export async function rotateImage(image: PreparedImage, clockwise: boolean): Pro
     const blob = await jpegUnder(turned, TARGET_BYTES);
     const small = drawn(turned, THUMB_SIDE);
     canvases.push(small);
-    return { blob, thumb: await jpeg(small, 0.8), width: height, height: width, name: image.name };
+    return { blob, thumb: await thumbJpeg(small), width: height, height: width, name: image.name };
   } finally {
     if (!(source instanceof HTMLImageElement)) source.close();
     canvases.forEach(release);

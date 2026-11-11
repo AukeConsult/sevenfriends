@@ -6,5 +6,7 @@
   "couldNotLoadThe": "Tidak bisa memuat file",
   "audio": "Audio",
   "video": "Video",
-  "image": "Gambar"
+  "image": "Gambar",
+  "fullSize": "Ukuran penuh",
+  "fitToScreen": "Sesuaikan layar"
 }

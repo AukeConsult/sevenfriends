@@ -35,7 +35,7 @@ const KIND_RULES: Record<CacheKind | "thumb", { family: Family; containers: Cont
   audio: { family: "audio", containers: ["mp4", "webm", "ogg", "mp3", "wav"], maxBytes: 25 * MB },
   avatar: { family: "image", containers: PICTURES, maxBytes: MAX_PICTURE_BYTES },
   icon: { family: "image", containers: PICTURES, maxBytes: 32 * 1024 },
-  thumb: { family: "image", containers: PICTURES, maxBytes: 100 * 1024 },
+  thumb: { family: "image", containers: PICTURES, maxBytes: 250 * 1024 },
 };
 
 /** What a stored object can be: the kinds above, a preview, or one piece of an upload that is not finished (`tmp/<uploadid>/<n>`). */

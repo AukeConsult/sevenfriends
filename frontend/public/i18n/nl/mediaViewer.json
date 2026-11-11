@@ -6,5 +6,7 @@
   "couldNotLoadThe": "Kon het bestand niet laden",
   "audio": "Audio",
   "video": "Video",
-  "image": "Afbeelding"
+  "image": "Afbeelding",
+  "fullSize": "Volledige grootte",
+  "fitToScreen": "Passend op scherm"
 }

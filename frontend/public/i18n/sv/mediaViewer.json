@@ -6,5 +6,7 @@
   "couldNotLoadThe": "Kunde inte ladda filen",
   "audio": "Ljud",
   "video": "Video",
-  "image": "Bild"
+  "image": "Bild",
+  "fullSize": "Full storlek",
+  "fitToScreen": "Anpassa till skärmen"
 }

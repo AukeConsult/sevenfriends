@@ -22,6 +22,8 @@ export class MediaViewer {
 
   protected readonly file = signal<StoredFile | null>(null);
   protected readonly error = signal<string | null>(null);
+  /** an image at its full size (scroll to see all of it) or fitted to the screen */
+  protected readonly full = signal(false);
   protected readonly formatBytes = formatBytes;
 
   constructor() {

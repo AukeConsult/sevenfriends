@@ -6,5 +6,7 @@
   "couldNotLoadThe": "Could not load the file",
   "audio": "Audio",
   "video": "Video",
-  "image": "Image"
+  "image": "Image",
+  "fullSize": "Full size",
+  "fitToScreen": "Fit to screen"
 }

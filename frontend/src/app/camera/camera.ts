@@ -5,7 +5,7 @@ import { MAX_VIDEO_SECONDS, recorderOptions, recorderType } from '../core/video'
 import { tr } from '../core/i18n';
 
 /** The longest side of a photo taken on the page, in pixels (it is made smaller still when it is prepared to be sent). */
-const PHOTO_SIDE = 1280;
+const PHOTO_SIDE = 2048;
 
 /** What went wrong with the camera, in words for the person. */
 export function cameraProblem(err: unknown): string {
@@ -122,7 +122,7 @@ export class Camera implements OnInit, OnDestroy {
     // the frame is scaled down straight from the camera picture (never a full-size canvas: a phone camera can give a very big frame)
     let blob: Blob | null = null;
     try {
-      blob = (await scaled(element, PHOTO_SIDE, 0.85)).blob; // the photo itself is not mirrored, only the view of it is
+      blob = (await scaled(element, PHOTO_SIDE, 0.9)).blob; // the photo itself is not mirrored, only the view of it is
     } catch {
       blob = null;
     }

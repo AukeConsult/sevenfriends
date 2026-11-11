@@ -6,5 +6,7 @@
   "couldNotLoadThe": "Nie udało się wczytać pliku",
   "audio": "Dźwięk",
   "video": "Wideo",
-  "image": "Zdjęcie"
+  "image": "Zdjęcie",
+  "fullSize": "Pełny rozmiar",
+  "fitToScreen": "Dopasuj do ekranu"
 }
