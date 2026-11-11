@@ -2,6 +2,7 @@ import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../core/auth.service';
+import { ActiveCircleService } from '../core/active-circle.service';
 import { FriendLinkService } from '../core/friend-link.service';
 import { WelcomeService } from '../core/welcome.service';
 import { WhyTiles } from '../why-tiles/why-tiles';
@@ -26,6 +27,7 @@ export class Welcome {
   /** signed in: the page is still shown (it is always open at /welcome), with a way on to the home page */
   protected readonly auth = inject(AuthService);
   private readonly friendLinks = inject(FriendLinkService);
+  private readonly active = inject(ActiveCircleService);
   private readonly friend = this.friendLinks.pending;
   protected readonly invited = computed(() => this.friend() !== null);
   /** the ping demo turns round: each scene is three pieces of noise and the one message that matters (words: welcome.json `scene<N>a|b|c|m`) */
@@ -34,6 +36,10 @@ export class Welcome {
     { n: 2, noise: ["12 unread newsletters", "Flash sale ends tonight!", "3 new suggestions for you"], calm: "Dad: Dinner on Sunday?" },
     { n: 3, noise: ["Trending now", "Old classmates: 99+ messages", "Sponsored: new shoes"], calm: "Anna: Landed safely ❤️" },
     { n: 4, noise: ["Your story got 3 views", "5 people you may know", "Someone is typing…"], calm: "Tom: Can you call me?" },
+    { n: 5, noise: ["Breaking news", "Win a free phone!", "12 people reacted"], calm: "Sara: I’m outside" },
+    { n: 6, noise: ["Update available", "Your weekly summary", "Join our community of 2M"], calm: "Mom: Call me when you can ❤️" },
+    { n: 7, noise: ["Reply all: 38 people", "Meeting moved again", "#general: 142 unread"], calm: "Jonas: Lunch at 12?" },
+    { n: 8, noise: ["Mandatory fun Friday", "Your timesheet is overdue", "Re: Fwd: Fwd: Q3 report"], calm: "Lisa: Need a hand with the deck?" },
   ];
   private readonly turn = signal(0);
   protected readonly scene = computed(() => this.scenes[this.turn() % this.scenes.length]);
@@ -49,7 +55,10 @@ export class Welcome {
 
   protected continueInBrowser(): void {
     this.welcome.continueInBrowser();
-    if (!this.friendLinks.enterCircleOf('/login')) void this.router.navigateByUrl('/login');
+    if (this.friendLinks.enterCircleOf('/login')) return;
+    // no link that names a circle: the general welcome page always starts in the Friends circle, whatever circle this browser was in before
+    if (!this.friend()?.circle) this.active.choose('default', '/login');
+    else void this.router.navigateByUrl('/login');
   }
 
   /** the explanation under the button: key, English title and text (the words come from welcome.json, these are the fallback) */
