@@ -1,6 +1,9 @@
 <ng-container *transloco="let t">
 <app-page-bar [title]="t('setup.title') || 'Setup wizard'" [subtitle]="step() ? (t('setup.step', { n: stepNumber(), total: stepCount() }) || 'Step ' + stepNumber() + ' of ' + stepCount()) : null">
-  <button type="button" class="btn btn-link btn-sm" (click)="finish('/')">{{ t('common.finish') || 'Finish' }}</button>
+  @if (step() && !showingWords()) {
+    <button type="button" class="btn btn-light btn-sm" [disabled]="busy() || stepNumber() === 1" (click)="previous()">{{ t('common.back') || 'Back' }}</button>
+    <button type="button" class="btn btn-primary btn-sm" [disabled]="busy()" (click)="headerNext()">{{ isLast() ? (t('common.finish') || 'Finish') : (t('common.next') || 'Next') }}</button>
+  }
 </app-page-bar>
 <main class="sf-narrow">
   @switch (step()) {
@@ -38,7 +41,6 @@
       @if (saveProblem(); as text) { <div class="alert alert-warning m-0" role="alert">{{ text }}</div> }
       <div class="d-flex flex-wrap gap-3 justify-content-center">
         <button type="button" class="btn btn-link" (click)="later()">{{ t('common.doItLater') || 'Do it later' }}</button>
-        <button type="button" class="btn btn-primary" [disabled]="busy()" (click)="saveProfile()">{{ t('common.next') || 'Next' }}</button>
       </div>
     }
     @case ('install') {
@@ -77,7 +79,6 @@
       <p class="small text-secondary m-0">{{ t('setup.hideTextNote') || 'Safer: the text of a message is hidden on your lock screen, so only you see what it says. You can change this with the switch above.' }}</p>
       <div class="d-flex flex-wrap gap-3 justify-content-center">
         <button type="button" class="btn btn-link" (click)="later()">{{ t('common.doItLater') || 'Do it later' }}</button>
-        <button type="button" class="btn btn-primary" (click)="isLast() ? finish('/') : next()">{{ isLast() ? (t('common.finish') || 'Finish') : (t('common.next') || 'Next') }}</button>
       </div>
     }
     @case ('key') {
@@ -87,7 +88,6 @@
       @if (!showingWords()) {
         <div class="d-flex flex-wrap gap-3 justify-content-center">
           <button type="button" class="btn btn-link" (click)="later()">{{ t('common.doItLater') || 'Do it later' }}</button>
-          <button type="button" class="btn btn-primary" (click)="isLast() ? finish('/') : next()">{{ isLast() ? (t('common.finish') || 'Finish') : (t('common.next') || 'Next') }}</button>
         </div>
       }
     }
@@ -96,7 +96,6 @@
         <h2 class="sf-section-title m-0">{{ t('setup.yourMany', { many: w.many }) || 'Your ' + w.many }}</h2>
         @if (hasFriends()) {
           <div class="alert alert-success m-0 w-100" role="status">✓ {{ t('setup.haveMany', { many: w.many }) || 'You already have ' + w.many + '. Everything is ready.' }}</div>
-          <button type="button" class="btn btn-primary" (click)="isLast() ? finish('/') : next()">{{ isLast() ? (t('common.finish') || 'Finish') : (t('common.next') || 'Next') }}</button>
           <button type="button" class="btn btn-outline-primary btn-sm" (click)="addFriend()">{{ t('setup.addAnother', { one: w.one }) || 'Add another ' + w.one }}</button>
         } @else {
           <p class="m-0">{{ t('setup.addFirst', { one: w.one, many: w.many }) || 'Add your first ' + w.one + ': there are only seven seats, so choose the ' + w.many + ' who matter most.' }}</p>

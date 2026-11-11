@@ -186,6 +186,17 @@ export class Setup {
 
   protected readonly busy = signal(false);
 
+  protected previous(): void {
+    this.index.update((i) => Math.max(i - 1, 0));
+  }
+
+  /** the Next / Finish button of the header: the same as the button that used to be under the step */
+  protected headerNext(): void {
+    if (this.step() === 'profile') void this.saveProfile();
+    else if (this.isLast()) this.finish('/');
+    else this.next();
+  }
+
   protected next(): void {
     this.index.update((i) => Math.min(i + 1, this.stepCount() - 1));
   }

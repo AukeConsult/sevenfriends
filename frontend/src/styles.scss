@@ -258,8 +258,8 @@ app-root {
   display: flex;
   align-items: center;
   gap: 0.25rem;
-  min-height: calc(3.25rem + var(--sf-safe-top));
-  padding: calc(0.375rem + var(--sf-safe-top)) calc(var(--sf-gutter) - 0.25rem) 0.375rem 0;
+  min-height: calc(2.75rem + var(--sf-safe-top));
+  padding: calc(0.125rem + var(--sf-safe-top)) calc(var(--sf-gutter) - 0.25rem) 0.125rem 0;
   background: var(--sf-header);
   border-bottom: 1px solid var(--sf-header-border);
   box-shadow: 0 3px 12px color-mix(in srgb, var(--sf-text) 12%, transparent);
@@ -1237,7 +1237,7 @@ nav.sf-tabs {
     &:hover { background: none; border-bottom-color: var(--sf-header-border); }
     &.active { background: none; color: var(--sf-primary); border-bottom-color: var(--sf-primary); } }
 }
-nav.sf-tabs ~ * > app-page-bar { display: none; } // inside Settings the one bar above the tabs is the header; the page's own bar (when it is also used on its own) is not shown
+nav.sf-tabs ~ * > app-page-bar { display: none !important; } // inside Settings the one bar above the tabs is the header; the page's own bar (when it is also used on its own) is not shown
 
 @media (max-width: 575.98px) {
   .sf-choice-round img { --sf-pick: calc((100vw - 2 * var(--sf-gutter) - 1rem) / 2 - 0.75rem); width: var(--sf-pick); height: var(--sf-pick); max-width: 10rem; max-height: 10rem; } // the icons of the profile on a phone: two in a row, as big as the width allows (at most 10rem)
