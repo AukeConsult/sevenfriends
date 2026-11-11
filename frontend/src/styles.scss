@@ -1365,7 +1365,7 @@ button.sf-hs-sleep { padding: 0; border: 0; background: none; font: inherit; wid
 .sf-home-ic { flex: none; display: grid; place-items: center; width: 2.25rem; height: 2.25rem; border-radius: 50%; background: var(--bs-primary-bg-subtle); font-size: 1.125rem; }
 .sf-home-cards > li.sf-list-item { flex-wrap: wrap; gap: 0.5rem 0.75rem; }
 /* the buttons of a card: under the text, small, side by side, never stretched */
-.sf-home-actions { flex: 1 0 100%; display: flex; flex-wrap: wrap; gap: 0.5rem; .btn { flex: 0 0 auto; } }
+.sf-home-actions { flex: none; width: 100%; display: flex; flex-wrap: wrap; gap: 0.5rem; .btn { flex: 0 0 auto; } }
 .sf-home-cards .sf-message-head { justify-content: flex-start; .sf-message-actions { margin-inline-start: auto; } }
 
 /* the three welcome pages for Seven Buddies (/buddy1, /buddy2, /buddy3) */
