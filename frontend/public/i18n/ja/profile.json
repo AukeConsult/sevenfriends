@@ -51,5 +51,10 @@
   "saveFailed": "保存できませんでした",
   "providerEmail": "メール",
   "providerPhone": "電話",
-  "providerUnknown": "不明"
+  "providerUnknown": "不明",
+  "sendAgain": "再送信",
+  "checking": "確認中…",
+  "iVerified": "リンクを開きました：今すぐ確認",
+  "notYet": "まだ確認されていません。まずメールのリンクを開いてください（迷惑メールも確認してください）。",
+  "checkFailed": "今は確認できませんでした。接続を確認してもう一度お試しください。"
 }

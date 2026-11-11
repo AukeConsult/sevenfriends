@@ -1,0 +1,9 @@
+{
+  "title": "Potwierdzanie e-maila",
+  "working": "Sprawdzanie linku…",
+  "verified": "Twój e-mail został potwierdzony.",
+  "toProfile": "Wróć do mojego profilu",
+  "toLogin": "Zaloguj się",
+  "other": "Ta strona nie może dokończyć tego linku.",
+  "failed": "Nie udało się użyć tego linku. Mógł zostać już użyty lub wygasnąć. Poproś o nowy na stronie swojego profilu."
+}

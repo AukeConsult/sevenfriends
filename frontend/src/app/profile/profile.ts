@@ -86,6 +86,9 @@ export class Profile {
   /** from the server (the login token), so it always agrees with what friends can find */
   protected readonly emailVerified = signal(false);
   protected readonly verificationSent = signal(false);
+  /** true while I ask Firebase whether the email is verified now, and after an answer of 'not yet' */
+  protected readonly checking = signal(false);
+  protected readonly notYet = signal(false);
   protected readonly verificationError = signal<string | null>(null);
   protected readonly state = signal<SaveState>('idle');
   protected readonly error = signal<string | null>(null);
@@ -126,6 +129,7 @@ export class Profile {
     // and try again when the connection is back
     const onHide = () => {
       if (document.visibilityState === 'hidden' && this.dirty) void this.flush(true);
+      if (document.visibilityState === 'visible' && this.verificationSent() && !this.emailVerified()) void this.checkVerification(); // back from the mail: look again by itself
     };
     const onClose = () => {
       if (this.dirty) void this.flush(true);
@@ -216,6 +220,23 @@ export class Profile {
       this.verificationSent.set(true);
     } catch (err) {
       this.verificationError.set(authMessage(err, tr('profile.sendFailed', 'Could not send the email. Please try again.')));
+    }
+  }
+
+  /** "I opened the link": asks again; verified = the page shows it at once, otherwise it says "not yet" (or why it could not ask). */
+  protected async checkVerification(): Promise<void> {
+    this.checking.set(true);
+    this.notYet.set(false);
+    this.verificationError.set(null);
+    try {
+      if (await this.auth.checkVerified()) {
+        this.emailVerified.set(true);
+        this.verificationSent.set(false);
+      } else this.notYet.set(true);
+    } catch (err) {
+      this.verificationError.set(authMessage(err, tr('profile.checkFailed', 'Could not check now. Check the connection and try again.')));
+    } finally {
+      this.checking.set(false);
     }
   }
 

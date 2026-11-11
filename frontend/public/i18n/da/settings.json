@@ -22,5 +22,7 @@
   "useASleepList": "Brug en soveliste",
   "offAOneYou": "Fra: når du fjerner {{ one }}, bliver vedkommende slettet, og rækken med sovelisten er skjult, mens den er tom.",
   "readyMadeMessageIndex": "Færdig besked {{ index }}",
-  "removeMessageIndex": "Fjern besked {{ index }}"
+  "removeMessageIndex": "Fjern besked {{ index }}",
+  "tellWhenIAdd": "Fortæl dem det, når jeg tilføjer noget til pengeskabet",
+  "aMessageTellsYour": "En besked fortæller din ven eller gruppe, at en note, en ting eller en fil er der, med et link til at åbne den. Fra: Der sendes intet; klokken i en ting kan stadig fortælle det."
 }

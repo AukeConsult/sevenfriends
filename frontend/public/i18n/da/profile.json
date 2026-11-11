@@ -51,5 +51,10 @@
   "saveFailed": "Kunne ikke gemme",
   "providerEmail": "E-mail",
   "providerPhone": "Telefon",
-  "providerUnknown": "Ukendt"
+  "providerUnknown": "Ukendt",
+  "sendAgain": "Send igen",
+  "checking": "Tjekker…",
+  "iVerified": "Jeg har åbnet linket: tjek nu",
+  "notYet": "Endnu ikke bekræftet. Åbn først linket i e-mailen (kig også i spam).",
+  "checkFailed": "Kunne ikke tjekke nu. Tjek forbindelsen og prøv igen."
 }

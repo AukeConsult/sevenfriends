@@ -290,7 +290,15 @@
     "makesASound": "mengeluarkan suara",
     "activityIn": "Aktivitas di {{ circle }}",
     "tryApp": "Try {{ app }}: {{ url }}",
-    "tryApp2": "Try {{ app }}:"
+    "tryApp2": "Try {{ app }}:",
+    "theLockOfThis": "Kunci percakapan ini tidak valid, jadi tidak ada yang dapat dikirim. Lihat peringatan di bawah nama.",
+    "chainBroken": "Kunci {{ name }} tidak valid. Tidak ada yang dapat dikirim sampai Anda tahu alasannya. Telepon {{ name }} dan tanyakan apa yang terjadi.",
+    "chainNewHistory": "Kunci dimulai dari awal. Ini bisa terjadi jika {{ name }} kehilangan semua ponsel dan komputernya. Terima hanya jika {{ name }} memberi tahu Anda.",
+    "chainCannotTrust": "Ada yang diubah atau dihapus dalam daftar kunci. Ini tidak dapat diterima di sini.",
+    "chainAccept": "Ya, {{ name }} memberi tahu saya",
+    "chainAgain": "Periksa lagi",
+    "noKeyInList": "Belum ada kunci orang ini di daftar bertanda tangan mereka, jadi tidak ada yang dapat dikunci untuk mereka. Minta mereka membuka aplikasi di perangkat yang disetujui.",
+    "thisDeviceNotApproved": "Perangkat ini belum disetujui. Setujui di perangkat Anda yang lain (di Beranda), lalu coba lagi."
   },
   "needsYourHelp": "{{ friendName }} butuh bantuanmu",
   "openToUnlockTheir": "Buka aplikasi untuk membuka kunci pesan lamanya lagi.",

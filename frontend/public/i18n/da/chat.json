@@ -64,5 +64,6 @@
   "messageOne": "besked",
   "messageMany": "beskeder",
   "alsoWhose": ", også {{ name }}s,",
-  "openTheItem": "Åbn emnet"
+  "openTheItem": "Åbn emnet",
+  "signatureBad": "⚠ Det kunne ikke kontrolleres, hvem der har skrevet denne besked. Stol ikke på den."
 }

@@ -64,5 +64,6 @@
   "messageOne": "메시지",
   "messageMany": "메시지",
   "alsoWhose": " ({{ name }}의 메시지 포함)",
-  "openTheItem": "항목 열기"
+  "openTheItem": "항목 열기",
+  "signatureBad": "⚠ 이 메시지를 누가 썼는지 확인할 수 없습니다. 믿지 마세요."
 }

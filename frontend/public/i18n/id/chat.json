@@ -64,5 +64,6 @@
   "messageOne": "pesan",
   "messageMany": "pesan",
   "alsoWhose": ", termasuk milik {{ name }},",
-  "openTheItem": "Buka item"
+  "openTheItem": "Buka item",
+  "signatureBad": "⚠ Tidak dapat memeriksa siapa yang menulis pesan ini. Jangan percayai pesan ini."
 }

@@ -51,5 +51,10 @@
   "saveFailed": "Tidak bisa menyimpan",
   "providerEmail": "Email",
   "providerPhone": "Telepon",
-  "providerUnknown": "Tidak diketahui"
+  "providerUnknown": "Tidak diketahui",
+  "sendAgain": "Kirim lagi",
+  "checking": "Memeriksa…",
+  "iVerified": "Saya sudah membuka tautan: periksa sekarang",
+  "notYet": "Belum terverifikasi. Buka dulu tautan di email (periksa juga di spam).",
+  "checkFailed": "Tidak dapat memeriksa sekarang. Periksa koneksi dan coba lagi."
 }

@@ -64,5 +64,6 @@
   "messageOne": "wiadomość",
   "messageMany": "wiadomości",
   "alsoWhose": ", także od: {{ name }},",
-  "openTheItem": "Otwórz element"
+  "openTheItem": "Otwórz element",
+  "signatureBad": "⚠ Nie udało się sprawdzić, kto napisał tę wiadomość. Nie ufaj jej."
 }

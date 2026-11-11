@@ -1,0 +1,9 @@
+{
+  "title": "E-postanızı onaylama",
+  "working": "Bağlantı kontrol ediliyor…",
+  "verified": "E-postanız doğrulandı.",
+  "toProfile": "Profilime dön",
+  "toLogin": "Giriş yap",
+  "other": "Bu sayfa bu bağlantıyı tamamlayamaz.",
+  "failed": "Bu bağlantı kullanılamadı. Daha önce kullanılmış ya da süresi dolmuş olabilir. Profil sayfanızdan yenisini isteyin."
+}

@@ -22,5 +22,7 @@
   "useASleepList": "Utiliser une liste de pause",
   "offAOneYou": "Désactivé : un {{ one }} que tu retires est supprimé, et la ligne de la liste de pause est masquée tant qu'elle est vide.",
   "readyMadeMessageIndex": "Message tout prêt {{ index }}",
-  "removeMessageIndex": "Supprimer le message {{ index }}"
+  "removeMessageIndex": "Supprimer le message {{ index }}",
+  "tellWhenIAdd": "Les prévenir quand j'ajoute quelque chose au coffre",
+  "aMessageTellsYour": "Un message indique à votre ami ou groupe qu'une note, un élément ou un fichier est là, avec un lien pour l'ouvrir. Désactivé : rien n'est envoyé ; la cloche dans un élément peut quand même les prévenir."
 }

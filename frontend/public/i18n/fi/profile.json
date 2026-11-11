@@ -51,5 +51,10 @@
   "saveFailed": "Tallennus ei onnistunut",
   "providerEmail": "Sähköposti",
   "providerPhone": "Puhelin",
-  "providerUnknown": "Tuntematon"
+  "providerUnknown": "Tuntematon",
+  "sendAgain": "Lähetä uudelleen",
+  "checking": "Tarkistetaan…",
+  "iVerified": "Avasin linkin: tarkista nyt",
+  "notYet": "Ei vielä vahvistettu. Avaa ensin sähköpostin linkki (katso myös roskapostista).",
+  "checkFailed": "Tarkistus ei onnistunut nyt. Tarkista yhteys ja yritä uudelleen."
 }

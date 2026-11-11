@@ -51,5 +51,10 @@
   "saveFailed": "Konnte nicht gespeichert werden",
   "providerEmail": "E-Mail",
   "providerPhone": "Telefon",
-  "providerUnknown": "Unbekannt"
+  "providerUnknown": "Unbekannt",
+  "sendAgain": "Erneut senden",
+  "checking": "Wird geprüft…",
+  "iVerified": "Ich habe den Link geöffnet: jetzt prüfen",
+  "notYet": "Noch nicht bestätigt. Öffne zuerst den Link in der E-Mail (schau auch im Spam-Ordner).",
+  "checkFailed": "Prüfen gerade nicht möglich. Prüfe die Verbindung und versuche es erneut."
 }

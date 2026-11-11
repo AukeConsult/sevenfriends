@@ -290,7 +290,15 @@
     "makesASound": "emette un suono",
     "activityIn": "Attività in {{ circle }}",
     "tryApp": "Try {{ app }}: {{ url }}",
-    "tryApp2": "Try {{ app }}:"
+    "tryApp2": "Try {{ app }}:",
+    "theLockOfThis": "Il lucchetto di questa conversazione non risulta valido, quindi non si può inviare nulla. Guarda l'avviso sotto il nome.",
+    "chainBroken": "Il lucchetto di {{ name }} non risulta valido. Non si può inviare nulla finché non sai perché. Chiama {{ name }} e chiedi cos'è successo.",
+    "chainNewHistory": "Il lucchetto riparte da capo. Può succedere se {{ name }} ha perso tutti i telefoni e computer. Accettalo solo se {{ name }} te l'ha detto.",
+    "chainCannotTrust": "Qualcosa nell'elenco dei lucchetti è stato cambiato o rimosso. Qui non può essere accettato.",
+    "chainAccept": "Sì, {{ name }} me l'ha detto",
+    "chainAgain": "Controlla di nuovo",
+    "noKeyInList": "Nessuna chiave di questa persona è ancora nel suo elenco firmato, quindi non si può bloccare nulla per lei. Chiedile di aprire l'app su un dispositivo approvato.",
+    "thisDeviceNotApproved": "Questo dispositivo non è ancora approvato. Approvalo su un altro tuo dispositivo (in Home) e riprova."
   },
   "needsYourHelp": "{{ friendName }} ha bisogno del tuo aiuto",
   "openToUnlockTheir": "Apri l'app per sbloccare di nuovo i suoi vecchi messaggi.",

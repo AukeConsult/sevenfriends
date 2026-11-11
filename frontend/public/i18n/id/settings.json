@@ -22,5 +22,7 @@
   "useASleepList": "Pakai daftar tidur",
   "offAOneYou": "Mati: {{ one }} yang kamu keluarkan akan dihapus, dan baris daftar tidur disembunyikan selama kosong.",
   "readyMadeMessageIndex": "Pesan siap pakai {{ index }}",
-  "removeMessageIndex": "Hapus pesan {{ index }}"
+  "removeMessageIndex": "Hapus pesan {{ index }}",
+  "tellWhenIAdd": "Beri tahu mereka saat saya menambahkan sesuatu ke brankas",
+  "aMessageTellsYour": "Sebuah pesan memberi tahu teman atau grup Anda bahwa ada catatan, item, atau berkas, dengan tautan untuk membukanya. Mati: tidak ada yang dikirim; lonceng di item tetap dapat memberi tahu."
 }

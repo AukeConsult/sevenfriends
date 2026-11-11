@@ -22,5 +22,7 @@
   "useASleepList": "スリープリストを使う",
   "offAOneYou": "オフ: 外した{{ one }}は削除され、スリープリストの行は空のあいだ非表示になります。",
   "readyMadeMessageIndex": "定型メッセージ {{ index }}",
-  "removeMessageIndex": "メッセージ {{ index }} を削除"
+  "removeMessageIndex": "メッセージ {{ index }} を削除",
+  "tellWhenIAdd": "金庫に何か追加したら知らせる",
+  "aMessageTellsYour": "メッセージで、メモ・項目・ファイルがあることを、開くためのリンク付きで友だちやグループに知らせます。オフ：何も送信されません。項目のベルで知らせることはできます。"
 }

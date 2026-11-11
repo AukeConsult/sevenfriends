@@ -51,5 +51,10 @@
   "saveFailed": "Nie udało się zapisać",
   "providerEmail": "E-mail",
   "providerPhone": "Telefon",
-  "providerUnknown": "Nieznany"
+  "providerUnknown": "Nieznany",
+  "sendAgain": "Wyślij ponownie",
+  "checking": "Sprawdzanie…",
+  "iVerified": "Otworzyłem(-am) link: sprawdź teraz",
+  "notYet": "Jeszcze niepotwierdzony. Najpierw otwórz link w e-mailu (zajrzyj też do spamu).",
+  "checkFailed": "Nie udało się teraz sprawdzić. Sprawdź połączenie i spróbuj ponownie."
 }

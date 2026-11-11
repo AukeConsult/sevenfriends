@@ -64,5 +64,6 @@
   "messageOne": "संदेश",
   "messageMany": "संदेश",
   "alsoWhose": ", {{ name }} के भी,",
-  "openTheItem": "आइटम खोलें"
+  "openTheItem": "आइटम खोलें",
+  "signatureBad": "⚠ यह जाँचा नहीं जा सका कि यह संदेश किसने लिखा। इस पर भरोसा न करें।"
 }

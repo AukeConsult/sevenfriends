@@ -77,7 +77,9 @@
     "unlockedOne": "One file is not locked, so our system can read it. Lock it so only you and {{ friendName }} can open it.",
     "unlockedMany": "{{ count }} files are not locked, so our system can read them. Lock them so only you and {{ friendName }} can open them.",
     "lockIt": "Lock it",
-    "lockThemNow": "Lock them"
+    "lockThemNow": "Lock them",
+    "notSaved": "Nicht gespeichert:",
+    "close": "Schließen"
   },
   "object": {
     "unknownKind": "Diese Art von Element ist nicht bekannt.",
@@ -240,6 +242,7 @@
     "told": "{{ friendName }} has got a message.",
     "nothingIsSent": "Nothing is sent when you add or change something.",
     "couldNotSend": "The message could not be sent. Try again.",
-    "message": "📦 In the safebox: {{ item }}"
+    "message": "📦 In the safebox: {{ item }}",
+    "files": "{{ count }} Dateien"
   }
 }

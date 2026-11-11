@@ -22,5 +22,7 @@
   "useASleepList": "Schlafliste verwenden",
   "offAOneYou": "Aus: Wer als {{ one }} entfernt wird, wird gelöscht, und die Zeile der Schlafliste ist ausgeblendet, solange sie leer ist.",
   "readyMadeMessageIndex": "Fertige Nachricht {{ index }}",
-  "removeMessageIndex": "Nachricht {{ index }} entfernen"
+  "removeMessageIndex": "Nachricht {{ index }} entfernen",
+  "tellWhenIAdd": "Ihnen mitteilen, wenn ich etwas im Tresor hinzufüge",
+  "aMessageTellsYour": "Eine Nachricht teilt deinem Freund oder deiner Gruppe mit, dass eine Notiz, ein Eintrag oder eine Datei da ist, mit einem Link zum Öffnen. Aus: Es wird nichts gesendet; die Glocke in einem Eintrag kann es trotzdem mitteilen."
 }

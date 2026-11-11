@@ -22,5 +22,7 @@
   "useASleepList": "Usar uma lista do sono",
   "offAOneYou": "Desativado: um {{ one }} que você remove é excluído, e a linha da lista do sono fica oculta enquanto estiver vazia.",
   "readyMadeMessageIndex": "Mensagem pronta {{ index }}",
-  "removeMessageIndex": "Remover mensagem {{ index }}"
+  "removeMessageIndex": "Remover mensagem {{ index }}",
+  "tellWhenIAdd": "Avisá-los quando eu adicionar algo ao cofre",
+  "aMessageTellsYour": "Uma mensagem avisa o seu amigo ou grupo de que há uma nota, item ou ficheiro, com um link para o abrir. Desligado: nada é enviado; o sino num item ainda pode avisar."
 }

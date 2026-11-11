@@ -51,5 +51,10 @@
   "saveFailed": "No se pudo guardar",
   "providerEmail": "Correo",
   "providerPhone": "Teléfono",
-  "providerUnknown": "Desconocido"
+  "providerUnknown": "Desconocido",
+  "sendAgain": "Enviar de nuevo",
+  "checking": "Comprobando…",
+  "iVerified": "Abrí el enlace: comprobar ahora",
+  "notYet": "Aún sin verificar. Abre primero el enlace del correo (mira también en el spam).",
+  "checkFailed": "No se pudo comprobar ahora. Revisa la conexión e inténtalo de nuevo."
 }

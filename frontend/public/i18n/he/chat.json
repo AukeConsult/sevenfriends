@@ -64,5 +64,6 @@
   "messageOne": "הודעה",
   "messageMany": "הודעות",
   "alsoWhose": ", וגם של {{ name }},",
-  "openTheItem": "פתיחת הפריט"
+  "openTheItem": "פתיחת הפריט",
+  "signatureBad": "⚠ לא ניתן היה לבדוק מי כתב את ההודעה הזו. אל תסמכו עליה."
 }

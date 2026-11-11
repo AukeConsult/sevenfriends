@@ -290,7 +290,15 @@
     "makesASound": "afgiver en lyd",
     "activityIn": "Aktivitet i {{ circle }}",
     "tryApp": "Try {{ app }}: {{ url }}",
-    "tryApp2": "Try {{ app }}:"
+    "tryApp2": "Try {{ app }}:",
+    "theLockOfThis": "Låsen i denne samtale stemmer ikke, så intet kan sendes. Se advarslen under navnet.",
+    "chainBroken": "Låsen hos {{ name }} stemmer ikke. Intet kan sendes, før du ved hvorfor. Ring til {{ name }} og spørg, hvad der er sket.",
+    "chainNewHistory": "Låsen starter forfra. Det kan ske, hvis {{ name }} har mistet alle telefoner og computere. Accepter det kun, hvis {{ name }} har sagt det til dig.",
+    "chainCannotTrust": "Noget i listen over låse er ændret eller fjernet. Det kan ikke accepteres her.",
+    "chainAccept": "Ja, {{ name }} har sagt det til mig",
+    "chainAgain": "Tjek igen",
+    "noKeyInList": "Ingen af denne persons nøgler står endnu i deres signerede liste, så intet kan låses for dem. Bed dem åbne appen på en godkendt enhed.",
+    "thisDeviceNotApproved": "Denne enhed er ikke godkendt endnu. Godkend den på en anden af dine enheder (på Hjem), og prøv igen."
   },
   "needsYourHelp": "{{ friendName }} har brug for din hjælp",
   "openToUnlockTheir": "Åbn appen for at låse deres gamle beskeder op igen.",

@@ -1,0 +1,9 @@
+{
+  "title": "Bekræft din e-mail",
+  "working": "Tjekker linket…",
+  "verified": "Din e-mail er bekræftet.",
+  "toProfile": "Tilbage til min profil",
+  "toLogin": "Log ind",
+  "other": "Dette link kan siden ikke gennemføre.",
+  "failed": "Linket kunne ikke bruges. Det er måske allerede brugt, eller det er udløbet. Bed om et nyt på din profilside."
+}

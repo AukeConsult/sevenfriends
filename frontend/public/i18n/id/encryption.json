@@ -63,5 +63,10 @@
   "askFriend": "Minta",
   "noFriendsInThis": "Belum ada teman di lingkaran ini.",
   "askOrTryRecovery": "Pemulihan: minta perangkatku yang lain atau seorang teman, bahkan saat semuanya baik-baik saja",
-  "openTheAppOn": "Buka Seven Friends di salah satu perangkat ini (harus sudah masuk dan menampilkan akun yang sama). Sebuah spanduk meminta kamu mengetuk Izinkan. Perangkat mana pun boleh."
+  "openTheAppOn": "Buka Seven Friends di salah satu perangkat ini (harus sudah masuk dan menampilkan akun yang sama). Sebuah spanduk meminta kamu mengetuk Izinkan. Perangkat mana pun boleh.",
+  "noRescueCode": "Belum ada kode pemulihan",
+  "noRescueCodeText": "Jika Anda kehilangan semua ponsel dan komputer, pesan dan berkas lama Anda tidak dapat dibuka lagi. Kode pemulihan adalah 24 kata di atas kertas yang mengembalikan kunci Anda di perangkat baru. Kode ini membuat kunci baru di perangkat ini dan memindahkan riwayat Anda ke sana; butuh beberapa saat.",
+  "addARescueCode": "Tambahkan kode pemulihan",
+  "lockingOldThings": "Mengunci pesan dan catatan lama Anda dengan kunci baru. Anda dapat terus menggunakan aplikasi.",
+  "someCouldNotBeLocked": "Beberapa item lama tidak dapat dibuka di perangkat ini. Buka aplikasi di perangkat Anda yang lain untuk menyelesaikannya."
 }

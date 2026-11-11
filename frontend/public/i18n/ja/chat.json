@@ -64,5 +64,6 @@
   "messageOne": "メッセージ",
   "messageMany": "メッセージ",
   "alsoWhose": "（{{ name }}さんの分も含む）",
-  "openTheItem": "アイテムを開く"
+  "openTheItem": "アイテムを開く",
+  "signatureBad": "⚠ このメッセージを誰が書いたか確認できませんでした。信用しないでください。"
 }

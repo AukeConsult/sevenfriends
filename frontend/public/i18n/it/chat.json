@@ -64,5 +64,6 @@
   "messageOne": "messaggio",
   "messageMany": "messaggi",
   "alsoWhose": ", anche di {{ name }},",
-  "openTheItem": "Apri l’elemento"
+  "openTheItem": "Apri l’elemento",
+  "signatureBad": "⚠ Non è stato possibile verificare chi ha scritto questo messaggio. Non fidarti."
 }

@@ -22,5 +22,7 @@
   "useASleepList": "Een slaaplijst gebruiken",
   "offAOneYou": "Uit: een {{ one }} die je weghaalt wordt verwijderd en de rij van de slaaplijst is verborgen zolang hij leeg is.",
   "readyMadeMessageIndex": "Kant-en-klaar bericht {{ index }}",
-  "removeMessageIndex": "Bericht {{ index }} verwijderen"
+  "removeMessageIndex": "Bericht {{ index }} verwijderen",
+  "tellWhenIAdd": "Laat het ze weten als ik iets aan de kluis toevoeg",
+  "aMessageTellsYour": "Een bericht laat je vriend of groep weten dat er een notitie, item of bestand is, met een link om het te openen. Uit: er wordt niets verstuurd; de bel in een item kan het nog steeds laten weten."
 }

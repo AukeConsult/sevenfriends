@@ -64,5 +64,6 @@
   "messageOne": "mesaj",
   "messageMany": "mesaj",
   "alsoWhose": ", ayrıca {{ name }} adlı kişinin,",
-  "openTheItem": "Öğeyi aç"
+  "openTheItem": "Öğeyi aç",
+  "signatureBad": "⚠ Bu mesajı kimin yazdığı doğrulanamadı. Ona güvenmeyin."
 }

@@ -290,7 +290,15 @@
     "makesASound": "ses çıkarır",
     "activityIn": "{{ circle }} içinde etkinlik",
     "tryApp": "Try {{ app }}: {{ url }}",
-    "tryApp2": "Try {{ app }}:"
+    "tryApp2": "Try {{ app }}:",
+    "theLockOfThis": "Bu görüşmenin kilidi doğrulanamadı, bu yüzden hiçbir şey gönderilemez. İsmin altındaki uyarıya bakın.",
+    "chainBroken": "{{ name }} kişisinin kilidi doğrulanamadı. Nedenini öğrenene kadar hiçbir şey gönderilemez. {{ name }} kişisini arayıp ne olduğunu sorun.",
+    "chainNewHistory": "Kilit baştan başlıyor. {{ name }} tüm telefonlarını ve bilgisayarlarını kaybettiyse bu olabilir. Yalnızca {{ name }} size söylediyse kabul edin.",
+    "chainCannotTrust": "Kilit listesinde bir şey değiştirilmiş ya da çıkarılmış. Burada kabul edilemez.",
+    "chainAccept": "Evet, {{ name }} bana söyledi",
+    "chainAgain": "Tekrar kontrol et",
+    "noKeyInList": "Bu kişinin hiçbir anahtarı henüz imzalı listesinde değil, bu yüzden onun için hiçbir şey kilitlenemez. Onaylı bir cihazda uygulamayı açmasını isteyin.",
+    "thisDeviceNotApproved": "Bu cihaz henüz onaylanmadı. Başka bir cihazınızda (Ana sayfada) onaylayın, sonra tekrar deneyin."
   },
   "needsYourHelp": "{{ friendName }} yardımına ihtiyaç duyuyor",
   "openToUnlockTheir": "Eski mesajlarının kilidini yeniden açmak için uygulamayı aç.",

@@ -290,7 +290,15 @@
     "makesASound": "låter",
     "activityIn": "Aktivitet i {{ circle }}",
     "tryApp": "Try {{ app }}: {{ url }}",
-    "tryApp2": "Try {{ app }}:"
+    "tryApp2": "Try {{ app }}:",
+    "theLockOfThis": "Låset i den här konversationen stämmer inte, så inget kan skickas. Se varningen under namnet.",
+    "chainBroken": "Låset hos {{ name }} stämmer inte. Inget kan skickas förrän du vet varför. Ring {{ name }} och fråga vad som hänt.",
+    "chainNewHistory": "Låset börjar om från början. Det kan hända om {{ name }} har förlorat alla telefoner och datorer. Godta det bara om {{ name }} har sagt det till dig.",
+    "chainCannotTrust": "Något i listan över lås har ändrats eller tagits bort. Det kan inte godtas här.",
+    "chainAccept": "Ja, {{ name }} har sagt det till mig",
+    "chainAgain": "Kontrollera igen",
+    "noKeyInList": "Ingen av personens nycklar finns ännu i deras signerade lista, så inget kan låsas för dem. Be dem öppna appen på en godkänd enhet.",
+    "thisDeviceNotApproved": "Den här enheten har inte godkänts ännu. Godkänn den på en annan av dina enheter (på Hem) och försök igen."
   },
   "needsYourHelp": "{{ friendName }} behöver din hjälp",
   "openToUnlockTheir": "Öppna appen för att låsa upp deras gamla meddelanden igen.",

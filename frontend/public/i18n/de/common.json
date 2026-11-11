@@ -290,7 +290,15 @@
     "makesASound": "macht einen Ton",
     "activityIn": "Aktivität in {{ circle }}",
     "tryApp": "Try {{ app }}: {{ url }}",
-    "tryApp2": "Try {{ app }}:"
+    "tryApp2": "Try {{ app }}:",
+    "theLockOfThis": "Das Schloss dieser Unterhaltung stimmt nicht, daher kann nichts gesendet werden. Sieh dir die Warnung unter dem Namen an.",
+    "chainBroken": "Das Schloss von {{ name }} stimmt nicht. Es kann nichts gesendet werden, bis du den Grund kennst. Ruf {{ name }} an und frag, was passiert ist.",
+    "chainNewHistory": "Das Schloss beginnt von vorn. Das kann passieren, wenn {{ name }} alle Handys und Computer verloren hat. Akzeptiere es nur, wenn {{ name }} es dir gesagt hat.",
+    "chainCannotTrust": "In der Liste der Schlösser wurde etwas geändert oder entfernt. Das kann hier nicht akzeptiert werden.",
+    "chainAccept": "Ja, {{ name }} hat es mir gesagt",
+    "chainAgain": "Erneut prüfen",
+    "noKeyInList": "Kein Schlüssel dieser Person steht schon in ihrer signierten Liste, daher kann nichts für sie gesperrt werden. Bitte sie, die App auf einem genehmigten Gerät zu öffnen.",
+    "thisDeviceNotApproved": "Dieses Gerät wurde noch nicht genehmigt. Genehmige es auf einem anderen Gerät von dir (auf Start) und versuche es dann erneut."
   },
   "needsYourHelp": "{{ friendName }} braucht deine Hilfe",
   "openToUnlockTheir": "Öffne die App, um die alten Nachrichten wieder zu entsperren.",

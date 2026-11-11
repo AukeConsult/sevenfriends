@@ -64,5 +64,6 @@
   "messageOne": "bericht",
   "messageMany": "berichten",
   "alsoWhose": ", ook die van {{ name }},",
-  "openTheItem": "Item openen"
+  "openTheItem": "Item openen",
+  "signatureBad": "⚠ Er kon niet worden gecontroleerd wie dit bericht schreef. Vertrouw het niet."
 }

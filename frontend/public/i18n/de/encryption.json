@@ -63,5 +63,10 @@
   "askFriend": "Fragen",
   "noFriendsInThis": "Noch keine Freunde in diesem Kreis.",
   "askOrTryRecovery": "Wiederherstellung: meine anderen Geräte oder einen Freund fragen, auch wenn alles in Ordnung ist",
-  "openTheAppOn": "Öffne Seven Friends auf einem dieser Geräte (du musst angemeldet sein und dasselbe Konto sehen). Ein Banner bittet dich, Erlauben zu tippen. Es ist egal, auf welchem."
+  "openTheAppOn": "Öffne Seven Friends auf einem dieser Geräte (du musst angemeldet sein und dasselbe Konto sehen). Ein Banner bittet dich, Erlauben zu tippen. Es ist egal, auf welchem.",
+  "noRescueCode": "Noch kein Rettungscode",
+  "noRescueCodeText": "Wenn du alle deine Handys und Computer verlierst, können deine alten Nachrichten und Dateien nicht mehr geöffnet werden. Ein Rettungscode sind 24 Wörter auf Papier, die dein Schloss auf einem neuen Gerät zurückbringen. Er erstellt ein neues Schloss auf diesem Gerät und überträgt deinen Verlauf; das dauert einen Moment.",
+  "addARescueCode": "Rettungscode hinzufügen",
+  "lockingOldThings": "Deine älteren Nachrichten und Notizen werden mit dem neuen Schlüssel gesperrt. Du kannst die App weiter benutzen.",
+  "someCouldNotBeLocked": "Einige ältere Einträge konnten auf diesem Gerät nicht geöffnet werden. Öffne die App auf einem anderen deiner Geräte, um sie abzuschließen."
 }

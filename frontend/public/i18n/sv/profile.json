@@ -51,5 +51,10 @@
   "saveFailed": "Kunde inte spara",
   "providerEmail": "E-post",
   "providerPhone": "Telefon",
-  "providerUnknown": "Okänd"
+  "providerUnknown": "Okänd",
+  "sendAgain": "Skicka igen",
+  "checking": "Kontrollerar…",
+  "iVerified": "Jag har öppnat länken: kontrollera nu",
+  "notYet": "Inte bekräftad ännu. Öppna länken i e-postmeddelandet först (titta även i skräpposten).",
+  "checkFailed": "Kunde inte kontrollera nu. Kontrollera anslutningen och försök igen."
 }

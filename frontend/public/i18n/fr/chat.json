@@ -64,5 +64,6 @@
   "messageOne": "message",
   "messageMany": "messages",
   "alsoWhose": ", ainsi que ceux de {{ name }},",
-  "openTheItem": "Ouvrir l’élément"
+  "openTheItem": "Ouvrir l’élément",
+  "signatureBad": "⚠ Impossible de vérifier qui a écrit ce message. Ne lui faites pas confiance."
 }

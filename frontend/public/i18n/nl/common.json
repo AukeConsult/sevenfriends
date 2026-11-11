@@ -290,7 +290,15 @@
     "makesASound": "maakt geluid",
     "activityIn": "Activiteit in {{ circle }}",
     "tryApp": "Try {{ app }}: {{ url }}",
-    "tryApp2": "Try {{ app }}:"
+    "tryApp2": "Try {{ app }}:",
+    "theLockOfThis": "Het slot van dit gesprek klopt niet, dus er kan niets worden verzonden. Kijk naar de waarschuwing onder de naam.",
+    "chainBroken": "Het slot van {{ name }} klopt niet. Er kan niets worden verzonden tot je weet waarom. Bel {{ name }} en vraag wat er is gebeurd.",
+    "chainNewHistory": "Het slot begint opnieuw. Dat kan gebeuren als {{ name }} alle telefoons en computers kwijt is. Accepteer het alleen als {{ name }} het je heeft verteld.",
+    "chainCannotTrust": "Er is iets in de lijst met sloten gewijzigd of weggehaald. Dat kan hier niet worden geaccepteerd.",
+    "chainAccept": "Ja, {{ name }} heeft het me verteld",
+    "chainAgain": "Opnieuw controleren",
+    "noKeyInList": "Geen enkele sleutel van deze persoon staat al in hun ondertekende lijst, dus er kan niets voor hen worden vergrendeld. Vraag hen de app te openen op een goedgekeurd apparaat.",
+    "thisDeviceNotApproved": "Dit apparaat is nog niet goedgekeurd. Keur het goed op een ander apparaat van jou (op Start) en probeer het opnieuw."
   },
   "needsYourHelp": "{{ friendName }} heeft je hulp nodig",
   "openToUnlockTheir": "Open de app om hun oude berichten weer te ontgrendelen.",

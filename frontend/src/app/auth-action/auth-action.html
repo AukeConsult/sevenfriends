@@ -1,0 +1,26 @@
+<ng-container *transloco="let t">
+<app-page-bar [title]="t('authAction.title') || 'Confirming your email'" [backTo]="signedIn() ? '/settings/profile' : '/login'" />
+
+<main class="sf-narrow">
+  @switch (state()) {
+    @case ('working') {
+      <p class="text-secondary m-0" role="status">{{ t('authAction.working') || 'Checking the link…' }}</p>
+    }
+    @case ('done') {
+      <div class="alert alert-success m-0" role="status">
+        <strong>{{ t('authAction.verified') || 'Your email is verified.' }}</strong>
+        @if (email()) { <br />{{ email() }} }
+      </div>
+      <a [routerLink]="signedIn() ? '/settings/profile' : '/login'" class="btn btn-primary">{{ signedIn() ? (t('authAction.toProfile') || 'Back to my profile') : (t('authAction.toLogin') || 'Sign in') }}</a>
+    }
+    @case ('failed') {
+      <div class="alert alert-danger m-0" role="alert">{{ error() }}</div>
+      <a [routerLink]="signedIn() ? '/settings/profile' : '/login'" class="btn btn-primary">{{ signedIn() ? (t('authAction.toProfile') || 'Back to my profile') : (t('authAction.toLogin') || 'Sign in') }}</a>
+    }
+    @case ('other') {
+      <div class="alert alert-warning m-0" role="alert">{{ t('authAction.other') || 'This link is not one this page can finish.' }}</div>
+      <a routerLink="/login" class="btn btn-primary">{{ t('authAction.toLogin') || 'Sign in' }}</a>
+    }
+  }
+</main>
+</ng-container>

@@ -290,7 +290,15 @@
     "makesASound": "会发出声音",
     "activityIn": "{{ circle }} 中有动态",
     "tryApp": "Try {{ app }}: {{ url }}",
-    "tryApp2": "Try {{ app }}:"
+    "tryApp2": "Try {{ app }}:",
+    "theLockOfThis": "此对话的锁未通过检查，因此无法发送任何内容。请查看名字下方的警告。",
+    "chainBroken": "{{ name }} 的锁未通过检查。在弄清原因之前无法发送任何内容。请给 {{ name }} 打电话，问问发生了什么。",
+    "chainNewHistory": "锁从头开始。当 {{ name }} 丢失了所有手机和电脑时可能出现这种情况。只有 {{ name }} 告诉过你时才接受。",
+    "chainCannotTrust": "锁列表中有内容被更改或删除。这里无法接受。",
+    "chainAccept": "是的，{{ name }} 告诉过我",
+    "chainAgain": "再次检查",
+    "noKeyInList": "此人的密钥还没有出现在其已签名的列表中，因此无法为其加锁。请让对方在已批准的设备上打开应用。",
+    "thisDeviceNotApproved": "此设备尚未获批准。请在你的另一台设备上（在首页）批准它，然后重试。"
   },
   "needsYourHelp": "{{ friendName }} 需要你的帮助",
   "openToUnlockTheir": "打开应用，重新解锁对方的旧消息。",

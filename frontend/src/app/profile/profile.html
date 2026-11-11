@@ -96,13 +96,17 @@
             @if (emailVerified()) {
               <span class="input-group-text text-success fw-semibold">{{ t('profile.verified') || 'Verified' }}</span>
             } @else {
-              <button type="button" class="btn btn-outline-primary btn-sm" [disabled]="verificationSent()" (click)="sendVerificationEmail()">
-                {{ verificationSent() ? (t('profile.sent') || 'Sent') : (t('profile.verify') || 'Verify') }}
+              <button type="button" class="btn btn-outline-primary btn-sm" [disabled]="checking()" (click)="sendVerificationEmail()">
+                {{ verificationSent() ? (t('profile.sendAgain') || 'Send again') : (t('profile.verify') || 'Verify') }}
               </button>
             }
           </div>
           @if (verificationSent()) {
             <span class="small text-success">{{ t('profile.verifySent') || 'Verification email sent to this address. Open the link in it, then come back here.' }}</span>
+            <span class="small d-flex flex-wrap align-items-center gap-2">
+              <button type="button" class="btn btn-outline-secondary btn-sm" [disabled]="checking()" (click)="checkVerification()">{{ checking() ? (t('profile.checking') || 'Checking…') : (t('profile.iVerified') || 'I opened the link: check now') }}</button>
+              @if (notYet()) { <span class="text-secondary">{{ t('profile.notYet') || 'Not verified yet. Open the link in the email first (look in spam too).' }}</span> }
+            </span>
           } @else if (!emailVerified()) {
             <span class="small text-secondary">{{ t('profile.findByEmail', { Many: w.Many }) || w.Many + ' can only find you by email once it is verified.' }}</span>
           }

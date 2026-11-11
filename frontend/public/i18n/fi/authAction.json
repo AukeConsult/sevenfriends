@@ -1,0 +1,9 @@
+{
+  "title": "Vahvistetaan sähköpostiasi",
+  "working": "Tarkistetaan linkkiä…",
+  "verified": "Sähköpostisi on vahvistettu.",
+  "toProfile": "Takaisin profiiliini",
+  "toLogin": "Kirjaudu sisään",
+  "other": "Tämä sivu ei voi viimeistellä tätä linkkiä.",
+  "failed": "Linkkiä ei voitu käyttää. Se on voitu jo käyttää tai se on vanhentunut. Pyydä uusi profiilisivultasi."
+}

@@ -64,5 +64,6 @@
   "messageOne": "رسالة",
   "messageMany": "رسائل",
   "alsoWhose": "، وكذلك رسائل {{ name }}،",
-  "openTheItem": "فتح العنصر"
+  "openTheItem": "فتح العنصر",
+  "signatureBad": "⚠ تعذّر التحقق ممن كتب هذه الرسالة. لا تثق بها."
 }

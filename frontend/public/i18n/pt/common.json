@@ -290,7 +290,15 @@
     "makesASound": "toca um som",
     "activityIn": "Atividade em {{ circle }}",
     "tryApp": "Try {{ app }}: {{ url }}",
-    "tryApp2": "Try {{ app }}:"
+    "tryApp2": "Try {{ app }}:",
+    "theLockOfThis": "O cadeado desta conversa não confere, por isso nada pode ser enviado. Veja o aviso por baixo do nome.",
+    "chainBroken": "O cadeado de {{ name }} não confere. Nada pode ser enviado até saber porquê. Ligue a {{ name }} e pergunte o que aconteceu.",
+    "chainNewHistory": "O cadeado começa do zero. Isto pode acontecer se {{ name }} perdeu todos os telemóveis e computadores. Só aceite se {{ name }} lhe disse.",
+    "chainCannotTrust": "Algo na lista de cadeados foi alterado ou retirado. Isso não pode ser aceite aqui.",
+    "chainAccept": "Sim, {{ name }} disse-me",
+    "chainAgain": "Verificar de novo",
+    "noKeyInList": "Nenhuma chave desta pessoa está ainda na sua lista assinada, por isso nada pode ser bloqueado para ela. Peça-lhe que abra a app num dispositivo aprovado.",
+    "thisDeviceNotApproved": "Este dispositivo ainda não foi aprovado. Aprove-o noutro dispositivo seu (no Início) e tente de novo."
   },
   "needsYourHelp": "{{ friendName }} precisa da sua ajuda",
   "openToUnlockTheir": "Abra o app para desbloquear de novo as mensagens antigas.",

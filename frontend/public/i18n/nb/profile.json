@@ -51,5 +51,10 @@
   "saveFailed": "Kunne ikke lagre",
   "providerEmail": "E-post",
   "providerPhone": "Telefon",
-  "providerUnknown": "Ukjent"
+  "providerUnknown": "Ukjent",
+  "sendAgain": "Send igjen",
+  "checking": "Sjekker…",
+  "iVerified": "Jeg har åpnet lenken: sjekk nå",
+  "notYet": "Ikke bekreftet ennå. Åpne lenken i e-posten først (se i søppelpost også).",
+  "checkFailed": "Kunne ikke sjekke nå. Sjekk forbindelsen og prøv igjen."
 }

@@ -63,5 +63,10 @@
   "askFriend": "请求",
   "noFriendsInThis": "这个圈子里还没有朋友。",
   "askOrTryRecovery": "恢复：请求我的其他设备或朋友，即使一切正常",
-  "openTheAppOn": "在其中一台设备上打开 Seven Friends（必须已登录同一个账号）。横幅会请你点“允许”。哪一台都可以。"
+  "openTheAppOn": "在其中一台设备上打开 Seven Friends（必须已登录同一个账号）。横幅会请你点“允许”。哪一台都可以。",
+  "noRescueCode": "还没有救援码",
+  "noRescueCodeText": "如果你丢失了所有手机和电脑，旧消息和文件将无法再打开。救援码是写在纸上的 24 个单词，可在新设备上找回你的锁。它会在此设备上创建新锁并把你的历史记录移过来，需要一点时间。",
+  "addARescueCode": "添加救援码",
+  "lockingOldThings": "正在用新密钥锁定你较早的消息和笔记。你可以继续使用应用。",
+  "someCouldNotBeLocked": "有些较早的项目无法在此设备上打开。请在你的另一台设备上打开应用来完成它们。"
 }

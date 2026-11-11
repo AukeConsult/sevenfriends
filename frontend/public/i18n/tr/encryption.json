@@ -63,5 +63,10 @@
   "askFriend": "İste",
   "noFriendsInThis": "Bu çevrede henüz arkadaş yok.",
   "askOrTryRecovery": "Kurtarma: her şey yolunda olsa bile diğer cihazlarımdan veya bir arkadaşımdan iste",
-  "openTheAppOn": "Seven Friends'i bu cihazlardan birinde aç (oturum açık olmalı ve aynı hesabı göstermeli). Bir banner senden İzin ver'e dokunmanı ister. Hangisi olduğu fark etmez."
+  "openTheAppOn": "Seven Friends'i bu cihazlardan birinde aç (oturum açık olmalı ve aynı hesabı göstermeli). Bir banner senden İzin ver'e dokunmanı ister. Hangisi olduğu fark etmez.",
+  "noRescueCode": "Henüz kurtarma kodu yok",
+  "noRescueCodeText": "Tüm telefonlarınızı ve bilgisayarlarınızı kaybederseniz eski mesajlarınız ve dosyalarınız bir daha açılamaz. Kurtarma kodu, kilidinizi yeni bir cihazda geri getiren kâğıttaki 24 kelimedir. Bu cihazda yeni bir kilit oluşturur ve geçmişinizi ona taşır; bir an sürer.",
+  "addARescueCode": "Kurtarma kodu ekle",
+  "lockingOldThings": "Eski mesajlarınız ve notlarınız yeni anahtarla kilitleniyor. Uygulamayı kullanmaya devam edebilirsiniz.",
+  "someCouldNotBeLocked": "Bazı eski öğeler bu cihazda açılamadı. Bitirmek için uygulamayı başka bir cihazınızda açın."
 }

@@ -22,5 +22,7 @@
   "useASleepList": "Käytä unilistaa",
   "offAOneYou": "Pois päältä: poistamasi {{ one }} poistetaan, ja unilistan rivi piilotetaan, kun lista on tyhjä.",
   "readyMadeMessageIndex": "Valmis viesti {{ index }}",
-  "removeMessageIndex": "Poista viesti {{ index }}"
+  "removeMessageIndex": "Poista viesti {{ index }}",
+  "tellWhenIAdd": "Kerro heille, kun lisään jotain kassakaappiin",
+  "aMessageTellsYour": "Viesti kertoo ystävällesi tai ryhmällesi, että muistiinpano, kohde tai tiedosto on olemassa, ja antaa linkin sen avaamiseen. Pois: mitään ei lähetetä; kohteen kello voi silti kertoa."
 }

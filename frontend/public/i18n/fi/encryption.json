@@ -63,5 +63,10 @@
   "askFriend": "Pyydä",
   "noFriendsInThis": "Tässä piirissä ei ole vielä ystäviä.",
   "askOrTryRecovery": "Palautus: pyydä muilta laitteiltani tai ystävältä, vaikka kaikki olisi hyvin",
-  "openTheAppOn": "Avaa Seven Friends jollakin näistä laitteista (sen täytyy olla kirjautuneena samalle tilille). Banneri pyytää sinua napauttamaan Salli. Ei ole väliä, millä."
+  "openTheAppOn": "Avaa Seven Friends jollakin näistä laitteista (sen täytyy olla kirjautuneena samalle tilille). Banneri pyytää sinua napauttamaan Salli. Ei ole väliä, millä.",
+  "noRescueCode": "Ei vielä pelastuskoodia",
+  "noRescueCodeText": "Jos menetät kaikki puhelimesi ja tietokoneesi, vanhoja viestejäsi ja tiedostojasi ei voi enää avata. Pelastuskoodi on 24 sanaa paperilla, jotka palauttavat lukkosi uudelle laitteelle. Se tekee tälle laitteelle uuden lukon ja siirtää historiasi sinne; se kestää hetken.",
+  "addARescueCode": "Lisää pelastuskoodi",
+  "lockingOldThings": "Vanhempia viestejäsi ja muistiinpanojasi lukitaan uudella avaimella. Voit jatkaa sovelluksen käyttöä.",
+  "someCouldNotBeLocked": "Joitakin vanhempia kohteita ei voitu avata tällä laitteella. Viimeistele ne avaamalla sovellus toisella laitteellasi."
 }

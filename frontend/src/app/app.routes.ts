@@ -26,6 +26,7 @@ import { Family } from './family/family';
 import { ViewWelcome } from './view-welcome/view-welcome';
 import { LoginEmail } from './login-email/login-email';
 import { LoginLink } from './login-link/login-link';
+import { AuthAction } from './auth-action/auth-action';
 import { MediaViewer } from './media-viewer/media-viewer';
 import { PhoneAuth } from './phone-auth/phone-auth';
 import { Notifications } from './notifications/notifications';
@@ -137,6 +138,7 @@ export const routes: Routes = [
   { path: 'login', component: Login, canActivate: [guestGuard], title: 'Sign in – Seven Friends' },
   { path: 'login/email', component: LoginEmail, canActivate: [guestGuard], title: 'Email link – Seven Friends' },
   { path: 'login/phone', component: PhoneAuth, canActivate: [guestGuard], data: { mode: 'login' }, title: 'Phone sign-in – Seven Friends' },
+  { path: 'auth/action', component: AuthAction, title: 'Confirming your email – Seven Friends' },
   { path: 'login/link', component: LoginLink, title: 'Signing in – Seven Friends' },
   { path: 'verify-phone', component: PhoneAuth, canActivate: [authGuard], data: { mode: 'link' }, title: 'Verify phone – Seven Friends' },
   { path: 'delete-account', component: DeleteAccount, canActivate: [authGuard], title: 'Delete my account – Seven Friends' },

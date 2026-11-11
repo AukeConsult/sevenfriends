@@ -51,5 +51,10 @@
   "saveFailed": "Could not save",
   "providerEmail": "Email",
   "providerPhone": "Phone",
-  "providerUnknown": "Unknown"
+  "providerUnknown": "Unknown",
+  "sendAgain": "Send again",
+  "checking": "Checking…",
+  "iVerified": "I opened the link: check now",
+  "notYet": "Not verified yet. Open the link in the email first (look in spam too).",
+  "checkFailed": "Could not check now. Check the connection and try again."
 }

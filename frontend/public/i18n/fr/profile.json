@@ -51,5 +51,10 @@
   "saveFailed": "Impossible d'enregistrer",
   "providerEmail": "E-mail",
   "providerPhone": "Téléphone",
-  "providerUnknown": "Inconnu"
+  "providerUnknown": "Inconnu",
+  "sendAgain": "Renvoyer",
+  "checking": "Vérification…",
+  "iVerified": "J'ai ouvert le lien : vérifier maintenant",
+  "notYet": "Pas encore confirmé. Ouvrez d'abord le lien dans l'e-mail (regardez aussi dans les spams).",
+  "checkFailed": "Vérification impossible pour le moment. Vérifiez la connexion et réessayez."
 }

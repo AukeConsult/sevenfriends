@@ -22,5 +22,7 @@
   "useASleepList": "Używaj listy uśpionych",
   "offAOneYou": "Wyłączone: usunięta osoba ({{ one }}) jest kasowana, a wiersz listy uśpionych jest ukryty, gdy jest pusty.",
   "readyMadeMessageIndex": "Gotowa wiadomość {{ index }}",
-  "removeMessageIndex": "Usuń wiadomość {{ index }}"
+  "removeMessageIndex": "Usuń wiadomość {{ index }}",
+  "tellWhenIAdd": "Powiadom ich, gdy dodam coś do sejfu",
+  "aMessageTellsYour": "Wiadomość informuje twojego znajomego lub grupę, że jest notatka, element lub plik, z linkiem do otwarcia. Wyłączone: nic nie jest wysyłane; dzwonek w elemencie nadal może powiadomić."
 }

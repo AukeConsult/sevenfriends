@@ -1,0 +1,9 @@
+{
+  "title": "Confirmando tu correo",
+  "working": "Comprobando el enlace…",
+  "verified": "Tu correo está verificado.",
+  "toProfile": "Volver a mi perfil",
+  "toLogin": "Iniciar sesión",
+  "other": "Esta página no puede completar este enlace.",
+  "failed": "No se pudo usar este enlace. Quizá ya se usó o ha caducado. Pide uno nuevo en tu página de perfil."
+}

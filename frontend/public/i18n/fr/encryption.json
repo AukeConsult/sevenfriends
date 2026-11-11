@@ -63,5 +63,10 @@
   "askFriend": "Demander",
   "noFriendsInThis": "Pas encore d'amis dans ce cercle.",
   "askOrTryRecovery": "Récupération : demander à mes autres appareils ou à un ami, même quand tout va bien",
-  "openTheAppOn": "Ouvre Seven Friends sur l'un de ces appareils (il doit être connecté et afficher le même compte). Une bannière te demande d'appuyer sur Autoriser. Peu importe lequel."
+  "openTheAppOn": "Ouvre Seven Friends sur l'un de ces appareils (il doit être connecté et afficher le même compte). Une bannière te demande d'appuyer sur Autoriser. Peu importe lequel.",
+  "noRescueCode": "Pas encore de code de secours",
+  "noRescueCodeText": "Si vous perdez tous vos téléphones et ordinateurs, vos anciens messages et fichiers ne pourront plus être ouverts. Un code de secours, ce sont 24 mots sur papier qui rétablissent votre verrou sur un nouvel appareil. Il crée un nouveau verrou sur cet appareil et y déplace votre historique ; cela prend un instant.",
+  "addARescueCode": "Ajouter un code de secours",
+  "lockingOldThings": "Verrouillage de vos anciens messages et notes avec la nouvelle clé. Vous pouvez continuer à utiliser l'app.",
+  "someCouldNotBeLocked": "Certains anciens éléments n'ont pas pu être ouverts sur cet appareil. Ouvrez l'app sur un autre de vos appareils pour les terminer."
 }

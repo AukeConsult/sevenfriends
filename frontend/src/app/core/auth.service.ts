@@ -2,6 +2,8 @@ import { Injectable, signal } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import {
   ConfirmationResult,
+  applyActionCode,
+  checkActionCode,
   GoogleAuthProvider,
   RecaptchaVerifier,
   User,
@@ -178,6 +180,24 @@ export class AuthService {
   async sendVerificationEmail(): Promise<void> {
     const user = auth.currentUser;
     if (user) await sendEmailVerification(user, { url: `${location.origin}/settings/profile` });
+  }
+
+  /**
+   * Finishes an emailed verification link (the page `/auth/action` opens it): checks the code, applies it, and when somebody is signed in here reloads the account so the
+   * verification is kept at once. Answers the address that was verified; throws with Firebase's code (`auth/invalid-action-code`, `auth/expired-action-code`) when the
+   * link is used already, has expired or is broken.
+   */
+  async applyVerificationCode(oobCode: string): Promise<string | null> {
+    const info = await checkActionCode(auth, oobCode);
+    await applyActionCode(auth, oobCode);
+    if (auth.currentUser) await this.refreshAccount().catch(() => undefined); // offline now: the profile page picks it up
+    return info.data.email ?? null;
+  }
+
+  /** Asks Firebase again whether the email of the account is verified now (the link may have been opened on another device). Answers true or false; throws when it cannot ask. */
+  async checkVerified(): Promise<boolean> {
+    await this.refreshAccount();
+    return auth.currentUser?.emailVerified === true;
   }
 
   /**

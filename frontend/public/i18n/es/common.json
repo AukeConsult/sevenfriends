@@ -290,7 +290,15 @@
     "makesASound": "hace un sonido",
     "activityIn": "Actividad en {{ circle }}",
     "tryApp": "Try {{ app }}: {{ url }}",
-    "tryApp2": "Try {{ app }}:"
+    "tryApp2": "Try {{ app }}:",
+    "theLockOfThis": "El candado de esta conversación no es válido, así que no se puede enviar nada. Mira el aviso bajo el nombre.",
+    "chainBroken": "El candado de {{ name }} no es válido. No se puede enviar nada hasta que sepas por qué. Llama a {{ name }} y pregunta qué pasó.",
+    "chainNewHistory": "El candado empieza de nuevo. Puede pasar si {{ name }} perdió todos sus teléfonos y ordenadores. Acéptalo solo si {{ name }} te lo dijo.",
+    "chainCannotTrust": "Algo en la lista de candados se cambió o se quitó. Aquí no se puede aceptar.",
+    "chainAccept": "Sí, {{ name }} me lo dijo",
+    "chainAgain": "Comprobar de nuevo",
+    "noKeyInList": "Ninguna clave de esta persona está aún en su lista firmada, así que no se puede bloquear nada para ella. Pídele que abra la app en un dispositivo aprobado.",
+    "thisDeviceNotApproved": "Este dispositivo aún no está aprobado. Apruébalo en otro dispositivo tuyo (en Inicio) y vuelve a intentarlo."
   },
   "needsYourHelp": "{{ friendName }} necesita tu ayuda",
   "openToUnlockTheir": "Abre la app para desbloquear de nuevo sus mensajes antiguos.",

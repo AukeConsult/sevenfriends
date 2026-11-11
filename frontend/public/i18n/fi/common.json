@@ -290,7 +290,15 @@
     "makesASound": "päästää äänen",
     "activityIn": "Toimintaa: {{ circle }}",
     "tryApp": "Try {{ app }}: {{ url }}",
-    "tryApp2": "Try {{ app }}:"
+    "tryApp2": "Try {{ app }}:",
+    "theLockOfThis": "Tämän keskustelun lukko ei täsmää, joten mitään ei voi lähettää. Katso nimen alla oleva varoitus.",
+    "chainBroken": "Henkilön {{ name }} lukko ei täsmää. Mitään ei voi lähettää, ennen kuin tiedät syyn. Soita henkilölle {{ name }} ja kysy, mitä tapahtui.",
+    "chainNewHistory": "Lukko alkaa alusta. Näin voi käydä, jos {{ name }} on menettänyt kaikki puhelimensa ja tietokoneensa. Hyväksy vain, jos {{ name }} kertoi siitä sinulle.",
+    "chainCannotTrust": "Lukkoluettelossa on jotain muutettu tai poistettu. Sitä ei voi hyväksyä täällä.",
+    "chainAccept": "Kyllä, {{ name }} kertoi minulle",
+    "chainAgain": "Tarkista uudelleen",
+    "noKeyInList": "Yksikään tämän henkilön avain ei ole vielä hänen allekirjoitetussa luettelossaan, joten mitään ei voi lukita hänelle. Pyydä häntä avaamaan sovellus hyväksytyllä laitteella.",
+    "thisDeviceNotApproved": "Tätä laitetta ei ole vielä hyväksytty. Hyväksy se toisella laitteellasi (Etusivulla) ja yritä uudelleen."
   },
   "needsYourHelp": "{{ friendName }} tarvitsee apuasi",
   "openToUnlockTheir": "Avaa sovellus avataksesi hänen vanhat viestinsä uudelleen.",

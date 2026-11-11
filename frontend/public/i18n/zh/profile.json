@@ -51,5 +51,10 @@
   "saveFailed": "无法保存",
   "providerEmail": "邮箱",
   "providerPhone": "手机",
-  "providerUnknown": "未知"
+  "providerUnknown": "未知",
+  "sendAgain": "重新发送",
+  "checking": "正在检查…",
+  "iVerified": "我已打开链接：立即检查",
+  "notYet": "尚未验证。请先打开邮件中的链接（也请看看垃圾邮件）。",
+  "checkFailed": "现在无法检查。请检查网络连接后重试。"
 }

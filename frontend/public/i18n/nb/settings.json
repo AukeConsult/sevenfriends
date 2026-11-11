@@ -22,5 +22,7 @@
   "useASleepList": "Bruk en soveliste",
   "offAOneYou": "Av: når du fjerner {{ one }}, slettes vedkommende, og sovelisten skjules mens den er tom.",
   "readyMadeMessageIndex": "Ferdig melding {{ index }}",
-  "removeMessageIndex": "Fjern melding {{ index }}"
+  "removeMessageIndex": "Fjern melding {{ index }}",
+  "tellWhenIAdd": "Si fra til dem når jeg legger noe i safen",
+  "aMessageTellsYour": "En melding forteller vennen eller gruppen din at et notat, en ting eller en fil er der, med en lenke for å åpne den. Av: Ingenting sendes; bjella i en ting kan fortsatt si fra."
 }

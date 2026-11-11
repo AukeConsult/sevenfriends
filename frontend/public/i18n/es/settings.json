@@ -22,5 +22,7 @@
   "useASleepList": "Usar una lista de descanso",
   "offAOneYou": "Desactivado: el {{ one }} que quitas se elimina, y la fila de la lista de descanso se oculta mientras está vacía.",
   "readyMadeMessageIndex": "Mensaje predefinido {{ index }}",
-  "removeMessageIndex": "Quitar el mensaje {{ index }}"
+  "removeMessageIndex": "Quitar el mensaje {{ index }}",
+  "tellWhenIAdd": "Avisarles cuando añado algo a la caja fuerte",
+  "aMessageTellsYour": "Un mensaje avisa a tu amigo o grupo de que hay una nota, elemento o archivo, con un enlace para abrirlo. Desactivado: no se envía nada; la campana de un elemento aún puede avisar."
 }

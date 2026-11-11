@@ -51,5 +51,10 @@
   "saveFailed": "לא ניתן היה לשמור",
   "providerEmail": "אימייל",
   "providerPhone": "טלפון",
-  "providerUnknown": "לא ידוע"
+  "providerUnknown": "לא ידוע",
+  "sendAgain": "שליחה מחדש",
+  "checking": "בודק…",
+  "iVerified": "פתחתי את הקישור: בדוק עכשיו",
+  "notYet": "עדיין לא אומת. פתחו קודם את הקישור באימייל (בדקו גם בספאם).",
+  "checkFailed": "לא ניתן לבדוק עכשיו. בדקו את החיבור ונסו שוב."
 }

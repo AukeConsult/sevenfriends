@@ -22,5 +22,7 @@
   "useASleepList": "Usa una lista del sonno",
   "offAOneYou": "Disattivato: un {{ one }} che togli viene eliminato e la riga della lista del sonno resta nascosta finché è vuota.",
   "readyMadeMessageIndex": "Messaggio pronto {{ index }}",
-  "removeMessageIndex": "Rimuovi il messaggio {{ index }}"
+  "removeMessageIndex": "Rimuovi il messaggio {{ index }}",
+  "tellWhenIAdd": "Avvisali quando aggiungo qualcosa alla cassaforte",
+  "aMessageTellsYour": "Un messaggio avvisa il tuo amico o gruppo che c'è una nota, un elemento o un file, con un link per aprirlo. Disattivato: non viene inviato nulla; la campanella in un elemento può comunque avvisare."
 }

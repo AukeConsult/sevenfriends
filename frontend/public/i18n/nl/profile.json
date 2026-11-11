@@ -51,5 +51,10 @@
   "saveFailed": "Kon niet opslaan",
   "providerEmail": "E-mail",
   "providerPhone": "Telefoon",
-  "providerUnknown": "Onbekend"
+  "providerUnknown": "Onbekend",
+  "sendAgain": "Opnieuw sturen",
+  "checking": "Controleren…",
+  "iVerified": "Ik heb de link geopend: nu controleren",
+  "notYet": "Nog niet bevestigd. Open eerst de link in de e-mail (kijk ook in de spam).",
+  "checkFailed": "Kan nu niet controleren. Controleer de verbinding en probeer het opnieuw."
 }

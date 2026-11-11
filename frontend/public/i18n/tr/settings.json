@@ -22,5 +22,7 @@
   "useASleepList": "Uyku listesi kullan",
   "offAOneYou": "Kapalıyken: çıkardığın kişi ({{ one }}) silinir ve boşken uyku listesi satırı gizlenir.",
   "readyMadeMessageIndex": "Hazır mesaj {{ index }}",
-  "removeMessageIndex": "{{ index }}. mesajı kaldır"
+  "removeMessageIndex": "{{ index }}. mesajı kaldır",
+  "tellWhenIAdd": "Kasaya bir şey eklediğimde onlara bildir",
+  "aMessageTellsYour": "Bir mesaj, arkadaşınıza veya grubunuza bir not, öğe ya da dosya olduğunu ve açmak için bir bağlantı olduğunu bildirir. Kapalı: hiçbir şey gönderilmez; öğedeki zil yine de haber verebilir."
 }

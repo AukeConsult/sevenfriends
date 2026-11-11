@@ -290,7 +290,15 @@
     "makesASound": "wydaje dźwięk",
     "activityIn": "Aktywność: {{ circle }}",
     "tryApp": "Try {{ app }}: {{ url }}",
-    "tryApp2": "Try {{ app }}:"
+    "tryApp2": "Try {{ app }}:",
+    "theLockOfThis": "Kłódka tej rozmowy się nie zgadza, więc nic nie można wysłać. Zobacz ostrzeżenie pod nazwą.",
+    "chainBroken": "Kłódka użytkownika {{ name }} się nie zgadza. Nic nie można wysłać, dopóki nie wiesz dlaczego. Zadzwoń do {{ name }} i zapytaj, co się stało.",
+    "chainNewHistory": "Kłódka zaczyna się od nowa. Może się tak zdarzyć, gdy {{ name }} straciła/straciłeś wszystkie telefony i komputery. Zaakceptuj tylko wtedy, gdy {{ name }} ci to powiedział(a).",
+    "chainCannotTrust": "Coś na liście kłódek zostało zmienione lub usunięte. Nie można tego tu zaakceptować.",
+    "chainAccept": "Tak, {{ name }} mi powiedział(a)",
+    "chainAgain": "Sprawdź ponownie",
+    "noKeyInList": "Żaden klucz tej osoby nie jest jeszcze na jej podpisanej liście, więc nic nie można dla niej zablokować. Poproś ją o otwarcie aplikacji na zatwierdzonym urządzeniu.",
+    "thisDeviceNotApproved": "To urządzenie nie zostało jeszcze zatwierdzone. Zatwierdź je na innym swoim urządzeniu (na stronie głównej) i spróbuj ponownie."
   },
   "needsYourHelp": "{{ friendName }} potrzebuje Twojej pomocy",
   "openToUnlockTheir": "Otwórz aplikację, żeby znów odblokować jej stare wiadomości.",

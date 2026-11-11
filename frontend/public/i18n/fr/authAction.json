@@ -1,0 +1,9 @@
+{
+  "title": "Confirmation de votre e-mail",
+  "working": "Vérification du lien…",
+  "verified": "Votre e-mail est confirmé.",
+  "toProfile": "Retour à mon profil",
+  "toLogin": "Se connecter",
+  "other": "Cette page ne peut pas traiter ce lien.",
+  "failed": "Ce lien n'a pas pu être utilisé. Il a peut-être déjà servi ou il a expiré. Demandez-en un nouveau sur votre page de profil."
+}

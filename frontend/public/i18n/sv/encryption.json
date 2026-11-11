@@ -63,5 +63,10 @@
   "askFriend": "Fråga",
   "noFriendsInThis": "Inga vänner i den här kretsen än.",
   "askOrTryRecovery": "Återställning: fråga mina andra enheter eller en vän, även när allt är bra",
-  "openTheAppOn": "Öppna Seven Friends på en av de här enheterna (den måste vara inloggad och visa samma konto). En banner ber dig trycka på Tillåt. Det spelar ingen roll vilken."
+  "openTheAppOn": "Öppna Seven Friends på en av de här enheterna (den måste vara inloggad och visa samma konto). En banner ber dig trycka på Tillåt. Det spelar ingen roll vilken.",
+  "noRescueCode": "Ingen räddningskod ännu",
+  "noRescueCodeText": "Om du förlorar alla dina telefoner och datorer kan dina gamla meddelanden och filer inte öppnas igen. En räddningskod är 24 ord på papper som ger tillbaka ditt lås på en ny enhet. Den skapar ett nytt lås på den här enheten och flyttar din historik dit; det tar en stund.",
+  "addARescueCode": "Lägg till en räddningskod",
+  "lockingOldThings": "Dina äldre meddelanden och anteckningar låses med den nya nyckeln. Du kan fortsätta använda appen.",
+  "someCouldNotBeLocked": "Några äldre saker kunde inte öppnas på den här enheten. Öppna appen på en annan av dina enheter för att slutföra dem."
 }

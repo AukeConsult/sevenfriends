@@ -63,5 +63,10 @@
   "askFriend": "Vraag",
   "noFriendsInThis": "Nog geen vrienden in deze kring.",
   "askOrTryRecovery": "Herstel: vraag mijn andere apparaten of een vriend, ook als alles goed is",
-  "openTheAppOn": "Open Seven Friends op een van deze apparaten (het moet ingelogd zijn en hetzelfde account tonen). Een banner vraagt je om Toestaan te tikken. Het maakt niet uit welk apparaat."
+  "openTheAppOn": "Open Seven Friends op een van deze apparaten (het moet ingelogd zijn en hetzelfde account tonen). Een banner vraagt je om Toestaan te tikken. Het maakt niet uit welk apparaat.",
+  "noRescueCode": "Nog geen herstelcode",
+  "noRescueCodeText": "Als je al je telefoons en computers kwijtraakt, kunnen je oude berichten en bestanden niet meer worden geopend. Een herstelcode is 24 woorden op papier die je slot terugbrengen op een nieuw apparaat. Hij maakt een nieuw slot op dit apparaat en verplaatst je geschiedenis ernaartoe; dat duurt even.",
+  "addARescueCode": "Herstelcode toevoegen",
+  "lockingOldThings": "Je oudere berichten en notities worden met de nieuwe sleutel vergrendeld. Je kunt de app gewoon blijven gebruiken.",
+  "someCouldNotBeLocked": "Een paar oudere items konden op dit apparaat niet worden geopend. Open de app op een ander apparaat van jou om ze af te maken."
 }

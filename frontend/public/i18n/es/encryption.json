@@ -63,5 +63,10 @@
   "askFriend": "Pedir",
   "noFriendsInThis": "Aún no hay amigos en este círculo.",
   "askOrTryRecovery": "Recuperación: pedir a mis otros dispositivos o a un amigo, aunque todo esté bien",
-  "openTheAppOn": "Abre Seven Friends en uno de estos dispositivos (debe tener la sesión iniciada y mostrar la misma cuenta). Un aviso te pide que pulses Permitir. Da igual cuál."
+  "openTheAppOn": "Abre Seven Friends en uno de estos dispositivos (debe tener la sesión iniciada y mostrar la misma cuenta). Un aviso te pide que pulses Permitir. Da igual cuál.",
+  "noRescueCode": "Aún no hay código de rescate",
+  "noRescueCodeText": "Si pierdes todos tus teléfonos y ordenadores, tus mensajes y archivos antiguos no se podrán abrir. Un código de rescate son 24 palabras en papel que recuperan tu candado en un dispositivo nuevo. Crea un candado nuevo en este dispositivo y traslada tu historial; tarda un momento.",
+  "addARescueCode": "Añadir un código de rescate",
+  "lockingOldThings": "Bloqueando tus mensajes y notas antiguos con la clave nueva. Puedes seguir usando la app.",
+  "someCouldNotBeLocked": "Algunos elementos antiguos no se pudieron abrir en este dispositivo. Abre la app en otro dispositivo tuyo para terminarlos."
 }

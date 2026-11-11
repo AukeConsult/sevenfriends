@@ -51,5 +51,10 @@
   "saveFailed": "Não foi possível salvar",
   "providerEmail": "E-mail",
   "providerPhone": "Telefone",
-  "providerUnknown": "Desconhecido"
+  "providerUnknown": "Desconhecido",
+  "sendAgain": "Enviar de novo",
+  "checking": "A verificar…",
+  "iVerified": "Abri o link: verificar agora",
+  "notYet": "Ainda não confirmado. Abra primeiro o link no e-mail (veja também no spam).",
+  "checkFailed": "Não foi possível verificar agora. Verifique a ligação e tente de novo."
 }

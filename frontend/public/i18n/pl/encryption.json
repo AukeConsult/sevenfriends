@@ -63,5 +63,10 @@
   "askFriend": "Poproś",
   "noFriendsInThis": "W tym kręgu nie ma jeszcze przyjaciół.",
   "askOrTryRecovery": "Odzyskiwanie: poproś moje inne urządzenia lub przyjaciela, nawet gdy wszystko jest w porządku",
-  "openTheAppOn": "Otwórz Seven Friends na jednym z tych urządzeń (musi być zalogowane i pokazywać to samo konto). Baner poprosi Cię o dotknięcie Zezwól. Nie ma znaczenia, które to będzie."
+  "openTheAppOn": "Otwórz Seven Friends na jednym z tych urządzeń (musi być zalogowane i pokazywać to samo konto). Baner poprosi Cię o dotknięcie Zezwól. Nie ma znaczenia, które to będzie.",
+  "noRescueCode": "Brak jeszcze kodu ratunkowego",
+  "noRescueCodeText": "Jeśli stracisz wszystkie telefony i komputery, stare wiadomości i pliki nie będą mogły zostać otwarte. Kod ratunkowy to 24 słowa na papierze, które przywracają twoją kłódkę na nowym urządzeniu. Tworzy nową kłódkę na tym urządzeniu i przenosi na nie twoją historię; to chwilę trwa.",
+  "addARescueCode": "Dodaj kod ratunkowy",
+  "lockingOldThings": "Blokowanie starszych wiadomości i notatek nowym kluczem. Możesz dalej korzystać z aplikacji.",
+  "someCouldNotBeLocked": "Niektórych starszych elementów nie udało się otworzyć na tym urządzeniu. Otwórz aplikację na innym swoim urządzeniu, aby je dokończyć."
 }

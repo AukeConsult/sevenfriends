@@ -51,5 +51,10 @@
   "saveFailed": "Kaydedilemedi",
   "providerEmail": "E-posta",
   "providerPhone": "Telefon",
-  "providerUnknown": "Bilinmiyor"
+  "providerUnknown": "Bilinmiyor",
+  "sendAgain": "Tekrar gönder",
+  "checking": "Kontrol ediliyor…",
+  "iVerified": "Bağlantıyı açtım: şimdi kontrol et",
+  "notYet": "Henüz doğrulanmadı. Önce e-postadaki bağlantıyı açın (spam klasörüne de bakın).",
+  "checkFailed": "Şu an kontrol edilemedi. Bağlantıyı kontrol edip tekrar deneyin."
 }

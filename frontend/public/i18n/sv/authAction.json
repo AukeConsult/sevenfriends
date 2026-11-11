@@ -1,0 +1,9 @@
+{
+  "title": "Bekräfta din e-post",
+  "working": "Kontrollerar länken…",
+  "verified": "Din e-post är bekräftad.",
+  "toProfile": "Tillbaka till min profil",
+  "toLogin": "Logga in",
+  "other": "Den här länken kan inte slutföras på den här sidan.",
+  "failed": "Länken kunde inte användas. Den kan redan vara använd eller ha gått ut. Be om en ny på din profilsida."
+}
