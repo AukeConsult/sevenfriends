@@ -3,7 +3,6 @@ import { Component, inject } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { InstallService } from '../core/install.service';
 import { SettingsTab, UiPreferencesService } from '../core/ui-preferences';
-import { tr } from '../core/i18n';
 import { PageBar } from '../page-bar/page-bar';
 
 /** The Settings page: one tab for each part (the part itself is the page shown under the tabs). */
@@ -36,11 +35,11 @@ export class SettingsShell {
   }
 
   protected readonly tabs = [
-    { path: 'profile', label: tr('settingsShell.profile', 'Profile') },
-    { path: 'preferences', label: tr('settingsShell.preferences', 'Display and chat') },
-    { path: 'notifications', label: tr('settingsShell.notifications', 'Notifications') },
-    { path: 'encryption', label: tr('settingsShell.keys', 'Privacy lock') },
-    { path: 'install', label: tr('settingsShell.install', 'Install'), browserOnly: true },
-    { path: 'about', label: tr('settingsShell.info', 'About and rules'), also: ['terms', 'privacy'] },
+    { path: 'profile', key: 'profile', fallback: 'Profile' },
+    { path: 'preferences', key: 'preferences', fallback: 'Display and chat' },
+    { path: 'notifications', key: 'notifications', fallback: 'Notifications' },
+    { path: 'encryption', key: 'keys', fallback: 'Privacy lock' },
+    { path: 'install', key: 'install', fallback: 'Install', browserOnly: true },
+    { path: 'about', key: 'info', fallback: 'About and rules', also: ['terms', 'privacy'] },
   ];
 }
