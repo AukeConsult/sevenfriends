@@ -3,7 +3,7 @@
   "checkingForNews": "Controleren op nieuws…",
   "hideTheseForHours": "Deze 24 uur verbergen",
   "hideForHours": "24 uur verbergen",
-  "yourSoundAndNotifications": "Je geluid en meldingen zijn nog niet ingesteld.",
+  "yourSoundAndNotifications": "Je instelling is nog niet afgerond.",
   "finishSetup": "Instellen afronden",
   "openAndroidSettings": "Android-instellingen openen",
   "notNow": "Nu niet",
@@ -64,5 +64,8 @@
   "getThemBack": "Haal ze terug",
   "privacyLockIsOff": "De privacyvergrendeling staat uit, dus ons systeem kan lezen wat je verstuurt.",
   "turnItOn": "Zet aan",
-  "unverifiedRequestHint": "Ken je die persoon? Bevestig dan. Zo niet, wijs af."
+  "unverifiedRequestHint": "Ken je die persoon? Bevestig dan. Zo niet, wijs af.",
+  "sendConfirmationEmail": "Bevestigingsmail sturen",
+  "confirmationSent": "Verstuurd. Open de link in de mail en kom dan terug.",
+  "confirmationFailed": "De mail kon niet worden verstuurd. Probeer het opnieuw."
 }

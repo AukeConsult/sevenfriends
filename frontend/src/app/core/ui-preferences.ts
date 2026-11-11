@@ -33,8 +33,8 @@ export interface UiPreferences {
   quickMessages: string[];
   /** the language of the texts of the app (a code of languages.ts); '' = not chosen on this device yet: the language of the account, the country or the browser is used (see language.service.ts) */
   language: string;
-  /** the first-time setup (/setup): 'new' = not offered yet, 'skipped' = left for later (Home offers it again), 'done' */
-  setup: 'new' | 'skipped' | 'done';
+  /** the first-time setup (/setup): 'new' = not offered yet, 'start' = a brand-new account, Home offers it (like 'skipped') and the wizard still counts as the first time, 'skipped' = left for later (Home offers it again), 'done' */
+  setup: 'new' | 'start' | 'skipped' | 'done';
   /** the page that was open last (a path like `/friends`), shown again when the app is opened at its start page; null = none */
   lastPage: string | null;
   /** the microphone is opened without the filters of the browser (set once a recording came out silent) */
@@ -149,7 +149,7 @@ function read(): UiPreferences {
       feedIcons: saved.feedIcons !== false,
       boxTellNew: saved.boxTellNew !== false,
       language: typeof saved.language === 'string' && isLanguage(saved.language) ? saved.language : '',
-      setup: saved.setup === 'done' || saved.setup === 'skipped' ? saved.setup : 'new',
+      setup: saved.setup === 'done' || saved.setup === 'skipped' || saved.setup === 'start' ? saved.setup : 'new',
       lastPage: typeof saved.lastPage === 'string' && saved.lastPage.startsWith('/') ? saved.lastPage : null,
       micRaw: saved.micRaw === true,
       pendingFriend: pendingOf(saved.pendingFriend),
@@ -213,6 +213,22 @@ export class UiPreferencesService {
 
   get<K extends keyof UiPreferences>(key: K): UiPreferences[K] {
     return this.state()[key];
+  }
+
+  /**
+   * A different person (or a new account) on this browser: every choice goes back to its default, except what belongs to the device or
+   * to the sign-in that is going on (the waiting friend link, the welcome page choice, the language, the colours and the text size; the last two follow the account anyway).
+   */
+  clearAccountChoices(): void {
+    const old = read();
+    const next: UiPreferences = { ...DEFAULTS, pendingFriend: old.pendingFriend, welcomeUntil: old.welcomeUntil, language: old.language, theme: old.theme, textSize: old.textSize };
+    this.state.set(next);
+    this.applyLook();
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    } catch {
+      /* private mode: the choices last until the page is closed */
+    }
   }
 
   /** Change one choice: it is remembered at once (merged into what is stored, so a second window's other choices are kept). */

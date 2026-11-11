@@ -36,5 +36,6 @@
   "doneText": "Tutto è configurato in questo browser.",
   "saveFailed": "Impossibile salvare. Riprova, oppure scegli \"Lo farò dopo\".",
   "notifyNeedsApp": "Le notifiche funzionano solo quando l’app è nella schermata Home. Segui i prossimi passaggi per aggiungerla.",
-  "hideTextNote": "Più sicuro: il testo di un messaggio è nascosto sulla schermata di blocco, così solo tu vedi cosa dice. Puoi cambiarlo con l’interruttore qui sopra."
+  "hideTextNote": "Più sicuro: il testo di un messaggio è nascosto sulla schermata di blocco, così solo tu vedi cosa dice. Puoi cambiarlo con l’interruttore qui sopra.",
+  "nameRequired": "Il tuo nome è obbligatorio."
 }

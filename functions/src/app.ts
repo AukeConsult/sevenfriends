@@ -3,7 +3,7 @@ import express from "express";
 import { circlesRouter } from "./circles";
 import { friendRequestsRouter } from "./friend-requests";
 import { cacheRouter } from "./media";
-import { inviteRouter } from "./invite";
+import { inviteRouter, invitePublicRouter } from "./invite";
 import { linkPreviewRouter } from "./link-preview";
 import { messagesRouter } from "./messages";
 import { notificationsRouter } from "./notifications";
@@ -46,6 +46,7 @@ export function createApp(): express.Express {
   router.use("/circles", circlesRouter);
   router.use("/friend-requests", friendRequestsRouter);
   router.use("/messages", messagesRouter);
+  router.use("/invite-public", invitePublicRouter); // before sign-in: the welcome page
   router.use("/invite", inviteRouter);
   router.use("/link-preview", linkPreviewRouter);
   router.use("/notifications", notificationsRouter);

@@ -4,8 +4,23 @@
   <div class="sf-hero text-center">
     <div class="sf-logo sf-logo-lg">7</div>
     <p class="sf-welcome-name m-0 mt-2">Seven Friends</p>
-    <h1 class="mt-2 mb-2">{{ t('welcome.sevenSeatsThePeople') || 'Seven seats. The people who matter.' }}</h1>
-    <p class="sf-hero-tag m-0">{{ t('welcome.closeQuietAndPrivate') || 'Close, quiet and private.' }}</p>
+    <h1 class="sf-welcome-title">{{ t('welcome.tiredOfPings') || 'Tired of pings from everywhere?' }}</h1>
+    <app-inviter />
+    <p class="sf-welcome-statement">{{ t('welcome.statement') || 'This is an app for people who are tired of too many pings from all directions, and want one calm place to stay close to their closest friends, connections and buddies, or their family.' }}</p>
+    <!-- the noise (crossed out) and the one message that matters -->
+    <div class="sf-pings" aria-hidden="true">
+      @for (s of [scene()]; track s.n) {
+        <div class="sf-pings-scene">
+          <div class="sf-pings-noise">
+            @for (w of s.noise; track $index) {
+              <span class="sf-ping sf-ping-noise">{{ t('welcome.scene' + s.n + 'abc'[$index]) || w }}</span>
+            }
+          </div>
+          <span class="sf-pings-arrow">↓</span>
+          <span class="sf-ping sf-ping-calm">{{ t('welcome.scene' + s.n + 'm') || s.calm }}</span>
+        </div>
+      }
+    </div>
     <app-seat-dots [blink]="true" />
   </div>
 
@@ -13,38 +28,35 @@
   <app-why circle="default" />
 
   <div class="sf-form-width mx-auto w-100 vstack gap-3">
-    @if (invited()) {
-      <div class="alert alert-info text-center m-0" role="status">
-        <span [innerHTML]="t('welcome.strongYouHaveBeen', { invitedBy: invitedBy() ? (t('welcome.byInvitedby', { invitedBy: invitedBy() }) || ' by ' + invitedBy()) : '' }) || '<strong>You have been invited' + (invitedBy() ? (t('welcome.byInvitedby', { invitedBy: invitedBy() }) || ' by ' + invitedBy()) : '') + '.</strong>'"></span>
-        @if (auth.user()) { {{ t('welcome.continueToAnswerIt') || 'Continue to answer it. It waits for you.' }} } @else { {{ t('welcome.getTheAppOr') || 'Get the app or sign in first. Your invitation waits for you.' }} }
-      </div>
-    }
-
     @if (auth.user()) {
       <!-- already signed in: /welcome is still open to everybody, so here is the way on -->
       <a class="btn btn-primary btn-lg" routerLink="/">{{ t('welcome.continueToYourHome') || 'Continue to your home page' }}</a>
     }
 
-    <!-- the two ways to use it: the app (the install action for this platform), or the browser -->
-    <section class="card sf-way">
-      <div class="card-body vstack gap-2">
-        <a class="btn btn-primary btn-lg" [routerLink]="installPage">{{ kind === 'android' ? (t('welcome.getTheAndroidApp') || 'Get the Android app') : kind === 'ios' ? (t('welcome.addItToYour') || 'Add it to your home screen') : (t('welcome.installItOnYour') || 'Install it on your computer') }}</a>
-      </div>
-    </section>
-
     @if (!auth.user()) {
-    <section class="card sf-way">
-      <div class="card-body vstack gap-2">
-        <h2 class="h5 m-0">{{ t('welcome.useItInThe') || 'Use it in the browser' }}</h2>
-        <p class="small text-secondary m-0">{{ t('welcome.nothingToInstallAlerts') || 'Nothing to install. Alerts only while the page is open' }}@if (kind === 'ios') { {{ t('welcome.iphoneNeedsTheHome') || '(iPhone needs the home-screen app for alerts)' }} }.</p>
-        <button type="button" class="btn btn-outline-secondary w-100" (click)="continueInBrowser()">{{ invited() ? (t('welcome.signInOrCreate') || 'Sign in or create an account first') : (t('welcome.continueInTheBrowser') || 'Continue in the browser') }}</button>
-      </div>
-    </section>
+      <!-- not signed in: the one way on is the web app (it opens on sign-in) -->
+      <button type="button" class="btn btn-primary btn-lg" (click)="continueInBrowser()">{{ invited() ? (t('welcome.createMyAccount') || 'Create my account') : (t('welcome.continueToTheApp') || 'Continue to the app') }}</button>
     }
+  </div>
 
-    <p class="small text-center text-secondary mb-0">
-      <a routerLink="/terms">{{ t('welcome.termsOfUse') || 'Terms of use' }}</a> · <a routerLink="/privacy">{{ t('welcome.dataAndPrivacy') || 'Data and privacy' }}</a> · <a routerLink="/locking">{{ t('welcome.howLockingWorks') || 'How locking works' }}</a> · <a routerLink="/about">{{ t('welcome.about') || 'About' }}</a> · <a routerLink="/viewwelcome">{{ t('welcome.testTheWelcomePages') || 'Test the welcome pages' }}</a>
-    </p>
+  <!-- the app explained in very simple words, on the same page -->
+  <hr class="sf-form-width mx-auto w-100 my-4" />
+  <div class="sf-form-width mx-auto w-100 vstack gap-4 sf-reading">
+    <h2 class="sf-section-title m-0">{{ t('welcome.explainTitle') || 'How does it work?' }}</h2>
+    @for (b of explain; track b.key) {
+      <section class="vstack gap-2">
+        <h3 class="sf-section-title m-0 d-flex align-items-center gap-2"><span class="sf-chapter-icon" aria-hidden="true">{{ b.icon }}</span>{{ t('welcome.' + b.key + 'Title') || b.title }}</h3>
+        <p class="m-0">{{ t('welcome.' + b.key + 'Text') || b.text }}</p>
+      </section>
+    }
+    <section class="vstack gap-2">
+      <h3 class="sf-section-title m-0 d-flex align-items-center gap-2"><span class="sf-chapter-icon" aria-hidden="true">🚀</span>{{ t('welcome.startTitle') || 'How to start' }}</h3>
+      <ol class="m-0 vstack gap-2">
+        @for (st of steps; track st.key) {
+          <li>{{ t('welcome.' + st.key) || st.text }}</li>
+        }
+      </ol>
+    </section>
   </div>
 </main>
 </ng-container>

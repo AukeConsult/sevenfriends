@@ -36,5 +36,6 @@
   "doneText": "In diesem Browser ist alles eingerichtet.",
   "saveFailed": "Konnte nicht gespeichert werden. Versuch es noch einmal oder wähl „Später“.",
   "notifyNeedsApp": "Benachrichtigungen funktionieren nur, wenn die App auf deinem Startbildschirm liegt. Folge den nächsten Schritten, um sie hinzuzufügen.",
-  "hideTextNote": "Sicherer: Der Text einer Nachricht wird auf dem Sperrbildschirm verborgen, damit nur du siehst, was darin steht. Du kannst das mit dem Schalter oben ändern."
+  "hideTextNote": "Sicherer: Der Text einer Nachricht wird auf dem Sperrbildschirm verborgen, damit nur du siehst, was darin steht. Du kannst das mit dem Schalter oben ändern.",
+  "nameRequired": "Dein Name ist erforderlich."
 }

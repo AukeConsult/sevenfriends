@@ -3,7 +3,7 @@
   "checkingForNews": "Buscando novedades…",
   "hideTheseForHours": "Ocultar esto durante 24 horas",
   "hideForHours": "Ocultar 24 horas",
-  "yourSoundAndNotifications": "Tu sonido y tus notificaciones aún no están configurados.",
+  "yourSoundAndNotifications": "Aún no has terminado la configuración.",
   "finishSetup": "Terminar configuración",
   "openAndroidSettings": "Abrir ajustes de Android",
   "notNow": "Ahora no",
@@ -64,5 +64,8 @@
   "getThemBack": "Recuperarlos",
   "privacyLockIsOff": "El bloqueo de privacidad está desactivado, así que nuestro sistema puede leer lo que envías.",
   "turnItOn": "Activarlo",
-  "unverifiedRequestHint": "¿La conoces? Entonces confirma. Si no, rechaza."
+  "unverifiedRequestHint": "¿La conoces? Entonces confirma. Si no, rechaza.",
+  "sendConfirmationEmail": "Enviar correo de confirmación",
+  "confirmationSent": "Enviado. Abre el enlace del correo y vuelve aquí.",
+  "confirmationFailed": "No se pudo enviar el correo. Inténtalo de nuevo."
 }

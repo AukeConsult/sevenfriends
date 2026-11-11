@@ -89,3 +89,38 @@ inviteRouter.get(
     });
   }),
 );
+
+/** An address with the middle hidden (`leif@gmail.com` -> `l***@gmail.com`, `+4791234567` -> `+47*****67`), for the page anyone can open. */
+export function maskContact(value: string | null): string | null {
+  if (!value) return null;
+  const at = value.indexOf("@");
+  if (at > 0) return `${value[0]}***${value.slice(at)}`;
+  return value.length <= 5 ? "***" : `${value.slice(0, 3)}${"*".repeat(value.length - 5)}${value.slice(-2)}`;
+}
+
+/**
+ * The welcome page's lookup: it is open before anyone has signed in, so it says only WHO invites: the name and the address
+ * with its middle hidden. The full address and phone number stay behind the sign-in (`/invite/lookup/:code`).
+ */
+export const invitePublicRouter = Router();
+invitePublicRouter.get(
+  "/:code",
+  asyncHandler(async (req, res) => {
+    const code = String(req.params.code ?? "");
+    if (code.length !== CODE_LENGTH || ![...code].every((c) => ALPHABET.includes(c))) {
+      res.status(404).json({ error: "This invite link is not valid (any more)" });
+      return;
+    }
+    const snap = await getFirestore().collection(USER_ACCOUNT_COLLECTION).where("inviteCode", "==", code).limit(1).select("displayName", "emailLower", "verifiedPhone", "phone").get();
+    if (snap.empty) {
+      res.status(404).json({ error: "This invite link is not valid (any more)" });
+      return;
+    }
+    const owner = snap.docs[0];
+    const data = owner.data();
+    const circleId = activeCircleOf(req);
+    const name = circleProfileOf(circleId, await readFields(circleCol(owner.id).doc(circleId), "profile"), data).name ?? (data.displayName as string | null | undefined) ?? null;
+    const contact = (data.emailLower as string | null | undefined) ?? (data.verifiedPhone as string | null | undefined) ?? (data.phone as string | null | undefined) ?? null;
+    res.json({ name, contact: maskContact(contact) });
+  }),
+);

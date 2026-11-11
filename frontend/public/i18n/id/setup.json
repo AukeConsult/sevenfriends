@@ -36,5 +36,6 @@
   "doneText": "Semuanya sudah diatur di browser ini.",
   "saveFailed": "Tidak bisa menyimpan. Coba lagi, atau pilih \"Nanti saja\".",
   "notifyNeedsApp": "Notifikasi hanya berfungsi jika aplikasi ada di layar utama. Ikuti langkah berikutnya untuk menambahkannya.",
-  "hideTextNote": "Lebih aman: teks pesan disembunyikan di layar kunci, jadi hanya kamu yang melihat isinya. Kamu bisa mengubahnya dengan sakelar di atas."
+  "hideTextNote": "Lebih aman: teks pesan disembunyikan di layar kunci, jadi hanya kamu yang melihat isinya. Kamu bisa mengubahnya dengan sakelar di atas.",
+  "nameRequired": "Namamu wajib diisi."
 }

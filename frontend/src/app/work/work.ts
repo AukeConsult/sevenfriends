@@ -3,7 +3,8 @@ import { NgTemplateOutlet } from '@angular/common';
 import { WhyTiles } from '../why-tiles/why-tiles';
 import { NextStep } from '../next-step/next-step';
 import { Component, inject } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+import { Inviter } from '../inviter/inviter';
 
 /**
  * Three welcome pages for Seven Work (the same app for business relations), public: /work1 (seven key contacts with roles), /work2 (stay close to the
@@ -11,7 +12,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
  */
 @Component({
   selector: 'app-work',
-  imports: [NgTemplateOutlet, RouterLink, NextStep, WhyTiles, TranslocoDirective],
+  imports: [Inviter, NgTemplateOutlet, NextStep, WhyTiles, TranslocoDirective],
   templateUrl: './work.html',
   providers: [provideTranslocoScope('work')],
 })

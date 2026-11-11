@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, Injector, inject, signal } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import {
   ConfirmationResult,
@@ -22,15 +22,23 @@ import {
   signOut,
   updateProfile,
 } from 'firebase/auth';
+import { DesktopNoticeService } from './desktop-notice.service';
+import { UiPreferencesService } from './ui-preferences';
 import { environment } from '../../environments/environment';
 import { auth } from './firebase';
 import { tr } from './i18n';
 
 /** Where the email is kept between asking for a sign-in link and opening it (same device). */
 const EMAIL_KEY = 'sf-email-for-sign-in';
+/** who signed in last on this browser (an id, nothing else) */
+const LAST_UID_KEY = 'sf-last-uid';
+/** the small things kept in this browser about the person using it (see clearLocalSession) */
+const LOCAL_PERSON_KEYS = ['sf-sleep-view', 'sf-checks-hidden-until']; // the sounds follow the account (SoundService clears and loads them itself)
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+  private readonly prefs = inject(UiPreferencesService);
+  private readonly injector = inject(Injector);
   readonly user = signal<User | null>(null);
 
   /**
@@ -233,11 +241,44 @@ export class AuthService {
 
   private newAccount = false;
 
-  /** Where to go after signing in: a brand-new account starts with the setup wizard (profile, notifications, key, first friend). */
+  /**
+   * Where to go after signing in: always Home. A brand-new account sees the front page first, with a notice ("Finish setup") that
+   * stays until the setup wizard (profile, notifications, key, first friend) is done.
+   */
   landingPath(): string {
-    const path = this.newAccount ? '/setup' : '/';
+    if (this.newAccount) this.prefs.set('setup', 'start');
     this.newAccount = false;
-    return path;
+    return '/';
+  }
+
+  /** when the account of this session was created by this sign-in (milliseconds), 0 = it was not */
+  private createdAt = 0;
+
+  /**
+   * True once, and only for the first minute, for an account created by this sign-in: only such an account answers a friend link by itself
+   * (see AutoInviteService). A link opened later in the same session is asked about on /friends/join like everybody else's.
+   */
+  takeNewAccount(): boolean {
+    const fresh = this.createdAt > 0 && Date.now() - this.createdAt < 60_000;
+    this.createdAt = 0;
+    return fresh;
+  }
+
+  /**
+   * A new account, or a different person than the last one who signed in on this browser, starts clean: the local choices (UiPreferences,
+   * the desktop notification switch, the small remembered views) and everything in the tab's session storage are cleared. The SAME person
+   * signing in again keeps theirs (for example the ready-made messages that live on this device only). The keys of this device are not touched.
+   */
+  private clearLocalSession(uid: string): void {
+    try {
+      if (!this.newAccount && localStorage.getItem(LAST_UID_KEY) === uid) return;
+      for (const key of LOCAL_PERSON_KEYS) localStorage.removeItem(key);
+      sessionStorage.clear();
+    } catch {
+      /* no storage: nothing to clear */
+    }
+    this.prefs.clearAccountChoices();
+    this.injector.get(DesktopNoticeService).reset(); // looked up now, not when this service is made: it needs the Router, which needs this service
   }
 
   /** Saves the user, and signs out again if that fails so state stays consistent. */
@@ -245,6 +286,14 @@ export class AuthService {
     this.signedOutNotice.set(null);
     // the account was created by this very sign-in (any method: Google, password, link, phone)
     this.newAccount = user.metadata.creationTime === user.metadata.lastSignInTime;
+    this.createdAt = this.newAccount ? Date.now() : 0;
+    // a new account, or somebody else than the last person who signed in here: nothing of the other person's local choices stays
+    this.clearLocalSession(user.uid);
+    try {
+      localStorage.setItem(LAST_UID_KEY, user.uid);
+    } catch {
+      /* no storage */
+    }
     try {
       await this.syncUser(user);
     } catch (err) {

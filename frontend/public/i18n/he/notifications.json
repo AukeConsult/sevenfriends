@@ -3,7 +3,7 @@
   "checkingForNews": "בודקים אם יש חדש…",
   "hideTheseForHours": "הסתרה ל-24 שעות",
   "hideForHours": "הסתרה ל-24 שעות",
-  "yourSoundAndNotifications": "הצלילים וההתראות עדיין לא הוגדרו.",
+  "yourSoundAndNotifications": "ההגדרה שלך עדיין לא הסתיימה.",
   "finishSetup": "סיום ההגדרה",
   "openAndroidSettings": "פתיחת הגדרות Android",
   "notNow": "לא עכשיו",
@@ -64,5 +64,8 @@
   "getThemBack": "להחזיר אותן",
   "privacyLockIsOff": "נעילת הפרטיות כבויה, ולכן המערכת שלנו יכולה לקרוא את מה שאתה שולח.",
   "turnItOn": "הפעל",
-  "unverifiedRequestHint": "אתה מכיר אותו? אז אשר. אם לא, דחה."
+  "unverifiedRequestHint": "אתה מכיר אותו? אז אשר. אם לא, דחה.",
+  "sendConfirmationEmail": "שליחת אימייל אישור",
+  "confirmationSent": "נשלח. פתח את הקישור באימייל וחזור לכאן.",
+  "confirmationFailed": "לא ניתן היה לשלוח את האימייל. נסה שוב."
 }

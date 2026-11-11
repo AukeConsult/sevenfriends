@@ -36,5 +36,6 @@
   "doneText": "Alt er satt opp i denne nettleseren.",
   "saveFailed": "Kunne ikke lagre. Prøv igjen, eller velg «Gjør det senere».",
   "notifyNeedsApp": "Varsler fungerer bare når appen ligger på startskjermen din. Gjør de neste stegene for å legge den til.",
-  "hideTextNote": "Tryggere: Teksten i en melding skjules på låseskjermen, så bare du ser hva den sier. Du kan endre dette med bryteren over."
+  "hideTextNote": "Tryggere: Teksten i en melding skjules på låseskjermen, så bare du ser hva den sier. Du kan endre dette med bryteren over.",
+  "nameRequired": "Navnet ditt er påkrevd."
 }

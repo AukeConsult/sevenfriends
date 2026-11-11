@@ -9,10 +9,11 @@ import { authMessage, wasCancelled, wasRejected } from '../core/auth-errors';
 import { AuthService } from '../core/auth.service';
 import { FriendLinkService } from '../core/friend-link.service';
 import { AuthMode } from '../models';
+import { Inviter } from '../inviter/inviter';
 
 @Component({
   selector: 'app-login',
-  imports: [RouterLink, Clearable, Hero, TranslocoDirective],
+  imports: [Inviter, RouterLink, Clearable, Hero, TranslocoDirective],
   providers: [provideTranslocoScope('login')],
   templateUrl: './login.html',
 })
@@ -47,7 +48,8 @@ export class Login {
   /** Why the person was signed out (for example a failed connection to sign-in), if they were. */
   protected readonly signedOutNotice = this.auth.signedOutNotice;
 
-  protected readonly mode = signal<AuthMode>('signin');
+  /** a person who comes with a friend link starts at "Create account" (the link is an invitation, so most have no account yet); the toggle below goes to sign-in */
+  protected readonly mode = signal<AuthMode>(this.friendLinks.pending() ? 'signup' : 'signin');
   protected readonly busy = signal(false);
   protected readonly error = signal<string | null>(null);
   protected readonly info = signal<string | null>(null);

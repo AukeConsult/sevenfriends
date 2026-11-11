@@ -94,17 +94,36 @@ export class Notifications {
   protected readonly toHelp = this.recovery.toHelp;
   protected readonly declined = this.recovery.declined;
   /** the first-time setup was left for later: Home offers it again */
-  protected readonly setupLeft = computed(() => this.prefs.value('setup')() === 'skipped');
+  protected readonly setupLeft = computed(() => ['skipped', 'start'].includes(this.prefs.value('setup')()));
   /** no key on this device and the setup is not offering it: a small reminder stays (the lock is made by itself at sign-in; this is only when this browser cannot keep one) */
   protected readonly lockOff = computed(() => this.keys.state() === 'none' && !this.setupLeft());
 
-  private readonly user = inject(AuthService).user;
+  private readonly auth = inject(AuthService);
+  private readonly user = this.auth.user;
 
   /**
    * My own details, when none of them is verified. I still receive requests, but my friends are told that I have
    * not verified, so I am told here too (with a way to fix it).
    */
   protected readonly unverified = signal<('email' | 'phone')[]>([]);
+  /** the "Send confirmation email" button of the unverified-email note */
+  protected readonly emailSending = signal(false);
+  protected readonly emailSent = signal(false);
+  protected readonly emailError = signal<string | null>(null);
+
+  /** Sends the email with the link that confirms the address (the same as on the profile page). */
+  protected async sendConfirmation(): Promise<void> {
+    this.emailSending.set(true);
+    this.emailError.set(null);
+    try {
+      await this.auth.sendVerificationEmail();
+      this.emailSent.set(true);
+    } catch (err: any) {
+      this.emailError.set(err?.message ? String(err.message) : tr('notifications.confirmationFailed', 'Could not send the email. Please try again.'));
+    } finally {
+      this.emailSending.set(false);
+    }
+  }
 
 
   protected readonly requests = this.friendsService.requests;

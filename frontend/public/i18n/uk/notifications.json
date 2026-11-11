@@ -3,7 +3,7 @@
   "checkingForNews": "Шукаю новини…",
   "hideTheseForHours": "Сховати це на 24 години",
   "hideForHours": "Сховати на 24 години",
-  "yourSoundAndNotifications": "Звук і сповіщення ще не налаштовано.",
+  "yourSoundAndNotifications": "Налаштування ще не завершено.",
   "finishSetup": "Завершити налаштування",
   "openAndroidSettings": "Відкрити налаштування Android",
   "notNow": "Не зараз",
@@ -64,5 +64,8 @@
   "getThemBack": "Повернути їх",
   "privacyLockIsOff": "Захист приватності вимкнено, тому наша система може читати те, що ви надсилаєте.",
   "turnItOn": "Увімкнути",
-  "unverifiedRequestHint": "Ви знаєте цю людину? Тоді підтвердіть. Якщо ні, відхиліть."
+  "unverifiedRequestHint": "Ви знаєте цю людину? Тоді підтвердіть. Якщо ні, відхиліть.",
+  "sendConfirmationEmail": "Надіслати лист із підтвердженням",
+  "confirmationSent": "Надіслано. Відкрийте посилання в листі та поверніться сюди.",
+  "confirmationFailed": "Не вдалося надіслати лист. Спробуйте ще раз."
 }

@@ -3,7 +3,7 @@
   "checkingForNews": "Suche nach Neuigkeiten …",
   "hideTheseForHours": "Diese 24 Stunden ausblenden",
   "hideForHours": "24 Stunden ausblenden",
-  "yourSoundAndNotifications": "Dein Ton und deine Benachrichtigungen sind noch nicht eingerichtet.",
+  "yourSoundAndNotifications": "Deine Einrichtung ist noch nicht abgeschlossen.",
   "finishSetup": "Einrichtung abschließen",
   "openAndroidSettings": "Android-Einstellungen öffnen",
   "notNow": "Nicht jetzt",
@@ -64,5 +64,8 @@
   "getThemBack": "Wiederherstellen",
   "privacyLockIsOff": "Die Datenschutzsperre ist aus, deshalb kann unser System lesen, was du sendest.",
   "turnItOn": "Einschalten",
-  "unverifiedRequestHint": "Kennst du die Person? Dann bestätige. Wenn nicht, lehne ab."
+  "unverifiedRequestHint": "Kennst du die Person? Dann bestätige. Wenn nicht, lehne ab.",
+  "sendConfirmationEmail": "Bestätigungs-E-Mail senden",
+  "confirmationSent": "Gesendet. Öffne den Link in der E-Mail und komm dann hierher zurück.",
+  "confirmationFailed": "Die E-Mail konnte nicht gesendet werden. Bitte versuche es erneut."
 }

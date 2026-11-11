@@ -60,6 +60,16 @@ export class DesktopNoticeService {
   }
 
   /** Turns the switch on or off; turning on asks for permission. Returns whether notices will now be shown. */
+  /** A different person (or a new account) on this browser: the switch starts off, whatever the last person chose. (The browser's own permission stays: only the person can take it back.) */
+  reset(): void {
+    this.wanted.set(false);
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      /* nothing to clear */
+    }
+  }
+
   async setWanted(on: boolean): Promise<boolean> {
     if (on && this.supported && Notification.permission === 'default') {
       this.permission.set(await Notification.requestPermission());

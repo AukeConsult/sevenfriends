@@ -1,8 +1,9 @@
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { Component, inject } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { WhyTiles } from '../why-tiles/why-tiles';
 import { NextStep } from '../next-step/next-step';
+import { Inviter } from '../inviter/inviter';
 
 /**
  * Three short welcome pages for Seven Friends, public: /friends1 (seven people around you, "that is your circle") and /friends2 (a phone that is quiet until it matters) and /friends3 (a private room for every friend).
@@ -10,7 +11,7 @@ import { NextStep } from '../next-step/next-step';
  */
 @Component({
   selector: 'app-friends-welcome',
-  imports: [RouterLink, NextStep, WhyTiles, TranslocoDirective],
+  imports: [Inviter, NextStep, WhyTiles, TranslocoDirective],
   templateUrl: './friends-welcome.html',
   providers: [provideTranslocoScope('friendsWelcome')],
 })

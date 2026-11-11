@@ -36,5 +36,6 @@
   "doneText": "Alt er sat op i denne browser.",
   "saveFailed": "Kunne ikke gemme. Prøv igen, eller vælg \"Gør det senere\".",
   "notifyNeedsApp": "Notifikationer virker kun, når appen ligger på din startskærm. Følg de næste trin for at tilføje den.",
-  "hideTextNote": "Mere sikkert: Teksten i en besked skjules på låseskærmen, så kun du kan se, hvad der står. Du kan ændre det med kontakten ovenfor."
+  "hideTextNote": "Mere sikkert: Teksten i en besked skjules på låseskærmen, så kun du kan se, hvad der står. Du kan ændre det med kontakten ovenfor.",
+  "nameRequired": "Dit navn skal udfyldes."
 }

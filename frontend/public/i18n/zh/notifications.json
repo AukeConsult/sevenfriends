@@ -3,7 +3,7 @@
   "checkingForNews": "正在查看有没有新消息…",
   "hideTheseForHours": "隐藏这些 24 小时",
   "hideForHours": "隐藏 24 小时",
-  "yourSoundAndNotifications": "你的提示音和通知还没有设置好。",
+  "yourSoundAndNotifications": "设置尚未完成。",
   "finishSetup": "完成设置",
   "openAndroidSettings": "打开 Android 设置",
   "notNow": "暂不",
@@ -64,5 +64,8 @@
   "getThemBack": "找回",
   "privacyLockIsOff": "隐私锁已关闭，因此我们的系统可以读取你发送的内容。",
   "turnItOn": "开启",
-  "unverifiedRequestHint": "你认识对方吗？认识就确认，不认识就拒绝。"
+  "unverifiedRequestHint": "你认识对方吗？认识就确认，不认识就拒绝。",
+  "sendConfirmationEmail": "发送确认邮件",
+  "confirmationSent": "已发送。请打开邮件中的链接，然后回到这里。",
+  "confirmationFailed": "无法发送邮件。请重试。"
 }

@@ -36,5 +36,6 @@
   "doneText": "Alles is ingesteld in deze browser.",
   "saveFailed": "Kon niet opslaan. Probeer het opnieuw, of kies \"Later doen\".",
   "notifyNeedsApp": "Meldingen werken alleen als de app op je beginscherm staat. Doe de volgende stappen om hem toe te voegen.",
-  "hideTextNote": "Veiliger: de tekst van een bericht wordt verborgen op je vergrendelscherm, dus alleen jij ziet wat er staat. Je kunt dit wijzigen met de schakelaar hierboven."
+  "hideTextNote": "Veiliger: de tekst van een bericht wordt verborgen op je vergrendelscherm, dus alleen jij ziet wat er staat. Je kunt dit wijzigen met de schakelaar hierboven.",
+  "nameRequired": "Je naam is verplicht."
 }

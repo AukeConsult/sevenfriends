@@ -36,5 +36,6 @@
   "doneText": "Kaikki on otettu käyttöön tässä selaimessa.",
   "saveFailed": "Tallennus ei onnistunut. Yritä uudelleen tai valitse \"Tee myöhemmin\".",
   "notifyNeedsApp": "Ilmoitukset toimivat vain, kun sovellus on aloitusnäytölläsi. Lisää se seuraavien vaiheiden avulla.",
-  "hideTextNote": "Turvallisempaa: viestin teksti piilotetaan lukitusnäytöltä, joten vain sinä näet, mitä siinä lukee. Voit muuttaa tämän yllä olevalla kytkimellä."
+  "hideTextNote": "Turvallisempaa: viestin teksti piilotetaan lukitusnäytöltä, joten vain sinä näet, mitä siinä lukee. Voit muuttaa tämän yllä olevalla kytkimellä.",
+  "nameRequired": "Nimi on pakollinen."
 }

@@ -3,7 +3,7 @@
   "checkingForNews": "新着を確認しています…",
   "hideTheseForHours": "これらを24時間隠す",
   "hideForHours": "24時間隠す",
-  "yourSoundAndNotifications": "サウンドと通知がまだ設定されていません。",
+  "yourSoundAndNotifications": "セットアップがまだ終わっていません。",
   "finishSetup": "設定を完了する",
   "openAndroidSettings": "Androidの設定を開く",
   "notNow": "今はしない",
@@ -64,5 +64,8 @@
   "getThemBack": "取り戻す",
   "privacyLockIsOff": "プライバシーロックがオフのため、送信した内容は当社のシステムから読み取れます。",
   "turnItOn": "オンにする",
-  "unverifiedRequestHint": "知っている人ですか？ そうなら承認、違うなら拒否してください。"
+  "unverifiedRequestHint": "知っている人ですか？ そうなら承認、違うなら拒否してください。",
+  "sendConfirmationEmail": "確認メールを送る",
+  "confirmationSent": "送信しました。メールのリンクを開いてから、ここに戻ってください。",
+  "confirmationFailed": "メールを送れませんでした。もう一度お試しください。"
 }

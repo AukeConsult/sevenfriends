@@ -7,10 +7,9 @@ const SEEN = 'sf-welcome-seen';
 const DAYS = 30;
 
 /**
- * The welcome page is the install step: it is shown to someone who is signed out and is NOT running the installed app.
- * Not shown: inside the Android app, the Windows app or an installed web app (there is nothing to install), once
- * "Continue in the browser" was chosen (for this visit; and for 30 days when there is no friend invitation waiting: an invitation
- * always shows it again, so it can say who invited and offer the install first).
+ * The welcome pages are shown to someone who is signed out and is NOT running the installed app (they offer no install: one button on to
+ * the web app). Not shown: inside the Android app, the Windows app or an installed web app, once "Continue in the browser" was chosen
+ * (for this visit; and for 30 days when there is no friend invitation waiting: an invitation always shows them again, so they can say who invited).
  */
 @Injectable({ providedIn: 'root' })
 export class WelcomeService {

@@ -3,7 +3,8 @@ import { NgTemplateOutlet } from '@angular/common';
 import { WhyTiles } from '../why-tiles/why-tiles';
 import { NextStep } from '../next-step/next-step';
 import { Component, inject } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+import { Inviter } from '../inviter/inviter';
 
 /**
  * Three short welcome pages for Seven Buddies (young people, 13 to 18), public: /buddy1 (close friends only, the seats in a row), /buddy2 (your people, a stack of friends
@@ -11,7 +12,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
  */
 @Component({
   selector: 'app-buddy',
-  imports: [NgTemplateOutlet, RouterLink, NextStep, WhyTiles, TranslocoDirective],
+  imports: [Inviter, NgTemplateOutlet, NextStep, WhyTiles, TranslocoDirective],
   templateUrl: './buddy.html',
   providers: [provideTranslocoScope('buddy')],
 })

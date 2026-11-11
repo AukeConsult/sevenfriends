@@ -74,6 +74,8 @@ export class Setup {
   protected readonly colorHex = computed(() => profileColorHex(this.color()));
   protected readonly initial = computed(() => (this.name().trim() || this.auth.user()?.email || '?')[0].toUpperCase());
   protected readonly saveProblem = signal<string | null>(null);
+  /** the name is required: the about-you step cannot be left (Next) while it is empty */
+  protected readonly mustName = computed(() => this.step() === 'profile' && !this.name().trim());
 
   /** the wizard opens for a new account: the text of its notifications is hidden unless the person says otherwise */
   private firstTime = false;
@@ -88,7 +90,7 @@ export class Setup {
   /** Reads what is already done and decides which steps to show. */
   private async open(): Promise<void> {
     // until the wizard is finished, Home offers it again ("Finish setup"): leaving it any other way than "Finish" does not lose it
-    this.firstTime = this.prefs.get('setup') === 'new';
+    this.firstTime = this.prefs.get('setup') === 'new' || this.prefs.get('setup') === 'start';
     if (this.firstTime) this.prefs.set('setup', 'skipped');
     try {
       const me = await this.api.request<ProfileDetails>('/profile');
@@ -122,6 +124,7 @@ export class Setup {
 
   /** Saves the "about you" step: only what is filled in (an empty name keeps the old one). */
   protected async saveProfile(): Promise<void> {
+    if (!this.name().trim()) return;
     if (await this.saveAbout()) this.next();
   }
 

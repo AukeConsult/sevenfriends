@@ -3,7 +3,7 @@
   "checkingForNews": "새 소식을 확인하는 중…",
   "hideTheseForHours": "24시간 동안 숨기기",
   "hideForHours": "24시간 동안 숨기기",
-  "yourSoundAndNotifications": "소리와 알림이 아직 설정되지 않았어요.",
+  "yourSoundAndNotifications": "설정이 아직 끝나지 않았습니다.",
   "finishSetup": "설정 마치기",
   "openAndroidSettings": "Android 설정 열기",
   "notNow": "나중에",
@@ -64,5 +64,8 @@
   "getThemBack": "되찾기",
   "privacyLockIsOff": "개인정보 잠금이 꺼져 있어서 보낸 내용을 저희 시스템이 읽을 수 있어요.",
   "turnItOn": "켜기",
-  "unverifiedRequestHint": "아는 사람인가요? 그렇다면 수락하고, 아니면 거절하세요."
+  "unverifiedRequestHint": "아는 사람인가요? 그렇다면 수락하고, 아니면 거절하세요.",
+  "sendConfirmationEmail": "확인 이메일 보내기",
+  "confirmationSent": "보냈습니다. 이메일의 링크를 연 다음 여기로 돌아오세요.",
+  "confirmationFailed": "이메일을 보내지 못했습니다. 다시 시도하세요."
 }

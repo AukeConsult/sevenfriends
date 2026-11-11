@@ -1,7 +1,8 @@
 import { Injectable, inject } from '@angular/core';
-import { CIRCLE_CHOICES } from './active-circle.service';
+import { ActiveCircleService, CIRCLE_CHOICES } from './active-circle.service';
 import { PendingFriend, UiPreferencesService } from './ui-preferences';
 import { APP_ORIGIN } from './app-origin';
+import { environment } from '../../environments/environment';
 import { keepLinkPin, parsePinFragment } from './list-pin';
 
 /** A contact from a link: an email (has an @) or a phone number. null = not usable. */
@@ -50,9 +51,36 @@ function pendingFromParams(params: URLSearchParams, path = ''): PendingFriend | 
 @Injectable({ providedIn: 'root' })
 export class FriendLinkService {
   private readonly prefs = inject(UiPreferencesService);
+  private readonly active = inject(ActiveCircleService);
 
   /** who the link points to, until it is answered; null = no link waiting */
   readonly pending = this.prefs.value('pendingFriend');
+
+  /**
+   * Who made the link with a code: the name and the address with its middle hidden (`l***@gmail.com`). A call that needs no
+   * sign-in, for the welcome page. null = the code is not valid (any more) or the server could not be reached.
+   */
+  async inviter(pending: PendingFriend): Promise<{ name: string | null; contact: string | null } | null> {
+    if (!pending.code) return null;
+    const circle = CIRCLE_CHOICES.find((c) => c.type === pending.circle)?.id;
+    try {
+      const res = await fetch(`${environment.apiBase}/invite-public/${pending.code}`, { headers: circle ? { 'X-Circle': circle } : {} });
+      return res.ok ? ((await res.json()) as { name: string | null; contact: string | null }) : null;
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * A visitor with a waiting link goes on in the circle the link invites into, whatever circle this browser was in (nobody is signed in, so
+   * nothing of another circle is lost): the app switches to it and opens `to` there. false = the link says no circle or it is the one in use.
+   */
+  enterCircleOf(to: string): boolean {
+    const wanted = CIRCLE_CHOICES.find((c) => c.type === this.pending()?.circle);
+    if (!wanted || wanted.id === this.active.id) return false;
+    this.active.choose(wanted.id, to);
+    return true;
+  }
 
   /** Reads the link from the address (once, at the start of the app, before any redirect drops it) and removes it from the address bar. */
   capture(): void {

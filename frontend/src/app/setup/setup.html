@@ -2,7 +2,7 @@
 <app-page-bar [title]="t('setup.title') || 'Setup wizard'" [subtitle]="step() ? (t('setup.step', { n: stepNumber(), total: stepCount() }) || 'Step ' + stepNumber() + ' of ' + stepCount()) : null">
   @if (step()) {
     <button type="button" class="btn btn-light btn-sm" [disabled]="busy() || stepNumber() === 1" (click)="previous()">{{ t('common.back') || 'Back' }}</button>
-    <button type="button" class="btn btn-primary btn-sm" [disabled]="busy()" (click)="headerNext()">{{ isLast() ? (t('common.finish') || 'Finish') : (t('common.next') || 'Next') }}</button>
+    <button type="button" class="btn btn-primary btn-sm" [disabled]="busy() || mustName()" (click)="headerNext()">{{ isLast() ? (t('common.finish') || 'Finish') : (t('common.next') || 'Next') }}</button>
   }
 </app-page-bar>
 <main class="sf-narrow">
@@ -11,8 +11,9 @@
     @case ('profile') {
       <h2 class="sf-section-title m-0">{{ t('setup.whoTitle', { many: w.many }) || 'Who are you to your ' + w.many + '?' }}</h2>
       <p class="small text-secondary m-0">{{ t('setup.whoText', { many: w.many }) || 'This is what your ' + w.many + ' see. Colour, country and language are under Settings → Profile.' }}</p>
-      <label class="d-grid gap-1"><span class="form-label small text-secondary m-0">{{ t('setup.name') || 'Your name' }}</span>
-        <input type="text" class="form-control" [value]="name()" (input)="name.set($any($event.target).value)" maxlength="100" autocomplete="name" />
+      <label class="d-grid gap-1"><span class="form-label small text-secondary m-0">{{ t('setup.name') || 'Your name' }} <span class="text-danger" aria-hidden="true">*</span></span>
+        <input type="text" class="form-control" [value]="name()" (input)="name.set($any($event.target).value)" maxlength="100" autocomplete="name" required [attr.aria-invalid]="mustName()" />
+        @if (mustName()) { <span class="sf-hint" role="status">{{ t('setup.nameRequired') || 'Your name is required.' }}</span> }
       </label>
       <!-- how my picture looks to my friends, with the ring in the chosen colour -->
       <div class="text-center">
@@ -107,6 +108,16 @@
         <button type="button" class="btn btn-primary" (click)="finish('/')">{{ t('common.finish') || 'Finish' }}</button>
       </div>
     }
+  }
+  @if (step()) {
+    <!-- the same Back / Next as in the top bar, at the foot of every step -->
+    <div class="sf-actions">
+      <button type="button" class="btn btn-outline-secondary flex-fill" [disabled]="busy() || stepNumber() === 1" (click)="previous()">{{ t('common.back') || 'Back' }}</button>
+      @if (step() !== 'install' && step() !== 'done') {
+        <!-- those two steps have their own Finish button in the step itself -->
+        <button type="button" class="btn btn-primary flex-fill" [disabled]="busy() || mustName()" (click)="headerNext()">{{ isLast() ? (t('common.finish') || 'Finish') : (t('common.next') || 'Next') }}</button>
+      }
+    </div>
   }
 </main>
 </ng-container>

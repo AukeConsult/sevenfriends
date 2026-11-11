@@ -3,7 +3,7 @@
   "checkingForNews": "Yeni bir şey var mı bakılıyor…",
   "hideTheseForHours": "Bunları 24 saat gizle",
   "hideForHours": "24 saat gizle",
-  "yourSoundAndNotifications": "Ses ve bildirimlerin henüz kurulmadı.",
+  "yourSoundAndNotifications": "Kurulumun henüz bitmedi.",
   "finishSetup": "Kurulumu bitir",
   "openAndroidSettings": "Android ayarlarını aç",
   "notNow": "Şimdi değil",
@@ -64,5 +64,8 @@
   "getThemBack": "Geri al",
   "privacyLockIsOff": "Gizlilik kilidi kapalı, bu yüzden sistemimiz gönderdiklerini okuyabilir.",
   "turnItOn": "Aç",
-  "unverifiedRequestHint": "Onu tanıyor musun? O zaman onayla. Değilse reddet."
+  "unverifiedRequestHint": "Onu tanıyor musun? O zaman onayla. Değilse reddet.",
+  "sendConfirmationEmail": "Onay e-postası gönder",
+  "confirmationSent": "Gönderildi. E-postadaki bağlantıyı aç ve buraya dön.",
+  "confirmationFailed": "E-posta gönderilemedi. Lütfen tekrar dene."
 }

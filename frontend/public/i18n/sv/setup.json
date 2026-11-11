@@ -36,5 +36,6 @@
   "doneText": "Allt är inställt i den här webbläsaren.",
   "saveFailed": "Kunde inte spara. Försök igen, eller välj \"Gör det senare\".",
   "notifyNeedsApp": "Aviseringar fungerar bara när appen ligger på din startskärm. Följ nästa steg för att lägga till den.",
-  "hideTextNote": "Säkrare: Texten i ett meddelande döljs på låsskärmen, så bara du ser vad det står. Du kan ändra detta med reglaget ovan."
+  "hideTextNote": "Säkrare: Texten i ett meddelande döljs på låsskärmen, så bara du ser vad det står. Du kan ändra detta med reglaget ovan.",
+  "nameRequired": "Ditt namn är obligatoriskt."
 }

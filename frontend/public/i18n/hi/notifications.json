@@ -3,7 +3,7 @@
   "checkingForNews": "नई खबर देख रहे हैं…",
   "hideTheseForHours": "इन्हें 24 घंटे के लिए छिपाएँ",
   "hideForHours": "24 घंटे के लिए छिपाएँ",
-  "yourSoundAndNotifications": "आपकी आवाज़ और सूचनाएँ अभी सेट नहीं हैं।",
+  "yourSoundAndNotifications": "आपका सेटअप अभी पूरा नहीं हुआ है।",
   "finishSetup": "सेटअप पूरा करें",
   "openAndroidSettings": "Android सेटिंग्स खोलें",
   "notNow": "अभी नहीं",
@@ -64,5 +64,8 @@
   "getThemBack": "उन्हें वापस पाएँ",
   "privacyLockIsOff": "गोपनीयता लॉक बंद है, इसलिए आप जो भेजते हैं उसे हमारा सिस्टम पढ़ सकता है।",
   "turnItOn": "चालू करें",
-  "unverifiedRequestHint": "क्या आप इन्हें जानते हैं? तो पुष्टि करें। नहीं तो अस्वीकार करें।"
+  "unverifiedRequestHint": "क्या आप इन्हें जानते हैं? तो पुष्टि करें। नहीं तो अस्वीकार करें।",
+  "sendConfirmationEmail": "पुष्टि ईमेल भेजें",
+  "confirmationSent": "भेज दिया। ईमेल का लिंक खोलें और यहाँ लौट आएँ।",
+  "confirmationFailed": "ईमेल नहीं भेजा जा सका। फिर से कोशिश करें।"
 }

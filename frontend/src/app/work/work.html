@@ -7,6 +7,7 @@
       @case (1) {
       <div class="sf-wk-brand"><span class="sf-wk-logo" style="background:#185FA5;color:#E6F1FB">7</span>Seven Work</div>
       <h1 class="sf-wk-hd"><span [innerHTML]="tx('work.yourSevenKeyBr') || 'Your seven key<br>business contacts'"></span></h1>
+      <app-inviter />
       <p class="sf-wk-sub">{{ tx('work.theFewPeopleYour') || 'The few people your work depends on. Close, clear, always reachable.' }}</p>
       <div class="sf-wk-list">
         <div class="sf-wk-rowc"><span class="sf-wk-cir" style="background:#B5D4F4;color:#0C447C">1</span>{{ tx('work.client') || 'Client' }}<span class="sf-wk-r">{{ tx('work.annaK') || 'Anna K.' }}</span></div>
@@ -21,6 +22,7 @@
       @case (2) {
       <div class="sf-wk-brand"><span class="sf-wk-logo" style="background:#0F6E56;color:#E1F5EE">7</span>Seven Work</div>
       <h1 class="sf-wk-hd">{{ tx('work.stayCloseToThe') || 'Stay close to the people your work needs' }}</h1>
+      <app-inviter />
       <div class="sf-wk-pill" style="background:#E1F5EE;color:#085041"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><span>{{ tx('work.seeWhoYouHaven') || 'See who you haven’t spoken to in a while' }}</span></div>
       <div class="sf-wk-pill" style="background:#E6F1FB;color:#0C447C"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 009 9 9 9 0 11-9-9z"/></svg><span><span [innerHTML]="tx('work.bFocusBQuiet') || '<b>Focus.</b> Quiet the rest, keep the key people.'"></span></span></div>
       <div class="sf-wk-pill" style="background:#FAEEDA;color:#633806"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 5a2 2 0 114 0 7 7 0 014 6v3a4 4 0 002 3H4a4 4 0 002-3v-3a7 7 0 014-6M9 17v1a3 3 0 006 0v-1"/></svg><span><span [innerHTML]="tx('work.bUrgentBA') || '<b>Urgent.</b> A flagged message always gets through.'"></span></span></div>
@@ -31,6 +33,7 @@
       @case (3) {
       <div class="sf-wk-brand"><span class="sf-wk-logo" style="background:#3C3489;color:#EEEDFE">7</span>Seven Work</div>
       <h1 class="sf-wk-hd">{{ tx('work.onePrivateSpaceFor') || 'One private space for each business relation' }}</h1>
+      <app-inviter />
       <p class="sf-wk-sub">{{ tx('work.noBigChannelsJust') || 'No big channels. Just you and one contact.' }}</p>
       <div class="sf-wk-room">
         <div class="sf-wk-roomhead"><span class="sf-wk-cir sf-wk-sm" style="background:#CECBF6;color:#3C3489">{{ tx('work.jm') || 'JM' }}</span>{{ tx('work.jonasM') || 'Jonas M.' }}<span class="sf-wk-lock"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg></span></div>
@@ -43,7 +46,6 @@
       }
     }
     <p class="sf-wk-fine"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg> {{ tx('work.privateNoAdsNo') || 'Private. No ads. No feed.' }}</p>
-    <p class="sf-wk-fine"><a routerLink="/welcome">{{ tx('work.installTheApp') || 'Install the app' }}</a> · <a routerLink="/privacy">{{ tx('work.privacy') || 'Privacy' }}</a> · <a routerLink="/viewwelcome">{{ tx('work.allWelcomePages') || 'All welcome pages' }}</a></p>
   </div>
 </main>
 </ng-container>

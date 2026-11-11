@@ -3,7 +3,7 @@
   "checkingForNews": "Checking for news…",
   "hideTheseForHours": "Hide these for 24 hours",
   "hideForHours": "Hide for 24 hours",
-  "yourSoundAndNotifications": "Your sound and notifications are not set up yet.",
+  "yourSoundAndNotifications": "Your setup is not finished yet.",
   "finishSetup": "Finish setup",
   "openAndroidSettings": "Open Android settings",
   "notNow": "Not now",
@@ -64,5 +64,8 @@
   "getThemBack": "Get them back",
   "privacyLockIsOff": "Privacy lock is off, so what you send can be read by our system.",
   "turnItOn": "Turn it on",
-  "unverifiedRequestHint": "Do you know them? Then confirm. If not, reject."
+  "unverifiedRequestHint": "Do you know them? Then confirm. If not, reject.",
+  "sendConfirmationEmail": "Send confirmation email",
+  "confirmationSent": "Sent. Open the link in the email, then come back here.",
+  "confirmationFailed": "Could not send the email. Please try again."
 }

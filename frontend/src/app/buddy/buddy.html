@@ -7,6 +7,7 @@
     @switch (variant) {
       @case (1) {
       <h1 class="sf-yg-hd"><span [innerHTML]="tx('buddy.closeBuddiesOnlyBr') || 'Close buddies only.<br>Seven seats.'"></span></h1>
+      <app-inviter />
       <p class="sf-yg-sub">{{ tx('buddy.keepYourPeopleClose') || 'Keep your people close and the noise away.' }}</p>
       <div class="sf-yg-row" [attr.aria-label]="tx('buddy.sevenSeatsThreeTaken') || 'Seven seats, three taken'">
         <span class="sf-yg-cir" style="background:#F4C0D1;color:#72243E">1</span><span class="sf-yg-cir" style="background:#CECBF6;color:#3C3489">2</span><span class="sf-yg-cir" style="background:#9FE1CB;color:#085041">3</span><span class="sf-yg-seat">4</span><span class="sf-yg-seat">5</span><span class="sf-yg-seat">6</span><span class="sf-yg-seat">7</span>
@@ -19,6 +20,7 @@
       }
       @case (2) {
       <h1 class="sf-yg-hd"><span [innerHTML]="tx('buddy.yourPeopleBrOnly') || 'Your people.<br>Only the close ones.'"></span></h1>
+      <app-inviter />
       <div class="sf-yg-stack" aria-hidden="true">
         <span class="sf-yg-cir sf-yg-big" style="background:#F4C0D1;color:#72243E">A</span><span class="sf-yg-cir sf-yg-big" style="background:#FAC775;color:#633806">J</span><span class="sf-yg-cir sf-yg-big" style="background:#9FE1CB;color:#085041">M</span><span class="sf-yg-cir sf-yg-big" style="background:#CECBF6;color:#3C3489">S</span><span class="sf-yg-cir sf-yg-big" style="background:#B5D4F4;color:#0C447C">+3</span>
       </div>
@@ -33,6 +35,7 @@
       }
       @case (3) {
       <h1 class="sf-yg-hd">{{ tx('buddy.yourInnerCircle') || 'Your inner circle' }}</h1>
+      <app-inviter />
       <p class="sf-yg-sub">{{ tx('buddy.sevenCloseFriendsAround') || 'Seven close friends around you.' }}</p>
       <svg class="sf-yg-circle" viewBox="0 0 200 170" role="img" aria-label="You in the middle with seven seats around, three taken"><circle cx="100" cy="85" r="60" fill="none" stroke="var(--sf-border)" stroke-width="1" stroke-dasharray="3 4"/><circle cx="100" cy="85" r="22" fill="#9FE1CB"/><text x="100" y="90" text-anchor="middle" font-size="13" font-weight="600" fill="#085041">You</text>
         <circle cx="100" cy="25" r="14" fill="#F4C0D1"/><circle cx="157" cy="43" r="14" fill="#CECBF6"/><circle cx="168" cy="102" r="14" fill="#FAC775"/>
@@ -44,7 +47,6 @@
       }
     }
     <p class="sf-yg-fine"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg> {{ tx('buddy.privateNoAdsNo') || 'Private. No ads. No feed.' }}</p>
-    <p class="sf-yg-fine"><a routerLink="/welcome">{{ tx('buddy.installTheApp') || 'Install the app' }}</a> · <a routerLink="/privacy">{{ tx('buddy.privacy') || 'Privacy' }}</a> · <a routerLink="/viewwelcome">{{ tx('buddy.allWelcomePages') || 'All welcome pages' }}</a></p>
   </div>
 </main>
 </ng-container>

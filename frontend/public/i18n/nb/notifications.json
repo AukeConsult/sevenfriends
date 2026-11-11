@@ -3,7 +3,7 @@
   "checkingForNews": "Ser etter nyheter…",
   "hideTheseForHours": "Skjul disse i 24 timer",
   "hideForHours": "Skjul i 24 timer",
-  "yourSoundAndNotifications": "Lyden og varslene dine er ikke satt opp ennå.",
+  "yourSoundAndNotifications": "Oppsettet ditt er ikke ferdig ennå.",
   "finishSetup": "Fullfør oppsettet",
   "openAndroidSettings": "Åpne Android-innstillinger",
   "notNow": "Ikke nå",
@@ -64,5 +64,8 @@
   "getThemBack": "Få dem tilbake",
   "privacyLockIsOff": "Personvernlåsen er av, så systemet vårt kan lese det du sender.",
   "turnItOn": "Slå på",
-  "unverifiedRequestHint": "Kjenner du dem? Da bekrefter du. Hvis ikke, avslå."
+  "unverifiedRequestHint": "Kjenner du dem? Da bekrefter du. Hvis ikke, avslå.",
+  "sendConfirmationEmail": "Send bekreftelses-e-post",
+  "confirmationSent": "Sendt. Åpne lenken i e-posten og kom tilbake hit.",
+  "confirmationFailed": "Kunne ikke sende e-posten. Prøv igjen."
 }

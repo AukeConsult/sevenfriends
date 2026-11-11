@@ -36,5 +36,6 @@
   "doneText": "Tudo está configurado neste navegador.",
   "saveFailed": "Não foi possível salvar. Tente de novo, ou escolha \"Fazer depois\".",
   "notifyNeedsApp": "As notificações só funcionam quando o app está na sua tela inicial. Siga os próximos passos para adicioná-lo.",
-  "hideTextNote": "Mais seguro: o texto de uma mensagem fica oculto na tela de bloqueio, então só você vê o que ela diz. Você pode mudar isso no botão acima."
+  "hideTextNote": "Mais seguro: o texto de uma mensagem fica oculto na tela de bloqueio, então só você vê o que ela diz. Você pode mudar isso no botão acima.",
+  "nameRequired": "O seu nome é obrigatório."
 }

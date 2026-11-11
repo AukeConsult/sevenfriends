@@ -3,7 +3,7 @@
   "checkingForNews": "جارٍ البحث عن جديد…",
   "hideTheseForHours": "إخفاء هذه لمدة 24 ساعة",
   "hideForHours": "إخفاء لمدة 24 ساعة",
-  "yourSoundAndNotifications": "لم يتم إعداد الصوت والإشعارات بعد.",
+  "yourSoundAndNotifications": "لم يكتمل الإعداد بعد.",
   "finishSetup": "إنهاء الإعداد",
   "openAndroidSettings": "فتح إعدادات Android",
   "notNow": "ليس الآن",
@@ -64,5 +64,8 @@
   "getThemBack": "استعدها",
   "privacyLockIsOff": "قفل الخصوصية متوقف، لذا يمكن لنظامنا قراءة ما ترسله.",
   "turnItOn": "تشغيله",
-  "unverifiedRequestHint": "هل تعرفه؟ إذن أكّد. وإن لم تعرفه فارفض."
+  "unverifiedRequestHint": "هل تعرفه؟ إذن أكّد. وإن لم تعرفه فارفض.",
+  "sendConfirmationEmail": "إرسال رسالة التأكيد",
+  "confirmationSent": "تم الإرسال. افتح الرابط في الرسالة ثم عد إلى هنا.",
+  "confirmationFailed": "تعذّر إرسال الرسالة. حاول مرة أخرى."
 }

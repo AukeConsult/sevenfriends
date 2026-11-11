@@ -3,13 +3,10 @@
 
   <div class="sf-form-width mx-auto w-100">
     @if (link(); as pending) {
-      <p class="alert alert-info text-center m-0 mb-3">
-        @if (pending.email || pending.phone) {
-          {{ t('login.friendLinkTo', { one: w.one, to: pending.email || pending.phone }) || 'Sign in or create an account to send a ' + w.one + ' request to ' + (pending.email || pending.phone) + '.' }}
-        } @else {
-          {{ t('login.friendLink', { one: w.one }) || 'Sign in or create an account to send a ' + w.one + ' request.' }}
-        }
-      </p>
+      <app-inviter />
+      @if (pending.email || pending.phone) {
+        <p class="alert alert-info text-center m-0 mb-3">{{ t('login.friendLinkTo', { one: w.one, to: pending.email || pending.phone }) || 'Sign in or create an account to send a ' + w.one + ' request to ' + (pending.email || pending.phone) + '.' }}</p>
+      }
     }
     @if (mode() === 'signin') {
       <!-- the ways to sign in without a password -->
@@ -100,7 +97,7 @@
       }
     }
     <p class="small text-center text-secondary mt-3 mb-0">
-      <a routerLink="/welcome">{{ t('login.getApp') || 'Get the app' }}</a> · <a routerLink="/terms">{{ t('login.terms') || 'Terms of use' }}</a> · <a routerLink="/privacy">{{ t('login.privacy') || 'Data and privacy' }}</a> · <a routerLink="/about">{{ t('login.about') || 'About' }}</a> · <a routerLink="/viewwelcome">{{ t('login.testWelcome') || 'Test welcome pages' }}</a>
+      <a routerLink="/terms">{{ t('login.terms') || 'Terms of use' }}</a> · <a routerLink="/privacy">{{ t('login.privacy') || 'Data and privacy' }}</a> · <a routerLink="/about">{{ t('login.about') || 'About' }}</a> · <a routerLink="/viewwelcome">{{ t('login.testWelcome') || 'Test welcome pages' }}</a>
     </p>
   </div>
 </main>

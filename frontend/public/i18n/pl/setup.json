@@ -36,5 +36,6 @@
   "doneText": "Wszystko jest ustawione w tej przeglądarce.",
   "saveFailed": "Nie udało się zapisać. Spróbuj ponownie albo wybierz „Zrobię to później”.",
   "notifyNeedsApp": "Powiadomienia działają tylko wtedy, gdy aplikacja jest na ekranie głównym. Wykonaj kolejne kroki, aby ją dodać.",
-  "hideTextNote": "Bezpieczniej: treść wiadomości jest ukryta na ekranie blokady, więc tylko ty widzisz, co w niej jest. Możesz to zmienić przełącznikiem powyżej."
+  "hideTextNote": "Bezpieczniej: treść wiadomości jest ukryta na ekranie blokady, więc tylko ty widzisz, co w niej jest. Możesz to zmienić przełącznikiem powyżej.",
+  "nameRequired": "Imię jest wymagane."
 }

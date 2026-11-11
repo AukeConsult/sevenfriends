@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { CODE_LENGTH, newCode } from "../src/invite";
+import { CODE_LENGTH, maskContact, newCode } from "../src/invite";
 import { User, seedPool } from "./helpers";
 
 /** The invite link: a code of mine that lets somebody else send me a friend request. */
@@ -95,5 +95,29 @@ describe("looking a code up", () => {
   it("needs a login", async () => {
     const res = await (await import("supertest")).default((await import("./helpers")).app).get("/api/invite/lookup/abcdefghjk");
     expect(res.status).toBe(401);
+  });
+});
+
+describe("the public lookup (the welcome page, before sign-in)", () => {
+  const open = async (code: string) => (await import("supertest")).default((await import("./helpers")).app).get(`/api/invite-public/${code}`);
+
+  it("says who invites, with the address hidden, and needs no login", async () => {
+    const code = await codeOf(u(0));
+    const res = await open(code);
+    expect(res.status).toBe(200);
+    expect(res.body.name).toBeTruthy();
+    expect(Object.keys(res.body).sort()).toEqual(["contact", "name"]);
+    if (res.body.contact) expect(res.body.contact).toContain("***");
+  });
+
+  it("does not know a code nobody has, or a malformed one", async () => {
+    expect((await open("abcdefghjk")).status).toBe(404);
+    expect((await open("short")).status).toBe(404);
+  });
+
+  it("hides the middle of an email address and of a phone number", () => {
+    expect(maskContact("leif@gmail.com")).toBe("l***@gmail.com");
+    expect(maskContact("+4791234567")).toBe("+47******67");
+    expect(maskContact(null)).toBeNull();
   });
 });

@@ -3,7 +3,7 @@
   "checkingForNews": "Memeriksa kabar baru…",
   "hideTheseForHours": "Sembunyikan selama 24 jam",
   "hideForHours": "Sembunyikan 24 jam",
-  "yourSoundAndNotifications": "Suara dan notifikasimu belum diatur.",
+  "yourSoundAndNotifications": "Pengaturanmu belum selesai.",
   "finishSetup": "Selesaikan pengaturan",
   "openAndroidSettings": "Buka pengaturan Android",
   "notNow": "Jangan sekarang",
@@ -64,5 +64,8 @@
   "getThemBack": "Pulihkan",
   "privacyLockIsOff": "Kunci privasi mati, jadi sistem kami dapat membaca apa yang kamu kirim.",
   "turnItOn": "Nyalakan",
-  "unverifiedRequestHint": "Apakah kamu mengenalnya? Jika ya, konfirmasi. Jika tidak, tolak."
+  "unverifiedRequestHint": "Apakah kamu mengenalnya? Jika ya, konfirmasi. Jika tidak, tolak.",
+  "sendConfirmationEmail": "Kirim email konfirmasi",
+  "confirmationSent": "Terkirim. Buka tautan di email, lalu kembali ke sini.",
+  "confirmationFailed": "Email tidak dapat dikirim. Coba lagi."
 }

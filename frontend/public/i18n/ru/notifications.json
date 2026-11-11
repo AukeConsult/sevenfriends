@@ -3,7 +3,7 @@
   "checkingForNews": "Проверяем новости…",
   "hideTheseForHours": "Скрыть на 24 часа",
   "hideForHours": "Скрыть на 24 часа",
-  "yourSoundAndNotifications": "Звук и уведомления ещё не настроены.",
+  "yourSoundAndNotifications": "Настройка ещё не завершена.",
   "finishSetup": "Завершить настройку",
   "openAndroidSettings": "Открыть настройки Android",
   "notNow": "Не сейчас",
@@ -64,5 +64,8 @@
   "getThemBack": "Вернуть их",
   "privacyLockIsOff": "Защита приватности выключена, поэтому наша система может читать то, что вы отправляете.",
   "turnItOn": "Включить",
-  "unverifiedRequestHint": "Вы знаете этого человека? Тогда подтвердите. Если нет, отклоните."
+  "unverifiedRequestHint": "Вы знаете этого человека? Тогда подтвердите. Если нет, отклоните.",
+  "sendConfirmationEmail": "Отправить письмо с подтверждением",
+  "confirmationSent": "Отправлено. Откройте ссылку в письме и вернитесь сюда.",
+  "confirmationFailed": "Не удалось отправить письмо. Попробуйте ещё раз."
 }

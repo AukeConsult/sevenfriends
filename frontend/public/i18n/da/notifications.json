@@ -3,7 +3,7 @@
   "checkingForNews": "Tjekker for nyt…",
   "hideTheseForHours": "Skjul disse i 24 timer",
   "hideForHours": "Skjul i 24 timer",
-  "yourSoundAndNotifications": "Din lyd og dine notifikationer er ikke sat op endnu.",
+  "yourSoundAndNotifications": "Din opsætning er ikke færdig endnu.",
   "finishSetup": "Gør opsætningen færdig",
   "openAndroidSettings": "Åbn Android-indstillinger",
   "notNow": "Ikke nu",
@@ -64,5 +64,8 @@
   "getThemBack": "Få dem tilbage",
   "privacyLockIsOff": "Privatlivslåsen er slået fra, så vores system kan læse det, du sender.",
   "turnItOn": "Slå til",
-  "unverifiedRequestHint": "Kender du dem? Så bekræft. Hvis ikke, så afvis."
+  "unverifiedRequestHint": "Kender du dem? Så bekræft. Hvis ikke, så afvis.",
+  "sendConfirmationEmail": "Send bekræftelsesmail",
+  "confirmationSent": "Sendt. Åbn linket i mailen, og kom tilbage hertil.",
+  "confirmationFailed": "Mailen kunne ikke sendes. Prøv igen."
 }

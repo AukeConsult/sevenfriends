@@ -10,6 +10,7 @@ import { KeysService } from './core/keys.service';
 import { ActiveCircleService } from './core/active-circle.service';
 import { AuthService } from './core/auth.service';
 import { FriendLinkService } from './core/friend-link.service';
+import { AutoInviteService } from './core/auto-invite.service';
 import { InstallService } from './core/install.service';
 import { LanguageService } from './core/language.service';
 import { LookSyncService } from './core/look-sync.service';
@@ -52,6 +53,7 @@ export class App {
   private readonly router = inject(Router);
   private readonly prefs = inject(UiPreferencesService);
   private readonly friendLink = inject(FriendLinkService);
+  private readonly autoInvite = inject(AutoInviteService);
   protected readonly active = inject(ActiveCircleService);
 
   constructor() {
@@ -72,7 +74,11 @@ export class App {
       const url = event.urlAfterRedirects.split('?')[0].split('#')[0];
       // somebody opened a friend link and is signed in: answer it first (signed out, the login page shows what it is about)
       if (this.auth.user() && this.friendLink.pending() && url !== '/friends/join') {
-        void this.router.navigateByUrl('/friends/join', { replaceUrl: true });
+        if (this.autoInvite.busy()) return;
+        // an account made just now answers the link by itself (creating it is the yes); everybody else is asked on the page
+        const toPage = () => void this.router.navigateByUrl('/friends/join', { replaceUrl: true });
+        if (this.auth.takeNewAccount()) void this.autoInvite.run().then((done) => (done ? undefined : toPage()));
+        else toPage();
         return;
       }
       if (first) {

@@ -7,6 +7,7 @@
       @case (1) {
       <div class="sf-fm-brand"><span class="sf-fm-logo" style="background:#D85A30;color:#FAECE7">7</span>Seven Family</div>
       <h1 class="sf-fm-hd"><span [innerHTML]="tx('family.yourSevenClosestBr') || 'Your seven closest.<br>Always in reach.'"></span></h1>
+      <app-inviter />
       <p class="sf-fm-sub">{{ tx('family.theFamilyYouCall') || 'The family you call first, in one calm place.' }}</p>
       <div class="sf-fm-fam">
         <div><span class="sf-fm-cir" style="background:#F5C4B3;color:#712B13">M</span>{{ tx('family.mum') || 'Mum' }}</div><div><span class="sf-fm-cir" style="background:#FAC775;color:#633806">D</span>{{ tx('family.dad') || 'Dad' }}</div><div><span class="sf-fm-cir" style="background:#F4C0D1;color:#72243E">S</span>{{ tx('family.sister') || 'Sister' }}</div><div><span class="sf-fm-cir" style="background:#CECBF6;color:#3C3489">G</span>{{ tx('family.grandma') || 'Grandma' }}</div>
@@ -19,6 +20,7 @@
       @case (2) {
       <div class="sf-fm-brand"><span class="sf-fm-logo" style="background:#0F6E56;color:#E1F5EE">7</span>Seven Family</div>
       <h1 class="sf-fm-hd"><span [innerHTML]="tx('family.aSafePlaceBr') || 'A safe place<br>for your family'"></span></h1>
+      <app-inviter />
       <div class="sf-fm-shield"><span><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a12 12 0 008.5 3A12 12 0 0112 21 12 12 0 013.5 6 12 12 0 0012 3"/><circle cx="12" cy="11" r="1"/><path d="M12 12v2.5"/></svg></span></div>
       <div class="sf-fm-pill" style="background:#E1F5EE;color:#085041"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2 20a7 7 0 0114 0"/><circle cx="17" cy="9" r="3"/><path d="M16 14.5a6 6 0 016 5.5"/></svg><span>{{ tx('family.onlyThePeopleYou') || 'Only the people you invite. No strangers.' }}</span></div>
       <div class="sf-fm-pill" style="background:#E6F1FB;color:#0C447C"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg><span>{{ tx('family.messagesAndPhotosLocked') || 'Messages and photos locked on your devices.' }}</span></div>
@@ -30,6 +32,7 @@
       @case (3) {
       <div class="sf-fm-brand"><span class="sf-fm-logo" style="background:#993556;color:#FBEAF0">7</span>Seven Family</div>
       <h1 class="sf-fm-hd"><span [innerHTML]="tx('family.closeEvenWhenBr') || 'Close, even when<br>far apart'"></span></h1>
+      <app-inviter />
       <div class="sf-fm-moods">
         <div class="sf-fm-m"><span class="sf-fm-cir sf-fm-sm" style="background:#CECBF6;color:#3C3489">G</span><div><span [innerHTML]="tx('family.bGrandmaB') || '<b>Grandma</b>'"></span><span>{{ tx('family.feelingHappyToday') || 'Feeling happy today' }}</span></div><i style="color:#BA7517"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9 10h.01M15 10h.01M9.5 15a3.5 3.5 0 005 0"/></svg></i></div>
         <div class="sf-fm-m"><span class="sf-fm-cir sf-fm-sm" style="background:#9FE1CB;color:#085041">B</span><div><span [innerHTML]="tx('family.bBrotherB') || '<b>Brother</b>'"></span><span>{{ tx('family.lastSpokenToDays') || 'Last spoken to 9 days ago' }}</span></div><span [innerHTML]="tx('family.emSayHiEm') || '<em>Say hi</em>'"></span></div>
@@ -41,7 +44,6 @@
       }
     }
     <p class="sf-fm-fine"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg> {{ tx('family.privateNoAdsNo') || 'Private. No ads. No feed.' }}</p>
-    <p class="sf-fm-fine"><a routerLink="/welcome">{{ tx('family.installTheApp') || 'Install the app' }}</a> · <a routerLink="/privacy">{{ tx('family.privacy') || 'Privacy' }}</a> · <a routerLink="/viewwelcome">{{ tx('family.allWelcomePages') || 'All welcome pages' }}</a></p>
   </div>
 </main>
 </ng-container>

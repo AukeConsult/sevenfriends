@@ -3,7 +3,7 @@
   "checkingForNews": "Tarkistetaan uutisia…",
   "hideTheseForHours": "Piilota nämä 24 tunniksi",
   "hideForHours": "Piilota 24 tunniksi",
-  "yourSoundAndNotifications": "Äänesi ja ilmoituksesi eivät ole vielä käytössä.",
+  "yourSoundAndNotifications": "Asetuksesi ei ole vielä valmis.",
   "finishSetup": "Viimeistele käyttöönotto",
   "openAndroidSettings": "Avaa Androidin asetukset",
   "notNow": "Ei nyt",
@@ -64,5 +64,8 @@
   "getThemBack": "Hae ne takaisin",
   "privacyLockIsOff": "Yksityisyyslukko on pois päältä, joten järjestelmämme voi lukea lähettämäsi.",
   "turnItOn": "Ota käyttöön",
-  "unverifiedRequestHint": "Tunnetko hänet? Vahvista silloin. Jos et, hylkää."
+  "unverifiedRequestHint": "Tunnetko hänet? Vahvista silloin. Jos et, hylkää.",
+  "sendConfirmationEmail": "Lähetä vahvistussähköposti",
+  "confirmationSent": "Lähetetty. Avaa viestin linkki ja palaa tänne.",
+  "confirmationFailed": "Sähköpostin lähetys epäonnistui. Yritä uudelleen."
 }

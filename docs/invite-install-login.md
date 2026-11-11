@@ -53,11 +53,11 @@ Two kinds of link, both opened as the front page of the website:
 What happens (`core/friend-link.service.ts`):
 1. At the start of the app the link is read from the address and **removed from the address bar** (`capture()`), and kept in the preferences as `pendingFriend`
    (**on this device only**).
-2. The sign-in page says "Sign in or create an account to send a friend request to …".
+2. The sign-in page opens at **Create account** and shows who invites (`app-inviter`).
 3. The pending link survives the sign-in itself (Google, an email link, an SMS code) and a reload.
-4. After sign-in the person lands on `/friends/join` and **confirms**; only then is the friend request created on the server. Answering (or declining) clears it (`clear()`).
+4. A **new** account sends the friend request at once (`AutoInviteService`, nothing to confirm); an **existing** account lands on `/friends/join` and **confirms**. Answering clears the link (`clear()`).
 
-So: the request exists on the server only after the person has signed in **and confirmed**. Until then it is a note on the device.
+So: the request exists on the server only after the person has signed in (a new account sends it by itself; an existing one confirms). Until then it is a note on the device.
 
 ## 5. The problem
 The person opens the invitation **in the browser**, but the right place to use the service is the **app**. Install is a restart on a different storage:
@@ -70,25 +70,23 @@ The person opens the invitation **in the browser**, but the right place to use t
 
 | # | Strategy | Reliable on | Status |
 |---|---|---|---|
-| A | **Account first.** (built: the welcome page says "Sign in or create an account first" for an invitation) The welcome page offers "create your account, then install". The person signs in **in the browser** and answers `/friends/join`; the request now exists on the server and belongs to the account. After install they only sign in (password, phone) and it is waiting. | everywhere, the most dependable | planned |
-| B | **Clipboard.** The welcome page copies the invitation link to the clipboard when the download is tapped, and says so. In the app the person taps **I have an invitation** on the sign-in page and **Paste** (or pastes by hand into the box). | Android, Windows (Android 12+ shows a small "pasted" notice); not iPhone | **built** (`WelcomeService`/`welcome.ts` `copyInvitation`, `login` `pasteInvite`; the Windows app allows clipboard reading) |
+| A | **Account first.** The welcome page offers "Create my account"; the account is made **in the browser** and the friend request to the inviter is sent at once (section 7). After install they only sign in (password, phone) and everything is waiting. | everywhere, the most dependable | **built** |
+| B | **Clipboard.** The install page (`install-device`) copies the invitation link to the clipboard when the download is tapped, and says so. In the app the person taps **I have an invitation** on the sign-in page and **Paste** (or pastes by hand into the box). | Android, Windows (Android 12+ shows a small "pasted" notice); not iPhone | **built** (`install-device.ts` `copyInvitation`, `login` `pasteInvite`; the Windows app allows clipboard reading) |
 | C | **App links (Android).** The app opens links of the website itself (`https://sevenfriends.web.app` and `sevenfriends.io`): tapping the same invitation again after install, or an email sign-in link, opens the app, not the browser. | Android | **built, not tried on a phone**: the intent filter in `AndroidManifest.xml` and `pathOfWebsiteLink` in `MainActivity.java`. Until `/.well-known/assetlinks.json` with the signing key's SHA-256 fingerprint is on the website (`keytool -list -v`), Android asks which app to use. **Open:** that file; Firebase Hosting `ignore` has `**/.*`, which hides `.well-known` and must be changed first. |
 | D | **Paste or type the invitation.** The sign-in page (not shown while an invitation waits) has **I have an invitation**: a box that takes the whole link, only the 10-character code, an email address or a phone number (`FriendLinkService.use`). | everywhere, manual | **built** |
 
 Rules for all of them: the link is only ever a **pointer** (a code or a contact), never a sign-in; the person always confirms on `/friends/join`;
 a link that cannot be read is ignored (`parseContact`, the code must be 10 letters/digits).
 
-## 7. The welcome page (built)
-A public page, `/welcome`, shown **before sign-in** as the **install step**:
-- **Shared top** (the same everywhere): the 7 logo, "Seven Friends", the slogan "Stay close to the people who matter most.", the seven dots, and 3–4 short points.
-- **Middle: one install action for this platform:** Android phone: Download the Android app; iPhone/iPad: the three Add to Home Screen steps; Windows PC: Download for Windows;
-  Mac/Linux/other: the browser's install hint.
-- **Below:** "Continue in the browser" (to sign-in). For an invitation the page starts with "<name> invited you", and offers strategy A beside the install.
-- **Who sees it:** anyone **not already running as the app** (browser tab). The Android app, the Windows app and the iPhone home-screen app go straight to sign-in. A
-  visitor who already has the app installed but opened the browser (the browser cannot tell) just taps "Continue in the browser".
-- **Detection:** `core/install.service.ts` (`native`, `installed`/standalone, `ios`, `windows`, `androidDevice`, `windowsApp`: the Windows app adds `SevenFriendsWindows/1.0` to its browser identity).
-- **Code:** `welcome/` (page), `hero/` (the shared top, also used by the sign-in page), `core/welcome.service.ts` (when it is due: `shouldShow()`), `core/auth.guard.ts` (`authGuard` sends a signed-out visitor to `/welcome` when it is due, else `/login`), preference `welcomeUntil` (30 days after "Continue in the browser"; a waiting friend invitation always shows the page again).
-- **Open:** remember "Continue in the browser" on that device for 30 days? The points' wording. Translations with the language setting.
+## 7. The welcome pages and the sign-up (built, replaces the install step)
+The welcome pages (`/welcome` and the 12 circle pages `friends1-3`, `buddy1-3`, `work1-3`, `family1-3`, reached by `/welcome/<circle>`) are public and shown **before sign-in**. They offer **no install** any more (install lives in Settings → Install):
+- **Under the headline:** for a code link, `app-inviter` shows "Invited by your friend Name (l***@mail.com)" (public lookup `GET /api/invite-public/:code`; the address has its middle hidden).
+- **One button** on to the web app: "Create my account" (an invitation waits) or the page's own words ("Claim my seat", ...). It opens `/login` at **Create account**. An invitation decides the circle: the app switches to the circle the link invites into (`FriendLinkService.enterCircleOf`).
+- **After the account is created** the friend request to the inviter is sent **at once, nothing to confirm** (`AutoInviteService`, only for an account created by this very sign-in; the account and its keys are made together). The inviter gets the usual ping and accepts as usual (seats and waiting list as before).
+- **The person lands on Home first**, with the "Your setup is not finished yet" notice and a **Finish setup** button that stays until the wizard ends with Finish (`setup` = `start` / `skipped` / `done`). The wizard needs a **name**.
+- **An existing account** that opens a link still answers it on `/friends/join` (a link is not a yes for somebody who did not just join).
+- **A new account, or another person than the last one on this browser, starts with clean local choices** (`AuthService.clearLocalSession`).
+- **Who sees it:** anyone not already running as the app and signed out (`WelcomeService.shouldShow()`; an invitation always shows it again). Code: `welcome/`, `friends-welcome/`, `buddy/`, `work/`, `family/` (pages), `next-step/` (the button), `inviter/` (the line), `core/welcome.service.ts`, `core/auth.guard.ts`, preference `welcomeUntil`.
 
 ## 8. Decisions and open points
 - Google sign-in in the Android and Windows apps: not solved (a native Google sign-in for Android is the proper fix; for now password, phone or email link).
