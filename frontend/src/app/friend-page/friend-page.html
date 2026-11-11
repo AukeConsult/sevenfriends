@@ -114,8 +114,15 @@
         </div>
       }
     </div>
+    <button type="button" class="sf-tool-btn" (click)="ctx.toggleHelp()" [attr.aria-expanded]="ctx.helpOpen()" aria-controls="feed-help" [attr.aria-label]="t('friendPage.help') || 'Help'" [attr.title]="t('friendPage.help') || 'Help'">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M9.5 9.5a2.5 2.5 0 015 .5c0 1.7-2.5 2-2.5 3.5" /><path d="M12 17h.01" /></svg>
+      </button>
   }
 </header>
+<!-- Expanding frame: the help (the ? in the header), on every page of the friend -->
+<div class="sf-expand" [class.open]="ctx.helpOpen()" [attr.inert]="ctx.helpOpen() ? null : ''">
+  <div class="sf-expand-inner"><app-feed-help /></div>
+</div>
 <app-lock-chain-band [friendId]="ctx.friendId" [name]="ctx.friendName()" />
 <app-key-changed-band [friendId]="ctx.friendId" [name]="ctx.friendName()" [fingerprints]="ctx.friendFingerprints()" />
 @if (ctx.lockedMessages() + ctx.lockedFiles() > 0) { <app-locked-band [friendId]="ctx.friendId" [name]="ctx.friendName()" [messages]="ctx.lockedMessages()" [files]="ctx.lockedFiles()" /> }

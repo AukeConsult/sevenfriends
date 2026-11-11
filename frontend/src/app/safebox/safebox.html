@@ -105,9 +105,6 @@
           <li [attr.data-item-id]="item.id" (pointerdown)="cards.down($event, item.id)" (dragstart)="$event.preventDefault()" (contextmenu)="cards.menu($event)" [class.sf-holding]="cards.pressId() === item.id || cards.dragId() === item.id" [class.sf-dragging]="cards.dragId() === item.id" [class.sf-drop-target]="cards.dropId() === item.id">
             <a class="sf-box-tile" draggable="false" [routerLink]="openLink(item)" [attr.aria-label]="item.name">
               <span class="sf-box-open"><ng-container *ngTemplateOutlet="visual; context: { $implicit: item }" /></span>
-              @if (item.enc) {
-                <span class="sf-box-tile-lock" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg></span>
-              }
               <span class="sf-box-tile-name">{{ item.name }}</span>
               <span class="sf-box-tile-sub">{{ when(item) || snippet(item) || kindLabel(item) }}@if (attachments(item)) { · 📎 {{ attachments(item) }} }</span>
             </a>

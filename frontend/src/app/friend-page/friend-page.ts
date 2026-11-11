@@ -15,6 +15,7 @@ import { presenceLabel } from '../core/presence';
 import { possessive } from '../core/pronoun';
 import { RealtimeService } from '../core/realtime.service';
 import { FriendAvatar } from '../friend-avatar/friend-avatar';
+import { FeedHelp } from '../friend-help/friend-help';
 import { FriendContext } from './friend-context';
 
 /**
@@ -23,7 +24,7 @@ import { FriendContext } from './friend-context';
  */
 @Component({
   selector: 'app-friend-page',
-  imports: [KeyChangedBand, LockChainBand, LockedBand, FriendAvatar, RouterLink, RouterLinkActive, RouterOutlet, TranslocoDirective],
+  imports: [FeedHelp, KeyChangedBand, LockChainBand, LockedBand, FriendAvatar, RouterLink, RouterLinkActive, RouterOutlet, TranslocoDirective],
   providers: [provideTranslocoScope('friendPage'), FriendContext],
   templateUrl: './friend-page.html',
   // every page under the header has the look of the conversation: a light tint of the friend's colour, and my own colour for what is mine
@@ -88,6 +89,12 @@ export class FriendPage {
       });
     });
 
+    // moving to another page of the friend closes the help
+    effect(() => {
+      this.url();
+      untracked(() => this.ctx.helpOpen.set(false));
+    });
+
     // the header's height (it changes with the notch and the font size)
     effect((onCleanup) => {
       const header = this.bar()?.nativeElement;
@@ -102,5 +109,6 @@ export class FriendPage {
   protected onDocumentClick(event: Event): void {
     const target = event.target as Element | null;
     if (this.ctx.moreOpen() && !target?.closest('.sf-more')) this.ctx.moreOpen.set(false);
+    if (this.ctx.helpOpen() && !target?.closest('.sf-help, [aria-controls="feed-help"]')) this.ctx.helpOpen.set(false); // a click anywhere else closes the help
   }
 }

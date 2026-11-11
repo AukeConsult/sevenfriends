@@ -1,5 +1,5 @@
 /** The colour themes of the app (the names the frontend knows: see THEMES in core/ui-preferences.ts). */
-export const LOOK_THEMES = ["light", "dark", "ocean", "forest", "rose"] as const;
+export const LOOK_THEMES = ["light", "dark", "ocean", "forest", "rose", "white"] as const;
 export type LookTheme = (typeof LOOK_THEMES)[number];
 
 /** The text sizes of the app. */

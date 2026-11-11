@@ -103,6 +103,7 @@ export class Chat {
     ];
   }
   protected readonly cleanupOpen = signal(false);
+  /** the help frame under the header is open */
   protected readonly cleanupWhose = signal<'mine' | 'both'>(this.prefs.get('cleanupWhose'));
   /** my messages, or both sides' (never the friend's alone) */
   protected readonly whoseChoices = computed<{ value: 'mine' | 'both'; label: string }[]>(() => [

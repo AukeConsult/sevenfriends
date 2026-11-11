@@ -11,7 +11,7 @@ import { tr } from './i18n';
  * Deliberately NOT remembered: the filter of "delete these messages" (it always starts with the safe defaults).
  */
 export interface UiPreferences {
-  /** the colours of the app (see THEMES); light is the default */
+  /** the colours of the app (see THEMES); white is the default */
   theme: ThemeKey;
   /** the size of the text in the whole app: normal (default), tiny, small, big or huge (on a phone every step is a bigger text than on a computer, see PHONE_SCALES) */
   textSize: 'normal' | 'tiny' | 'small' | 'big' | 'huge';
@@ -70,6 +70,7 @@ export interface PendingFriend {
 
 /** The colour themes: `header` is the colour of the browser's address bar (the header colour of the theme in styles.scss); `dark` themes switch Bootstrap's dark mode on too. */
 export const THEMES = [
+  { key: 'white', get label() { return tr('core.white', 'White'); }, header: '#ffffff', dark: false },
   { key: 'light', get label() { return tr('core.light', 'Light'); }, header: '#fde6c6', dark: false },
   { key: 'dark', get label() { return tr('core.dark', 'Dark'); }, header: '#1f2430', dark: true },
   { key: 'ocean', get label() { return tr('core.ocean', 'Ocean'); }, header: '#d6eaf7', dark: false },
@@ -93,7 +94,7 @@ export const PHONE_TEXT_SCALES: Record<UiPreferences['textSize'], number> = { ti
 const kindIds = (v: unknown): string[] => (Array.isArray(v) ? v.filter((k: unknown): k is string => typeof k === 'string') : []);
 const layoutOf = (v: any): { main: string[]; more: string[] } | null => (v && typeof v === 'object' ? { main: kindIds(v.main), more: kindIds(v.more) } : null);
 
-export const DEFAULTS: UiPreferences = { boxTellNew: true, theme: 'light', textSize: 'normal', settingsTab: 'profile', emojiTab: 'People', chatOrder: 'oldest', enterSends: true, sleepList: true, quickMessages: [], feedIcons: true, language: '', setup: 'new', lastPage: null, micRaw: false, pendingFriend: null, welcomeUntil: null, boxPlain: false, boxView: 'list', boxKindLayout: null, boxHiddenOpen: false, cleanupWhose: 'mine', cleanupDays: 30, friendQuick: {} };
+export const DEFAULTS: UiPreferences = { boxTellNew: true, theme: 'white', textSize: 'normal', settingsTab: 'profile', emojiTab: 'People', chatOrder: 'oldest', enterSends: true, sleepList: true, quickMessages: [], feedIcons: true, language: '', setup: 'new', lastPage: null, micRaw: false, pendingFriend: null, welcomeUntil: null, boxPlain: false, boxView: 'list', boxKindLayout: null, boxHiddenOpen: false, cleanupWhose: 'mine', cleanupDays: 30, friendQuick: {} };
 
 /** The ready-made messages as stored: only texts, trimmed, not empty, not too long, not too many. */
 export function quickOf(value: unknown): string[] {
@@ -138,7 +139,7 @@ function read(): UiPreferences {
     }
     const saved = JSON.parse(raw) as Partial<Record<keyof UiPreferences, unknown>>;
     return {
-      theme: THEMES.find((t) => t.key === saved.theme)?.key ?? 'light',
+      theme: THEMES.find((t) => t.key === saved.theme)?.key ?? 'white',
       textSize: saved.textSize === 'tiny' || saved.textSize === 'small' || saved.textSize === 'big' || saved.textSize === 'huge' ? saved.textSize : 'normal',
       settingsTab: SETTINGS_TABS.find((t) => t === saved.settingsTab) ?? 'profile',
       emojiTab: typeof saved.emojiTab === 'string' && saved.emojiTab ? saved.emojiTab.slice(0, 40) : 'People',

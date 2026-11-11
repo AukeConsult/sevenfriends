@@ -84,6 +84,8 @@ export class FriendContext {
   private lockNoticeTimer: ReturnType<typeof setTimeout> | undefined;
   /** the menu of the three dots in the header */
   readonly moreOpen = signal(false);
+  /** the help frame under the header (the ? in the header shows and hides it; on every page of the friend) */
+  readonly helpOpen = signal(false);
   /** the height of the header: the message field sticks right under it when the newest message is on top */
   readonly barHeight = signal(56);
   /** set by the feed while it is open */
@@ -260,6 +262,12 @@ export class FriendContext {
   /** Opens the profile page of the friend (under the same header). */
   showProfile(): void {
     void this.router.navigate(['/friends', this.friendId, 'profile']);
+  }
+
+  toggleHelp(): void {
+    const open = !this.helpOpen();
+    this.helpOpen.set(open);
+    if (open) window.scrollTo({ top: 0, behavior: 'smooth' }); // the frame is at the top of the page: bring it into view
   }
 
   /** The three dots of the header: opening its menu closes the emoji picker and the + menu of the feed (only one is open at a time). */

@@ -13,7 +13,7 @@
     // The browser's install offer can arrive before the app has started: keep it here, the install page picks it up (core/install.service.ts)
     window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); window.__sfInstallOffer = e; });
   </script>
-  <meta name="theme-color" content="#fde6c6">
+  <meta name="theme-color" content="#ffffff">
   <script>
     // The Android app tells the page how high its status bar is (SfInsets, MainActivity.java), because the web view does not report it itself
     (function () {
@@ -32,8 +32,8 @@
     // The colours the person chose (Preferences): set before the first paint, so the page does not flash the light colours (core/ui-preferences.ts keeps it up to date)
     try {
       var sf = JSON.parse(localStorage.getItem('sf-ui') || '{}');
-      var themes = { light: '#fde6c6', dark: '#1f2430', ocean: '#d6eaf7', forest: '#dcefd3', rose: '#fbdde3' };
-      var theme = themes[sf.theme] ? sf.theme : 'light';
+      var themes = { light: '#fde6c6', dark: '#1f2430', ocean: '#d6eaf7', forest: '#dcefd3', rose: '#fbdde3', white: '#ffffff' };
+      var theme = themes[sf.theme] ? sf.theme : 'white';
       document.documentElement.setAttribute('data-theme', theme);
       document.documentElement.setAttribute('data-bs-theme', theme === 'dark' ? 'dark' : 'light');
       var tc = document.querySelector('meta[name="theme-color"]');
