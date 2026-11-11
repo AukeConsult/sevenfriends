@@ -1,8 +1,9 @@
 <ng-container *transloco="let t">
-<main class="sf-lock-page sf-send-page">
+<main class="sf-lock-page sf-send-page" [class.sf-send-embedded]="embedded()">
   @if (ctx.blocked(); as why) {
     <div class="alert alert-warning" role="alert">{{ why }}</div>
   } @else {
+    @if (ctx.sendFormOpen() || embedded()) {
     <!-- the frame to write in; what opens (emojis, image / video / voice) expands above it, and closes when focus goes elsewhere -->
     @if (emojiOpen()) {
       <div class="sf-send-attach sf-send-emoji">
@@ -30,7 +31,10 @@
       }
     <app-poke-toggle />
     <div class="sf-send-frame">
-      <textarea #field appClear class="sf-send-text" rows="5" maxlength="2000" [placeholder]="mediaReady() ? (t('friendSend.addATextOptional') || 'Add a text (optional)…') : (t('friendSend.writeToFriendname', { friendName: friendName() }) || 'Write to ' + friendName() + '…')" [attr.aria-label]="(t('friendSend.messageToFriendname', { friendName: friendName() }) || 'Message to ' + friendName())"
+      <button type="button" class="sf-send-hide" (click)="hide()" [attr.aria-label]="t('friendSend.hideTheForm') || 'Hide the form'" [attr.title]="t('friendSend.hideTheForm') || 'Hide the form'">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6" /></svg>
+      </button>
+      <textarea #field appClear class="sf-send-text" rows="1" maxlength="2000" [placeholder]="mediaReady() ? (t('friendSend.addATextOptional') || 'Add a text (optional)…') : (t('friendSend.writeToFriendname', { friendName: friendName() }) || 'Write to ' + friendName() + '…')" [attr.aria-label]="(t('friendSend.messageToFriendname', { friendName: friendName() }) || 'Message to ' + friendName())"
                 [value]="text()" (input)="text.set($any($event.target).value)" (focus)="emojiOpen.set(false)" (keydown.enter)="enterPressed($event)" [disabled]="busy()"></textarea>
       <div class="sf-send-tools">
         <button type="button" data-send="emoji" class="sf-send-tool" (click)="toggleEmoji()" [attr.aria-expanded]="emojiOpen()" [attr.aria-label]="t('friendSend.addAnEmoji') || 'Add an emoji'" [attr.title]="t('friendSend.addAnEmoji') || 'Add an emoji'">
@@ -51,6 +55,9 @@
       </div>
     </div>
 
+    }
+
+    @if (quickMessagesShown) { <!-- the ready-made messages are off for now: set quickMessagesShown to true to bring them back -->
     <!-- the ready-made messages: this friend's own first (my colour), then the general ones; Add opens the frame to change this friend's own -->
     <div class="sf-send-bubbles">
       @for (quick of ctx.ownQuick(); track 'own' + $index) {
@@ -78,8 +85,6 @@
       </div>
     }
 
-    @if (notice(); as done) {
-      <p class="sf-hint m-0" role="status">{{ done }}</p>
     }
     @if (error()) {
       <div class="alert alert-danger" role="alert">{{ error() }}</div>

@@ -23,7 +23,6 @@
   "continue": "Continuar",
   "doneFriendnameCanOpen": "Pronto. {{ friendName }} já pode abrir de novo as mensagens antigas.",
   "skippedCouldNotBe": "{{ skipped }} não puderam ser abertos neste dispositivo (estavam trancados para uma chave que ele não tem).",
-  "getYourOldMessages": "Recupere suas mensagens antigas",
   "afterYouMakeA": "Depois que você cria uma nova chave, as mensagens e os arquivos do cofre de antes ficam trancados para a chave antiga, então este dispositivo não consegue abri-los.",
   "friendnameStillCanTheir": "{{ friendName }} ainda consegue. O app dessa pessoa pode trancar essas chaves de novo para a sua nova chave. Só as chaves se movem: nada legível é enviado, e o servidor não vê nada.",
   "weSendFriendnameA": "Enviamos um pedido para {{ friendName }}.",

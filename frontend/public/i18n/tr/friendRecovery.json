@@ -23,7 +23,6 @@
   "continue": "Devam",
   "doneFriendnameCanOpen": "Tamam. {{ friendName }} eski mesajlarını yeniden açabilir.",
   "skippedCouldNotBe": "{{ skipped }} bu cihazda açılamadı (bu cihazda olmayan bir anahtar için kilitlenmişti).",
-  "getYourOldMessages": "Eski mesajlarını geri al",
   "afterYouMakeA": "Yeni bir anahtar oluşturduktan sonra, önceki mesajlar ve kasa dosyaları eski anahtar için kilitli kalır, bu yüzden bu cihaz onları açamaz.",
   "friendnameStillCanTheir": "{{ friendName }} hâlâ açabilir. Onun uygulaması bu anahtarları yeni anahtarın için yeniden kilitleyebilir. Sadece anahtarlar taşınır: okunabilir hiçbir şey gönderilmez ve sunucu hiçbir şey görmez.",
   "weSendFriendnameA": "{{ friendName }} kişisine bir istek göndeririz.",

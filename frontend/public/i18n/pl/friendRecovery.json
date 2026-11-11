@@ -23,7 +23,6 @@
   "continue": "Dalej",
   "doneFriendnameCanOpen": "Gotowe. {{ friendName }} może znów otworzyć swoje stare wiadomości.",
   "skippedCouldNotBe": "{{ skipped }} nie udało się otworzyć na tym urządzeniu (były zablokowane kluczem, którego ono nie ma).",
-  "getYourOldMessages": "Odzyskaj stare wiadomości",
   "afterYouMakeA": "Po utworzeniu nowego klucza wcześniejsze wiadomości i pliki z sejfu są zablokowane starym kluczem, więc to urządzenie nie może ich otworzyć.",
   "friendnameStillCanTheir": "{{ friendName }} nadal może. Aplikacja tej osoby może zablokować te klucze ponownie Twoim nowym kluczem. Przenoszone są tylko klucze: nic czytelnego nie jest wysyłane, a serwer niczego nie widzi.",
   "weSendFriendnameA": "Wysyłamy prośbę do: {{ friendName }}.",

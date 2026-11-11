@@ -1,7 +1,10 @@
 <ng-container *transloco="let t">
 <app-page-bar [title]="file()?.name ?? (t('mediaViewer.imageVideoOrAudio') || 'Image, video or audio')" [backButton]="true" [titleBack]="true" [backLabel]="t('mediaViewer.back') || 'Back'" (backClick)="back()">
   @if (friendId && file(); as named) {
-    <button type="button" class="sf-bar-icon" (click)="startRename(named)" [attr.aria-label]="t('mediaViewer.rename') || 'Rename'" [attr.title]="t('mediaViewer.rename') || 'Rename'">✎</button>
+    <button type="button" class="sf-tool-btn" (click)="startRename(named)" [attr.aria-label]="t('mediaViewer.rename') || 'Rename'" [attr.title]="t('mediaViewer.rename') || 'Rename'">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z" /></svg>
+      <span class="sf-tool-label" aria-hidden="true">{{ t('mediaViewer.rename') || 'Rename' }}</span>
+    </button>
   }
 </app-page-bar>
 

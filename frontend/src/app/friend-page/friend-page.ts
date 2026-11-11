@@ -15,6 +15,7 @@ import { presenceLabel } from '../core/presence';
 import { possessive } from '../core/pronoun';
 import { RealtimeService } from '../core/realtime.service';
 import { FriendAvatar } from '../friend-avatar/friend-avatar';
+import { FriendSend } from '../friend-send/friend-send';
 import { FeedHelp } from '../friend-help/friend-help';
 import { FriendContext } from './friend-context';
 
@@ -24,7 +25,7 @@ import { FriendContext } from './friend-context';
  */
 @Component({
   selector: 'app-friend-page',
-  imports: [FeedHelp, KeyChangedBand, LockChainBand, LockedBand, FriendAvatar, RouterLink, RouterLinkActive, RouterOutlet, TranslocoDirective],
+  imports: [FeedHelp, FriendSend, KeyChangedBand, LockChainBand, LockedBand, FriendAvatar, RouterLink, RouterLinkActive, RouterOutlet, TranslocoDirective],
   providers: [provideTranslocoScope('friendPage'), FriendContext],
   templateUrl: './friend-page.html',
   // every page under the header has the look of the conversation: a light tint of the friend's colour, and my own colour for what is mine
@@ -47,7 +48,12 @@ export class FriendPage {
   protected readonly myColor = computed(() => profileColorHex(this.myAvatar.color()));
   protected readonly myInk = computed(() => profileColorInk(this.myAvatar.color()));
   private readonly router = inject(Router);
+  /** the pages that can have the Send form on top of them */
+  protected readonly sendOver = computed(() => this.onFeed() || this.onSafebox());
+  /** the feed is oldest first (newest at the bottom): the Send form is at the bottom too, otherwise under the header */
+  protected readonly sendAtBottom = computed(() => this.onFeed() && !this.ctx.feed()?.sortDesc());
   private readonly bar = viewChild<ElementRef<HTMLElement>>('bar');
+  private sendRedirect = false; // the feed was opened from /send: its Send form starts open
   private lastLive = this.realtime.latestMessage()?.seq ?? 0; // live messages before this page opened are not news
 
   protected readonly presenceLabel = presenceLabel;
@@ -89,10 +95,23 @@ export class FriendPage {
       });
     });
 
-    // moving to another page of the friend closes the help
+    // moving to another page of the friend closes the help (the Send form is independent of the pages: it stays as it is)
     effect(() => {
       this.url();
-      untracked(() => this.ctx.helpOpen.set(false));
+      untracked(() => {
+        this.ctx.helpOpen.set(false);
+        if (this.sendRedirect) this.ctx.feedSendOpen.set(true); // opened from /send; otherwise the Send form keeps its state from page to page
+        this.sendRedirect = false;
+      });
+    });
+
+    // the Send page is the feed with the Send form open on top of it: the address /send goes to the feed and opens the form
+    effect(() => {
+      if (!this.onSend()) return;
+      untracked(() => {
+        this.sendRedirect = true;
+        void this.router.navigate(['/friends', this.ctx.friendId], { replaceUrl: true });
+      });
     });
 
     // the header's height (it changes with the notch and the font size)
@@ -103,6 +122,19 @@ export class FriendPage {
       watch.observe(header);
       onCleanup(() => watch.disconnect());
     });
+  }
+
+  /** On the Send page a tap on the Send icon shows or hides the writing form; on any other page it opens the Send page (form shown). */
+  protected toggleSendForm(event: Event): void {
+    if (this.onFeed() || this.onSafebox()) { // over the feed or the safebox: the form opens on top of it, the same icon closes it
+      event.preventDefault();
+      this.ctx.feedSendOpen.update((open) => !open);
+      if (this.ctx.feedSendOpen()) window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    if (!this.onSend()) { this.ctx.sendFormOpen.set(true); return; }
+    event.preventDefault();
+    this.ctx.sendFormOpen.update((open) => !open);
   }
 
   @HostListener('document:click', ['$event'])

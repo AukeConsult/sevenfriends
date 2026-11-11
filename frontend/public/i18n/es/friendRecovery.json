@@ -23,7 +23,6 @@
   "continue": "Continuar",
   "doneFriendnameCanOpen": "Listo. {{ friendName }} ya puede abrir de nuevo sus mensajes antiguos.",
   "skippedCouldNotBe": "{{ skipped }} no se pudo abrir en este dispositivo (estaba bloqueado para una clave que no tiene).",
-  "getYourOldMessages": "Recupera tus mensajes antiguos",
   "afterYouMakeA": "Después de crear una clave nueva, los mensajes y archivos de la caja fuerte de antes quedan bloqueados para la clave antigua, así que este dispositivo no puede abrirlos.",
   "friendnameStillCanTheir": "{{ friendName }} todavía puede. Su app puede volver a bloquear esas claves para tu clave nueva. Solo se mueven las claves: no se envía nada legible y el servidor no ve nada.",
   "weSendFriendnameA": "Enviamos una solicitud a {{ friendName }}.",

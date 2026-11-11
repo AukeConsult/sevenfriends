@@ -33,5 +33,6 @@
   "ownTitle": "Change or delete",
   "ownText": "Tap one of your own messages to edit it, copy it or delete it. A deleted message disappears for both of you.",
   "hideTitle": "Hide",
-  "hideText": "You can hide a picture or video in your feed and show it again."
+  "hideText": "You can hide a picture or video in your feed and show it again.",
+  "hide": "Got it, hide the help"
 }

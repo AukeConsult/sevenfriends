@@ -2,6 +2,14 @@
 <main class="sf-lock-page">
   <app-page-bar [sub]="true" [title]="t('friendRecovery.recovery') || 'Recovery'" />
 
+  @if (ctx.isGroup()) {
+    <!-- a group has no recovery by a friend: say why, and what to do instead (the page asks the server nothing) -->
+    <section>
+      <h2>{{ t('friendRecovery.groupTitle') || 'Recovery is between two people' }}</h2>
+      <p>{{ t('friendRecovery.groupText') || 'To open your old messages again, a friend’s app locks the old keys again for your new key. A group has no one friend who can do that for you, so recovery is not available in a group.' }}</p>
+      <p class="sf-hint">{{ t('friendRecovery.groupOther') || 'You can still get them back with another device of yours that can open them, or with your 24 secret words (Settings → Privacy lock).' }}</p>
+    </section>
+  } @else {
   @if (error()) { <p class="text-danger small" role="alert">{{ error() }}</p> }
 
   @if (ended(); as who) {
@@ -96,7 +104,6 @@
       }
       @default {
         <section>
-          <h2>{{ t('friendRecovery.getYourOldMessages') || 'Get your old messages back' }}</h2>
           <p>{{ t('friendRecovery.afterYouMakeA') || 'After you make a new key, messages and safebox files from before are locked for the old key, so this device cannot open them.' }}</p>
           <p>{{ t('friendRecovery.friendnameStillCanTheir', { friendName: friendName() }) || friendName() + ' still can. Their app can lock those keys again for your new key. Only the keys move: nothing readable is sent, and the server sees nothing.' }}</p>
           <ol class="ps-3">
@@ -117,6 +124,7 @@
     }
   } @else if (!error()) {
     <p class="sf-hint">{{ t('friendRecovery.checking') || 'Checking…' }}</p>
+  }
   }
 </main>
 </ng-container>

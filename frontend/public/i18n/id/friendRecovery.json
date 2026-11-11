@@ -23,7 +23,6 @@
   "continue": "Lanjutkan",
   "doneFriendnameCanOpen": "Selesai. {{ friendName }} bisa membuka lagi pesan lamanya.",
   "skippedCouldNotBe": "{{ skipped }} tidak bisa dibuka di perangkat ini (dikunci untuk kunci yang tidak dimilikinya).",
-  "getYourOldMessages": "Dapatkan kembali pesan lamamu",
   "afterYouMakeA": "Setelah kamu membuat kunci baru, pesan dan file safebox dari sebelumnya terkunci untuk kunci lama, jadi perangkat ini tidak bisa membukanya.",
   "friendnameStillCanTheir": "{{ friendName }} masih bisa. Aplikasinya bisa mengunci kembali kunci-kunci itu untuk kunci barumu. Hanya kunci yang berpindah: tidak ada yang terbaca yang dikirim, dan server tidak melihat apa pun.",
   "weSendFriendnameA": "Kami mengirim permintaan ke {{ friendName }}.",

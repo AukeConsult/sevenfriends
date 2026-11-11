@@ -46,7 +46,7 @@
 
   // ---- Basic dimensions (phone defaults) ----
   --sf-max-width: 1000px;
-  --sf-feed-max: 40rem; // the widest the list of messages is (640 px at the base size: easy to read); the message field under it keeps the whole width of the app
+  --sf-list-max-width: 40rem; // the max view list width: the widest a list of messages is, and the help under the header (640 px at the base size: easy to read)
   --sf-picture-max: 200px; // the widest a picture is in the feed (the full picture is on its own page)
   --sf-video-max: 320px; // the widest a video is in the feed: a quarter of the area it had (the video is played, or opened in full, from there)
   --sf-media-max: 640px; // the widest an image, video or audio in a message gets: a mobile screen (pixels, so it does not grow with the text size on wide screens)
@@ -323,7 +323,7 @@ router-outlet + * { display: block; min-height: 100dvh; }
 .sf-page.sf-page-view { max-width: 50rem; padding-inline: 0.75rem; } // the view of a file: wider, for pictures, documents and sheets
 .sf-page.sf-box-page { padding: 0.5rem 1.5rem calc(4.5rem + env(safe-area-inset-bottom)); gap: 0.375rem; } // the safebox list: room on both sides and at the bottom, clear of the bottom menu // a file view uses the whole width of the screen
 .sf-content { padding-top: 0.75rem; }
-.sf-feed { width: 100%; max-width: var(--sf-feed-max); margin-inline: auto; display: flex; flex-direction: column; gap: 0.5rem; padding-top: 0.75rem; padding-bottom: calc(3.5rem + 4rem + env(safe-area-inset-bottom)); } // + the composer
+.sf-feed { width: 100%; max-width: var(--sf-list-max-width); margin-inline: auto; display: flex; flex-direction: column; gap: 0.5rem; padding-top: 0.75rem; padding-bottom: calc(3.5rem + 4rem + env(safe-area-inset-bottom)); } // + the composer
 .sf-landing {
   min-height: 100dvh;
   display: flex;
@@ -626,6 +626,7 @@ router-outlet + * { display: block; min-height: 100dvh; }
 .sf-lock-frame { display: grid; gap: 0.5rem; margin: 0.5rem var(--sf-gutter) 0; padding: 0.75rem 0.875rem; border: 1px solid var(--sf-border); border-radius: var(--sf-radius); background: var(--sf-card); font-size: var(--sf-fs-description); color: var(--sf-text); p { margin: 0; } .form-check { margin: 0; } } // the frame under the conversation header: what the padlock means and the switch
 .sf-tool-btn { position: relative; }
 .sf-tool-btn.sf-current { background: color-mix(in srgb, var(--sf-primary) 16%, transparent); color: var(--sf-primary); } // the icon of the page that is open under the header (the messages or the safebox)
+.sf-tool-btn[aria-pressed='true'] { background: color-mix(in srgb, var(--sf-text) 13%, transparent); } // a header button that switches something on and off (Send): on = a grey background in the colour of the text of the theme
 .sf-tool-dot { position: absolute; top: 0.2rem; inset-inline-end: 0.35rem; width: 0.6rem; height: 0.6rem; border-radius: 50%; background: var(--bs-danger, #dc3545); box-shadow: 0 0 0 2px var(--sf-header); } // a message arrived while the safebox is open
 .sf-lock-toast-anchor { position: sticky; height: 0; z-index: 4; } // under the header while the page scrolls; takes no room
 .sf-lock-toast { position: absolute; inset-inline: var(--sf-gutter); margin: 0.5rem auto 0; max-width: 28rem; padding: 0.625rem 0.875rem; border: 1px solid var(--bs-warning-border-subtle, #ffe69c); border-radius: var(--sf-radius); background: var(--bs-warning-bg-subtle, #fff3cd); color: var(--bs-warning-text-emphasis, #664d03); font-size: var(--sf-fs-description); box-shadow: 0 4px 14px color-mix(in srgb, var(--sf-text) 18%, transparent); animation: sf-toast 5s ease forwards; pointer-events: none;
@@ -681,29 +682,15 @@ router-outlet + * { display: block; min-height: 100dvh; }
   overflow-wrap: anywhere;
   .sf-mine & { border-radius: 1.25rem 1.25rem 0.25rem 1.25rem; background: var(--sf-my, linear-gradient(135deg, var(--sf-primary), var(--sf-primary-2))); color: var(--sf-my-ink, #fff); }
 }
-.sf-composer {
-  position: fixed;
-  inset: auto 0 calc(3.5rem + env(safe-area-inset-bottom)) 0;
-  max-width: var(--sf-max-width);
-  margin: 0 auto;
-  z-index: 4;
-  display: flex;
-  flex-direction: column;
-  background: var(--sf-bg); // the same as the page (a friend's colour overrides it, see sf-feed-tinted)
-  border-top: 1px solid var(--sf-border);
-}
 // the image / video / voice panel above the message field (see add-media)
 .sf-attach-panel { display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: var(--sf-media-max); margin: 0 auto; padding: 0.5rem var(--sf-gutter); max-height: 70dvh; overflow-y: auto; border-bottom: 1px solid var(--sf-border);
   .sf-attach-preview { max-height: 30dvh; } }
-.sf-composer-row { display: flex; align-items: center; gap: 0.25rem; padding: 0.5rem var(--sf-gutter); }
 .sf-bubble-tap { cursor: pointer; }
 .sf-bubble .sf-box-note, .sf-bubble .sf-hint, .sf-bubble .text-secondary, .sf-bubble .text-muted, .sf-bubble small { color: inherit; } // whatever is in a bubble takes the bubble's text colour, so it reads on any background colour
 .sf-bubble .sf-hint, .sf-bubble .text-secondary, .sf-bubble .text-muted, .sf-bubble small { opacity: 0.75; }
 .sf-bubble a { color: inherit; text-decoration: underline; overflow-wrap: anywhere; } // a link in a message: same colour as its text
 .sf-bubble a.btn { color: var(--sf-primary); text-decoration: none; } // a button in a message (Open the item) keeps its own dark text, not the colour of the bubble
-.sf-draft-link { max-width: var(--sf-media-max); margin: 0 auto; width: 100%; border-bottom: 1px solid var(--sf-border); padding: 0.25rem var(--sf-gutter) 0.5rem; display: flex; flex-direction: column; gap: 0.25rem;
   iframe { width: 100%; height: min(16rem, 35dvh); border: 1px solid var(--sf-border); border-radius: var(--sf-radius); background: #fff; } }
-.sf-draft-link-bar { display: flex; align-items: center; gap: 0.5rem; > .sf-hint:first-child { flex: 1; min-width: 0; } }
 .sf-link-frame { width: 100%; display: flex; flex-direction: column; gap: 0.25rem; iframe { width: 100%; height: min(24rem, 60dvh); border: 1px solid var(--sf-border); border-radius: var(--sf-radius); background: #fff; } } // the page of a link, shown in the feed
 // ---- Images in messages ----
 .sf-message-wide { width: 94%; } // a message with the page of a link open takes the width of the feed: the page is shown wide, not as a narrow strip
@@ -729,7 +716,7 @@ router-outlet + * { display: block; min-height: 100dvh; }
   img { display: block; width: 100%; height: 100%; object-fit: contain; }
 }
 // a picture in the feed is small (at most 200 px wide and 16 rem high): the whole picture is on its own page
-.sf-media-picture { --sf-media-height: 16rem; width: min(calc(var(--sf-media-height) * var(--sf-ratio, 1.5)), var(--sf-picture-max)); cursor: zoom-in; }
+.sf-media-picture { --sf-media-height: 16rem; width: min(calc(var(--sf-media-height) * var(--sf-ratio, 1.5)), var(--sf-picture-max)); cursor: pointer; }
 .sf-media-link { display: block; line-height: 0; }
 .sf-attach-preview { display: block; max-width: 100%; max-height: 60dvh; margin: 0 auto; border-radius: var(--sf-radius); object-fit: contain; }
 .sf-camera { position: relative; background: #000; border-radius: var(--sf-radius); overflow: hidden; video { display: block; width: 100%; max-height: 65dvh; object-fit: contain; transform: scaleX(-1); } } // the view is mirrored like a mirror; the photo is not
@@ -781,7 +768,7 @@ app-voice { display: contents; }
   flex-direction: column;
   gap: 0.5rem;
   padding: 0.75rem var(--sf-gutter) calc(4.5rem + env(safe-area-inset-bottom));
-  img { display: block; max-width: 100%; max-height: calc(100dvh - 12rem); margin: 0 auto; object-fit: contain; cursor: zoom-in; }
+  img { display: block; max-width: 100%; max-height: calc(100dvh - 12rem); margin: 0 auto; object-fit: contain; cursor: pointer; }
 }
 /* an image can be shown at its full size: it scrolls inside this frame (a tap or the button turns it back) */
 .sf-viewer-pic.sf-viewer-full { overflow: auto; max-height: calc(100dvh - 12rem); touch-action: pan-x pan-y pinch-zoom; img { max-width: none; max-height: none; width: auto; margin: 0; cursor: zoom-out; } }
@@ -805,20 +792,8 @@ app-voice { display: contents; }
 .sf-msg-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 0.375rem; margin-top: 0.25rem;
   .btn { min-height: 1.5rem; padding: 0 0.5rem; font-size: var(--sf-fs-description); } // small, slim, quiet buttons under a message
 }
-.sf-editing { display: flex; align-items: center; justify-content: space-between; padding: 0.25rem var(--sf-gutter); background: var(--bs-primary-bg-subtle); }
-.sf-composer-field { resize: none; max-height: 8rem; overflow-y: auto; line-height: 1.4; }
-.sf-emoji-toggle { margin: 0; font-size: var(--sf-fs-title); }
-.sf-composer-row .sf-icon-btn { margin: 0; width: 2.25rem; height: 2.25rem; } // the buttons in the message row are close together and level with the middle of the field
-// the + button of the message row: its menu (emoji, image, video, voice) opens above it (below it when the message field is on top)
+// a header button with a menu that opens under it (the three dots of a friend)
 .sf-add { position: relative; flex: none; }
-.sf-composer-row .sf-add-btn { // a round, yellow button (smiley / paperclip)
-  display: grid; place-items: center; border-radius: 50%; color: var(--sf-primary); // yellow, with a dark blue icon (white would not read on yellow)
-  background: linear-gradient(135deg, #ffe27a, #fbbf24); box-shadow: 0 0.125rem 0.5rem rgb(0 0 0 / 0.2);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-  &:hover, &[aria-expanded='true'] { transform: scale(1.1); box-shadow: 0 0.25rem 0.75rem rgb(0 0 0 / 0.28); }
-  @media (prefers-reduced-motion: reduce) { transition: none; &:hover, &[aria-expanded='true'] { transform: none; } }
-}
-.sf-add-btn svg { transition: transform 0.2s ease; @media (prefers-reduced-motion: reduce) { transition: none; } }
 .sf-add-menu {
   position: absolute; inset-inline-start: 0; bottom: 100%; z-index: 5; // no gap to the button: the hover must not break on the way to the menu
   display: flex; flex-direction: column; min-width: 12rem; max-width: min(20rem, 80vw); max-height: 60dvh; overflow-y: auto; padding: 0.25rem;
@@ -828,22 +803,19 @@ app-voice { display: contents; }
 }
 @keyframes sf-add-pop { from { opacity: 0; transform: translateY(0.4rem) scale(0.95); } }
 .sf-add-item svg { flex: none; color: var(--sf-primary); } // the icon keeps its size when the text is long
-.sf-composer-top .sf-add-menu { bottom: auto; top: 100%; transform-origin: top left; }
 .sf-add-item {
   display: flex; align-items: center; gap: 0.75rem; padding: 0.6rem 0.75rem; border: 0; border-radius: 0.5rem; background: none;
   color: inherit; font: inherit; text-align: start; text-decoration: none; cursor: pointer;
   &:hover, &:focus-visible { background: var(--sf-bg); color: inherit; }
 }
-.sf-tap { cursor: pointer; } // the time of a picture, video or voice message opens its buttons, like the three dots
 .sf-menu-sep { height: 1px; margin: 0.25rem 0.5rem; background: var(--sf-border); } // the line between the tools of the open page and the other pages in the header menu
 .sf-more-menu { inset-inline-start: auto; inset-inline-end: 0; bottom: auto; top: 100%; transform-origin: top right; width: max-content; max-width: calc(100vw - 1rem); .sf-add-item span { white-space: normal; } } // the header menu opens below the three dots, at the right edge; it is as wide as its longest text (the three dots are narrow, so without `width: max-content` it would be squeezed to their width)
-.sf-add-quick { min-width: 0; &:disabled { opacity: 0.5; } }
 .sf-add-emoji { display: inline-grid; place-items: center; width: 22px; font-size: 1.2rem; line-height: 1; }
-.sf-emoji-panel { display: grid; grid-template-columns: repeat(auto-fill, 1.5rem); justify-content: space-between; column-gap: 0.25rem; padding: 0.125rem var(--sf-gutter); border-bottom: 1px solid var(--sf-border); } // compact: small emojis, as many in a row as fit
+.sf-emoji-panel { display: grid; grid-template-columns: repeat(auto-fill, 2.25rem); justify-content: space-between; column-gap: 0.25rem; padding: 0.125rem var(--sf-gutter); border-bottom: 1px solid var(--sf-border); } // compact: small emojis, as many in a row as fit
 .sf-emoji-wrap { border-bottom: 1px solid var(--sf-border); .sf-emoji-panel { border-bottom: 0; } }
 .sf-emoji-tabs { display: flex; padding: 0 var(--sf-gutter); border-bottom: 1px solid var(--sf-border); }
 .sf-emoji-tab { flex: 1; padding: 0.25rem 0; border: 0; border-bottom: 2px solid transparent; background: none; font-size: var(--sf-fs-text); line-height: 1.75rem; &.sf-on { border-bottom-color: var(--sf-primary); background: var(--sf-surface); } } // one tab per group of emojis
-.sf-emoji { padding: 0; border: 0; background: none; font-size: var(--sf-fs-text); line-height: 1.75rem; width: 1.5rem; text-align: center; border-radius: 0.5rem; &:hover, &:focus-visible { background: var(--sf-bg); } }
+.sf-emoji { padding: 0; border: 0; background: none; font-size: calc(var(--sf-fs-text) * 1.5); line-height: 2.625rem; width: 2.25rem; text-align: center; border-radius: 0.5rem; &:hover, &:focus-visible { background: var(--sf-bg); } }
 
 // ---- Bottom menu (plain flexbox: stays a row even without Bootstrap) ----
 .sf-menu {
@@ -1003,6 +975,7 @@ app-voice { display: contents; }
 // the friend header: on a phone one row (picture, name with its status, the icons); on a wider view each icon has a word under it
 .sf-bar .sf-bar-actions .sf-tool-btn { min-width: 4rem; padding-inline: 0.5rem; } // on a wider view the header has room for a word under each icon too
 .sf-bar .sf-bar-actions .sf-tool-label { display: block; font-size: 0.7rem; line-height: 1.2; white-space: nowrap; }
+.sf-bar .sf-bar-end .sf-tool-label { display: block; font-size: var(--sf-fs-description); line-height: 1.2; white-space: nowrap; } // the name under an icon in the header of a page that is not a friend (the picture, video or audio page: Rename)
 @media (max-width: 575.98px) {
   .sf-bar:has(.sf-bar-actions) .sf-bar-text { flex: 1 1 0; min-width: 0; } // one row: the name (with its status line) takes what the icons leave and is cut with ... when too long
   .sf-bar .sf-bar-actions { flex: none; margin-inline-start: 0; gap: 0; }
@@ -1011,13 +984,11 @@ app-voice { display: contents; }
   .sf-bar > .sf-more { margin-inline-end: 0; }
 }
 .sf-cleanup-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem 0.75rem; } // the count on the left, the button on the right, on one line
-.sf-cleanup { display: flex; flex-direction: column; gap: 0.5rem; padding: 0.75rem var(--sf-gutter); background: var(--sf-card); border-bottom: 1px solid var(--sf-border); }
+.sf-cleanup { display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: var(--sf-list-max-width); margin-inline: auto; padding: 0.75rem var(--sf-gutter); background: var(--sf-card); border-bottom: 1px solid var(--sf-border); }
 .sf-pending .sf-bubble { opacity: 0.6; pointer-events: none; } // on its way: not sent yet
 .sf-doomed .sf-bubble { outline: 2px dashed #dc2626; outline-offset: 2px; opacity: 0.7; } // marked by the delete frame: will be deleted
 
 // Newest message on top: the message field sits right under the header (sticky) and grows downwards; the emoji panel opens below the field
-.sf-composer-top { position: sticky; inset-inline: 0; bottom: auto; z-index: 2; flex-direction: column-reverse; border-top: 0; border-bottom: 1px solid var(--sf-border); }
-.sf-composer-top .sf-emoji-wrap { border-bottom: 0; border-top: 1px solid var(--sf-border); }
 .sf-feed { overflow-anchor: none; } // no jumping when the feed is turned around (sort order) or the message field changes height
 
 // Radio choices in two columns (the delete frame in the message feed)
@@ -1074,8 +1045,13 @@ app-voice { display: contents; }
 .sf-friend-page { min-height: 100dvh; } // the tint of the friend's colour reaches the bottom also on a short page
 .sf-send-quick { border-radius: 1.25rem 1.25rem 0.25rem 1.25rem; background: var(--sf-card); border: 1px solid var(--sf-border); color: inherit; white-space: pre-wrap; overflow-wrap: anywhere; &.sf-mine-bubble { background: var(--sf-my, linear-gradient(135deg, var(--sf-primary), var(--sf-primary-2))); color: var(--sf-my-ink, #fff); border-color: transparent; } }
 // the large frame to write in (Send a message): white, with a border; what opens covers it
-.sf-send-frame { display: flex; flex-direction: column; background: var(--sf-card); border: 1px solid var(--sf-border); border-radius: 1rem; &:focus-within { border-color: var(--sf-primary); } }
-.sf-send-text { width: 100%; resize: none; border: 0; outline: 0; background: transparent; color: inherit; padding: 0.875rem 1rem 0.25rem; min-height: 8rem; line-height: 1.4; font: inherit; border-radius: 1rem 1rem 0 0; }
+.sf-inline-edit { display: grid; gap: 0.5rem; width: 100%; max-width: var(--sf-list-max-width); margin-left: auto; textarea { resize: none; max-height: 40dvh; field-sizing: content; } } // my message being edited: a field in its place, with Cancel and Save
+.sf-send-bottom { position: sticky; bottom: calc(3.5rem + 1rem + var(--sf-float-gap) + env(safe-area-inset-bottom)); margin-bottom: calc(3.5rem + 1rem + var(--sf-float-gap) + env(safe-area-inset-bottom)); background: var(--sf-feed-bg, var(--sf-bg)); z-index: 2; } // the Send form under an oldest-first feed: stays above the bottom menu
+app-poke-toggle { display: contents; } // the empty host would be one more row of the page (and one more gap)
+.sf-send-embedded { padding-bottom: 0.5rem; gap: 0.5rem; } // the Send form over the feed: the feed follows right under it (no room for the bottom menu here)
+.sf-send-frame { position: relative; display: flex; flex-direction: column; background: var(--sf-card); border: 1px solid var(--sf-border); border-radius: 1rem; &:focus-within { border-color: var(--sf-primary); } }
+.sf-send-hide { position: absolute; top: 0.25rem; inset-inline-end: 0.25rem; z-index: 1; width: 1.75rem; height: 1.75rem; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: none; color: var(--sf-muted); &:hover, &:focus-visible { background: var(--sf-surface); color: var(--sf-text); } } // a small hide button in the top right corner of the writing frame
+.sf-send-text { width: 100%; resize: none; border: 0; outline: 0; background: transparent; color: inherit; padding: 0.875rem 2.25rem 0.25rem 1rem; min-height: calc(1.4em + 1.125rem); max-height: 40dvh; overflow-y: auto; line-height: 1.4; font: inherit; border-radius: 1rem 1rem 0 0; }
 .sf-send-tools { display: flex; align-items: center; gap: 0.375rem; padding: 0.5rem 0.625rem; }
 .sf-send-tool { display: grid; place-items: center; width: 2.25rem; height: 2.25rem; border: 0; border-radius: 50%; color: var(--sf-primary); background: linear-gradient(135deg, #ffe27a, #fbbf24); box-shadow: 0 0.125rem 0.5rem rgb(0 0 0 / 0.2); &[aria-expanded='true'] { box-shadow: 0 0 0 2px var(--sf-primary); } } // the round yellow buttons of the message row in the conversation
 .sf-send-go { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; padding: 0; border: 0; border-radius: 50%; background: var(--sf-my, linear-gradient(135deg, var(--sf-primary), var(--sf-primary-2))); color: var(--sf-my-ink, #fff); &:disabled { opacity: 0.45; } } // the round Send button, in my colour
@@ -1236,8 +1212,6 @@ html[data-theme='white'] {
 .sf-photo.sf-ringed { box-shadow: 0 0 0 4px var(--sf-friend); } // the circle of my colour round my picture / icon: how my friends see it
 .sf-feed-tinted { background: var(--sf-feed-bg); } // the conversation page: a light tint of the friend's colour
 html[data-theme='dark'] .sf-feed-tinted { background: color-mix(in srgb, var(--sf-feed-bg) 12%, var(--sf-bg)); } // in the dark theme only a hint of it
-.sf-feed-tinted .sf-composer { background: var(--sf-feed-bg); } // the message band has the same background as the page
-html[data-theme='dark'] .sf-feed-tinted .sf-composer { background: color-mix(in srgb, var(--sf-feed-bg) 12%, var(--sf-bg)); }
 
 // ---- Phone: the space above the first text of a page is at least 44px (a header, or this padding) ----
 @media (max-width: 575.98px) {
@@ -1262,19 +1236,10 @@ nav.sf-tabs ~ * > app-page-bar { display: none !important; } // inside Settings 
 .sf-choices-compact:has(.sf-choice-round) { gap: 0.25rem; }
 .sf-choices-compact .sf-choice-round img { width: clamp(2.75rem, calc((100vw - 2 * var(--sf-gutter)) / 4 - 1.25rem), 4rem); height: clamp(2.75rem, calc((100vw - 2 * var(--sf-gutter)) / 4 - 1.25rem), 4rem); } // the icon choices of the setup wizard and the Profile page: smaller, about four in a row, growing a little with the width of the view (the Profile page keeps the big ones)
 
-// ---- Phone: the smiley and the paperclip float over the right edge of the feed (a see-through yellow capsule just above the message field), so the field has the whole width ----
+// ---- Phone: extra room under the last message ----
 :root { --sf-float-gap: 0px; }
 @media (max-width: 575.98px) {
-  :root { --sf-float-gap: 3rem; } // extra room under the last message, so it can be scrolled clear of the capsule
-  .sf-composer-row { padding-inline: 0.5rem; } // the field runs almost edge to edge
-  .sf-composer-row .sf-add { position: absolute; inset-inline-start: 0.5rem; bottom: calc(100% - 0.125rem); z-index: 3; } // on the inset-inline-start: my own messages are on the right, so the capsule does not cover them
-  .sf-composer-top .sf-composer-row .sf-add { bottom: auto; top: calc(100% - 0.125rem); }
-  .sf-composer-row .sf-add .d-flex { gap: 0 !important; padding: 0; border-radius: 1.5rem; background: color-mix(in srgb, #fbbf24 45%, transparent); backdrop-filter: blur(2px); }
-  .sf-composer-row .sf-add .sf-add-btn { width: 1.875rem; height: 1.875rem; min-height: 0; margin: 0; padding: 0; background: none; box-shadow: none; color: var(--sf-primary);
-    &:hover, &[aria-expanded='true'] { transform: none; box-shadow: none; background: #fbbf24; } // solid yellow when pressed
-    svg { width: 1.25rem; height: 1.25rem; } }
-  .sf-composer-row .sf-add-menu { inset-inline-start: 0; inset-inline-end: auto; transform-origin: bottom left; }
-  .sf-composer-top .sf-composer-row .sf-add-menu { transform-origin: top left; }
+  :root { --sf-float-gap: 3rem; } // extra room under the last message
 }
 
 .sf-recovery-words { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem 1.5rem; margin: 0; padding: 1rem 1rem 1rem 3rem; font-size: var(--sf-fs-description); border: 1px solid var(--sf-border); border-radius: var(--sf-radius); background: var(--sf-card); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; user-select: all; li::marker { color: var(--sf-muted); } @media (min-width: 576px) { grid-template-columns: repeat(3, 1fr); } } // the 24 recovery words, numbered
@@ -1731,7 +1696,7 @@ button.sf-back { padding: 0; border: 0; background: none; } // a back arrow that
 .sf-bar-text[role=button] { cursor: pointer; } // a title that goes back like the arrow (see PageBar `titleBack`)
 
 /* the help frame under the header of the conversation: a row of a round icon and its words */
-.sf-help { display: grid; gap: 0.75rem; padding: 0.75rem var(--sf-gutter) 1rem; border-bottom: 1px solid var(--sf-border); background: var(--sf-card); }
+.sf-help { display: grid; gap: 0.75rem; width: 100%; max-width: var(--sf-list-max-width); margin-inline: auto; padding: 0.75rem var(--sf-gutter) 1rem; border-bottom: 1px solid var(--sf-border); background: var(--sf-card); }
 .sf-help-row { display: flex; gap: 0.75rem; align-items: flex-start; }
 .sf-help-icon { flex: none; display: grid; place-items: center; width: 2.25rem; height: 2.25rem; border-radius: 50%; background: var(--sf-surface); color: var(--sf-primary); }
 .sf-help-title { font-size: var(--sf-fs-text); font-weight: 600; }

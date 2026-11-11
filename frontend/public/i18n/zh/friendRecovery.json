@@ -23,7 +23,6 @@
   "continue": "继续",
   "doneFriendnameCanOpen": "完成。{{ friendName }} 又可以打开以前的消息了。",
   "skippedCouldNotBe": "有 {{ skipped }} 项无法在这台设备上打开（它们是为这台设备没有的密钥加锁的）。",
-  "getYourOldMessages": "找回你以前的消息",
   "afterYouMakeA": "创建新密钥之后，以前的消息和保险箱文件仍是为旧密钥加锁的，所以这台设备打不开。",
   "friendnameStillCanTheir": "{{ friendName }} 还可以。对方的应用可以为你的新密钥重新给这些密钥加锁。移动的只有密钥：不会发送任何可读的内容，服务器也看不到任何东西。",
   "weSendFriendnameA": "我们会向 {{ friendName }} 发送一条请求。",

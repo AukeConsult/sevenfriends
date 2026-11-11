@@ -23,7 +23,6 @@
   "continue": "계속",
   "doneFriendnameCanOpen": "완료됐어요. {{ friendName }}님이 이전 메시지를 다시 열 수 있어요.",
   "skippedCouldNotBe": "{{ skipped }}개를 이 기기에서 열 수 없었어요 (이 기기에 없는 키로 잠겨 있었어요).",
-  "getYourOldMessages": "이전 메시지 되찾기",
   "afterYouMakeA": "새 키를 만들면 이전의 메시지와 금고 파일은 이전 키로 잠겨 있어서 이 기기에서 열 수 없어요.",
   "friendnameStillCanTheir": "{{ friendName }}님은 아직 열 수 있어요. 상대의 앱이 그 키들을 내 새 키에 맞춰 다시 잠글 수 있어요. 키만 이동하고, 읽을 수 있는 내용은 전송되지 않으며 서버는 아무것도 볼 수 없어요.",
   "weSendFriendnameA": "{{ friendName }}님에게 요청을 보내요.",

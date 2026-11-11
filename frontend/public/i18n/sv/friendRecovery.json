@@ -23,7 +23,6 @@
   "continue": "Fortsätt",
   "doneFriendnameCanOpen": "Klart. {{ friendName }} kan öppna sina gamla meddelanden igen.",
   "skippedCouldNotBe": "{{ skipped }} kunde inte öppnas på den här enheten (de var låsta för en nyckel som den inte har).",
-  "getYourOldMessages": "Få tillbaka dina gamla meddelanden",
   "afterYouMakeA": "När du har skapat en ny nyckel är tidigare meddelanden och kassaskåpsfiler låsta för den gamla nyckeln, så den här enheten kan inte öppna dem.",
   "friendnameStillCanTheir": "{{ friendName }} kan fortfarande. Hens app kan låsa de nycklarna igen för din nya nyckel. Bara nycklarna flyttas: inget läsbart skickas, och servern ser ingenting.",
   "weSendFriendnameA": "Vi skickar en förfrågan till {{ friendName }}.",

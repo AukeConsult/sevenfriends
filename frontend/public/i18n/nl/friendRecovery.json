@@ -23,7 +23,6 @@
   "continue": "Doorgaan",
   "doneFriendnameCanOpen": "Klaar. {{ friendName }} kan de oude berichten weer openen.",
   "skippedCouldNotBe": "{{ skipped }} kon niet op dit apparaat worden geopend (ze waren vergrendeld voor een sleutel die het niet heeft).",
-  "getYourOldMessages": "Haal je oude berichten terug",
   "afterYouMakeA": "Nadat je een nieuwe sleutel hebt gemaakt, zijn berichten en kluisbestanden van daarvoor vergrendeld voor de oude sleutel, dus dit apparaat kan ze niet openen.",
   "friendnameStillCanTheir": "{{ friendName }} kan dat nog wel. Hun app kan die sleutels opnieuw vergrendelen voor je nieuwe sleutel. Alleen de sleutels worden verplaatst: er wordt niets leesbaars verstuurd en de server ziet niets.",
   "weSendFriendnameA": "We sturen {{ friendName }} een verzoek.",

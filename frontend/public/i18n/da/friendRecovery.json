@@ -23,7 +23,6 @@
   "continue": "Fortsæt",
   "doneFriendnameCanOpen": "Færdig. {{ friendName }} kan åbne sine gamle beskeder igen.",
   "skippedCouldNotBe": "{{ skipped }} kunne ikke åbnes på denne enhed (de var låst til en nøgle, den ikke har).",
-  "getYourOldMessages": "Få dine gamle beskeder tilbage",
   "afterYouMakeA": "Når du har oprettet en ny nøgle, er tidligere beskeder og filer i pengeskabet låst til den gamle nøgle, så denne enhed kan ikke åbne dem.",
   "friendnameStillCanTheir": "{{ friendName }} kan stadig. Deres app kan låse de nøgler igen til din nye nøgle. Kun nøglerne flyttes: intet læsbart bliver sendt, og serveren ser intet.",
   "weSendFriendnameA": "Vi sender {{ friendName }} en anmodning.",

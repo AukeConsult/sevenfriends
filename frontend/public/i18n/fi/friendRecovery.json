@@ -23,7 +23,6 @@
   "continue": "Jatka",
   "doneFriendnameCanOpen": "Valmis. {{ friendName }} voi taas avata vanhat viestinsä.",
   "skippedCouldNotBe": "{{ skipped }} ei voitu avata tällä laitteella (ne oli lukittu avaimelle, jota sillä ei ole).",
-  "getYourOldMessages": "Hanki vanhat viestisi takaisin",
   "afterYouMakeA": "Kun teet uuden avaimen, aiemmat viestit ja kassakaapin tiedostot on lukittu vanhalle avaimelle, joten tämä laite ei voi avata niitä.",
   "friendnameStillCanTheir": "{{ friendName }} voi vielä. Hänen sovelluksensa voi lukita nuo avaimet uudelleen uudelle avaimellesi. Vain avaimet siirtyvät: mitään luettavaa ei lähetetä, eikä palvelin näe mitään.",
   "weSendFriendnameA": "Lähetämme käyttäjälle {{ friendName }} pyynnön.",

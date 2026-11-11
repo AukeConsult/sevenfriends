@@ -23,7 +23,6 @@
   "continue": "Weiter",
   "doneFriendnameCanOpen": "Fertig. {{ friendName }} kann die alten Nachrichten wieder öffnen.",
   "skippedCouldNotBe": "{{ skipped }} konnte auf diesem Gerät nicht geöffnet werden (für einen Schlüssel gesperrt, den es nicht hat).",
-  "getYourOldMessages": "Hol deine alten Nachrichten zurück",
   "afterYouMakeA": "Wenn du einen neuen Schlüssel erstellst, sind frühere Nachrichten und Tresordateien für den alten Schlüssel gesperrt, deshalb kann dieses Gerät sie nicht öffnen.",
   "friendnameStillCanTheir": "{{ friendName }} kann es noch. Die App der Person kann diese Schlüssel für deinen neuen Schlüssel neu sperren. Es werden nur die Schlüssel bewegt: Nichts Lesbares wird gesendet, und der Server sieht nichts.",
   "weSendFriendnameA": "Wir schicken {{ friendName }} eine Anfrage.",

@@ -14,8 +14,6 @@ export interface FeedActions {
   sortDesc(): boolean;
   toggleSort(): void;
   toggleCleanup(): void;
-  /** the header menu was opened: the emoji picker and the + menu close */
-  closeMenus(): void;
 }
 
 /** A tool of the page that is open (not the feed), shown first in the header menu: "Messages for X only" on Send a message, "Add files" in the safebox. */
@@ -86,6 +84,12 @@ export class FriendContext {
   readonly moreOpen = signal(false);
   /** the help frame under the header (the ? in the header shows and hides it; on every page of the friend) */
   readonly helpOpen = signal(false);
+  /** the writing form of the Send page (the Send icon in the header shows and hides it) */
+  readonly sendFormOpen = signal(true);
+  /** the Send form over the feed (the Send icon in the header shows and hides it while the feed is open) */
+  readonly feedSendOpen = signal(false);
+  /** what is written in the Send form: kept here, so the text stays when the form moves (top / bottom) or the page changes */
+  readonly sendDraft = signal('');
   /** the height of the header: the message field sticks right under it when the newest message is on top */
   readonly barHeight = signal(56);
   /** set by the feed while it is open */
@@ -270,10 +274,8 @@ export class FriendContext {
     if (open) window.scrollTo({ top: 0, behavior: 'smooth' }); // the frame is at the top of the page: bring it into view
   }
 
-  /** The three dots of the header: opening its menu closes the emoji picker and the + menu of the feed (only one is open at a time). */
+  /** The three dots of the header: shows and hides its menu. */
   toggleMore(): void {
-    const open = !this.moreOpen();
-    this.moreOpen.set(open);
-    if (open) this.feed()?.closeMenus();
+    this.moreOpen.set(!this.moreOpen());
   }
 }

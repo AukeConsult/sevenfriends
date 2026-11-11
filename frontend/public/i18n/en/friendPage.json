@@ -1,8 +1,7 @@
 {
-  "backToHome": "Back to home",
   "hasYouOnPronoun": "😴 Has you on {{ pronoun }} sleep list",
   "sendAMessage": "Send a message",
-  "send": "Send",
+  "write": "Write",
   "messages": "Messages",
   "newMessage": "New message",
   "safeboxFilesOnlyYou": "Safebox: files only you and this friend see",

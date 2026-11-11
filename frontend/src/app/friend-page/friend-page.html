@@ -1,6 +1,5 @@
 <ng-container *transloco="let t">
 <header #bar class="sf-bar" [class.sf-has-color]="!!ctx.friendColor()" [style.--sf-friend]="ctx.friendColor()" [style.--sf-friend-ink]="ctx.friendInk()">
-  <a routerLink="/" class="sf-back" [attr.aria-label]="t('friendPage.backToHome') || 'Back to home'">‹</a>
   @if (ctx.seat() > 0 || ctx.friend()?.asleep) {
     <span class="sf-seat">
       @if (ctx.friend(); as f) {
@@ -25,21 +24,25 @@
   @if (!ctx.blocked()) {
     <div class="sf-bar-actions">
       <!-- the icons that switch what is under the header: sending one message, the messages, and the safebox -->
-      <a [routerLink]="['/friends', ctx.friendId, 'send']" routerLinkActive="sf-current" ariaCurrentWhenActive="page" class="sf-tool-btn" [attr.aria-label]="t('friendPage.sendAMessage') || 'Send a message'" [attr.title]="t('friendPage.sendAMessage') || 'Send a message'">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h10a5 5 0 015 5v4a5 5 0 01-5 5h-5l-4 3v-3H7a5 5 0 01-5-5V9a5 5 0 015-5z" /><path d="M8 11h7M12.5 8l3 3-3 3" /></svg>
-        <span class="sf-tool-label" aria-hidden="true">{{ t('friendPage.send') || 'Send' }}</span>
+      <a [routerLink]="sendOver() ? null : ['/friends', ctx.friendId, 'send']" [attr.role]="sendOver() ? 'button' : null" [attr.tabindex]="sendOver() ? 0 : null" (keydown.enter)="sendOver() && toggleSendForm($event)" class="sf-tool-btn" [class.sf-current]="sendOver() ? ctx.feedSendOpen() : onSend() && ctx.sendFormOpen()" [attr.aria-pressed]="sendOver() ? ctx.feedSendOpen() : onSend() ? ctx.sendFormOpen() : null" (click)="toggleSendForm($event)" [attr.aria-expanded]="sendOver() ? ctx.feedSendOpen() : onSend() ? ctx.sendFormOpen() : null" [attr.aria-label]="t('friendPage.sendAMessage') || 'Send a message'" [attr.title]="t('friendPage.sendAMessage') || 'Send a message'">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /><path d="M12 7v6M9 10h6" /></svg>
+        <span class="sf-tool-label" aria-hidden="true">{{ t('friendPage.write') || 'Write' }}</span>
       </a>
+      @if (!onFeed()) {
       <a [routerLink]="['/friends', ctx.friendId]" routerLinkActive="sf-current" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page" class="sf-tool-btn" [attr.aria-label]="t('friendPage.messages') || 'Messages'" [attr.title]="t('friendPage.messages') || 'Messages'">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 8V6a2 2 0 012-2h8a2 2 0 012 2v5a2 2 0 01-2 2h-1" /><path d="M4 10a2 2 0 012-2h7a2 2 0 012 2v5a2 2 0 01-2 2H9l-3 3v-3a2 2 0 01-2-2z" /></svg>
         @if (ctx.messageDot()) { <span class="sf-tool-dot" role="img" [attr.aria-label]="t('friendPage.newMessage') || 'New message'"></span> }
         <span class="sf-tool-label" aria-hidden="true">{{ t('friendPage.messages') || 'Messages' }}</span>
       </a>
+      }
+      @if (!onSafebox()) {
       <a [routerLink]="['/friends', ctx.friendId, 'safebox']" routerLinkActive="sf-current" ariaCurrentWhenActive="page" class="sf-tool-btn" [attr.aria-label]="t('friendPage.safeboxFilesOnlyYou') || 'Safebox: files only you and this friend see'" [attr.title]="t('friendPage.safeboxFilesOnlyYou') || 'Safebox: files only you and this friend see'">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <rect x="3" y="4" width="18" height="16" rx="2" /><circle cx="12" cy="12" r="3" /><path d="M12 15v2M7 20v1M17 20v1" />
         </svg>
         <span class="sf-tool-label" aria-hidden="true">{{ t('friendPage.safebox') || 'Safebox' }}</span>
       </a>
+      }
     </div>
     <div class="sf-add sf-more">
       <button type="button" class="sf-tool-btn" (click)="ctx.toggleMore()" [attr.aria-expanded]="ctx.moreOpen()" aria-haspopup="true" [attr.aria-label]="t('friendPage.more') || 'More'" [attr.title]="t('friendPage.more') || 'More'">
@@ -83,7 +86,7 @@
           }
           @if (!onSend()) {
           <a role="menuitem" class="sf-add-item" [routerLink]="['/friends', ctx.friendId, 'send']" (click)="ctx.moreOpen.set(false)">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h10a5 5 0 015 5v4a5 5 0 01-5 5h-5l-4 3v-3H7a5 5 0 01-5-5V9a5 5 0 015-5z" /><path d="M8 11h7M12.5 8l3 3-3 3" /></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /><path d="M12 7v6M9 10h6" /></svg>
             <span>{{ t('friendPage.sendAMessage') || 'Send a message' }}</span>
           </a>
           }
@@ -99,7 +102,7 @@
             <span>{{ t('friendPage.lockingAndKeys') || 'Locking and keys' }}</span>
           </a>
           }
-          @if (!onRecovery()) {
+          @if (!onRecovery() && !ctx.isGroup()) {
           <a role="menuitem" class="sf-add-item" [routerLink]="['/friends', ctx.friendId, 'recovery']" (click)="ctx.moreOpen.set(false)">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7" /><path d="M3 4v5h5" /><path d="M12 8v4l3 2" /></svg>
             <span>{{ t('friendPage.recovery') || 'Recovery' }}</span>
@@ -121,8 +124,14 @@
 </header>
 <!-- Expanding frame: the help (the ? in the header), on every page of the friend -->
 <div class="sf-expand" [class.open]="ctx.helpOpen()" [attr.inert]="ctx.helpOpen() ? null : ''">
-  <div class="sf-expand-inner"><app-feed-help /></div>
+  <div class="sf-expand-inner"><app-feed-help (closed)="ctx.helpOpen.set(false)" /></div>
 </div>
+@if (sendOver() && !sendAtBottom()) {
+  <!-- Expanding frame: the Send form on top of the feed (newest first) or the safebox (the Send icon in the header) -->
+  <div class="sf-expand" [class.open]="ctx.feedSendOpen()" [attr.inert]="ctx.feedSendOpen() ? null : ''">
+    <div class="sf-expand-inner">@if (ctx.feedSendOpen()) { <app-friend-send [embedded]="true" /> }</div>
+  </div>
+}
 <app-lock-chain-band [friendId]="ctx.friendId" [name]="ctx.friendName()" />
 <app-key-changed-band [friendId]="ctx.friendId" [name]="ctx.friendName()" [fingerprints]="ctx.friendFingerprints()" />
 @if (ctx.lockedMessages() + ctx.lockedFiles() > 0) { <app-locked-band [friendId]="ctx.friendId" [name]="ctx.friendName()" [messages]="ctx.lockedMessages()" [files]="ctx.lockedFiles()" /> }
@@ -137,4 +146,8 @@
 </div>
 
 <router-outlet />
+@if (sendAtBottom() && ctx.feedSendOpen()) {
+  <!-- the feed is oldest first: the Send form is under the messages, where the newest one is (it follows the order of the feed) -->
+  <div class="sf-send-bottom"><app-friend-send [embedded]="true" /></div>
+}
 </ng-container>

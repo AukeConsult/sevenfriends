@@ -1,10 +1,7 @@
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { tr } from '../core/i18n';
 import { ActiveCircleService } from '../core/active-circle.service';
-import { AddMedia } from '../add-media/add-media';
-import { Clearable } from '../core/clearable';
 import { FriendContext } from '../friend-page/friend-context';
-import { PokeToggle } from '../friend-page/poke-toggle';
 import { NgTemplateOutlet } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AppDatePipe } from '../core/app-date.pipe';
@@ -12,7 +9,6 @@ import { Component, DestroyRef, ElementRef, HostListener, computed, effect, inje
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Router, RouterLink } from '@angular/router';
 import { ApiError } from '../core/api.service';
-import { localLink } from '../core/link-embed';
 import { ChatItem } from '../core/message-lock.service';
 import { SafeboxService } from '../core/safebox.service';
 import { FriendAvatar } from '../friend-avatar/friend-avatar';
@@ -25,12 +21,11 @@ import { MyAvatarService } from '../core/my-avatar.service';
 import { MediaService } from '../core/media.service';
 import { LiveChanges } from '../core/live-changes';
 import { UiPreferencesService } from '../core/ui-preferences';
-import { EMOJI_GROUPS } from '../core/emojis';
 import { FriendsService } from '../core/friends.service';
 import { initials } from '../core/initials';
 import { MemberPictureService } from '../core/member-picture.service';
 import { RealtimeService } from '../core/realtime.service';
-import { ChatMessage, GroupMember, MessageDeleteCriteria, MessageLink } from '../models';
+import { ChatMessage, GroupMember, MessageDeleteCriteria } from '../models';
 
 // New messages, edits and deletes arrive live (RealtimeService). This refresh is only a safety net.
 const SAFETY_REFRESH_MS = 30000;
@@ -38,7 +33,7 @@ const SAFETY_REFRESH_MS = 30000;
 /** The message feed with one friend: /friends/:id (the id of the connection). */
 @Component({
   selector: 'app-chat',
-  imports: [AddMedia, PokeToggle, AppDatePipe, FriendAvatar, MediaAudio, MediaImage, MediaVideo, NgTemplateOutlet, RouterLink, Clearable, TranslocoDirective],
+  imports: [AppDatePipe, FriendAvatar, MediaAudio, MediaImage, MediaVideo, NgTemplateOutlet, RouterLink, TranslocoDirective],
   templateUrl: './chat.html',
   providers: [provideTranslocoScope('chat')],
 })
@@ -54,19 +49,14 @@ export class Chat {
   private readonly router = inject(Router);
   private lastLive = this.realtime.latestMessage()?.seq ?? 0; // live messages before this page opened are not news
   private readonly end = viewChild<ElementRef<HTMLElement>>('end');
-  private readonly field = viewChild<ElementRef<HTMLTextAreaElement>>('field');
-  private readonly composer = viewChild<ElementRef<HTMLElement>>('composer');
 
   /** everything about this friend that the header shares with the pages under it (the friend, the colour, the padlock, the profile) */
-  private readonly ctx = inject(FriendContext);
+  protected readonly ctx = inject(FriendContext);
   protected readonly friendId = this.ctx.friendId;
   protected readonly name = this.ctx.name;
   protected readonly friend = this.ctx.friend;
   protected readonly seat = this.ctx.seat;
   protected readonly blocked = this.ctx.blocked;
-  protected readonly messagesLocked = this.ctx.messagesLocked;
-  /** the header menu (it lives in the friend page) */
-  private readonly moreOpen = this.ctx.moreOpen;
   protected readonly barHeight = this.ctx.barHeight;
 
   /** The friend's picture next to a message: opens the profile under the header. */
@@ -75,20 +65,14 @@ export class Chat {
   }
   protected readonly initials = initials;
   protected readonly messages = signal<ChatItem[]>([]);
-  protected readonly hasShut = computed(() => this.messages().some((m) => m.locked === 'shut'));
   private readonly lockedCount = computed(() => this.messages().filter((m) => m.locked === 'shut').length);
-  /** false = oldest first (the default); true = newest first. Remembered on this device. */
-  /** newest first? (a remembered choice, the same in every window; a refresh of the feed never changes it) */
-  /** the Enter key sends the message (a preference) */
-  protected readonly enterSends = this.prefs.value('enterSends');
   /** a picture next to every message (a preference) */
   protected readonly feedIcons = this.prefs.value('feedIcons');
   private readonly myAvatarService = inject(MyAvatarService);
   protected readonly myAvatar = this.myAvatarService.src;
   private readonly me = inject(AuthService).user;
   protected readonly myInitials = computed(() => initials(this.me()?.displayName ?? this.me()?.email ?? this.me()?.phoneNumber));
-  /** this friend's own ready-made messages first, then the general ones */
-  protected readonly quickMessages = computed(() => [...this.ctx.ownQuick(), ...this.prefs.value('quickMessages')()]);
+  /** newest first? (a remembered choice, the same in every window; a refresh of the feed never changes it) */
   protected readonly sortDesc = computed(() => this.prefs.value('chatOrder')() === 'newest');
   protected readonly shown = computed(() => (this.sortDesc() ? [...this.messages()].reverse() : this.messages()));
 
@@ -103,7 +87,6 @@ export class Chat {
     ];
   }
   protected readonly cleanupOpen = signal(false);
-  /** the help frame under the header is open */
   protected readonly cleanupWhose = signal<'mine' | 'both'>(this.prefs.get('cleanupWhose'));
   /** my messages, or both sides' (never the friend's alone) */
   protected readonly whoseChoices = computed<{ value: 'mine' | 'both'; label: string }[]>(() => [
@@ -141,73 +124,9 @@ export class Chat {
   private countSeq = 0;
   protected readonly loaded = signal(false);
   protected readonly error = signal<string | null>(null);
-  protected readonly text = signal('');
+  /** the text of my message that is being edited (the field is in the message itself) */
+  protected readonly editText = signal('');
   protected readonly sending = signal(false);
-  protected readonly emojiGroups = EMOJI_GROUPS;
-  /** the tab of the emoji picker that is open (People first) */
-  /** the group open in the emoji picker: the one used last (remembered on this device), People when there is none */
-  protected readonly emojiGroup = signal(EMOJI_GROUPS.some((g) => g.name === this.prefs.get('emojiTab')) ? this.prefs.get('emojiTab') : 'People');
-  protected chooseEmojiGroup(name: string): void {
-    this.emojiGroup.set(name);
-    this.prefs.set('emojiTab', name);
-  }
-  protected readonly emojisOfGroup = computed(() => EMOJI_GROUPS.find((g) => g.name === this.emojiGroup())?.emojis ?? []);
-  /** the emoji panel above the message field */
-  protected readonly emojiOpen = signal(false);
-  /** the menu of the smiley and the paperclip button */
-  /** the image, video or voice panel that is open above the message field (null = none) */
-  private readonly media = viewChild(AddMedia);
-  protected readonly attachKind = signal<'image' | 'video' | 'audio' | null>(null);
-  protected readonly menuOpen = signal(false);
-  private menuPinned = false; // opened by a click or tap: it stays until the next click, instead of closing when the mouse leaves
-
-  /** which menu is open: the smiley (emoji, quick messages) or the paperclip (image, video, voice) */
-  protected readonly menuKind = signal<'emoji' | 'attach'>('emoji');
-
-  protected toggleMenu(kind: 'emoji' | 'attach'): void {
-    if (kind === 'emoji' && !this.quickMessages().length) { // no ready-made messages: the smiley opens the emojis at once, no menu
-      this.menuOpen.set(false);
-      this.moreOpen.set(false);
-      this.emojiOpen.set(!this.emojiOpen());
-      return;
-    }
-    if (this.menuOpen() && this.menuKind() === kind && this.menuPinned) {
-      this.menuOpen.set(false);
-      this.menuPinned = false;
-      return;
-    }
-    this.emojiOpen.set(false); // only one thing is open at a time: the picker and the header menu close
-    this.moreOpen.set(false);
-    this.menuKind.set(kind);
-    this.menuPinned = true; // opened by a click or tap: it stays until the next click
-    this.menuOpen.set(true);
-  }
-
-  /** A mouse over a button opens its menu (or the emoji picker) and closes the other one; leaving closes the menu (a finger has no hover: it taps). */
-  protected hoverMenu(inside: boolean, kind?: 'emoji' | 'attach'): void {
-    if (!window.matchMedia('(any-hover: hover)').matches) return;
-    if (!inside) {
-      if (!this.menuPinned) this.menuOpen.set(false);
-      return;
-    }
-    if (!kind) return;
-    this.moreOpen.set(false);
-    if (kind === 'attach') {
-      this.emojiOpen.set(false); // the emoji picker closes when the paperclip opens
-      if (this.menuKind() !== 'attach') this.menuPinned = false;
-      this.menuKind.set('attach');
-      this.menuOpen.set(true);
-    } else if (!this.quickMessages().length) { // no menu to show: the emoji picker opens (and stays until the next click or typing)
-      this.menuOpen.set(false);
-      this.menuPinned = false;
-      this.emojiOpen.set(true);
-    } else {
-      this.emojiOpen.set(false);
-      if (this.menuKind() !== 'emoji') this.menuPinned = false;
-      this.menuKind.set('emoji');
-      this.menuOpen.set(true);
-    }
-  }
   /** my message whose Edit / Delete buttons are open (tap a message of mine) */
   protected readonly selected = signal<string | null>(null);
   /** my message that is being deleted (the question is open) */
@@ -215,10 +134,8 @@ export class Chat {
   /** the picture or video whose "move to the safebox" question is open, and whether it is being moved */
   protected readonly moving = signal<string | null>(null);
   protected readonly movingBusy = signal(false);
-  /** my message that is being edited: the message field holds its text, and Send saves it */
+  /** my message that is being edited (its text is a field in the message itself) */
   protected readonly editing = signal<string | null>(null);
-  /** the height of the message field with its panel: the feed keeps this much room at the bottom, so no message hides behind it */
-  protected readonly composerHeight = signal(64);
 
   /** In a group feed: who is who, so every message shows its writer (picture or initials, and the name). */
   protected readonly isGroup = computed(() => !!this.friend()?.group);
@@ -272,10 +189,6 @@ export class Chat {
       sortDesc: () => this.sortDesc(),
       toggleSort: () => this.toggleSort(),
       toggleCleanup: () => this.toggleCleanup(),
-      closeMenus: () => {
-        this.menuOpen.set(false);
-        this.emojiOpen.set(false);
-      },
     });
     this.refresh(true);
 
@@ -285,21 +198,6 @@ export class Chat {
       if (!live || live.seq <= this.lastLive) return;
       this.lastLive = live.seq;
       if (live.connectionId === this.friendId) untracked(() => void this.refresh(false));
-    });
-
-    // a link in the message field: check it after the last key press
-    effect(() => {
-      const text = this.text();
-      untracked(() => this.watchDraft(text));
-    });
-
-    // the message field grows with its text: keep the feed clear of it
-    effect((onCleanup) => {
-      const form = this.composer()?.nativeElement;
-      if (!form) return;
-      const watch = new ResizeObserver(() => this.composerHeight.set(form.offsetHeight));
-      watch.observe(form);
-      onCleanup(() => watch.disconnect());
     });
 
     // the messages of this friendship changed (the friend edited or deleted one, or I did on another device): show it at once
@@ -339,50 +237,6 @@ export class Chat {
     } finally {
       this.loaded.set(true);
     }
-  }
-
-  /** The link in the text that is being written (checked a moment after the last key press), and whether its preview is open. */
-  protected readonly draftLink = signal<MessageLink | null>(null);
-  protected readonly draftOpen = signal(false);
-  private draftDismissed: string | null = null;
-  private draftTimer: ReturnType<typeof setTimeout> | undefined;
-  private draftSeq = 0;
-
-  protected dismissDraftLink(): void {
-    this.draftDismissed = this.draftLink()?.url ?? null; // the same link does not come back while it stays in the text
-    this.draftLink.set(null);
-    this.draftOpen.set(false);
-  }
-
-  /** The text changed: look for a link in it. */
-  private watchDraft(text: string): void {
-    clearTimeout(this.draftTimer);
-    const url = this.parts(text).find((p) => p.url)?.url ?? null;
-    if (this.messagesLocked() && !this.editing()) {
-      // a locked message: the link is looked at on this device only (the server must not read it); only a known player is shown while writing
-      this.draftSeq++;
-      const local = localLink(text);
-      this.draftLink.set(local && !local.unchecked ? local : null);
-      if (!local || local.unchecked) this.draftOpen.set(false);
-      return;
-    }
-    if (!url || this.editing()) {
-      this.draftSeq++;
-      this.draftLink.set(null);
-      this.draftOpen.set(false);
-      this.draftDismissed = null;
-      return;
-    }
-    if (url === this.draftLink()?.url || url === this.draftDismissed) return;
-    const seq = ++this.draftSeq;
-    this.draftTimer = setTimeout(async () => {
-      try {
-        const link = await this.chat.previewLink(text);
-        if (seq === this.draftSeq) this.draftLink.set(link);
-      } catch {
-        if (seq === this.draftSeq) this.draftLink.set(null); // not checked: nothing is shown, the message still goes
-      }
-    }, 700);
   }
 
   /** The messages whose link preview is open (the page is loaded only after a tap: it shows the friend's address to that site and runs its scripts). */
@@ -466,24 +320,26 @@ export class Chat {
     }
   }
 
-  /** The three dots under a picture, video or voice message: its buttons open under it (any message, also my friend's). */
-  protected more(message: ChatMessage): void {
-    this.deleting.set(null);
-    this.selected.update((id) => (id === message.id ? null : message.id));
+  /** A tap on a message (mine or the friend's) shows its time and its buttons; a tap on a link, a button or a player inside it does not. */
+  /** The middle of a picture (this much of its width and of its height: about 30% of its area) opens it in full; the rest of it works like a tap on the message. */
+  private static readonly PICTURE_MIDDLE = 0.55;
+
+  protected pictureTap(message: ChatMessage, media: { ownerId: string; objectId: string }, event: MouseEvent): void {
+    event.stopPropagation(); // the tap is handled here (the message below it would toggle itself too)
+    const box = (event.currentTarget as HTMLElement).getBoundingClientRect();
+    const x = box.width ? (event.clientX - box.left) / box.width : 0.5;
+    const y = box.height ? (event.clientY - box.top) / box.height : 0.5;
+    const half = Chat.PICTURE_MIDDLE / 2;
+    if (Math.abs(x - 0.5) <= half && Math.abs(y - 0.5) <= half) this.openPicture(media);
+    else this.select(message);
   }
 
-  /** Copy the text of a message to the clipboard, and close its buttons. */
-  protected async copy(message: ChatMessage): Promise<void> {
-    try {
-      await navigator.clipboard.writeText(message.text);
-    } catch {
-      this.error.set(tr('chat.couldNotCopyThe', 'Could not copy the text'));
-    }
-    this.selected.set(null);
+  protected openPicture(media: { ownerId: string; objectId: string }): void {
+    void this.router.navigate(['/media', media.ownerId, media.objectId], { queryParams: { f: this.friendId } });
   }
 
-  protected select(message: ChatMessage): void {
-    if (!message.mine && !message.inBox) return; // the note of a file moved to the safebox may be removed by either friend
+  protected select(message: ChatMessage, event?: Event): void {
+    if ((event?.target as Element | null)?.closest('a, button, video, audio, input')) return;
     this.deleting.set(null);
     this.selected.update((id) => (id === message.id ? null : message.id));
   }
@@ -496,20 +352,44 @@ export class Chat {
     }
     this.editing.set(message.id);
     this.selected.set(null);
-    this.text.set(message.text);
+    this.editText.set(message.text);
     setTimeout(() => {
-      const input = this.field()?.nativeElement;
+      const input = document.getElementById('inline-edit') as HTMLTextAreaElement | null;
       if (!input) return;
-      input.value = message.text;
-      this.fit();
+      this.grow(input);
       input.focus();
+      input.setSelectionRange(input.value.length, input.value.length);
     });
+  }
+
+  /** The field of the message that is being edited grows with its text. */
+  protected grow(input: HTMLTextAreaElement): void {
+    input.style.height = 'auto';
+    input.style.height = `${input.scrollHeight + (input.offsetHeight - input.clientHeight)}px`; // the text and the border: no scroll bar until the cap (40% of the screen)
   }
 
   protected cancelEdit(): void {
     this.editing.set(null);
-    this.text.set('');
-    setTimeout(() => this.fit());
+    this.editText.set('');
+  }
+
+  /** Save the text of the message that is being edited (a locked message stays locked, with the same key). */
+  protected async saveEdit(): Promise<void> {
+    const editingId = this.editing();
+    const text = this.editText().trim();
+    if (!editingId || !text || this.sending()) return;
+    this.sending.set(true);
+    this.error.set(null);
+    try {
+      const changed = await this.chat.edit(this.friendId, editingId, text, this.messages().find((m) => m.id === editingId));
+      this.messages.update((list) => list.map((m) => (m.id === editingId ? changed : m)));
+      this.editing.set(null);
+      this.editText.set('');
+    } catch (err: any) {
+      this.error.set(err.message ?? tr('chat.couldNotSaveThe', 'Could not save the message'));
+    } finally {
+      this.sending.set(false);
+    }
   }
 
   /** Moves the picture or video of a message to the safebox: the message stays in both feeds and says it is there. */
@@ -537,139 +417,6 @@ export class Chat {
       this.deleting.set(null);
     } catch (err: any) {
       this.error.set(err.message ?? tr('chat.couldNotDeleteThe', 'Could not delete the message'));
-    }
-  }
-
-  /** Puts a message of mine at the end, unless the feed already has it (a refresh can bring it in before the answer of the send arrives). */
-  private addOnce(message: ChatItem): void {
-    this.messages.update((list) => (list.some((m) => m.id === message.id) ? list.map((m) => (m.id === message.id ? message : m)) : [...list, message]));
-  }
-
-  private pendingSeq = 0;
-
-  /**
-   * A new message: it is in the feed the moment it is sent (a little faded, with a temporary id) and is replaced by the real one when the server has it.
-   * If the server refuses it, it goes again and the text comes back into the field.
-   */
-  private async sendNew(text: string, fromField: boolean): Promise<void> {
-    const poke = this.ctx.pokes();
-    const temp: ChatItem = { id: `pending-${++this.pendingSeq}`, text, media: null, mine: true, read: true, time: new Date().toISOString(), edited: false, hidden: false, link: null };
-    this.messages.update((list) => [...list, temp]);
-    this.ctx.poke.set(false);
-    this.error.set(null);
-    if (fromField) {
-      this.text.set('');
-      this.emojiOpen.set(false);
-      setTimeout(() => this.fit());
-    }
-    this.scrollDown();
-    try {
-      const message = await this.chat.send(this.friendId, text, poke);
-      this.messages.update((list) => {
-        const rest = list.filter((m) => m.id !== temp.id);
-        return rest.some((m) => m.id === message.id) ? rest.map((m) => (m.id === message.id ? message : m)) : [...rest, message];
-      });
-    } catch (err: any) {
-      this.messages.update((list) => list.filter((m) => m.id !== temp.id));
-      if (fromField && !this.text()) this.text.set(text);
-      this.error.set(err.message ?? tr('chat.couldNotSendThe', 'Could not send the message'));
-    }
-  }
-
-  protected async send(): Promise<void> {
-    const text = this.text().trim();
-    if (!text || this.sending()) return;
-    const editingId = this.editing();
-    if (!editingId) {
-      void this.sendNew(text, true); // shown at once, confirmed when the server answers
-      return;
-    }
-    this.sending.set(true);
-    this.error.set(null);
-    try {
-      if (editingId) {
-        const changed = await this.chat.edit(this.friendId, editingId, text, this.messages().find((m) => m.id === editingId)); // a locked message stays locked, with the same key
-        this.messages.update((list) => list.map((m) => (m.id === editingId ? changed : m)));
-        this.editing.set(null);
-      }
-      this.text.set('');
-      this.emojiOpen.set(false);
-      setTimeout(() => this.fit());
-      this.scrollDown();
-    } catch (err: any) {
-      this.error.set(err.message ?? (editingId ? tr('chat.couldNotSaveThe', 'Could not save the message') : tr('chat.couldNotSendThe', 'Could not send the message')));
-    } finally {
-      this.sending.set(false);
-    }
-  }
-
-  protected openAttach(kind: 'image' | 'video' | 'audio'): void {
-    this.menuOpen.set(false);
-    this.menuPinned = false;
-    this.emojiOpen.set(false);
-    this.attachKind.set(kind);
-  }
-
-  /** The panel sent a file: the message is in the feed, the panel closes. */
-  protected attached(message: ChatItem): void {
-    this.addOnce(message);
-    this.attachKind.set(null);
-    this.scrollDown();
-  }
-
-  /** A ready-made message from the + menu: sent at once. What is typed in the field stays as it is. */
-  protected async sendQuick(text: string): Promise<void> {
-    this.menuOpen.set(false);
-    this.menuPinned = false;
-    if (this.editing()) return;
-    void this.sendNew(text, false);
-  }
-
-  /** The field grew or shrank with what was typed. */
-  protected typed(): void {
-    const input = this.field()?.nativeElement;
-    if (!input) return;
-    this.text.set(input.value);
-    this.fit();
-  }
-
-  /** Enter is a new line (the browser does that); Ctrl+Enter or Cmd+Enter sends, like the Send button. */
-  protected enterPressed(event: Event): void {
-    const key = event as KeyboardEvent;
-    if (key.isComposing) return; // a letter is still being composed (Enter confirms it)
-    // autosend: Enter sends, Shift+Enter is a new line; otherwise only Ctrl / Cmd + Enter sends
-    const sends = this.enterSends() ? !key.shiftKey : key.ctrlKey || key.metaKey;
-    if (!sends) return;
-    key.preventDefault();
-    void this.send();
-  }
-
-  /** The field is as high as its text (it opens upwards: the form sits at the bottom of the screen), up to a few lines. */
-  private fit(): void {
-    const input = this.field()?.nativeElement;
-    if (!input) return;
-    input.style.height = 'auto';
-    input.style.height = `${input.scrollHeight}px`;
-  }
-
-  /**
-   * Puts the emoji where the cursor is in the message field (at the end when the field was not used yet). The panel stays open, so
-   * several emojis can be added one after the other: it closes when the person taps the field, types, sends, or taps the emoji button.
-   * The field is not focused here (that would close the panel, and on a phone open the keyboard over it): the cursor is only moved.
-   */
-  protected addEmoji(emoji: string): void {
-    const input = this.field()?.nativeElement;
-    const value = this.text();
-    const start = input?.selectionStart ?? value.length;
-    const end = input?.selectionEnd ?? start;
-    const next = value.slice(0, start) + emoji + value.slice(end);
-    if (next.length > 2000) return; // the same limit as the field (the server checks it too)
-    this.text.set(next);
-    if (input) {
-      input.value = next;
-      const caret = start + emoji.length;
-      input.setSelectionRange(caret, caret); // the next emoji (or the next letter) goes after this one
-      this.fit();
     }
   }
 
@@ -718,11 +465,6 @@ export class Chat {
   @HostListener('document:click', ['$event'])
   protected onDocumentClick(event: Event): void {
     const target = event.target as Element | null;
-    if (this.attachKind() && !target?.closest('app-add-media, .sf-add') && !this.media()?.hasWork()) this.attachKind.set(null); // a click elsewhere closes the image / video / voice panel, unless it holds a file or a recording
-    if (this.menuOpen() && !target?.closest('.sf-add')) {
-      this.menuOpen.set(false);
-      this.menuPinned = false;
-    }
     if (this.cleanupOpen() && !target?.closest('.sf-cleanup, [aria-controls="cleanup"]')) this.closeCleanup();
     const selected = this.selected();
     if (selected && (target?.closest('.sf-message') as HTMLElement | null)?.dataset['id'] !== selected) {

@@ -1,5 +1,5 @@
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
-import { Component } from '@angular/core';
+import { Component, output } from '@angular/core';
 
 /** The help under the header of the conversation (the ? in the header opens it, see the expanding frame in `chat.html`): what the icons in the header do, the safebox, and the messages. */
 @Component({
@@ -9,6 +9,8 @@ import { Component } from '@angular/core';
   providers: [provideTranslocoScope('friendHelp')],
 })
 export class FeedHelp {
+  /** the button at the end: hide the help */
+  readonly closed = output<void>();
   /** the sections: the key of the title, its English title, and the rows (key, picture, English title, English text); the words come from friendHelp.json */
   protected readonly sections = [
     {

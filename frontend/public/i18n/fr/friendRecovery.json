@@ -23,7 +23,6 @@
   "continue": "Continuer",
   "doneFriendnameCanOpen": "C'est fait. {{ friendName }} peut de nouveau ouvrir ses anciens messages.",
   "skippedCouldNotBe": "{{ skipped }} n'ont pas pu être ouverts sur cet appareil (ils étaient verrouillés pour une clé qu'il n'a pas).",
-  "getYourOldMessages": "Retrouver tes anciens messages",
   "afterYouMakeA": "Quand tu crées une nouvelle clé, les messages et fichiers du coffre-fort d'avant restent verrouillés pour l'ancienne clé, donc cet appareil ne peut pas les ouvrir.",
   "friendnameStillCanTheir": "{{ friendName }} le peut encore. Son appli peut reverrouiller ces clés pour ta nouvelle clé. Seules les clés bougent : rien de lisible n'est envoyé, et le serveur ne voit rien.",
   "weSendFriendnameA": "Nous envoyons une demande à {{ friendName }}.",

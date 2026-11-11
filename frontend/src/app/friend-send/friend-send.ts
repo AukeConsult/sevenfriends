@@ -1,6 +1,6 @@
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { tr } from '../core/i18n';
-import { Component, DestroyRef, ElementRef, HostListener, computed, inject, signal, viewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, computed, effect, inject, input, signal, viewChild } from '@angular/core';
 import { AddMedia } from '../add-media/add-media';
 import { ChatService } from '../core/chat.service';
 import { PokeToggle } from '../friend-page/poke-toggle';
@@ -24,18 +24,38 @@ import { FriendContext } from '../friend-page/friend-context';
 })
 export class FriendSend {
   protected readonly ctx = inject(FriendContext);
+  /** shown on top of the feed (not as the Send page): the form is always shown then */
+  readonly embedded = input(false);
   private readonly chat = inject(ChatService);
   private readonly prefs = inject(UiPreferencesService);
 
   protected readonly friendName = this.ctx.friendName;
   protected readonly general = this.prefs.value('quickMessages');
   protected readonly enterSends = this.prefs.value('enterSends');
+  /** the ready-made messages (and the Add frame) are off for now */
+  protected readonly quickMessagesShown = false;
   protected readonly quickMax = QUICK_MAX;
   protected readonly quickLength = QUICK_LENGTH;
 
   constructor() {
+    // the writing field is two lines and grows with the text (the style caps it): measured after the new text is in the field
+    effect(() => {
+      this.text();
+      const field = this.field()?.nativeElement;
+      if (!field) return;
+      setTimeout(() => {
+        field.style.height = 'auto';
+        field.style.height = `${field.scrollHeight}px`;
+      });
+    });
     // the menu of the header: "Messages for Leif x only" opens the frame to change them (after the click that chose it has been seen by the click-outside rule)
-    this.ctx.setPageTool({ label: tr('friendSend.messagesForOnly', 'Messages for {{ friendName }} only', { friendName: this.friendName() }), kind: 'message', run: () => setTimeout(() => this.openAdd()) }, inject(DestroyRef));
+    // (off with the ready-made messages) this.ctx.setPageTool({ label: tr('friendSend.messagesForOnly', 'Messages for {{ friendName }} only', { friendName: this.friendName() }), kind: 'message', run: () => setTimeout(() => this.openAdd()) }, inject(DestroyRef));
+  }
+
+  /** the small button in the corner of the frame: hide the Send form (the Send icon in the header shows it again) */
+  protected hide(): void {
+    if (this.embedded()) this.ctx.feedSendOpen.set(false);
+    else this.ctx.sendFormOpen.set(false);
   }
 
   private openAdd(): void {
@@ -45,7 +65,7 @@ export class FriendSend {
 
   protected readonly field = viewChild<ElementRef<HTMLTextAreaElement>>('field');
   private readonly media = viewChild(AddMedia);
-  protected readonly text = signal('');
+  protected readonly text = this.ctx.sendDraft;
   protected readonly busy = signal(false);
   protected readonly notice = signal<string | null>(null);
   protected readonly error = signal<string | null>(null);

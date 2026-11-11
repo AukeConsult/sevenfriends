@@ -51,6 +51,7 @@ export class FriendRecovery {
   }
 
   private async refresh(): Promise<void> {
+    if (this.ctx.isGroup()) return; // a group has no recovery by a friend
     try {
       const was = this.state();
       const now = await this.service.state(this.ctx.friendId);
