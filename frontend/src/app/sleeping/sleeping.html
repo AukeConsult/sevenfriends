@@ -1,8 +1,16 @@
 <ng-container *transloco="let t">
 <ng-template #bar>
-  <app-page-bar [title]="t('sleeping.sleepList') || 'Sleep list'" [backButton]="embedded()" [backTo]="embedded() ? null : '/'" [backLabel]="embedded() ? (t('sleeping.backToHome') || 'Back to home') : (t('sleeping.backToMyFriends') || 'Back to my friends')" (backClick)="closed.emit()">
-    <svg barIcon viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
-  </app-page-bar>
+  <!-- the same top as Home, but only about the friends who sleep -->
+  <app-home-top />
+  <h1 class="sf-home-hi">{{ t('sleeping.sleepList') || 'Sleep list' }}</h1>
+  <p class="sf-home-sub">{{ t('sleeping.emptyHint') || 'A friend who sleeps gives the seat back. You keep the conversation and can wake them any time.' }}</p>
+  <div class="d-flex justify-content-center">
+    @if (embedded()) {
+      <button type="button" class="btn btn-light btn-sm" (click)="closed.emit()">‹ {{ t('sleeping.goToFriends') || 'Go to Friends' }}</button>
+    } @else {
+      <a routerLink="/" class="btn btn-light btn-sm">‹ {{ t('sleeping.goToFriends') || 'Go to Friends' }}</a>
+    }
+  </div>
 </ng-template>
 <ng-template #card let-friend="friend">
     <article class="sf-sl-card" [style.--sf-friend]="colorOf(friend.color)">
@@ -15,7 +23,7 @@
         </span>
         <span class="sf-sl-card-text">
           <a [routerLink]="['/friends', friend.id]" (click)="opened()" class="sf-sl-card-name">{{ friend.name }}</a>
-          <span class="sf-hint">{{ friend.group ? (t('friendProfile.group') || 'Group') + ' · ' + (friend.members ?? 1) + ' ' + (t('friendProfile.peopleCount') || 'people') : lastSpoken(friend) }}</span>
+          <span class="sf-hint">{{ friend.group ? (t('sleeping.group') || 'Group') + ' · ' + (friend.members ?? 1) + ' ' + (t('sleeping.peopleCount') || 'people') : lastSpoken(friend) }}</span>
         </span>
         @if (unread().get(friend.id); as count) {
           <span class="badge rounded-pill text-bg-danger">{{ count === 1 ? 'New message' : (t('sleeping.countNewMessages', { count: count }) || count + ' new messages') }}</span>
@@ -74,7 +82,7 @@
           <li class="sf-sl-item" [class.sf-sl-on]="expanded() === friend.id">
             <button type="button" class="sf-hs-friend sf-sl-btn" [style.--sf-friend]="colorOf(friend.color)" (click)="toggleProfile(friend)" [attr.aria-expanded]="expanded() === friend.id" [attr.aria-label]="friend.name">
               <span class="sf-hs-ring">
-                <app-friend-avatar [friend]="friend" [seat]="1" [size]="42" />
+                <app-friend-avatar [friend]="friend" [seat]="1" [size]="56" />
                 @if (unread().get(friend.id); as count) {
                   <span class="sf-hs-unread" [attr.aria-label]="(t('sleeping.countUnread', { count: count }) || count + ' unread')">{{ count }}</span>
                 }
@@ -95,12 +103,14 @@
   }
 </ng-template>
 @if (embedded()) {
-  <section [attr.aria-label]="(t('sleeping.silentMany', { many: w.many }) || 'Sleeping ' + w.many)">
+  <section class="sf-sl-body" (click)="tapAway($event)" [attr.aria-label]="(t('sleeping.silentMany', { many: w.many }) || 'Sleeping ' + w.many)">
     <ng-container [ngTemplateOutlet]="bar" />
-    <div class="sf-sl-body"><ng-container [ngTemplateOutlet]="body" /></div>
+    <ng-container [ngTemplateOutlet]="body" />
   </section>
 } @else {
-  <ng-container [ngTemplateOutlet]="bar" />
-  <main class="sf-page"><ng-container [ngTemplateOutlet]="body" /></main>
+  <main class="sf-page" (click)="tapAway($event)">
+    <ng-container [ngTemplateOutlet]="bar" />
+    <ng-container [ngTemplateOutlet]="body" />
+  </main>
 }
 </ng-container>

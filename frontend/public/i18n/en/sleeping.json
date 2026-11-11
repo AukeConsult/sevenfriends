@@ -28,5 +28,7 @@
   "sleepingCount": "Sleeping ({{ count }}) · conversations are kept",
   "view": "View",
   "viewCircles": "Circles",
-  "viewList": "List"
+  "viewList": "List",
+  "group": "Group",
+  "peopleCount": "people"
 }

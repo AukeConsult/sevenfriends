@@ -28,5 +28,7 @@
   "sleepingCount": "בשינה ({{ count }}) · השיחות נשמרות",
   "view": "תצוגה",
   "viewCircles": "עיגולים",
-  "viewList": "רשימה"
+  "viewList": "רשימה",
+  "group": "קבוצה",
+  "peopleCount": "אנשים"
 }

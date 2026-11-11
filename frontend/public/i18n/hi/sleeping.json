@@ -28,5 +28,7 @@
   "sleepingCount": "सो रहे ({{ count }}) · बातचीत सुरक्षित हैं",
   "view": "दृश्य",
   "viewCircles": "गोले",
-  "viewList": "सूची"
+  "viewList": "सूची",
+  "group": "समूह",
+  "peopleCount": "लोग"
 }

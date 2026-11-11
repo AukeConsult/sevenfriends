@@ -28,5 +28,7 @@
   "sleepingCount": "Sover ({{ count }}) · samtal sparas",
   "view": "Visning",
   "viewCircles": "Cirklar",
-  "viewList": "Lista"
+  "viewList": "Lista",
+  "group": "Grupp",
+  "peopleCount": "personer"
 }

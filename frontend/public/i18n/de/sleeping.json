@@ -28,5 +28,7 @@
   "sleepingCount": "Schlafend ({{ count }}) · Unterhaltungen bleiben erhalten",
   "view": "Ansicht",
   "viewCircles": "Kreise",
-  "viewList": "Liste"
+  "viewList": "Liste",
+  "group": "Gruppe",
+  "peopleCount": "Personen"
 }

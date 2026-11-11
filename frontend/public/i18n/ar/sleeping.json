@@ -28,5 +28,7 @@
   "sleepingCount": "النائمون ({{ count }}) · المحادثات محفوظة",
   "view": "العرض",
   "viewCircles": "دوائر",
-  "viewList": "قائمة"
+  "viewList": "قائمة",
+  "group": "مجموعة",
+  "peopleCount": "أشخاص"
 }

@@ -1,5 +1,5 @@
-<!-- the pages are made again when the circle changes (the track value is the switch count), so no page keeps anything of the old circle -->
-@for (switched of [active.epoch()]; track switched) {
+<!-- the pages are made again when the circle changes (the track value is the switch count, written as text so Angular does not warn about the intended re-creation), so no page keeps anything of the old circle -->
+@for (switched of [active.epoch()]; track switched + "") {
   <router-outlet />
 }
 @if (auth.user()) {

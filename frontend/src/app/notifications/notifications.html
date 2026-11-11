@@ -1,5 +1,5 @@
 <ng-container *transloco="let t">
-<main [class.sf-page]="!silentOpen() && !addOpen()">
+<main [class.sf-page]="!addOpen()">
   @if (silentOpen()) {
     <!-- the silent list, from the top down: everything else is hidden -->
     <app-sleeping [embedded]="true" (closed)="silentOpen.set(false)" />

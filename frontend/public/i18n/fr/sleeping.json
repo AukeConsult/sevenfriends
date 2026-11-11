@@ -28,5 +28,7 @@
   "sleepingCount": "En veille ({{ count }}) · les conversations sont conservées",
   "view": "Affichage",
   "viewCircles": "Cercles",
-  "viewList": "Liste"
+  "viewList": "Liste",
+  "group": "Groupe",
+  "peopleCount": "personnes"
 }

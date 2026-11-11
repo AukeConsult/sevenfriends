@@ -28,5 +28,7 @@
   "sleepingCount": "Slapend ({{ count }}) · gesprekken blijven bewaard",
   "view": "Weergave",
   "viewCircles": "Cirkels",
-  "viewList": "Lijst"
+  "viewList": "Lijst",
+  "group": "Groep",
+  "peopleCount": "mensen"
 }

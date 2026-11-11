@@ -28,5 +28,7 @@
   "sleepingCount": "Спят ({{ count }}) · переписка сохраняется",
   "view": "Вид",
   "viewCircles": "Круги",
-  "viewList": "Список"
+  "viewList": "Список",
+  "group": "Группа",
+  "peopleCount": "человек"
 }

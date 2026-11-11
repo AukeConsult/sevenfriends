@@ -30,7 +30,7 @@
             @if (request.fromUnverified.length) { <small class="text-warning-emphasis">{{ t('pending.hasNotVerifiedTheir') || 'Has not verified their email or phone, so we cannot be sure it is really them. Do you know them? Then free a seat and confirm. If not, reject.' }}</small> }
           </span>
           <span class="badge rounded-pill text-bg-warning">{{ t('pending.pending') || 'Pending' }}</span>
-          <button type="button" class="btn btn-outline-secondary" (click)="reject(request)">{{ t('pending.reject') || 'Reject' }}</button>
+          <button type="button" class="btn btn-outline-secondary btn-sm" (click)="reject(request)">{{ t('pending.reject') || 'Reject' }}</button>
         </li>
       }
     </ul>

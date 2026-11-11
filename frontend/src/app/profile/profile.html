@@ -96,7 +96,7 @@
             @if (emailVerified()) {
               <span class="input-group-text text-success fw-semibold">{{ t('profile.verified') || 'Verified' }}</span>
             } @else {
-              <button type="button" class="btn btn-outline-primary" [disabled]="verificationSent()" (click)="sendVerificationEmail()">
+              <button type="button" class="btn btn-outline-primary btn-sm" [disabled]="verificationSent()" (click)="sendVerificationEmail()">
                 {{ verificationSent() ? (t('profile.sent') || 'Sent') : (t('profile.verify') || 'Verify') }}
               </button>
             }
@@ -143,7 +143,7 @@
             <span class="input-group-text text-success fw-semibold">{{ t('profile.verified') || 'Verified' }}</span>
           } @else {
             <!-- TODO: bring back when SMS verification is ready
-            <button type="button" class="btn btn-outline-primary" [disabled]="loading() || !form().phone.trim()" (click)="verifyPhone()">Verify</button>
+            <button type="button" class="btn btn-outline-primary btn-sm" [disabled]="loading() || !form().phone.trim()" (click)="verifyPhone()">Verify</button>
             -->
           }
         </div>
@@ -174,20 +174,20 @@
           <input type="text" class="form-control" [value]="url" readonly [attr.aria-label]="t('profile.inviteTitle') || 'Your invite link'" (focus)="$any($event.target).select()" />
         }
         <div class="d-flex flex-wrap gap-2">
-          <button type="button" class="btn btn-primary" (click)="invite.share()">{{ t('profile.shareLink') || 'Share link' }}</button>
-          @if (!invite.canShare) { <button type="button" class="btn btn-light" (click)="invite.copy()">{{ t('profile.copyLink') || 'Copy link' }}</button> }
+          <button type="button" class="btn btn-primary btn-sm" (click)="invite.share()">{{ t('profile.shareLink') || 'Share link' }}</button>
+          @if (!invite.canShare) { <button type="button" class="btn btn-light btn-sm" (click)="invite.copy()">{{ t('profile.copyLink') || 'Copy link' }}</button> }
           @if (confirmNewLink()) {
             <span class="small align-self-center">{{ t('profile.oldStops') || 'The old link stops working.' }}</span>
-            <button type="button" class="btn btn-outline-danger" (click)="confirmNewLink.set(false); invite.reset()">{{ t('profile.makeNew') || 'Make new link' }}</button>
-            <button type="button" class="btn btn-light" (click)="confirmNewLink.set(false)">{{ t('profile.cancel') || 'Cancel' }}</button>
+            <button type="button" class="btn btn-outline-danger btn-sm" (click)="confirmNewLink.set(false); invite.reset()">{{ t('profile.makeNew') || 'Make new link' }}</button>
+            <button type="button" class="btn btn-light btn-sm" (click)="confirmNewLink.set(false)">{{ t('profile.cancel') || 'Cancel' }}</button>
           } @else {
-            <button type="button" class="btn btn-light" (click)="confirmNewLink.set(true)">{{ t('profile.newLink') || 'New link…' }}</button>
+            <button type="button" class="btn btn-light btn-sm" (click)="confirmNewLink.set(true)">{{ t('profile.newLink') || 'New link…' }}</button>
           }
         </div>
         @if (invite.note(); as note) { <p class="small text-secondary m-0" role="status">{{ note }}</p> }
       } @else if (invite.problem(); as why) {
         <p class="small text-danger m-0" role="alert">{{ why }}</p>
-        <button type="button" class="btn btn-light align-self-start" (click)="invite.load()">{{ t('profile.tryAgain') || 'Try again' }}</button>
+        <button type="button" class="btn btn-light btn-sm align-self-start" (click)="invite.load()">{{ t('profile.tryAgain') || 'Try again' }}</button>
       } @else {
         <p class="small text-secondary m-0">{{ t('profile.loading') || 'Loading…' }}</p>
       }

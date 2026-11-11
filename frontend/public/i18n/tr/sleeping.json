@@ -28,5 +28,7 @@
   "sleepingCount": "Uyuyanlar ({{ count }}) · sohbetler saklanır",
   "view": "Görünüm",
   "viewCircles": "Daireler",
-  "viewList": "Liste"
+  "viewList": "Liste",
+  "group": "Grup",
+  "peopleCount": "kişi"
 }

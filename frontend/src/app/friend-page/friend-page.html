@@ -121,7 +121,7 @@
 
 <!-- what the padlock just did, in plain words: it fades away by itself -->
 <div class="sf-lock-toast-anchor" [style.top.px]="ctx.barHeight()">
-  @for (n of [ctx.lockNoticeSeq()]; track n) {
+  @for (n of [ctx.lockNoticeSeq()]; track n + '') {
     @if (ctx.lockNotice(); as notice) {
       <p class="sf-lock-toast" [class.sf-on]="ctx.messagesLocked()" role="status">{{ notice }}</p>
     }

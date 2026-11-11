@@ -28,5 +28,7 @@
   "sleepingCount": "Śpią ({{ count }}) · rozmowy są zachowane",
   "view": "Widok",
   "viewCircles": "Kółka",
-  "viewList": "Lista"
+  "viewList": "Lista",
+  "group": "Grupa",
+  "peopleCount": "osób"
 }

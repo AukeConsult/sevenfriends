@@ -991,16 +991,15 @@ app-voice { display: contents; }
 .sf-bar-actions { display: flex; margin-inline-start: auto; }
 .sf-bar-actions .sf-icon-btn { margin: 0; }
 @media (max-width: 575.98px) { .sf-bar-actions .sf-tool-btn { min-width: 2.375rem; padding-inline: 0.0625rem; svg { width: 20px; height: 20px; } } } // The buttons in a header are a little narrower and smaller on a phone, so the name has more room
-// the friend header on a phone has two rows: the picture, the name with its status and the three dots on top; the four pages as tabs with a word under each icon below
+// the friend header: on a phone one row (picture, name with its status, the icons); on a wider view each icon has a word under it
 .sf-bar .sf-bar-actions .sf-tool-btn { min-width: 4rem; padding-inline: 0.5rem; } // on a wider view the header has room for a word under each icon too
 .sf-bar .sf-bar-actions .sf-tool-label { display: block; font-size: 0.7rem; line-height: 1.2; white-space: nowrap; }
 @media (max-width: 575.98px) {
-  .sf-bar:has(.sf-bar-actions) { flex-wrap: wrap; padding-bottom: 0.25rem; }
-  .sf-bar:has(.sf-bar-actions) .sf-bar-text { flex: 1 1 0; }
-  .sf-bar > .sf-more { order: 1; margin-inline-start: auto; margin-inline-end: -1rem; }
-  .sf-bar .sf-bar-actions { order: 2; flex: 0 0 100%; margin-inline-start: 0; padding-inline-start: 0.5rem; justify-content: space-around; }
-  .sf-bar .sf-bar-actions .sf-tool-btn { min-width: 4rem; padding-inline: 0.5rem; }
-  .sf-bar .sf-bar-actions .sf-tool-label { display: block; font-size: 0.7rem; line-height: 1.2; white-space: nowrap; }
+  .sf-bar:has(.sf-bar-actions) .sf-bar-text { flex: 1 1 0; min-width: 0; } // one row: the name (with its status line) takes what the icons leave and is cut with ... when too long
+  .sf-bar .sf-bar-actions { flex: none; margin-inline-start: 0; gap: 0; }
+  .sf-bar .sf-bar-actions .sf-tool-btn { min-width: 2.375rem; padding-inline: 0.0625rem; }
+  .sf-bar .sf-bar-actions .sf-tool-label { display: none; } // on a phone the icons stand alone (they keep their name for screen readers and as a tooltip)
+  .sf-bar > .sf-more { margin-inline-end: 0; }
 }
 .sf-cleanup-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem 0.75rem; } // the count on the left, the button on the right, on one line
 .sf-cleanup { display: flex; flex-direction: column; gap: 0.5rem; padding: 0.75rem var(--sf-gutter); background: var(--sf-card); border-bottom: 1px solid var(--sf-border); }
@@ -1654,8 +1653,8 @@ app-capture-button { display: contents; } // the capture button is its button (o
 .sf-member .btn { margin-inline-start: auto; }
 
 // Sleep list: the seat strip, a card for each sleeper (Wake up, Open, Delete), the empty page
-.sf-sl-seats { display: flex; align-items: center; gap: 0.75rem; background: var(--sf-primary-soft, #e3eaf7); color: var(--sf-primary); border-radius: var(--sf-radius); padding: 0.75rem 1rem; }
-.sf-sl-count { font-size: var(--sf-fs-title); font-weight: 800; white-space: nowrap; }
+.sf-sl-seats { display: flex; align-items: center; justify-content: center; gap: 0.5rem; align-self: center; background: var(--sf-primary-soft, #e3eaf7); color: var(--sf-primary); border-radius: 999px; padding: 0.125rem 0.75rem; } // one small line, not a big box
+.sf-sl-count { font-size: var(--sf-fs-description); font-weight: 800; white-space: nowrap; }
 .sf-sl-seats-text { font-size: var(--sf-fs-description); }
 .sf-sl-cards { display: flex; flex-direction: column; gap: 0.75rem; }
 .sf-sl-card { display: flex; flex-direction: column; gap: 0.75rem; background: #fff; border: 1px solid var(--sf-border); border-radius: var(--sf-radius); padding: 0.75rem 1rem; }
@@ -1667,14 +1666,14 @@ app-capture-button { display: contents; } // the capture button is its button (o
 .sf-sl-empty-icon { display: grid; place-items: center; width: 6rem; height: 6rem; border-radius: 50%; background: var(--sf-header); color: var(--sf-primary); }
 .sf-sl-views { display: flex; gap: 0.5rem; }
 .sf-sl-row { display: flex; flex-wrap: wrap; gap: 0.75rem 0.5rem; }
-.sf-sl-item { width: 4.25rem; }
+.sf-sl-item { width: 5rem; }
 .sf-sl-btn { width: 100%; padding: 0; border: 0; background: none; font: inherit; }
-.sf-sl-row .sf-hs-ring { width: 3.25rem; height: 3.25rem; }
+.sf-sl-row .sf-hs-ring { width: 4rem; height: 4rem; }
 .sf-sl-name { display: block; max-width: 100%; font-size: var(--sf-fs-description); line-height: 1.2; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: center; }
 .sf-sl-on .sf-hs-ring { box-shadow: 0 0 0 2px var(--sf-card), 0 0 0 4px var(--sf-primary); }
-.sf-sl-body { display: flex; flex-direction: column; gap: 1rem; padding: 1rem var(--sf-gutter) calc(4.5rem + env(safe-area-inset-bottom)); } // the sleep list inside Home is a full page now: side room and room for the bottom menu
-.sf-sl-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
-.sf-sl-toolbar .sf-hint { flex: 1; min-width: 0; }
+.sf-sl-body { min-height: calc(100dvh - 7rem); display: flex; flex-direction: column; gap: 1rem; } // the sleep list inside Home: Home's own page (main.sf-page) gives the side room, the top and the room for the bottom menu, so the top is exactly Home's
+.sf-sl-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.5rem 1rem; text-align: center; } // centred, like the heading and the circles
+.sf-sl-toolbar .sf-hint { min-width: 0; }
 .sf-sl-views .btn { display: grid; place-items: center; width: 2.25rem; padding: 0; } // the two views are icons: small circles and lines
 .sf-member-link { flex: 1; min-width: 0; display: flex; align-items: center; gap: 0.75rem; color: inherit; text-decoration: none; } // the picture and the name of a member: a link to the conversation with that friend when it is my friend
 .sf-sender { display: block; margin-bottom: 0.125rem; font-weight: 600; } // in a group feed: the name of the one who wrote the message, above the bubble

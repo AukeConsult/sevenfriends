@@ -46,7 +46,7 @@
         <div class="input-group">
           <input type="text" class="form-control" [value]="text" [maxLength]="quickLength" [attr.placeholder]="tx('settings.forExampleIM') || 'For example: I\'m on my way'"
                  (change)="setQuick($index, $any($event.target).value)" [attr.aria-label]="(tx('settings.readyMadeMessageIndex', { index: $index + 1 }) || 'Ready-made message ' + ($index + 1))" autocomplete="off" />
-          <button type="button" class="btn btn-outline-secondary" (click)="removeQuick($index)" [attr.aria-label]="(tx('settings.removeMessageIndex', { index: $index + 1 }) || 'Remove message ' + ($index + 1))">✕</button>
+          <button type="button" class="btn btn-outline-secondary btn-sm" (click)="removeQuick($index)" [attr.aria-label]="(tx('settings.removeMessageIndex', { index: $index + 1 }) || 'Remove message ' + ($index + 1))">✕</button>
         </div>
       }
       @if (quick().length < quickMax) {

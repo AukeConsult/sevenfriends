@@ -28,5 +28,7 @@
   "sleepingCount": "Sover ({{ count }}) · samtaler gemmes",
   "view": "Visning",
   "viewCircles": "Cirkler",
-  "viewList": "Liste"
+  "viewList": "Liste",
+  "group": "Gruppe",
+  "peopleCount": "personer"
 }

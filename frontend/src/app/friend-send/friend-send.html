@@ -23,7 +23,7 @@
     }
     @if (attach(); as kind) {
         <div class="sf-send-attach">
-          @for (k of [kind]; track k) {
+          @for (k of [kind]; track k + '') {
             <app-add-media [kind]="k" [friendId]="ctx.friendId" [hosted]="true" [caption]="text()" (closed)="attach.set(null)" (sent)="attached()" />
           }
         </div>
@@ -69,7 +69,7 @@
           <div class="d-flex gap-2">
             <input type="text" class="form-control" [value]="row" [maxLength]="quickLength" [attr.placeholder]="t('friendSend.forExampleIM') || 'For example: I\'m on my way'"
                    (input)="setRow($index, $any($event.target).value)" [attr.aria-label]="(t('friendSend.messageForFriendnameIndex', { friendName: friendName(), index: $index + 1 }) || 'Message for ' + friendName() + ' ' + ($index + 1))" autocomplete="off" />
-            <button type="button" class="btn btn-outline-secondary" (click)="removeRow($index)" [attr.aria-label]="(t('friendSend.removeMessageIndex', { index: $index + 1 }) || 'Remove message ' + ($index + 1))">✕</button>
+            <button type="button" class="btn btn-outline-secondary btn-sm" (click)="removeRow($index)" [attr.aria-label]="(t('friendSend.removeMessageIndex', { index: $index + 1 }) || 'Remove message ' + ($index + 1))">✕</button>
           </div>
         }
         @if (rows().length < quickMax) {

@@ -96,7 +96,7 @@
           }
           <button type="button" class="btn btn-light btn-sm align-self-start" (click)="adding.set(false)">{{ t('friendProfile.cancel') || 'Cancel' }}</button>
         } @else {
-          <button type="button" class="btn btn-primary" (click)="adding.set(true)">{{ t('friendProfile.addAPerson') || 'Add a friend to the group' }}</button>
+          <button type="button" class="btn btn-primary btn-sm" (click)="adding.set(true)">{{ t('friendProfile.addAPerson') || 'Add a friend to the group' }}</button>
         }
       </section>
 
@@ -154,8 +154,8 @@
       }
       @if (f.incoming && f.status === 'pending') {
         <div class="sf-actions">
-          <button type="button" class="btn btn-primary flex-fill" (click)="confirm(f)" [disabled]="busy()">{{ t('friendProfile.confirm') || 'Confirm' }}</button>
-          <button type="button" class="btn btn-outline-secondary flex-fill" (click)="reject(f)" [disabled]="busy()">{{ t('friendProfile.reject') || 'Reject' }}</button>
+          <button type="button" class="btn btn-primary btn-sm flex-fill" (click)="confirm(f)" [disabled]="busy()">{{ t('friendProfile.confirm') || 'Confirm' }}</button>
+          <button type="button" class="btn btn-outline-secondary btn-sm flex-fill" (click)="reject(f)" [disabled]="busy()">{{ t('friendProfile.reject') || 'Reject' }}</button>
         </div>
       }
     </section>

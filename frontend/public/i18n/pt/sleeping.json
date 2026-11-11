@@ -28,5 +28,7 @@
   "sleepingCount": "Dormindo ({{ count }}) · as conversas ficam guardadas",
   "view": "Vista",
   "viewCircles": "Círculos",
-  "viewList": "Lista"
+  "viewList": "Lista",
+  "group": "Grupo",
+  "peopleCount": "pessoas"
 }

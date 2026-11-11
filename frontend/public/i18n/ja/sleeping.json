@@ -28,5 +28,7 @@
   "sleepingCount": "睡眠中 ({{ count }}) · 会話は保存されます",
   "view": "表示",
   "viewCircles": "丸",
-  "viewList": "リスト"
+  "viewList": "リスト",
+  "group": "グループ",
+  "peopleCount": "人"
 }

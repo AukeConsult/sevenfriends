@@ -28,5 +28,7 @@
   "sleepingCount": "休眠中 ({{ count }}) · 对话已保留",
   "view": "视图",
   "viewCircles": "圆圈",
-  "viewList": "列表"
+  "viewList": "列表",
+  "group": "群组",
+  "peopleCount": "人"
 }

@@ -104,7 +104,7 @@
     }
     @if (attachKind()) {
       <!-- an image, video or voice message: opens here, above the message field, not as a page -->
-      @for (k of [attachKind()!]; track k) {
+      @for (k of [attachKind()!]; track k + '') {
         <app-add-media [kind]="k" [friendId]="friendId" (closed)="attachKind.set(null)" (sent)="attached($event)" />
       }
     }

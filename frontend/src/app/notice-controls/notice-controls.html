@@ -217,7 +217,7 @@
         <div class="input-group flex-nowrap">
           <a class="btn btn-outline-secondary flex-grow-1 min-w-0 justify-content-between text-start" [routerLink]="['/settings/sounds', item.event]" [queryParams]="setup() ? { setup: 1 } : null"
              [attr.aria-label]="(t('noticeControls.chooseTheSoundFor', { label: item.label }) || 'Choose the sound for ' + item.label)"><span class="sf-ellipsis">{{ soundLabel(item.event) }}</span><span class="ms-2" aria-hidden="true">›</span></a>
-          <button type="button" class="btn btn-outline-primary flex-shrink-0 text-nowrap" [disabled]="sounds.choices()[item.event] === 'none'"
+          <button type="button" class="btn btn-outline-primary btn-sm flex-shrink-0 text-nowrap" [disabled]="sounds.choices()[item.event] === 'none'"
                   (click)="tryOut(item.event)" [attr.aria-label]="(sounds.playingKey() === item.event ? 'Stop the sound for ' : 'Play the sound for ') + item.label">{{ sounds.playingKey() === item.event ? (t('noticeControls.stop') || '■ Stop') : (t('noticeControls.play') || '▶ Play') }}</button>
         </div>
       </div>

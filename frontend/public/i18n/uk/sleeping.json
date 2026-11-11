@@ -28,5 +28,7 @@
   "sleepingCount": "Сплять ({{ count }}) · розмови зберігаються",
   "view": "Вигляд",
   "viewCircles": "Кола",
-  "viewList": "Список"
+  "viewList": "Список",
+  "group": "Група",
+  "peopleCount": "осіб"
 }

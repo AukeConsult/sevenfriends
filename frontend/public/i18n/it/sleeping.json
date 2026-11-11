@@ -28,5 +28,7 @@
   "sleepingCount": "Dormono ({{ count }}) · le conversazioni restano",
   "view": "Vista",
   "viewCircles": "Cerchi",
-  "viewList": "Elenco"
+  "viewList": "Elenco",
+  "group": "Gruppo",
+  "peopleCount": "persone"
 }

@@ -28,5 +28,7 @@
   "sleepingCount": "잠든 친구 ({{ count }}) · 대화는 보관됩니다",
   "view": "보기",
   "viewCircles": "원",
-  "viewList": "목록"
+  "viewList": "목록",
+  "group": "그룹",
+  "peopleCount": "명"
 }

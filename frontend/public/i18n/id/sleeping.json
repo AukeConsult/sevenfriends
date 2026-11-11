@@ -28,5 +28,7 @@
   "sleepingCount": "Tidur ({{ count }}) · percakapan tersimpan",
   "view": "Tampilan",
   "viewCircles": "Lingkaran",
-  "viewList": "Daftar"
+  "viewList": "Daftar",
+  "group": "Grup",
+  "peopleCount": "orang"
 }

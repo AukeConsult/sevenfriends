@@ -10,7 +10,7 @@ import { FriendsService } from '../core/friends.service';
 import { MessagesService } from '../core/messages.service';
 import { timeAgo } from '../core/time-ago';
 import { Friend, profileColorHex } from '../models';
-import { PageBar } from '../page-bar/page-bar';
+import { HomeTop } from '../home-top/home-top';
 
 const MAX_FRIENDS = 7; // seats (the same number as on the Friends page)
 
@@ -20,7 +20,8 @@ const MAX_FRIENDS = 7; // seats (the same number as on the Friends page)
  */
 @Component({
   selector: 'app-sleeping',
-  imports: [PageBar, NgTemplateOutlet, RouterLink, FriendAvatar, TranslocoDirective],
+  host: { style: 'display: block' },
+  imports: [HomeTop, NgTemplateOutlet, RouterLink, FriendAvatar, TranslocoDirective],
   templateUrl: './sleeping.html',
   providers: [provideTranslocoScope('sleeping')],
 })
@@ -65,6 +66,14 @@ export class Sleeping {
   /** the sleeper whose card is open (circles view) */
   protected readonly expanded = signal<string | null>(null);
   protected readonly selected = computed(() => this.sleeping().find((f) => f.id === this.expanded()) ?? null);
+
+  /** A tap on an empty part of the page goes back; anything that has its own function (buttons, links, the cards and circles) keeps it. */
+  protected tapAway(event: Event): void {
+    const target = event.target as HTMLElement | null;
+    if (target?.closest('button, a, input, select, textarea, label, article, .sf-sl-item')) return;
+    if (this.embedded()) this.closed.emit();
+    else void this.router.navigate(['/']);
+  }
 
   protected setView(view: 'circles' | 'list'): void {
     this.view.set(view);

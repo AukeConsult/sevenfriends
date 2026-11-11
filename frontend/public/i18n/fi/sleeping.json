@@ -28,5 +28,7 @@
   "sleepingCount": "Nukkuvat ({{ count }}) · keskustelut säilyvät",
   "view": "Näkymä",
   "viewCircles": "Ympyrät",
-  "viewList": "Lista"
+  "viewList": "Lista",
+  "group": "Ryhmä",
+  "peopleCount": "henkilöä"
 }
