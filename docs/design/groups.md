@@ -2,7 +2,7 @@
 
 A group is **a friend with several people in it**. From one member's point of view it is an ordinary entry in the friend list: it sits in a seat, can be put on the sleep list, and is deleted like a friend. It has its own conversation and its own safebox, shared by all members.
 
-Status: built (backend tested in `functions/test/groups.test.ts`, 18 tests; the frontend has not been run yet). Not built: see "Not done yet".
+Status: built (backend tested in `functions/test/groups.test.ts` and `group-keys.test.ts`; the frontend is built but has not been run through a build or a test). Not built: see "Not done yet".
 
 ## The data
 
@@ -71,8 +71,14 @@ A group is not a person: no presence, no mood, no country, no phone/email, no "n
 
 ## In the app
 - Add a friend → "A group" → name → the group is made and shown in a seat ("Group · only you" / "Group · N people").
-- The profile of the group (`friend-profile`) has the name and description (autosaved), the picture, the list of people with **Remove** (only for the maker) and **Add a friend to the group** (lists my confirmed friends who are not in it).
-- Everything else (conversation, safebox, sleep list, delete) is the page of a friend.
+- **The profile of the group** (`friend-profile`): name and description (autosaved), the picture, a badge for **each member** with their picture and a link to the member's feed, **Add a friend to the group** (lists my confirmed friends who are not in it), the rules for who may remove whom, a note that a new member sees only what is written after they joined, and a **Leave the group** button (in a frame under the button, never a pop-up). The sleep / wake / delete buttons are icons in the header of the page.
+- **The feed shows who wrote each message** in a group: the writer's picture (or initials) and name in front of every message that is not mine (`ChatMessage.fromUid`, resolved with `MemberPictureService`, which reads each member's picture once).
+- **The sleep list** looks like the front page (the same top, a heading, the seats pill, circles that flow left to right or a list of cards). A group on the list shows "Group · N people". Tapping a friend opens the card with wake, open and profile; tapping an empty part of the page goes back.
+- Everything else (conversation, safebox, delete) is the page of a friend.
+
+## Leaving and the database
+- **Leave** is `DELETE /:friendId` and runs `leaveGroup`: the member's messages, safebox items (`deleteItemsOf`) and reminders are deleted; the owner role passes to the next person in `memberOrder`; the last one out wipes the group and its box. The remaining members get a push.
+- **Reads are small**: a group is read with `groupHead(groupId, fields)` (`getAll` with a field mask), so the picture data URL is not read on every call. The fake Firestore enforces field masks, so a test fails when a field that was not asked for is used. New composite indexes are in `firestore.indexes.json`; deploy them with `firebase deploy --only firestore:indexes`.
 
 ## Not done yet
 1. **Open questions**: "ask to remove" that the owner confirms (only discussed).
