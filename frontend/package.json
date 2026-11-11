@@ -28,7 +28,7 @@
     ]
   },
   "private": true,
-  "license": "GPL-3.0-only",
+  "license": "PolyForm-Noncommercial-1.0.0",
   "author": "Leif Auke <leif@auke.no> (Blueboot R&D AS)",
   "dependencies": {
     "@angular/common": "^20.3.0",

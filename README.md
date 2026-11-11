@@ -1,6 +1,6 @@
 # Seven Friends
 
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
+[![License: PolyForm Noncommercial 1.0.0](https://img.shields.io/badge/License-PolyForm%20Noncommercial-blue.svg)](LICENSE)
 
 A calm, simple app for staying in touch with the seven people who matter most to you. Seven seats, no feed, no ads, no noise:
 you notice your friends, and they notice you.
@@ -223,18 +223,25 @@ Ideas, bug reports and pull requests are welcome. Read [`CONTRIBUTING.md`](CONTR
 
 ## Trademarks and brand
 
-**The software is free. The brand is not.**
+**The code is free for non-commercial use. The brand is not free at all.**
 
-The names **Seven Friends**, **Seven Buddies**, **Seven Work** and **Seven Family**, the domain names, the logos (including the "7" mark), the look of the apps and welcome pages, and the profiles and identity of the circles are trademarks and brand assets of Blueboot R&D AS. They are **not** covered by the GPL, and they may **not** be used freely for other installations, forks or services.
+The names **Seven Friends**, **Seven Buddies**, **Seven Work** and **Seven Family**, the domain names, the logos (including the "7" mark), the look of the apps and welcome pages, and the profiles and identity of the circles are trademarks and brand assets of Blueboot R&D AS. They are **not** covered by the software license, and they may **not** be used freely for other installations, forks or services.
 
-- The GPL v3 licence gives you the right to use, study, change and share the **source code**. It gives no right to the names, logos or brand, and no right to present your installation as the official one or as a service of Blueboot R&D AS.
+- The software license (below) gives you the right to use, study, change and share the **source code** for non-commercial purposes. It gives no right to the names, logos or brand, and no right to present your installation as the official one or as a service of Blueboot R&D AS.
 - If you run your own installation or publish a fork, give it **your own name, logo and look**, and remove ours (see `frontend/public/`, the welcome pages, the app names in `android/`, `ios/` and `windows/`, and the texts in `frontend/public/i18n/`).
 - The idea of the product, a small, calm app built around seven seats and its circles, is the work of Blueboot R&D AS and is not offered for free reuse under the Seven names.
-- For permission to use the name or to run an official or branded installation, write to [hey@blueboot.ai](mailto:hey@blueboot.ai).
+- For commercial use of the software, for permission to use the name, or to run an official or branded installation, write to [hey@blueboot.ai](mailto:hey@blueboot.ai).
 
 ## License
 
-Seven Friends is free software, released under the **GNU General Public License v3.0**. See [`LICENSE`](LICENSE). The licence covers the software only; see [Trademarks and brand](#trademarks-and-brand).
+The source code is released under the **[PolyForm Noncommercial License 1.0.0](LICENSE)**. In short:
+
+- You may read, run, change and share the code for **non-commercial** purposes: personal use, study, research, hobby projects, and use by charities, schools and public bodies, as the license text defines.
+- **Commercial use is not allowed** under this license. That includes selling it, offering it as a paid or advertising-supported service, and building it into a commercial product. To use it commercially, [ask for a commercial license](mailto:hey@blueboot.ai).
+- Whoever receives a copy from you must receive the license text with it.
+- The names, logos and brand are **not** part of the license; see [Trademarks and brand](#trademarks-and-brand).
+
+This is a *source-available* license, not an open-source license in the sense of the Open Source Definition. Versions published before the change were released under the GNU General Public License v3.0 and stay available under that license for the people who received them. The license text in [`LICENSE`](LICENSE) is the only authority; this summary is a help, not a replacement.
 
 Made by [Blueboot R&D AS](https://blueboot.ai), Norway. Contact: [hey@blueboot.ai](mailto:hey@blueboot.ai).
 

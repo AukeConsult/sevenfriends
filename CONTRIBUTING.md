@@ -13,4 +13,4 @@ Thanks for wanting to help. Small, focused changes are the easiest to review.
 5. **Never commit secrets**: `.env`, service account keys, keystores and `google-services.json` are ignored on purpose.
 6. **Security problems** are reported privately, see [`SECURITY.md`](SECURITY.md).
 
-By contributing you agree that your contribution is released under the project's license, the GNU General Public License v3.0.
+By contributing you agree that your contribution is released under the project's license, the PolyForm Noncommercial License 1.0.0, and that Blueboot R&D AS may also license it under other terms (for example a commercial license). If you do not agree, please do not send a contribution.
