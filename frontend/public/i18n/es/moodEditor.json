@@ -1,7 +1,7 @@
 {
   "tapToSayHow": "Toca para decir cómo estás",
   "yourMood": "Tu estado de ánimo",
-  "noMood": "Sin estado de ánimo",
+  "noMood": "Ninguno",
   "aFewWordsAbout": "Unas palabras sobre cómo estás (opcional)",
   "moodMessage": "Mensaje de ánimo",
   "couldNotLoadYour": "No se pudo cargar tu estado de ánimo",

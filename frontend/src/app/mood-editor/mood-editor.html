@@ -28,11 +28,11 @@
       <div class="sf-choices sf-choices-grid" role="radiogroup" [attr.aria-label]="t('moodEditor.yourMood') || 'Your mood'">
         <!-- no mood at all: the empty choice -->
         <button type="button" class="sf-choice" role="radio" [attr.aria-checked]="mood() === null" [class.sf-chosen]="mood() === null"
-                [attr.aria-label]="t('moodEditor.noMood') || 'No mood'" [attr.title]="t('moodEditor.noMood') || 'No mood'" (click)="choose(null)">
+                [attr.aria-label]="t('moodEditor.noMood') || 'None'" [attr.title]="t('moodEditor.noMood') || 'None'" (click)="choose(null)">
           <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
             <circle cx="12" cy="12" r="9" /><path d="M5.6 5.6l12.8 12.8" />
           </svg>
-          <span class="small">{{ t('moodEditor.noMood') || 'No mood' }}</span>
+          <span class="small">{{ t('moodEditor.noMood') || 'None' }}</span>
         </button>
         @for (m of moods; track m.id) {
           <button type="button" class="sf-choice" role="radio" [attr.aria-checked]="mood() === m.id" [class.sf-chosen]="mood() === m.id"

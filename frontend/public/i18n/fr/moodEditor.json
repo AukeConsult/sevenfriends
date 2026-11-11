@@ -1,7 +1,7 @@
 {
   "tapToSayHow": "Appuie pour dire comment tu vas",
   "yourMood": "Ton humeur",
-  "noMood": "Pas d'humeur",
+  "noMood": "Aucun",
   "aFewWordsAbout": "Quelques mots sur comment tu vas (facultatif)",
   "moodMessage": "Message d'humeur",
   "couldNotLoadYour": "Impossible de charger ton humeur",

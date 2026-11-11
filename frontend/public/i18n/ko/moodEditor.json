@@ -1,7 +1,7 @@
 {
   "tapToSayHow": "눌러서 지금 기분을 알려 주세요",
   "yourMood": "내 기분",
-  "noMood": "기분 없음",
+  "noMood": "없음",
   "aFewWordsAbout": "지금 어떤지 짧게 적어 보세요 (선택)",
   "moodMessage": "기분 메시지",
   "couldNotLoadYour": "기분을 불러올 수 없어요",
