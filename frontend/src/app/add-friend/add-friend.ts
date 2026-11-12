@@ -1,3 +1,4 @@
+import { InviteDiagram } from '../invite-diagram/invite-diagram';
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { tr } from '../core/i18n';
 import { circleLink } from '../core/friend-link.service';
@@ -17,7 +18,7 @@ import { PageBar } from '../page-bar/page-bar';
  */
 @Component({
   selector: 'app-add-friend',
-  imports: [PageBar, RouterLink, Clearable, TranslocoDirective],
+  imports: [PageBar, InviteDiagram, RouterLink, Clearable, TranslocoDirective],
   templateUrl: './add-friend.html',
   providers: [provideTranslocoScope('addFriend')],
 })

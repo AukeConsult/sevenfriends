@@ -24,6 +24,7 @@
     }
 
     <h2 class="sf-section m-0">{{ t('addFriend.notOnAppYet', { app: w.app }) || 'Not on ' + w.app + ' yet?' }}</h2>
+    <app-invite-diagram />
     <p class="small text-secondary m-0">{{ t('addFriend.sendALinkIn') || 'Send a link in a text message, WhatsApp, social media or anywhere else. Nothing is saved until they sign up with it.' }}</p>
     <div class="d-flex flex-wrap gap-2">
       <button type="button" class="btn btn-outline-primary btn-sm" (click)="shareLink()">{{ t('addFriend.shareInviteLink') || 'Share invite link' }}</button>

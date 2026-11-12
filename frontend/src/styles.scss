@@ -1302,7 +1302,7 @@ nav.sf-tabs ~ * > app-page-bar { display: none !important; } // inside Settings 
   &:focus-visible { outline: 2px solid var(--sf-primary); outline-offset: 3px; border-radius: var(--sf-radius); }
   &.sf-hs-dim .sf-hs-ring { opacity: 0.6; }
 }
-.sf-hs-ring { position: relative; display: block; width: 3.75rem; height: 3.75rem; padding: 3px; border-radius: 50%; background: var(--sf-friend, var(--sf-border));
+.sf-hs-ring { position: relative; display: block; width: min(100%, 3.75rem); height: auto; aspect-ratio: 1; margin-inline: auto; padding: 3px; border-radius: 50%; background: var(--sf-friend, var(--sf-border));
   .sf-avatar { width: 100%; height: 100%; display: block; border-radius: 50%; background: var(--sf-card); }
   .sf-dot { inset-inline-end: 0; bottom: 0; width: 0.9rem; height: 0.9rem; } }
 .sf-hs-unread { position: absolute; inset-inline-end: -0.25rem; top: -0.25rem; min-width: 1.2rem; height: 1.2rem; padding: 0 0.3rem; border-radius: 0.6rem; background: var(--sf-primary); color: #fff; font-size: 0.75rem; font-weight: 700; line-height: 1.2rem; text-align: center; box-shadow: 0 0 0 2px var(--sf-surface, #fff); }
@@ -1312,6 +1312,8 @@ nav.sf-tabs ~ * > app-page-bar { display: none !important; } // inside Settings 
 .sf-hs-sub { display: inline-flex; align-items: center; gap: 0.2rem; max-width: 100%; font-size: 0.6875rem; line-height: 1.2; color: var(--sf-muted); overflow: hidden; white-space: nowrap; img { flex: none; } }
 .sf-hs-free .sf-hs-ring { background: none; border: 2px dashed var(--sf-border); padding: 0; display: grid; place-items: center; color: var(--sf-muted); }
 .sf-share-ic { display: inline-grid; place-items: center; width: 2.25rem; height: 2.25rem; border-radius: 50%; background: var(--bs-primary-bg-subtle); color: var(--sf-primary); }
+app-invite-diagram { display: block; }
+.sf-share-diagram { display: block; color: var(--sf-primary); width: 100%; max-width: 18rem; height: auto; margin: 0 auto 0.25rem; } // the picture on top of a share card: no text in it, so it needs no translation
 .sf-share-mini { flex: none; display: inline-flex; margin-top: 0.15rem; color: var(--sf-primary); }
 .sf-hs-tip { margin: 0.5rem 0 0; text-align: center; font-size: 0.625rem; line-height: 1.2; color: var(--sf-muted); }
 button.sf-hs-free { padding: 0; border: 0; background: none; font: inherit; width: 100%; }
@@ -1333,7 +1335,8 @@ button.sf-hs-sleep { padding: 0; border: 0; background: none; font: inherit; wid
 .sf-hs-sleep-open .sf-hs-ring { border-color: var(--sf-muted); }
 .sf-hs-sleep.sf-drop .sf-hs-ring { border-color: var(--sf-primary); background: var(--bs-primary-bg-subtle); transform: scale(1.08); }
 .sf-hs-sleep.sf-drop .sf-hs-sub { color: var(--sf-primary); }
-@media (min-width: 576px) { .sf-hs-row { grid-template-columns: repeat(8, 1fr); } }
+// always two rows of four (seven seats + the sleep circle), on every screen size; only the pictures grow
+@media (min-width: 768px) { .sf-hs-ring { width: min(100%, 4.5rem); } }
 
 // ---- Home: the slim top, the greeting, the folded setup line, the cards (no side bars) ----
 .sf-home-top { display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding-bottom: 0.5rem; margin-bottom: 0.75rem; border-bottom: 1px solid var(--sf-border); }

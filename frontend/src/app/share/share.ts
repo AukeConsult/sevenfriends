@@ -6,11 +6,12 @@ import { FriendsService } from '../core/friends.service';
 import { InstallService } from '../core/install.service';
 import { InviteLinkService } from '../core/invite-link.service';
 import { HomeTop } from '../home-top/home-top';
+import { InviteDiagram } from '../invite-diagram/invite-diagram';
 
 /** Share (a tab of the bottom menu): the link that invites a friend (a friend request), the general link to the app, and the way to install the app on a phone. */
 @Component({
   selector: 'app-share',
-  imports: [HomeTop, RouterLink, TranslocoDirective],
+  imports: [HomeTop, InviteDiagram, RouterLink, TranslocoDirective],
   templateUrl: './share.html',
   providers: [provideTranslocoScope('share')],
 })
