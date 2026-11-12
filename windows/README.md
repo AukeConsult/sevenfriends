@@ -7,12 +7,10 @@ A native Windows app (.NET 8, WPF) with the Microsoft Edge WebView2 control that
   `frontend/capacitor.config.json`; change both when https://sevenfriends.io works).
 - **Needs:** the .NET SDK 8 or newer on the computer that builds it. The people who install the app need nothing extra
   except the WebView2 Runtime, which is part of Windows 11 and of Microsoft Edge (the app says so if it is missing).
+- `windows/nuget.config` makes the restore use nuget.org only (a missing offline source from Visual Studio, `NU1301`, no longer stops it).
 - **Try it:** `npm run windows:run` (builds and opens a window with the app).
-- **Make the app:** `npm run windows:publish` writes a self-contained `windows/publish/SevenFriends.exe` (no .NET needed to run it).
-- **Make the installer:** install Inno Setup 6 (https://jrsoftware.org/isdl.php), then `npm run windows:installer`.
-  The result is `windows/installer/output/SevenFriendsSetup.exe`: it installs for the current person only (no administrator needed),
-  with a Start menu entry and an optional desktop icon, and has an uninstaller in Windows Settings → Apps.
-  To publish a new version, change the version in `SevenFriends.csproj` and in `installer/SevenFriends.iss`.
+- **Build, pack and publish, in one command:** `npm run windows:release` (`scripts/windows-release.mjs`): it builds the self-contained `windows/publish/SevenFriends.exe`, packs the installer with Inno Setup 6 (https://jrsoftware.org/isdl.php; found in its usual folders) and copies it to `frontend/public/downloads/SevenFriendsSetup.exe`. Then `npm run deploy:hosting` publishes it.
+- The installer (`windows/installer/output/SevenFriendsSetup.exe`) installs for the current person only (no administrator needed), with a Start menu entry and an optional desktop icon, and has an uninstaller in Windows Settings → Apps. To publish a new version, change the version in `SevenFriends.csproj` and in `installer/SevenFriends.iss`, then run `npm run windows:release`.
 - Only the app's own pages and the sign-in popup open inside the window; every other link opens in the browser. The microphone,
   camera and notifications are allowed for the app's own pages only. The sign-in is kept in `%LOCALAPPDATA%\SevenFriends`.
 - The icon is `app.ico` (made from `frontend/public/icons/icon-512.png`).
@@ -34,6 +32,6 @@ Not done yet:
 - Not compiled or tried on Windows yet: the first `windows:run` may need a small fix.
 
 ## Offering it for download on the website
-`npm run windows:release` copies `windows/installer/output/SevenFriendsSetup.exe` to `frontend/public/downloads/` (not committed); `npm run deploy:hosting`
+`npm run windows:release` copies `windows/installer/output/SevenFriendsSetup.exe` to `frontend/public/downloads/SevenFriendsSetup.exe` (not committed); `npm run deploy:hosting`
 publishes it, and the Install page shows **Download for Windows** to people on a Windows computer (only when the file is there). A new version is a new
 build, `windows:release` and a deploy: people download the installer again (no automatic updates yet).

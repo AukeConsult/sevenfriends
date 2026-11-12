@@ -40,5 +40,10 @@
   "startItWhenYou": "Uruchamiaj ją po zalogowaniu do komputera",
   "afterInstallingYouCan": "Po instalacji możesz pozwolić aplikacji uruchamiać się samej, żeby powiadomienia przychodziły bez otwierania przeglądarki.",
   "strongEdgeStrongOpen": "<strong>Edge:</strong> otwórz <code>edge://apps</code>, naciśnij ⋯ przy Seven Friends i wybierz <em>Automatyczne uruchamianie przy logowaniu do urządzenia</em>.",
-  "strongChromeStrongOpen": "<strong>Chrome:</strong> otwórz <code>chrome://apps</code>, kliknij prawym przyciskiem Seven Friends i wybierz <em>Uruchom aplikację po zalogowaniu</em>."
+  "strongChromeStrongOpen": "<strong>Chrome:</strong> otwórz <code>chrome://apps</code>, kliknij prawym przyciskiem Seven Friends i wybierz <em>Uruchom aplikację po zalogowaniu</em>.",
+  "chooseHowToInstall": "Są dwa sposoby, aby mieć Seven Friends na tym komputerze. Wybierz jeden.",
+  "recommended": "Zalecane",
+  "theBrowserApp": "Aplikacja przeglądarkowa",
+  "browserAppAbout": "Instaluje się z Chrome lub Edge we własnym oknie, bez pobierania. Powiadomienia przychodzą, gdy przeglądarka jest uruchomiona.",
+  "itGivesOwnWindow": "Dostaje własne okno i ikonę na liście aplikacji. Jest darmowa, nie wymaga sklepu z aplikacjami i możesz ją usunąć w każdej chwili."
 }

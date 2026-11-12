@@ -40,5 +40,10 @@
   "startItWhenYou": "Bilgisayarına girişte otomatik başlasın",
   "afterInstallingYouCan": "Yükledikten sonra uygulamanın kendiliğinden başlamasını sağlayabilirsin; böylece tarayıcıyı açmadan bildirimler gelir.",
   "strongEdgeStrongOpen": "<strong>Edge:</strong> <code>edge://apps</code> adresini aç, Seven Friends'te ⋯'a bas ve <em>Cihaz girişinde otomatik başlat</em>'ı seç.",
-  "strongChromeStrongOpen": "<strong>Chrome:</strong> <code>chrome://apps</code> adresini aç, Seven Friends'e sağ tıkla ve <em>Giriş yaptığında uygulamayı başlat</em>'ı seç."
+  "strongChromeStrongOpen": "<strong>Chrome:</strong> <code>chrome://apps</code> adresini aç, Seven Friends'e sağ tıkla ve <em>Giriş yaptığında uygulamayı başlat</em>'ı seç.",
+  "chooseHowToInstall": "Seven Friends'i bu bilgisayara kurmanın iki yolu var. Birini seçin.",
+  "recommended": "Önerilen",
+  "theBrowserApp": "Tarayıcı uygulaması",
+  "browserAppAbout": "Chrome veya Edge'den, indirme olmadan kendi penceresinde kurulur. Bildirimler tarayıcı çalışırken gelir.",
+  "itGivesOwnWindow": "Kendi penceresi ve uygulama listenizde bir simgesi olur. Ücretsizdir, uygulama mağazası gerektirmez ve istediğiniz zaman kaldırabilirsiniz."
 }

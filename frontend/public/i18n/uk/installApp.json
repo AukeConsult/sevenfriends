@@ -40,5 +40,10 @@
   "startItWhenYou": "Запускати, коли ти входиш у комп’ютер",
   "afterInstallingYouCan": "Після встановлення можна дозволити застосунку запускатися самому, щоб сповіщення приходили без відкриття браузера.",
   "strongEdgeStrongOpen": "<strong>Edge:</strong> відкрий <code>edge://apps</code>, натисни ⋯ біля Seven Friends і вибери <em>Автозапуск під час входу на пристрої</em>.",
-  "strongChromeStrongOpen": "<strong>Chrome:</strong> відкрий <code>chrome://apps</code>, клацни правою кнопкою на Seven Friends і вибери <em>Запускати застосунок під час входу</em>."
+  "strongChromeStrongOpen": "<strong>Chrome:</strong> відкрий <code>chrome://apps</code>, клацни правою кнопкою на Seven Friends і вибери <em>Запускати застосунок під час входу</em>.",
+  "chooseHowToInstall": "Є два способи встановити Seven Friends на цей комп'ютер. Оберіть один.",
+  "recommended": "Рекомендовано",
+  "theBrowserApp": "Застосунок у браузері",
+  "browserAppAbout": "Встановлюється з Chrome або Edge в окремому вікні, без завантаження. Сповіщення надходять, поки браузер запущено.",
+  "itGivesOwnWindow": "Він отримує власне вікно й значок у списку застосунків. Він безкоштовний, магазин застосунків не потрібен, і його можна видалити будь-коли."
 }

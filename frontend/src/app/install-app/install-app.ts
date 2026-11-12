@@ -1,5 +1,6 @@
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../core/auth.service';
 import { fileExists } from '../core/download';
@@ -9,7 +10,7 @@ import { PageBar } from '../page-bar/page-bar';
 /** What "install" means and how to do it on this device (opened from the Me menu). */
 @Component({
   selector: 'app-install-app',
-  imports: [PageBar, RouterLink, TranslocoDirective],
+  imports: [PageBar, RouterLink, NgTemplateOutlet, TranslocoDirective],
   templateUrl: './install-app.html',
   providers: [provideTranslocoScope('installApp')],
 })
@@ -23,6 +24,8 @@ export class InstallApp implements OnInit {
   /** the finished apps on this website (frontend/public/downloads, put there by scripts/publish-download.mjs): a download button shows only for a file that is really there */
   protected readonly windowsFile = signal(false);
   protected readonly androidFile = signal(false);
+  /** Windows with the installer on this site: the Windows app and the browser app are shown as two choices */
+  protected readonly windowsChoice = computed(() => this.windowsFile() && !this.app.runsAsApp());
 
   protected readonly mic = signal<'granted' | 'denied' | 'ask'>('ask');
   /** the install button was tapped before the microphone was allowed: it only says so; a second tap installs anyway */

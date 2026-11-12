@@ -40,5 +40,10 @@
   "startItWhenYou": "Que se inicie al iniciar sesión en tu ordenador",
   "afterInstallingYouCan": "Después de instalarla, puedes dejar que la app se inicie sola para que las notificaciones lleguen sin abrir el navegador.",
   "strongEdgeStrongOpen": "<strong>Edge:</strong> abre <code>edge://apps</code>, pulsa ⋯ en Seven Friends y elige <em>Inicio automático al iniciar sesión en el dispositivo</em>.",
-  "strongChromeStrongOpen": "<strong>Chrome:</strong> abre <code>chrome://apps</code>, haz clic derecho en Seven Friends y elige <em>Iniciar la app al iniciar sesión</em>."
+  "strongChromeStrongOpen": "<strong>Chrome:</strong> abre <code>chrome://apps</code>, haz clic derecho en Seven Friends y elige <em>Iniciar la app al iniciar sesión</em>.",
+  "chooseHowToInstall": "Hay dos formas de tener Seven Friends en este ordenador. Elige una.",
+  "recommended": "Recomendada",
+  "theBrowserApp": "La app del navegador",
+  "browserAppAbout": "Se instala desde Chrome o Edge en su propia ventana, sin descarga. Las notificaciones llegan mientras el navegador está abierto.",
+  "itGivesOwnWindow": "Tiene su propia ventana y un icono en tu lista de aplicaciones. Es gratis, no necesita tienda de aplicaciones y puedes quitarla cuando quieras."
 }

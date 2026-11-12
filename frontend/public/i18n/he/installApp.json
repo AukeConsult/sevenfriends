@@ -40,5 +40,10 @@
   "startItWhenYou": "הפעלה כשמתחברים למחשב",
   "afterInstallingYouCan": "אחרי ההתקנה אפשר לגרום לאפליקציה להתחיל לבד, כך שההתראות יגיעו בלי לפתוח את הדפדפן.",
   "strongEdgeStrongOpen": "<strong>Edge:</strong> יש לפתוח <code>edge://apps</code>, ללחוץ על ⋯ ב-Seven Friends ולבחור <em>הפעלה אוטומטית בכניסה למכשיר</em>.",
-  "strongChromeStrongOpen": "<strong>Chrome:</strong> יש לפתוח <code>chrome://apps</code>, ללחוץ לחיצה ימנית על Seven Friends ולבחור <em>הפעלת האפליקציה בעת התחברות</em>."
+  "strongChromeStrongOpen": "<strong>Chrome:</strong> יש לפתוח <code>chrome://apps</code>, ללחוץ לחיצה ימנית על Seven Friends ולבחור <em>הפעלת האפליקציה בעת התחברות</em>.",
+  "chooseHowToInstall": "יש שתי דרכים להתקין את Seven Friends במחשב הזה. בחרו אחת.",
+  "recommended": "מומלץ",
+  "theBrowserApp": "אפליקציית הדפדפן",
+  "browserAppAbout": "מותקנת מ-Chrome או מ-Edge בחלון משלה, בלי הורדה. ההתראות מגיעות כל עוד הדפדפן פועל.",
+  "itGivesOwnWindow": "היא מקבלת חלון משלה וסמל ברשימת האפליקציות שלכם. היא חינמית, לא צריכה חנות אפליקציות, ואפשר להסיר אותה בכל עת."
 }

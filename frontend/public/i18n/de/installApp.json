@@ -40,5 +40,10 @@
   "startItWhenYou": "Beim Anmelden am Computer starten",
   "afterInstallingYouCan": "Nach der Installation kannst du die App von selbst starten lassen, damit Benachrichtigungen ankommen, ohne den Browser zu öffnen.",
   "strongEdgeStrongOpen": "<strong>Edge:</strong> Öffne <code>edge://apps</code>, klick bei Seven Friends auf ⋯ und wähl <em>Automatischer Start bei der Geräteanmeldung</em>.",
-  "strongChromeStrongOpen": "<strong>Chrome:</strong> Öffne <code>chrome://apps</code>, klick mit der rechten Maustaste auf Seven Friends und wähl <em>App beim Anmelden starten</em>."
+  "strongChromeStrongOpen": "<strong>Chrome:</strong> Öffne <code>chrome://apps</code>, klick mit der rechten Maustaste auf Seven Friends und wähl <em>App beim Anmelden starten</em>.",
+  "chooseHowToInstall": "Es gibt zwei Wege, Seven Friends auf diesen Computer zu bringen. Wähle einen.",
+  "recommended": "Empfohlen",
+  "theBrowserApp": "Die Browser-App",
+  "browserAppAbout": "Wird aus Chrome oder Edge in einem eigenen Fenster installiert, ohne Download. Benachrichtigungen kommen an, solange der Browser läuft.",
+  "itGivesOwnWindow": "Sie bekommt ein eigenes Fenster und ein Symbol in deiner App-Liste. Sie ist kostenlos, braucht keinen App-Store und du kannst sie jederzeit entfernen."
 }

@@ -40,5 +40,10 @@
   "startItWhenYou": "登录电脑时自动启动",
   "afterInstallingYouCan": "安装之后，你可以让应用自己启动，这样不用打开浏览器也能收到通知。",
   "strongEdgeStrongOpen": "<strong>Edge：</strong>打开 <code>edge://apps</code>，点 Seven Friends 上的 ⋯，选择<em>设备登录时自动启动</em>。",
-  "strongChromeStrongOpen": "<strong>Chrome：</strong>打开 <code>chrome://apps</code>，右键点击 Seven Friends，选择<em>登录时启动应用</em>。"
+  "strongChromeStrongOpen": "<strong>Chrome：</strong>打开 <code>chrome://apps</code>，右键点击 Seven Friends，选择<em>登录时启动应用</em>。",
+  "chooseHowToInstall": "在这台电脑上使用 Seven Friends 有两种方式，请任选一种。",
+  "recommended": "推荐",
+  "theBrowserApp": "浏览器应用",
+  "browserAppAbout": "从 Chrome 或 Edge 安装到独立窗口，无需下载。浏览器运行期间可收到通知。",
+  "itGivesOwnWindow": "它会有自己的窗口，并在应用列表中显示图标。免费，无需应用商店，随时可以删除。"
 }

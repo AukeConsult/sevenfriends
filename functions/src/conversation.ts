@@ -10,7 +10,7 @@ import { findPeerEntry, shownNameOf } from "./circle-profile";
 import { linkOf } from "./link-preview";
 import { otherMembers } from "./group-members";
 import { Refused, parseMessageEnc, parseRelock, wrapsCover, wrapsFor } from "./box-encryption";
-import { publishedKeysOf } from "./keys";
+import { recipientKeysOf } from "./keys";
 import { touchFeed, touchFeedIfExists } from "./sync";
 import { LOCKED_MIME, cleanFileName, deleteObject, deleteObjects, isObjectId, mediaLabel, objectInfo, renameObject } from "./sf-cache";
 
@@ -171,7 +171,7 @@ async function lockedText(body: unknown, myUid: string, peerUids: string[], res:
     res.status(refused.status).json({ error: refused.error });
     return null;
   }
-  const people = await Promise.all([myUid, ...peerUids].map(async (uid) => ({ uid, keys: await publishedKeysOf(uid) })));
+  const people = await Promise.all([myUid, ...peerUids].map(async (uid) => ({ uid, keys: await recipientKeysOf(uid) })));
   if (!wrapsCover(parsed.enc, people)) {
     res.status(409).json({ error: "The encryption keys changed while the message was sent. Try again." });
     return null;

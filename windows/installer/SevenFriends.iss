@@ -1,10 +1,10 @@
 ; The installer of Seven Friends for Windows (Inno Setup 6, https://jrsoftware.org/isinfo.php).
-; First: npm run windows:publish (makes windows/publish), then: npm run windows:installer  ->  windows/installer/output/SevenFriendsSetup.exe
+; Made by: npm run windows:release (builds windows/publish, runs this script, copies the result to the website downloads)  ->  windows/installer/output/SevenFriendsSetup.exe
 ; It installs for the current person only (no administrator needed), with a Start menu entry and an optional desktop icon.
 [Setup]
 AppId={{6F2C8E3A-4B7D-4E59-9A1C-5D3E7B9F0A12}
 AppName=Seven Friends
-AppVersion=1.0.0
+AppVersion=1.1.0
 AppPublisher=Blueboot R&D AS
 AppPublisherURL=https://sevenfriends.io
 DefaultDirName={autopf}\Seven Friends

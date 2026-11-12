@@ -40,5 +40,10 @@
   "startItWhenYou": "कंप्यूटर में साइन इन करते ही इसे शुरू करें",
   "afterInstallingYouCan": "इंस्टॉल करने के बाद आप ऐप को अपने आप शुरू होने दे सकते हैं, ताकि ब्राउज़र खोले बिना सूचनाएँ आती रहें।",
   "strongEdgeStrongOpen": "<strong>Edge:</strong> <code>edge://apps</code> खोलें, Seven Friends पर ⋯ दबाएँ और <em>Auto-start on device login</em> चुनें।",
-  "strongChromeStrongOpen": "<strong>Chrome:</strong> <code>chrome://apps</code> खोलें, Seven Friends पर राइट-क्लिक करें और <em>Start app when you sign in</em> चुनें।"
+  "strongChromeStrongOpen": "<strong>Chrome:</strong> <code>chrome://apps</code> खोलें, Seven Friends पर राइट-क्लिक करें और <em>Start app when you sign in</em> चुनें।",
+  "chooseHowToInstall": "इस कंप्यूटर पर Seven Friends पाने के दो तरीके हैं। एक चुनें।",
+  "recommended": "अनुशंसित",
+  "theBrowserApp": "ब्राउज़र ऐप",
+  "browserAppAbout": "यह Chrome या Edge से अपनी अलग विंडो में इंस्टॉल होता है, बिना डाउनलोड के। ब्राउज़र चालू रहने पर सूचनाएँ आती हैं।",
+  "itGivesOwnWindow": "इसे अपनी अलग विंडो और आपकी ऐप सूची में एक आइकन मिलता है। यह मुफ़्त है, इसके लिए ऐप स्टोर नहीं चाहिए, और आप इसे कभी भी हटा सकते हैं।"
 }

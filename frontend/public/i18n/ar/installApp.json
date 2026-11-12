@@ -40,5 +40,10 @@
   "startItWhenYou": "شغّله عند تسجيل الدخول إلى حاسوبك",
   "afterInstallingYouCan": "بعد التثبيت، يمكنك جعل التطبيق يبدأ من تلقاء نفسه لتصلك الإشعارات دون فتح المتصفح.",
   "strongEdgeStrongOpen": "<strong>Edge:</strong> افتح <code>edge://apps</code>، واضغط ⋯ على Seven Friends واختر <em>Auto-start on device login</em>.",
-  "strongChromeStrongOpen": "<strong>Chrome:</strong> افتح <code>chrome://apps</code>، واضغط بزر الفأرة الأيمن على Seven Friends واختر <em>Start app when you sign in</em>."
+  "strongChromeStrongOpen": "<strong>Chrome:</strong> افتح <code>chrome://apps</code>، واضغط بزر الفأرة الأيمن على Seven Friends واختر <em>Start app when you sign in</em>.",
+  "chooseHowToInstall": "هناك طريقتان للحصول على Seven Friends على هذا الكمبيوتر. اختر واحدة.",
+  "recommended": "موصى به",
+  "theBrowserApp": "تطبيق المتصفح",
+  "browserAppAbout": "يُثبَّت من Chrome أو Edge في نافذته الخاصة، دون تنزيل. تصل الإشعارات أثناء تشغيل المتصفح.",
+  "itGivesOwnWindow": "يحصل على نافذته الخاصة وأيقونة في قائمة تطبيقاتك. إنه مجاني، ولا يحتاج إلى متجر تطبيقات، ويمكنك إزالته في أي وقت."
 }

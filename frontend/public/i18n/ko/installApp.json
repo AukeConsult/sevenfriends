@@ -40,5 +40,10 @@
   "startItWhenYou": "컴퓨터에 로그인할 때 자동으로 시작하기",
   "afterInstallingYouCan": "설치한 후 앱이 저절로 시작되게 하면 브라우저를 열지 않아도 알림이 도착해요.",
   "strongEdgeStrongOpen": "<strong>Edge:</strong> <code>edge://apps</code>를 열고 Seven Friends의 ⋯를 눌러 <em>기기 로그인 시 자동 시작</em>을 선택하세요.",
-  "strongChromeStrongOpen": "<strong>Chrome:</strong> <code>chrome://apps</code>를 열고 Seven Friends를 마우스 오른쪽 버튼으로 클릭해 <em>로그인할 때 앱 시작</em>을 선택하세요."
+  "strongChromeStrongOpen": "<strong>Chrome:</strong> <code>chrome://apps</code>를 열고 Seven Friends를 마우스 오른쪽 버튼으로 클릭해 <em>로그인할 때 앱 시작</em>을 선택하세요.",
+  "chooseHowToInstall": "이 컴퓨터에서 Seven Friends를 사용하는 방법은 두 가지입니다. 하나를 고르세요.",
+  "recommended": "추천",
+  "theBrowserApp": "브라우저 앱",
+  "browserAppAbout": "Chrome 또는 Edge에서 다운로드 없이 전용 창으로 설치합니다. 알림은 브라우저가 실행 중일 때 도착합니다.",
+  "itGivesOwnWindow": "전용 창이 생기고 앱 목록에 아이콘이 추가됩니다. 무료이고, 앱 스토어가 필요 없으며, 언제든지 삭제할 수 있습니다."
 }

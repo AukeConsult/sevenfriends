@@ -40,5 +40,10 @@
   "startItWhenYou": "Jalankan saat kamu masuk ke komputer",
   "afterInstallingYouCan": "Setelah dipasang, kamu bisa membiarkan aplikasi berjalan sendiri supaya notifikasi masuk tanpa membuka browser.",
   "strongEdgeStrongOpen": "<strong>Edge:</strong> buka <code>edge://apps</code>, tekan ⋯ pada Seven Friends dan pilih <em>Auto-start on device login</em>.",
-  "strongChromeStrongOpen": "<strong>Chrome:</strong> buka <code>chrome://apps</code>, klik kanan Seven Friends dan pilih <em>Start app when you sign in</em>."
+  "strongChromeStrongOpen": "<strong>Chrome:</strong> buka <code>chrome://apps</code>, klik kanan Seven Friends dan pilih <em>Start app when you sign in</em>.",
+  "chooseHowToInstall": "Ada dua cara untuk memasang Seven Friends di komputer ini. Pilih salah satu.",
+  "recommended": "Disarankan",
+  "theBrowserApp": "Aplikasi browser",
+  "browserAppAbout": "Dipasang dari Chrome atau Edge di jendelanya sendiri, tanpa unduhan. Notifikasi masuk selama browser berjalan.",
+  "itGivesOwnWindow": "Aplikasi ini mendapat jendela sendiri dan ikon di daftar aplikasi Anda. Gratis, tidak perlu toko aplikasi, dan bisa dihapus kapan saja."
 }

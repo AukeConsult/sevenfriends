@@ -2,8 +2,8 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
-        Title="Seven Friends" Width="480" Height="860" MinWidth="360" MinHeight="560"
+        Title="Seven Friends" Width="380" Height="700" MinWidth="360" MinHeight="560" MaxWidth="1000"
         Background="#F6F7FB" WindowStartupLocation="CenterScreen">
-    <!-- the app is made for a phone: a narrow window looks right, and it can be resized -->
+    <!-- the app is made for a phone: a narrow window looks right, and it can be resized up to the width of the app (1000px) -->
     <wv2:WebView2 x:Name="Web" />
 </Window>

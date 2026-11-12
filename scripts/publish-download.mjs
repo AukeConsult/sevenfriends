@@ -16,7 +16,7 @@ if (!existsSync(source)) {
   console.error(`Not found: ${source}\nBuild it first (see windows/README.md or android/README.md).`);
   process.exit(1);
 }
-const folder = resolve(root, "frontend/public/downloads");
-mkdirSync(folder, { recursive: true });
-copyFileSync(source, resolve(folder, name));
+const target = resolve(root, "frontend/public/downloads", name);
+mkdirSync(dirname(target), { recursive: true });
+copyFileSync(source, target);
 console.log(`${name} (${(statSync(source).size / 1024 / 1024).toFixed(1)} MB) is in frontend/public/downloads: run npm run deploy:hosting to publish it.`);

@@ -40,5 +40,10 @@
   "startItWhenYou": "Start den, når du logger ind på din computer",
   "afterInstallingYouCan": "Efter installationen kan du lade appen starte af sig selv, så notifikationer kommer frem uden at åbne browseren.",
   "strongEdgeStrongOpen": "<strong>Edge:</strong> åbn <code>edge://apps</code>, tryk på ⋯ ved Seven Friends og vælg <em>Start automatisk ved enhedslogin</em>.",
-  "strongChromeStrongOpen": "<strong>Chrome:</strong> åbn <code>chrome://apps</code>, højreklik på Seven Friends og vælg <em>Start app, når du logger ind</em>."
+  "strongChromeStrongOpen": "<strong>Chrome:</strong> åbn <code>chrome://apps</code>, højreklik på Seven Friends og vælg <em>Start app, når du logger ind</em>.",
+  "chooseHowToInstall": "Der er to måder at få Seven Friends på denne computer. Vælg en.",
+  "recommended": "Anbefalet",
+  "theBrowserApp": "Browser-appen",
+  "browserAppAbout": "Installeres fra Chrome eller Edge i sit eget vindue, uden download. Notifikationer kommer, mens browseren kører.",
+  "itGivesOwnWindow": "Den får sit eget vindue og et ikon på din liste over apps. Den er gratis, kræver ingen appbutik, og du kan fjerne den når som helst."
 }

@@ -1,38 +1,47 @@
 <ng-container *transloco="let t">
+<ng-template #browserInstall>
+  <h2 class="sf-section-title m-0">{{ t('installApp.allowTheMicrophone') || '1. Allow the microphone' }}</h2>
+  @if (mic() === 'granted') {
+    <div class="alert alert-success m-0" role="status">{{ t('installApp.theMicrophoneIsAllowed') || '✓ The microphone is allowed.' }}</div>
+  } @else {
+    <p class="m-0"><span [innerHTML]="t('installApp.soYouCanSend') || 'So you can send voice messages. Tap the button and choose <strong>Allow</strong>.'"></span></p>
+    <button type="button" class="btn btn-primary w-100" (click)="allowMic()">{{ t('installApp.allowTheMicrophone2') || 'Allow the microphone' }}</button>
+    @if (mic() === 'denied') {
+      <div class="alert alert-warning m-0" role="alert"><span [innerHTML]="t('installApp.theMicrophoneIsSwitched') || 'The microphone is switched off. Tap the <strong>lock or sliders icon</strong> at the left of the web address, then <strong>Permissions</strong>, and allow the <strong>Microphone</strong>. No icon? Tap the three dots, then <strong>Settings</strong>, <strong>Site settings</strong>, <strong>Microphone</strong>. Then tap the button again.'"></span></div>
+    }
+  }
+  <h2 class="sf-section-title m-0">{{ t('installApp.installTheApp2') || '2. Install the app' }}</h2>
+  <button type="button" class="btn btn-primary w-100" (click)="press()">{{ t('installApp.installTheApp') || 'Install the app' }}</button>
+  @if (warned() && mic() === 'ask') {
+    <div class="alert alert-warning m-0" role="alert"><span [innerHTML]="t('installApp.theMicrophoneIsNot') || 'The microphone is not allowed yet. Do step 1 first, or tap <strong>Install the app</strong> again to install without it.'"></span></div>
+  }
+  <p class="small text-secondary m-0">{{ app.mobile ? (t('installApp.itPutsSevenFriends') || 'It puts Seven Friends on your home screen like any other app. It is free, needs no app store, and you can remove it any time.') : (t('installApp.itGivesOwnWindow') || 'It gets its own window and an icon in your app list. It is free, needs no app store, and you can remove it any time.') }}</p>
+</ng-template>
+
 <app-page-bar [title]="t('installApp.installTheApp') || 'Install the app'" [backTo]="auth.user() ? null : '/login'" />
 
 <main class="sf-narrow vstack gap-3">
   @if (app.installed()) {
     <div class="alert alert-success m-0" role="status">{{ t('installApp.youAreUsingThe') || '✓ You are using the installed app. Nothing more to do.' }}</div>
     <a routerLink="/" class="btn btn-primary">{{ t('installApp.continueToTheHome') || 'Continue to the home page' }}</a>
-  } @else if (!app.androidDevice) {
-    <h2 class="sf-section-title m-0">{{ t('installApp.allowTheMicrophone') || '1. Allow the microphone' }}</h2>
-    @if (mic() === 'granted') {
-      <div class="alert alert-success m-0" role="status">{{ t('installApp.theMicrophoneIsAllowed') || '✓ The microphone is allowed.' }}</div>
-    } @else {
-      <p class="m-0"><span [innerHTML]="t('installApp.soYouCanSend') || 'So you can send voice messages. Tap the button and choose <strong>Allow</strong>.'"></span></p>
-      <button type="button" class="btn btn-primary w-100" (click)="allowMic()">{{ t('installApp.allowTheMicrophone2') || 'Allow the microphone' }}</button>
-      @if (mic() === 'denied') {
-        <div class="alert alert-warning m-0" role="alert"><span [innerHTML]="t('installApp.theMicrophoneIsSwitched') || 'The microphone is switched off. Tap the <strong>lock or sliders icon</strong> at the left of the web address, then <strong>Permissions</strong>, and allow the <strong>Microphone</strong>. No icon? Tap the three dots, then <strong>Settings</strong>, <strong>Site settings</strong>, <strong>Microphone</strong>. Then tap the button again.'"></span></div>
-      }
-    }
-    <h2 class="sf-section-title m-0">{{ t('installApp.installTheApp2') || '2. Install the app' }}</h2>
-    <button type="button" class="btn btn-primary w-100" (click)="press()">{{ t('installApp.installTheApp') || 'Install the app' }}</button>
-    @if (warned() && mic() === 'ask') {
-      <div class="alert alert-warning m-0" role="alert"><span [innerHTML]="t('installApp.theMicrophoneIsNot') || 'The microphone is not allowed yet. Do step 1 first, or tap <strong>Install the app</strong> again to install without it.'"></span></div>
-    }
-    <p class="small text-secondary m-0">{{ t('installApp.itPutsSevenFriends') || 'It puts Seven Friends on your home screen like any other app. It is free, needs no app store, and you can remove it any time.' }}</p>
-  }
-
-  @if (windowsFile() && !app.runsAsApp()) {
-    <details class="sf-how" [open]="!app.mobile">
-      <summary>{{ t('installApp.theWindowsApp') || 'The Windows app' }}</summary>
-      <div class="vstack gap-2">
-      <p class="m-0">{{ t('installApp.anAppForYour') || 'An app for your Windows computer: it runs next to the clock, so new messages arrive as notifications even when the window is closed.' }}</p>
-      <a class="btn btn-outline-primary" href="/downloads/SevenFriendsSetup.exe" download>{{ t('installApp.downloadForWindows') || 'Download for Windows' }}</a>
-      <p class="small text-secondary m-0"><span [innerHTML]="t('installApp.openTheDownloadedFile') || 'Open the downloaded file to install it. If Windows says it protected your PC, choose <em>More info</em>, then <em>Run anyway</em>.'"></span></p>
+  } @else if (windowsChoice()) {
+    <p class="m-0 text-secondary">{{ t('installApp.chooseHowToInstall') || 'Two ways to get Seven Friends on this computer. Pick one.' }}</p>
+    <section class="card card-body vstack gap-2 sf-choice-card">
+      <div class="d-flex align-items-center gap-2">
+        <h2 class="sf-section-title m-0">{{ t('installApp.theWindowsApp') || 'The Windows app' }}</h2>
+        <span class="badge text-bg-primary ms-auto">{{ t('installApp.recommended') || 'Recommended' }}</span>
       </div>
-    </details>
+      <p class="m-0">{{ t('installApp.anAppForYour') || 'An app for your Windows computer: it runs next to the clock, so new messages arrive as notifications even when the window is closed.' }}</p>
+      <a class="btn btn-primary" href="/downloads/SevenFriendsSetup.exe" download>{{ t('installApp.downloadForWindows') || 'Download for Windows' }}</a>
+      <p class="small text-secondary m-0"><span [innerHTML]="t('installApp.openTheDownloadedFile') || 'Open the downloaded file to install it. If Windows says it protected your PC, choose <em>More info</em>, then <em>Run anyway</em>.'"></span></p>
+    </section>
+    <section class="card card-body vstack gap-2">
+      <h2 class="sf-section-title m-0">{{ t('installApp.theBrowserApp') || 'The browser app' }}</h2>
+      <p class="m-0">{{ t('installApp.browserAppAbout') || 'Installs from Chrome or Edge into its own window, with no download. Notifications arrive while the browser is running.' }}</p>
+      <ng-container *ngTemplateOutlet="browserInstall" />
+    </section>
+  } @else if (!app.androidDevice) {
+    <ng-container *ngTemplateOutlet="browserInstall" />
   }
 
   @if (app.androidDevice && !app.installed()) {

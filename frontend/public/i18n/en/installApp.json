@@ -40,5 +40,10 @@
   "startItWhenYou": "Start it when you sign in to your computer",
   "afterInstallingYouCan": "After installing, you can let the app start by itself so that notifications arrive without opening the browser.",
   "strongEdgeStrongOpen": "<strong>Edge:</strong> open <code>edge://apps</code>, press ⋯ on Seven Friends and choose <em>Auto-start on device login</em>.",
-  "strongChromeStrongOpen": "<strong>Chrome:</strong> open <code>chrome://apps</code>, right-click Seven Friends and choose <em>Start app when you sign in</em>."
+  "strongChromeStrongOpen": "<strong>Chrome:</strong> open <code>chrome://apps</code>, right-click Seven Friends and choose <em>Start app when you sign in</em>.",
+  "chooseHowToInstall": "Two ways to get Seven Friends on this computer. Pick one.",
+  "recommended": "Recommended",
+  "theBrowserApp": "The browser app",
+  "browserAppAbout": "Installs from Chrome or Edge into its own window, with no download. Notifications arrive while the browser is running.",
+  "itGivesOwnWindow": "It gets its own window and an icon in your app list. It is free, needs no app store, and you can remove it any time."
 }

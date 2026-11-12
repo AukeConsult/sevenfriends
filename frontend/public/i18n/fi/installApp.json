@@ -40,5 +40,10 @@
   "startItWhenYou": "Käynnistä se, kun kirjaudut tietokoneelle",
   "afterInstallingYouCan": "Asennuksen jälkeen voit antaa sovelluksen käynnistyä itsestään, jolloin ilmoitukset tulevat ilman selaimen avaamista.",
   "strongEdgeStrongOpen": "<strong>Edge:</strong> avaa <code>edge://apps</code>, paina Seven Friendsin kohdalla ⋯ ja valitse <em>Auto-start on device login</em>.",
-  "strongChromeStrongOpen": "<strong>Chrome:</strong> avaa <code>chrome://apps</code>, napsauta Seven Friendsiä hiiren oikealla ja valitse <em>Start app when you sign in</em>."
+  "strongChromeStrongOpen": "<strong>Chrome:</strong> avaa <code>chrome://apps</code>, napsauta Seven Friendsiä hiiren oikealla ja valitse <em>Start app when you sign in</em>.",
+  "chooseHowToInstall": "Seven Friendsin saa tälle tietokoneelle kahdella tavalla. Valitse toinen.",
+  "recommended": "Suositus",
+  "theBrowserApp": "Selainsovellus",
+  "browserAppAbout": "Asennetaan Chromesta tai Edgestä omaan ikkunaansa ilman latausta. Ilmoitukset saapuvat, kun selain on käynnissä.",
+  "itGivesOwnWindow": "Se saa oman ikkunan ja kuvakkeen sovellusluetteloosi. Se on ilmainen, ei tarvitse sovelluskauppaa ja voit poistaa sen milloin tahansa."
 }

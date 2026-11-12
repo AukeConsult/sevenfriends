@@ -109,6 +109,7 @@ input, textarea, [contenteditable='true'] { -webkit-user-select: text; user-sele
 // ---- Base elements ----
 html, body {
   min-height: 100%;
+  overflow-x: clip; // the page never scrolls sideways (a desktop scrollbar makes 100vw wider than the page)
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -421,6 +422,7 @@ router-outlet + * { display: block; min-height: 100dvh; }
 .min-w-0 { min-width: 0; }
 .flex-none { flex: none; }
 // The "how to install" steps, one folding block per kind of device (Install the app)
+.sf-choice-card { border: 2px solid var(--sf-primary); }
 .sf-how { border: 1px solid var(--sf-border); border-radius: var(--sf-radius); background: var(--sf-card); }
 .sf-how > summary { cursor: pointer; font-weight: 600; padding: 0.875rem 1rem; list-style: none; display: flex; justify-content: space-between; align-items: center; }
 .sf-how > summary::-webkit-details-marker { display: none; }

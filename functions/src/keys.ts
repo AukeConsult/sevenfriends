@@ -35,6 +35,16 @@ export async function publishedKeysOf(uid: string): Promise<PublishedKey[]> {
     .sort((a, b) => (a.createdAt ?? "").localeCompare(b.createdAt ?? ""));
 }
 
+/**
+ * The keys a message is locked for: where the person has a signed device list, only the keys in its newest version (a key that is published but not approved yet
+ * is left out, as in the app: MessageLockService.trusted); a person without a list has every key in use.
+ */
+export async function recipientKeysOf(uid: string): Promise<PublishedKey[]> {
+  const [keys, newest] = await Promise.all([publishedKeysOf(uid), keyListCol(uid).orderBy("version", "desc").limit(1).get()]);
+  const head = newest.docs[0]?.data() as DeviceList | undefined;
+  return head ? keys.filter((k) => head.devices.some((d) => d.keyId === k.id)) : keys;
+}
+
 /** My published keys, and whether a backup is stored. */
 keysRouter.get(
   "/",

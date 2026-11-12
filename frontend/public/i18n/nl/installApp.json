@@ -40,5 +40,10 @@
   "startItWhenYou": "Laat hem starten als je inlogt op je computer",
   "afterInstallingYouCan": "Na het installeren kun je de app zichzelf laten starten, zodat meldingen binnenkomen zonder dat je de browser opent.",
   "strongEdgeStrongOpen": "<strong>Edge:</strong> open <code>edge://apps</code>, klik op ⋯ bij Seven Friends en kies <em>Automatisch starten bij aanmelden op apparaat</em>.",
-  "strongChromeStrongOpen": "<strong>Chrome:</strong> open <code>chrome://apps</code>, klik met de rechtermuisknop op Seven Friends en kies <em>App starten bij inloggen</em>."
+  "strongChromeStrongOpen": "<strong>Chrome:</strong> open <code>chrome://apps</code>, klik met de rechtermuisknop op Seven Friends en kies <em>App starten bij inloggen</em>.",
+  "chooseHowToInstall": "Er zijn twee manieren om Seven Friends op deze computer te krijgen. Kies er een.",
+  "recommended": "Aanbevolen",
+  "theBrowserApp": "De browser-app",
+  "browserAppAbout": "Wordt vanuit Chrome of Edge in een eigen venster geïnstalleerd, zonder download. Meldingen komen binnen zolang de browser draait.",
+  "itGivesOwnWindow": "Ze krijgt een eigen venster en een pictogram in je lijst met apps. Ze is gratis, heeft geen appstore nodig en je kunt haar op elk moment verwijderen."
 }

@@ -40,5 +40,10 @@
   "startItWhenYou": "Запускать при входе в компьютер",
   "afterInstallingYouCan": "После установки можно сделать так, чтобы приложение запускалось само и уведомления приходили без открытия браузера.",
   "strongEdgeStrongOpen": "<strong>Edge:</strong> открой <code>edge://apps</code>, нажми ⋯ у Seven Friends и выбери <em>Auto-start on device login</em>.",
-  "strongChromeStrongOpen": "<strong>Chrome:</strong> открой <code>chrome://apps</code>, щёлкни Seven Friends правой кнопкой и выбери <em>Start app when you sign in</em>."
+  "strongChromeStrongOpen": "<strong>Chrome:</strong> открой <code>chrome://apps</code>, щёлкни Seven Friends правой кнопкой и выбери <em>Start app when you sign in</em>.",
+  "chooseHowToInstall": "Есть два способа установить Seven Friends на этот компьютер. Выберите один.",
+  "recommended": "Рекомендуется",
+  "theBrowserApp": "Приложение в браузере",
+  "browserAppAbout": "Устанавливается из Chrome или Edge в отдельном окне, без скачивания. Уведомления приходят, пока браузер запущен.",
+  "itGivesOwnWindow": "У него будет своё окно и значок в списке приложений. Оно бесплатное, магазин приложений не нужен, и его можно удалить в любой момент."
 }

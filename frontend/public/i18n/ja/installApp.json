@@ -40,5 +40,10 @@
   "startItWhenYou": "パソコンにログインしたときに起動する",
   "afterInstallingYouCan": "インストールしたあとは、アプリを自動で起動するようにできます。ブラウザを開かなくても通知が届くようになります。",
   "strongEdgeStrongOpen": "<strong>Edge:</strong> <code>edge://apps</code> を開き、Seven Friends の ⋯ を押して<em>デバイスへのログイン時に自動起動</em>を選びます。",
-  "strongChromeStrongOpen": "<strong>Chrome:</strong> <code>chrome://apps</code> を開き、Seven Friends を右クリックして<em>ログイン時にアプリを起動</em>を選びます。"
+  "strongChromeStrongOpen": "<strong>Chrome:</strong> <code>chrome://apps</code> を開き、Seven Friends を右クリックして<em>ログイン時にアプリを起動</em>を選びます。",
+  "chooseHowToInstall": "このパソコンで Seven Friends を使う方法は2つあります。どちらかを選んでください。",
+  "recommended": "おすすめ",
+  "theBrowserApp": "ブラウザアプリ",
+  "browserAppAbout": "Chrome または Edge から、ダウンロードなしで専用ウィンドウにインストールします。通知はブラウザが起動している間に届きます。",
+  "itGivesOwnWindow": "専用のウィンドウができ、アプリ一覧にアイコンが追加されます。無料で、アプリストアは不要、いつでも削除できます。"
 }
