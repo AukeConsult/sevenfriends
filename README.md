@@ -19,7 +19,7 @@ Seven Friends is built around one idea: **keep the few people who matter close, 
 
 ### Friends and seats
 - **Seven seats.** You have seven seats in each circle. A friend sits in a seat, so the app can never turn into a long list of contacts.
-- **Friend requests.** Add a friend by name, email, phone, or with a **friend link** you send yourself (the app sends no invitation email or text). The other person confirms or rejects.
+- **Friend requests.** Find somebody who is already on the app by **email or phone**: the request goes to them at once and they confirm or reject it. When nobody is found nothing is saved and no seat is used. Somebody who is not on the app is invited with a **friend link** you send yourself (the app sends no invitation email or text); nothing is saved until they sign up with it.
 - **Waiting list.** When all your seats are taken, new requests wait on a *Pending* page until you free a seat.
 - **Sleep list.** Put a friend to sleep to give the seat back without losing the conversation. A sleeping friend's messages arrive silently, and you wake them up when you have a seat again. The sleep list is a page of its own, styled like the front page.
 - **Verified or not.** Nobody has to verify an email or phone to join. The other side is only told when a contact is not verified, and you can mark "this is really them".
@@ -28,11 +28,11 @@ Seven Friends is built around one idea: **keep the few people who matter close, 
 
 ### Circles
 - The same app runs up to four separate **circles**: *Friends*, *Buddies*, *Work* and *Family*. Each has its own seven seats, name, colour, moods and welcome pages, and one app shows one circle at a time. Switching circle rebuilds every page, so nothing leaks between them.
-- Preferences (theme, text size, message order, ready-made messages) are saved per circle.
+- Preferences (theme, text size, message order) are saved per circle.
 - Details: [`docs/design/circles.md`](docs/design/circles.md), "Push and circles" in [`docs/guide/connections.md`](docs/guide/connections.md)
 
 ### Groups
-- A **group is a friend with several people in it** (at most seven in a seat, like a friend). It has its own conversation, its own safebox, a name, a description and a picture.
+- A **group is a friend with several people in it** (at most seven in a seat, like a friend). The Add page only makes a *new* group; to join an existing one a member of that group has to invite you. It has its own conversation, its own safebox, a name, a description and a picture.
 - Any member can add one of their **own confirmed friends**, so every membership rests on a friendship somebody in the group already trusts. People can leave at any time, and the last one out deletes the group and everything in it.
 - The profile of a group shows every member as a badge with their picture. In the feed every message shows who wrote it.
 - Details: [`docs/design/groups.md`](docs/design/groups.md)
@@ -41,7 +41,7 @@ Seven Friends is built around one idea: **keep the few people who matter close, 
 - **Conversation feed** with each friend or group: text, pictures, video, voice messages and captions, edit and delete, sort order, and a clean-up of old messages.
 - **Links** in messages are clickable and show a page preview in a frame.
 - **Pings.** A message can be sent as a gentle "poke" that gets through even to a friend who has you on their sleep list.
-- **Ready-made messages** you write once and send with a tap.
+- **Sharing stays inside the app.** Seven Friends is for sharing inside the app, with one friend or one group at a time: pictures, videos, voice messages and files cannot be downloaded or exported, and nothing is passed on to other friendships or groups. A voice message just plays in the feed.
 - **Media cache.** Pictures, video and audio are made small on your device, cached, and shown fast on a slow connection.
 - Details: [`docs/guide/messages-and-profile.md`](docs/guide/messages-and-profile.md), [`docs/guide/media-and-safebox.md`](docs/guide/media-and-safebox.md)
 
@@ -108,7 +108,7 @@ Seven Friends is built around one idea: **keep the few people who matter close, 
 | Home (`/`) | Quiet page with requests and unread messages, your seven, the sleep list entry |
 | Friends and groups | Seats, add a friend, a friend's profile, the conversation, send a message, send an image / video / voice |
 | Safebox | List and grid, new file, note and objects, links between items |
-| Locking and recovery | Locking and keys, recovery by words, by own devices, by a friend |
+| Locking and recovery | Privacy lock, recovery by words, by own devices, by a friend ("Get old messages back" in the app) |
 | Sleep list and Pending | Friends who sleep, requests waiting for a seat |
 | Settings | Profile, preferences, sounds and notifications, encryption keys, install, privacy, terms, about |
 | Sign-in and setup | Login methods, welcome pages, the setup wizard, delete my account |
