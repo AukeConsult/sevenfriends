@@ -60,8 +60,6 @@ export const SOUND_EVENTS: { event: SoundEvent; label: string; hint: string }[] 
 ];
 
 const DEFAULTS: Record<SoundEvent, SoundId> = { message: 'ding', request: 'chime', answer: 'soft' };
-const STORAGE_KEY = 'sf-sounds';
-const VOLUME_KEY = 'sf-volume';
 /** Volume 0-100 % when nothing was chosen (louder than the first version of the sounds). */
 const DEFAULT_VOLUME = 80;
 /** The loudest a note gets (at 100 %); the volume is applied on a curve, so the slider feels even. */
@@ -72,14 +70,14 @@ const MAX_GAIN = 0.9;
  * can have its own sound (or none), chosen on the Settings page. Browsers only allow sound after the person has
  * tapped or clicked the page once, so audio is unlocked at the first tap; before that a sound is silently skipped.
  * The choices belong to the ACCOUNT (`PUT /preferences/sounds`), so they follow the person to every device: they are
- * loaded when somebody signs in and saved a moment after every change, and kept in localStorage only as a copy for a
- * quick start. At sign-out the copy is cleared, so the next person on the device starts with the defaults.
+ * loaded when somebody signs in and saved a moment after every change. Nothing is kept on the device: at sign-out the choices are
+ * reset to the defaults.
  * Only works while the app is open.
  */
 @Injectable({ providedIn: 'root' })
 export class SoundService {
   /** The sound chosen for each event. */
-  readonly choices = signal<Record<SoundEvent, SoundId>>(this.read());
+  readonly choices = signal<Record<SoundEvent, SoundId>>({ ...DEFAULTS });
 
   /** The music jingles that were dropped in `public/sounds` (empty when there are none). */
   readonly jingles = signal<Jingle[]>([]);
@@ -89,10 +87,10 @@ export class SoundService {
   private readonly live = inject(LiveChanges);
 
   /** true once the person has chosen their sounds (or looked at the Settings page) */
-  readonly defined = signal(this.hasSaved());
+  readonly defined = signal(false);
 
   /** How loud the sounds are, 0-100. */
-  readonly volume = signal(this.readVolume());
+  readonly volume = signal(DEFAULT_VOLUME);
 
   private context: AudioContext | null = null;
   private jingle: HTMLAudioElement | null = null;
@@ -177,34 +175,18 @@ export class SoundService {
     this.choices.set({ message: sounds.message as SoundId, request: sounds.request as SoundId, answer: sounds.answer as SoundId });
     this.volume.set(sounds.volume);
     this.defined.set(true);
-    this.writeLocal();
   }
 
   private reset(): void {
     this.choices.set({ ...DEFAULTS });
     this.volume.set(DEFAULT_VOLUME);
     this.defined.set(false);
-    try {
-      localStorage.removeItem(STORAGE_KEY);
-      localStorage.removeItem(VOLUME_KEY);
-    } catch {
-      /* nothing to clear */
-    }
   }
 
-  private writeLocal(): void {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.choices()));
-      localStorage.setItem(VOLUME_KEY, String(this.volume()));
-    } catch {
-      /* private mode: the choice lasts until the page is closed */
-    }
-  }
 
   /** A change: keep the copy on this device now, and save it on the account in a moment. */
   private changed(): void {
     this.defined.set(true);
-    this.writeLocal();
     if (!this.accountUid) return;
     clearTimeout(this.saveTimer);
     this.saveTimer = setTimeout(() => {
@@ -305,13 +287,6 @@ export class SoundService {
     this.changed();
   }
 
-  private hasSaved(): boolean {
-    try {
-      return localStorage.getItem(STORAGE_KEY) !== null;
-    } catch {
-      return false;
-    }
-  }
 
   /** Plays the sound chosen for this event. */
   play(event: SoundEvent): void {
@@ -388,28 +363,5 @@ export class SoundService {
     }
   }
 
-  private readVolume(): number {
-    try {
-      const saved = Number(localStorage.getItem(VOLUME_KEY));
-      return localStorage.getItem(VOLUME_KEY) !== null && Number.isFinite(saved) ? Math.min(100, Math.max(0, saved)) : DEFAULT_VOLUME;
-    } catch {
-      return DEFAULT_VOLUME;
-    }
-  }
 
-  private read(): Record<SoundEvent, SoundId> {
-    try {
-      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '{}') as Partial<Record<SoundEvent, SoundId>>;
-      // a jingle choice is kept even before the list of jingles has been read (a deleted file simply stays silent)
-      const valid = (id: unknown): id is SoundId =>
-        SOUND_CHOICES.some((c) => c.id === id) || (typeof id === 'string' && id.startsWith('file:') && id.length > 'file:'.length);
-      return {
-        message: valid(saved.message) ? saved.message : DEFAULTS.message,
-        request: valid(saved.request) ? saved.request : DEFAULTS.request,
-        answer: valid(saved.answer) ? saved.answer : DEFAULTS.answer,
-      };
-    } catch {
-      return { ...DEFAULTS };
-    }
-  }
 }

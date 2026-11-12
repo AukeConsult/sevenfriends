@@ -33,7 +33,6 @@ const EMAIL_KEY = 'sf-email-for-sign-in';
 /** who signed in last on this browser (an id, nothing else) */
 const LAST_UID_KEY = 'sf-last-uid';
 /** the small things kept in this browser about the person using it (see clearLocalSession) */
-const LOCAL_PERSON_KEYS = ['sf-sleep-view', 'sf-checks-hidden-until']; // the sounds follow the account (SoundService clears and loads them itself)
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -272,7 +271,6 @@ export class AuthService {
   private clearLocalSession(uid: string): void {
     try {
       if (!this.newAccount && localStorage.getItem(LAST_UID_KEY) === uid) return;
-      for (const key of LOCAL_PERSON_KEYS) localStorage.removeItem(key);
       sessionStorage.clear();
     } catch {
       /* no storage: nothing to clear */

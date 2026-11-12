@@ -7,8 +7,6 @@ export const LOOK_TEXT_SIZES = ["tiny", "small", "normal", "big", "huge"] as con
 export type LookTextSize = (typeof LOOK_TEXT_SIZES)[number];
 
 /** Ready-made messages: at most this many, each at most this long. */
-export const CIRCLE_QUICK_MAX = 10;
-export const CIRCLE_QUICK_LENGTH = 200;
 
 /**
  * The choices a person makes in Settings, kept PER CIRCLE (on the circle's own document), so they follow the person to every device and
@@ -25,13 +23,13 @@ export interface CircleSettings {
   sleepList: boolean;
   /** a picture next to every message in a conversation */
   feedIcons: boolean;
-  /** the ready-made messages */
-  quickMessages: string[];
+  /** when I add something to the safebox, a message tells my friend or group */
+  boxTellNew: boolean;
 }
 
-const KEYS: readonly (keyof CircleSettings)[] = ["theme", "textSize", "chatOrder", "enterSends", "sleepList", "feedIcons", "quickMessages"];
+const KEYS: readonly (keyof CircleSettings)[] = ["theme", "textSize", "chatOrder", "enterSends", "sleepList", "feedIcons", "boxTellNew"];
 
-/** One value checked; undefined = not valid. (The quick messages are trimmed and the empty ones dropped.) */
+/** One value checked; undefined = not valid. */
 function valid(key: keyof CircleSettings, value: unknown): CircleSettings[keyof CircleSettings] | undefined {
   switch (key) {
     case "theme": return LOOK_THEMES.find((t) => t === value);
@@ -39,12 +37,8 @@ function valid(key: keyof CircleSettings, value: unknown): CircleSettings[keyof 
     case "chatOrder": return value === "oldest" || value === "newest" ? value : undefined;
     case "enterSends":
     case "sleepList":
-    case "feedIcons": return typeof value === "boolean" ? value : undefined;
-    case "quickMessages": {
-      if (!Array.isArray(value) || value.some((v) => typeof v !== "string")) return undefined;
-      const list = (value as string[]).map((v) => v.trim()).filter(Boolean);
-      return list.length <= CIRCLE_QUICK_MAX && list.every((v) => v.length <= CIRCLE_QUICK_LENGTH) ? list : undefined;
-    }
+    case "feedIcons":
+    case "boxTellNew": return typeof value === "boolean" ? value : undefined;
   }
 }
 

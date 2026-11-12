@@ -30,7 +30,6 @@ interface LockedEntry {
   enc: MessageEnc;
 }
 
-const LOCKED_STORE = 'sf-locked-media';
 
 /** Files in messages: uploading them, and reading them back from the media cache of the server. A file of a locked message is locked on the sender's device and opened on the reader's. */
 @Injectable({ providedIn: 'root' })
@@ -41,14 +40,12 @@ export class MediaService {
   private readonly files = new Map<string, Promise<StoredFile>>();
   /** the files that are locked (by `ownerId/objectId`), told by the conversation when it opens the messages; kept for this tab so the full-size page can open them after a reload */
   private locked: Map<string, LockedEntry> | null = null;
-  private storing = false;
 
   constructor() {
     // another circle: the files that were read, and the list of locked files, belong to the old circle
     inject(ActiveCircleService).onSwitch(() => {
       this.files.clear();
       this.locked = new Map();
-      try { sessionStorage.removeItem(LOCKED_STORE); } catch { /* no storage */ }
     });
   }
 
@@ -129,26 +126,11 @@ export class MediaService {
     // a newer copy of the message with more key copies (after a recovery) replaces the old one, so the file opens with it
     if (before && before.enc.wraps.length >= enc.wraps.length) return;
     known.set(`${ownerId}/${objectId}`, { friendId, enc });
-    if (!this.storing) {
-      this.storing = true;
-      queueMicrotask(() => {
-        this.storing = false;
-        try {
-          sessionStorage.setItem(LOCKED_STORE, JSON.stringify([...known]));
-        } catch {
-          /* no storage: the full-size page then needs the conversation opened first */
-        }
-      });
-    }
   }
 
   private lockedFiles(): Map<string, LockedEntry> {
     if (!this.locked) {
-      try {
-        this.locked = new Map(JSON.parse(sessionStorage.getItem(LOCKED_STORE) ?? '[]') as [string, LockedEntry][]);
-      } catch {
-        this.locked = new Map();
-      }
+      this.locked = new Map();
     }
     return this.locked;
   }

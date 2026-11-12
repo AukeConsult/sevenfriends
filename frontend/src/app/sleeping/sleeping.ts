@@ -9,6 +9,7 @@ import { FriendAvatar } from '../friend-avatar/friend-avatar';
 import { FriendsService } from '../core/friends.service';
 import { MessagesService } from '../core/messages.service';
 import { timeAgo } from '../core/time-ago';
+import { UiPreferencesService } from '../core/ui-preferences';
 import { Friend, profileColorHex } from '../models';
 import { HomeTop } from '../home-top/home-top';
 
@@ -28,6 +29,7 @@ const MAX_FRIENDS = 7; // seats (the same number as on the Friends page)
 export class Sleeping {
   protected readonly w = inject(ActiveCircleService).words;
   private readonly friendsService = inject(FriendsService);
+  private readonly prefs = inject(UiPreferencesService);
   /** shown inside Home (under its top, in place of everything else) instead of as a page of its own: the back arrow then closes it */
   readonly embedded = input(false);
   readonly closed = output<void>();
@@ -61,8 +63,8 @@ export class Sleeping {
   /** friends in a seat */
   protected readonly taken = computed(() => this.friendsService.awake().length);
 
-  /** how the sleepers are shown: small circles (tap one to see its card) or a list of cards; remembered on this device */
-  protected readonly view = signal<'circles' | 'list'>(localStorage.getItem('sf-sleep-view') === 'list' ? 'list' : 'circles');
+  /** how the sleepers are shown: small circles (tap one to see its card) or a list of cards; kept on this device (UiPreferences) */
+  protected readonly view = this.prefs.value('sleepView');
   /** the sleeper whose card is open (circles view) */
   protected readonly expanded = signal<string | null>(null);
   protected readonly selected = computed(() => this.sleeping().find((f) => f.id === this.expanded()) ?? null);
@@ -76,13 +78,8 @@ export class Sleeping {
   }
 
   protected setView(view: 'circles' | 'list'): void {
-    this.view.set(view);
+    this.prefs.set('sleepView', view);
     this.deleting.set(null);
-    try {
-      localStorage.setItem('sf-sleep-view', view);
-    } catch {
-      /* not saved: the choice holds until the page is closed */
-    }
   }
 
   protected toggleProfile(friend: Friend): void {

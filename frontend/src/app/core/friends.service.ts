@@ -68,17 +68,6 @@ export class FriendsService {
   }
 
   /**
-   * The ready-made messages kept on this device for a friend (UiPreferences.friendQuick) are deleted with the friend. This is done when the friend is
-   * removed, never from a list that is loaded: a list is one circle only, and the friends of the other circles are not in it.
-   */
-  private forgetQuickOf(id: string): void {
-    const kept = this.prefs.get('friendQuick');
-    if (!(id in kept)) return;
-    const { [id]: _gone, ...left } = kept;
-    this.prefs.set('friendQuick', left);
-  }
-
-  /**
    * Confirm a request: the requester becomes my friend too.
    * Returns 'no-seats' when my circle is full: the request then stays pending.
    */
@@ -174,7 +163,6 @@ export class FriendsService {
   async remove(id: string): Promise<void> {
     await this.api.request<void>(`${this.friendsPath()}/${id}`, { method: 'DELETE' });
     this.friends.update((list) => list.filter((f) => f.id !== id));
-    this.forgetQuickOf(id);
   }
 
   private friendsPath(): string {

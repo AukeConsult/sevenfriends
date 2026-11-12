@@ -112,3 +112,6 @@ These rules are implemented in `functions/src` and covered by the tests in `func
 - `sendPush` (`functions/src/push.ts`, `devicesFor`) wakes the devices of a person for a circle: the app made for that circle first (and then only that one, so nobody is woken twice); without one, the devices of the all-circles app, whatever circle they are in at the moment. A device without `app` counts as `all`.
 - The push carries `circle` and its page has `?incircle=<type>`. The all-circles app never switches circle by itself: when the circle of the address is not the one it is in, `CircleSwitch` asks (Switch / Stay). A push that arrives while the web app is in front, about another circle, is shown as a notification by the page (`desktop-notice.service.ts`), because the page only listens to its own circle.
 - Not done yet: a push about another circle while the Android app is in front is not shown (Android shows pushes only when the app is in the background).
+
+## Sleep list
+- The sleep list is a **list read from the database** (`friend.asleep`), not a seat: a sleeping friend has no seat and the app stores no seat or picture copy for it. Its picture is the friend's uploaded picture, else the icon they chose; a friend with neither gets a neutral icon (`friend-avatar.ts`, seat 0 = no seat icon).

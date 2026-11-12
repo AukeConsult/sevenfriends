@@ -3,10 +3,10 @@ import { Circle, CircleSettings } from '../models';
 import { ActiveCircleService } from './active-circle.service';
 import { ApiService } from './api.service';
 import { AuthService } from './auth.service';
-import { DEFAULTS, UiPreferencesService } from './ui-preferences';
+import { ACCOUNT_KEYS, DEFAULTS, UiPreferencesService } from './ui-preferences';
 
 /** The choices that are kept on the circle (the others in UiPreferences are about this screen or this device). */
-const SYNCED: readonly (keyof CircleSettings)[] = ['theme', 'textSize', 'chatOrder', 'enterSends', 'sleepList', 'feedIcons', 'quickMessages'];
+const SYNCED: readonly (keyof CircleSettings)[] = ACCOUNT_KEYS; // the same list: these are never written to the device
 
 /**
  * Keeps the settings (theme, text size, order, Enter, sleep list, pictures, ready-made messages) on the CIRCLE the person works in, so every device shows the same

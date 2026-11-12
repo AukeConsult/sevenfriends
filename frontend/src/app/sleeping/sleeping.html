@@ -16,7 +16,7 @@
     <article class="sf-sl-card" [style.--sf-friend]="colorOf(friend.color)">
       <div class="sf-sl-card-head">
         <span class="sf-sl-pic">
-          <app-friend-avatar [friend]="friend" [seat]="1" [size]="48" />
+          <app-friend-avatar [friend]="friend" [seat]="friend.seat ?? 0" [size]="48" />
           @if (unread().get(friend.id); as count) {
             <span class="sf-hs-unread" [attr.aria-label]="(t('sleeping.countUnread', { count: count }) || count + ' unread')">{{ count }}</span>
           }
@@ -82,7 +82,7 @@
           <li class="sf-sl-item" [class.sf-sl-on]="expanded() === friend.id">
             <button type="button" class="sf-hs-friend sf-sl-btn" [style.--sf-friend]="colorOf(friend.color)" (click)="toggleProfile(friend)" [attr.aria-expanded]="expanded() === friend.id" [attr.aria-label]="friend.name">
               <span class="sf-hs-ring">
-                <app-friend-avatar [friend]="friend" [seat]="1" [size]="56" />
+                <app-friend-avatar [friend]="friend" [seat]="friend.seat ?? 0" [size]="56" />
                 @if (unread().get(friend.id); as count) {
                   <span class="sf-hs-unread" [attr.aria-label]="(t('sleeping.countUnread', { count: count }) || count + ' unread')">{{ count }}</span>
                 }

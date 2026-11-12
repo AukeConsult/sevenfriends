@@ -29,8 +29,6 @@ export interface UiPreferences {
   feedIcons: boolean;
   /** when I add something to the safebox, a message tells my friend or group (default); off = nothing is sent (the bell in the item still can) */
   boxTellNew: boolean;
-  /** ready-made messages: they are listed in the + menu of a conversation and sent with one tap (at most QUICK_MAX, each at most QUICK_LENGTH characters) */
-  quickMessages: string[];
   /** the language of the texts of the app (a code of languages.ts); '' = not chosen on this device yet: the language of the account, the country or the browser is used (see language.service.ts) */
   language: string;
   /** the first-time setup (/setup): 'new' = not offered yet, 'start' = a brand-new account, Home offers it (like 'skipped') and the wizard still counts as the first time, 'skipped' = left for later (Home offers it again), 'done' */
@@ -57,8 +55,12 @@ export interface UiPreferences {
   /** the clean-up frame of a conversation: whose messages and how old they must be are remembered (the words to look for are not) */
   cleanupWhose: 'mine' | 'both';
   cleanupDays: number | null;
-  /** ready-made messages for ONE friend (by friend id), kept on this device only: listed first in that friend's + menu and on the Send a message page */
-  friendQuick: Record<string, string[]>;
+  /** how the sleepers are shown: small circles or a list of cards */
+  sleepView: 'circles' | 'list';
+  /** the setup notes on Home are hidden until this time (ms), or null */
+  checksHiddenUntil: number | null;
+  /** where each conversation feed was scrolled to when it was left (by connection id; the newest message then and the order): the feed opens there again. UI position only. */
+  feedPlace: Record<string, { y: number; newest: string | null; desc: boolean }>;
 }
 
 /** Where a friend link points: an invite code, or an email / phone number. */
@@ -85,9 +87,6 @@ export type ThemeKey = (typeof THEMES)[number]['key'];
 export const SETTINGS_TABS = ['profile', 'preferences', 'notifications', 'encryption', 'install', 'about'] as const;
 export type SettingsTab = (typeof SETTINGS_TABS)[number];
 
-export const QUICK_MAX = 10;
-export const QUICK_LENGTH = 200;
-
 /** How much the text grows or shrinks (the root font size is multiplied by it: everything in rem follows). */
 export const TEXT_SCALES: Record<UiPreferences['textSize'], number> = { tiny: 0.8, small: 0.9, normal: 1, big: 1.15, huge: 1.35 };
 /** The same on a phone (a screen up to 575 px wide): one step up, so Small is what Normal was, Normal is what Big was, and Big is 15% more. */
@@ -96,23 +95,17 @@ export const PHONE_TEXT_SCALES: Record<UiPreferences['textSize'], number> = { ti
 const kindIds = (v: unknown): string[] => (Array.isArray(v) ? v.filter((k: unknown): k is string => typeof k === 'string') : []);
 const layoutOf = (v: any): { main: string[]; more: string[] } | null => (v && typeof v === 'object' ? { main: kindIds(v.main), more: kindIds(v.more) } : null);
 
-export const DEFAULTS: UiPreferences = { boxTellNew: true, theme: 'white', textSize: 'normal', settingsTab: 'profile', emojiTab: 'People', chatOrder: 'oldest', enterSends: true, sleepList: true, quickMessages: [], feedIcons: true, language: '', setup: 'new', lastPage: null, micRaw: false, pendingFriend: null, welcomeUntil: null, boxPlain: false, boxView: 'list', boxKindLayout: null, boxHiddenOpen: false, cleanupWhose: 'mine', cleanupDays: 30, friendQuick: {}, seatMoved: false };
+export const DEFAULTS: UiPreferences = { boxTellNew: true, theme: 'white', textSize: 'normal', settingsTab: 'profile', emojiTab: 'People', chatOrder: 'oldest', enterSends: true, sleepList: true, feedIcons: true, language: '', setup: 'new', lastPage: null, micRaw: false, pendingFriend: null, welcomeUntil: null, boxPlain: false, boxView: 'list', boxKindLayout: null, boxHiddenOpen: false, cleanupWhose: 'mine', cleanupDays: 30, feedPlace: {}, seatMoved: false, sleepView: 'circles', checksHiddenUntil: null };
 
-/** The ready-made messages as stored: only texts, trimmed, not empty, not too long, not too many. */
-export function quickOf(value: unknown): string[] {
-  if (!Array.isArray(value)) return [];
-  return value.filter((v): v is string => typeof v === 'string').map((v) => v.trim().slice(0, QUICK_LENGTH)).filter(Boolean).slice(0, QUICK_MAX);
-}
-
-/** The ready-made messages of each friend as stored: by friend id, each list cleaned like the general one, empty lists left out, not too many friends. */
-export function friendQuickOf(value: unknown): Record<string, string[]> {
-  const result: Record<string, string[]> = {};
-  if (!value || typeof value !== 'object' || Array.isArray(value)) return result;
-  for (const [id, list] of Object.entries(value as Record<string, unknown>).slice(0, 200)) {
-    const clean = quickOf(list);
-    if (clean.length) result[id] = clean;
+/** The remembered feed places, checked (at most 30, the newest kept). */
+export function feedPlaceOf(value: unknown): UiPreferences['feedPlace'] {
+  const out: UiPreferences['feedPlace'] = {};
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return out;
+  for (const [id, v] of Object.entries(value as Record<string, unknown>).slice(-30)) {
+    const p = v as { y?: unknown; newest?: unknown; desc?: unknown } | null;
+    if (p && typeof p.y === 'number' && Number.isFinite(p.y) && (p.newest === null || typeof p.newest === 'string') && typeof p.desc === 'boolean') out[id] = { y: p.y, newest: p.newest, desc: p.desc };
   }
-  return result;
+  return out;
 }
 
 const text = (value: unknown): string | null => (typeof value === 'string' && value ? value : null);
@@ -124,8 +117,15 @@ function pendingOf(value: unknown): PendingFriend | null {
   return pending.code || pending.email || pending.phone ? pending : null;
 }
 const STORAGE_KEY = 'sf-ui';
-/** The two separate keys that were used before this object existed: read once, then the object is used. */
-const OLD_CHAT_ORDER = 'sf-chat-order';
+/** The choices that are kept in the DATABASE (on the circle, see LookSyncService): they are never written to this device, only held while the app is open. */
+export const ACCOUNT_KEYS = ['theme', 'textSize', 'chatOrder', 'enterSends', 'sleepList', 'feedIcons', 'boxTellNew'] as const;
+/** What may be written to this device: the choices about this screen, without the ones that live in the database. */
+function onDevice(all: UiPreferences): Partial<UiPreferences> {
+  const rest: Partial<UiPreferences> = { ...all };
+  for (const key of ACCOUNT_KEYS) delete rest[key];
+  return rest;
+}
+/** The separate key that was used before this object existed: read once, then the object is used. */
 const OLD_MIC_RAW = 'sf-mic-raw';
 
 /** What is in storage, checked field by field (a missing or damaged field falls back to its default). */
@@ -135,11 +135,12 @@ function read(): UiPreferences {
     if (raw === null) {
       return {
         ...DEFAULTS,
-        chatOrder: localStorage.getItem(OLD_CHAT_ORDER) === 'newest' ? 'newest' : 'oldest',
+        
         micRaw: localStorage.getItem(OLD_MIC_RAW) === '1',
       };
     }
     const saved = JSON.parse(raw) as Partial<Record<keyof UiPreferences, unknown>>;
+    for (const key of ACCOUNT_KEYS) delete saved[key]; // an old copy from before: the database is the only place
     return {
       theme: THEMES.find((t) => t.key === saved.theme)?.key ?? 'white',
       textSize: saved.textSize === 'tiny' || saved.textSize === 'small' || saved.textSize === 'big' || saved.textSize === 'huge' ? saved.textSize : 'normal',
@@ -148,7 +149,6 @@ function read(): UiPreferences {
       chatOrder: saved.chatOrder === 'newest' ? 'newest' : 'oldest',
       enterSends: saved.enterSends !== false,
       sleepList: saved.sleepList !== false,
-      quickMessages: quickOf(saved.quickMessages),
       feedIcons: saved.feedIcons !== false,
       boxTellNew: saved.boxTellNew !== false,
       language: typeof saved.language === 'string' && isLanguage(saved.language) ? saved.language : '',
@@ -163,7 +163,9 @@ function read(): UiPreferences {
       boxHiddenOpen: saved.boxHiddenOpen === true,
       seatMoved: saved.seatMoved === true,
       cleanupWhose: saved.cleanupWhose === 'both' ? 'both' : 'mine',
-      friendQuick: friendQuickOf(saved.friendQuick),
+      feedPlace: feedPlaceOf(saved.feedPlace),
+      sleepView: saved.sleepView === 'list' ? 'list' : 'circles',
+      checksHiddenUntil: typeof saved.checksHiddenUntil === 'number' && Number.isFinite(saved.checksHiddenUntil) ? saved.checksHiddenUntil : null,
       cleanupDays: saved.cleanupDays === null || (typeof saved.cleanupDays === 'number' && Number.isInteger(saved.cleanupDays) && saved.cleanupDays > 0) ? saved.cleanupDays : 30,
     };
   } catch {
@@ -190,7 +192,8 @@ export class UiPreferencesService {
 
   /** Reads the stored choices again and shows them on every page (colours and text size are page-wide, so all pages follow at once). */
   private reload(): void {
-    this.state.set(read());
+    const now = this.state();
+    this.state.set({ ...read(), ...Object.fromEntries(ACCOUNT_KEYS.map((key) => [key, now[key]])) });
     this.applyLook();
   }
 
@@ -229,7 +232,7 @@ export class UiPreferencesService {
     this.state.set(next);
     this.applyLook();
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(onDevice(next)));
     } catch {
       /* private mode: the choices last until the page is closed */
     }
@@ -237,11 +240,12 @@ export class UiPreferencesService {
 
   /** Change one choice: it is remembered at once (merged into what is stored, so a second window's other choices are kept). */
   set<K extends keyof UiPreferences>(key: K, value: UiPreferences[K]): void {
-    const next = { ...read(), [key]: value };
+    const now = this.state();
+    const next = { ...read(), ...Object.fromEntries(ACCOUNT_KEYS.map((k) => [k, now[k]])), [key]: value } as UiPreferences; // the choices of this screen from storage (a second window may have changed them), the database ones as they are here
     this.state.set(next);
     this.applyLook();
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(onDevice(next)));
     } catch {
       /* private mode: the choice lasts until the page is closed */
     }

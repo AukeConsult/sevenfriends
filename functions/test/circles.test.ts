@@ -54,8 +54,8 @@ describe("the choices of a circle (theme, text size, order, ...)", () => {
 
   it("start as none chosen, and are kept on the circle", async () => {
     expect(await settings(pool[0])).toEqual({});
-    await save(pool[0], { theme: "ocean", textSize: "big", quickMessages: ["  On my way  ", "", "Call me"] }).expect(200);
-    expect(await settings(pool[0])).toEqual({ theme: "ocean", textSize: "big", quickMessages: ["On my way", "Call me"] });
+    await save(pool[0], { theme: "ocean", textSize: "big" }).expect(200);
+    expect(await settings(pool[0])).toEqual({ theme: "ocean", textSize: "big" });
     expect(await settings(pool[1])).toEqual({}); // only mine
   });
 
@@ -81,8 +81,6 @@ describe("the choices of a circle (theme, text size, order, ...)", () => {
     ["a wrong order", { chatOrder: "random" }],
     ["a switch that is not true or false", { enterSends: "yes" }],
     ["an unknown setting", { favouriteFood: "pizza" }],
-    ["more than 10 quick messages", { quickMessages: Array.from({ length: 11 }, (_, i) => `m${i}`) }],
-    ["a quick message longer than 200 characters", { quickMessages: ["x".repeat(201)] }],
   ])("refuse %s, and keep what was there", async (_label, bad) => {
     await save(pool[0], { theme: "forest" }).expect(200);
     expect((await save(pool[0], { textSize: "small", ...bad })).status).toBe(400);

@@ -2,7 +2,6 @@ import { Injectable, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { tr } from './i18n';
 
-const STORAGE_KEY = 'sf-desktop-notices';
 const WORKER_URL = '/firebase-messaging-sw.js'; // the one service worker of the app (push + notification clicks)
 
 export interface DesktopNotice {
@@ -63,11 +62,6 @@ export class DesktopNoticeService {
   /** A different person (or a new account) on this browser: the switch starts off, whatever the last person chose. (The browser's own permission stays: only the person can take it back.) */
   reset(): void {
     this.wanted.set(false);
-    try {
-      localStorage.removeItem(STORAGE_KEY);
-    } catch {
-      /* nothing to clear */
-    }
   }
 
   async setWanted(on: boolean): Promise<boolean> {
@@ -77,11 +71,6 @@ export class DesktopNoticeService {
     const allowed = on && this.supported && Notification.permission === 'granted';
     this.permission.set(this.supported ? Notification.permission : 'denied');
     this.wanted.set(allowed);
-    try {
-      localStorage.setItem(STORAGE_KEY, allowed ? 'on' : 'off');
-    } catch {
-      /* private mode: the choice lasts until the page is closed */
-    }
     if (allowed) await this.registerWorker();
     return allowed;
   }
@@ -143,10 +132,6 @@ export class DesktopNoticeService {
   }
 
   private read(): boolean {
-    try {
-      return localStorage.getItem(STORAGE_KEY) === 'on' && this.supported && Notification.permission === 'granted';
-    } catch {
-      return false;
-    }
+    return this.supported && Notification.permission === 'granted'; // the browser itself remembers the permission: nothing is kept by the app
   }
 }

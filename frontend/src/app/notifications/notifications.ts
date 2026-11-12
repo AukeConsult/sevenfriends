@@ -203,25 +203,11 @@ export class Notifications {
     this.android.openSettings();
   }
 
-  /** the setup notes can be hidden for 24 hours (the time is kept on this device, so they stay away when the app is opened again) */
-  private static readonly CHECKS_KEY = 'sf-checks-hidden-until';
-  protected readonly checksHidden = signal(Number(this.readHiddenUntil()) > Date.now());
-
-  private readHiddenUntil(): string | null {
-    try {
-      return localStorage.getItem(Notifications.CHECKS_KEY);
-    } catch {
-      return null;
-    }
-  }
+  /** the setup notes can be hidden for 24 hours (the time is kept on this device in UiPreferences, so they stay away when the app is opened again) */
+  protected readonly checksHidden = computed(() => (this.prefs.value('checksHiddenUntil')() ?? 0) > Date.now());
 
   protected hideChecks(): void {
-    try {
-      localStorage.setItem(Notifications.CHECKS_KEY, String(Date.now() + 24 * 60 * 60 * 1000));
-    } catch {
-      /* storage is not available: hidden until the app is opened again */
-    }
-    this.checksHidden.set(true);
+    this.prefs.set('checksHiddenUntil', Date.now() + 24 * 60 * 60 * 1000);
   }
 
   /** the setup notes: sound and notifications not set up, the phone's notification switch, details not verified (folded into one line on Home); privacy lock off is one of them */

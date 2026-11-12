@@ -32,7 +32,6 @@ import { ChatMessage, GroupMember, MessageDeleteCriteria } from '../models';
 const SAFETY_REFRESH_MS = 30000;
 
 /** Where each feed was scrolled to when the person left it (to a picture, a video, the safebox, another page), kept while the app runs: the feed is shown there again, unless a message came meanwhile (then it shows the newest). */
-const LEFT_AT = new Map<string, { y: number; newest: string | null; desc: boolean }>();
 
 /** The message feed with one friend: /friends/:id (the id of the connection). */
 @Component({
@@ -197,7 +196,8 @@ export class Chat {
     // leaving the feed (any page): remember where it was scrolled to
     this.router.events.pipe(filter((e) => e instanceof NavigationStart), takeUntilDestroyed()).subscribe(() => {
       if (!this.loaded()) return; // the feed was not shown yet: nothing to remember
-      LEFT_AT.set(this.friendId, { y: window.scrollY, newest: this.messages().filter((m) => !m.id.startsWith('pending-')).at(-1)?.id ?? null, desc: this.sortDesc() });
+      const place = { y: window.scrollY, newest: this.messages().filter((m) => !m.id.startsWith('pending-')).at(-1)?.id ?? null, desc: this.sortDesc() };
+      this.prefs.set('feedPlace', { ...this.prefs.get('feedPlace'), [this.friendId]: place });
     });
     this.refresh(true);
 
@@ -241,8 +241,10 @@ export class Chat {
       }
       if (first) {
         // shown again after a visit to another page: at the same place, unless a message came meanwhile (then the newest)
-        const left = LEFT_AT.get(this.friendId);
-        LEFT_AT.delete(this.friendId);
+        const places = { ...this.prefs.get('feedPlace') };
+        const left = places[this.friendId];
+        delete places[this.friendId];
+        if (left) this.prefs.set('feedPlace', places);
         const newest = res.messages.at(-1)?.id ?? null;
         if (left && left.desc === this.sortDesc() && left.newest === newest) this.scrollBack(left.y);
         else this.scrollDown();
