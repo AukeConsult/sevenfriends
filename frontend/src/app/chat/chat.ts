@@ -1,3 +1,4 @@
+import { APP_ORIGIN } from '../core/app-origin';
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { tr } from '../core/i18n';
 import { ActiveCircleService } from '../core/active-circle.service';
@@ -309,7 +310,8 @@ export class Chat {
   /** an address of this app itself (an item of the safebox in a message): it opens here, not in a new tab, and has no preview frame */
   protected own(url: string): boolean {
     try {
-      return new URL(url).origin === location.origin;
+      const { origin } = new URL(url);
+      return origin === location.origin || origin === APP_ORIGIN; // the app runs on sevenfriends.web.app in the Android and Windows apps, and links are written with the main address
     } catch {
       return false;
     }

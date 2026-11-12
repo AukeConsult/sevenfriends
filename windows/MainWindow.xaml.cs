@@ -9,7 +9,7 @@ using Microsoft.Win32;
 namespace SevenFriends;
 
 /// <summary>
-/// Shows the live web app (the same address as server.url in frontend/capacitor.config.json: change both together).
+/// Shows the live web app on the main address, the same as server.url in frontend/capacitor.config.json (change both together).
 /// The web app stays the one code base: deploy it and this window shows the new version, nothing to rebuild.
 ///
 /// Closing the window does not end the app: it goes to the tray (the icon next to the clock) and keeps running, so a
@@ -19,7 +19,7 @@ namespace SevenFriends;
 public partial class MainWindow : Window
 {
     public const string WindowTitle = "Seven Friends";
-    private const string AppUrl = "https://sevenfriends.web.app";
+    private const string AppUrl = "https://sevenfriends.io";
     private const string RunKey = @"Software\Microsoft\Windows\CurrentVersion\Run";
     private const string RunName = "SevenFriends";
 

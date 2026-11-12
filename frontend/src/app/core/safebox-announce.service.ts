@@ -1,3 +1,4 @@
+import { APP_ORIGIN } from './app-origin';
 import { Injectable, inject } from '@angular/core';
 import { ChatService } from './chat.service';
 import { tr } from './i18n';
@@ -17,7 +18,7 @@ export class SafeboxAnnounceService {
   text(what: string, title: string, path: string[]): string {
     const item = [what.trim(), title.trim()].filter(Boolean).join(' – ');
     const text = tr('safebox.tell.message', '📦 In the safebox: {{ item }}', { item });
-    return path.length ? `${text}\n${location.origin}${path.join('/')}` : text;
+    return path.length ? `${text}\n${APP_ORIGIN}${path.join('/')}` : text;
   }
 
   /** Sends the message (the bell in an item calls this and shows the error). */
