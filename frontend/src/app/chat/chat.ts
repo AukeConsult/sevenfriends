@@ -31,7 +31,6 @@ import { ChatMessage, GroupMember, MessageDeleteCriteria } from '../models';
 // New messages, edits and deletes arrive live (RealtimeService). This refresh is only a safety net.
 const SAFETY_REFRESH_MS = 30000;
 
-/** Where each feed was scrolled to when the person left it (to a picture, a video, the safebox, another page), kept while the app runs: the feed is shown there again, unless a message came meanwhile (then it shows the newest). */
 
 /** The message feed with one friend: /friends/:id (the id of the connection). */
 @Component({
@@ -192,6 +191,9 @@ export class Chat {
       sortDesc: () => this.sortDesc(),
       toggleSort: () => this.toggleSort(),
       toggleCleanup: () => this.toggleCleanup(),
+      addPending: (text) => this.addPending(text),
+      confirmPending: (id, item) => this.messages.update((list) => list.map((m) => (m.id === id ? item : m))),
+      dropPending: (id) => this.messages.update((list) => list.filter((m) => m.id !== id)),
     });
     // leaving the feed (any page): remember where it was scrolled to
     this.router.events.pipe(filter((e) => e instanceof NavigationStart), takeUntilDestroyed()).subscribe(() => {
@@ -219,6 +221,16 @@ export class Chat {
       clearInterval(timer);
       this.ctx.feed.set(null);
     });
+  }
+
+  private pendingCount = 0;
+
+  /** A message of mine is in the feed the moment it is sent, before the server has answered; `refresh` takes the temporary copy away when the real one arrives. */
+  private addPending(text: string): string {
+    const id = `pending-${++this.pendingCount}`;
+    this.messages.update((list) => [...list, { id, text, media: null, mine: true, read: false, time: new Date().toISOString(), edited: false, hidden: false, link: null }]);
+    this.scrollDown();
+    return id;
   }
 
   private async refresh(first: boolean): Promise<void> {

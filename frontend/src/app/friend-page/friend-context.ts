@@ -9,12 +9,19 @@ import { UiPreferencesService } from '../core/ui-preferences';
 import { ApiError } from '../core/api.service';
 import { BoxKeys, BoxPerson, SafeboxItem, profileColorHex, profileColorInk, readableFingerprint } from '../models';
 import { tr } from '../core/i18n';
+import { ChatItem } from '../core/message-lock.service';
 
 /** What the conversation tells the header it can do (the sort order and the clean-up belong to the feed, so the menu shows them only while the feed is open). */
 export interface FeedActions {
   sortDesc(): boolean;
   toggleSort(): void;
   toggleCleanup(): void;
+  /** shows a message of mine in the feed at once, before the server has it; returns its temporary id */
+  addPending(text: string): string;
+  /** the server has it: the temporary message becomes the real one */
+  confirmPending(id: string, item: ChatItem): void;
+  /** it could not be sent: the temporary message goes */
+  dropPending(id: string): void;
 }
 
 /** A tool of the page that is open (not the feed), shown first in the header menu: "Messages for X only" on Send a message, "Add files" in the safebox. */

@@ -128,11 +128,14 @@ export class FriendSend {
     this.error.set(null);
     this.notice.set(`Sending: ${text.length > 40 ? text.slice(0, 40) + '…' : text}`);
     const poke = this.ctx.pokes();
+    const pending = this.ctx.feed()?.addPending(text) ?? null; // in the feed at once; the server is asked after
     try {
-      await this.chat.send(this.ctx.friendId, text, poke);
+      const item = await this.chat.send(this.ctx.friendId, text, poke);
+      if (pending) this.ctx.feed()?.confirmPending(pending, item);
       this.ctx.poke.set(false);
       this.notice.set(`Sent: ${text.length > 40 ? text.slice(0, 40) + '…' : text}`);
     } catch (err: any) {
+      if (pending) this.ctx.feed()?.dropPending(pending);
       if (clear && !this.text().trim()) this.text.set(text); // not sent: the text is back in the frame (unless something new is being written)
       this.notice.set(null);
       this.error.set(err.message ?? tr('friendSend.couldNotSendThe', 'Could not send the message'));
