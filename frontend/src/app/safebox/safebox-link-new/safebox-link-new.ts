@@ -1,11 +1,12 @@
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
-import { Location, NgTemplateOutlet } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { translationsLoaded } from '../../core/i18n';
 import { SafeboxService } from '../../core/safebox.service';
 import { UiPreferencesService } from '../../core/ui-preferences';
 import { arrangeKinds, boxKinds } from '../../core/safebox-objects';
+import { TapBack } from '../../core/tap-back';
 import { PageBar } from '../../page-bar/page-bar';
 
 /**
@@ -14,13 +15,12 @@ import { PageBar } from '../../page-bar/page-bar';
  */
 @Component({
   selector: 'app-safebox-link-new',
-  imports: [PageBar, NgTemplateOutlet, RouterLink, TranslocoDirective],
+  imports: [TapBack, PageBar, NgTemplateOutlet, RouterLink, TranslocoDirective],
   templateUrl: './safebox-link-new.html',
   providers: [provideTranslocoScope('safebox')],
 })
 export class SafeboxLinkNew {
   private readonly router = inject(Router);
-  private readonly location = inject(Location);
   protected readonly friendId = inject(ActivatedRoute).snapshot.paramMap.get('id') ?? '';
   protected readonly itemId = inject(ActivatedRoute).snapshot.paramMap.get('itemId') ?? '';
   protected readonly list = ['/friends', this.friendId, 'safebox'];
@@ -44,10 +44,9 @@ export class SafeboxLinkNew {
     return type === 'note' ? [...base, 'note'] : [...base, 'new', type];
   }
 
-  /** One step back in the history (the pages of this flow replace each other, so that is the item, or the list of items to pick from); opened directly: the item, or the list. */
-  protected back(event: Event): void {
-    event.preventDefault();
-    if ((history.state?.navigationId ?? 1) > 1) this.location.back();
-    else void this.router.navigate(this.service.openPath(this.friendId, this.itemId) ?? this.list, { replaceUrl: true });
+  /** Back: the item the new one is linked from, otherwise the safebox list. */
+  protected back(event?: Event): void {
+    event?.preventDefault();
+    void this.router.navigate(this.service.openPath(this.friendId, this.itemId) ?? this.list, { replaceUrl: true });
   }
 }

@@ -52,5 +52,6 @@
   "messageMany": "viestiä",
   "alsoWhose": ", myös käyttäjän {{ name }},",
   "openTheItem": "Avaa kohde",
-  "signatureBad": "⚠ Viestin kirjoittajaa ei voitu tarkistaa. Älä luota viestiin."
+  "signatureBad": "⚠ Viestin kirjoittajaa ei voitu tarkistaa. Älä luota viestiin.",
+  "save": "Tallenna"
 }

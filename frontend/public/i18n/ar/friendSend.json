@@ -17,5 +17,6 @@
   "addAMessageFor": "أضِف رسالة لـ {{ friendName }} فقط",
   "messageForFriendnameIndex": "رسالة لـ {{ friendName }} {{ index }}",
   "removeMessageIndex": "إزالة الرسالة {{ index }}",
-  "messagesForOnly": "رسائل لـ {{ friendName }} فقط"
+  "messagesForOnly": "رسائل لـ {{ friendName }} فقط",
+  "hideTheForm": "إخفاء النموذج"
 }

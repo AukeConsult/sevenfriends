@@ -77,7 +77,7 @@ export class SafeboxAttachments {
     const parent = this.parentId();
     if (parent) {
       const failed = await this.send(parent, files);
-      if (failed) this.error.set(tr('safebox.attachments.couldNotAddCount', '{{ count }} file(s) could not be added.', { count: failed }));
+      if (failed > 1) this.error.set(tr('safebox.attachments.couldNotAddCount', '{{ count }} file(s) could not be added.', { count: failed })); // one failure keeps its own reason (too big, ...)
       await this.reload();
     } else this.pending.update((list) => [...list, ...files]);
   }
@@ -97,6 +97,10 @@ export class SafeboxAttachments {
       this.uploading.set(file.name);
       try {
         if (!keys) throw new Error(tr('safebox.attachments.noKeys', 'The keys are not known yet.'));
+        if (!file.type.startsWith('image/')) {
+          const maxBytes = await this.service.maxFileBytes(this.friendId());
+          if (file.size > maxBytes) throw new Error(tr('safebox.attachments.tooBig', '“{{ fileName }}” is too big for the safebox (at most {{ mb }} MB).', { fileName: file.name, mb: Math.round(maxBytes / 1024 / 1024) }));
+        }
         if (file.type.startsWith('image/')) {
           const image = await prepareImage(file);
           await this.service.addAttachment(this.friendId(), parent, image.blob, image.name, image.thumb, keys);

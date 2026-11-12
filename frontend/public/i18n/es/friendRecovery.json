@@ -41,5 +41,8 @@
   "dismiss": "Descartar",
   "decline": "Rechazar",
   "youDeclined": "Dijiste que no. {{ friendName }} ha sido avisado.",
-  "alsoWhenNothing": "Puedes pedirlo en cualquier momento, también cuando no hay nada bloqueado para ti: {{ friendName }} vuelve entonces a bloquearlo todo para todas tus claves, y tiene que aceptar cada vez."
+  "alsoWhenNothing": "Puedes pedirlo en cualquier momento, también cuando no hay nada bloqueado para ti: {{ friendName }} vuelve entonces a bloquearlo todo para todas tus claves, y tiene que aceptar cada vez.",
+  "groupTitle": "La recuperación es entre dos personas",
+  "groupText": "Para volver a abrir tus mensajes antiguos, la app de un amigo bloquea de nuevo las claves antiguas para tu nueva clave. Un grupo no tiene un amigo concreto que pueda hacerlo por ti, así que la recuperación no está disponible en un grupo.",
+  "groupOther": "Aún puedes recuperarlos con otro de tus dispositivos que pueda abrirlos, o con tus 24 palabras secretas (Ajustes → Claves)."
 }

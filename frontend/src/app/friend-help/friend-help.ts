@@ -32,6 +32,7 @@ export class FeedHelp {
         { key: "boxWhat", icon: "box", title: "What it is", text: "A box that belongs to you and this friend (or this group) together. It is for the things you want to keep and find again later, so they do not get lost in the conversation." },
         { key: "boxWho", icon: "people", title: "Who can use it", text: "Only the people in the conversation. Each of you can add things, open them, give them a new name and take them out. Every friend and every group has its own box." },
         { key: "boxWhat2", icon: "folder", title: "What goes in", text: "Pictures, videos, voice messages and files. Also notes: secrets, dates, tickets, places, contacts, links and checklists." },
+        { key: "boxOrder", icon: "box", title: "Changing the order", text: "In the list, press and drag ⠿ to move an item. In the picture view, press and hold an item, then drag it to a new place." },
         { key: "boxMove", icon: "image", title: "From the conversation", text: "Tap a picture or video in the conversation and choose \"To the safebox\". It moves into the box and leaves the conversation, for both of you." },
         { key: "boxNews", icon: "news", title: "You are told", text: "When someone adds something, a message \"In the safebox\" appears in the conversation, so nobody misses it." },
         { key: "boxLock", icon: "lock", title: "Locked", text: "When you both have a lock key, everything in the box is locked on your devices, so not even we can read it." },

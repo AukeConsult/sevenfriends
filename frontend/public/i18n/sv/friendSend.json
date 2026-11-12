@@ -17,5 +17,6 @@
   "addAMessageFor": "Lägg till ett meddelande bara för {{ friendName }}",
   "messageForFriendnameIndex": "Meddelande för {{ friendName }} {{ index }}",
   "removeMessageIndex": "Ta bort meddelande {{ index }}",
-  "messagesForOnly": "Meddelanden bara för {{ friendName }}"
+  "messagesForOnly": "Meddelanden bara för {{ friendName }}",
+  "hideTheForm": "Dölj formuläret"
 }

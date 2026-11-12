@@ -1,18 +1,9 @@
 {
-  "back": "Indietro",
-  "imageVideoOrAudio": "Immagine, video o audio",
-  "download": "Scarica",
   "loading": "Caricamento…",
   "couldNotLoadThe": "Impossibile caricare il file",
   "audio": "Audio",
   "video": "Video",
   "image": "Immagine",
   "fullSize": "Dimensione reale",
-  "fitToScreen": "Adatta allo schermo",
-  "rename": "Rinomina",
-  "name": "Nome",
-  "save": "Salva",
-  "cancel": "Annulla",
-  "writeAName": "Scrivi un nome",
-  "couldNotRenameThe": "Impossibile rinominare il file"
+  "fitToScreen": "Adatta allo schermo"
 }

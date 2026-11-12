@@ -39,7 +39,6 @@
     "deleteAskNamed": "Видалити «{{ itemName }}»? Воно буде видалене в обох, повернути його не можна."
   },
   "list": {
-    "onlyYouAndFriendname": "Ці файли бачите лише ти і {{ friendName }}.",
     "retry": "Повторити",
     "usedOfMaxbytes": "{{ used }} із {{ maxBytes }}",
     "nothingHereYetAdd": "Тут поки нічого немає. Додай фото, відео чи документи, якими хочеш ділитися лише з {{ friendName }}.",
@@ -65,15 +64,14 @@
     "case": "Справа",
     "search": "Пошук у сейфі",
     "noMatch": "За твоїм запитом нічого не знайдено.",
-    "hiddenTypes": "Приховані типи",
-    "hintTypes": "Утримуйте тип і перетягніть його на інший, щоб перемістити, або на «Приховані типи», щоб приховати.",
+    "hiddenTypes": "Усі типи",
+    "commonTypes": "Поширені типи",
+    "hintTypes": "Натисніть на тип і втримуйте, потім перетягніть, щоб перемістити, або на «Усі типи», щоб сховати.",
     "due": "Термін",
     "dueOnly": "Показувати лише те, що настало, зокрема період нагадування",
-    "hintTypesShown": "Утримуйте тип і перетягніть його на інший, щоб перемістити, або на «Видимі типи», щоб показати.",
+    "hintTypesShown": "Натисніть на тип і втримуйте, потім перетягніть, щоб перемістити. Перетягніть тип із пунктирною рамкою на тип із суцільною, щоб зробити його поширеним.",
     "moveItem": "Перемістити {{itemName}}: перетягніть або скористайтеся стрілками",
     "couldNotSaveTheOrder": "Не вдалося зберегти порядок",
-    "dragHint": "Press and drag ⠿ to move an item",
-    "dragHintHold": "Press and hold an item, then drag it to a new place",
     "unlockedOne": "One file is not locked, so our system can read it. Lock it so only you and {{ friendName }} can open it.",
     "unlockedMany": "{{ count }} files are not locked, so our system can read them. Lock them so only you and {{ friendName }} can open them.",
     "lockIt": "Lock it",
@@ -187,11 +185,11 @@
     "couldNotOpenThe": "Не вдалося відкрити файл",
     "wordDocument": "Документ Word",
     "zipArchive": "Архів Zip",
-    "thisFileIsLocked2": "Цей файл замкнено, і його не вдалося відкрити."
+    "thisFileIsLocked2": "Цей файл замкнено, і його не вдалося відкрити.",
+    "cannotPlayVideo": "Цей браузер не може відтворити таке відео (наприклад, .wmv). Завантажте його, щоб переглянути в іншому застосунку."
   },
   "upload": {
     "newFile": "Новий файл",
-    "lockedOnThisDevice": "Заблоковано на цьому пристрої. Відкрити це можете лише ти і {{ friendName }}.",
     "notLocked": "Ці файли зберігаються без блокування.",
     "chooseFiles": "Обери файли або перетягни їх сюди",
     "strongChooseFilesStrong": "<strong>Обрати файли</strong>",
@@ -213,20 +211,22 @@
     "dropItemname": "Не додавати {{ itemName }}",
     "couldNotRead": "Не вдалося прочитати вкладення",
     "couldNotAddCount": "Не вдалося додати файлів: {{ count }}.",
-    "noKeys": "Ключі поки що невідомі."
+    "noKeys": "Ключі поки що невідомі.",
+    "viewAll": "Показати всі",
+    "noPictures": "У цьому альбомі поки немає зображень чи відео.",
+    "previousPicture": "Попереднє зображення",
+    "nextPicture": "Наступне зображення",
+    "tooBig": "Файл «{{ fileName }}» завеликий для сейфа (не більше {{ mb }} МБ)."
   },
   "link": {
     "linkWith": "Пов'язати з…",
-    "pickWhatToLink": "Обери, з чим пов'язати «{{ itemName }}».",
-    "pickAnItem": "Обери елемент.",
     "nothingToLink": "Немає з чим пов'язувати.",
     "picture": "Зображення",
     "sound": "Звук",
     "couldNotMakeTheLink": "Не вдалося створити зв'язок"
   },
   "linkNew": {
-    "newLinkedItem": "Новий пов'язаний елемент",
-    "whatKind": "Який елемент? Його буде пов'язано з тим, звідки ти прийшов."
+    "newLinkedItem": "Новий пов'язаний елемент"
   },
   "links": {
     "linkedItems": "Пов'язані елементи",

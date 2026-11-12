@@ -39,7 +39,6 @@
     "deleteAskNamed": "Slette «{{ itemName }}»? Det slettes for dere begge og kan ikke hentes tilbake."
   },
   "list": {
-    "onlyYouAndFriendname": "Bare du og {{ friendName }} kan se disse filene.",
     "retry": "Prøv igjen",
     "usedOfMaxbytes": "{{ used }} av {{ maxBytes }}",
     "nothingHereYetAdd": "Ingenting her ennå. Legg til bilder, videoer eller dokumenter du vil dele bare med {{ friendName }}.",
@@ -65,15 +64,14 @@
     "case": "Sak",
     "search": "Søk i safen",
     "noMatch": "Ingenting passer med søket ditt.",
-    "hiddenTypes": "Skjulte typer",
-    "hintTypes": "Hold en type og dra den over en annen for å flytte den, eller over Skjulte typer for å skjule den.",
+    "hiddenTypes": "Alle typer",
+    "commonTypes": "Vanlige typer",
+    "hintTypes": "Hold nede en type og dra den for å flytte den, eller til Alle typer for å skjule den.",
     "due": "Forfall",
     "dueOnly": "Vis bare det som forfaller, også i påminnelsesperioden",
-    "hintTypesShown": "Hold en type og dra den over en annen for å flytte den, eller over Synlige typer for å vise den.",
+    "hintTypesShown": "Hold nede en type og dra den for å flytte den. Dra en stiplet type til en hel for å gjøre den vanlig.",
     "moveItem": "Flytt {{itemName}}: dra, eller bruk piltastene",
     "couldNotSaveTheOrder": "Kunne ikke lagre rekkefølgen",
-    "dragHint": "Press and drag ⠿ to move an item",
-    "dragHintHold": "Press and hold an item, then drag it to a new place",
     "unlockedOne": "One file is not locked, so our system can read it. Lock it so only you and {{ friendName }} can open it.",
     "unlockedMany": "{{ count }} files are not locked, so our system can read them. Lock them so only you and {{ friendName }} can open them.",
     "lockIt": "Lock it",
@@ -187,11 +185,11 @@
     "couldNotOpenThe": "Kunne ikke åpne filen",
     "wordDocument": "Word-dokument",
     "zipArchive": "Zip-arkiv",
-    "thisFileIsLocked2": "Denne filen er låst og kunne ikke åpnes."
+    "thisFileIsLocked2": "Denne filen er låst og kunne ikke åpnes.",
+    "cannotPlayVideo": "Denne nettleseren kan ikke spille av denne typen video (for eksempel en .wmv). Last den ned for å se den i en annen app."
   },
   "upload": {
     "newFile": "Ny fil",
-    "lockedOnThisDevice": "Låst på denne enheten. Bare du og {{ friendName }} kan åpne det.",
     "notLocked": "Disse filene lagres uten lås.",
     "chooseFiles": "Velg filer, eller slipp dem her",
     "strongChooseFilesStrong": "<strong>Velg filer</strong>",
@@ -213,20 +211,22 @@
     "dropItemname": "Ikke legg til {{ itemName }}",
     "couldNotRead": "Kunne ikke lese vedleggene",
     "couldNotAddCount": "{{ count }} fil(er) kunne ikke legges til.",
-    "noKeys": "Nøklene er ikke kjent ennå."
+    "noKeys": "Nøklene er ikke kjent ennå.",
+    "viewAll": "Vis alle",
+    "noPictures": "Det er ingen bilder eller videoer i dette albumet ennå.",
+    "previousPicture": "Forrige bilde",
+    "nextPicture": "Neste bilde",
+    "tooBig": "«{{ fileName }}» er for stor for safeboksen (maks {{ mb }} MB)."
   },
   "link": {
     "linkWith": "Koble til …",
-    "pickWhatToLink": "Velg hva «{{ itemName }}» skal kobles til.",
-    "pickAnItem": "Velg et element.",
     "nothingToLink": "Ingenting å koble til.",
     "picture": "Bilde",
     "sound": "Lyd",
     "couldNotMakeTheLink": "Kunne ikke lage koblingen"
   },
   "linkNew": {
-    "newLinkedItem": "Nytt koblet element",
-    "whatKind": "Hva slags element? Det kobles til elementet du kom fra."
+    "newLinkedItem": "Nytt koblet element"
   },
   "links": {
     "linkedItems": "Koblede elementer",

@@ -1,6 +1,7 @@
 {
   "hasYouOnPronoun": "😴 Tem você na lista do sono",
   "sendAMessage": "Enviar uma mensagem",
+  "write": "Escrever",
   "messages": "Mensagens",
   "newMessage": "Nova mensagem",
   "safeboxFilesOnlyYou": "Cofre: arquivos que só você e este amigo veem",
@@ -24,5 +25,7 @@
   "lockingIsOnWhat": "A tranca está ativada. O que você envia para {{ who }} é trancado no seu dispositivo, então só vocês dois podem ler. Nem nós conseguimos.",
   "lockingIsOffWhat": "A tranca está desativada. O que você envia para {{ who }} não é trancado, então nosso sistema pode ler. O que foi enviado antes continua como foi enviado.",
   "asleepNoSeat": "😴 Dormindo · na sua lista do sono",
-  "noLongerHere": "Você não está mais neste grupo ou amizade."
+  "noLongerHere": "Você não está mais neste grupo ou amizade.",
+  "help": "Ajuda",
+  "hideHelp": "Ocultar a ajuda"
 }

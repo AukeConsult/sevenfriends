@@ -1,6 +1,7 @@
 {
   "hasYouOnPronoun": "😴 Har deg på sovelisten",
   "sendAMessage": "Send en melding",
+  "write": "Skriv",
   "messages": "Meldinger",
   "newMessage": "Ny melding",
   "safeboxFilesOnlyYou": "Safeboks: filer bare du og denne vennen ser",
@@ -24,5 +25,7 @@
   "lockingIsOnWhat": "Låsing er på. Det du sender til {{ who }}, låses på enheten din, så bare dere to kan lese det. Ikke engang vi kan.",
   "lockingIsOffWhat": "Låsing er av. Det du sender til {{ who }}, er ikke låst, så systemet vårt kan lese det. Det som ble sendt tidligere, forblir som det ble sendt.",
   "asleepNoSeat": "😴 Sover · på din sovende-liste",
-  "noLongerHere": "Du er ikke lenger med i denne gruppen eller dette vennskapet."
+  "noLongerHere": "Du er ikke lenger med i denne gruppen eller dette vennskapet.",
+  "help": "Hjelp",
+  "hideHelp": "Skjul hjelpen"
 }

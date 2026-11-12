@@ -41,5 +41,8 @@
   "dismiss": "Sluiten",
   "decline": "Afwijzen",
   "youDeclined": "Je zei nee. {{ friendName }} is op de hoogte gebracht.",
-  "alsoWhenNothing": "Je kunt altijd vragen, ook als er niets voor je vergrendeld is: {{ friendName }} vergrendelt dan alles opnieuw voor al je sleutels en moet elke keer ja zeggen."
+  "alsoWhenNothing": "Je kunt altijd vragen, ook als er niets voor je vergrendeld is: {{ friendName }} vergrendelt dan alles opnieuw voor al je sleutels en moet elke keer ja zeggen.",
+  "groupTitle": "Herstel gebeurt tussen twee mensen",
+  "groupText": "Om je oude berichten weer te openen, vergrendelt de app van een vriend de oude sleutels opnieuw voor je nieuwe sleutel. Een groep heeft niet één vriend die dat voor je kan doen, dus herstel is niet beschikbaar in een groep.",
+  "groupOther": "Je kunt ze nog steeds terugkrijgen met een ander apparaat van jou dat ze kan openen, of met je 24 geheime woorden (Instellingen → Sleutels)."
 }

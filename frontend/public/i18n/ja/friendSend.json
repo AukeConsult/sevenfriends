@@ -17,5 +17,6 @@
   "addAMessageFor": "{{ friendName }}さん専用のメッセージを追加",
   "messageForFriendnameIndex": "{{ friendName }}さん用のメッセージ {{ index }}",
   "removeMessageIndex": "メッセージ {{ index }} を削除",
-  "messagesForOnly": "{{ friendName }}さん専用のメッセージ"
+  "messagesForOnly": "{{ friendName }}さん専用のメッセージ",
+  "hideTheForm": "フォームを隠す"
 }

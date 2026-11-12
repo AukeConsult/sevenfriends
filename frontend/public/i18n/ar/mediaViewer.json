@@ -1,18 +1,9 @@
 {
-  "back": "رجوع",
-  "imageVideoOrAudio": "صورة أو فيديو أو صوت",
-  "download": "تنزيل",
   "loading": "جارٍ التحميل…",
   "couldNotLoadThe": "تعذّر تحميل الملف",
   "audio": "صوت",
   "video": "فيديو",
   "image": "صورة",
   "fullSize": "الحجم الكامل",
-  "fitToScreen": "ملاءمة الشاشة",
-  "rename": "إعادة التسمية",
-  "name": "الاسم",
-  "save": "حفظ",
-  "cancel": "إلغاء",
-  "writeAName": "اكتب اسمًا",
-  "couldNotRenameThe": "تعذّرت إعادة تسمية الملف"
+  "fitToScreen": "ملاءمة الشاشة"
 }

@@ -8,6 +8,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { KeysService } from '../core/keys.service';
 import { FriendsService } from '../core/friends.service';
 import { formatBytes } from '../core/image';
+import { NoticeClearService } from '../core/notice-clear.service';
 import { SafeboxService } from '../core/safebox.service';
 import { UiPreferencesService } from '../core/ui-preferences';
 import { FriendContext } from '../friend-page/friend-context';
@@ -55,6 +56,7 @@ export class Safebox {
   private readonly friends = inject(FriendsService);
   private readonly ctx = inject(FriendContext);
   private readonly router = inject(Router);
+  private readonly notices = inject(NoticeClearService);
   protected readonly prefs = inject(UiPreferencesService);
 
   protected readonly unsaved = this.service.unsaved;
@@ -167,6 +169,7 @@ export class Safebox {
     this.loadError.set(null);
     try {
       this.box.set(await this.service.load(this.friendId));
+      this.notices.opened(); // a notice about several files (it points to the list) can go now
       void this.service.loadDues(this.friendId, this.items()).then(() => this.dueTick.update((n) => n + 1)); // the items made before heads said when they are due
     } catch (err: any) {
       this.loadError.set(err.message ?? tr('safebox.common.couldNotOpenTheSafebox', 'Could not open the safebox'));

@@ -3,10 +3,8 @@
   "yourSeven": "Tujuhmu",
   "waiting": "Menunggu",
   "pending": "Tertunda",
-  "addAOne": "Tambah {{ one }}",
   "silent": "Senyap",
   "dropHere": "Letakkan di sini",
-  "sleepList": "Daftar tidur",
   "couldNotMoveThe": "Tidak bisa memindahkan ",
   "openTheConversationWith": "Buka percakapan dengan {{ friendName }}. Tekan dan tahan untuk memindahkan.",
   "countUnread": "{{ count }} belum dibaca",
@@ -14,7 +12,5 @@
   "dropOnASeat": "Letakkan di kursi atau lingkaran Senyap",
   "dropOnASeat2": "Letakkan di kursi",
   "pressAndHoldA": "Tekan dan tahan {{ one }} untuk memindahkan",
-  "seatsExplained": "7 kursi, 7 teman dekat. Tidurkan seorang teman untuk mengosongkan kursi: obrolan tetap disimpan.",
-  "groupCount": "Grup · {{ count }} orang",
-  "groupOnlyYou": "Grup · hanya kamu"
+  "seatsExplained": "7 kursi, 7 teman dekat. Tidurkan seorang teman untuk mengosongkan kursi: obrolan tetap disimpan."
 }

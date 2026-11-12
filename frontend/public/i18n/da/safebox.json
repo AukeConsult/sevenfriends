@@ -39,7 +39,6 @@
     "deleteAskNamed": "Slet “{{ itemName }}”? Det slettes for jer begge og kan ikke bringes tilbage."
   },
   "list": {
-    "onlyYouAndFriendname": "Kun du og {{ friendName }} kan se disse filer.",
     "retry": "Prøv igen",
     "usedOfMaxbytes": "{{ used }} af {{ maxBytes }}",
     "nothingHereYetAdd": "Intet her endnu. Tilføj billeder, videoer eller dokumenter, du kun vil dele med {{ friendName }}.",
@@ -65,15 +64,14 @@
     "case": "Sag",
     "search": "Søg i pengeskabet",
     "noMatch": "Intet matcher din søgning.",
-    "hiddenTypes": "Skjulte typer",
-    "hintTypes": "Hold en type nede og træk den hen på en anden for at flytte den, eller hen på Skjulte typer for at skjule den.",
+    "hiddenTypes": "Alle typer",
+    "commonTypes": "Almindelige typer",
+    "hintTypes": "Hold en type nede og træk den for at flytte den, eller hen på Alle typer for at skjule den.",
     "due": "Forfald",
     "dueOnly": "Vis kun det, der forfalder, også i påmindelsesperioden",
-    "hintTypesShown": "Hold en type nede og træk den hen på en anden for at flytte den, eller hen på Synlige typer for at vise den.",
+    "hintTypesShown": "Hold en type nede og træk den for at flytte den. Træk en stiplet type hen på en hel for at gøre den almindelig.",
     "moveItem": "Flyt {{itemName}}: træk, eller brug piletasterne",
     "couldNotSaveTheOrder": "Kunne ikke gemme rækkefølgen",
-    "dragHint": "Press and drag ⠿ to move an item",
-    "dragHintHold": "Press and hold an item, then drag it to a new place",
     "unlockedOne": "One file is not locked, so our system can read it. Lock it so only you and {{ friendName }} can open it.",
     "unlockedMany": "{{ count }} files are not locked, so our system can read them. Lock them so only you and {{ friendName }} can open them.",
     "lockIt": "Lock it",
@@ -187,11 +185,11 @@
     "couldNotOpenThe": "Filen kunne ikke åbnes",
     "wordDocument": "Word-dokument",
     "zipArchive": "Zip-arkiv",
-    "thisFileIsLocked2": "Denne fil er låst og kunne ikke åbnes."
+    "thisFileIsLocked2": "Denne fil er låst og kunne ikke åbnes.",
+    "cannotPlayVideo": "Denne browser kan ikke afspille denne slags video (fx en .wmv). Download den for at se den i en anden app."
   },
   "upload": {
     "newFile": "Ny fil",
-    "lockedOnThisDevice": "Låst på denne enhed. Kun du og {{ friendName }} kan åbne det.",
     "notLocked": "Disse filer gemmes uden lås.",
     "chooseFiles": "Vælg filer, eller slip dem her",
     "strongChooseFilesStrong": "<strong>Vælg filer</strong>",
@@ -213,20 +211,22 @@
     "dropItemname": "Tilføj ikke {{ itemName }}",
     "couldNotRead": "Kunne ikke læse vedhæftningerne",
     "couldNotAddCount": "{{ count }} fil(er) kunne ikke tilføjes.",
-    "noKeys": "Nøglerne er ikke kendt endnu."
+    "noKeys": "Nøglerne er ikke kendt endnu.",
+    "viewAll": "Vis alle",
+    "noPictures": "Der er endnu ingen billeder eller videoer i dette album.",
+    "previousPicture": "Forrige billede",
+    "nextPicture": "Næste billede",
+    "tooBig": "“{{ fileName }}” er for stor til pengeskabet (højst {{ mb }} MB)."
   },
   "link": {
     "linkWith": "Kæd sammen med …",
-    "pickWhatToLink": "Vælg, hvad “{{ itemName }}” skal kædes sammen med.",
-    "pickAnItem": "Vælg et element.",
     "nothingToLink": "Intet at kæde sammen med.",
     "picture": "Billede",
     "sound": "Lyd",
     "couldNotMakeTheLink": "Kunne ikke oprette sammenkædningen"
   },
   "linkNew": {
-    "newLinkedItem": "Nyt sammenkædet element",
-    "whatKind": "Hvilken slags element? Det kædes sammen med det, du kom fra."
+    "newLinkedItem": "Nyt sammenkædet element"
   },
   "links": {
     "linkedItems": "Sammenkædede elementer",

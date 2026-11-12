@@ -1,6 +1,7 @@
 {
   "hasYouOnPronoun": "😴 Menaruhmu di daftar tidur",
   "sendAMessage": "Kirim pesan",
+  "write": "Tulis",
   "messages": "Pesan",
   "newMessage": "Pesan baru",
   "safeboxFilesOnlyYou": "Safebox: file yang hanya dilihat kamu dan teman ini",
@@ -24,5 +25,7 @@
   "lockingIsOnWhat": "Penguncian aktif. Apa yang kamu kirim ke {{ who }} dikunci di perangkatmu, jadi hanya kalian berdua yang bisa membacanya. Kami pun tidak bisa.",
   "lockingIsOffWhat": "Penguncian mati. Apa yang kamu kirim ke {{ who }} tidak dikunci, jadi sistem kami bisa membacanya. Yang dikirim sebelumnya tetap seperti saat dikirim.",
   "asleepNoSeat": "😴 Tidur · di daftar tidurmu",
-  "noLongerHere": "Kamu tidak lagi berada di grup atau pertemanan ini."
+  "noLongerHere": "Kamu tidak lagi berada di grup atau pertemanan ini.",
+  "help": "Bantuan",
+  "hideHelp": "Sembunyikan bantuan"
 }

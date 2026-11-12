@@ -3,10 +3,8 @@
   "yourSeven": "Twoja siódemka",
   "waiting": "Oczekujące",
   "pending": "Do potwierdzenia",
-  "addAOne": "Dodaj: {{ one }}",
   "silent": "Ciche",
   "dropHere": "Upuść tutaj",
-  "sleepList": "Lista uśpionych",
   "couldNotMoveThe": "Nie udało się przenieść ",
   "openTheConversationWith": "Otwórz rozmowę: {{ friendName }}. Przytrzymaj, żeby przenieść.",
   "countUnread": "Nieprzeczytane: {{ count }}",
@@ -14,7 +12,5 @@
   "dropOnASeat": "Upuść na miejscu lub w kręgu Ciche",
   "dropOnASeat2": "Upuść na miejscu",
   "pressAndHoldA": "Przytrzymaj ({{ one }}), żeby przenieść",
-  "seatsExplained": "7 miejsc, 7 bliskich znajomych. Uśpij znajomego, aby zwolnić miejsce: czat zostaje zachowany.",
-  "groupCount": "Grupa · {{ count }} osób",
-  "groupOnlyYou": "Grupa · tylko ty"
+  "seatsExplained": "7 miejsc, 7 bliskich znajomych. Uśpij znajomego, aby zwolnić miejsce: czat zostaje zachowany."
 }

@@ -193,3 +193,20 @@ describe("hide a picture or video", () => {
     await u(0).call("put", `${url(id, "nope")}/hidden`, { hidden: true }).expect(404);
   });
 });
+
+describe("take a message out of my own feed", () => {
+  it("my copy goes, the other person keeps theirs, whoever sent it", async () => {
+    const id = await connect(u(0), u(1));
+    const m = await sendOne(u(0), id, "📦 In the safebox: Note");
+    await u(1).call("delete", `${url(id, m)}/mine`).expect(204); // the receiver clears theirs
+    expect(await feedOf(u(1), id)).toHaveLength(0);
+    expect(await feedOf(u(0), id)).toHaveLength(1);
+    await u(0).call("delete", `${url(id, m)}/mine`).expect(204); // the sender clears theirs
+    expect(await feedOf(u(0), id)).toHaveLength(0);
+  });
+
+  it("an unknown message is not found", async () => {
+    const id = await connect(u(0), u(1));
+    await u(0).call("delete", `${url(id, "nope")}/mine`).expect(404);
+  });
+});

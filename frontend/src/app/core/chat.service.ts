@@ -42,8 +42,8 @@ export class ChatService {
   }
 
   /** Sends a text message, locked on this device when both of us have a key and locking is on, plain otherwise. */
-  send(friendId: string, text: string, poke = false): Promise<ChatItem> {
-    return this.lockedRequest(friendId, text, false, (body) => this.api.request<ChatMessage>(this.base(friendId), { method: 'POST', body: JSON.stringify(poke ? { ...body, poke } : body) }));
+  send(friendId: string, text: string, poke = false, notice = false): Promise<ChatItem> {
+    return this.lockedRequest(friendId, text, false, (body) => this.api.request<ChatMessage>(this.base(friendId), { method: 'POST', body: JSON.stringify({ ...body, ...(poke ? { poke } : {}), ...(notice ? { notice } : {}) }) }));
   }
 
   /**
@@ -89,6 +89,11 @@ export class ChatService {
 
   remove(friendId: string, messageId: string): Promise<void> {
     return this.api.request<void>(`${this.base(friendId)}/${messageId}`, { method: 'DELETE' });
+  }
+
+  /** Takes a message out of MY feed only (whoever sent it): the other people keep their copies. */
+  removeMine(friendId: string, messageId: string): Promise<void> {
+    return this.api.request<void>(`${this.base(friendId)}/${messageId}/mine`, { method: 'DELETE' });
   }
 
   /** Deletes (or, with `dryRun`, only counts) several of my messages at once. */

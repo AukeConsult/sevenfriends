@@ -39,7 +39,6 @@
     "deleteAskNamed": "Radera ”{{ itemName }}”? Det raderas för er båda och kan inte hämtas tillbaka."
   },
   "list": {
-    "onlyYouAndFriendname": "Bara du och {{ friendName }} kan se de här filerna.",
     "retry": "Försök igen",
     "usedOfMaxbytes": "{{ used }} av {{ maxBytes }}",
     "nothingHereYetAdd": "Inget här ännu. Lägg till bilder, videor eller dokument du bara vill dela med {{ friendName }}.",
@@ -65,15 +64,14 @@
     "case": "Ärende",
     "search": "Sök i kassaskåpet",
     "noMatch": "Inget matchar din sökning.",
-    "hiddenTypes": "Dolda typer",
-    "hintTypes": "Håll ned en typ och dra den till en annan för att flytta den, eller till Dolda typer för att dölja den.",
+    "hiddenTypes": "Alla typer",
+    "commonTypes": "Vanliga typer",
+    "hintTypes": "Håll ned en typ och dra den för att flytta den, eller till Alla typer för att dölja den.",
     "due": "Förfaller",
     "dueOnly": "Visa bara det som förfaller, inklusive påminnelseperioden",
-    "hintTypesShown": "Håll ned en typ och dra den till en annan för att flytta den, eller till Synliga typer för att visa den.",
+    "hintTypesShown": "Håll ned en typ och dra den för att flytta den. Dra en streckad typ till en hel för att göra den vanlig.",
     "moveItem": "Flytta {{itemName}}: dra, eller använd piltangenterna",
     "couldNotSaveTheOrder": "Det gick inte att spara ordningen",
-    "dragHint": "Press and drag ⠿ to move an item",
-    "dragHintHold": "Press and hold an item, then drag it to a new place",
     "unlockedOne": "One file is not locked, so our system can read it. Lock it so only you and {{ friendName }} can open it.",
     "unlockedMany": "{{ count }} files are not locked, so our system can read them. Lock them so only you and {{ friendName }} can open them.",
     "lockIt": "Lock it",
@@ -187,11 +185,11 @@
     "couldNotOpenThe": "Kunde inte öppna filen",
     "wordDocument": "Word-dokument",
     "zipArchive": "Zip-arkiv",
-    "thisFileIsLocked2": "Den här filen är låst och kunde inte öppnas."
+    "thisFileIsLocked2": "Den här filen är låst och kunde inte öppnas.",
+    "cannotPlayVideo": "Den här webbläsaren kan inte spela upp den här typen av video (till exempel en .wmv). Ladda ned den för att titta på den i en annan app."
   },
   "upload": {
     "newFile": "Ny fil",
-    "lockedOnThisDevice": "Låst på den här enheten. Bara du och {{ friendName }} kan öppna det.",
     "notLocked": "De här filerna lagras utan lås.",
     "chooseFiles": "Välj filer eller släpp dem här",
     "strongChooseFilesStrong": "<strong>Välj filer</strong>",
@@ -213,20 +211,22 @@
     "dropItemname": "Lägg inte till {{ itemName }}",
     "couldNotRead": "Det gick inte att läsa bilagorna",
     "couldNotAddCount": "{{ count }} fil(er) kunde inte läggas till.",
-    "noKeys": "Nycklarna är inte kända ännu."
+    "noKeys": "Nycklarna är inte kända ännu.",
+    "viewAll": "Visa alla",
+    "noPictures": "Det finns inga bilder eller videor i det här albumet än.",
+    "previousPicture": "Föregående bild",
+    "nextPicture": "Nästa bild",
+    "tooBig": "“{{ fileName }}” är för stor för kassaskåpet (högst {{ mb }} MB)."
   },
   "link": {
     "linkWith": "Länka med …",
-    "pickWhatToLink": "Välj vad ”{{ itemName }}” ska länkas med.",
-    "pickAnItem": "Välj ett objekt.",
     "nothingToLink": "Inget att länka med.",
     "picture": "Bild",
     "sound": "Ljud",
     "couldNotMakeTheLink": "Det gick inte att skapa länken"
   },
   "linkNew": {
-    "newLinkedItem": "Nytt länkat objekt",
-    "whatKind": "Vilket slags objekt? Det länkas med det du kom från."
+    "newLinkedItem": "Nytt länkat objekt"
   },
   "links": {
     "linkedItems": "Länkade objekt",

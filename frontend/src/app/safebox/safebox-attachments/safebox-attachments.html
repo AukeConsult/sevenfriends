@@ -1,7 +1,12 @@
 <ng-container *transloco="let t">
 <section class="d-grid gap-2">
   @if (count()) {
-    <span>{{ album() ? (t('safebox.attachments.pictures') || 'Pictures and videos') : (t('safebox.attachments.attachments') || 'Attachments') }} <span class="sf-hint">· {{ count() }} / {{ max() }}</span></span>
+    <div class="d-flex justify-content-between align-items-center gap-2">
+      <span>{{ album() ? (t('safebox.attachments.pictures') || 'Pictures and videos') : (t('safebox.attachments.attachments') || 'Attachments') }} <span class="sf-hint">· {{ count() }} / {{ max() }}</span></span>
+      @if (album() && parentId() && saved().length) {
+        <a class="btn btn-light btn-sm" [routerLink]="['/friends', friendId(), 'safebox', 'object', parentId(), 'pictures']">{{ t('safebox.attachments.viewAll') || 'View all' }}</a>
+      }
+    </div>
   }
 
   @if (saved().length || pending().length) {

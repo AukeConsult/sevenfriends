@@ -3,10 +3,8 @@
   "yourSeven": "Dina sju",
   "waiting": "Väntar",
   "pending": "Väntande",
-  "addAOne": "Lägg till: {{ one }}",
   "silent": "Tyst",
   "dropHere": "Släpp här",
-  "sleepList": "Vilolista",
   "couldNotMoveThe": "Kunde inte flytta ",
   "openTheConversationWith": "Öppna konversationen med {{ friendName }}. Tryck och håll för att flytta.",
   "countUnread": "{{ count }} olästa",
@@ -14,7 +12,5 @@
   "dropOnASeat": "Släpp på en plats eller på den tysta kretsen",
   "dropOnASeat2": "Släpp på en plats",
   "pressAndHoldA": "Tryck och håll på {{ one }} för att flytta",
-  "seatsExplained": "7 platser, 7 nära vänner. Lägg en vän i vila för att frigöra en plats: Chatten sparas.",
-  "groupCount": "Grupp · {{ count }} personer",
-  "groupOnlyYou": "Grupp · bara du"
+  "seatsExplained": "7 platser, 7 nära vänner. Lägg en vän i vila för att frigöra en plats: Chatten sparas."
 }

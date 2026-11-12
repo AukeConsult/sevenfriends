@@ -52,5 +52,6 @@
   "messageMany": "Nachrichten",
   "alsoWhose": ", auch von {{ name }},",
   "openTheItem": "Eintrag öffnen",
-  "signatureBad": "⚠ Es konnte nicht geprüft werden, wer diese Nachricht geschrieben hat. Vertraue ihr nicht."
+  "signatureBad": "⚠ Es konnte nicht geprüft werden, wer diese Nachricht geschrieben hat. Vertraue ihr nicht.",
+  "save": "Speichern"
 }

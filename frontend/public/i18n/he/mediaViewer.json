@@ -1,18 +1,9 @@
 {
-  "back": "חזרה",
-  "imageVideoOrAudio": "תמונה, סרטון או אודיו",
-  "download": "הורדה",
   "loading": "טוענים…",
   "couldNotLoadThe": "לא ניתן היה לטעון את הקובץ",
   "audio": "אודיו",
   "video": "סרטון",
   "image": "תמונה",
   "fullSize": "גודל מלא",
-  "fitToScreen": "התאם למסך",
-  "rename": "שנה שם",
-  "name": "שם",
-  "save": "שמור",
-  "cancel": "ביטול",
-  "writeAName": "כתוב שם",
-  "couldNotRenameThe": "לא ניתן היה לשנות את שם הקובץ"
+  "fitToScreen": "התאם למסך"
 }

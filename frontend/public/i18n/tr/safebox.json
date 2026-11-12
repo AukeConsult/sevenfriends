@@ -39,7 +39,6 @@
     "deleteAskNamed": "“{{ itemName }}” silinsin mi? İkiniz için de silinir ve geri getirilemez."
   },
   "list": {
-    "onlyYouAndFriendname": "Bu dosyaları sadece sen ve {{ friendName }} görebilirsiniz.",
     "retry": "Tekrar dene",
     "usedOfMaxbytes": "{{ used }} / {{ maxBytes }}",
     "nothingHereYetAdd": "Burada henüz bir şey yok. Sadece {{ friendName }} ile paylaşmak istediğin resimleri, videoları ya da belgeleri ekle.",
@@ -65,15 +64,14 @@
     "case": "Dosya (dava)",
     "search": "Kasada ara",
     "noMatch": "Aramanla eşleşen bir şey yok.",
-    "hiddenTypes": "Gizli türler",
-    "hintTypes": "Bir türü basılı tutup başka bir türün üzerine sürükleyerek taşıyın, ya da gizlemek için Gizli türler üzerine sürükleyin.",
+    "hiddenTypes": "Tüm türler",
+    "commonTypes": "Yaygın türler",
+    "hintTypes": "Bir türe basılı tutup sürükleyerek taşı ya da gizlemek için Tüm türler üzerine bırak.",
     "due": "Vadesi gelen",
     "dueOnly": "Yalnızca vadesi gelenleri göster (hatırlatma süresi dahil)",
-    "hintTypesShown": "Bir türü basılı tutup başka bir türün üzerine sürükleyerek taşıyın, ya da göstermek için Görünen türler üzerine sürükleyin.",
+    "hintTypesShown": "Bir türe basılı tutup sürükleyerek taşı. Kesikli çizgili bir türü düz çizgili bir türün üzerine bırakarak yaygın yap.",
     "moveItem": "{{itemName}} öğesini taşı: sürükleyin veya ok tuşlarını kullanın",
     "couldNotSaveTheOrder": "Sıra kaydedilemedi",
-    "dragHint": "Press and drag ⠿ to move an item",
-    "dragHintHold": "Press and hold an item, then drag it to a new place",
     "unlockedOne": "One file is not locked, so our system can read it. Lock it so only you and {{ friendName }} can open it.",
     "unlockedMany": "{{ count }} files are not locked, so our system can read them. Lock them so only you and {{ friendName }} can open them.",
     "lockIt": "Lock it",
@@ -187,11 +185,11 @@
     "couldNotOpenThe": "Dosya açılamadı",
     "wordDocument": "Word belgesi",
     "zipArchive": "Zip arşivi",
-    "thisFileIsLocked2": "Bu dosya kilitli ve açılamadı."
+    "thisFileIsLocked2": "Bu dosya kilitli ve açılamadı.",
+    "cannotPlayVideo": "Bu tarayıcı bu tür videoyu (örneğin .wmv) oynatamıyor. Başka bir uygulamada izlemek için indir."
   },
   "upload": {
     "newFile": "Yeni dosya",
-    "lockedOnThisDevice": "Bu cihazda kilitli. Yalnızca sen ve {{ friendName }} açabilirsiniz.",
     "notLocked": "Bu dosyalar kilitsiz saklanır.",
     "chooseFiles": "Dosya seç ya da buraya bırak",
     "strongChooseFilesStrong": "<strong>Dosya seç</strong>",
@@ -213,20 +211,22 @@
     "dropItemname": "{{ itemName }} ekleme",
     "couldNotRead": "Ekler okunamadı",
     "couldNotAddCount": "{{ count }} dosya eklenemedi.",
-    "noKeys": "Anahtarlar henüz bilinmiyor."
+    "noKeys": "Anahtarlar henüz bilinmiyor.",
+    "viewAll": "Tümünü gör",
+    "noPictures": "Bu albümde henüz resim veya video yok.",
+    "previousPicture": "Önceki resim",
+    "nextPicture": "Sonraki resim",
+    "tooBig": "“{{ fileName }}” kasa için çok büyük (en fazla {{ mb }} MB)."
   },
   "link": {
     "linkWith": "Şununla bağla…",
-    "pickWhatToLink": "“{{ itemName }}” öğesinin neyle bağlanacağını seç.",
-    "pickAnItem": "Bir öğe seç.",
     "nothingToLink": "Bağlanacak bir şey yok.",
     "picture": "Resim",
     "sound": "Ses",
     "couldNotMakeTheLink": "Bağlantı kurulamadı"
   },
   "linkNew": {
-    "newLinkedItem": "Yeni bağlı öğe",
-    "whatKind": "Ne tür bir öğe? Geldiğin öğeyle bağlanır."
+    "newLinkedItem": "Yeni bağlı öğe"
   },
   "links": {
     "linkedItems": "Bağlı öğeler",

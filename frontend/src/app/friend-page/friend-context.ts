@@ -82,7 +82,7 @@ export class FriendContext {
   private lockNoticeTimer: ReturnType<typeof setTimeout> | undefined;
   /** the menu of the three dots in the header */
   readonly moreOpen = signal(false);
-  /** the help frame under the header (the ? in the header shows and hides it; on every page of the friend) */
+  /** the help frame under the header (the Help item of the ⋯ menu shows and hides it; on every page of the friend) */
   readonly helpOpen = signal(false);
   /** the writing form of the Send page (the Send icon in the header shows and hides it) */
   readonly sendFormOpen = signal(true);

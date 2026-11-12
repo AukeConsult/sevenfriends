@@ -4,7 +4,7 @@ import { tr } from '../core/i18n';
 
 /**
  * The header of every page: the one coloured bar (`.sf-bar`, see styles.scss). A back arrow on a sub-page (a link, or a button that emits `backClick`), the title on the left
- * with an optional small line under it, an optional icon before the title (`<svg barIcon>`), and the actions of the page on the right (the content of the tag, each a `.sf-bar-icon`).
+ * with an optional small line under it, an optional icon before the title (`<svg barIcon>`), an optional button or link at the very left (`barStart`, a `.sf-bar-icon`, in place of the back arrow), and the actions of the page on the right (the content of the tag, each a `.sf-bar-icon`).
  * A top page (Profile, Settings) has no back arrow. The styles are the standard ones; nothing is styled here.
  */
 @Component({
@@ -18,6 +18,7 @@ import { tr } from '../core/i18n';
       } @else if (backButton()) {
         <button type="button" class="sf-back" (click)="backClick.emit($event)" [attr.aria-label]="label()">‹</button>
       }
+      <ng-content select="[barStart]" />
       <div class="sf-bar-text" [attr.role]="titleBack() ? 'button' : null" [attr.tabindex]="titleBack() ? 0 : null" (click)="titleBack() && backClick.emit($event)" (keydown.enter)="titleBack() && backClick.emit($event)">
         <h1 class="sf-bar-title sf-bar-heading"><ng-content select="[barIcon]" /><span class="sf-ellipsis">{{ title() }}</span></h1>
         @if (subtitle()) { <span class="sf-hint sf-ellipsis">{{ subtitle() }}</span> }

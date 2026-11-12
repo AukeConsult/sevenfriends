@@ -62,6 +62,7 @@ export const routes: Routes = [
       { path: 'lock', loadComponent: () => import('./friend-lock/friend-lock').then((m) => m.FriendLock), title: 'Locking – Seven Friends' },
       { path: 'safebox/new/file', loadComponent: () => import('./safebox/safebox-upload/safebox-upload').then((m) => m.SafeboxUpload), title: 'New file – Seven Friends' },
       { path: 'safebox/new/:type', loadComponent: () => import('./safebox/safebox-object/safebox-object').then((m) => m.SafeboxObject), title: 'New – Seven Friends' },
+      { path: 'safebox/object/:itemId/pictures', loadComponent: () => import('./safebox/safebox-album/safebox-album').then((m) => m.SafeboxAlbum), title: 'Album – Seven Friends' },
       { path: 'safebox/object/:itemId', loadComponent: () => import('./safebox/safebox-object/safebox-object').then((m) => m.SafeboxObject), title: 'Safebox – Seven Friends' },
       { path: 'safebox/note/:itemId', loadComponent: () => import('./safebox/safebox-note/safebox-note').then((m) => m.SafeboxNote), title: 'Note – Seven Friends' },
       { path: 'safebox/note', loadComponent: () => import('./safebox/safebox-note/safebox-note').then((m) => m.SafeboxNote), title: 'New note – Seven Friends' },

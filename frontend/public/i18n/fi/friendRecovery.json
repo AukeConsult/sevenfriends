@@ -41,5 +41,8 @@
   "dismiss": "Ohita",
   "decline": "Hylkää",
   "youDeclined": "Sanoit ei. {{ friendName }} on saanut tiedon.",
-  "alsoWhenNothing": "Voit pyytää milloin tahansa, myös silloin kun mitään ei ole sinulle lukittu: {{ friendName }} lukitsee silloin kaiken uudelleen kaikille avaimillesi ja hänen täytyy sanoa kyllä joka kerta."
+  "alsoWhenNothing": "Voit pyytää milloin tahansa, myös silloin kun mitään ei ole sinulle lukittu: {{ friendName }} lukitsee silloin kaiken uudelleen kaikille avaimillesi ja hänen täytyy sanoa kyllä joka kerta.",
+  "groupTitle": "Palautus tapahtuu kahden ihmisen välillä",
+  "groupText": "Jotta voit avata vanhat viestisi uudelleen, ystävän sovellus lukitsee vanhat avaimet uudelleen uudelle avaimellesi. Ryhmässä ei ole yhtä ystävää, joka voisi tehdä sen puolestasi, joten palautus ei ole ryhmässä mahdollinen.",
+  "groupOther": "Voit silti saada ne takaisin toisella laitteellasi, joka pystyy avaamaan ne, tai 24 salasanallasi (Asetukset → Avaimet)."
 }

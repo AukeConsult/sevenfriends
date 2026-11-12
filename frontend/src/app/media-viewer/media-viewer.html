@@ -1,29 +1,6 @@
 <ng-container *transloco="let t">
-<app-page-bar [title]="file()?.name ?? (t('mediaViewer.imageVideoOrAudio') || 'Image, video or audio')" [backButton]="true" [titleBack]="true" [backLabel]="t('mediaViewer.back') || 'Back'" (backClick)="back()">
-  @if (friendId && file(); as named) {
-    <button type="button" class="sf-tool-btn" (click)="startRename(named)" [attr.aria-label]="t('mediaViewer.rename') || 'Rename'" [attr.title]="t('mediaViewer.rename') || 'Rename'">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z" /></svg>
-      <span class="sf-tool-label" aria-hidden="true">{{ t('mediaViewer.rename') || 'Rename' }}</span>
-    </button>
-  }
-</app-page-bar>
-
 <main class="sf-viewer">
   @if (file(); as shown) {
-    @if (friendId && renaming()) {
-        <div class="sf-field">
-        <label class="form-label" for="media-name">{{ t('mediaViewer.name') || 'Name' }}</label>
-        <div class="d-flex align-items-center gap-2">
-          <input id="media-name" class="form-control" type="text" maxlength="90" [value]="newName()" (input)="newName.set($any($event.target).value)" (keydown.enter)="saveRename(shown)" />
-          <span class="sf-hint">{{ endingOf(shown) }}</span>
-        </div>
-        @if (renameError(); as problem) { <p class="sf-hint text-danger m-0">{{ problem }}</p> }
-        <div class="d-flex gap-2">
-          <button type="button" class="btn btn-light btn-sm flex-fill" (click)="renaming.set(false)" [disabled]="saving()">{{ t('mediaViewer.cancel') || 'Cancel' }}</button>
-          <button type="button" class="btn btn-primary btn-sm flex-fill" (click)="saveRename(shown)" [disabled]="saving()">{{ t('mediaViewer.save') || 'Save' }}</button>
-        </div>
-      </div>
-    }
     @if (isAudio(shown)) {
       <audio [src]="shown.url" controls autoplay [attr.aria-label]="shown.name ?? (t('mediaViewer.audio') || 'Audio')"></audio>
     } @else if (isVideo(shown)) {
@@ -34,8 +11,7 @@
       </div>
       <button type="button" class="btn btn-outline-primary btn-sm align-self-center" (click)="full.set(!full())">{{ full() ? (t('mediaViewer.fitToScreen') || 'Fit to screen') : (t('mediaViewer.fullSize') || 'Full size') }}</button>
     }
-    <p class="sf-hint text-center m-0">{{ shown.type }} · {{ formatBytes(shown.bytes) }}</p>
-    <a class="btn btn-primary align-self-center" [href]="shown.url" [download]="saveName(shown)">{{ t('mediaViewer.download') || 'Download' }}</a>
+    <p class="sf-hint text-center m-0">{{ shown.name ? shown.name + ' · ' : '' }}{{ shown.type }} · {{ formatBytes(shown.bytes) }}</p>
   } @else if (error()) {
     <div class="alert alert-danger" role="alert">{{ error() }}</div>
   } @else {

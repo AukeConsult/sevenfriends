@@ -1,6 +1,7 @@
 {
   "hasYouOnPronoun": "😴 Ma Cię na liście uśpionych",
   "sendAMessage": "Wyślij wiadomość",
+  "write": "Napisz",
   "messages": "Wiadomości",
   "newMessage": "Nowa wiadomość",
   "safeboxFilesOnlyYou": "Sejf: pliki widoczne tylko dla Ciebie i tego przyjaciela",
@@ -24,5 +25,7 @@
   "lockingIsOnWhat": "Blokowanie jest włączone. To, co wysyłasz do: {{ who }}, jest blokowane na Twoim urządzeniu, więc mogą to przeczytać tylko wasza dwójka. My też nie.",
   "lockingIsOffWhat": "Blokowanie jest wyłączone. To, co wysyłasz do: {{ who }}, nie jest blokowane, więc nasz system może to przeczytać. To, co wysłano wcześniej, pozostaje bez zmian.",
   "asleepNoSeat": "😴 Śpi · na twojej liście uśpionych",
-  "noLongerHere": "Nie jesteś już w tej grupie ani znajomości."
+  "noLongerHere": "Nie jesteś już w tej grupie ani znajomości.",
+  "help": "Pomoc",
+  "hideHelp": "Ukryj pomoc"
 }

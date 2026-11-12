@@ -1,18 +1,9 @@
 {
-  "back": "Kembali",
-  "imageVideoOrAudio": "Gambar, video, atau audio",
-  "download": "Unduh",
   "loading": "Memuat…",
   "couldNotLoadThe": "Tidak bisa memuat file",
   "audio": "Audio",
   "video": "Video",
   "image": "Gambar",
   "fullSize": "Ukuran penuh",
-  "fitToScreen": "Sesuaikan layar",
-  "rename": "Ganti nama",
-  "name": "Nama",
-  "save": "Simpan",
-  "cancel": "Batal",
-  "writeAName": "Tulis nama",
-  "couldNotRenameThe": "Tidak bisa mengganti nama berkas"
+  "fitToScreen": "Sesuaikan layar"
 }

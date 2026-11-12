@@ -17,5 +17,6 @@
   "addAMessageFor": "Sadece {{ friendName }} için mesaj ekle",
   "messageForFriendnameIndex": "{{ friendName }} için mesaj {{ index }}",
   "removeMessageIndex": "{{ index }}. mesajı kaldır",
-  "messagesForOnly": "Sadece {{ friendName }} için mesajlar"
+  "messagesForOnly": "Sadece {{ friendName }} için mesajlar",
+  "hideTheForm": "Formu gizle"
 }

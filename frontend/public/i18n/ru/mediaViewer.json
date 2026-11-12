@@ -1,18 +1,9 @@
 {
-  "back": "Назад",
-  "imageVideoOrAudio": "Картинка, видео или аудио",
-  "download": "Скачать",
   "loading": "Загрузка…",
   "couldNotLoadThe": "Не удалось загрузить файл",
   "audio": "Аудио",
   "video": "Видео",
   "image": "Картинка",
   "fullSize": "Полный размер",
-  "fitToScreen": "По размеру экрана",
-  "rename": "Переименовать",
-  "name": "Название",
-  "save": "Сохранить",
-  "cancel": "Отмена",
-  "writeAName": "Введите название",
-  "couldNotRenameThe": "Не удалось переименовать файл"
+  "fitToScreen": "По размеру экрана"
 }

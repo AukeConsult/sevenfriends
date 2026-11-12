@@ -41,5 +41,8 @@
   "dismiss": "Tutup",
   "decline": "Tolak",
   "youDeclined": "Kamu bilang tidak. {{ friendName }} sudah diberi tahu.",
-  "alsoWhenNothing": "Kamu bisa meminta kapan saja, juga saat tidak ada yang terkunci untukmu: {{ friendName }} lalu mengunci semuanya lagi untuk semua kuncimu, dan harus menjawab ya setiap kali."
+  "alsoWhenNothing": "Kamu bisa meminta kapan saja, juga saat tidak ada yang terkunci untukmu: {{ friendName }} lalu mengunci semuanya lagi untuk semua kuncimu, dan harus menjawab ya setiap kali.",
+  "groupTitle": "Pemulihan hanya antara dua orang",
+  "groupText": "Untuk membuka lagi pesan lamamu, aplikasi seorang teman mengunci ulang kunci lama untuk kunci barumu. Grup tidak punya satu teman yang bisa melakukannya untukmu, jadi pemulihan tidak tersedia di grup.",
+  "groupOther": "Kamu masih bisa mendapatkannya kembali dengan perangkat lain milikmu yang bisa membukanya, atau dengan 24 kata rahasiamu (Pengaturan → Kunci)."
 }

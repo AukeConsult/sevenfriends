@@ -1,18 +1,9 @@
 {
-  "back": "返回",
-  "imageVideoOrAudio": "图片、视频或音频",
-  "download": "下载",
   "loading": "加载中…",
   "couldNotLoadThe": "无法加载文件",
   "audio": "音频",
   "video": "视频",
   "image": "图片",
   "fullSize": "原始大小",
-  "fitToScreen": "适应屏幕",
-  "rename": "重命名",
-  "name": "名称",
-  "save": "保存",
-  "cancel": "取消",
-  "writeAName": "请输入名称",
-  "couldNotRenameThe": "无法重命名文件"
+  "fitToScreen": "适应屏幕"
 }

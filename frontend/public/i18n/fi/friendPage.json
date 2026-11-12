@@ -1,6 +1,7 @@
 {
   "hasYouOnPronoun": "😴 Sinut on hänen unilistallaan",
   "sendAMessage": "Lähetä viesti",
+  "write": "Kirjoita",
   "messages": "Viestit",
   "newMessage": "Uusi viesti",
   "safeboxFilesOnlyYou": "Kassakaappi: tiedostot, jotka vain sinä ja tämä ystävä näette",
@@ -24,5 +25,7 @@
   "lockingIsOnWhat": "Lukitus on päällä. Se, minkä lähetät: {{ who }}, lukitaan laitteellasi, joten vain te kaksi voitte lukea sen. Emme edes me.",
   "lockingIsOffWhat": "Lukitus on pois päältä. Se, minkä lähetät: {{ who }}, ei ole lukittu, joten järjestelmämme voi lukea sen. Aiemmin lähetetty pysyy sellaisena kuin se lähetettiin.",
   "asleepNoSeat": "😴 Nukkuu · unilistallasi",
-  "noLongerHere": "Et ole enää tässä ryhmässä tai ystävyydessä."
+  "noLongerHere": "Et ole enää tässä ryhmässä tai ystävyydessä.",
+  "help": "Ohje",
+  "hideHelp": "Piilota ohje"
 }

@@ -3,10 +3,8 @@
   "yourSeven": "あなたの7人",
   "waiting": "待機中",
   "pending": "保留中",
-  "addAOne": "{{ one }}を追加",
   "silent": "サイレント",
   "dropHere": "ここにドロップ",
-  "sleepList": "スリープリスト",
   "couldNotMoveThe": "移動できませんでした: ",
   "openTheConversationWith": "{{ friendName }}さんとの会話を開きます。長押しで移動できます。",
   "countUnread": "未読 {{ count }} 件",
@@ -14,7 +12,5 @@
   "dropOnASeat": "席かサイレントサークルにドロップ",
   "dropOnASeat2": "席にドロップ",
   "pressAndHoldA": "{{ one }}を長押しして移動",
-  "seatsExplained": "7つの席、7人の親しい友だち。席を空けるには友だちをスリープにします。チャットは残ります。",
-  "groupCount": "グループ · {{ count }}人",
-  "groupOnlyYou": "グループ · あなただけ"
+  "seatsExplained": "7つの席、7人の親しい友だち。席を空けるには友だちをスリープにします。チャットは残ります。"
 }

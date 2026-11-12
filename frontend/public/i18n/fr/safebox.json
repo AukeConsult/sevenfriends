@@ -39,7 +39,6 @@
     "deleteAskNamed": "Supprimer « {{ itemName }} » ? Ce sera supprimé pour vous deux et ne pourra pas être récupéré."
   },
   "list": {
-    "onlyYouAndFriendname": "Seuls toi et {{ friendName }} pouvez voir ces fichiers.",
     "retry": "Réessayer",
     "usedOfMaxbytes": "{{ used }} sur {{ maxBytes }}",
     "nothingHereYetAdd": "Rien ici pour l'instant. Ajoute des photos, vidéos ou documents que tu veux partager uniquement avec {{ friendName }}.",
@@ -65,15 +64,14 @@
     "case": "Dossier",
     "search": "Rechercher dans le coffre",
     "noMatch": "Rien ne correspond à ta recherche.",
-    "hiddenTypes": "Types masqués",
-    "hintTypes": "Maintenez un type et faites-le glisser sur un autre pour le déplacer, ou sur Types masqués pour le masquer.",
+    "hiddenTypes": "Tous les types",
+    "commonTypes": "Types courants",
+    "hintTypes": "Maintenez un type et faites-le glisser pour le déplacer, ou sur Tous les types pour le masquer.",
     "due": "À échéance",
     "dueOnly": "Afficher seulement ce qui est à échéance, période de rappel comprise",
-    "hintTypesShown": "Maintenez un type et faites-le glisser sur un autre pour le déplacer, ou sur Types visibles pour l'afficher.",
+    "hintTypesShown": "Maintenez un type et faites-le glisser pour le déplacer. Faites glisser un type en pointillés sur un type plein pour le rendre courant.",
     "moveItem": "Déplacer {{itemName}} : faites glisser ou utilisez les touches fléchées",
     "couldNotSaveTheOrder": "Impossible d'enregistrer l'ordre",
-    "dragHint": "Press and drag ⠿ to move an item",
-    "dragHintHold": "Press and hold an item, then drag it to a new place",
     "unlockedOne": "One file is not locked, so our system can read it. Lock it so only you and {{ friendName }} can open it.",
     "unlockedMany": "{{ count }} files are not locked, so our system can read them. Lock them so only you and {{ friendName }} can open them.",
     "lockIt": "Lock it",
@@ -187,11 +185,11 @@
     "couldNotOpenThe": "Impossible d'ouvrir le fichier",
     "wordDocument": "Document Word",
     "zipArchive": "Archive Zip",
-    "thisFileIsLocked2": "Ce fichier est verrouillé et n'a pas pu être ouvert."
+    "thisFileIsLocked2": "Ce fichier est verrouillé et n'a pas pu être ouvert.",
+    "cannotPlayVideo": "Ce navigateur ne peut pas lire ce type de vidéo (un .wmv, par exemple). Téléchargez-la pour la regarder dans une autre app."
   },
   "upload": {
     "newFile": "Nouveau fichier",
-    "lockedOnThisDevice": "Verrouillé sur cet appareil. Seuls toi et {{ friendName }} pouvez l'ouvrir.",
     "notLocked": "Ces fichiers sont enregistrés sans verrou.",
     "chooseFiles": "Choisis des fichiers, ou dépose-les ici",
     "strongChooseFilesStrong": "<strong>Choisir des fichiers</strong>",
@@ -213,20 +211,22 @@
     "dropItemname": "Ne pas ajouter {{ itemName }}",
     "couldNotRead": "Impossible de lire les pièces jointes",
     "couldNotAddCount": "{{ count }} fichier(s) n'ont pas pu être ajoutés.",
-    "noKeys": "Les clés ne sont pas encore connues."
+    "noKeys": "Les clés ne sont pas encore connues.",
+    "viewAll": "Tout voir",
+    "noPictures": "Aucune image ni vidéo dans cet album pour le moment.",
+    "previousPicture": "Image précédente",
+    "nextPicture": "Image suivante",
+    "tooBig": "« {{ fileName }} » est trop volumineux pour le coffre-fort ({{ mb }} Mo au maximum)."
   },
   "link": {
     "linkWith": "Lier avec…",
-    "pickWhatToLink": "Choisis avec quoi lier « {{ itemName }} ».",
-    "pickAnItem": "Choisis un élément.",
     "nothingToLink": "Rien avec quoi lier.",
     "picture": "Image",
     "sound": "Son",
     "couldNotMakeTheLink": "Impossible de créer le lien"
   },
   "linkNew": {
-    "newLinkedItem": "Nouvel élément lié",
-    "whatKind": "Quel type d'élément ? Il est lié à celui d'où tu viens."
+    "newLinkedItem": "Nouvel élément lié"
   },
   "links": {
     "linkedItems": "Éléments liés",

@@ -1,6 +1,7 @@
 {
   "hasYouOnPronoun": "😴 나를 수면 목록에 두었어요",
   "sendAMessage": "메시지 보내기",
+  "write": "쓰기",
   "messages": "메시지",
   "newMessage": "새 메시지",
   "safeboxFilesOnlyYou": "금고: 나와 이 친구만 볼 수 있는 파일",
@@ -24,5 +25,7 @@
   "lockingIsOnWhat": "잠금이 켜져 있어요. {{ who }}에게 보내는 내용은 내 기기에서 잠겨서 두 사람만 읽을 수 있어요. 저희도 읽을 수 없어요.",
   "lockingIsOffWhat": "잠금이 꺼져 있어요. {{ who }}에게 보내는 내용은 잠기지 않아서 저희 시스템이 읽을 수 있어요. 이전에 보낸 내용은 그대로예요.",
   "asleepNoSeat": "😴 잠든 상태 · 내 수면 목록에 있음",
-  "noLongerHere": "더 이상 이 그룹 또는 친구 관계에 속해 있지 않습니다."
+  "noLongerHere": "더 이상 이 그룹 또는 친구 관계에 속해 있지 않습니다.",
+  "help": "도움말",
+  "hideHelp": "도움말 숨기기"
 }

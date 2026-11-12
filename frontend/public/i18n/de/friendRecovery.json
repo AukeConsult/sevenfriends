@@ -41,5 +41,8 @@
   "dismiss": "Verwerfen",
   "decline": "Ablehnen",
   "youDeclined": "Du hast Nein gesagt. {{ friendName }} wurde informiert.",
-  "alsoWhenNothing": "Du kannst jederzeit fragen, auch wenn für dich nichts gesperrt ist: {{ friendName }} sperrt dann alles erneut für alle deine Schlüssel und muss jedes Mal zustimmen."
+  "alsoWhenNothing": "Du kannst jederzeit fragen, auch wenn für dich nichts gesperrt ist: {{ friendName }} sperrt dann alles erneut für alle deine Schlüssel und muss jedes Mal zustimmen.",
+  "groupTitle": "Wiederherstellung gibt es nur zwischen zwei Personen",
+  "groupText": "Um deine alten Nachrichten wieder zu öffnen, sperrt die App eines Freundes die alten Schlüssel erneut für deinen neuen Schlüssel. In einer Gruppe gibt es keinen einzelnen Freund, der das für dich tun kann, deshalb ist die Wiederherstellung in einer Gruppe nicht möglich.",
+  "groupOther": "Du kannst sie trotzdem zurückholen: mit einem anderen deiner Geräte, das sie öffnen kann, oder mit deinen 24 geheimen Wörtern (Einstellungen → Schlüssel)."
 }

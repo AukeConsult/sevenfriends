@@ -1,0 +1,30 @@
+<ng-container *transloco="let t">
+<main class="sf-page sf-page-item" (tapBack)="back()">
+  <app-page-bar [sub]="true" [title]="(t('safebox.list.album') || 'Album') + (pictures() ? ' · ' + pictures()!.length : '')">
+    <a [routerLink]="list" barStart class="sf-bar-icon" (click)="back($event)" [attr.aria-label]="(t('safebox.common.allItems') || 'All items in the safebox')" [attr.title]="(t('safebox.common.allItems') || 'All items in the safebox')"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg></a>
+  </app-page-bar>
+
+  @if (error()) {
+    <div class="alert alert-danger" role="alert">{{ error() }}</div>
+  } @else if (pictures(); as all) {
+    @if (all.length) {
+      <div #strip class="sf-pager" (scroll)="scrolled(strip)">
+        @for (item of all; track item.id; let i = $index) {
+          <a class="sf-pager-slide" [routerLink]="['/friends', friendId, 'safebox', item.id]" [attr.aria-label]="item.name">
+            <app-safebox-slide [friendId]="friendId" [item]="item" [near]="i >= index() - 1 && i <= index() + 1" />
+          </a>
+        }
+      </div>
+      <div class="d-flex align-items-center justify-content-center gap-2">
+        <button type="button" class="btn btn-light btn-sm" (click)="step(strip, -1)" [disabled]="index() === 0" [attr.aria-label]="t('safebox.attachments.previousPicture') || 'Previous picture'">‹</button>
+        <span class="sf-hint sf-ellipsis">{{ index() + 1 }} / {{ all.length }}@if (current(); as shown) { · {{ shown.name }} }</span>
+        <button type="button" class="btn btn-light btn-sm" (click)="step(strip, 1)" [disabled]="index() >= all.length - 1" [attr.aria-label]="t('safebox.attachments.nextPicture') || 'Next picture'">›</button>
+      </div>
+    } @else {
+      <p class="sf-hint text-center">{{ t('safebox.attachments.noPictures') || 'No pictures or videos in this album yet.' }}</p>
+    }
+  } @else {
+    <p class="text-secondary text-center">{{ t('safebox.common.opening') || 'Opening…' }}</p>
+  }
+</main>
+</ng-container>

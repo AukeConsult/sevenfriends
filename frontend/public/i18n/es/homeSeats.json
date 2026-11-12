@@ -3,10 +3,8 @@
   "yourSeven": "Tus siete",
   "waiting": "En espera",
   "pending": "Pendiente",
-  "addAOne": "Añadir un {{ one }}",
   "silent": "Silenciados",
   "dropHere": "Suelta aquí",
-  "sleepList": "Lista de descanso",
   "couldNotMoveThe": "No se pudo mover ",
   "openTheConversationWith": "Abre la conversación con {{ friendName }}. Mantén pulsado para mover.",
   "countUnread": "{{ count }} sin leer",
@@ -14,7 +12,5 @@
   "dropOnASeat": "Suelta en una plaza o en el círculo de Silenciados",
   "dropOnASeat2": "Suelta en una plaza",
   "pressAndHoldA": "Mantén pulsado un {{ one }} para moverlo",
-  "seatsExplained": "7 asientos, 7 amigos cercanos. Pon a un amigo a dormir para liberar un asiento: el chat se conserva.",
-  "groupCount": "Grupo · {{ count }} personas",
-  "groupOnlyYou": "Grupo · solo tú"
+  "seatsExplained": "7 asientos, 7 amigos cercanos. Pon a un amigo a dormir para liberar un asiento: el chat se conserva."
 }

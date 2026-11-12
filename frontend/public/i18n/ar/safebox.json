@@ -39,7 +39,6 @@
     "deleteAskNamed": "حذف «{{ itemName }}»؟ سيُحذف لكما ولا يمكن استرجاعه."
   },
   "list": {
-    "onlyYouAndFriendname": "أنت و{{ friendName }} فقط تستطيعان رؤية هذه الملفات.",
     "retry": "إعادة المحاولة",
     "usedOfMaxbytes": "{{ used }} من {{ maxBytes }}",
     "nothingHereYetAdd": "لا شيء هنا بعد. أضِف صورًا أو فيديوهات أو مستندات تريد مشاركتها مع {{ friendName }} فقط.",
@@ -65,15 +64,14 @@
     "case": "قضية",
     "search": "ابحث في الخزنة",
     "noMatch": "لا شيء يطابق بحثك.",
-    "hiddenTypes": "أنواع مخفية",
-    "hintTypes": "اضغط مطولاً على نوع واسحبه إلى نوع آخر لنقله، أو إلى «أنواع مخفية» لإخفائه.",
+    "hiddenTypes": "كل الأنواع",
+    "commonTypes": "الأنواع الشائعة",
+    "hintTypes": "اضغط مطولًا على نوع واسحبه لنقله، أو إلى «كل الأنواع» لإخفائه.",
     "due": "مستحق",
     "dueOnly": "إظهار المستحق فقط، بما في ذلك فترة التذكير",
-    "hintTypesShown": "اضغط مطولاً على نوع واسحبه إلى نوع آخر لنقله، أو إلى «أنواع ظاهرة» لإظهاره.",
+    "hintTypesShown": "اضغط مطولًا على نوع واسحبه لنقله. اسحب نوعًا بإطار متقطع إلى نوع بإطار متصل ليصبح شائعًا.",
     "moveItem": "انقل {{itemName}}: اسحبه أو استخدم مفاتيح الأسهم",
     "couldNotSaveTheOrder": "تعذّر حفظ الترتيب",
-    "dragHint": "Press and drag ⠿ to move an item",
-    "dragHintHold": "Press and hold an item, then drag it to a new place",
     "unlockedOne": "One file is not locked, so our system can read it. Lock it so only you and {{ friendName }} can open it.",
     "unlockedMany": "{{ count }} files are not locked, so our system can read them. Lock them so only you and {{ friendName }} can open them.",
     "lockIt": "Lock it",
@@ -187,11 +185,11 @@
     "couldNotOpenThe": "تعذّر فتح الملف",
     "wordDocument": "مستند Word",
     "zipArchive": "أرشيف Zip",
-    "thisFileIsLocked2": "هذا الملف مقفل وتعذّر فتحه."
+    "thisFileIsLocked2": "هذا الملف مقفل وتعذّر فتحه.",
+    "cannotPlayVideo": "لا يستطيع هذا المتصفح تشغيل هذا النوع من الفيديو (مثل ملف wmv.). نزّله لمشاهدته في تطبيق آخر."
   },
   "upload": {
     "newFile": "ملف جديد",
-    "lockedOnThisDevice": "مقفل على هذا الجهاز. أنت و{{ friendName }} فقط تستطيعان فتحه.",
     "notLocked": "تُخزَّن هذه الملفات دون قفل.",
     "chooseFiles": "اختر ملفات، أو أفلتها هنا",
     "strongChooseFilesStrong": "<strong>اختر ملفات</strong>",
@@ -213,20 +211,22 @@
     "dropItemname": "لا تضف {{ itemName }}",
     "couldNotRead": "تعذرت قراءة المرفقات",
     "couldNotAddCount": "تعذرت إضافة {{ count }} ملف.",
-    "noKeys": "المفاتيح غير معروفة بعد."
+    "noKeys": "المفاتيح غير معروفة بعد.",
+    "viewAll": "عرض الكل",
+    "noPictures": "لا توجد صور أو مقاطع فيديو في هذا الألبوم بعد.",
+    "previousPicture": "الصورة السابقة",
+    "nextPicture": "الصورة التالية",
+    "tooBig": "الملف «{{ fileName }}» كبير جدًا بالنسبة إلى الخزنة (الحد الأقصى {{ mb }} ميغابايت)."
   },
   "link": {
     "linkWith": "اربط مع…",
-    "pickWhatToLink": "اختر ما تريد ربط «{{ itemName }}» به.",
-    "pickAnItem": "اختر عنصرًا.",
     "nothingToLink": "لا شيء للربط معه.",
     "picture": "صورة",
     "sound": "صوت",
     "couldNotMakeTheLink": "تعذّر إنشاء الرابط"
   },
   "linkNew": {
-    "newLinkedItem": "عنصر مرتبط جديد",
-    "whatKind": "ما نوع العنصر؟ سيُربط بالعنصر الذي جئت منه."
+    "newLinkedItem": "عنصر مرتبط جديد"
   },
   "links": {
     "linkedItems": "العناصر المرتبطة",

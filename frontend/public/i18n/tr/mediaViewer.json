@@ -1,18 +1,9 @@
 {
-  "back": "Geri",
-  "imageVideoOrAudio": "Resim, video veya ses",
-  "download": "İndir",
   "loading": "Yükleniyor…",
   "couldNotLoadThe": "Dosya yüklenemedi",
   "audio": "Ses",
   "video": "Video",
   "image": "Resim",
   "fullSize": "Tam boyut",
-  "fitToScreen": "Ekrana sığdır",
-  "rename": "Yeniden adlandır",
-  "name": "Ad",
-  "save": "Kaydet",
-  "cancel": "İptal",
-  "writeAName": "Bir ad yaz",
-  "couldNotRenameThe": "Dosya yeniden adlandırılamadı"
+  "fitToScreen": "Ekrana sığdır"
 }

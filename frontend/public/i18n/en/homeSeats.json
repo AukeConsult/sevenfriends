@@ -3,10 +3,8 @@
   "yourSeven": "Your seven",
   "waiting": "Waiting",
   "pending": "Pending",
-  "addAOne": "Add a {{ one }}",
   "silent": "Sleep",
   "dropHere": "Drop here",
-  "sleepList": "Sleep list",
   "couldNotMoveThe": "Could not move the ",
   "openTheConversationWith": "Open the conversation with {{ friendName }}. Press and hold to move.",
   "countUnread": "{{ count }} unread",
@@ -14,7 +12,5 @@
   "dropOnASeat": "Drop on a seat or on Sleep",
   "dropOnASeat2": "Drop on a seat",
   "pressAndHoldA": "Press and hold a {{ one }} to move",
-  "seatsExplained": "7 seats, 7 close friends. Put a friend to sleep to free a seat: the chat is kept.",
-  "groupCount": "Group · {{ count }} people",
-  "groupOnlyYou": "Group · only you"
+  "seatsExplained": "7 seats, 7 close friends. Put a friend to sleep to free a seat: the chat is kept."
 }

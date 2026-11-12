@@ -233,6 +233,7 @@ conversationRouter.post(
       return;
     }
 
+    const notice = req.body?.notice === true; // a notice ("📦 In the safebox: …") is for the other people only: the sender keeps no copy of it in their own feed
     const poke = req.body?.poke === true; // "poke anyway": the friend is told with a sound even when they have me on their sleep list
     const muted = peerEntries.map((entry) => entry?.data()?.asleep === true && !poke); // one for each of the other people
     const mine = media ? messageCol(token.uid).doc(media.objectId) : messageCol(token.uid).doc(); // a message with a file has the id of the file: that is how the receiver is let in
@@ -250,7 +251,7 @@ conversationRouter.post(
     const batch = getFirestore().batch();
     // each copy says which circle it belongs to FOR ITS OWNER: mine in my circle, the friend's in theirs
     // a locked message keeps in each copy only that person's copies of the message key
-    batch.set(mine, { ...common, ...(locked ? { enc: wrapsFor(locked.enc, token.uid) } : {}), circleId: connection.circleId, read: true }); // my own message needs no reading
+    if (!notice) batch.set(mine, { ...common, ...(locked ? { enc: wrapsFor(locked.enc, token.uid) } : {}), circleId: connection.circleId, read: true }); // my own message needs no reading
     for (const peer of connection.peers) {
       // the same message id in every copy
       batch.set(messageCol(peer.uid).doc(mine.id), { ...common, ...(locked ? { enc: wrapsFor(locked.enc, peer.uid) } : {}), ...(poke ? { poke: true } : {}), circleId: peer.circleId, read: false });
@@ -475,6 +476,29 @@ conversationRouter.delete(
     for (const their of own.theirs) batch.delete(their.ref); // deleting a copy that is not there is fine
     for (const entry of own.peerEntries) await touchFeedIfExists(batch, entry);
     touchFeed(batch, own.myEntry); // my other devices reload the feed
+    await batch.commit();
+    res.status(204).end();
+  }),
+);
+
+/**
+ * Take a message out of MY feed only (`DELETE .../messages/:id/mine`): my copy goes, the other people keep theirs, and the file of the message stays. Whoever sent it:
+ * it is for the notices that are read once ("📦 In the safebox: …"), which each person clears from their own feed.
+ */
+conversationRouter.delete(
+  "/:messageId/mine",
+  asyncHandler(async (req, res) => {
+    const connection = await connectionOf(req, res);
+    if (!connection) return;
+    const mine = messageCol(uidOf(res)).doc(req.params.messageId);
+    const data = (await mine.get()).data();
+    if (!data || data.connectionId !== connection.id) {
+      res.status(404).json({ error: "Message not found" });
+      return;
+    }
+    const batch = getFirestore().batch();
+    batch.delete(mine);
+    touchFeed(batch, (res.locals.circleRef as DocumentReference).collection(FRIENDS_SUBCOLLECTION).doc(connection.id)); // my other devices reload the feed
     await batch.commit();
     res.status(204).end();
   }),

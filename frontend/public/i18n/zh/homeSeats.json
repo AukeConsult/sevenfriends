@@ -3,10 +3,8 @@
   "yourSeven": "你的七位",
   "waiting": "等待中",
   "pending": "待处理",
-  "addAOne": "添加{{ one }}",
   "silent": "静音",
   "dropHere": "放在这里",
-  "sleepList": "睡眠名单",
   "couldNotMoveThe": "无法移动",
   "openTheConversationWith": "打开与 {{ friendName }} 的对话。长按可移动。",
   "countUnread": "{{ count }} 条未读",
@@ -14,7 +12,5 @@
   "dropOnASeat": "放到一个位置上，或放进“静音”圈",
   "dropOnASeat2": "放到一个位置上",
   "pressAndHoldA": "长按{{ one }}可移动",
-  "seatsExplained": "7 个席位，7 位亲密朋友。让朋友进入休眠即可空出席位：聊天记录会保留。",
-  "groupCount": "群组 · {{ count }} 人",
-  "groupOnlyYou": "群组 · 只有你"
+  "seatsExplained": "7 个席位，7 位亲密朋友。让朋友进入休眠即可空出席位：聊天记录会保留。"
 }

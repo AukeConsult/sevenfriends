@@ -39,7 +39,6 @@
     "deleteAskNamed": "「{{ itemName }}」を削除しますか？ふたりの両方から削除され、元に戻せません。"
   },
   "list": {
-    "onlyYouAndFriendname": "このファイルを見られるのは、あなたと{{ friendName }}さんだけです。",
     "retry": "再試行",
     "usedOfMaxbytes": "{{ used }} / {{ maxBytes }}",
     "nothingHereYetAdd": "まだ何もありません。{{ friendName }}さんとだけ共有したい写真、動画、書類を追加しましょう。",
@@ -65,15 +64,14 @@
     "case": "案件",
     "search": "金庫内を検索",
     "noMatch": "検索に一致するものはありません。",
-    "hiddenTypes": "非表示の種類",
-    "hintTypes": "種類を長押ししてほかの種類にドラッグすると移動し、「非表示の種類」にドラッグすると隠れます。",
+    "hiddenTypes": "すべての種類",
+    "commonTypes": "よく使う種類",
+    "hintTypes": "種類を長押ししてドラッグすると移動できます。「すべての種類」にドラッグすると非表示になります。",
     "due": "期限",
     "dueOnly": "期限が近いものだけを表示（リマインダー期間を含む）",
-    "hintTypesShown": "種類を長押ししてほかの種類にドラッグすると移動し、「表示中の種類」にドラッグすると表示されます。",
+    "hintTypesShown": "種類を長押ししてドラッグすると移動できます。破線の種類を実線の種類にドラッグすると、よく使う種類になります。",
     "moveItem": "{{itemName}} を移動: ドラッグするか、矢印キーを使います",
     "couldNotSaveTheOrder": "並び順を保存できませんでした",
-    "dragHint": "Press and drag ⠿ to move an item",
-    "dragHintHold": "Press and hold an item, then drag it to a new place",
     "unlockedOne": "One file is not locked, so our system can read it. Lock it so only you and {{ friendName }} can open it.",
     "unlockedMany": "{{ count }} files are not locked, so our system can read them. Lock them so only you and {{ friendName }} can open them.",
     "lockIt": "Lock it",
@@ -187,11 +185,11 @@
     "couldNotOpenThe": "ファイルを開けませんでした",
     "wordDocument": "Word文書",
     "zipArchive": "Zipアーカイブ",
-    "thisFileIsLocked2": "このファイルはロックされていて、開けませんでした。"
+    "thisFileIsLocked2": "このファイルはロックされていて、開けませんでした。",
+    "cannotPlayVideo": "このブラウザではこの種類の動画（たとえば .wmv）は再生できません。ダウンロードして別のアプリで見てください。"
   },
   "upload": {
     "newFile": "新しいファイル",
-    "lockedOnThisDevice": "この端末でロック中。開けるのはあなたと{{ friendName }}さんだけです。",
     "notLocked": "これらのファイルはロックなしで保存されます。",
     "chooseFiles": "ファイルを選ぶか、ここにドロップ",
     "strongChooseFilesStrong": "<strong>ファイルを選ぶ</strong>",
@@ -213,20 +211,22 @@
     "dropItemname": "{{ itemName }}を追加しない",
     "couldNotRead": "添付ファイルを読み込めませんでした",
     "couldNotAddCount": "{{ count }}件のファイルを追加できませんでした。",
-    "noKeys": "キーがまだ分かっていません。"
+    "noKeys": "キーがまだ分かっていません。",
+    "viewAll": "すべて見る",
+    "noPictures": "このアルバムにはまだ画像や動画がありません。",
+    "previousPicture": "前の画像",
+    "nextPicture": "次の画像",
+    "tooBig": "「{{ fileName }}」はセーフボックスには大きすぎます（最大 {{ mb }} MB）。"
   },
   "link": {
     "linkWith": "リンクする…",
-    "pickWhatToLink": "「{{ itemName }}」をリンクする相手を選んでください。",
-    "pickAnItem": "項目を選んでください。",
     "nothingToLink": "リンクできるものがありません。",
     "picture": "画像",
     "sound": "音",
     "couldNotMakeTheLink": "リンクを作成できませんでした"
   },
   "linkNew": {
-    "newLinkedItem": "新しいリンク先の項目",
-    "whatKind": "どの種類の項目にしますか？ 元の項目とリンクされます。"
+    "newLinkedItem": "新しいリンク先の項目"
   },
   "links": {
     "linkedItems": "リンクされた項目",

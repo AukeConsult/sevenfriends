@@ -39,7 +39,6 @@
     "deleteAskNamed": "למחוק את «{{ itemName }}»? זה יימחק אצל שניכם ולא ניתן יהיה להחזיר אותו."
   },
   "list": {
-    "onlyYouAndFriendname": "רק אתם ו{{ friendName }} יכולים לראות את הקבצים האלה.",
     "retry": "ניסיון חוזר",
     "usedOfMaxbytes": "{{ used }} מתוך {{ maxBytes }}",
     "nothingHereYetAdd": "עדיין אין כאן כלום. אפשר להוסיף תמונות, סרטונים או מסמכים שרוצים לשתף רק עם {{ friendName }}.",
@@ -65,15 +64,14 @@
     "case": "תיק",
     "search": "חיפוש בכספת",
     "noMatch": "שום דבר לא תואם לחיפוש שלך.",
-    "hiddenTypes": "סוגים מוסתרים",
-    "hintTypes": "לחץ והחזק סוג וגרור אותו על סוג אחר כדי להזיז אותו, או על «סוגים מוסתרים» כדי להסתיר אותו.",
+    "hiddenTypes": "כל הסוגים",
+    "commonTypes": "סוגים נפוצים",
+    "hintTypes": "לחצו לחיצה ארוכה על סוג וגררו אותו כדי להזיז אותו, או אל כל הסוגים כדי להסתיר אותו.",
     "due": "לביצוע",
     "dueOnly": "הצג רק פריטים לביצוע, כולל תקופת התזכורת",
-    "hintTypesShown": "לחץ והחזק סוג וגרור אותו על סוג אחר כדי להזיז אותו, או על «סוגים גלויים» כדי להציג אותו.",
+    "hintTypesShown": "לחצו לחיצה ארוכה על סוג וגררו אותו כדי להזיז אותו. גררו סוג מקווקו על סוג רגיל כדי להפוך אותו לנפוץ.",
     "moveItem": "הזז את {{itemName}}: גרור או השתמש במקשי החצים",
     "couldNotSaveTheOrder": "לא ניתן היה לשמור את הסדר",
-    "dragHint": "Press and drag ⠿ to move an item",
-    "dragHintHold": "Press and hold an item, then drag it to a new place",
     "unlockedOne": "One file is not locked, so our system can read it. Lock it so only you and {{ friendName }} can open it.",
     "unlockedMany": "{{ count }} files are not locked, so our system can read them. Lock them so only you and {{ friendName }} can open them.",
     "lockIt": "Lock it",
@@ -187,11 +185,11 @@
     "couldNotOpenThe": "לא ניתן היה לפתוח את הקובץ",
     "wordDocument": "מסמך Word",
     "zipArchive": "ארכיון Zip",
-    "thisFileIsLocked2": "הקובץ הזה נעול ולא ניתן היה לפתוח אותו."
+    "thisFileIsLocked2": "הקובץ הזה נעול ולא ניתן היה לפתוח אותו.",
+    "cannotPlayVideo": "הדפדפן הזה לא יכול להפעיל סוג כזה של סרטון (למשל קובץ wmv.). הורידו אותו כדי לצפות בו באפליקציה אחרת."
   },
   "upload": {
     "newFile": "קובץ חדש",
-    "lockedOnThisDevice": "נעול במכשיר הזה. רק את/ה ו-{{ friendName }} יכולים לפתוח את זה.",
     "notLocked": "הקבצים האלה נשמרים בלי נעילה.",
     "chooseFiles": "בחר/י קבצים, או שחרר/י אותם כאן",
     "strongChooseFilesStrong": "<strong>בחירת קבצים</strong>",
@@ -213,20 +211,22 @@
     "dropItemname": "אל תוסיף את {{ itemName }}",
     "couldNotRead": "לא ניתן היה לקרוא את הקבצים המצורפים",
     "couldNotAddCount": "לא ניתן היה להוסיף {{ count }} קבצים.",
-    "noKeys": "המפתחות עדיין לא ידועים."
+    "noKeys": "המפתחות עדיין לא ידועים.",
+    "viewAll": "הצגת הכול",
+    "noPictures": "עדיין אין תמונות או סרטונים באלבום הזה.",
+    "previousPicture": "התמונה הקודמת",
+    "nextPicture": "התמונה הבאה",
+    "tooBig": "”{{ fileName }}“ גדול מדי לכספת (עד {{ mb }} MB)."
   },
   "link": {
     "linkWith": "קישור עם…",
-    "pickWhatToLink": "בחר/י עם מה לקשר את \"{{ itemName }}\".",
-    "pickAnItem": "בחר/י פריט.",
     "nothingToLink": "אין עם מה לקשר.",
     "picture": "תמונה",
     "sound": "צליל",
     "couldNotMakeTheLink": "לא ניתן היה ליצור את הקישור"
   },
   "linkNew": {
-    "newLinkedItem": "פריט מקושר חדש",
-    "whatKind": "איזה סוג פריט? הוא יקושר לפריט שממנו הגעת."
+    "newLinkedItem": "פריט מקושר חדש"
   },
   "links": {
     "linkedItems": "פריטים מקושרים",

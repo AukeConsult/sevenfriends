@@ -41,5 +41,8 @@
   "dismiss": "Afvis",
   "decline": "Afslå",
   "youDeclined": "Du sagde nej. {{ friendName }} har fået besked.",
-  "alsoWhenNothing": "Du kan spørge når som helst, også når intet er låst for dig: {{ friendName }} låser så alt igen for alle dine nøgler og skal sige ja hver gang."
+  "alsoWhenNothing": "Du kan spørge når som helst, også når intet er låst for dig: {{ friendName }} låser så alt igen for alle dine nøgler og skal sige ja hver gang.",
+  "groupTitle": "Gendannelse sker mellem to personer",
+  "groupText": "For at åbne dine gamle beskeder igen låser en vens app de gamle nøgler igen til din nye nøgle. En gruppe har ingen enkelt ven, der kan gøre det for dig, så gendannelse er ikke mulig i en gruppe.",
+  "groupOther": "Du kan stadig få dem tilbage med en anden af dine enheder, der kan åbne dem, eller med dine 24 hemmelige ord (Indstillinger → Nøgler)."
 }

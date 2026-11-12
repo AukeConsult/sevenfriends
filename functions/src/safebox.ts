@@ -2,7 +2,8 @@ import express, { Request, Response, Router } from "express";
 import { DecodedIdToken } from "firebase-admin/auth";
 import { DocumentReference, FieldValue, Timestamp, getFirestore } from "firebase-admin/firestore";
 import { asyncHandler } from "./auth";
-import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAX_UPLOAD_BYTES, SAFEBOX_MAX_BYTES, SAFEBOX_MAX_ITEMS, SAFEBOX_REMINDERS, boxOwner } from "./constants";
+import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAX_UPLOAD_BYTES, SAFEBOX_MAX_ITEMS, SAFEBOX_REMINDERS, boxOwner } from "./constants";
+import { limitsOf } from "./limits";
 import { Peer, connectionOf, peerEntryRef, peerSleeps } from "./conversation";
 import { ALBUM_PICTURES_MAX, ATTACHMENTS_MAX, CASE_DOCUMENTS_MAX, BoxKeys, DeviceList, PersonKeyLists, ENC_HEADER_MAX, GroupShareItem, MediaRef, SAFEBOX_OBJECT_TYPES, Safebox, SafeboxItem } from "./models";
 import { MAX_WRAPS, ParsedReminder, lockedBytes, objectBytes, parseEncryptedUpload, parseNewObject, parseObjectChange, wrapValid, wrapsCover, wrapsFor } from "./box-encryption";
@@ -14,7 +15,7 @@ import { checkBytes, checkSafeboxFile, cleanFileName, deleteFolder, deleteObject
 
 const uidOf = (res: Response) => (res.locals.token as DecodedIdToken).uid;
 const iso = (t: unknown) => (t instanceof Timestamp ? t.toDate().toISOString() : null);
-/** One file may be as big as one upload request allows. */
+/** What one upload request can carry at most: the ceiling of every file. The limit of the account (`limitsOf`) is checked after the request has arrived, and is never above this. */
 const MAX_FILE_BYTES = MAX_UPLOAD_BYTES;
 /** The file comes as the plain request body (the type is found from the first bytes, not from the header). */
 const fileBody = express.raw({ type: () => true, limit: MAX_FILE_BYTES });
@@ -102,7 +103,8 @@ safeboxRouter.get(
     const uid = uidOf(res);
     const found = (await safeboxItems(connection.id).select(...LIST_FIELDS).get()).docs.filter((d) => inCircle(d.data(), uid, connection.circleId)).map((d) => toItem(d.id, d.data(), uid));
     const items = await numberItems(connection.id, found);
-    const box: Safebox = { items, usedBytes: items.reduce((sum, i) => sum + i.bytes, 0), maxBytes: SAFEBOX_MAX_BYTES, maxFileBytes: MAX_FILE_BYTES };
+    const limits = await limitsOf(uid);
+    const box: Safebox = { items, usedBytes: items.reduce((sum, i) => sum + i.bytes, 0), maxBytes: limits.safeboxTotalBytes, maxFileBytes: limits.safeboxFileBytes };
     res.json(box);
   }),
 );
@@ -278,8 +280,9 @@ async function boxHasRoom(res: Response, connection: Connection, size: number, r
     res.status(409).json({ error: `The safebox is full (at most ${SAFEBOX_MAX_ITEMS} files). Delete some first.` });
     return false;
   }
-  if (existing.reduce((sum, d) => sum + (d.data().bytes as number), 0) + size > SAFEBOX_MAX_BYTES) {
-    res.status(413).json({ error: `The safebox is full (at most ${Math.round(SAFEBOX_MAX_BYTES / 1024 / 1024)} MB). Delete some files first.` });
+  const maxBytes = (await limitsOf(uidOf(res))).safeboxTotalBytes; // the limit of the account that adds
+  if (existing.reduce((sum, d) => sum + (d.data().bytes as number), 0) + size > maxBytes) {
+    res.status(413).json({ error: `The safebox is full (at most ${Math.round(maxBytes / 1024 / 1024)} MB). Delete some files first.` });
     return false;
   }
   return true;
@@ -304,7 +307,7 @@ safeboxRouter.post(
     const connection = await connectionOf(req, res);
     if (!connection) return;
     const bytes = Buffer.isBuffer(req.body) ? req.body : Buffer.alloc(0);
-    const checked = checkSafeboxFile(bytes, MAX_FILE_BYTES);
+    const checked = checkSafeboxFile(bytes, (await limitsOf(uidOf(res))).safeboxFileBytes);
     if ("error" in checked) {
       res.status(checked.status).json({ error: checked.error });
       return;
@@ -327,7 +330,7 @@ safeboxRouter.post(
   asyncHandler(async (req, res) => {
     const connection = await connectionOf(req, res);
     if (!connection) return;
-    const upload = parseEncryptedUpload(Buffer.isBuffer(req.body) ? req.body : Buffer.alloc(0), MAX_FILE_BYTES);
+    const upload = parseEncryptedUpload(Buffer.isBuffer(req.body) ? req.body : Buffer.alloc(0), (await limitsOf(uidOf(res))).safeboxFileBytes);
     if ("error" in upload) {
       res.status(upload.status).json({ error: upload.error });
       return;
@@ -429,8 +432,9 @@ safeboxRouter.post(
       res.status(409).json({ error: "This picture or video is locked. It cannot be moved to the safebox yet." }); // the server cannot read it; moving a locked file is not built yet
       return;
     }
-    if (media.bytes > MAX_FILE_BYTES) {
-      res.status(413).json({ error: `That file is too big for the safebox (at most ${Math.round(MAX_FILE_BYTES / 1024 / 1024)} MB)` });
+    const maxFileBytes = (await limitsOf(uidOf(res))).safeboxFileBytes;
+    if (media.bytes > maxFileBytes) {
+      res.status(413).json({ error: `That file is too big for the safebox (at most ${Math.round(maxFileBytes / 1024 / 1024)} MB)` });
       return;
     }
     const bytes = await readAll(media.ownerId, media.objectId);
@@ -438,7 +442,7 @@ safeboxRouter.post(
       res.status(404).json({ error: "The file is gone" });
       return;
     }
-    const checked = checkSafeboxFile(bytes, MAX_FILE_BYTES);
+    const checked = checkSafeboxFile(bytes, maxFileBytes);
     if ("error" in checked) {
       res.status(checked.status).json({ error: checked.error });
       return;

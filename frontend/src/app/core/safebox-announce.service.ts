@@ -22,7 +22,7 @@ export class SafeboxAnnounceService {
 
   /** Sends the message (the bell in an item calls this and shows the error). */
   send(friendId: string, what: string, title: string, path: string[]): Promise<unknown> {
-    return this.chat.send(friendId, this.text(what, title, path));
+    return this.chat.send(friendId, this.text(what, title, path), false, true); // a notice: the others get it, I keep no copy in my own feed
   }
 
   /** After something was ADDED: tells the friend or group when the person wants that. Quiet: nothing is thrown. */

@@ -1,18 +1,9 @@
 {
-  "back": "Terug",
-  "imageVideoOrAudio": "Afbeelding, video of audio",
-  "download": "Downloaden",
   "loading": "Laden…",
   "couldNotLoadThe": "Kon het bestand niet laden",
   "audio": "Audio",
   "video": "Video",
   "image": "Afbeelding",
   "fullSize": "Volledige grootte",
-  "fitToScreen": "Passend op scherm",
-  "rename": "Hernoemen",
-  "name": "Naam",
-  "save": "Opslaan",
-  "cancel": "Annuleren",
-  "writeAName": "Schrijf een naam",
-  "couldNotRenameThe": "Het bestand kon niet worden hernoemd"
+  "fitToScreen": "Passend op scherm"
 }

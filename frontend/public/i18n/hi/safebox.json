@@ -39,7 +39,6 @@
     "deleteAskNamed": "«{{ itemName }}» को हटाएँ? यह आप दोनों के लिए हट जाएगा और वापस नहीं मिलेगा।"
   },
   "list": {
-    "onlyYouAndFriendname": "ये फ़ाइलें सिर्फ़ आप और {{ friendName }} देख सकते हैं।",
     "retry": "फिर कोशिश करें",
     "usedOfMaxbytes": "{{ maxBytes }} में से {{ used }}",
     "nothingHereYetAdd": "यहाँ अभी कुछ नहीं है। वे तस्वीरें, वीडियो या दस्तावेज़ जोड़ें जो आप सिर्फ़ {{ friendName }} के साथ साझा करना चाहते हैं।",
@@ -65,15 +64,14 @@
     "case": "मामला",
     "search": "तिजोरी में खोजें",
     "noMatch": "आपकी खोज से कुछ मेल नहीं खाता।",
-    "hiddenTypes": "छिपे हुए प्रकार",
-    "hintTypes": "किसी प्रकार को दबाए रखें और उसे दूसरे पर खींचें ताकि वह खिसक जाए, या «छिपे हुए प्रकार» पर खींचें ताकि वह छिप जाए।",
+    "hiddenTypes": "सभी प्रकार",
+    "commonTypes": "आम प्रकार",
+    "hintTypes": "किसी प्रकार को दबाए रखें और उसे हिलाने के लिए खींचें, या छिपाने के लिए सभी प्रकार पर खींचें।",
     "due": "देय",
     "dueOnly": "केवल देय आइटम दिखाएँ, रिमाइंडर की अवधि सहित",
-    "hintTypesShown": "किसी प्रकार को दबाए रखें और उसे दूसरे पर खींचें ताकि वह खिसक जाए, या «दिखने वाले प्रकार» पर खींचें ताकि वह दिखने लगे।",
+    "hintTypesShown": "किसी प्रकार को दबाए रखें और उसे हिलाने के लिए खींचें। किसी बिंदीदार प्रकार को ठोस प्रकार पर खींचें ताकि वह आम बन जाए।",
     "moveItem": "{{itemName}} को खिसकाएँ: खींचें या तीर कुंजियाँ इस्तेमाल करें",
     "couldNotSaveTheOrder": "क्रम सहेजा नहीं जा सका",
-    "dragHint": "Press and drag ⠿ to move an item",
-    "dragHintHold": "Press and hold an item, then drag it to a new place",
     "unlockedOne": "One file is not locked, so our system can read it. Lock it so only you and {{ friendName }} can open it.",
     "unlockedMany": "{{ count }} files are not locked, so our system can read them. Lock them so only you and {{ friendName }} can open them.",
     "lockIt": "Lock it",
@@ -187,11 +185,11 @@
     "couldNotOpenThe": "फ़ाइल खुल नहीं सकी",
     "wordDocument": "Word दस्तावेज़",
     "zipArchive": "Zip आर्काइव",
-    "thisFileIsLocked2": "यह फ़ाइल लॉक है और खुल नहीं सकी।"
+    "thisFileIsLocked2": "यह फ़ाइल लॉक है और खुल नहीं सकी।",
+    "cannotPlayVideo": "यह ब्राउज़र इस तरह का वीडियो नहीं चला सकता (जैसे .wmv)। इसे किसी दूसरे ऐप में देखने के लिए डाउनलोड करें।"
   },
   "upload": {
     "newFile": "नई फ़ाइल",
-    "lockedOnThisDevice": "इस डिवाइस पर लॉक। इसे सिर्फ़ आप और {{ friendName }} खोल सकते हैं।",
     "notLocked": "ये फ़ाइलें बिना लॉक के रखी जाती हैं।",
     "chooseFiles": "फ़ाइलें चुनें, या यहाँ छोड़ें",
     "strongChooseFilesStrong": "<strong>फ़ाइलें चुनें</strong>",
@@ -213,20 +211,22 @@
     "dropItemname": "{{ itemName }} न जोड़ें",
     "couldNotRead": "अटैचमेंट पढ़े नहीं जा सके",
     "couldNotAddCount": "{{ count }} फ़ाइलें जोड़ी नहीं जा सकीं।",
-    "noKeys": "कुंजियाँ अभी पता नहीं हैं।"
+    "noKeys": "कुंजियाँ अभी पता नहीं हैं।",
+    "viewAll": "सभी देखें",
+    "noPictures": "इस एल्बम में अभी कोई तस्वीर या वीडियो नहीं है।",
+    "previousPicture": "पिछली तस्वीर",
+    "nextPicture": "अगली तस्वीर",
+    "tooBig": "“{{ fileName }}” सेफ़बॉक्स के लिए बहुत बड़ी है (अधिकतम {{ mb }} MB)।"
   },
   "link": {
     "linkWith": "इससे जोड़ें…",
-    "pickWhatToLink": "चुनें कि “{{ itemName }}” को किससे जोड़ना है।",
-    "pickAnItem": "एक आइटम चुनें।",
     "nothingToLink": "जोड़ने के लिए कुछ नहीं है।",
     "picture": "चित्र",
     "sound": "ध्वनि",
     "couldNotMakeTheLink": "लिंक बनाया नहीं जा सका"
   },
   "linkNew": {
-    "newLinkedItem": "नया जुड़ा हुआ आइटम",
-    "whatKind": "किस तरह का आइटम? यह उस आइटम से जुड़ जाएगा जहाँ से आप आए थे।"
+    "newLinkedItem": "नया जुड़ा हुआ आइटम"
   },
   "links": {
     "linkedItems": "जुड़े हुए आइटम",

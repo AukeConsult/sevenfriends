@@ -100,8 +100,18 @@ export class SafeboxService {
     return total;
   }
 
+  /** the biggest file the server takes (as told with the last reading of a box) */
+  private maxFile = 0;
+
+  /** The biggest file the server takes: known from an earlier reading of the box, otherwise the box is read once. */
+  async maxFileBytes(friendId: string): Promise<number> {
+    if (!this.maxFile) await this.load(friendId);
+    return this.maxFile;
+  }
+
   async load(friendId: string): Promise<Safebox> {
     const box = await this.api.request<Safebox>(this.base(friendId));
+    this.maxFile = box.maxFileBytes;
     this.relations.delete(friendId); // read again with the items
     return { ...box, items: await Promise.all(box.items.map((item) => this.reveal(friendId, item))) };
   }

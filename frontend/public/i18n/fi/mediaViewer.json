@@ -1,18 +1,9 @@
 {
-  "back": "Takaisin",
-  "imageVideoOrAudio": "Kuva, video tai ääni",
-  "download": "Lataa",
   "loading": "Ladataan…",
   "couldNotLoadThe": "Tiedostoa ei voitu ladata",
   "audio": "Ääni",
   "video": "Video",
   "image": "Kuva",
   "fullSize": "Koko koko",
-  "fitToScreen": "Sovita näyttöön",
-  "rename": "Nimeä uudelleen",
-  "name": "Nimi",
-  "save": "Tallenna",
-  "cancel": "Peruuta",
-  "writeAName": "Kirjoita nimi",
-  "couldNotRenameThe": "Tiedoston nimeäminen uudelleen epäonnistui"
+  "fitToScreen": "Sovita näyttöön"
 }

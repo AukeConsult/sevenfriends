@@ -1,6 +1,7 @@
 {
   "hasYouOnPronoun": "😴 Hat dich auf der Schlafliste",
   "sendAMessage": "Nachricht senden",
+  "write": "Schreiben",
   "messages": "Nachrichten",
   "newMessage": "Neue Nachricht",
   "safeboxFilesOnlyYou": "Tresor: Dateien, die nur du und dieser Freund seht",
@@ -24,5 +25,7 @@
   "lockingIsOnWhat": "Sperren ist an. Was du an {{ who }} sendest, wird auf deinem Gerät gesperrt, sodass nur ihr beide es lesen könnt. Nicht einmal wir.",
   "lockingIsOffWhat": "Sperren ist aus. Was du an {{ who }} sendest, wird nicht gesperrt, deshalb kann unser System es lesen. Was früher gesendet wurde, bleibt, wie es gesendet wurde.",
   "asleepNoSeat": "😴 Schläft · auf deiner Schlafliste",
-  "noLongerHere": "Du bist nicht mehr in dieser Gruppe oder Freundschaft."
+  "noLongerHere": "Du bist nicht mehr in dieser Gruppe oder Freundschaft.",
+  "help": "Hilfe",
+  "hideHelp": "Hilfe ausblenden"
 }

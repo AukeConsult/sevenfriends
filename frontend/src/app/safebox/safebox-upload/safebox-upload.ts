@@ -1,5 +1,4 @@
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
-import { Location } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { SafeboxCapture } from '../safebox-capture/safebox-capture';
@@ -11,6 +10,7 @@ import { SafeboxService } from '../../core/safebox.service';
 import { UiPreferencesService } from '../../core/ui-preferences';
 import { FriendContext } from '../../friend-page/friend-context';
 import { BoxKeys, ChosenFile } from '../../models';
+import { TapBack } from '../../core/tap-back';
 import { PageBar } from '../../page-bar/page-bar';
 
 /**
@@ -20,14 +20,13 @@ import { PageBar } from '../../page-bar/page-bar';
  */
 @Component({
   selector: 'app-safebox-upload',
-  imports: [PageBar, RouterLink, SafeboxCapture, TranslocoDirective],
+  imports: [TapBack, PageBar, RouterLink, SafeboxCapture, TranslocoDirective],
   templateUrl: './safebox-upload.html',
   providers: [provideTranslocoScope('safebox')],
 })
 export class SafeboxUpload {
   private readonly service = inject(SafeboxService);
   private readonly router = inject(Router);
-  private readonly location = inject(Location);
   private readonly ctx = inject(FriendContext);
   private readonly friends = inject(FriendsService);
   private readonly prefs = inject(UiPreferencesService);
@@ -65,11 +64,10 @@ export class SafeboxUpload {
     this.add([file]);
   }
 
-  /** Away from this page: one step back in the history (the list, or the item the files were made for); opened directly: `leave`. */
+  /** Away from this page: the item the files were made for, otherwise the safebox list. */
   protected leaveNow(event?: Event): void {
     event?.preventDefault();
-    if ((history.state?.navigationId ?? 1) > 1) this.location.back();
-    else void this.router.navigate(this.leave, { replaceUrl: true });
+    void this.router.navigate(this.leave, { replaceUrl: true });
   }
 
   protected pick(input: HTMLInputElement): void {
@@ -109,6 +107,11 @@ export class SafeboxUpload {
       this.mark(i, { state: 'sending', error: undefined });
       try {
         const file = files[i].file;
+        if (!file.type.startsWith('image/')) {
+          // too big for the server: said at once, nothing is sent (a picture is made smaller first)
+          const maxBytes = await this.service.maxFileBytes(this.friendId);
+          if (file.size > maxBytes) throw new Error(tr('safebox.attachments.tooBig', '“{{ fileName }}” is too big for the safebox (at most {{ mb }} MB).', { fileName: file.name, mb: Math.round(maxBytes / 1024 / 1024) }));
+        }
         const made = file.type.startsWith('image/') ? await this.service.addImage(this.friendId, await prepareImage(file), keys) : await this.service.add(this.friendId, file, file.name, undefined, keys);
         if (this.linkTo && keys) await this.service.addLink(this.friendId, this.linkTo, made.id, keys).catch(() => undefined); // made from "Add a new item and link it"
         this.mark(i, { state: 'done' });

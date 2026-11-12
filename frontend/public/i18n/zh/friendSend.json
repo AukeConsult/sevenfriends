@@ -17,5 +17,6 @@
   "addAMessageFor": "添加只给 {{ friendName }} 的消息",
   "messageForFriendnameIndex": "给 {{ friendName }} 的消息 {{ index }}",
   "removeMessageIndex": "删除消息 {{ index }}",
-  "messagesForOnly": "只给 {{ friendName }} 的消息"
+  "messagesForOnly": "只给 {{ friendName }} 的消息",
+  "hideTheForm": "隐藏表单"
 }

@@ -3,10 +3,8 @@
   "yourSeven": "השבעה שלך",
   "waiting": "בהמתנה",
   "pending": "ממתינים",
-  "addAOne": "הוספה: {{ one }}",
   "silent": "שקט",
   "dropHere": "לשחרר כאן",
-  "sleepList": "רשימת שינה",
   "couldNotMoveThe": "לא ניתן היה להעביר את ",
   "openTheConversationWith": "פתיחת השיחה עם {{ friendName }}. לחיצה ארוכה להזזה.",
   "countUnread": "{{ count }} שלא נקראו",
@@ -14,7 +12,5 @@
   "dropOnASeat": "לשחרר על מקום או על מעגל השקט",
   "dropOnASeat2": "לשחרר על מקום",
   "pressAndHoldA": "לחיצה ארוכה על {{ one }} כדי להזיז",
-  "seatsExplained": "7 מקומות, 7 חברים קרובים. העבר חבר למצב שינה כדי לפנות מקום: השיחה נשמרת.",
-  "groupCount": "קבוצה · {{ count }} אנשים",
-  "groupOnlyYou": "קבוצה · רק אתה"
+  "seatsExplained": "7 מקומות, 7 חברים קרובים. העבר חבר למצב שינה כדי לפנות מקום: השיחה נשמרת."
 }

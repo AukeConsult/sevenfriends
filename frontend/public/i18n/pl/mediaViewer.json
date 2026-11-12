@@ -1,18 +1,9 @@
 {
-  "back": "Wstecz",
-  "imageVideoOrAudio": "Zdjęcie, wideo lub dźwięk",
-  "download": "Pobierz",
   "loading": "Wczytywanie…",
   "couldNotLoadThe": "Nie udało się wczytać pliku",
   "audio": "Dźwięk",
   "video": "Wideo",
   "image": "Zdjęcie",
   "fullSize": "Pełny rozmiar",
-  "fitToScreen": "Dopasuj do ekranu",
-  "rename": "Zmień nazwę",
-  "name": "Nazwa",
-  "save": "Zapisz",
-  "cancel": "Anuluj",
-  "writeAName": "Wpisz nazwę",
-  "couldNotRenameThe": "Nie udało się zmienić nazwy pliku"
+  "fitToScreen": "Dopasuj do ekranu"
 }

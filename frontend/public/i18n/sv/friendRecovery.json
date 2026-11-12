@@ -41,5 +41,8 @@
   "dismiss": "Avfärda",
   "decline": "Avslå",
   "youDeclined": "Du sa nej. {{ friendName }} har fått veta det.",
-  "alsoWhenNothing": "Du kan fråga när som helst, även när inget är låst för dig: {{ friendName }} låser då allt på nytt för alla dina nycklar och måste säga ja varje gång."
+  "alsoWhenNothing": "Du kan fråga när som helst, även när inget är låst för dig: {{ friendName }} låser då allt på nytt för alla dina nycklar och måste säga ja varje gång.",
+  "groupTitle": "Återställning sker mellan två personer",
+  "groupText": "För att öppna dina gamla meddelanden igen låser en väns app de gamla nycklarna på nytt för din nya nyckel. En grupp har ingen enskild vän som kan göra det åt dig, så återställning finns inte i en grupp.",
+  "groupOther": "Du kan fortfarande få tillbaka dem med en annan av dina enheter som kan öppna dem, eller med dina 24 hemliga ord (Inställningar → Nycklar)."
 }

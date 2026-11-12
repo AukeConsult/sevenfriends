@@ -41,5 +41,8 @@
   "dismiss": "Odrzuć",
   "decline": "Odmów",
   "youDeclined": "Odmówiono. {{ friendName }} został(a) powiadomiony(-a).",
-  "alsoWhenNothing": "Możesz poprosić w każdej chwili, także gdy dla Ciebie nic nie jest zablokowane: {{ friendName }} zablokuje wtedy wszystko ponownie dla wszystkich Twoich kluczy i za każdym razem musi się zgodzić."
+  "alsoWhenNothing": "Możesz poprosić w każdej chwili, także gdy dla Ciebie nic nie jest zablokowane: {{ friendName }} zablokuje wtedy wszystko ponownie dla wszystkich Twoich kluczy i za każdym razem musi się zgodzić.",
+  "groupTitle": "Odzyskiwanie działa między dwiema osobami",
+  "groupText": "Aby ponownie otworzyć Twoje stare wiadomości, aplikacja znajomego blokuje stare klucze jeszcze raz dla Twojego nowego klucza. W grupie nie ma jednego znajomego, który mógłby zrobić to za Ciebie, więc odzyskiwanie nie jest dostępne w grupie.",
+  "groupOther": "Nadal możesz je odzyskać innym swoim urządzeniem, które potrafi je otworzyć, albo za pomocą 24 tajnych słów (Ustawienia → Klucze)."
 }

@@ -1,7 +1,7 @@
 <ng-container *transloco="let t">
-<main class="sf-page sf-page-item">
-  <app-page-bar [sub]="true" [title]="t('safebox.link.linkWith') || 'Link with…'" [subtitle]="source() ? (t('safebox.link.pickWhatToLink', { itemName: source()!.name }) || 'Pick what to link “' + source()!.name + '” with.') : (t('safebox.link.pickAnItem') || 'Pick an item.')" [backTo]="list" (backClick)="back($event)">
-    <a [routerLink]="list" class="sf-bar-icon" [attr.aria-label]="(t('safebox.common.allItems') || 'All items in the safebox')" [attr.title]="(t('safebox.common.allItems') || 'All items in the safebox')"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg></a>
+<main class="sf-page sf-page-item" (tapBack)="back()">
+  <app-page-bar [sub]="true" [title]="t('safebox.link.linkWith') || 'Link with…'">
+    <a [routerLink]="list" barStart class="sf-bar-icon" (click)="back($event)" [attr.aria-label]="(t('safebox.common.allItems') || 'All items in the safebox')" [attr.title]="(t('safebox.common.allItems') || 'All items in the safebox')"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg></a>
   </app-page-bar>
 
   <form class="sf-narrow-form d-grid gap-2" (submit)="$event.preventDefault()">

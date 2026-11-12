@@ -1,7 +1,6 @@
 <ng-container *transloco="let t">
 <main class="sf-page sf-page-wide sf-box-page">
   <!-- the title and the way back are in the header of the friend page (the Safebox icon) -->
-  <p class="sf-hint text-center m-0">{{ t('safebox.list.onlyYouAndFriendname', { friendName: friendName() }) || 'Only you and ' + friendName() + ' can see these files.' }}</p>
   @if (canEncrypt() && plainItems().length) {
     <p class="sf-hint text-center m-0">{{ plainItems().length === 1
       ? (t('safebox.list.unlockedOne', { friendName: friendName() }) || 'One file is not locked, so our system can read it. Lock it so only you and ' + friendName() + ' can open it.')
@@ -34,7 +33,7 @@
         } @else if (split().more.length || kindDrag.dragId()) {
           <ng-container *ngTemplateOutlet="toggle" />
         }
-        <p class="sf-hint m-0 sf-box-hint">{{ moreOpen() ? (t('safebox.list.hintTypesShown') || 'Hold a type and drag it onto another to move it, or onto Visible types to show it.') : (t('safebox.list.hintTypes') || 'Hold a type and drag it onto another to move it, or onto Hidden types to hide it.') }}</p>
+        <p class="sf-hint m-0 sf-box-hint">{{ moreOpen() ? (t('safebox.list.hintTypesShown') || 'Hold and drag a type to move it. Drag a dashed type onto a solid one to make it common.') : (t('safebox.list.hintTypes') || 'Hold and drag a type to move it, or onto All types to hide it.') }}</p>
       </div>
     </details>
     @if (items().length) {
@@ -84,10 +83,6 @@
     }
 
 
-    @if (shown().length > 1) {
-      <!-- always visible: how to change the order -->
-      <p class="sf-box-drag-hint"><span aria-hidden="true">{{ boxView() === 'list' ? '⠿' : '☝' }}</span> {{ boxView() === 'list' ? (t('safebox.list.dragHint') || 'Press and drag ⠿ to move an item') : (t('safebox.list.dragHintHold') || 'Press and hold an item, then drag it to a new place') }}</p>
-    }
 
     @if (!items().length) {
       <p class="sf-box-empty text-secondary text-center">
@@ -171,12 +166,12 @@
 <ng-template #toggle>
   <button type="button" class="sf-box-newnote sf-box-more" data-kind-id="more" [class.sf-drop-target]="kindDrag.dropId() === 'more'" (click)="prefs.set('boxHiddenOpen', !moreOpen())" [attr.aria-expanded]="moreOpen()">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path [attr.d]="moreOpen() ? 'M6 15l6-6 6 6' : 'M6 9l6 6 6-6'" /></svg>
-    <span>{{ (t('safebox.list.hiddenTypes') || 'Hidden types') + ' (' + split().more.length + ')' }}</span>
+    <span>{{ moreOpen() ? (t('safebox.list.commonTypes') || 'Common types') : (t('safebox.list.hiddenTypes') || 'All types') }}</span>
   </button>
 </ng-template>
 <ng-template #pill let-kind let-hiddenKind="hidden">
   <!-- the pill opens a new item of this kind -->
-  <div class="sf-box-newnote" [class.sf-kind-hidden]="hiddenKind" [class.sf-kind-masked]="!hiddenKind && moreOpen()" [attr.data-kind-id]="kind.type" [class.sf-holding]="kindDrag.pressId() === kind.type || kindDrag.dragId() === kind.type" [class.sf-drop-target]="kindDrag.dropId() === kind.type"
+  <div class="sf-box-newnote" [class.sf-kind-hidden]="hiddenKind" [attr.data-kind-id]="kind.type" [class.sf-holding]="kindDrag.pressId() === kind.type || kindDrag.dragId() === kind.type" [class.sf-drop-target]="kindDrag.dropId() === kind.type"
        (pointerdown)="kindDrag.down($event, kind.type)" (contextmenu)="kindDrag.menu($event)" (dragstart)="$event.preventDefault()">
     <a class="sf-box-newnote-link" draggable="false" [routerLink]="newLink(kind.type)">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path [attr.d]="kind.icon" /></svg>

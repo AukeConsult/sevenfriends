@@ -3,10 +3,8 @@
   "yourSeven": "Je zeven",
   "waiting": "Wachtend",
   "pending": "In behandeling",
-  "addAOne": "{{ one }} toevoegen",
   "silent": "Stil",
   "dropHere": "Hier neerzetten",
-  "sleepList": "Slaaplijst",
   "couldNotMoveThe": "Kon niet verplaatsen: ",
   "openTheConversationWith": "Open het gesprek met {{ friendName }}. Houd ingedrukt om te verplaatsen.",
   "countUnread": "{{ count }} ongelezen",
@@ -14,7 +12,5 @@
   "dropOnASeat": "Zet neer op een plek of in de stille kring",
   "dropOnASeat2": "Zet neer op een plek",
   "pressAndHoldA": "Houd een {{ one }} ingedrukt om te verplaatsen",
-  "seatsExplained": "7 plekken, 7 goede vrienden. Zet een vriend te slapen om een plek vrij te maken: het gesprek blijft bewaard.",
-  "groupCount": "Groep · {{ count }} mensen",
-  "groupOnlyYou": "Groep · alleen jij"
+  "seatsExplained": "7 plekken, 7 goede vrienden. Zet een vriend te slapen om een plek vrij te maken: het gesprek blijft bewaard."
 }

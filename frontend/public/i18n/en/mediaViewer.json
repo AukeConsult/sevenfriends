@@ -1,18 +1,9 @@
 {
-  "back": "Back",
-  "imageVideoOrAudio": "Image, video or audio",
-  "download": "Download",
   "loading": "Loading…",
   "couldNotLoadThe": "Could not load the file",
   "audio": "Audio",
   "video": "Video",
   "image": "Image",
   "fullSize": "Full size",
-  "fitToScreen": "Fit to screen",
-  "rename": "Rename",
-  "name": "Name",
-  "save": "Save",
-  "cancel": "Cancel",
-  "writeAName": "Write a name",
-  "couldNotRenameThe": "Could not rename the file"
+  "fitToScreen": "Fit to screen"
 }

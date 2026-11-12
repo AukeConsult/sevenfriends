@@ -17,5 +17,6 @@
   "addAMessageFor": "सिर्फ़ {{ friendName }} के लिए संदेश जोड़ें",
   "messageForFriendnameIndex": "{{ friendName }} के लिए संदेश {{ index }}",
   "removeMessageIndex": "संदेश {{ index }} हटाएँ",
-  "messagesForOnly": "सिर्फ़ {{ friendName }} के लिए संदेश"
+  "messagesForOnly": "सिर्फ़ {{ friendName }} के लिए संदेश",
+  "hideTheForm": "फ़ॉर्म छिपाएँ"
 }

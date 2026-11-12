@@ -17,6 +17,8 @@ import { REMIND_DEFAULT, REMIND_LEADS, objectKind, remindAt, safeUrl } from '../
 import { UiPreferencesService } from '../../core/ui-preferences';
 import { FriendContext } from '../../friend-page/friend-context';
 import { BoxKeys, CHECKLIST_ENTRIES_MAX, CHECKLIST_TEXT_MAX, ChecklistEntry, OBJECT_TITLE_MAX, ObjectField, ObjectKind, ObjectPayload, ReminderRequest, SAFEBOX_OBJECT_TYPES, SafeboxType } from '../../models';
+import { TapBack } from '../../core/tap-back';
+import { NoticeClearService } from '../../core/notice-clear.service';
 import { PageBar } from '../../page-bar/page-bar';
 
 /** A link under a field (open the address, call, write, show on a map). */
@@ -41,13 +43,14 @@ interface FoundPlace {
  */
 @Component({
   selector: 'app-safebox-object',
-  imports: [PageBar, SafeboxTell, RouterLink, SafeboxAttachments, SafeboxLinks, TranslocoDirective],
+  imports: [TapBack, PageBar, SafeboxTell, RouterLink, SafeboxAttachments, SafeboxLinks, TranslocoDirective],
   templateUrl: './safebox-object.html',
   providers: [provideTranslocoScope('safebox')],
 })
 export class SafeboxObject {
   private readonly service = inject(SafeboxService);
   private readonly router = inject(Router);
+  private readonly notices = inject(NoticeClearService);
   private readonly location = inject(Location);
   private readonly ctx = inject(FriendContext);
   private readonly prefs = inject(UiPreferencesService);
@@ -120,7 +123,14 @@ export class SafeboxObject {
   private autoAddress = false;
   private readonly snapshot = computed(() => JSON.stringify([this.title(), this.values(), this.entries(), this.lead(), this.remindFriend()]));
   protected readonly changed = computed(() => this.snapshot() !== this.saved());
-  protected readonly canSave = computed(() => !this.busy() && !this.loading() && !!this.kind() && this.title().trim() !== '' && this.requiredFilled() && this.placeFilled() && (this.isNew || this.changed()) && this.keyStatus() === 'both');
+  /** what the item is called: the title; a Date without a title is called by its date (the date is what matters, so it can be saved at once) */
+  private readonly effectiveTitle = computed(() => {
+    const typed = this.title().trim();
+    if (typed || this.kind()?.type !== 'date') return typed;
+    const day = (this.values()['date'] ?? '').trim();
+    return day ? new Date(day + 'T00:00').toLocaleDateString(undefined, { dateStyle: 'medium' }) : '';
+  });
+  protected readonly canSave = computed(() => !this.busy() && !this.loading() && !!this.kind() && this.effectiveTitle() !== '' && this.requiredFilled() && this.placeFilled() && (this.isNew || this.changed()) && this.keyStatus() === 'both');
 
   /** every field that must be filled in is */
   private readonly requiredFilled = computed(() => (this.kind()?.fields ?? []).every((f) => !f.required || (this.values()[f.key] ?? '').trim() !== ''));
@@ -418,7 +428,9 @@ export class SafeboxObject {
       this.saved.set(this.snapshot());
       this.revision.set(read.revision);
       this.conflict.set(false);
+      this.notices.opened(); // a notice that told about this item can go now
     } catch (err: any) {
+      if (err instanceof ApiError && err.status === 404) this.notices.opened(); // the item is not there any more: the notice about it goes too
       this.loadError.set(err?.message || tr('safebox.object.couldNotOpenIt', 'Could not open it'));
     } finally {
       this.loading.set(false);
@@ -448,7 +460,7 @@ export class SafeboxObject {
       remind = at ? { at, both: this.remindFriend() } : null;
     }
     const items = kind.checklist ? this.entries().filter((e) => e.text.trim()).map((e) => ({ ...e, text: e.text.trim() })) : undefined;
-    const payload: ObjectPayload = { v: 1, title: this.title().trim(), fields, ...(items ? { items } : {}) };
+    const payload: ObjectPayload = { v: 1, title: this.effectiveTitle(), fields, ...(items ? { items } : {}) };
     const snapshot = this.snapshot(); // what is saved now: a change made while it goes is saved by the next round
     try {
       if (this.isNew) {
@@ -483,14 +495,10 @@ export class SafeboxObject {
     }
   }
 
-  /** The title is the way back: to the page before when there is one in the app, otherwise to the list. */
-  protected back(event: Event): void {
-    event.preventDefault();
-    if ((history.state?.navigationId ?? 1) > 1) {
-      this.location.back(); // one step back: the page it was opened from (a new item made from an item replaces the pages of that flow, so that is the item)
-      return;
-    }
-    const to = history.state?.backTo as string | undefined; // opened directly (a reload): the item it was made from, or the list
+  /** Back (the list icon, a tap on an empty place, a swipe to the left): the item this one was made from, otherwise the safebox list. */
+  protected back(event?: Event): void {
+    event?.preventDefault();
+    const to = history.state?.backTo as string | undefined; // the item this one was made from ("Add a new item and link it"), otherwise the safebox list
     void this.router.navigate((to ? this.service.openPath(this.friendId, to) : null) ?? this.list, { replaceUrl: true });
   }
 

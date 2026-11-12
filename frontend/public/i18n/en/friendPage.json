@@ -26,5 +26,6 @@
   "lockingIsOffWhat": "Locking is off. What you send to {{ who }} is not locked, so our system can read it. What was sent earlier stays as it was sent.",
   "asleepNoSeat": "😴 Asleep · on your sleep list",
   "noLongerHere": "You are not in this group or friendship any more.",
-  "help": "Help"
+  "help": "Help",
+  "hideHelp": "Hide help"
 }

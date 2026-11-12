@@ -2,7 +2,6 @@ import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { SafeboxTell } from '../safebox-tell/safebox-tell';
 import { tr } from '../../core/i18n';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { Location } from '@angular/common';
 import { Component, ElementRef, computed, effect, inject, signal, untracked, viewChild } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { map } from 'rxjs';
@@ -15,6 +14,9 @@ import { isObjectType } from '../../core/safebox-objects';
 import { MediaAudio } from '../../media-audio/media-audio';
 import { MediaVideo } from '../../media-video/media-video';
 import { MediaRef, Safebox, SafeboxItem } from '../../models';
+import { TapBack } from '../../core/tap-back';
+import { VideoBar } from '../../video-bar/video-bar';
+import { NoticeClearService } from '../../core/notice-clear.service';
 import { PageBar } from '../../page-bar/page-bar';
 
 /** What a document is, from its type and the ending of its name: how it is shown. */
@@ -38,14 +40,14 @@ const ENDINGS: Record<string, DocType> = {
  */
 @Component({
   selector: 'app-safebox-view',
-  imports: [PageBar, SafeboxTell, RouterLink, MediaVideo, MediaAudio, SafeboxLinks, TranslocoDirective],
+  imports: [TapBack, VideoBar, PageBar, SafeboxTell, RouterLink, MediaVideo, MediaAudio, SafeboxLinks, TranslocoDirective],
   templateUrl: './safebox-view.html',
   providers: [provideTranslocoScope('safebox')],
 })
 export class SafeboxView {
   private readonly service = inject(SafeboxService);
   private readonly router = inject(Router);
-  private readonly location = inject(Location);
+  private readonly notices = inject(NoticeClearService);
   private readonly route = inject(ActivatedRoute);
 
   protected readonly friendId = this.route.snapshot.paramMap.get('id') ?? '';
@@ -120,12 +122,30 @@ export class SafeboxView {
   protected readonly imageUrl = signal<string | null>(null);
   /** an encrypted video or sound, opened here (the media players read the server's file, which is locked) */
   protected readonly mediaUrl = signal<string | null>(null);
+  /** the browser cannot play this video (a .wmv, say): the page says so and offers Download */
+  protected readonly cannotPlay = signal(false);
   protected readonly text = signal<string | null>(null);
   protected readonly cut = signal(false);
   protected readonly formatBytes = formatBytes;
 
+  /** the box was read once more because the file was missing from it */
+  private retried = false;
+
   constructor() {
     void this.load();
+    effect(() => {
+      if (this.item()) untracked(() => this.notices.opened()); // a notice that told about this file can go now
+    });
+    // a file that is not in the box (taken out, or the page was kept from before): read the box once more, and if it is still not there, go to the list instead of a dead end
+    effect(() => {
+      if (!this.box() || this.loadError() || this.item() || this.retried) return;
+      this.retried = true;
+      untracked(() => void this.load().then(() => {
+        if (this.item()) return;
+        this.notices.opened(); // the file is not there any more: the notice about it goes too
+        return this.router.navigate(this.list, { replaceUrl: true });
+      }));
+    });
     // draws a PDF, Word, Excel or PowerPoint file once its place in the page exists (the place is part of the template)
     let drawn: string | null = null;
     effect(() => {
@@ -141,6 +161,7 @@ export class SafeboxView {
       const item = this.item();
       this.imageUrl.set(null);
       this.mediaUrl.set(null);
+      this.cannotPlay.set(false);
       this.text.set(null);
       this.cut.set(false);
       this.failed.set(false);
@@ -240,12 +261,10 @@ export class SafeboxView {
     }
   }
 
-  /** The title goes back to where the file was opened from (the item with the link, the list ...); to its own item or the list when the page was opened directly. */
-  protected goBack(event: Event): void {
-    if ((history.state?.navigationId ?? 1) > 1) {
-      event.preventDefault();
-      this.location.back();
-    }
+  /** Back: the object the file belongs to (an album, say), otherwise the safebox list. */
+  protected goBack(event?: Event): void {
+    event?.preventDefault();
+    void this.router.navigate(this.back(), { replaceUrl: true });
   }
 
   protected go(item: SafeboxItem | null): void {

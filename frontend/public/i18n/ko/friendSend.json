@@ -17,5 +17,6 @@
   "addAMessageFor": "{{ friendName }}님 전용 메시지 추가",
   "messageForFriendnameIndex": "{{ friendName }}님 전용 메시지 {{ index }}",
   "removeMessageIndex": "메시지 {{ index }} 삭제",
-  "messagesForOnly": "{{ friendName }}님 전용 메시지"
+  "messagesForOnly": "{{ friendName }}님 전용 메시지",
+  "hideTheForm": "양식 숨기기"
 }

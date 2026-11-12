@@ -3,10 +3,8 @@
   "yourSeven": "سبعتك",
   "waiting": "قيد الانتظار",
   "pending": "معلّق",
-  "addAOne": "إضافة {{ one }}",
   "silent": "صامت",
   "dropHere": "أفلت هنا",
-  "sleepList": "قائمة النوم",
   "couldNotMoveThe": "تعذّر نقل ",
   "openTheConversationWith": "افتح المحادثة مع {{ friendName }}. اضغط مطولًا للنقل.",
   "countUnread": "{{ count }} غير مقروءة",
@@ -14,7 +12,5 @@
   "dropOnASeat": "أفلت على مقعد أو على دائرة الصامتين",
   "dropOnASeat2": "أفلت على مقعد",
   "pressAndHoldA": "اضغط مطولًا على {{ one }} لنقله",
-  "seatsExplained": "7 مقاعد، 7 أصدقاء مقرّبين. ضع صديقًا في وضع النوم لتحرير مقعد: تبقى المحادثة محفوظة.",
-  "groupCount": "مجموعة · {{ count }} أشخاص",
-  "groupOnlyYou": "مجموعة · أنت فقط"
+  "seatsExplained": "7 مقاعد، 7 أصدقاء مقرّبين. ضع صديقًا في وضع النوم لتحرير مقعد: تبقى المحادثة محفوظة."
 }

@@ -17,5 +17,6 @@
   "addAMessageFor": "Legg til en melding bare for {{ friendName }}",
   "messageForFriendnameIndex": "Melding for {{ friendName }} {{ index }}",
   "removeMessageIndex": "Fjern melding {{ index }}",
-  "messagesForOnly": "Meldinger bare for {{ friendName }}"
+  "messagesForOnly": "Meldinger bare for {{ friendName }}",
+  "hideTheForm": "Skjul skjemaet"
 }

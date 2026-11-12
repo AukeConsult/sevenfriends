@@ -13,6 +13,8 @@ import { SafeboxService } from '../../core/safebox.service';
 import { UiPreferencesService } from '../../core/ui-preferences';
 import { FriendContext } from '../../friend-page/friend-context';
 import { NOTE_TEXT_MAX, NOTE_TITLE_MAX } from '../../models';
+import { TapBack } from '../../core/tap-back';
+import { NoticeClearService } from '../../core/notice-clear.service';
 import { PageBar } from '../../page-bar/page-bar';
 
 /**
@@ -22,13 +24,14 @@ import { PageBar } from '../../page-bar/page-bar';
  */
 @Component({
   selector: 'app-safebox-note',
-  imports: [PageBar, SafeboxTell, RouterLink, SafeboxAttachments, SafeboxLinks, TranslocoDirective],
+  imports: [TapBack, PageBar, SafeboxTell, RouterLink, SafeboxAttachments, SafeboxLinks, TranslocoDirective],
   templateUrl: './safebox-note.html',
   providers: [provideTranslocoScope('safebox')],
 })
 export class SafeboxNote {
   private readonly service = inject(SafeboxService);
   private readonly router = inject(Router);
+  private readonly notices = inject(NoticeClearService);
   private readonly location = inject(Location);
   private readonly ctx = inject(FriendContext);
   private readonly prefs = inject(UiPreferencesService);
@@ -100,7 +103,9 @@ export class SafeboxNote {
       this.saved.set({ title: read.note.title, text: read.note.text });
       this.revision.set(read.revision);
       this.conflict.set(false);
+      this.notices.opened(); // a notice that told about this item can go now
     } catch (err: any) {
+      if (err instanceof ApiError && err.status === 404) this.notices.opened(); // the item is not there any more: the notice about it goes too
       this.loadError.set(err?.message || tr('safebox.note.couldNotOpenThe', 'Could not open the note'));
     } finally {
       this.loading.set(false);
@@ -154,14 +159,10 @@ export class SafeboxNote {
     }
   }
 
-  /** The title is the way back: to the page before when there is one in the app, otherwise to the list. */
-  protected back(event: Event): void {
-    event.preventDefault();
-    if ((history.state?.navigationId ?? 1) > 1) {
-      this.location.back(); // one step back: the page it was opened from (a new item made from an item replaces the pages of that flow, so that is the item)
-      return;
-    }
-    const to = history.state?.backTo as string | undefined; // opened directly (a reload): the item it was made from, or the list
+  /** Back (the list icon, a tap on an empty place, a swipe to the left): the item this one was made from, otherwise the safebox list. */
+  protected back(event?: Event): void {
+    event?.preventDefault();
+    const to = history.state?.backTo as string | undefined; // the item this one was made from ("Add a new item and link it"), otherwise the safebox list
     void this.router.navigate((to ? this.service.openPath(this.friendId, to) : null) ?? this.list, { replaceUrl: true });
   }
 

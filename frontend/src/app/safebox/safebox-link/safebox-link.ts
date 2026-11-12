@@ -1,5 +1,4 @@
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
-import { Location } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { tr } from '../../core/i18n';
@@ -7,6 +6,7 @@ import { SafeboxService } from '../../core/safebox.service';
 import { isObjectType, objectIcon, objectKind } from '../../core/safebox-objects';
 import { FriendContext } from '../../friend-page/friend-context';
 import { SafeboxItem } from '../../models';
+import { TapBack } from '../../core/tap-back';
 import { PageBar } from '../../page-bar/page-bar';
 
 /**
@@ -15,14 +15,13 @@ import { PageBar } from '../../page-bar/page-bar';
  */
 @Component({
   selector: 'app-safebox-link',
-  imports: [PageBar, RouterLink, TranslocoDirective],
+  imports: [TapBack, PageBar, RouterLink, TranslocoDirective],
   templateUrl: './safebox-link.html',
   providers: [provideTranslocoScope('safebox')],
 })
 export class SafeboxLink {
   private readonly service = inject(SafeboxService);
   private readonly router = inject(Router);
-  private readonly location = inject(Location);
   private readonly ctx = inject(FriendContext);
   private readonly route = inject(ActivatedRoute);
 
@@ -81,10 +80,9 @@ export class SafeboxLink {
     }
   }
 
-  /** Back is one step back in the history: the item the link is for (this page was opened from it, and nothing is left between). Opened directly: that item, or the list. */
+  /** Back: the item the link is for, otherwise the safebox list. */
   protected back(event?: Event): void {
     event?.preventDefault();
-    if ((history.state?.navigationId ?? 1) > 1) this.location.back();
-    else void this.router.navigate(this.service.openPath(this.friendId, this.itemId) ?? this.list, { replaceUrl: true });
+    void this.router.navigate(this.service.openPath(this.friendId, this.itemId) ?? this.list, { replaceUrl: true });
   }
 }

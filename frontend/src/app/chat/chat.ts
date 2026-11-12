@@ -16,6 +16,7 @@ import { MediaAudio } from '../media-audio/media-audio';
 import { MediaImage } from '../media-image/media-image';
 import { MediaVideo } from '../media-video/media-video';
 import { AuthService } from '../core/auth.service';
+import { NoticeClearService } from '../core/notice-clear.service';
 import { ChatService } from '../core/chat.service';
 import { MyAvatarService } from '../core/my-avatar.service';
 import { MediaService } from '../core/media.service';
@@ -40,6 +41,7 @@ const SAFETY_REFRESH_MS = 30000;
 export class Chat {
   protected readonly w = inject(ActiveCircleService).words;
   private readonly chat = inject(ChatService);
+  private readonly notices = inject(NoticeClearService);
   private readonly safebox = inject(SafeboxService);
   private readonly prefs = inject(UiPreferencesService);
   private readonly live = inject(LiveChanges);
@@ -285,11 +287,39 @@ export class Chat {
     }
   }
 
-  protected openInApp(event: Event, url: string): void {
+  protected openInApp(event: Event, url: string, message?: ChatMessage): void {
     if (!this.own(url)) return;
     event.preventDefault();
     const target = new URL(url);
-    void this.router.navigateByUrl(target.pathname + target.search + target.hash);
+    const path = target.pathname + target.search + target.hash;
+    if (!message || !/\/safebox(\/|$)/.test(target.pathname)) {
+      void this.router.navigateByUrl(path);
+      return;
+    }
+    // a notice about the safebox ("📦 In the safebox: …") is read once. First the box is checked: if the item is not there any more, the notice is taken out of MY feed and nothing opens;
+    // if it is there, the page opens and, when the item has really opened, the notice goes (the page of the item tells `NoticeClearService`)
+    void this.openSafeboxNotice(path, target.pathname, message);
+  }
+
+  private async openSafeboxNotice(path: string, pathname: string, message: ChatMessage): Promise<void> {
+    const itemId = /\/safebox\/(?:object\/|note\/|link\/)?([^/]+?)(?:\/(?:new|pictures))?$/.exec(pathname)?.[1];
+    let gone = false;
+    if (itemId && !['new', 'note', 'object', 'link'].includes(itemId)) {
+      try {
+        gone = !(await this.safebox.load(this.friendId)).items.some((item) => item.id === itemId);
+      } catch {
+        gone = false; // no connection or another error: just open it, the notice stays until the item opens
+      }
+    }
+    if (gone) {
+      try {
+        await this.chat.removeMine(this.friendId, message.id);
+        this.messages.update((list) => list.filter((m) => m.id !== message.id));
+      } catch { /* the notice stays */ }
+      return;
+    }
+    this.notices.wait(this.friendId, message.id, pathname);
+    void this.router.navigateByUrl(path);
   }
 
   protected parts(text: string): { text: string; url: string | null }[] {

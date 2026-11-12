@@ -39,7 +39,6 @@
     "deleteAskNamed": "Hapus “{{ itemName }}”? Ini akan dihapus untuk kalian berdua dan tidak bisa dikembalikan."
   },
   "list": {
-    "onlyYouAndFriendname": "Hanya kamu dan {{ friendName }} yang bisa melihat file ini.",
     "retry": "Coba lagi",
     "usedOfMaxbytes": "{{ used }} dari {{ maxBytes }}",
     "nothingHereYetAdd": "Belum ada apa-apa di sini. Tambahkan gambar, video, atau dokumen yang ingin kamu bagikan hanya dengan {{ friendName }}.",
@@ -65,15 +64,14 @@
     "case": "Berkas perkara",
     "search": "Cari di brankas",
     "noMatch": "Tidak ada yang cocok dengan pencarianmu.",
-    "hiddenTypes": "Jenis tersembunyi",
-    "hintTypes": "Tahan sebuah jenis lalu seret ke jenis lain untuk memindahkannya, atau ke Jenis tersembunyi untuk menyembunyikannya.",
+    "hiddenTypes": "Semua jenis",
+    "commonTypes": "Jenis umum",
+    "hintTypes": "Tahan sebuah jenis lalu seret untuk memindahkannya, atau ke Semua jenis untuk menyembunyikannya.",
     "due": "Jatuh tempo",
     "dueOnly": "Tampilkan hanya yang jatuh tempo, termasuk masa pengingat",
-    "hintTypesShown": "Tahan sebuah jenis lalu seret ke jenis lain untuk memindahkannya, atau ke Jenis terlihat untuk menampilkannya.",
+    "hintTypesShown": "Tahan sebuah jenis lalu seret untuk memindahkannya. Seret jenis bergaris putus-putus ke jenis bergaris penuh agar menjadi umum.",
     "moveItem": "Pindahkan {{itemName}}: seret, atau gunakan tombol panah",
     "couldNotSaveTheOrder": "Tidak dapat menyimpan urutan",
-    "dragHint": "Press and drag ⠿ to move an item",
-    "dragHintHold": "Press and hold an item, then drag it to a new place",
     "unlockedOne": "One file is not locked, so our system can read it. Lock it so only you and {{ friendName }} can open it.",
     "unlockedMany": "{{ count }} files are not locked, so our system can read them. Lock them so only you and {{ friendName }} can open them.",
     "lockIt": "Lock it",
@@ -187,11 +185,11 @@
     "couldNotOpenThe": "Tidak bisa membuka file",
     "wordDocument": "Dokumen Word",
     "zipArchive": "Arsip Zip",
-    "thisFileIsLocked2": "File ini terkunci dan tidak bisa dibuka."
+    "thisFileIsLocked2": "File ini terkunci dan tidak bisa dibuka.",
+    "cannotPlayVideo": "Browser ini tidak dapat memutar jenis video ini (misalnya .wmv). Unduh untuk menontonnya di aplikasi lain."
   },
   "upload": {
     "newFile": "File baru",
-    "lockedOnThisDevice": "Terkunci di perangkat ini. Hanya kamu dan {{ friendName }} yang bisa membukanya.",
     "notLocked": "File ini disimpan tanpa kunci.",
     "chooseFiles": "Pilih file, atau letakkan di sini",
     "strongChooseFilesStrong": "<strong>Pilih file</strong>",
@@ -213,20 +211,22 @@
     "dropItemname": "Jangan tambahkan {{ itemName }}",
     "couldNotRead": "Lampiran tidak bisa dibaca",
     "couldNotAddCount": "{{ count }} file tidak bisa ditambahkan.",
-    "noKeys": "Kunci belum diketahui."
+    "noKeys": "Kunci belum diketahui.",
+    "viewAll": "Lihat semua",
+    "noPictures": "Belum ada gambar atau video di album ini.",
+    "previousPicture": "Gambar sebelumnya",
+    "nextPicture": "Gambar berikutnya",
+    "tooBig": "“{{ fileName }}” terlalu besar untuk safebox (maksimal {{ mb }} MB)."
   },
   "link": {
     "linkWith": "Tautkan dengan…",
-    "pickWhatToLink": "Pilih apa yang akan ditautkan dengan “{{ itemName }}”.",
-    "pickAnItem": "Pilih sebuah item.",
     "nothingToLink": "Tidak ada yang bisa ditautkan.",
     "picture": "Gambar",
     "sound": "Suara",
     "couldNotMakeTheLink": "Tautan tidak bisa dibuat"
   },
   "linkNew": {
-    "newLinkedItem": "Item tertaut baru",
-    "whatKind": "Jenis item apa? Item ini ditautkan dengan item asalmu."
+    "newLinkedItem": "Item tertaut baru"
   },
   "links": {
     "linkedItems": "Item tertaut",

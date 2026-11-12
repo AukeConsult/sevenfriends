@@ -1,6 +1,6 @@
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { AppDatePipe } from '../core/app-date.pipe';
-import { Component, computed, effect, inject, signal, untracked } from '@angular/core';
+import { Component, HostListener, computed, effect, inject, signal, untracked } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { NgTemplateOutlet } from '@angular/common';
 import { FriendsService } from '../core/friends.service';
@@ -42,6 +42,39 @@ export class FriendProfile {
   protected readonly error = signal<string | null>(null);
   protected readonly asking = signal(false);
   protected readonly busy = signal(false);
+
+  /** A tap on an empty place, or a swipe to the left, goes back to the conversation (not when something is open, or the tap is on a button, a link, a field or the bars). */
+  @HostListener('document:click', ['$event'])
+  protected onDocumentClick(event: Event): void {
+    const target = event.target as Element | null;
+    if (!target || !target.isConnected || window.getSelection()?.toString() || this.asking() || this.adding() || this.leaving()) return;
+    if (document.activeElement?.matches('input, textarea')) return; // the first tap only leaves the field being edited (the group's name and description)
+    if (target.closest('a, button, input, textarea, select, label, summary, .sf-bar, .sf-expand, .sf-confirm, app-bottom-nav, [role="alertdialog"]')) return;
+    this.back();
+  }
+
+  private swipeStart: { x: number; y: number; time: number } | null = null;
+
+  @HostListener('document:touchstart', ['$event'])
+  protected onTouchStart(event: TouchEvent): void {
+    const touch = event.touches[0];
+    this.swipeStart = event.touches.length === 1 && touch && !(event.target as Element | null)?.closest('input, textarea, select, audio, video, iframe, [contenteditable], [role="slider"]') ? { x: touch.clientX, y: touch.clientY, time: Date.now() } : null;
+  }
+
+  @HostListener('document:touchend', ['$event'])
+  protected onTouchEnd(event: TouchEvent): void {
+    const start = this.swipeStart;
+    this.swipeStart = null;
+    const touch = event.changedTouches[0];
+    if (!start || !touch) return;
+    const dx = touch.clientX - start.x;
+    const dy = touch.clientY - start.y;
+    if (Date.now() - start.time <= 700 && dx <= -70 && Math.abs(dx) >= Math.abs(dy) * 1.8) this.back();
+  }
+
+  private back(): void {
+    void this.router.navigate(['/friends', this.ctx.friendId]);
+  }
 
   /** A group: the people in it, and which of my friends can still be added. */
   protected readonly members = signal<GroupMember[]>([]);

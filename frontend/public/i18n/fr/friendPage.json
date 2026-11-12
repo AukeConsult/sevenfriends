@@ -1,6 +1,7 @@
 {
   "hasYouOnPronoun": "😴 T'a mis dans sa liste de pause",
   "sendAMessage": "Envoyer un message",
+  "write": "Écrire",
   "messages": "Messages",
   "newMessage": "Nouveau message",
   "safeboxFilesOnlyYou": "Coffre-fort : fichiers que seuls toi et cet ami voyez",
@@ -24,5 +25,7 @@
   "lockingIsOnWhat": "Le verrouillage est activé. Ce que tu envoies à {{ who }} est verrouillé sur ton appareil, pour que vous seuls puissiez le lire. Même nous, nous ne pouvons pas.",
   "lockingIsOffWhat": "Le verrouillage est désactivé. Ce que tu envoies à {{ who }} n'est pas verrouillé, donc notre système peut le lire. Ce qui a été envoyé avant reste tel quel.",
   "asleepNoSeat": "😴 En veille · sur votre liste de veille",
-  "noLongerHere": "Vous n'êtes plus dans ce groupe ou cette amitié."
+  "noLongerHere": "Vous n'êtes plus dans ce groupe ou cette amitié.",
+  "help": "Aide",
+  "hideHelp": "Masquer l’aide"
 }

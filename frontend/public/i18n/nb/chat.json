@@ -52,5 +52,6 @@
   "messageMany": "meldinger",
   "alsoWhose": ", og også {{ name }}s,",
   "openTheItem": "Åpne elementet",
-  "signatureBad": "⚠ Det kunne ikke sjekkes hvem som skrev denne meldingen. Ikke stol på den."
+  "signatureBad": "⚠ Det kunne ikke sjekkes hvem som skrev denne meldingen. Ikke stol på den.",
+  "save": "Lagre"
 }

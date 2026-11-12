@@ -3,10 +3,8 @@
   "yourSeven": "आपके सात",
   "waiting": "इंतज़ार",
   "pending": "लंबित",
-  "addAOne": "{{ one }} जोड़ें",
   "silent": "शांत",
   "dropHere": "यहाँ छोड़ें",
-  "sleepList": "स्लीप लिस्ट",
   "couldNotMoveThe": "हिलाया नहीं जा सका ",
   "openTheConversationWith": "{{ friendName }} के साथ बातचीत खोलें। हिलाने के लिए दबाकर रखें।",
   "countUnread": "{{ count }} अनपढ़े",
@@ -14,7 +12,5 @@
   "dropOnASeat": "किसी सीट या शांत सर्कल पर छोड़ें",
   "dropOnASeat2": "किसी सीट पर छोड़ें",
   "pressAndHoldA": "हिलाने के लिए {{ one }} को दबाकर रखें",
-  "seatsExplained": "7 सीटें, 7 करीबी दोस्त। सीट खाली करने के लिए किसी दोस्त को सुला दें: चैट सुरक्षित रहती है।",
-  "groupCount": "समूह · {{ count }} लोग",
-  "groupOnlyYou": "समूह · सिर्फ़ आप"
+  "seatsExplained": "7 सीटें, 7 करीबी दोस्त। सीट खाली करने के लिए किसी दोस्त को सुला दें: चैट सुरक्षित रहती है।"
 }

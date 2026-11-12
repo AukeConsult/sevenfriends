@@ -17,5 +17,6 @@
   "addAMessageFor": "Tilføj en besked kun til {{ friendName }}",
   "messageForFriendnameIndex": "Besked til {{ friendName }} {{ index }}",
   "removeMessageIndex": "Fjern besked {{ index }}",
-  "messagesForOnly": "Beskeder kun til {{ friendName }}"
+  "messagesForOnly": "Beskeder kun til {{ friendName }}",
+  "hideTheForm": "Skjul formularen"
 }

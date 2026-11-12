@@ -1,6 +1,7 @@
 {
   "hasYouOnPronoun": "😴 把你放进了睡眠名单",
   "sendAMessage": "发送消息",
+  "write": "写消息",
   "messages": "消息",
   "newMessage": "新消息",
   "safeboxFilesOnlyYou": "保险箱：只有你和这位朋友能看到的文件",
@@ -24,5 +25,7 @@
   "lockingIsOnWhat": "加锁已开启。你发给 {{ who }} 的内容会在你的设备上加锁，只有你们两个人能读到，连我们也不能。",
   "lockingIsOffWhat": "加锁已关闭。你发给 {{ who }} 的内容没有加锁，我们的系统可以读取。之前发送的内容保持原样。",
   "asleepNoSeat": "😴 休眠中 · 在你的休眠列表里",
-  "noLongerHere": "你已不在这个群组或好友关系中。"
+  "noLongerHere": "你已不在这个群组或好友关系中。",
+  "help": "帮助",
+  "hideHelp": "隐藏帮助"
 }

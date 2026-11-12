@@ -52,5 +52,6 @@
   "messageMany": "berichten",
   "alsoWhose": ", ook die van {{ name }},",
   "openTheItem": "Item openen",
-  "signatureBad": "⚠ Er kon niet worden gecontroleerd wie dit bericht schreef. Vertrouw het niet."
+  "signatureBad": "⚠ Er kon niet worden gecontroleerd wie dit bericht schreef. Vertrouw het niet.",
+  "save": "Opslaan"
 }

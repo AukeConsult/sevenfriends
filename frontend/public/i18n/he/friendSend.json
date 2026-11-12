@@ -17,5 +17,6 @@
   "addAMessageFor": "הוספת הודעה ל{{ friendName }} בלבד",
   "messageForFriendnameIndex": "הודעה ל{{ friendName }} {{ index }}",
   "removeMessageIndex": "הסרת הודעה {{ index }}",
-  "messagesForOnly": "הודעות ל{{ friendName }} בלבד"
+  "messagesForOnly": "הודעות ל{{ friendName }} בלבד",
+  "hideTheForm": "הסתרת הטופס"
 }

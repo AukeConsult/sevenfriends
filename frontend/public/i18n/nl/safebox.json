@@ -39,7 +39,6 @@
     "deleteAskNamed": "“{{ itemName }}” verwijderen? Het wordt voor jullie allebei verwijderd en kan niet worden teruggehaald."
   },
   "list": {
-    "onlyYouAndFriendname": "Alleen jij en {{ friendName }} kunnen deze bestanden zien.",
     "retry": "Opnieuw proberen",
     "usedOfMaxbytes": "{{ used }} van {{ maxBytes }}",
     "nothingHereYetAdd": "Hier is nog niets. Voeg foto's, video's of documenten toe die je alleen met {{ friendName }} wilt delen.",
@@ -65,15 +64,14 @@
     "case": "Dossier",
     "search": "Zoeken in de kluis",
     "noMatch": "Niets komt overeen met je zoekopdracht.",
-    "hiddenTypes": "Verborgen typen",
-    "hintTypes": "Houd een type ingedrukt en sleep het naar een ander type om het te verplaatsen, of naar Verborgen typen om het te verbergen.",
+    "hiddenTypes": "Alle typen",
+    "commonTypes": "Veelgebruikte typen",
+    "hintTypes": "Houd een type ingedrukt en sleep het om het te verplaatsen, of naar Alle typen om het te verbergen.",
     "due": "Actueel",
     "dueOnly": "Toon alleen wat actueel is, inclusief de herinneringsperiode",
-    "hintTypesShown": "Houd een type ingedrukt en sleep het naar een ander type om het te verplaatsen, of naar Zichtbare typen om het te tonen.",
+    "hintTypesShown": "Houd een type ingedrukt en sleep het om het te verplaatsen. Sleep een gestippeld type naar een gevuld type om het veelgebruikt te maken.",
     "moveItem": "Verplaats {{itemName}}: sleep, of gebruik de pijltoetsen",
     "couldNotSaveTheOrder": "De volgorde kon niet worden opgeslagen",
-    "dragHint": "Press and drag ⠿ to move an item",
-    "dragHintHold": "Press and hold an item, then drag it to a new place",
     "unlockedOne": "One file is not locked, so our system can read it. Lock it so only you and {{ friendName }} can open it.",
     "unlockedMany": "{{ count }} files are not locked, so our system can read them. Lock them so only you and {{ friendName }} can open them.",
     "lockIt": "Lock it",
@@ -187,11 +185,11 @@
     "couldNotOpenThe": "Kon het bestand niet openen",
     "wordDocument": "Word-document",
     "zipArchive": "Zip-archief",
-    "thisFileIsLocked2": "Dit bestand is vergrendeld en kon niet worden geopend."
+    "thisFileIsLocked2": "Dit bestand is vergrendeld en kon niet worden geopend.",
+    "cannotPlayVideo": "Deze browser kan dit soort video (bijvoorbeeld een .wmv) niet afspelen. Download de video om hem in een andere app te bekijken."
   },
   "upload": {
     "newFile": "Nieuw bestand",
-    "lockedOnThisDevice": "Vergrendeld op dit apparaat. Alleen jij en {{ friendName }} kunnen het openen.",
     "notLocked": "Deze bestanden worden zonder slot opgeslagen.",
     "chooseFiles": "Kies bestanden of zet ze hier neer",
     "strongChooseFilesStrong": "<strong>Kies bestanden</strong>",
@@ -213,20 +211,22 @@
     "dropItemname": "{{ itemName }} niet toevoegen",
     "couldNotRead": "De bijlagen konden niet worden gelezen",
     "couldNotAddCount": "{{ count }} bestand(en) kon(den) niet worden toegevoegd.",
-    "noKeys": "De sleutels zijn nog niet bekend."
+    "noKeys": "De sleutels zijn nog niet bekend.",
+    "viewAll": "Alles bekijken",
+    "noPictures": "Er staan nog geen afbeeldingen of video’s in dit album.",
+    "previousPicture": "Vorige afbeelding",
+    "nextPicture": "Volgende afbeelding",
+    "tooBig": "“{{ fileName }}” is te groot voor de kluis (maximaal {{ mb }} MB)."
   },
   "link": {
     "linkWith": "Koppelen met…",
-    "pickWhatToLink": "Kies waarmee “{{ itemName }}” moet worden gekoppeld.",
-    "pickAnItem": "Kies een item.",
     "nothingToLink": "Niets om mee te koppelen.",
     "picture": "Afbeelding",
     "sound": "Geluid",
     "couldNotMakeTheLink": "De koppeling kon niet worden gemaakt"
   },
   "linkNew": {
-    "newLinkedItem": "Nieuw gekoppeld item",
-    "whatKind": "Wat voor item? Het wordt gekoppeld aan het item waar je vandaan komt."
+    "newLinkedItem": "Nieuw gekoppeld item"
   },
   "links": {
     "linkedItems": "Gekoppelde items",

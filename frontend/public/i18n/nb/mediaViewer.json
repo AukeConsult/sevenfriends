@@ -1,18 +1,9 @@
 {
-  "back": "Tilbake",
-  "imageVideoOrAudio": "Bilde, video eller lyd",
-  "download": "Last ned",
   "loading": "Laster…",
   "couldNotLoadThe": "Kunne ikke laste filen",
   "audio": "Lyd",
   "video": "Video",
   "image": "Bilde",
   "fullSize": "Full størrelse",
-  "fitToScreen": "Tilpass til skjermen",
-  "rename": "Endre navn",
-  "name": "Navn",
-  "save": "Lagre",
-  "cancel": "Avbryt",
-  "writeAName": "Skriv et navn",
-  "couldNotRenameThe": "Kunne ikke endre navn på filen"
+  "fitToScreen": "Tilpass til skjermen"
 }

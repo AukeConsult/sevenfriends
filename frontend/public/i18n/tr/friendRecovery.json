@@ -41,5 +41,8 @@
   "dismiss": "Kapat",
   "decline": "Reddet",
   "youDeclined": "Hayır dedin. {{ friendName }}'a bildirildi.",
-  "alsoWhenNothing": "İstediğin zaman isteyebilirsin, senin için hiçbir şey kilitli olmasa da: {{ friendName }} o zaman her şeyi tüm anahtarların için yeniden kilitler ve her seferinde evet demesi gerekir."
+  "alsoWhenNothing": "İstediğin zaman isteyebilirsin, senin için hiçbir şey kilitli olmasa da: {{ friendName }} o zaman her şeyi tüm anahtarların için yeniden kilitler ve her seferinde evet demesi gerekir.",
+  "groupTitle": "Kurtarma iki kişi arasında yapılır",
+  "groupText": "Eski mesajlarını yeniden açmak için bir arkadaşının uygulaması eski anahtarları yeni anahtarın için yeniden kilitler. Bir grupta bunu senin için yapabilecek tek bir arkadaş yoktur, bu yüzden grupta kurtarma kullanılamaz.",
+  "groupOther": "Onları yine de açabilen başka bir cihazınla ya da 24 gizli kelimenle (Ayarlar → Anahtarlar) geri alabilirsin."
 }

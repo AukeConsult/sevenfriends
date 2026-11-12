@@ -1,18 +1,9 @@
 {
-  "back": "Tilbage",
-  "imageVideoOrAudio": "Billede, video eller lyd",
-  "download": "Download",
   "loading": "Indlæser…",
   "couldNotLoadThe": "Filen kunne ikke indlæses",
   "audio": "Lyd",
   "video": "Video",
   "image": "Billede",
   "fullSize": "Fuld størrelse",
-  "fitToScreen": "Tilpas til skærm",
-  "rename": "Omdøb",
-  "name": "Navn",
-  "save": "Gem",
-  "cancel": "Annuller",
-  "writeAName": "Skriv et navn",
-  "couldNotRenameThe": "Filen kunne ikke omdøbes"
+  "fitToScreen": "Tilpas til skærm"
 }

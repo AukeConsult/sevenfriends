@@ -17,5 +17,6 @@
   "addAMessageFor": "Aggiungi un messaggio solo per {{ friendName }}",
   "messageForFriendnameIndex": "Messaggio per {{ friendName }} {{ index }}",
   "removeMessageIndex": "Rimuovi il messaggio {{ index }}",
-  "messagesForOnly": "Messaggi solo per {{ friendName }}"
+  "messagesForOnly": "Messaggi solo per {{ friendName }}",
+  "hideTheForm": "Nascondi il modulo"
 }

@@ -41,5 +41,8 @@
   "dismiss": "Lukk",
   "decline": "Avslå",
   "youDeclined": "Du sa nei. {{ friendName }} har fått beskjed.",
-  "alsoWhenNothing": "Du kan spørre når som helst, også når ingenting er låst for deg: {{ friendName }} låser da alt på nytt for alle nøklene dine, og må si ja hver gang."
+  "alsoWhenNothing": "Du kan spørre når som helst, også når ingenting er låst for deg: {{ friendName }} låser da alt på nytt for alle nøklene dine, og må si ja hver gang.",
+  "groupTitle": "Gjenoppretting skjer mellom to personer",
+  "groupText": "For å åpne de gamle meldingene dine igjen låser en venns app de gamle nøklene på nytt for den nye nøkkelen din. En gruppe har ingen enkeltvenn som kan gjøre det for deg, så gjenoppretting er ikke tilgjengelig i en gruppe.",
+  "groupOther": "Du kan fortsatt få dem tilbake med en annen av enhetene dine som kan åpne dem, eller med de 24 hemmelige ordene dine (Innstillinger → Nøkler)."
 }

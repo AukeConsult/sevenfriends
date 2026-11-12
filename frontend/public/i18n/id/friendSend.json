@@ -17,5 +17,6 @@
   "addAMessageFor": "Tambah pesan khusus untuk {{ friendName }}",
   "messageForFriendnameIndex": "Pesan untuk {{ friendName }} {{ index }}",
   "removeMessageIndex": "Hapus pesan {{ index }}",
-  "messagesForOnly": "Pesan khusus untuk {{ friendName }}"
+  "messagesForOnly": "Pesan khusus untuk {{ friendName }}",
+  "hideTheForm": "Sembunyikan formulir"
 }

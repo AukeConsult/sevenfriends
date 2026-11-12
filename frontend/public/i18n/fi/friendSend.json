@@ -17,5 +17,6 @@
   "addAMessageFor": "Lisää viesti vain käyttäjälle {{ friendName }}",
   "messageForFriendnameIndex": "Viesti käyttäjälle {{ friendName }} {{ index }}",
   "removeMessageIndex": "Poista viesti {{ index }}",
-  "messagesForOnly": "Viestit vain käyttäjälle {{ friendName }}"
+  "messagesForOnly": "Viestit vain käyttäjälle {{ friendName }}",
+  "hideTheForm": "Piilota lomake"
 }

@@ -39,7 +39,6 @@
     "deleteAskNamed": "要删除“{{ itemName }}”吗？它会为你们两人删除，且无法恢复。"
   },
   "list": {
-    "onlyYouAndFriendname": "只有你和 {{ friendName }} 能看到这些文件。",
     "retry": "重试",
     "usedOfMaxbytes": "已用 {{ used }}，共 {{ maxBytes }}",
     "nothingHereYetAdd": "这里还没有东西。添加你只想分享给 {{ friendName }} 的图片、视频或文档吧。",
@@ -65,15 +64,14 @@
     "case": "案件",
     "search": "搜索保险箱",
     "noMatch": "没有与搜索匹配的内容。",
-    "hiddenTypes": "隐藏类型",
-    "hintTypes": "长按某个类型并拖到另一个类型上即可移动，拖到“隐藏类型”上则会隐藏它。",
+    "hiddenTypes": "所有类型",
+    "commonTypes": "常用类型",
+    "hintTypes": "按住一个类型并拖动即可移动它，拖到“所有类型”上则会隐藏它。",
     "due": "到期",
     "dueOnly": "只显示到期的项目（包括提醒期）",
-    "hintTypesShown": "长按某个类型并拖到另一个类型上即可移动，拖到“可见类型”上则会显示它。",
+    "hintTypesShown": "按住一个类型并拖动即可移动它。把虚线类型拖到实线类型上，即可让它成为常用类型。",
     "moveItem": "移动 {{itemName}}：拖动，或使用方向键",
     "couldNotSaveTheOrder": "无法保存顺序",
-    "dragHint": "Press and drag ⠿ to move an item",
-    "dragHintHold": "Press and hold an item, then drag it to a new place",
     "unlockedOne": "One file is not locked, so our system can read it. Lock it so only you and {{ friendName }} can open it.",
     "unlockedMany": "{{ count }} files are not locked, so our system can read them. Lock them so only you and {{ friendName }} can open them.",
     "lockIt": "Lock it",
@@ -187,11 +185,11 @@
     "couldNotOpenThe": "无法打开文件",
     "wordDocument": "Word 文档",
     "zipArchive": "Zip 压缩包",
-    "thisFileIsLocked2": "这个文件已加锁，无法打开。"
+    "thisFileIsLocked2": "这个文件已加锁，无法打开。",
+    "cannotPlayVideo": "此浏览器无法播放这种视频（例如 .wmv）。请下载后用其他应用观看。"
   },
   "upload": {
     "newFile": "新文件",
-    "lockedOnThisDevice": "已在此设备上锁定。只有你和 {{ friendName }} 能打开。",
     "notLocked": "这些文件未加锁存储。",
     "chooseFiles": "选择文件，或拖到这里",
     "strongChooseFilesStrong": "<strong>选择文件</strong>",
@@ -213,20 +211,22 @@
     "dropItemname": "不添加 {{ itemName }}",
     "couldNotRead": "无法读取附件",
     "couldNotAddCount": "有 {{ count }} 个文件无法添加。",
-    "noKeys": "密钥尚未确定。"
+    "noKeys": "密钥尚未确定。",
+    "viewAll": "查看全部",
+    "noPictures": "这个相册里还没有图片或视频。",
+    "previousPicture": "上一张图片",
+    "nextPicture": "下一张图片",
+    "tooBig": "“{{ fileName }}”太大，放不进保险箱（最大 {{ mb }} MB）。"
   },
   "link": {
     "linkWith": "关联到…",
-    "pickWhatToLink": "选择要将“{{ itemName }}”关联到什么。",
-    "pickAnItem": "选择一个项目。",
     "nothingToLink": "没有可关联的内容。",
     "picture": "图片",
     "sound": "声音",
     "couldNotMakeTheLink": "无法创建关联"
   },
   "linkNew": {
-    "newLinkedItem": "新的关联项目",
-    "whatKind": "什么类型的项目？它会与你刚才所在的项目关联。"
+    "newLinkedItem": "新的关联项目"
   },
   "links": {
     "linkedItems": "已关联的项目",

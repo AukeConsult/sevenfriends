@@ -39,7 +39,6 @@
     "deleteAskNamed": "Poistetaanko “{{ itemName }}”? Se poistuu teiltä molemmilta eikä sitä voi palauttaa."
   },
   "list": {
-    "onlyYouAndFriendname": "Vain sinä ja {{ friendName }} näette nämä tiedostot.",
     "retry": "Yritä uudelleen",
     "usedOfMaxbytes": "{{ used }} / {{ maxBytes }}",
     "nothingHereYetAdd": "Täällä ei ole vielä mitään. Lisää kuvia, videoita tai asiakirjoja, jotka haluat jakaa vain käyttäjän {{ friendName }} kanssa.",
@@ -65,15 +64,14 @@
     "case": "Asia",
     "search": "Hae kassakaapista",
     "noMatch": "Mikään ei vastaa hakuasi.",
-    "hiddenTypes": "Piilotetut tyypit",
-    "hintTypes": "Pidä tyyppiä painettuna ja vedä se toisen päälle siirtääksesi sen tai kohtaan Piilotetut tyypit piilottaaksesi sen.",
+    "hiddenTypes": "Kaikki tyypit",
+    "commonTypes": "Yleiset tyypit",
+    "hintTypes": "Pidä tyyppiä painettuna ja vedä se siirtääksesi sen tai Kaikki tyypit -painikkeen päälle piilottaaksesi sen.",
     "due": "Erääntyy",
     "dueOnly": "Näytä vain erääntyvät, muistutusjakso mukaan lukien",
-    "hintTypesShown": "Pidä tyyppiä painettuna ja vedä se toisen päälle siirtääksesi sen tai kohtaan Näkyvät tyypit näyttääksesi sen.",
+    "hintTypesShown": "Pidä tyyppiä painettuna ja vedä se siirtääksesi sen. Vedä katkoviivainen tyyppi umpinaisen päälle tehdäksesi siitä yleisen.",
     "moveItem": "Siirrä {{itemName}}: vedä tai käytä nuolinäppäimiä",
     "couldNotSaveTheOrder": "Järjestystä ei voitu tallentaa",
-    "dragHint": "Press and drag ⠿ to move an item",
-    "dragHintHold": "Press and hold an item, then drag it to a new place",
     "unlockedOne": "One file is not locked, so our system can read it. Lock it so only you and {{ friendName }} can open it.",
     "unlockedMany": "{{ count }} files are not locked, so our system can read them. Lock them so only you and {{ friendName }} can open them.",
     "lockIt": "Lock it",
@@ -187,11 +185,11 @@
     "couldNotOpenThe": "Tiedostoa ei voitu avata",
     "wordDocument": "Word-asiakirja",
     "zipArchive": "Zip-arkisto",
-    "thisFileIsLocked2": "Tämä tiedosto on lukittu, eikä sitä voitu avata."
+    "thisFileIsLocked2": "Tämä tiedosto on lukittu, eikä sitä voitu avata.",
+    "cannotPlayVideo": "Tämä selain ei voi toistaa tämän tyyppistä videota (esimerkiksi .wmv). Lataa se katsoaksesi sen toisessa sovelluksessa."
   },
   "upload": {
     "newFile": "Uusi tiedosto",
-    "lockedOnThisDevice": "Lukittu tällä laitteella. Vain sinä ja {{ friendName }} voitte avata sen.",
     "notLocked": "Nämä tiedostot tallennetaan ilman lukkoa.",
     "chooseFiles": "Valitse tiedostoja tai pudota ne tähän",
     "strongChooseFilesStrong": "<strong>Valitse tiedostoja</strong>",
@@ -213,20 +211,22 @@
     "dropItemname": "Älä lisää {{ itemName }}",
     "couldNotRead": "Liitteitä ei voitu lukea",
     "couldNotAddCount": "{{ count }} tiedostoa ei voitu lisätä.",
-    "noKeys": "Avaimia ei vielä tunneta."
+    "noKeys": "Avaimia ei vielä tunneta.",
+    "viewAll": "Näytä kaikki",
+    "noPictures": "Tässä albumissa ei ole vielä kuvia tai videoita.",
+    "previousPicture": "Edellinen kuva",
+    "nextPicture": "Seuraava kuva",
+    "tooBig": "“{{ fileName }}” on liian suuri kassakaappiin (enintään {{ mb }} Mt)."
   },
   "link": {
     "linkWith": "Linkitä kohteeseen…",
-    "pickWhatToLink": "Valitse, mihin ”{{ itemName }}” linkitetään.",
-    "pickAnItem": "Valitse kohde.",
     "nothingToLink": "Ei mitään, mihin linkittää.",
     "picture": "Kuva",
     "sound": "Ääni",
     "couldNotMakeTheLink": "Linkkiä ei voitu luoda"
   },
   "linkNew": {
-    "newLinkedItem": "Uusi linkitetty kohde",
-    "whatKind": "Minkä tyyppinen kohde? Se linkitetään siihen, josta tulit."
+    "newLinkedItem": "Uusi linkitetty kohde"
   },
   "links": {
     "linkedItems": "Linkitetyt kohteet",

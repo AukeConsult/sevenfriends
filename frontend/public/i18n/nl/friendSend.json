@@ -17,5 +17,6 @@
   "addAMessageFor": "Een bericht alleen voor {{ friendName }} toevoegen",
   "messageForFriendnameIndex": "Bericht voor {{ friendName }} {{ index }}",
   "removeMessageIndex": "Bericht {{ index }} verwijderen",
-  "messagesForOnly": "Berichten alleen voor {{ friendName }}"
+  "messagesForOnly": "Berichten alleen voor {{ friendName }}",
+  "hideTheForm": "Formulier verbergen"
 }

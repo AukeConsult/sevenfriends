@@ -52,5 +52,6 @@
   "messageMany": "mensagens",
   "alsoWhose": ", e também as de {{ name }},",
   "openTheItem": "Abrir o item",
-  "signatureBad": "⚠ Não foi possível verificar quem escreveu esta mensagem. Não confie nela."
+  "signatureBad": "⚠ Não foi possível verificar quem escreveu esta mensagem. Não confie nela.",
+  "save": "Guardar"
 }

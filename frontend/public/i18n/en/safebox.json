@@ -39,7 +39,6 @@
     "deleteAskNamed": "Delete “{{ itemName }}”? It is deleted for both of you and cannot be brought back."
   },
   "list": {
-    "onlyYouAndFriendname": "Only you and {{ friendName }} can see these files.",
     "retry": "Retry",
     "usedOfMaxbytes": "{{ used }} of {{ maxBytes }}",
     "nothingHereYetAdd": "A private shared space for you and {{ friendName }}: files, notes, tickets, passwords. Only the two of you can open it. Nothing here yet: tap New to start.",
@@ -65,15 +64,14 @@
     "case": "Paperwork",
     "search": "Search the safebox",
     "noMatch": "Nothing matches your search.",
-    "hiddenTypes": "Hidden types",
-    "hintTypes": "Hold a type and drag it onto another to move it, or onto Hidden types to hide it.",
+    "hiddenTypes": "All types",
+    "commonTypes": "Common types",
+    "hintTypes": "Hold and drag a type to move it, or onto All types to hide it.",
     "due": "Coming up",
     "dueOnly": "Show only what is coming up soon, including items with a reminder running",
-    "hintTypesShown": "Hold a type and drag it onto another to move it. The dashed ones are hidden: drag one onto a solid one to show it.",
+    "hintTypesShown": "Hold and drag a type to move it. Drag a dashed type onto a solid one to make it common.",
     "moveItem": "Move {{itemName}}: drag, or use the arrow keys",
     "couldNotSaveTheOrder": "Could not save the order",
-    "dragHint": "Press and drag ⠿ to move an item",
-    "dragHintHold": "Press and hold an item, then drag it to a new place",
     "unlockedOne": "One file is not locked, so our system can read it. Lock it so only you and {{ friendName }} can open it.",
     "unlockedMany": "{{ count }} files are not locked, so our system can read them. Lock them so only you and {{ friendName }} can open them.",
     "lockIt": "Lock it",
@@ -187,11 +185,11 @@
     "couldNotOpenThe": "Could not open the file",
     "wordDocument": "Word document",
     "zipArchive": "Zip archive",
-    "thisFileIsLocked2": "This file is locked and could not be opened."
+    "thisFileIsLocked2": "This file is locked and could not be opened.",
+    "cannotPlayVideo": "This browser cannot play this kind of video (a .wmv, for example). Download it to watch it in another app."
   },
   "upload": {
     "newFile": "New file",
-    "lockedOnThisDevice": "Locked on this device. Only you and {{ friendName }} can open it.",
     "notLocked": "These files are stored without a lock.",
     "chooseFiles": "Choose files, or drop them here",
     "strongChooseFilesStrong": "<strong>Choose files</strong>",
@@ -213,20 +211,22 @@
     "dropItemname": "Do not add {{ itemName }}",
     "couldNotRead": "Could not read the attachments",
     "couldNotAddCount": "{{ count }} file(s) could not be added.",
-    "noKeys": "The keys are not known yet."
+    "noKeys": "The keys are not known yet.",
+    "viewAll": "View all",
+    "noPictures": "No pictures or videos in this album yet.",
+    "previousPicture": "Previous picture",
+    "nextPicture": "Next picture",
+    "tooBig": "“{{ fileName }}” is too big for the safebox (at most {{ mb }} MB)."
   },
   "link": {
     "linkWith": "Link with…",
-    "pickWhatToLink": "Pick what to link “{{ itemName }}” with.",
-    "pickAnItem": "Pick an item.",
     "nothingToLink": "Nothing to link with.",
     "picture": "Picture",
     "sound": "Sound",
     "couldNotMakeTheLink": "Could not make the link"
   },
   "linkNew": {
-    "newLinkedItem": "New linked item",
-    "whatKind": "What kind of item? It is linked with the one you came from."
+    "newLinkedItem": "New linked item"
   },
   "links": {
     "linkedItems": "Linked items",

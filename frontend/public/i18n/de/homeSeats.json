@@ -3,10 +3,8 @@
   "yourSeven": "Deine Sieben",
   "waiting": "Warten",
   "pending": "Offen",
-  "addAOne": "{{ one }} hinzufügen",
   "silent": "Stumm",
   "dropHere": "Hier ablegen",
-  "sleepList": "Schlafliste",
   "couldNotMoveThe": "Konnte nicht verschoben werden: ",
   "openTheConversationWith": "Unterhaltung mit {{ friendName }} öffnen. Gedrückt halten zum Verschieben.",
   "countUnread": "{{ count }} ungelesen",
@@ -14,7 +12,5 @@
   "dropOnASeat": "Auf einem Platz oder im stummen Kreis ablegen",
   "dropOnASeat2": "Auf einem Platz ablegen",
   "pressAndHoldA": "{{ one }} gedrückt halten, um zu verschieben",
-  "seatsExplained": "7 Plätze, 7 enge Freunde. Schick einen Freund schlafen, um einen Platz frei zu machen: Der Chat bleibt erhalten.",
-  "groupCount": "Gruppe · {{ count }} Personen",
-  "groupOnlyYou": "Gruppe · nur du"
+  "seatsExplained": "7 Plätze, 7 enge Freunde. Schick einen Freund schlafen, um einen Platz frei zu machen: Der Chat bleibt erhalten."
 }
