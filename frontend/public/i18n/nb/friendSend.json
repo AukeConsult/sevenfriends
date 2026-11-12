@@ -6,17 +6,10 @@
   "sendAVoiceMessage": "Send en talemelding",
   "send": "Send",
   "add": "+ Legg til",
-  "messagesForFriendnameOnly": "Meldinger bare for {{ friendName }}. De lagres på denne enheten, og lagres mens du skriver.",
-  "forExampleIM": "For eksempel: Jeg er på vei",
-  "addAMessage": "+ Legg til en melding",
   "couldNotSendThe": "Kunne ikke sende meldingen",
   "addEmoji": "Legg til {{ emoji }}",
   "addATextOptional": "Legg til en tekst (valgfritt)…",
   "writeToFriendname": "Skriv til {{ friendName }}…",
   "messageToFriendname": "Melding til {{ friendName }}",
-  "addAMessageFor": "Legg til en melding bare for {{ friendName }}",
-  "messageForFriendnameIndex": "Melding for {{ friendName }} {{ index }}",
-  "removeMessageIndex": "Fjern melding {{ index }}",
-  "messagesForOnly": "Meldinger bare for {{ friendName }}",
   "hideTheForm": "Skjul skjemaet"
 }

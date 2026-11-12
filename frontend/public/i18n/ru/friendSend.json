@@ -6,17 +6,10 @@
   "sendAVoiceMessage": "Отправить голосовое",
   "send": "Отправить",
   "add": "+ Добавить",
-  "messagesForFriendnameOnly": "Сообщения только для {{ friendName }}. Они хранятся на этом устройстве и сохраняются, пока ты печатаешь.",
-  "forExampleIM": "Например: уже иду",
-  "addAMessage": "+ Добавить сообщение",
   "couldNotSendThe": "Не удалось отправить сообщение",
   "addEmoji": "Добавить {{ emoji }}",
   "addATextOptional": "Добавь текст (необязательно)…",
   "writeToFriendname": "Напиши: {{ friendName }}…",
   "messageToFriendname": "Сообщение для {{ friendName }}",
-  "addAMessageFor": "Добавить сообщение только для {{ friendName }}",
-  "messageForFriendnameIndex": "Сообщение для {{ friendName }} {{ index }}",
-  "removeMessageIndex": "Убрать сообщение {{ index }}",
-  "messagesForOnly": "Сообщения только для {{ friendName }}",
   "hideTheForm": "Скрыть форму"
 }

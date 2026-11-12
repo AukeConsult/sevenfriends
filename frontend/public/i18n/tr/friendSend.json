@@ -6,17 +6,10 @@
   "sendAVoiceMessage": "Sesli mesaj gönder",
   "send": "Gönder",
   "add": "+ Ekle",
-  "messagesForFriendnameOnly": "Sadece {{ friendName }} için mesajlar. Bu cihazda saklanır ve yazdıkça kaydedilir.",
-  "forExampleIM": "Örneğin: Yoldayım",
-  "addAMessage": "+ Mesaj ekle",
   "couldNotSendThe": "Mesaj gönderilemedi",
   "addEmoji": "Ekle: {{ emoji }}",
   "addATextOptional": "Bir metin ekle (isteğe bağlı)…",
   "writeToFriendname": "Yaz: {{ friendName }}…",
   "messageToFriendname": "Mesaj: {{ friendName }}",
-  "addAMessageFor": "Sadece {{ friendName }} için mesaj ekle",
-  "messageForFriendnameIndex": "{{ friendName }} için mesaj {{ index }}",
-  "removeMessageIndex": "{{ index }}. mesajı kaldır",
-  "messagesForOnly": "Sadece {{ friendName }} için mesajlar",
   "hideTheForm": "Formu gizle"
 }

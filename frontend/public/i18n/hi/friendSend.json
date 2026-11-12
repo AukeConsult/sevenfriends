@@ -6,17 +6,10 @@
   "sendAVoiceMessage": "वॉइस संदेश भेजें",
   "send": "भेजें",
   "add": "+ जोड़ें",
-  "messagesForFriendnameOnly": "सिर्फ़ {{ friendName }} के लिए संदेश। वे इसी डिवाइस पर रखे जाते हैं, और लिखते ही सहेज लिए जाते हैं।",
-  "forExampleIM": "जैसे: मैं रास्ते में हूँ",
-  "addAMessage": "+ संदेश जोड़ें",
   "couldNotSendThe": "संदेश भेजा नहीं जा सका",
   "addEmoji": "{{ emoji }} जोड़ें",
   "addATextOptional": "कुछ लिखें (वैकल्पिक)…",
   "writeToFriendname": "{{ friendName }} को लिखें…",
   "messageToFriendname": "{{ friendName }} को संदेश",
-  "addAMessageFor": "सिर्फ़ {{ friendName }} के लिए संदेश जोड़ें",
-  "messageForFriendnameIndex": "{{ friendName }} के लिए संदेश {{ index }}",
-  "removeMessageIndex": "संदेश {{ index }} हटाएँ",
-  "messagesForOnly": "सिर्फ़ {{ friendName }} के लिए संदेश",
   "hideTheForm": "फ़ॉर्म छिपाएँ"
 }

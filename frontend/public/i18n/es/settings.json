@@ -15,14 +15,8 @@
   "yourOneSPicture": "La foto de tu {{ one }} y la tuya, en una conversación.",
   "enterSendsTheMessage": "Intro envía el mensaje",
   "shiftEnterMakesA": "Mayús + Intro hace un salto de línea. Desactivado: Intro hace un salto de línea y Ctrl + Intro envía.",
-  "readyMadeMessages": "Mensajes predefinidos",
-  "theyAreListedUnder": "Aparecen bajo la carita sonriente en una conversación y con un toque se envían.",
-  "forExampleIM": "Por ejemplo: voy de camino",
-  "addAMessage": "+ Añadir un mensaje",
   "useASleepList": "Usar una lista de descanso",
   "offAOneYou": "Desactivado: el {{ one }} que quitas se elimina, y la fila de la lista de descanso se oculta mientras está vacía.",
-  "readyMadeMessageIndex": "Mensaje predefinido {{ index }}",
-  "removeMessageIndex": "Quitar el mensaje {{ index }}",
   "tellWhenIAdd": "Avisarles cuando añado algo a la caja fuerte",
   "aMessageTellsYour": "Un mensaje avisa a tu amigo o grupo de que hay una nota, elemento o archivo, con un enlace para abrirlo. Desactivado: no se envía nada; la campana de un elemento aún puede avisar."
 }

@@ -15,14 +15,8 @@
   "yourOneSPicture": "La foto del tuo {{ one }} e la tua, in una conversazione.",
   "enterSendsTheMessage": "Invio manda il messaggio",
   "shiftEnterMakesA": "Maiusc + Invio va a capo. Disattivato: Invio va a capo e Ctrl + Invio manda.",
-  "readyMadeMessages": "Messaggi pronti",
-  "theyAreListedUnder": "Sono elencati sotto la faccina in una conversazione e un tocco li invia.",
-  "forExampleIM": "Per esempio: sto arrivando",
-  "addAMessage": "+ Aggiungi un messaggio",
   "useASleepList": "Usa una lista del sonno",
   "offAOneYou": "Disattivato: un {{ one }} che togli viene eliminato e la riga della lista del sonno resta nascosta finché è vuota.",
-  "readyMadeMessageIndex": "Messaggio pronto {{ index }}",
-  "removeMessageIndex": "Rimuovi il messaggio {{ index }}",
   "tellWhenIAdd": "Avvisali quando aggiungo qualcosa alla cassaforte",
   "aMessageTellsYour": "Un messaggio avvisa il tuo amico o gruppo che c'è una nota, un elemento o un file, con un link per aprirlo. Disattivato: non viene inviato nulla; la campanella in un elemento può comunque avvisare."
 }

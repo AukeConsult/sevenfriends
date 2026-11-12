@@ -6,17 +6,10 @@
   "sendAVoiceMessage": "ボイスメッセージを送る",
   "send": "送信",
   "add": "+ 追加",
-  "messagesForFriendnameOnly": "{{ friendName }}さん専用のメッセージです。このデバイスに保存され、入力するたびに自動で保存されます。",
-  "forExampleIM": "例: 今向かってるよ",
-  "addAMessage": "+ メッセージを追加",
   "couldNotSendThe": "メッセージを送信できませんでした",
   "addEmoji": "{{ emoji }}を追加",
   "addATextOptional": "テキストを追加（任意）…",
   "writeToFriendname": "{{ friendName }}さんに書く…",
   "messageToFriendname": "{{ friendName }}さんへのメッセージ",
-  "addAMessageFor": "{{ friendName }}さん専用のメッセージを追加",
-  "messageForFriendnameIndex": "{{ friendName }}さん用のメッセージ {{ index }}",
-  "removeMessageIndex": "メッセージ {{ index }} を削除",
-  "messagesForOnly": "{{ friendName }}さん専用のメッセージ",
   "hideTheForm": "フォームを隠す"
 }

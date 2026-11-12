@@ -1,33 +1,33 @@
 <ng-container *transloco="let t">
 <main class="sf-lock-page">
-  <app-page-bar [sub]="true" [title]="t('friendLock.lockingAndKeys') || 'Locking and keys'" />
+  <app-page-bar [sub]="true" [title]="t('friendLock.lockingAndKeys') || 'Privacy lock'" />
 
   <section>
     <p>
       @if (ctx.isGroup()) {
         @switch (ctx.keyStatus()) {
           @case ('both') { {{ t('friendLock.groupLocked') || 'Messages and files are locked: only the people in this group can open them.' }} }
-          @case ('me') { {{ ctx.withoutKey().length ? (t('friendLock.groupSomeoneNoKey', { names: ctx.whoLacksKey() }) || 'Not private yet. Still missing the lock: ' + ctx.whoLacksKey() + '. Ask them to open the app and finish the setup. Until then our system can read what you send.') : (t('friendLock.friendnameHasAKey', { friendName: friendName() }) || 'The others are ready, but you are not. Make or restore your key on this device. Until then, what you send can be read by our system.') }} }
-          @case ('friend') { {{ t('friendLock.groupSomeoneNoKey', { names: ctx.whoLacksKey() }) || 'Not private yet. Still missing the lock: ' + ctx.whoLacksKey() + '. Ask them to open the app and finish the setup. Until then our system can read what you send.' }} }
+          @case ('me') { {{ ctx.withoutKey().length ? (t('friendLock.groupSomeoneNoKey', { names: ctx.whoLacksKey() }) || 'Not private yet. Still missing the lock: {{ names }}. Ask them to open the app and finish the setup. Until then our system can read what you send.' + ctx.whoLacksKey() + '. Ask them to open the app and finish the setup. Until then our system can read what you send.') : (t('friendLock.friendnameHasAKey', { friendName: friendName() }) || '{{ friendName }} has the privacy lock on, but you do not. Turn it on, or bring it back, on this device. Until then, what you send can be read by our system.') }} }
+          @case ('friend') { {{ t('friendLock.groupSomeoneNoKey', { names: ctx.whoLacksKey() }) || 'Not private yet. Still missing the lock: {{ names }}. Ask them to open the app and finish the setup. Until then our system can read what you send.' + ctx.whoLacksKey() + '. Ask them to open the app and finish the setup. Until then our system can read what you send.' }} }
           @case ('none') { {{ t('friendLock.groupNobodyHasAKey') || 'Not private yet. Nobody in this group has set up the lock. Ask everyone to open the app and finish the setup. Until then our system can read what you send.' }} }
-          @default { {{ t('friendLock.checkingTheKeys') || 'Checking the keys…' }} }
+          @default { {{ t('friendLock.checkingTheKeys') || 'Checking the privacy locks…' }} }
         }
       } @else {
       @switch (ctx.keyStatus()) {
-        @case ('both') { {{ t('friendLock.yourMessagesAndFiles', { friendName: friendName() }) || 'Your messages and files are locked: only you and ' + friendName() + ' can open them.' }} }
+        @case ('both') { {{ t('friendLock.yourMessagesAndFiles', { friendName: friendName() }) || 'Your messages and files are locked: only you and {{ friendName }} can open them.' + friendName() + ' can open them.' }} }
         @case ('me') { {{ t('friendLock.friendnameHasAKey', { friendName: friendName() }) || friendName() + ' is ready, but you are not. Make or restore your key on this device. Until then, what you send can be read by our system.' }} }
-        @case ('friend') { {{ t('friendLock.youHaveAKey', { friendName: friendName() }) || 'You are ready, but ' + friendName() + ' is not yet. Until ' + friendName() + ' makes a key, what you send can be read by our system.' }} }
-        @case ('none') { {{ t('friendLock.neitherOfYouHas') || 'Neither of you has a key yet. Until you both have one, what you send can be read by our system.' }} }
-        @default { {{ t('friendLock.checkingTheKeys') || 'Checking the keys…' }} }
+        @case ('friend') { {{ t('friendLock.youHaveAKey', { friendName: friendName() }) || 'Your privacy lock is on, but {{ friendName }} has not turned theirs on yet. Until then, what you send can be read by our system.' + friendName() + ' is not yet. Until ' + friendName() + ' makes a key, what you send can be read by our system.' }} }
+        @case ('none') { {{ t('friendLock.neitherOfYouHas') || 'Neither of you has the privacy lock on yet. Until you both do, what you send can be read by our system.' }} }
+        @default { {{ t('friendLock.checkingTheKeys') || 'Checking the privacy locks…' }} }
       }
       }
     </p>
     @if (ctx.keyStatus() !== 'checking') {
-      <ul class="sf-box-keystatus list-unstyled" [attr.aria-label]="t('friendLock.whoHasAnEncryption') || 'Who has an encryption key'">
-        <li [class.sf-has]="ctx.meHasKey()"><span aria-hidden="true">{{ ctx.meHasKey() ? '✓' : '✗' }}</span> {{ t('friendLock.youYet', { yet: ctx.meHasKey() ? (t('friendLock.hasAKey') || 'has a key') : (t('friendLock.noKeyYet') || 'no key yet') }) || 'You: ' + (ctx.meHasKey() ? (t('friendLock.hasAKey') || 'has a key') : (t('friendLock.noKeyYet') || 'no key yet')) }}</li>
+      <ul class="sf-box-keystatus list-unstyled" [attr.aria-label]="t('friendLock.whoHasAnEncryption') || 'Who has the privacy lock on'">
+        <li [class.sf-has]="ctx.meHasKey()"><span aria-hidden="true">{{ ctx.meHasKey() ? '✓' : '✗' }}</span> {{ t('friendLock.youYet', { yet: ctx.meHasKey() ? (t('friendLock.hasAKey') || 'has a key') : (t('friendLock.noKeyYet') || 'no key yet') }) || 'You: {{ yet }}' + (ctx.meHasKey() ? (t('friendLock.hasAKey') || 'lock is on') : (t('friendLock.noKeyYet') || 'lock is not on yet')) }}</li>
         @if (ctx.isGroup()) {
           @for (o of ctx.others(); track o.uid) {
-            <li [class.sf-has]="o.keys.length > 0"><span aria-hidden="true">{{ o.keys.length ? '✓' : '✗' }}</span> {{ o.name }}: {{ o.keys.length ? (t('friendLock.hasAKey') || 'has a key') : (t('friendLock.noKeyYet') || 'no key yet') }}</li>
+            <li [class.sf-has]="o.keys.length > 0"><span aria-hidden="true">{{ o.keys.length ? '✓' : '✗' }}</span> {{ o.name }}: {{ o.keys.length ? (t('friendLock.hasAKey') || 'lock is on') : (t('friendLock.noKeyYet') || 'lock is not on yet') }}</li>
           }
         } @else {
         <li [class.sf-has]="ctx.friendHasKey()"><span aria-hidden="true">{{ ctx.friendHasKey() ? '✓' : '✗' }}</span> {{ friendName() }}: {{ ctx.friendHasKey() ? 'has a key' : 'no key yet' }}</li>
@@ -37,12 +37,12 @@
     @if (ctx.meHasKey() === false) {
       <p class="sf-hint">
         @if (keys.elsewhere()) {
-          {{ t('friendLock.youMadeAKey') || 'You made a key before, but it is not on this device (it is on another device, or this browser cleared it). You can bring it back with your 24 words in Settings → Privacy lock.' }}
+          {{ t('friendLock.youMadeAKey') || 'You turned on your privacy lock before, but it is not on this device (it is on another device, or this browser cleared it). You can bring it back with your 24 words in Settings → Privacy lock.' }}
         } @else {
-          {{ t('friendLock.youCanMakeYour') || 'You can make your key in Settings → Privacy lock.' }}
+          {{ t('friendLock.youCanMakeYour') || 'You can turn on your privacy lock in Settings → Privacy lock.' }}
         }
       </p>
-      <a routerLink="/settings/encryption" class="btn btn-primary btn-sm">{{ t('friendLock.makeMyKey') || 'Make my key' }}</a>
+      <a routerLink="/settings/encryption" class="btn btn-primary btn-sm">{{ t('friendLock.makeMyKey') || 'Turn on my privacy lock' }}</a>
     }
   </section>
 
@@ -52,7 +52,7 @@
       @if (plainItems().length) {
         <p>{{ t('friendLock.wereAddedBeforeLocking', { were: plainItems().length === 1 ? (t('friendLock.fileWas') || '1 file was') : (t('friendLock.plainitemslengthFilesWere', { plainItemsLength: plainItems().length }) || plainItems().length + ' files were'), are: plainItems().length === 1 ? (t('friendLock.itIs') || 'it is') : (t('friendLock.theyAre') || 'they are'), them: plainItems().length === 1 ? (t('friendLock.it') || 'it') : (t('friendLock.them') || 'them') }) || (plainItems().length === 1 ? (t('friendLock.fileWas') || '1 file was') : (t('friendLock.plainitemslengthFilesWere', { plainItemsLength: plainItems().length }) || plainItems().length + ' files were')) + ' added before locking was possible, so ' + (plainItems().length === 1 ? (t('friendLock.itIs') || 'it is') : (t('friendLock.theyAre') || 'they are')) + ' not locked. You can lock ' + (plainItems().length === 1 ? (t('friendLock.it') || 'it') : (t('friendLock.them') || 'them')) + ' now: each file is replaced by a locked copy that keeps its name and date. You can also lock a single file with the lock button next to it.' }}</p>
         <button type="button" class="btn btn-outline-primary btn-sm" (click)="encryptAll()" [disabled]="encrypting() !== null">
-          {{ encrypting() ? (t('friendLock.lockingDoneOfTotal', { done: encrypting()!.done + 1, total: encrypting()!.total }) || 'Locking ' + (encrypting()!.done + 1) + ' of ' + encrypting()!.total + '…') : (plainItems().length === 1 ? (t('friendLock.lockThisFile') || 'Lock this file') : (t('friendLock.lockAllPlainitemslengthFiles', { plainItemsLength: plainItems().length }) || 'Lock all ' + plainItems().length + ' files')) }}
+          {{ encrypting() ? (t('friendLock.lockingDoneOfTotal', { done: encrypting()!.done + 1, total: encrypting()!.total }) || 'Locking {{ done }} of {{ total }}…' + (encrypting()!.done + 1) + ' of ' + encrypting()!.total + '…') : (plainItems().length === 1 ? (t('friendLock.lockThisFile') || 'Lock this file') : (t('friendLock.lockAllPlainitemslengthFiles', { plainItemsLength: plainItems().length }) || 'Lock all {{ plainItemsLength }} files' + plainItems().length + ' files')) }}
         </button>
       } @else {
         <p>{{ t('friendLock.allTheFilesIn') || 'All the files in this safebox are locked.' }}</p>
@@ -63,13 +63,13 @@
 
   <!-- simple by default: the status above is all most people need; the rest is behind one button -->
   <div class="d-flex justify-content-center">
-    <button type="button" class="btn btn-light btn-sm" [attr.aria-expanded]="advanced()" (click)="advanced.set(!advanced())">{{ advanced() ? (t('friendLock.hideAdvanced') || 'Hide advanced') : (t('friendLock.advanced') || 'Advanced') }}</button>
+    <button type="button" class="btn btn-light btn-sm" [attr.aria-expanded]="advanced()" (click)="advanced.set(!advanced())">{{ advanced() ? (t('friendLock.hideAdvanced') || 'Hide details') : (t('friendLock.advanced') || 'More details') }}</button>
   </div>
 
   @if (advanced()) {
     <section>
       <h2>{{ t('friendLock.howDoesLockingWork') || 'How does locking work?' }}</h2>
-      <p><span [innerHTML]="t('friendLock.eachOfYouHas') || 'Each of you has a small secret <strong>key</strong>, made once on the device you use. It never leaves that device. Messages and files are locked only when you both have a key.'"></span></p>
+      <p><span [innerHTML]="t('friendLock.eachOfYouHas') || 'Each of you has a small secret <strong>privacy lock</strong>, made once on the device you use. It never leaves that device. Messages and files are locked only when you both have it on.'"></span></p>
       <p>{{ t('friendLock.allFilesAreKept') || 'All files are kept on our secure server. A locked file is unreadable there: only you and your friend can open it, not even we can. A file that is not locked can be read by our system.' }}</p>
     </section>
 
@@ -85,9 +85,9 @@
     }
 
     <section>
-      <h2>{{ t('friendLock.isItReallyFriendname', { friendName: friendName() }) || 'Is it really ' + friendName() + '\'s key?' }}</h2>
+      <h2>{{ t('friendLock.isItReallyFriendname', { friendName: friendName() }) || 'Is this really {{ friendName }}?' + friendName() + '\'s key?' }}</h2>
       <p>
-        {{ t('friendLock.eachKeyHasA', { friendName: friendName() }) || 'Each key has a code. To be sure ' + friendName() + '\'s key is really theirs, ask them to read you the code under Settings → Privacy lock on their device, or compare it in person. If it is the same as the code below, the key is theirs.' }}
+        {{ t('friendLock.eachKeyHasA', { friendName: friendName() }) || 'Everyone\'s privacy lock has a code. To be sure it is really {{ friendName }}, meet or call them and ask them to read you the code on their device (Settings → Privacy lock). If it is the same as the code below, it is them.' + friendName() + '\'s key is really theirs, ask them to read you the code under Settings → Privacy lock on their device, or compare it in person. If it is the same as the code below, the key is theirs.' }}
       </p>
       @for (person of ctx.others(); track person.uid) {
       @for (key of person.keys; track key.id) {
@@ -100,19 +100,14 @@
         <p class="sf-hint">{{ t('friendLock.friendnameHasNoKey', { friendName: friendName() }) || friendName() + ' has no key yet.' }}</p>
       }
       @if (keys.fingerprint(); as mine) {
-        <p class="sf-hint m-0">{{ t('friendLock.yourCodeForFriendname', { friendName: friendName() }) || 'Your code, for ' + friendName() + ' to compare:' }}</p>
+        <p class="sf-hint m-0">{{ t('friendLock.yourCodeForFriendname', { friendName: friendName() }) || 'Your code, for {{ friendName }} to compare:' + friendName() + ' to compare:' }}</p>
         <pre class="sf-fingerprint">{{ ctx.readable(mine) }}</pre>
       }
     </section>
 
     <section>
-      <h2>{{ t('friendLock.yourKeys') || 'Your keys' }}</h2>
-      <p>{{ t('friendLock.toSeeYourDevices') || 'To see your devices, make a new key, or restore your key with your 24 words, open' }} <a routerLink="/settings/encryption">{{ t('friendLock.settingsKeys') || 'Settings → Privacy lock' }}</a>.</p>
-      @if (keys.diagnosis(); as d) {
-        <p class="sf-hint">
-          {{ t('friendLock.detailsForThisBrowser', { slice: d.account.slice(-6), no: d.localKeyId ? (t('friendLock.yesSlice', { slice: d.localKeyId.slice(0, 8) }) || 'yes (' + d.localKeyId.slice(0, 8) + ')') : (t('friendLock.no') || 'no'), published: d.localKeyId ? ', ' + (d.localPublished === 'yes' ? (t('friendLock.published') || 'published') : d.localPublished === 'removed' ? (t('friendLock.removed') || 'removed') : (t('friendLock.notPublished') || 'not published')) : '', mine: ctx.serverKeys().mine, friendName: friendName(), friend: ctx.serverKeys().friend }) || 'Details for this browser: account …' + d.account.slice(-6) + ' · key in this browser: ' + (d.localKeyId ? (t('friendLock.yesSlice', { slice: d.localKeyId.slice(0, 8) }) || 'yes (' + d.localKeyId.slice(0, 8) + ')') : (t('friendLock.no') || 'no')) + (d.localKeyId ? ', ' + (d.localPublished === 'yes' ? (t('friendLock.published') || 'published') : d.localPublished === 'removed' ? (t('friendLock.removed') || 'removed') : (t('friendLock.notPublished') || 'not published')) : '') + ' · keys in use on the server: you ' + ctx.serverKeys().mine + ', ' + friendName() + ' ' + ctx.serverKeys().friend }}
-        </p>
-      }
+      <h2>{{ t('friendLock.yourKeys') || 'Your privacy lock' }}</h2>
+      <p>{{ t('friendLock.toSeeYourDevices') || 'To see your devices, turn on a new privacy lock, or bring yours back with your 24 words, open' }} <a routerLink="/settings/encryption">{{ t('friendLock.settingsKeys') || 'Settings → Privacy lock' }}</a>.</p>
     </section>
   }
 </main>

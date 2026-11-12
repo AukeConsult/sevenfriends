@@ -15,14 +15,8 @@
   "yourOneSPicture": "대화에서 내 {{ one }}의 사진과 내 사진을 보여 줘요.",
   "enterSendsTheMessage": "Enter로 메시지 보내기",
   "shiftEnterMakesA": "Shift + Enter는 줄바꿈이에요. 끄면 Enter는 줄바꿈, Ctrl + Enter는 보내기예요.",
-  "readyMadeMessages": "빠른 메시지",
-  "theyAreListedUnder": "대화의 이모지 아이콘 아래에 목록으로 나오고, 한 번 누르면 보내져요.",
-  "forExampleIM": "예: 지금 가는 중이에요",
-  "addAMessage": "+ 메시지 추가",
   "useASleepList": "수면 목록 사용",
   "offAOneYou": "끄면 삭제 시 ({{ one }}) 바로 삭제되고, 수면 목록 줄은 비어 있는 동안 숨겨져요.",
-  "readyMadeMessageIndex": "빠른 메시지 {{ index }}",
-  "removeMessageIndex": "메시지 {{ index }} 삭제",
   "tellWhenIAdd": "보관함에 무언가 추가하면 알려 주기",
   "aMessageTellsYour": "메시지로 친구나 그룹에게 메모, 항목 또는 파일이 있음을 열기 링크와 함께 알려 줍니다. 끔: 아무것도 보내지 않습니다. 항목의 벨로는 여전히 알릴 수 있습니다."
 }

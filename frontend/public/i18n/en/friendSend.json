@@ -6,17 +6,10 @@
   "sendAVoiceMessage": "Send a voice message",
   "send": "Send",
   "add": "+ Add",
-  "messagesForFriendnameOnly": "Your draft is saved here, on this device, until you send it.",
-  "forExampleIM": "For example: I'm on my way",
-  "addAMessage": "+ Add a message",
   "couldNotSendThe": "Could not send the message",
   "addEmoji": "Add {{ emoji }}",
   "addATextOptional": "Add a text (optional)…",
   "writeToFriendname": "Write to {{ friendName }}…",
   "messageToFriendname": "Message to {{ friendName }}",
-  "addAMessageFor": "Add a message for {{ friendName }} only",
-  "messageForFriendnameIndex": "Message for {{ friendName }} {{ index }}",
-  "removeMessageIndex": "Remove message {{ index }}",
-  "messagesForOnly": "Messages for {{ friendName }} only",
   "hideTheForm": "Hide the form"
 }

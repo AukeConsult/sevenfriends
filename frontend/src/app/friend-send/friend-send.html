@@ -57,35 +57,6 @@
 
     }
 
-    @if (quickMessagesShown) { <!-- the ready-made messages are off for now: set quickMessagesShown to true to bring them back -->
-    <!-- the ready-made messages: this friend's own first (my colour), then the general ones; Add opens the frame to change this friend's own -->
-    <div class="sf-send-bubbles">
-      @for (quick of ctx.ownQuick(); track 'own' + $index) {
-        <button type="button" class="btn sf-send-quick sf-mine-bubble text-start" [disabled]="busy()" (click)="deliver(quick)">{{ quick }}</button>
-      }
-      @for (quick of general(); track 'all' + $index) {
-        <button type="button" class="btn sf-send-quick text-start" [disabled]="busy()" (click)="deliver(quick)">{{ quick }}</button>
-      }
-      <button type="button" data-send="add" class="btn sf-send-add" (click)="toggleAdd()" [attr.aria-expanded]="addOpen()" [attr.aria-label]="(t('friendSend.addAMessageFor', { friendName: friendName() }) || 'Add a message for ' + friendName() + ' only')" [title]="(t('friendSend.addAMessageFor', { friendName: friendName() }) || 'Add a message for ' + friendName() + ' only')">{{ t('friendSend.add') || '+ Add' }}</button>
-    </div>
-
-    @if (addOpen()) {
-      <div class="sf-send-addframe">
-        <p class="sf-hint m-0">{{ t('friendSend.messagesForFriendnameOnly', { friendName: friendName() }) || 'Your draft is saved here, on this device, until you send it.' }}</p>
-        @for (row of rows(); track $index) {
-          <div class="d-flex gap-2">
-            <input type="text" class="form-control" [value]="row" [maxLength]="quickLength" [attr.placeholder]="t('friendSend.forExampleIM') || 'For example: I\'m on my way'"
-                   (input)="setRow($index, $any($event.target).value)" [attr.aria-label]="(t('friendSend.messageForFriendnameIndex', { friendName: friendName(), index: $index + 1 }) || 'Message for ' + friendName() + ' ' + ($index + 1))" autocomplete="off" />
-            <button type="button" class="btn btn-outline-secondary btn-sm" (click)="removeRow($index)" [attr.aria-label]="(t('friendSend.removeMessageIndex', { index: $index + 1 }) || 'Remove message ' + ($index + 1))">✕</button>
-          </div>
-        }
-        @if (rows().length < quickMax) {
-          <button type="button" class="btn btn-light btn-sm align-self-start" (click)="addRow()">{{ t('friendSend.addAMessage') || '+ Add a message' }}</button>
-        }
-      </div>
-    }
-
-    }
     @if (error()) {
       <div class="alert alert-danger" role="alert">{{ error() }}</div>
     }

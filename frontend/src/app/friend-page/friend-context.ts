@@ -37,16 +37,6 @@ export class FriendContext {
 
   readonly friendId = inject(ActivatedRoute).snapshot.paramMap.get('id') ?? '';
   /** this friend, from the list */
-  /** the ready-made messages that are for this friend only (kept on this device, see UiPreferences.friendQuick) */
-  readonly ownQuick = computed(() => this.prefs.value('friendQuick')()[this.friendId] ?? []);
-
-  setOwnQuick(list: string[]): void {
-    const all = { ...this.prefs.get('friendQuick') };
-    if (list.length) all[this.friendId] = list;
-    else delete all[this.friendId];
-    this.prefs.set('friendQuick', all);
-  }
-
   /** the friend's name for a sentence */
   /** "Poke anyway" is on for the next message (only offered when the friend has me on their sleep list); it goes off again after a send. */
   readonly poke = signal(false);

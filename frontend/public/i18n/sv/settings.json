@@ -15,14 +15,8 @@
   "yourOneSPicture": "Bild på din {{ one }} och din egen, i en konversation.",
   "enterSendsTheMessage": "Enter skickar meddelandet",
   "shiftEnterMakesA": "Shift + Enter ger en ny rad. Av: Enter ger en ny rad och Ctrl + Enter skickar.",
-  "readyMadeMessages": "Färdiga meddelanden",
-  "theyAreListedUnder": "De listas under smileyn i en konversation, och ett tryck skickar dem.",
-  "forExampleIM": "Till exempel: Jag är på väg",
-  "addAMessage": "+ Lägg till ett meddelande",
   "useASleepList": "Använd en vilolista",
   "offAOneYou": "Av: en {{ one }} du tar bort raderas, och raden för vilolistan döljs medan den är tom.",
-  "readyMadeMessageIndex": "Färdigt meddelande {{ index }}",
-  "removeMessageIndex": "Ta bort meddelande {{ index }}",
   "tellWhenIAdd": "Berätta för dem när jag lägger till något i kassaskåpet",
   "aMessageTellsYour": "Ett meddelande berättar för din vän eller grupp att en anteckning, sak eller fil finns, med en länk för att öppna den. Av: Inget skickas; klockan i en sak kan fortfarande berätta det."
 }

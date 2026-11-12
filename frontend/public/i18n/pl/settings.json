@@ -15,14 +15,8 @@
   "yourOneSPicture": "Zdjęcie osoby ({{ one }}) i Twoje, w rozmowie.",
   "enterSendsTheMessage": "Enter wysyła wiadomość",
   "shiftEnterMakesA": "Shift + Enter robi nową linię. Wyłączone: Enter robi nową linię, a Ctrl + Enter wysyła.",
-  "readyMadeMessages": "Gotowe wiadomości",
-  "theyAreListedUnder": "Są na liście pod buźką w rozmowie, a jedno dotknięcie je wysyła.",
-  "forExampleIM": "Na przykład: Już jadę",
-  "addAMessage": "+ Dodaj wiadomość",
   "useASleepList": "Używaj listy uśpionych",
   "offAOneYou": "Wyłączone: usunięta osoba ({{ one }}) jest kasowana, a wiersz listy uśpionych jest ukryty, gdy jest pusty.",
-  "readyMadeMessageIndex": "Gotowa wiadomość {{ index }}",
-  "removeMessageIndex": "Usuń wiadomość {{ index }}",
   "tellWhenIAdd": "Powiadom ich, gdy dodam coś do sejfu",
   "aMessageTellsYour": "Wiadomość informuje twojego znajomego lub grupę, że jest notatka, element lub plik, z linkiem do otwarcia. Wyłączone: nic nie jest wysyłane; dzwonek w elemencie nadal może powiadomić."
 }

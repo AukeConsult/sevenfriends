@@ -15,14 +15,8 @@
   "yourOneSPicture": "صورة {{ one }} الخاص بك وصورتك، في المحادثة.",
   "enterSendsTheMessage": "مفتاح Enter يرسل الرسالة",
   "shiftEnterMakesA": "Shift + Enter يبدأ سطرًا جديدًا. عند الإيقاف: Enter يبدأ سطرًا جديدًا وCtrl + Enter يرسل.",
-  "readyMadeMessages": "رسائل جاهزة",
-  "theyAreListedUnder": "تظهر تحت الوجه المبتسم في المحادثة، وضغطة واحدة ترسلها.",
-  "forExampleIM": "مثلًا: أنا في الطريق",
-  "addAMessage": "+ إضافة رسالة",
   "useASleepList": "استخدام قائمة نوم",
   "offAOneYou": "عند الإيقاف: يُحذف {{ one }} الذي تزيله، ويُخفى صف قائمة النوم ما دامت فارغة.",
-  "readyMadeMessageIndex": "الرسالة الجاهزة {{ index }}",
-  "removeMessageIndex": "إزالة الرسالة {{ index }}",
   "tellWhenIAdd": "أخبرهم عندما أضيف شيئًا إلى الخزنة",
   "aMessageTellsYour": "تُعلم رسالة صديقك أو مجموعتك بوجود ملاحظة أو عنصر أو ملف، مع رابط لفتحه. إيقاف: لا يُرسل شيء؛ لا يزال الجرس في العنصر قادرًا على الإخبار."
 }

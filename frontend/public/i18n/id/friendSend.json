@@ -6,17 +6,10 @@
   "sendAVoiceMessage": "Kirim pesan suara",
   "send": "Kirim",
   "add": "+ Tambah",
-  "messagesForFriendnameOnly": "Pesan khusus untuk {{ friendName }}. Disimpan di perangkat ini, dan tersimpan otomatis saat kamu mengetik.",
-  "forExampleIM": "Contoh: Aku lagi di jalan",
-  "addAMessage": "+ Tambah pesan",
   "couldNotSendThe": "Tidak bisa mengirim pesan",
   "addEmoji": "Tambah {{ emoji }}",
   "addATextOptional": "Tambahkan teks (opsional)…",
   "writeToFriendname": "Tulis ke {{ friendName }}…",
   "messageToFriendname": "Pesan untuk {{ friendName }}",
-  "addAMessageFor": "Tambah pesan khusus untuk {{ friendName }}",
-  "messageForFriendnameIndex": "Pesan untuk {{ friendName }} {{ index }}",
-  "removeMessageIndex": "Hapus pesan {{ index }}",
-  "messagesForOnly": "Pesan khusus untuk {{ friendName }}",
   "hideTheForm": "Sembunyikan formulir"
 }

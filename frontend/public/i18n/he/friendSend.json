@@ -6,17 +6,10 @@
   "sendAVoiceMessage": "שליחת הודעה קולית",
   "send": "שליחה",
   "add": "+ הוספה",
-  "messagesForFriendnameOnly": "הודעות ל{{ friendName }} בלבד. הן נשמרות במכשיר הזה, ונשמרות תוך כדי הקלדה.",
-  "forExampleIM": "לדוגמה: אני בדרך",
-  "addAMessage": "+ הוספת הודעה",
   "couldNotSendThe": "לא ניתן היה לשלוח את ההודעה",
   "addEmoji": "הוספת {{ emoji }}",
   "addATextOptional": "הוספת טקסט (לא חובה)…",
   "writeToFriendname": "כתיבה ל{{ friendName }}…",
   "messageToFriendname": "הודעה ל{{ friendName }}",
-  "addAMessageFor": "הוספת הודעה ל{{ friendName }} בלבד",
-  "messageForFriendnameIndex": "הודעה ל{{ friendName }} {{ index }}",
-  "removeMessageIndex": "הסרת הודעה {{ index }}",
-  "messagesForOnly": "הודעות ל{{ friendName }} בלבד",
   "hideTheForm": "הסתרת הטופס"
 }

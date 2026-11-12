@@ -6,17 +6,10 @@
   "sendAVoiceMessage": "发送语音消息",
   "send": "发送",
   "add": "+ 添加",
-  "messagesForFriendnameOnly": "只用于 {{ friendName }} 的消息。它们保存在这台设备上，输入时自动保存。",
-  "forExampleIM": "例如：我在路上了",
-  "addAMessage": "+ 添加消息",
   "couldNotSendThe": "无法发送消息",
   "addEmoji": "添加 {{ emoji }}",
   "addATextOptional": "添加文字（选填）…",
   "writeToFriendname": "给 {{ friendName }} 写点什么…",
   "messageToFriendname": "给 {{ friendName }} 的消息",
-  "addAMessageFor": "添加只给 {{ friendName }} 的消息",
-  "messageForFriendnameIndex": "给 {{ friendName }} 的消息 {{ index }}",
-  "removeMessageIndex": "删除消息 {{ index }}",
-  "messagesForOnly": "只给 {{ friendName }} 的消息",
   "hideTheForm": "隐藏表单"
 }

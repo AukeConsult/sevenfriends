@@ -6,17 +6,10 @@
   "sendAVoiceMessage": "Надіслати голосове повідомлення",
   "send": "Надіслати",
   "add": "+ Додати",
-  "messagesForFriendnameOnly": "Повідомлення лише для {{ friendName }}. Вони зберігаються на цьому пристрої й зберігаються, поки ти пишеш.",
-  "forExampleIM": "Наприклад: Я вже в дорозі",
-  "addAMessage": "+ Додати повідомлення",
   "couldNotSendThe": "Не вдалося надіслати повідомлення",
   "addEmoji": "Додати {{ emoji }}",
   "addATextOptional": "Додай текст (необов’язково)…",
   "writeToFriendname": "Напиши {{ friendName }}…",
   "messageToFriendname": "Повідомлення для {{ friendName }}",
-  "addAMessageFor": "Додати повідомлення лише для {{ friendName }}",
-  "messageForFriendnameIndex": "Повідомлення для {{ friendName }} {{ index }}",
-  "removeMessageIndex": "Видалити повідомлення {{ index }}",
-  "messagesForOnly": "Повідомлення лише для {{ friendName }}",
   "hideTheForm": "Сховати форму"
 }

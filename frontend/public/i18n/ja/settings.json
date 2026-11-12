@@ -15,14 +15,8 @@
   "yourOneSPicture": "会話に、{{ one }}の写真とあなたの写真を表示します。",
   "enterSendsTheMessage": "Enterでメッセージを送信",
   "shiftEnterMakesA": "Shift + Enter で改行します。オフの場合: Enter で改行し、Ctrl + Enter で送信します。",
-  "readyMadeMessages": "定型メッセージ",
-  "theyAreListedUnder": "会話の絵文字ボタンの下に並び、ワンタップで送れます。",
-  "forExampleIM": "例: 今向かってるよ",
-  "addAMessage": "+ メッセージを追加",
   "useASleepList": "スリープリストを使う",
   "offAOneYou": "オフ: 外した{{ one }}は削除され、スリープリストの行は空のあいだ非表示になります。",
-  "readyMadeMessageIndex": "定型メッセージ {{ index }}",
-  "removeMessageIndex": "メッセージ {{ index }} を削除",
   "tellWhenIAdd": "金庫に何か追加したら知らせる",
   "aMessageTellsYour": "メッセージで、メモ・項目・ファイルがあることを、開くためのリンク付きで友だちやグループに知らせます。オフ：何も送信されません。項目のベルで知らせることはできます。"
 }

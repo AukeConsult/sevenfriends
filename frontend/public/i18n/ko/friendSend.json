@@ -6,17 +6,10 @@
   "sendAVoiceMessage": "음성 메시지 보내기",
   "send": "보내기",
   "add": "+ 추가",
-  "messagesForFriendnameOnly": "{{ friendName }}님 전용 메시지예요. 이 기기에 보관되고, 입력하는 대로 저장돼요.",
-  "forExampleIM": "예: 지금 가는 중이에요",
-  "addAMessage": "+ 메시지 추가",
   "couldNotSendThe": "메시지를 보낼 수 없어요",
   "addEmoji": "{{ emoji }} 추가",
   "addATextOptional": "텍스트 추가 (선택)…",
   "writeToFriendname": "{{ friendName }}님에게 쓰기…",
   "messageToFriendname": "{{ friendName }}님에게 보낼 메시지",
-  "addAMessageFor": "{{ friendName }}님 전용 메시지 추가",
-  "messageForFriendnameIndex": "{{ friendName }}님 전용 메시지 {{ index }}",
-  "removeMessageIndex": "메시지 {{ index }} 삭제",
-  "messagesForOnly": "{{ friendName }}님 전용 메시지",
   "hideTheForm": "양식 숨기기"
 }

@@ -45,18 +45,6 @@
         <label class="form-check-label" for="pref-box-tell">{{ tx('settings.tellWhenIAdd') || 'Tell them when I add something to the safebox' }}</label>
       </div>
       <span class="small text-secondary">{{ tx('settings.aMessageTellsYour') || 'A message tells your friend or group that a note, item or file is there, with a link to open it. Off: nothing is sent; the bell in an item can still tell them.' }}</span>
-      <strong class="mt-2">{{ tx('settings.readyMadeMessages') || 'Ready-made messages' }}</strong>
-      <span class="small text-secondary">{{ tx('settings.theyAreListedUnder') || 'They are listed under the smiley in a conversation, and one tap sends it.' }}</span>
-      @for (text of quick(); track $index) {
-        <div class="input-group">
-          <input type="text" class="form-control" [value]="text" [maxLength]="quickLength" [attr.placeholder]="tx('settings.forExampleIM') || 'For example: I\'m on my way'"
-                 (change)="setQuick($index, $any($event.target).value)" [attr.aria-label]="(tx('settings.readyMadeMessageIndex', { index: $index + 1 }) || 'Ready-made message ' + ($index + 1))" autocomplete="off" />
-          <button type="button" class="btn btn-outline-secondary btn-sm" (click)="removeQuick($index)" [attr.aria-label]="(tx('settings.removeMessageIndex', { index: $index + 1 }) || 'Remove message ' + ($index + 1))">✕</button>
-        </div>
-      }
-      @if (quick().length < quickMax) {
-        <button type="button" class="btn btn-light btn-sm align-self-start" (click)="addQuick()">{{ tx('settings.addAMessage') || '+ Add a message' }}</button>
-      }
     </div>
   </div>
   <h2 class="sf-section-title m-0 mt-2">{{ w.Many }}</h2>

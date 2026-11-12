@@ -6,17 +6,10 @@
   "sendAVoiceMessage": "Enviar un mensaje de voz",
   "send": "Enviar",
   "add": "+ Añadir",
-  "messagesForFriendnameOnly": "Mensajes solo para {{ friendName }}. Se guardan en este dispositivo y se guardan mientras escribes.",
-  "forExampleIM": "Por ejemplo: voy de camino",
-  "addAMessage": "+ Añadir un mensaje",
   "couldNotSendThe": "No se pudo enviar el mensaje",
   "addEmoji": "Añadir {{ emoji }}",
   "addATextOptional": "Añade un texto (opcional)…",
   "writeToFriendname": "Escribe a {{ friendName }}…",
   "messageToFriendname": "Mensaje para {{ friendName }}",
-  "addAMessageFor": "Añadir un mensaje solo para {{ friendName }}",
-  "messageForFriendnameIndex": "Mensaje para {{ friendName }} {{ index }}",
-  "removeMessageIndex": "Quitar el mensaje {{ index }}",
-  "messagesForOnly": "Mensajes solo para {{ friendName }}",
   "hideTheForm": "Ocultar el formulario"
 }
