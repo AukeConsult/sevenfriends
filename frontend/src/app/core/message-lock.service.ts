@@ -29,6 +29,9 @@ export interface SealedText {
 }
 
 /** Locks the text of a message before it is sent, and opens the locked messages of a feed. Everything happens on this device. */
+/** the key of this person on this device (see `myDeviceKey`) */
+type OwnKey = { uid: string; keyId: string; privateKey: CryptoKey; signKey?: CryptoKey } | null;
+
 /** how long the keys of a conversation are kept before a send reads them again */
 const KEYS_FRESH_MS = 5 * 60_000;
 
@@ -75,7 +78,7 @@ export class MessageLockService {
   }
 
   /** The key of this person on this device with its id, or null when there is none. */
-  private myKey(): Promise<{ uid: string; keyId: string; privateKey: CryptoKey; signKey?: CryptoKey } | null> {
+  private myKey(): Promise<OwnKey> {
     return myDeviceKey(this.auth.user()?.uid);
   }
 
@@ -120,7 +123,7 @@ export class MessageLockService {
   private async checked(friendId: string, message: ChatMessage, raw: string, myUid: string): Promise<{ text: string; signature?: 'ok' | 'bad' }> {
     const envelope = unpackSignedText(raw);
     if (!envelope) return { text: raw.slice(1), signature: 'bad' };
-    const author = message.mine ? myUid : (message.fromUid ?? (await this.safebox.keys(friendId).then((k) => k.friendUid).catch(() => '')));
+    const author = message.mine ? myUid : (message.fromUid ?? (await this.keysOf(friendId).then((k) => k.friendUid).catch(() => '')));
     let person = author ? await this.lists.devicesOf(friendId, author) : null;
     if (envelope !== 'plain' && envelope && person?.status === 'ok' && !person.devices.some((d) => d.keyId === envelope.k)) person = await this.lists.devicesOf(friendId, author, true); // a new version may be out
     if (envelope === 'plain') {
@@ -187,7 +190,7 @@ export class MessageLockService {
   }
 
   /** A message of the feed with its real text (and the real type and size of its file) when it was locked and this device can open it. */
-  async open(friendId: string, message: ChatMessage): Promise<ChatItem> {
+  async open(friendId: string, message: ChatMessage, own?: Promise<OwnKey>): Promise<ChatItem> {
     const enc = message.enc;
     if (!enc) return message;
     // a locked file is opened when it is read: the media service is told which message key belongs to it
@@ -197,7 +200,7 @@ export class MessageLockService {
     const known = this.opened.get(id);
     if (known) return { ...message, text: known.text, media: known.media, link: localLink(known.text), locked: 'open', ...(known.signature ? { signature: known.signature } : {}) };
     try {
-      const mine = await this.myKey();
+      const mine = await (own ?? this.myKey());
       if (!mine) throw new Error('no key');
       const key = await openMessageKey(enc, mine.keyId, mine.privateKey);
       const { text, signature } = await this.checked(friendId, message, await openTextWith(friendId, enc, message.text, key), mine.uid);
@@ -215,6 +218,7 @@ export class MessageLockService {
 
   /** The whole feed, opened. */
   openAll(friendId: string, messages: ChatMessage[]): Promise<ChatItem[]> {
-    return Promise.all(messages.map((m) => this.open(friendId, m)));
+    const own = messages.some((m) => m.enc) ? this.myKey() : undefined; // this device's key is read once for the feed, not once per message
+    return Promise.all(messages.map((m) => this.open(friendId, m, own)));
   }
 }
