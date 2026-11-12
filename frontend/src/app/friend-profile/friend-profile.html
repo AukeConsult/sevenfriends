@@ -43,7 +43,7 @@
 
     @if (f.group) {
       <section class="sf-group-card">
-        <app-friend-avatar [friend]="f" [seat]="ctx.seat() || 1" [size]="72" />
+        <app-friend-avatar [friend]="f" [size]="72" />
         <div class="sf-group-card-text">
           <input class="form-control sf-group-name" type="text" maxlength="100" [value]="f.name" [attr.aria-label]="t('friendProfile.groupName') || 'Name of the group'" (change)="saveGroup(f, { name: $any($event.target).value })" [disabled]="busy()" />
           <div class="d-flex gap-2">
@@ -116,7 +116,7 @@
       </section>
     } @else {
     <section>
-      <app-friend-avatar [friend]="f" [seat]="ctx.seat() || 1" [size]="72" />
+      <app-friend-avatar [friend]="f" [size]="72" />
       <div>
         <h2 class="m-0">{{ f.name }}</h2>
         <p class="sf-hint m-0">{{ presenceLabel(f.presence) }}</p>

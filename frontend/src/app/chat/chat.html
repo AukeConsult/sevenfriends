@@ -84,7 +84,7 @@
               @if (senderPicture(message); as pic) { <img [src]="pic" [alt]="senderName(message)" width="28" height="28" /> } @else { <span class="sf-feed-initials" [attr.title]="senderName(message)">{{ initials(senderName(message)) }}</span> }
             } @else if (friend(); as f) {
               <button type="button" class="sf-name-btn" (click)="showProfile()" [attr.aria-label]="(t('chat.showTheProfileOf', { fName: f.name }) || 'Show the profile of ' + f.name)">
-                <app-friend-avatar [friend]="f" [seat]="seat() || 1" [small]="true" [size]="28" />
+                <app-friend-avatar [friend]="f" [small]="true" [size]="28" />
               </button>
             }
           </span>

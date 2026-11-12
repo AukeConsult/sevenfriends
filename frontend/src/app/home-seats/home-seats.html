@@ -15,7 +15,7 @@
                (click)="open(friend)" (keydown.enter)="open(friend)" (keydown)="seatKey($event, slot.position)" (contextmenu)="$event.preventDefault()" (dragstart)="$event.preventDefault()"
                (pointerdown)="dragStart($event, slot.position)" (pointermove)="dragMove($event)" (pointerup)="dragEnd($event)" (pointercancel)="dragEnd($event, true)">
             <span class="sf-hs-ring" [class.sf-hs-group]="friend.group">
-              <app-friend-avatar [friend]="friend" [seat]="slot.position" [size]="56" />
+              <app-friend-avatar [friend]="friend" [size]="56" />
               @if (friend.status === 'confirmed' && !friend.group) {
                 <span class="sf-dot" [class]="'sf-dot-' + friend.presence" [title]="presenceLabel(friend.presence)" role="img" [attr.aria-label]="presenceLabel(friend.presence)"></span>
               }

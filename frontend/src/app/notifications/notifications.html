@@ -173,7 +173,7 @@
           @for (group of groups(); track group.key) {
             <li class="sf-message-item">
               <div class="sf-message-head">
-                @if (group.friend; as friend) { <app-friend-avatar [friend]="friend" [seat]="friend.seat ?? 1" [small]="true" [size]="36" /> }
+                @if (group.friend; as friend) { <app-friend-avatar [friend]="friend" [small]="true" [size]="36" /> }
                 <strong class="sf-ellipsis">{{ group.name }}@if (group.count > 1) { <span class="badge text-bg-primary ms-2">{{ group.count }}</span> }</strong>
               </div>
               <span class="sf-wrap">{{ group.last.text }}@if (group.last.time) { <small class="sf-message-time ms-2">{{ group.last.time | appDate: 'short' }}</small> }</span>
@@ -201,7 +201,7 @@
     @if (nudge(); as friend) {
       <ul class="sf-list sf-home-cards">
         <li class="sf-list-item">
-          <app-friend-avatar [friend]="friend" [seat]="friend.seat ?? 1" [small]="true" [size]="36" />
+          <app-friend-avatar [friend]="friend" [small]="true" [size]="36" />
           <span class="sf-list-text"><strong class="small">{{ t('notifications.sayHiToFriendname', { friendName: friend.name }) || 'Say hi to ' + friend.name + '?' }}</strong><small>{{ lastTalk(friend) }}</small></span>
           <a [routerLink]="['/friends', friend.id]" class="btn btn-outline-primary btn-sm">{{ t('notifications.sayHi') || 'Say hi' }}</a>
         </li>
@@ -222,7 +222,7 @@
       <ul class="sf-list sf-home-cards">
         @for (friend of quiet(); track friend.id) {
           <li class="sf-list-item">
-            <app-friend-avatar [friend]="friend" [seat]="friend.seat ?? 1" [small]="true" [size]="36" />
+            <app-friend-avatar [friend]="friend" [small]="true" [size]="36" />
             <span class="sf-list-text">{{ quietText(friend) }}</span>
             <a [routerLink]="['/friends', friend.id]" class="btn btn-outline-primary btn-sm">{{ t('notifications.sayHi') || 'Say hi' }}</a>
           </li>

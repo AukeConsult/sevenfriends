@@ -3,7 +3,7 @@ import { FriendPictureService } from './friend-picture.service';
 import { FriendsService } from './friends.service';
 import { MyAvatarService } from './my-avatar.service';
 
-/** The picture of a person in a group: mine, else the picture (or seat icon) of my friend; null = the initials are shown (not my friend, or gone). */
+/** The picture of a person in a group: mine, else the picture or icon of my friend; null = the initials are shown (not my friend, or gone). */
 @Injectable({ providedIn: 'root' })
 export class MemberPictureService {
   private readonly myAvatar = inject(MyAvatarService);
@@ -14,7 +14,6 @@ export class MemberPictureService {
     if (member.you) return this.myAvatar.src();
     const friend = this.friends.friends().find((x) => x.id === member.friendId);
     if (!friend) return null;
-    const seat = friend.seat ?? this.friends.awake().findIndex((x) => x.id === friend.id) + 1; // the seat itself, as on Home
-    return this.pictures.src(friend.id, friend.pictureId ?? friend.pictureAt) ?? `icons/friends/friend${friend.icon ?? (seat || 1)}.svg`;
+    return this.pictures.src(friend.id, friend.pictureId ?? friend.pictureAt) ?? `icons/friends/friend${friend.icon ?? 1}.svg`;
   }
 }

@@ -4,7 +4,7 @@
     <span class="sf-seat">
       @if (ctx.friend(); as f) {
         <button type="button" class="sf-name-btn" (click)="ctx.showProfile()" [attr.aria-label]="(t('friendPage.showTheProfileOf', { fName: f.name }) || 'Show the profile of {{ fName }}' + f.name)">
-          <app-friend-avatar [friend]="f" [seat]="ctx.seat() || 1" [small]="true" [size]="30" />
+          <app-friend-avatar [friend]="f" [small]="true" [size]="30" />
         </button>
         @if (!f.group) { <span class="sf-dot" [class]="'sf-dot-' + f.presence" [title]="presenceLabel(f.presence)" role="img" [attr.aria-label]="presenceLabel(f.presence)"></span> }
         @if (f.mood; as mood) {
