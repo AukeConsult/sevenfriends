@@ -13,6 +13,7 @@ import android.provider.Settings;
 import android.text.format.DateFormat;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -61,6 +62,28 @@ final class NativeCheck {
         NotificationManager nm = activity.getSystemService(NotificationManager.class);
         boolean allowed = nm != null && nm.areNotificationsEnabled();
 
+        // the main switch, first of all: "Notify this app". It is set here, so it does not have to be set on the Settings page. The page registers or forgets this phone.
+        LinearLayout deviceCard = card(activity, activity.getString(R.string.check_notify_app));
+        LinearLayout deviceRow = new LinearLayout(activity);
+        deviceRow.setOrientation(LinearLayout.HORIZONTAL);
+        deviceRow.setGravity(Gravity.CENTER_VERTICAL);
+        TextView deviceValue = row(activity, deviceRow, "", "…", GRAY);
+        ((ViewGroup) deviceValue.getParent()).getChildAt(0).setVisibility(View.GONE); // the card heading already says what it is
+        deviceValue.setGravity(Gravity.START);
+        deviceValue.setTextSize(16);
+        ((View) deviceValue.getParent()).setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
+        Button deviceButton = new Button(activity);
+        deviceButton.setAllCaps(false);
+        deviceButton.setTextSize(12);
+        deviceButton.setMinHeight(0);
+        deviceButton.setMinimumHeight(0);
+        deviceButton.setVisibility(View.GONE);
+        deviceRow.addView(deviceButton, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, (int) (36 * density)));
+        deviceCard.addView(deviceRow);
+        TextView deviceNote = note(activity, activity.getString(R.string.check_registered_note));
+        deviceCard.addView(deviceNote);
+        form.addView(deviceCard);
+
         // at the top: Android's own page, where a kind is switched on or off and its sound is chosen
         Button setInAndroid = new Button(activity);
         setInAndroid.setText(R.string.check_set_in_android);
@@ -91,22 +114,6 @@ final class NativeCheck {
         bar.setMax(100);
         bar.setProgress(volume);
         phone.addView(bar, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, (int) (8 * density)));
-        // "Notify this app": set here, so it does not have to be set on the Settings page. The page registers or forgets this phone.
-        LinearLayout deviceRow = new LinearLayout(activity);
-        deviceRow.setOrientation(LinearLayout.HORIZONTAL);
-        deviceRow.setGravity(Gravity.CENTER_VERTICAL);
-        TextView deviceValue = row(activity, deviceRow, activity.getString(R.string.check_notify_app), "…", GRAY);
-        ((View) deviceValue.getParent()).setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
-        Button deviceButton = new Button(activity);
-        deviceButton.setAllCaps(false);
-        deviceButton.setTextSize(12);
-        deviceButton.setMinHeight(0);
-        deviceButton.setMinimumHeight(0);
-        deviceButton.setVisibility(View.GONE);
-        deviceRow.addView(deviceButton, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, (int) (36 * density)));
-        phone.addView(deviceRow);
-        TextView deviceNote = note(activity, activity.getString(R.string.check_registered_note));
-        phone.addView(deviceNote);
         // hide the text of a message on the lock screen: stored on the account by the page
         final boolean[] setting = {false}; // the switch is being set from the page's answer: not a change of the person
         SwitchCompat hide = new SwitchCompat(activity);

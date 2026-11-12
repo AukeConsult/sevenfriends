@@ -135,7 +135,6 @@ function read(): UiPreferences {
     if (raw === null) {
       return {
         ...DEFAULTS,
-        
         micRaw: localStorage.getItem(OLD_MIC_RAW) === '1',
       };
     }
