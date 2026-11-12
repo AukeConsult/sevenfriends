@@ -1,9 +1,7 @@
 <ng-container *transloco="let t">
 <main class="sf-viewer">
   @if (file(); as shown) {
-    @if (isAudio(shown)) {
-      <audio [src]="shown.url" controls autoplay [attr.aria-label]="shown.name ?? (t('mediaViewer.audio') || 'Audio')"></audio>
-    } @else if (isVideo(shown)) {
+    @if (isVideo(shown)) {
       <video [src]="shown.url" controls autoplay playsinline [attr.aria-label]="shown.name ?? (t('mediaViewer.video') || 'Video')"></video>
     } @else {
       <div class="sf-viewer-pic" [class.sf-viewer-full]="full()">

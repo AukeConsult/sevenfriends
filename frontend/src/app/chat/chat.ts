@@ -19,7 +19,6 @@ import { AuthService } from '../core/auth.service';
 import { NoticeClearService } from '../core/notice-clear.service';
 import { ChatService } from '../core/chat.service';
 import { MyAvatarService } from '../core/my-avatar.service';
-import { MediaService } from '../core/media.service';
 import { LiveChanges } from '../core/live-changes';
 import { UiPreferencesService } from '../core/ui-preferences';
 import { FriendsService } from '../core/friends.service';
@@ -45,7 +44,6 @@ export class Chat {
   private readonly safebox = inject(SafeboxService);
   private readonly prefs = inject(UiPreferencesService);
   private readonly live = inject(LiveChanges);
-  private readonly mediaService = inject(MediaService);
   private readonly realtime = inject(RealtimeService);
   private readonly friendsService = inject(FriendsService);
   private readonly router = inject(Router);
@@ -333,21 +331,6 @@ export class Chat {
     }
     if (last < text.length) result.push({ text: text.slice(last), url: null });
     return result;
-  }
-
-  /** Saves the image, video or voice message of a message on this device (works for my own and for the friend's). */
-  protected async download(media: NonNullable<ChatMessage['media']>): Promise<void> {
-    try {
-      const file = await this.mediaService.object(media.ownerId, media.objectId);
-      const name = file.name || 'file';
-      const extension = file.type.split('/')[1]?.split(';')[0].replace('jpeg', 'jpg').replace('quicktime', 'mov');
-      const link = document.createElement('a');
-      link.href = file.url;
-      link.download = /\.[A-Za-z0-9]{2,5}$/.test(name) || !extension ? name : `${name}.${extension}`;
-      link.click();
-    } catch (err: any) {
-      this.error.set(err.message ?? tr('chat.couldNotDownloadThe', 'Could not download the file'));
-    }
   }
 
   /** A tap on a message (mine or the friend's) shows its time and its buttons; a tap on a link, a button or a player inside it does not. */

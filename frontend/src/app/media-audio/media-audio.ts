@@ -1,14 +1,12 @@
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { Component, inject, input, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { formatBytes } from '../core/image';
 import { MediaService } from '../core/media.service';
 import { MediaRef } from '../models';
 
 /** An audio message: a play button (with the length and size); the audio is read from the server (`getObject`) only when it is played. */
 @Component({
   selector: 'app-media-audio',
-  imports: [RouterLink, TranslocoDirective],
+  imports: [TranslocoDirective],
   templateUrl: './media-audio.html',
   providers: [provideTranslocoScope('mediaAudio')],
 })
@@ -16,8 +14,6 @@ export class MediaAudio {
   private readonly service = inject(MediaService);
 
   readonly media = input.required<MediaRef>();
-  /** the friendship of the message: the full-size page needs it to rename the file */
-  readonly friendId = input<string | null>(null);
   protected readonly src = signal<string | null>(null);
   protected readonly loading = signal(false);
   protected readonly failed = signal(false);
@@ -36,10 +32,12 @@ export class MediaAudio {
     }
   }
 
+  /** only the length of the message (nobody cares about its size) */
   protected info(): string {
-    const { durationMs, bytes } = this.media();
-    const seconds = Math.round((durationMs ?? 0) / 1000);
-    return `${durationMs ? `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')} · ` : ''}${formatBytes(bytes)}`;
+    const { durationMs } = this.media();
+    if (!durationMs) return '';
+    const seconds = Math.round(durationMs / 1000);
+    return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
   }
 
   protected playbackFailed(): void {

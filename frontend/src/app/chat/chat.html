@@ -115,7 +115,7 @@
           @if (message.media; as media) {
             <!-- an image opens at once when it is tapped; Edit / Delete of my own message are under its time -->
             @if (media.kind === 'audio') {
-              <app-media-audio [media]="media" [friendId]="friendId" />
+              <app-media-audio [media]="media" />
             } @else if (!pictureHidden().has(message.id)) {
               @if (media.kind === 'video') {
                 <app-media-video [media]="media" [friendId]="friendId" />
@@ -153,9 +153,8 @@
         <div class="sf-msg-actions-row">
         @if (!message.mine && message.media; as media) {
           <!-- the friend's image, video or voice message: open and download it (shown after the three dots, or while it is hidden) -->
-          @if (selected() === message.id || moving() === message.id || pictureHidden().has(message.id)) {
+          @if (media.kind !== 'audio' && (selected() === message.id || moving() === message.id || pictureHidden().has(message.id))) {
           <div class="sf-msg-actions">
-            @if (media.kind !== 'audio') {
               @if (pictureHidden().has(message.id)) { @if (message.time) { <small class="sf-hint">{{ message.time | appDate: 'd MMM, HH:mm' }}@if (message.edited) { {{ t('chat.edited') || '· edited' }} } @if (message.enc?.media && message.locked === 'open') { <svg class="sf-lock-mark" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Locked"><title>Locked: only you and your friend can open this</title><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg> }@if (doomed().has(message.id)) { · <strong class="text-danger">{{ t('chat.willBeDeleted') || 'will be deleted' }}</strong> } ·</small> } <span class="sf-hint">{{ t('chat.pictureHidden', { Picture: media.kind === 'video' ? '🎞️ Video' : '🖼️ Picture' }) || (media.kind === 'video' ? '🎞️ Video' : '🖼️ Picture') + ' hidden' }}</span> }
               <button type="button" class="btn btn-light btn-sm" (click)="togglePicture(message.id)">{{ pictureHidden().has(message.id) ? 'Show' : 'Hide' }}</button>
               @if (moving() === message.id) {
@@ -165,9 +164,7 @@
               } @else {
                 @if (!message.enc?.media) { <button type="button" class="btn btn-light btn-sm" (click)="moving.set(message.id)">{{ t('chat.toTheSafebox') || 'To the safebox' }}</button> }
               }
-            }
-            @if (media.kind !== 'image') { <a [routerLink]="['/media', media.ownerId, media.objectId]" [queryParams]="{ f: friendId }" class="btn btn-light btn-sm">{{ t('chat.open') || 'Open' }}</a> }
-            @if (media.kind === 'audio') { <button type="button" class="btn btn-light btn-sm" (click)="download(media)">{{ t('chat.download') || 'Download' }}</button> }
+            @if (media.kind === 'video') { <a [routerLink]="['/media', media.ownerId, media.objectId]" [queryParams]="{ f: friendId }" class="btn btn-light btn-sm">{{ t('chat.open') || 'Open' }}</a> }
           </div>
           }
         }
@@ -195,8 +192,7 @@
             } @else {
               @if (message.media; as media) {
                 @if (media) {
-                  @if (media.kind !== 'image') { <a [routerLink]="['/media', media.ownerId, media.objectId]" [queryParams]="{ f: friendId }" class="btn btn-light btn-sm">{{ t('chat.open') || 'Open' }}</a> }
-                  @if (media.kind === 'audio') { <button type="button" class="btn btn-light btn-sm" (click)="download(media)">{{ t('chat.download') || 'Download' }}</button> }
+                  @if (media.kind === 'video') { <a [routerLink]="['/media', media.ownerId, media.objectId]" [queryParams]="{ f: friendId }" class="btn btn-light btn-sm">{{ t('chat.open') || 'Open' }}</a> }
                 }
               }
               @if (message.mine && !message.inBox && !message.media) { <button type="button" class="btn btn-light btn-sm" (click)="startEdit(message)">{{ t('chat.edit') || 'Edit' }}</button> }

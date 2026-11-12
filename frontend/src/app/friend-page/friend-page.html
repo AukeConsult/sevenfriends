@@ -25,7 +25,7 @@
     <div class="sf-bar-actions">
       <!-- the icons that switch what is under the header: sending one message, the messages, and the safebox -->
       <a [routerLink]="sendOver() ? null : ['/friends', ctx.friendId, 'send']" [attr.role]="sendOver() ? 'button' : null" [attr.tabindex]="sendOver() ? 0 : null" (keydown.enter)="sendOver() && toggleSendForm($event)" class="sf-tool-btn" [class.sf-current]="sendOver() ? ctx.feedSendOpen() : onSend() && ctx.sendFormOpen()" [attr.aria-pressed]="sendOver() ? ctx.feedSendOpen() : onSend() ? ctx.sendFormOpen() : null" (click)="toggleSendForm($event)" [attr.aria-expanded]="sendOver() ? ctx.feedSendOpen() : onSend() ? ctx.sendFormOpen() : null" [attr.aria-label]="t('friendPage.sendAMessage') || 'Send a message'" [attr.title]="t('friendPage.sendAMessage') || 'Send a message'">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /><path d="M12 7v6M9 10h6" /></svg>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22z" /><path d="M8 12h8M12 8v8" /></svg>
         <span class="sf-tool-label" aria-hidden="true">{{ t('friendPage.write') || 'Write' }}</span>
       </a>
       @if (!onFeed()) {
@@ -86,7 +86,7 @@
           }
           @if (!onSend()) {
           <a role="menuitem" class="sf-add-item" [routerLink]="['/friends', ctx.friendId, 'send']" (click)="ctx.moreOpen.set(false)">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /><path d="M12 7v6M9 10h6" /></svg>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22z" /><path d="M8 12h8M12 8v8" /></svg>
             <span>{{ t('friendPage.sendAMessage') || 'Send a message' }}</span>
           </a>
           }

@@ -50,7 +50,7 @@
         }
         @case ('audio') {
           @if (item()!.enc) {
-            @if (mediaUrl(); as url) { <audio [src]="url" controls></audio> } @else if (!failed()) { <span class="text-secondary">{{ t('safebox.common.opening') || 'Opening…' }}</span> }
+            @if (mediaUrl(); as url) { <audio [src]="url" controls controlsList="nodownload noplaybackrate"></audio> } @else if (!failed()) { <span class="text-secondary">{{ t('safebox.common.opening') || 'Opening…' }}</span> }
           } @else if (ref(); as media) { <app-media-audio [media]="media" /> }
         }
         @default {

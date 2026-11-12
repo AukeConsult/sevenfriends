@@ -48,7 +48,7 @@
       } @else if (kind === 'video') {
         <video class="sf-attach-preview" [src]="src" controls playsinline [attr.aria-label]="t('addMedia.theVideoYouAre') || 'The video you are about to send'"></video>
       } @else {
-        <audio class="sf-attach-audio" [src]="src" controls [attr.aria-label]="t('addMedia.theVoiceMessageYou') || 'The voice message you are about to send'"></audio>
+        <audio class="sf-attach-audio" [src]="src" controls controlsList="nodownload noplaybackrate" [attr.aria-label]="t('addMedia.theVoiceMessageYou') || 'The voice message you are about to send'"></audio>
       }
     }
     @if (canRotate()) {
