@@ -79,7 +79,11 @@ export interface FriendInvite {
 }
 
 /** What is sent when adding a friend. */
-export type NewFriend = Pick<Friend, "name" | "email" | "phone"> & { message?: string | null };
+export type NewFriend = Pick<Friend, "name" | "email" | "phone"> & {
+  message?: string | null;
+  /** true = save the request only when somebody with this email or phone number is on the app (nobody: refused with 422, nothing is saved) */
+  onlyIfOnApp?: boolean;
+};
 
 /** A request from someone who added me. */
 export interface FriendRequest {

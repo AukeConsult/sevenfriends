@@ -1,63 +1,35 @@
 <ng-container *transloco="let t">
 <app-page-bar [title]="t('addFriend.addAOne', { one: w.one }) || 'Add a ' + w.one" [backButton]="embedded()" [backTo]="embedded() ? null : '/'" [backLabel]="t('addFriend.backToHome') || 'Back to home'" (backClick)="closed.emit()" />
 
-@if (result(); as done) {
-  <!-- the person has no account yet: the request is saved, and this is the link to send -->
-  <main class="sf-narrow">
-    <div class="alert alert-success m-0" role="status">
-      <span [innerHTML]="t('addFriend.strongSavedStrongTo', { to: done.to, app: w.app }) || '<strong>Saved.</strong> {{ to }} is not on {{ app }} yet. Your request waits for them.'"></span>
-    </div>
-    <h2 class="sf-section">{{ t('addFriend.sendThemThisLink') || 'Send them this link' }}</h2>
-    <div class="card">
-      <div class="card-body vstack gap-2">
-        @if (!invite.canShare) {
-          <input type="text" class="form-control" [value]="done.link" readonly [attr.aria-label]="t('addFriend.theLinkToSend') || 'The link to send'" (focus)="$any($event.target).select()" />
-        }
-        <div class="d-flex flex-wrap gap-2">
-          <button type="button" class="btn btn-primary" (click)="invite.share(done.link)">{{ t('addFriend.shareLink') || 'Share link' }}</button>
-          @if (!invite.canShare) { <button type="button" class="btn btn-light" (click)="invite.copy(done.link)">{{ t('addFriend.copyLink') || 'Copy link' }}</button> }
-        </div>
-        @if (invite.note(); as note) { <p class="small m-0" role="status">{{ note }}</p> }
-      </div>
-    </div>
-    <div class="sf-actions">
-      @if (embedded()) { <button type="button" class="btn btn-light flex-fill" (click)="closed.emit()">{{ t('addFriend.done') || 'Done' }}</button> }
-      @else { <a [routerLink]="backTo" [queryParams]="backParams" class="btn btn-light flex-fill">{{ t('addFriend.done') || 'Done' }}</a> }
-      <button type="button" class="btn btn-light flex-fill" (click)="another()">{{ t('addFriend.addAnother') || 'Add another' }}</button>
-    </div>
-  </main>
-} @else {
   <form class="sf-narrow" (submit)="$event.preventDefault(); mode() === 'group' ? makeGroup() : send()" [attr.aria-label]="(t('addFriend.addAOne', { one: w.one }) || 'Add a ' + w.one)">
     <!-- a person, or a group (a group sits in a seat like a friend; the people are added to it afterwards) -->
     <div class="d-flex gap-2" role="group" [attr.aria-label]="t('addFriend.whatToAdd') || 'What do you want to add?'">
       <button type="button" class="btn btn-sm flex-fill" [class.btn-primary]="mode() === 'person'" [class.btn-light]="mode() !== 'person'" [attr.aria-pressed]="mode() === 'person'" (click)="mode.set('person'); error.set(null)">{{ t('addFriend.aPerson') || 'A person' }}</button>
-      <button type="button" class="btn btn-sm flex-fill" [class.btn-primary]="mode() === 'group'" [class.btn-light]="mode() !== 'group'" [attr.aria-pressed]="mode() === 'group'" (click)="mode.set('group'); error.set(null)">{{ t('addFriend.aGroup') || 'A group' }}</button>
+      <button type="button" class="btn btn-sm flex-fill" [class.btn-primary]="mode() === 'group'" [class.btn-light]="mode() !== 'group'" [attr.aria-pressed]="mode() === 'group'" (click)="mode.set('group'); error.set(null)">{{ t('addFriend.aGroup') || 'A new group' }}</button>
     </div>
     @if (mode() === 'group') {
-      <p class="small text-secondary m-0">{{ t('addFriend.aGroupIsOne') || 'A group is one conversation and one safebox for several people. It takes a seat, like a friend.' }}</p>
+      <p class="small text-secondary m-0">{{ t('addFriend.aGroupIsOne') || 'This makes a new group: one conversation and one safebox for several people. It takes a seat, like a friend.' }}</p>
+      <p class="small text-secondary m-0">{{ t('addFriend.joinAGroup') || 'To join a group that already exists, a member of that group has to invite you.' }}</p>
       <label class="sf-field"><span class="form-label small text-secondary m-0">{{ t('addFriend.nameOfTheGroup') || 'Name of the group' }}</span>
         <input appClear type="text" class="form-control" [value]="groupName()" (input)="groupName.set($any($event.target).value)" autocomplete="off" maxlength="100" />
       </label>
     } @else {
-    <p class="small text-secondary m-0">{{ t('addFriend.theirEmailOrPhone') || 'Their email or phone number is how they are found.' }}</p>
+    <h2 class="sf-section m-0">{{ t('addFriend.alreadyOnApp', { app: w.app }) || 'Already on ' + w.app + '?' }}</h2>
+    <label class="sf-field"><span class="form-label small text-secondary m-0">{{ t('addFriend.emailOrPhone') || 'Email or phone' }}</span>
+      <input appClear type="text" class="form-control" [value]="query()" (input)="query.set($any($event.target).value); notFound.set(false)"
+             inputmode="email" autocomplete="off" autocapitalize="off" spellcheck="false" />
+    </label>
+    @if (notFound()) {
+      <div class="alert alert-info m-0" role="status">{{ t('addFriend.nobodyWithThatIs', { app: w.app }) || 'Nobody with that email or phone number is on ' + w.app + ' yet. Send them an invite link below.' }}</div>
+    }
 
-    <label class="sf-field"><span class="form-label small text-secondary m-0">{{ t('addFriend.email') || 'Email' }}</span>
-      <input appClear type="email" class="form-control" [value]="draft().email" (input)="setField('email', $any($event.target).value)"
-             inputmode="email" autocomplete="off" />
-    </label>
-    <label class="sf-field"><span class="form-label small text-secondary m-0">{{ t('addFriend.phone') || 'Phone' }}</span>
-      <input appClear type="tel" class="form-control" [value]="draft().phone" (input)="setField('phone', $any($event.target).value)"
-             inputmode="tel" autocomplete="off" />
-    </label>
-    <label class="sf-field"><span class="form-label small text-secondary m-0">{{ t('addFriend.nameOptional') || 'Name (optional)' }}</span>
-      <input appClear type="text" class="form-control" [value]="draft().name" (input)="setField('name', $any($event.target).value)"
-             autocomplete="off" maxlength="100" />
-    </label>
-    <label class="sf-field"><span class="form-label small text-secondary m-0">{{ t('addFriend.messageOptional') || 'Message (optional)' }}</span>
-      <textarea appClear class="form-control" rows="2" maxlength="500" [value]="draft().message"
-                (input)="setField('message', $any($event.target).value)"
-                [placeholder]="w.hello"></textarea>
-    </label>
+    <h2 class="sf-section m-0">{{ t('addFriend.notOnAppYet', { app: w.app }) || 'Not on ' + w.app + ' yet?' }}</h2>
+    <p class="small text-secondary m-0">{{ t('addFriend.sendALinkIn') || 'Send a link in a text message, WhatsApp, social media or anywhere else. Nothing is saved until they sign up with it.' }}</p>
+    <div class="d-flex flex-wrap gap-2">
+      <button type="button" class="btn btn-outline-primary btn-sm" (click)="shareLink()">{{ t('addFriend.shareInviteLink') || 'Share invite link' }}</button>
+      @if (!invite.canShare) { <button type="button" class="btn btn-light btn-sm" (click)="copyLink()">{{ t('addFriend.copyLink') || 'Copy link' }}</button> }
+    </div>
+    @if (invite.note(); as note) { <p class="small m-0" role="status">{{ note }}</p> }
     }
 
     @if (error()) {
@@ -68,9 +40,8 @@
       @if (embedded()) { <button type="button" class="btn btn-light flex-fill" (click)="closed.emit()" [disabled]="sending()">{{ t('addFriend.cancel') || 'Cancel' }}</button> }
       @else { <a [routerLink]="backTo" [queryParams]="backParams" class="btn btn-light flex-fill" [class.disabled]="sending()">{{ t('addFriend.cancel') || 'Cancel' }}</a> }
       <button type="submit" class="btn btn-primary flex-fill" [disabled]="sending()">
-        {{ sending() ? (t('addFriend.sending') || 'Sending…') : (mode() === 'group' ? (t('addFriend.makeTheGroup') || 'Make the group') : (t('addFriend.addOne', { one: w.one }) || 'Add ' + w.one)) }}
+        {{ sending() ? (t('addFriend.sending') || 'Sending…') : (mode() === 'group' ? (t('addFriend.makeTheGroup') || 'Create the new group') : (t('addFriend.findAndSend') || 'Find and send request')) }}
       </button>
     </div>
   </form>
-}
 </ng-container>

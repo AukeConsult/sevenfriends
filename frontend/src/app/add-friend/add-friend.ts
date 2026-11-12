@@ -8,14 +8,12 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../core/auth.service';
 import { FriendsService } from '../core/friends.service';
 import { InviteLinkService } from '../core/invite-link.service';
-import { FriendDraft } from '../models';
+import { ApiError } from '../core/api.service';
 import { PageBar } from '../page-bar/page-bar';
 
-const emptyDraft = (): FriendDraft => ({ name: '', email: '', phone: '', message: '' });
-
 /**
- * A full page to add a friend: an email or a phone number. Somebody who has an account gets the request at once; for somebody who has
- * none the request is saved anyway (it waits for them), and the page shows the link to send them (it opens the welcome page).
+ * A full page to add a friend. Two ways, both on the page from the start: find somebody who is on the app by an email or a phone number (the request is sent at
+ * once; when nobody is found nothing is saved), or send a link to somebody who is not (nothing is saved until they sign up with it).
  */
 @Component({
   selector: 'app-add-friend',
@@ -41,16 +39,16 @@ export class AddFriend {
 
   /** the link to send: the welcome page of the circle with my invite code (never my email address or phone number) */
   private readonly link = computed(() => this.invite.link() ?? circleLink(this.circleType, ''));
-  /** set when the person has no account yet: who it was for, and the link to send */
-  protected readonly result = signal<{ to: string; link: string } | null>(null);
-
   /** what is made: a person (an email or a phone number) or a group (a name; the people come in later) */
   protected readonly mode = signal<'person' | 'group'>('person');
   protected readonly groupName = signal('');
 
-  protected readonly draft = signal<FriendDraft>(emptyDraft());
+  /** what was typed: an email or a phone number */
+  protected readonly query = signal('');
   protected readonly sending = signal(false);
   protected readonly error = signal<string | null>(null);
+  /** nobody with what was typed is on the app: the invite link under it is what to use */
+  protected readonly notFound = signal(false);
 
   /** My own email or phone number (the same rule as on the server, which has the last word). */
   private isMe(email: string, phone: string): boolean {
@@ -62,14 +60,16 @@ export class AddFriend {
     );
   }
 
-  /** "Add another" after a saved invitation. */
-  protected another(): void {
-    this.result.set(null);
-    this.draft.set(emptyDraft());
+  constructor() {
+    void this.invite.load(); // the link is ready when it is tapped
   }
 
-  protected setField(field: keyof FriendDraft, value: string): void {
-    this.draft.update((d) => ({ ...d, [field]: value }));
+  protected shareLink(): void {
+    void this.invite.share(this.link());
+  }
+
+  protected copyLink(): void {
+    void this.invite.copy(this.link());
   }
 
   /** Make the group: it is a friend entry of mine, and its conversation opens. */
@@ -93,17 +93,20 @@ export class AddFriend {
     }
   }
 
+  /** Find somebody on the app by what was typed and send the request. Nobody found: nothing is saved. */
   protected async send(): Promise<void> {
-    const d = this.draft();
+    const value = this.query().trim();
     if (this.sending()) return;
+    this.notFound.set(false);
 
-    const hasContact = [d.email, d.phone].some((v) => v.trim());
-    if (!hasContact) {
+    if (!value) {
       this.error.set(tr('addFriend.addAnEmailOr', 'Add an email or a phone number, so your {{ one }} can be found.', { one: this.w.one }));
       return;
     }
+    const email = value.includes('@') ? value : '';
+    const phone = value.includes('@') ? '' : value;
 
-    if (this.isMe(d.email, d.phone)) {
+    if (this.isMe(email, phone)) {
       this.error.set(tr('addFriend.thatIsYouAdd', 'That is you. Add the email or phone number of a {{ one }}.', { one: this.w.one })); // the server refuses it too
       return;
     }
@@ -111,7 +114,7 @@ export class AddFriend {
     // already on this list: say so, and send nothing (the server refuses it too)
     const digits = (v: string | null | undefined) => (v ?? '').replace(/\D/g, '').slice(-8);
     const same = this.friends.friends().find(
-      (f) => f.status !== 'rejected' && ((d.email.trim() && f.email?.toLowerCase() === d.email.trim().toLowerCase()) || (digits(d.phone).length >= 8 && digits(f.phone) === digits(d.phone))),
+      (f) => f.status !== 'rejected' && ((email && f.email?.toLowerCase() === email.toLowerCase()) || (digits(phone).length >= 8 && digits(f.phone) === digits(phone))),
     );
     if (same) {
       this.error.set(same.status === 'confirmed' ? tr('addFriend.isAlreadyYour', '{{ sameName }} is already your {{ one }}.', { sameName: same.name, one: this.w.one }) : tr('addFriend.youHaveAlreadyAdded', 'You have already added {{ sameName }}: the request waits for them.', { sameName: same.name }));
@@ -121,21 +124,12 @@ export class AddFriend {
     this.sending.set(true);
     this.error.set(null);
     try {
-      const created = await this.friends.add({
-        name: d.name,
-        email: d.email || null,
-        phone: d.phone || null,
-        message: d.message.trim() || null,
-      });
-      if (created.invited || created.onApp) {
-        if (this.embedded()) this.closed.emit(); // has an account: the request is with them already
-        else await this.router.navigate([this.backTo], { queryParams: this.backParams });
-      } else {
-        await this.invite.load();
-        this.result.set({ to: created.name || created.email || created.phone || tr('addFriend.thisPerson', 'This person'), link: this.link() });
-      }
+      await this.friends.add({ name: '', email: email || null, phone: phone || null, message: null, onlyIfOnApp: true });
+      if (this.embedded()) this.closed.emit(); // the request is with them
+      else await this.router.navigate([this.backTo], { queryParams: this.backParams });
     } catch (err: any) {
-      this.error.set(err.message ?? tr('addFriend.sendFailed', 'Could not send the request.'));
+      if (err instanceof ApiError && err.status === 422) this.notFound.set(true);
+      else this.error.set(err.message ?? tr('addFriend.sendFailed', 'Could not send the request.'));
     } finally {
       this.sending.set(false);
     }

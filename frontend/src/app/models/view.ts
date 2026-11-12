@@ -8,8 +8,6 @@ export interface FriendSlot {
   friend: Friend | null;
 }
 
-/** The "add a friend" form. */
-export type FriendDraft = { name: string; email: string; phone: string; message: string };
 
 /** The profile form: name, phone, country and language (autosaved). */
 export type ProfileDraft = { name: string; phone: string; country: string; language: string; pronoun: string };

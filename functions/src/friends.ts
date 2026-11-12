@@ -35,6 +35,18 @@ import {
   text,
 } from "./validation";
 
+const SEARCHES_PER_HOUR = 30;
+const searched = new Map<string, number[]>(); // user id -> times of the last searches (in this server instance)
+
+/** True when this person searched for people too often in the last hour (finding out who has an account must not be a free tool). */
+function tooManySearches(uid: string, now = Date.now()): boolean {
+  const recent = (searched.get(uid) ?? []).filter((t) => now - t < 3_600_000);
+  recent.push(now);
+  searched.set(uid, recent);
+  if (searched.size > 5000) for (const [id, times] of searched) if (!times.some((t) => now - t < 3_600_000)) searched.delete(id);
+  return recent.length > SEARCHES_PER_HOUR;
+}
+
 function parseFriend(body: Record<string, unknown>): { data?: NewFriend; nameGiven?: boolean; error?: string } {
   const givenName = text(body.name, 100);
   const email = text(body.email, 200)?.toLowerCase() ?? null;
@@ -223,6 +235,11 @@ friendsRouter.post(
       res.status(400).json({ error: "That is you. Add the email or phone number of a friend." });
       return;
     }
+    const onlyIfOnApp = req.body?.onlyIfOnApp === true;
+    if (onlyIfOnApp && tooManySearches(token.uid)) {
+      res.status(429).json({ error: "You searched many times in a short while. Wait a little and try again." });
+      return;
+    }
     // Does the friend already have an account? Then their frontend gets a ping (a signal) to run its search.
     const accounts = await findAccounts(data.email, keys.phoneKey, (res.locals.token as DecodedIdToken).uid);
 
@@ -238,6 +255,10 @@ friendsRouter.post(
       res.status(409).json({
         error: already.status === "confirmed" ? `${who} is already your ${ONE_PERSON[(res.locals.circleRef as DocumentReference).id] ?? "friend"}.` : `You have already added ${who}: the request waits for them.`,
       });
+      return;
+    }
+    if (onlyIfOnApp && !accounts.length) {
+      res.status(422).json({ error: "Nobody with that email or phone number is on the app yet.", notOnApp: true }); // nothing is saved for somebody who is not here: they are invited with a link
       return;
     }
     const ref = col.doc();
