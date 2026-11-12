@@ -52,6 +52,8 @@ export interface UiPreferences {
   boxKindLayout: { main: string[]; more: string[] } | null;
   /** the "Hidden types" of the New frame of the safebox are showing (open) or folded away */
   boxHiddenOpen: boolean;
+  /** a friend has been moved on the Home seats once: the "press and hold" tip is not shown any more */
+  seatMoved: boolean;
   /** the clean-up frame of a conversation: whose messages and how old they must be are remembered (the words to look for are not) */
   cleanupWhose: 'mine' | 'both';
   cleanupDays: number | null;
@@ -94,7 +96,7 @@ export const PHONE_TEXT_SCALES: Record<UiPreferences['textSize'], number> = { ti
 const kindIds = (v: unknown): string[] => (Array.isArray(v) ? v.filter((k: unknown): k is string => typeof k === 'string') : []);
 const layoutOf = (v: any): { main: string[]; more: string[] } | null => (v && typeof v === 'object' ? { main: kindIds(v.main), more: kindIds(v.more) } : null);
 
-export const DEFAULTS: UiPreferences = { boxTellNew: true, theme: 'white', textSize: 'normal', settingsTab: 'profile', emojiTab: 'People', chatOrder: 'oldest', enterSends: true, sleepList: true, quickMessages: [], feedIcons: true, language: '', setup: 'new', lastPage: null, micRaw: false, pendingFriend: null, welcomeUntil: null, boxPlain: false, boxView: 'list', boxKindLayout: null, boxHiddenOpen: false, cleanupWhose: 'mine', cleanupDays: 30, friendQuick: {} };
+export const DEFAULTS: UiPreferences = { boxTellNew: true, theme: 'white', textSize: 'normal', settingsTab: 'profile', emojiTab: 'People', chatOrder: 'oldest', enterSends: true, sleepList: true, quickMessages: [], feedIcons: true, language: '', setup: 'new', lastPage: null, micRaw: false, pendingFriend: null, welcomeUntil: null, boxPlain: false, boxView: 'list', boxKindLayout: null, boxHiddenOpen: false, cleanupWhose: 'mine', cleanupDays: 30, friendQuick: {}, seatMoved: false };
 
 /** The ready-made messages as stored: only texts, trimmed, not empty, not too long, not too many. */
 export function quickOf(value: unknown): string[] {
@@ -159,6 +161,7 @@ function read(): UiPreferences {
       boxView: saved.boxView === 'icons' ? 'icons' : 'list',
       boxKindLayout: layoutOf(saved.boxKindLayout),
       boxHiddenOpen: saved.boxHiddenOpen === true,
+      seatMoved: saved.seatMoved === true,
       cleanupWhose: saved.cleanupWhose === 'both' ? 'both' : 'mine',
       friendQuick: friendQuickOf(saved.friendQuick),
       cleanupDays: saved.cleanupDays === null || (typeof saved.cleanupDays === 'number' && Number.isInteger(saved.cleanupDays) && saved.cleanupDays > 0) ? saved.cleanupDays : 30,

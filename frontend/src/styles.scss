@@ -612,6 +612,7 @@ router-outlet + * { display: block; min-height: 100dvh; }
 // ---- Bar extras (message feed header) ----
 .sf-bar-text { display: flex; flex-direction: column; min-width: 0; }
 .sf-bar .sf-seat + .sf-bar-text { margin-inline-start: 0.75rem; } // room between the picture and the name in a conversation header
+.sf-friend-page .sf-bar > :first-child:not(.sf-back) { margin-inline-start: 0.375rem; } // the header of a friend has no back arrow: the picture sits a little closer to the left edge
 .sf-title-dot { display: inline-block; width: 0.75rem; height: 0.75rem; margin-inline-end: 0.5rem; border-radius: 50%; background: var(--sf-red); vertical-align: middle; } // a seat dot to the left of a title
 // The save status of the Profile sits at the right of the title and takes no room of its own
 // a card without its frame: the content sits straight on the page
@@ -690,7 +691,6 @@ router-outlet + * { display: block; min-height: 100dvh; }
 .sf-bubble .sf-hint, .sf-bubble .text-secondary, .sf-bubble .text-muted, .sf-bubble small { opacity: 0.75; }
 .sf-bubble a { color: inherit; text-decoration: underline; overflow-wrap: anywhere; } // a link in a message: same colour as its text
 .sf-bubble a.btn { color: var(--sf-primary); text-decoration: none; } // a button in a message (Open the item) keeps its own dark text, not the colour of the bubble
-  iframe { width: 100%; height: min(16rem, 35dvh); border: 1px solid var(--sf-border); border-radius: var(--sf-radius); background: #fff; } }
 .sf-link-frame { width: 100%; display: flex; flex-direction: column; gap: 0.25rem; iframe { width: 100%; height: min(24rem, 60dvh); border: 1px solid var(--sf-border); border-radius: var(--sf-radius); background: #fff; } } // the page of a link, shown in the feed
 // ---- Images in messages ----
 .sf-message-wide { width: 94%; } // a message with the page of a link open takes the width of the feed: the page is shown wide, not as a narrow strip
@@ -1292,7 +1292,7 @@ nav.sf-tabs ~ * > app-page-bar { display: none !important; } // inside Settings 
 
 // ---- Home: the seven seats (round pictures in a row), arranging, the silent bucket ----
 .sf-hs { margin-bottom: 1rem; }
-.sf-hs-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 0.5rem; }
+.sf-hs-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 1.25rem; }
 .sf-hs-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.875rem 0.25rem; }
 .sf-hs-seat { min-width: 0; }
 .sf-hs-friend { display: flex; flex-direction: column; align-items: center; gap: 0.125rem; text-align: center; text-decoration: none; color: var(--sf-text); cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent;
@@ -1303,6 +1303,8 @@ nav.sf-tabs ~ * > app-page-bar { display: none !important; } // inside Settings 
   .sf-avatar { width: 100%; height: 100%; display: block; border-radius: 50%; background: var(--sf-card); }
   .sf-dot { inset-inline-end: 0; bottom: 0; width: 0.9rem; height: 0.9rem; } }
 .sf-hs-unread { position: absolute; inset-inline-end: -0.25rem; top: -0.25rem; min-width: 1.2rem; height: 1.2rem; padding: 0 0.3rem; border-radius: 0.6rem; background: var(--sf-primary); color: #fff; font-size: 0.75rem; font-weight: 700; line-height: 1.2rem; text-align: center; box-shadow: 0 0 0 2px var(--sf-surface, #fff); }
+.sf-hs-group { box-shadow: 0 0 0 3px var(--sf-bg), 0 0 0 5px color-mix(in srgb, var(--sf-text) 55%, var(--sf-bg)); } // a group: a second, wider circle round the picture; gap = page colour, line = the text colour toned towards it, so it shows in every theme
+.sf-hs-mood { position: absolute; inset-inline-start: -0.25rem; top: -0.25rem; width: 1.375rem; height: 1.375rem; border-radius: 50%; background: var(--sf-card); box-shadow: 0 0 0 2px var(--sf-card); } // the mood of a friend: a small face on the picture, top left (the new-message count is top right, the dot bottom right)
 .sf-hs-name { max-width: 100%; font-size: 0.8125rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sf-hs-sub { display: inline-flex; align-items: center; gap: 0.2rem; max-width: 100%; font-size: 0.6875rem; line-height: 1.2; color: var(--sf-muted); overflow: hidden; white-space: nowrap; img { flex: none; } }
 .sf-hs-free .sf-hs-ring { background: none; border: 2px dashed var(--sf-border); padding: 0; display: grid; place-items: center; color: var(--sf-muted); }
@@ -1316,7 +1318,7 @@ button.sf-hs-free { padding: 0; border: 0; background: none; font: inherit; widt
 .sf-hs-ring::after { content: ''; position: absolute; inset: -5px; border-radius: 50%; pointer-events: none; opacity: 0;
   background: conic-gradient(var(--sf-primary) var(--sf-hs-a), transparent 0);
   -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px)); mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px)); }
-.sf-hs-press .sf-hs-ring::after { opacity: 1; animation: sf-hs-turn 450ms linear forwards; }
+.sf-hs-press .sf-hs-ring::after { opacity: 1; animation: sf-hs-turn 150ms linear 100ms forwards; /* total 250ms = HOLD_MS; the first 100ms nothing shows, so a tap does not flash the ring */ }
 .sf-hs-lift .sf-hs-ring::after { opacity: 1; --sf-hs-a: 360deg; }
 .sf-hs-lift { cursor: grabbing; z-index: 2; touch-action: none; filter: drop-shadow(0 6px 10px rgb(0 0 0 / 0.25)); }
 @keyframes sf-hs-turn { from { --sf-hs-a: 0deg; } to { --sf-hs-a: 360deg; } }

@@ -138,8 +138,6 @@ export class Safebox {
     });
     if (!this.friends.friends().length) void this.friends.load().catch(() => undefined); // for the friend's name
     void this.reload();
-    // the menu of the header: Add files opens the page to upload them
-    this.ctx.setPageTool({ label: tr('safebox.common.addFiles', 'Add files'), kind: 'files', run: () => void this.router.navigate(['/friends', this.friendId, 'safebox', 'new', 'file']) }, inject(DestroyRef));
   }
 
   // ---- the order of the items: hold an item (a card or a row) and drag it onto another one

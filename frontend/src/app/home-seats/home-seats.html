@@ -14,10 +14,13 @@
                role="button" tabindex="0" [attr.aria-label]="(t('homeSeats.openTheConversationWith', { friendName: friend.name }) || 'Open the conversation with ' + friend.name + '. Press and hold to move.')"
                (click)="open(friend)" (keydown.enter)="open(friend)" (keydown)="seatKey($event, slot.position)" (contextmenu)="$event.preventDefault()" (dragstart)="$event.preventDefault()"
                (pointerdown)="dragStart($event, slot.position)" (pointermove)="dragMove($event)" (pointerup)="dragEnd($event)" (pointercancel)="dragEnd($event, true)">
-            <span class="sf-hs-ring">
+            <span class="sf-hs-ring" [class.sf-hs-group]="friend.group">
               <app-friend-avatar [friend]="friend" [seat]="slot.position" [size]="56" />
               @if (friend.status === 'confirmed' && !friend.group) {
                 <span class="sf-dot" [class]="'sf-dot-' + friend.presence" [title]="presenceLabel(friend.presence)" role="img" [attr.aria-label]="presenceLabel(friend.presence)"></span>
+              }
+              @if (friend.status === 'confirmed' && !friend.group && friend.mood; as mood) {
+                <img class="sf-hs-mood" [src]="moodIcon(mood)" [alt]="moodLabel(mood)" [title]="moodLabel(mood)" width="20" height="20" />
               }
               @if (unread().get(friend.id); as count) {
                 <span class="sf-hs-unread" [attr.aria-label]="(t('homeSeats.countUnread', { count: count }) || count + ' unread')">{{ count }}</span>
@@ -27,19 +30,12 @@
             <span class="sf-hs-sub">
               @if (friend.status !== 'confirmed') {
                 {{ friend.waiting ? (t('homeSeats.waiting') || 'Waiting') : (t('homeSeats.pending') || 'Pending') }}
-              } @else if (friend.group) {
-                {{ (friend.members ?? 1) > 1 ? (t('homeSeats.groupCount', { count: friend.members }) || 'Group · ' + friend.members + ' people') : (t('homeSeats.groupOnlyYou') || 'Group · only you') }}
-              } @else if (friend.mood; as mood) {
-                <img [src]="moodIcon(mood)" alt="" width="14" height="14" />{{ moodLabel(mood) }}
-              } @else {
-                {{ presenceLabel(friend.presence) }}
               }
             </span>
           </div>
         } @else {
           <button type="button" class="sf-hs-friend sf-hs-free" [attr.aria-label]="(t('homeSeats.seatPositionIsFree', { position: slot.position, one: w.one }) || 'Seat ' + slot.position + ' is free: add a ' + w.one)" (click)="add.emit()">
             <span class="sf-hs-ring"><span class="sf-hs-plus" aria-hidden="true">+</span></span>
-            <span class="sf-hs-sub">{{ t('homeSeats.addAOne', { one: w.one }) || 'Add a ' + w.one }}</span>
           </button>
         }
       </li>
@@ -53,12 +49,14 @@
             @if (sleeping() > 0) { <span class="sf-hs-unread" aria-hidden="true">{{ sleeping() }}</span> }
           </span>
           <span class="sf-hs-name">{{ t('homeSeats.silent') || 'Sleep' }}</span>
-          <span class="sf-hs-sub">{{ dragging() ? (t('homeSeats.dropHere') || 'Drop here') : (t('homeSeats.sleepList') || 'Sleep list') }}</span>
+          @if (dragging()) { <span class="sf-hs-sub">{{ t('homeSeats.dropHere') || 'Drop here' }}</span> }
         </button>
       </li>
     }
   </ul>
+  @if (dragging() || !seatMoved()) {
   <p class="sf-hs-tip">{{ dragging() ? (showBucket() ? (t('homeSeats.dropOnASeat') || 'Drop on a seat or on Sleep') : (t('homeSeats.dropOnASeat2') || 'Drop on a seat')) : (t('homeSeats.pressAndHoldA', { one: w.one }) || 'Press and hold a ' + w.one + ' to move') }}</p>
+  }
 
 </section>
 </ng-container>

@@ -17,5 +17,6 @@
   "addAMessageFor": "Add a message for {{ friendName }} only",
   "messageForFriendnameIndex": "Message for {{ friendName }} {{ index }}",
   "removeMessageIndex": "Remove message {{ index }}",
-  "messagesForOnly": "Messages for {{ friendName }} only"
+  "messagesForOnly": "Messages for {{ friendName }} only",
+  "hideTheForm": "Hide the form"
 }

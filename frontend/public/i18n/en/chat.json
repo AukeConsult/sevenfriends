@@ -52,5 +52,6 @@
   "messageMany": "messages",
   "alsoWhose": ", also {{ name }}'s,",
   "openTheItem": "Open the item",
-  "signatureBad": "⚠ Could not check who wrote this message. Do not trust it."
+  "signatureBad": "⚠ Could not check who wrote this message. Do not trust it.",
+  "save": "Save"
 }

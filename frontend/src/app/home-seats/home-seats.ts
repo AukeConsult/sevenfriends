@@ -52,6 +52,7 @@ export class HomeSeats {
   });
   protected readonly sleeping = computed(() => this.friendsService.sleeping().length);
   /** the silent bucket is shown when the sleep list is used, or when friends are still on it */
+  protected readonly seatMoved = this.prefs.value('seatMoved');
   protected readonly showBucket = computed(() => this.prefs.value('sleepList')() || this.sleeping() > 0);
 
   protected readonly error = signal<string | null>(null);
@@ -84,7 +85,7 @@ export class HomeSeats {
   protected readonly pressing = signal<number | null>(null);
   private holdTimer: ReturnType<typeof setTimeout> | undefined;
   private justDragged = false;
-  private static readonly HOLD_MS = 450;
+  private static readonly HOLD_MS = 250;
   private static readonly MOVE_PX = 8;
 
   /** a finger or mouse held on a friend for a moment picks the friend up; before that the page scrolls and a tap opens as usual */
@@ -171,6 +172,7 @@ export class HomeSeats {
     if (cancelled) return;
     const mover = this.friendIn(drag.from);
     if (!mover) return;
+    if (toBucket || (to && to !== drag.from)) this.prefs.set('seatMoved', true); // learned: the tip goes away
     try {
       if (toBucket) {
         await this.friendsService.sleep(mover.id, true);
