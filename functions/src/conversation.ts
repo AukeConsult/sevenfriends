@@ -265,9 +265,9 @@ conversationRouter.post(
 
     const created: ChatMessage = { id: mine.id, text, media, mine: true, read: true, time: iso(sentAt), edited: false, hidden: false, link, ...(locked ? { enc: wrapsFor(locked.enc, token.uid) } : {}) };
     // wake the other person's devices (before the answer: the function may stop right after it)
-    for (const [i, peer] of connection.peers.entries()) {
+    await Promise.all(connection.peers.map(async (peer, i) => {
       if (!muted[i]) await sendPush(peer.uid, { circleId: peer.circleId, id: `message-${mine.id}`, title: connection.group ? `${fromName} · ${connection.name}` : fromName, body: locked ? "🔒 New message" : text || mediaLabel(media!.kind), url: `/friends/${connection.id}`, kind: "message" });
-    }
+    }));
     res.status(201).json(created);
   }),
 );

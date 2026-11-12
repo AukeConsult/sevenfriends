@@ -129,7 +129,7 @@ async function withUnverified(friend: Friend, entry: FirebaseFirestore.DocumentD
           presence: presenceOf(account),
           icon: profile.icon,
           color: profile.color,
-          pictureAt: iso(picture.at),
+          pictureAt: picture.id ? (iso(picture.at) ?? picture.id) : null, // the version of the picture: the time it was saved, else its own id (a picture without a time, e.g. one moved from an older version, was never fetched by the apps)
           pictureId: picture.id,
         }
       : { country: null, mood: null, moodMessage: null, pronoun: null, presence: "offline" as const, icon: null, color: null, pictureAt: null, pictureId: null };

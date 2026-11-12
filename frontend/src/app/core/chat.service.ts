@@ -32,7 +32,7 @@ export class ChatService {
    */
   private async lockedRequest(friendId: string, text: string, force: boolean, send: (body: { text: string; enc?: SealedText['enc'] }) => Promise<ChatMessage>): Promise<ChatItem> {
     for (let attempt = 0; ; attempt++) {
-      const sealed = await this.lock.seal(friendId, text, force);
+      const sealed = await this.lock.seal(friendId, text, force, attempt > 0); // the second try (after a 409: the keys changed) reads them again
       try {
         return await this.lock.open(friendId, await send(sealed ?? { text }));
       } catch (err) {

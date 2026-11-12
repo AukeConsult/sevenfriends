@@ -14,7 +14,7 @@ export class MemberPictureService {
     if (member.you) return this.myAvatar.src();
     const friend = this.friends.friends().find((x) => x.id === member.friendId);
     if (!friend) return null;
-    const seat = this.friends.awake().findIndex((x) => x.id === friend.id) + 1;
-    return this.pictures.src(friend.id, friend.pictureAt) ?? `icons/friends/friend${friend.icon ?? (seat || 1)}.svg`;
+    const seat = friend.seat ?? this.friends.awake().findIndex((x) => x.id === friend.id) + 1; // the seat itself, as on Home
+    return this.pictures.src(friend.id, friend.pictureId ?? friend.pictureAt) ?? `icons/friends/friend${friend.icon ?? (seat || 1)}.svg`;
   }
 }

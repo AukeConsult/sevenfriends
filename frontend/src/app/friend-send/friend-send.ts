@@ -117,22 +117,27 @@ export class FriendSend {
 
   protected async deliver(message: string, clear = false): Promise<void> {
     const text = message.trim();
-    if (!text || this.busy()) return;
-    this.busy.set(true);
+    if (!text || (!clear && this.busy())) return;
+    // at once: the frame is empty and the message is said to be on its way, the answer of the server is not waited for (a failure puts the text back)
+    if (clear) {
+      this.text.set('');
+      this.emojiOpen.set(false);
+    } else {
+      this.busy.set(true);
+    }
     this.error.set(null);
-    this.notice.set(null);
+    this.notice.set(`Sending: ${text.length > 40 ? text.slice(0, 40) + '…' : text}`);
+    const poke = this.ctx.pokes();
     try {
-      await this.chat.send(this.ctx.friendId, text, this.ctx.pokes());
+      await this.chat.send(this.ctx.friendId, text, poke);
       this.ctx.poke.set(false);
       this.notice.set(`Sent: ${text.length > 40 ? text.slice(0, 40) + '…' : text}`);
-      if (clear) {
-        this.text.set('');
-        this.emojiOpen.set(false);
-      }
     } catch (err: any) {
+      if (clear && !this.text().trim()) this.text.set(text); // not sent: the text is back in the frame (unless something new is being written)
+      this.notice.set(null);
       this.error.set(err.message ?? tr('friendSend.couldNotSendThe', 'Could not send the message'));
     } finally {
-      this.busy.set(false);
+      if (!clear) this.busy.set(false);
     }
   }
 

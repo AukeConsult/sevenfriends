@@ -29,6 +29,9 @@ export interface SealedText {
 }
 
 /** Locks the text of a message before it is sent, and opens the locked messages of a feed. Everything happens on this device. */
+/** how long the keys of a conversation are kept before a send reads them again */
+const KEYS_FRESH_MS = 5 * 60_000;
+
 @Injectable({ providedIn: 'root' })
 export class MessageLockService {
   private readonly auth = inject(AuthService);
@@ -41,9 +44,34 @@ export class MessageLockService {
   /** the texts that were opened, by friend, message and iv (a new edit has a new iv): the feed is read again after every new message, a key is not used again for what is known */
   private readonly opened = new Map<string, { text: string; media: MediaRef | null; signature?: 'ok' | 'bad' }>();
 
+  /** the keys in use of me and of a friend, by connection: read once in five minutes at most (a send used to ask the server every time). A send that the server refuses because the keys changed (409) reads them again. */
+  private readonly keysAt = new Map<string, { at: number; job: Promise<BoxKeys> }>();
+
   constructor() {
     // another circle: the opened texts of the old circle are let go
-    inject(ActiveCircleService).onSwitch(() => this.opened.clear());
+    inject(ActiveCircleService).onSwitch(() => {
+      this.opened.clear();
+      this.keysAt.clear();
+    });
+  }
+
+  private keysOf(friendId: string, fresh = false): Promise<BoxKeys> {
+    const known = this.keysAt.get(friendId);
+    if (!fresh && known && Date.now() - known.at < KEYS_FRESH_MS) return known.job;
+    const job = this.safebox.keys(friendId);
+    this.keysAt.set(friendId, { at: Date.now(), job });
+    job.catch(() => this.keysAt.delete(friendId)); // a failed read is not kept
+    return job;
+  }
+
+  /** Gets what the next send needs (the keys, and the device lists of both people) ready while the person is still writing, so Send does not wait for them. */
+  warm(friendId: string): void {
+    if (this.plain()) return;
+    void (async () => {
+      const [raw, mine] = await Promise.all([this.keysOf(friendId), this.myKey()]);
+      if (!mine) return;
+      await Promise.all([this.lists.devicesOf(friendId, mine.uid), ...(raw.others ?? []).map((o) => this.lists.devicesOf(friendId, o.uid))]);
+    })().catch(() => undefined); // only a head start: a send does its own reading when this failed
   }
 
   /** The key of this person on this device with its id, or null when there is none. */
@@ -119,11 +147,13 @@ export class MessageLockService {
    * The text locked for me and my friend, or null when it goes as plain text: the text is empty, locking is switched off, or one of us has no key
    * (mine counts only on this device). With `force` (changing a message that is locked) it is never null: it throws when the message cannot be locked.
    */
-  async seal(friendId: string, text: string, force = false): Promise<SealedText | null> {
+  async seal(friendId: string, text: string, force = false, fresh = false): Promise<SealedText | null> {
     if (!text || (!force && this.plain())) return null;
-    const [raw, mine] = await Promise.all([this.safebox.keys(friendId), this.myKey()]);
+    const fromCache = !fresh && Date.now() - (this.keysAt.get(friendId)?.at ?? 0) < KEYS_FRESH_MS;
+    const [raw, mine] = await Promise.all([this.keysOf(friendId, fresh), this.myKey()]);
     const keys = mine ? await this.trusted(friendId, mine, raw) : raw;
     if (!mine || !keys.mine.some((k) => k.id === mine.keyId) || !keys.friend.length) {
+      if (fromCache && !force) return this.seal(friendId, text, force, true); // what was known said "plain": read the keys again before sending it so (a key may have been made a moment ago)
       if (force) throw new Error(tr('core.thisMessageIsLocked', 'This message is locked, so the new text must be locked too. You and your friend both need privacy lock turned on.'));
       return null;
     }

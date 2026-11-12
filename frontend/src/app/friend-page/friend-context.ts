@@ -1,3 +1,4 @@
+import { MessageLockService } from '../core/message-lock.service';
 import { Injectable, computed, effect, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FriendsService } from '../core/friends.service';
@@ -31,6 +32,7 @@ export interface PageTool {
 export class FriendContext {
   private readonly friends = inject(FriendsService);
   private readonly keys = inject(KeysService);
+  private readonly lock = inject(MessageLockService);
   private readonly safebox = inject(SafeboxService);
   private readonly prefs = inject(UiPreferencesService);
   private readonly router = inject(Router);
@@ -46,7 +48,11 @@ export class FriendContext {
 
   readonly friend = computed(() => this.friends.friends().find((f) => f.id === this.friendId) ?? null);
   /** the seat of this friend (1-7): its icon friend{seat}.svg is shown in the header; 0 while the list is not loaded */
-  readonly seat = computed(() => this.friends.awake().findIndex((f) => f.id === this.friendId) + 1);
+  readonly seat = computed(() => {
+    const list = this.friends.awake();
+    const index = list.findIndex((f) => f.id === this.friendId);
+    return index < 0 ? 0 : (list[index].seat ?? index + 1); // the seat the friend sits in (as on Home), not the place in the list: the two differ when a seat is empty
+  });
   /** the name of this conversation once it is loaded (the feed tells it) */
   readonly name = signal('');
   /** how many messages / safebox files of this friendship this device cannot open (set by the feed and the safebox; the band under the header shows it) */
@@ -152,6 +158,7 @@ export class FriendContext {
     });
     void this.keys.refresh(); // is there a key for me on this device?
     this.loadBoxKeys(); // and for my friend?
+    this.lock.warm(this.friendId); // the keys and device lists are read now, so the first Send does not wait for them
     void this.friends.load().catch(() => undefined); // always when a friend's page opens (also after a reload): the seat, picture and icon are the newest
   }
 
