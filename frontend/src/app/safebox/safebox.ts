@@ -205,26 +205,6 @@ export class Safebox {
     }
   }
 
-  /** Saves the file under its own name. */
-  protected async download(item: SafeboxItem): Promise<void> {
-    this.error.set(null);
-    this.busy.set(true);
-    try {
-      this.save((await this.service.file(this.friendId, item.id)).url, item.name);
-    } catch (err: any) {
-      this.error.set(err.message ?? tr('safebox.list.couldNotDownloadThe', 'Could not download the file'));
-    } finally {
-      this.busy.set(false);
-    }
-  }
-
-  private save(url: string, name: string): void {
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = name;
-    link.click();
-  }
-
   protected startRename(item: SafeboxItem): void {
     this.deleting.set(null);
     this.renaming.set({ id: item.id, name: item.name });

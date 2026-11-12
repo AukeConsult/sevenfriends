@@ -2,7 +2,7 @@
   "backToSignIn": "Terug naar inloggen",
   "back": "‹ Terug",
   "yourDataAndPrivacy": "Je gegevens en privacy",
-  "sevenFriendsIsFor": "Seven Friends is voor je beste vrienden, dus we bewaren zo min mogelijk. Deze pagina legt in gewone woorden uit wat er wordt opgeslagen, wie het kan zien, welke rechten je hebt onder de AVG (de Europese wet voor gegevensbescherming) en hoe je dingen verwijdert.",
+  "sevenFriendsIsFor": "Seven Friends is bedoeld om binnen de app te delen, met één vriend of één groep tegelijk. Het is niet bedoeld om informatie uit de app te sturen.",
   "whatIsStoredAbout": "Wat er over jou wordt opgeslagen",
   "strongYourLoginStrong": "<strong>Je login:</strong> hoe je inlogt (Google, e-mail of telefoon) en het e-mailadres of telefoonnummer waarmee je bent ingelogd.",
   "strongYourProfileStrong": "<strong>Je profiel:</strong> je naam, en wat je zelf toevoegt: e-mailadres, telefoonnummer, land, stemming en stemmingsbericht, of vrienden hij, zij of die over je zeggen, sociale accounts, een foto of een pictogram.",
@@ -31,7 +31,7 @@
   "profile": "profiel",
   "editAMessageYou": "; bewerk een bericht dat je hebt verstuurd.",
   "strongToHaveIt": "<strong>Laten wissen:</strong> zie \"Hoe verwijder je\" hieronder. Je kunt een bericht, een vriend of alles wissen.",
-  "strongToTakeIt": "<strong>Meenemen:</strong> er is nog geen exportknop. Foto's, video's en spraakberichten kun je één voor één downloaden uit het gesprek.",
+  "strongToTakeIt": "<strong>Om mee te nemen:</strong> Seven Friends is bedoeld om binnen de app te delen, dus er is geen knop om te exporteren of te downloaden.",
   "strongToObjectOr": "<strong>Bezwaar maken of beperken:</strong> je kunt op elk moment stoppen: zet een vriend op slaap, zet geluiden en meldingen uit of verwijder je account.",
   "strongToComplainStrong": "<strong>Klagen:</strong> je kunt een klacht indienen bij de toezichthouder voor gegevensbescherming van je land (in Noorwegen: Datatilsynet).",
   "howToDelete": "Hoe verwijder je",
@@ -44,9 +44,13 @@
   "strongEverythingStrongDelete": "<strong>Alles:</strong> verwijder je account.",
   "whatDeletingYourAccount": "Wat het verwijderen van je account wist",
   "yourLoginYourProfile": "Je login, je profiel en foto, je vriendenlijst, elk vriendschapsverzoek dat je hebt verstuurd of ontvangen, en elk bericht dat je hebt verstuurd of ontvangen, inclusief de foto's, video's en spraakberichten, ook in de gesprekken van je vrienden. Het wordt definitief gewist en kan niet ongedaan worden gemaakt. Eerst wordt om bevestiging gevraagd.",
-  "whatYourFriendsAlready": "Wat je vrienden al hebben gezien, kan niet worden teruggenomen: een vriend kan een foto hebben gedownload of een bericht ergens anders naartoe hebben gekopieerd, buiten de app.",
+  "whatYourFriendsAlready": "Wat je vrienden al gezien hebben, kun je niet terugnemen: een vriend kan een screenshot gemaakt of een bericht ergens anders naartoe gekopieerd hebben, buiten de app.",
   "deleteMyAccount": "Mijn account verwijderen…",
   "responsibleForTheService": "Verantwoordelijk voor de dienst: Blueboot R&D AS, Noorwegen. Vragen of verzoeken over je gegevens:",
   "heyBluebootAi": "hey@blueboot.ai",
-  "thisIsAShort": ". Dit is een korte uitleg, geen juridisch contract."
+  "thisIsAShort": ". Dit is een korte uitleg, geen juridisch contract.",
+  "sharingStaysInsideThe": "Delen blijft binnen de app",
+  "picturesVideosVoiceMessages": "Afbeeldingen, video’s, spraakberichten en bestanden kunnen niet worden gedownload of geëxporteerd.",
+  "whatYouShareWith": "Wat je met één vriend of groep deelt, wordt niet doorgegeven aan andere vriendschappen of groepen, en de app kan het daar niet naartoe kopiëren of doorsturen.",
+  "theAppCannotStop": "De app kan niet voorkomen dat een vriend een screenshot maakt of een bericht kopieert: deel alleen wat je goed vindt dat die bewaart."
 }

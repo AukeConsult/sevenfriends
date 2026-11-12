@@ -43,7 +43,7 @@ export class FeedHelp {
       title: "The messages",
       rows: [
         { key: "sides", icon: "messages", title: "Who wrote what", text: "Your messages are on the right and your friend's messages are on the left. The time under a message shows when it was sent." },
-        { key: "pictures", icon: "image", title: "Pictures and videos", text: "Tap a picture to open it in full size. There you can zoom in, download it and give it a new name. A video can be played in the feed or opened in full." },
+        { key: "pictures", icon: "image", title: "Pictures and videos", text: "Tap a picture to open it in full size, where you can zoom in. A video can be played in the feed or opened in full." },
         { key: "own", icon: "pencil", title: "Change or delete", text: "Tap one of your own messages to edit it, copy it or delete it. A deleted message disappears for both of you." },
         { key: "hide", icon: "eye", title: "Hide", text: "You can hide a picture or video in your feed and show it again." },
       ],

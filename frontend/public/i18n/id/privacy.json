@@ -2,7 +2,7 @@
   "backToSignIn": "Kembali ke halaman masuk",
   "back": "‹ Kembali",
   "yourDataAndPrivacy": "Data dan privasimu",
-  "sevenFriendsIsFor": "Seven Friends untuk teman-teman terdekatmu, jadi kami menyimpan sesedikit mungkin. Halaman ini menjelaskan dengan bahasa sederhana apa yang disimpan, siapa yang bisa melihatnya, hak apa yang kamu punya menurut GDPR (undang-undang perlindungan data Eropa), dan cara menghapusnya.",
+  "sevenFriendsIsFor": "Seven Friends dibuat untuk berbagi di dalam aplikasi, dengan satu teman atau satu grup sekaligus. Aplikasi ini bukan untuk mengirim informasi ke luar aplikasi.",
   "whatIsStoredAbout": "Apa yang disimpan tentangmu",
   "strongYourLoginStrong": "<strong>Loginmu:</strong> cara kamu masuk (Google, email, atau telepon) dan alamat email atau nomor telepon yang kamu pakai untuk masuk.",
   "strongYourProfileStrong": "<strong>Profilmu:</strong> namamu, dan yang kamu pilih untuk ditambahkan: email, nomor telepon, negara, suasana hati dan pesannya, apakah teman menyebutmu laki-laki, perempuan, atau netral, akun sosial, foto, atau ikon.",
@@ -31,7 +31,7 @@
   "profile": "profil",
   "editAMessageYou": "; edit pesan yang kamu kirim.",
   "strongToHaveIt": "<strong>Menghapusnya:</strong> lihat \"Cara menghapus\" di bawah. Kamu bisa menghapus satu pesan, seorang teman, atau semuanya.",
-  "strongToTakeIt": "<strong>Membawanya bersamamu:</strong> belum ada tombol ekspor. Gambar, video, dan pesan suara bisa diunduh satu per satu dari percakapan.",
+  "strongToTakeIt": "<strong>Untuk dibawa pergi:</strong> Seven Friends dibuat untuk berbagi di dalam aplikasi, jadi tidak ada tombol ekspor atau unduh.",
   "strongToObjectOr": "<strong>Menolak atau membatasi:</strong> kamu bisa berhenti kapan saja: tidurkan seorang teman, matikan suara dan notifikasi, atau hapus akunmu.",
   "strongToComplainStrong": "<strong>Mengajukan keluhan:</strong> kamu bisa mengadu ke otoritas perlindungan data di negaramu (di Norwegia: Datatilsynet).",
   "howToDelete": "Cara menghapus",
@@ -44,9 +44,13 @@
   "strongEverythingStrongDelete": "<strong>Semuanya:</strong> hapus akunmu.",
   "whatDeletingYourAccount": "Apa yang terhapus saat kamu menghapus akunmu",
   "yourLoginYourProfile": "Loginmu, profil dan fotomu, daftar temanmu, setiap permintaan pertemanan yang kamu kirim atau terima, dan setiap pesan yang kamu kirim atau terima, termasuk gambar, video, dan pesan suara, juga di percakapan temanmu. Semuanya dihapus selamanya dan tidak bisa dibatalkan. Kamu diminta mengonfirmasi dulu.",
-  "whatYourFriendsAlready": "Apa yang sudah dilihat temanmu tidak bisa ditarik kembali: seorang teman mungkin sudah mengunduh gambar atau menyalin pesan ke tempat lain, di luar aplikasi.",
+  "whatYourFriendsAlready": "Apa yang sudah dilihat teman Anda tidak dapat ditarik kembali: teman mungkin telah mengambil tangkapan layar atau menyalin pesan ke tempat lain di luar aplikasi.",
   "deleteMyAccount": "Hapus akunku…",
   "responsibleForTheService": "Penanggung jawab layanan: Blueboot R&D AS, Norwegia. Pertanyaan atau permintaan tentang datamu:",
   "heyBluebootAi": "hey@blueboot.ai",
-  "thisIsAShort": ". Ini penjelasan singkat, bukan kontrak hukum."
+  "thisIsAShort": ". Ini penjelasan singkat, bukan kontrak hukum.",
+  "sharingStaysInsideThe": "Berbagi tetap di dalam aplikasi",
+  "picturesVideosVoiceMessages": "Gambar, video, pesan suara, dan berkas tidak dapat diunduh atau diekspor.",
+  "whatYouShareWith": "Apa yang Anda bagikan dengan satu teman atau grup tidak diteruskan ke pertemanan atau grup lain, dan aplikasi tidak punya cara untuk menyalin atau meneruskannya ke sana.",
+  "theAppCannotStop": "Aplikasi tidak dapat mencegah teman mengambil tangkapan layar atau menyalin pesan: bagikan hanya yang Anda rela mereka simpan."
 }

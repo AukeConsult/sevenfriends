@@ -45,7 +45,7 @@
         }
         @case ('video') {
           @if (item()!.enc) {
-            @if (mediaUrl(); as url) { <video #player class="sf-box-view-image" [src]="url" playsinline (click)="player.paused ? player.play() : player.pause()" (error)="cannotPlay.set(true)"></video> <app-video-bar [video]="player" /> @if (cannotPlay()) { <p class="sf-hint text-center m-0">{{ t('safebox.view.cannotPlayVideo') || 'This browser cannot play this kind of video (a .wmv, for example). Download it to watch it in another app.' }}</p> } } @else if (!failed()) { <span class="text-secondary">{{ t('safebox.common.opening') || 'Opening…' }}</span> }
+            @if (mediaUrl(); as url) { <video #player class="sf-box-view-image" [src]="url" playsinline (click)="player.paused ? player.play() : player.pause()" (error)="cannotPlay.set(true)"></video> <app-video-bar [video]="player" /> @if (cannotPlay()) { <p class="sf-hint text-center m-0">{{ t('safebox.view.cannotPlayVideo') || 'This browser cannot play this kind of video (a .wmv, for example).' }}</p> } } @else if (!failed()) { <span class="text-secondary">{{ t('safebox.common.opening') || 'Opening…' }}</span> }
           } @else if (ref(); as media) { <app-media-video [media]="media" /> }
         }
         @case ('audio') {
@@ -58,7 +58,7 @@
             @case ('text') {
               @if (text() !== null) {
                 <pre class="sf-box-view-text">{{ text() }}</pre>
-                @if (cut()) { <p class="sf-hint m-0">{{ t('safebox.view.onlyTheFirstPart') || 'Only the first part of the text is shown. Download the file to read all of it.' }}</p> }
+                @if (cut()) { <p class="sf-hint m-0">{{ t('safebox.view.onlyTheFirstPart') || 'Only the first part of the text is shown.' }}</p> }
               } @else if (!failed()) {
                 <span class="text-secondary">{{ t('safebox.view.loading') || 'Loading…' }}</span>
               }
@@ -85,13 +85,13 @@
                         </tbody>
                       </table>
                     </div>
-                    @if (sheets()[sheet()].cut) { <p class="sf-hint m-0">{{ t('safebox.view.onlyTheFirstPart2') || 'Only the first part of the sheet is shown. Download the file to see all of it.' }}</p> }
+                    @if (sheets()[sheet()].cut) { <p class="sf-hint m-0">{{ t('safebox.view.onlyTheFirstPart2') || 'Only the first part of the sheet is shown.' }}</p> }
                   }
                 } @else {
                   <div #host class="sf-box-host" [class.sf-box-host-pdf]="how === 'pdf'"></div>
                 }
               } @else {
-              <!-- old Word / Excel / PowerPoint, OpenDocument, zip and big files cannot be shown here: a card to download it -->
+              <!-- old Word / Excel / PowerPoint, OpenDocument, zip and big files cannot be shown here: a card that says so -->
               <div class="sf-box-card">
                 <span class="sf-box-icon sf-box-icon-big" aria-hidden="true">
                   @switch (docType()) {
@@ -102,7 +102,7 @@
                   }
                 </span>
                 <span [innerHTML]="t('safebox.view.strongDoclabelStrong', { docLabel: docLabel() }) || '<strong>' + docLabel() + '</strong>'"></span>
-                <span class="text-secondary small">{{ t('safebox.view.thisKindOfFile') || 'This kind of file cannot be shown here. Download it to open it in another app.' }}</span>
+                <span class="text-secondary small">{{ t('safebox.view.thisKindOfFile') || 'This kind of file cannot be shown here.' }}</span>
               </div>
               }
             }
@@ -127,13 +127,6 @@
         }
       </div>
     }
-
-    <div class="d-flex gap-2 justify-content-center align-items-center flex-wrap">
-      <button type="button" class="btn btn-primary d-flex align-items-center gap-2" [disabled]="busy()" (click)="download()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 11l5 5 5-5M5 20h14" /></svg>
-        {{ t('safebox.common.download') || 'Download' }}
-      </button>
-    </div>
 
     <app-safebox-links [friendId]="friendId" [itemId]="item()!.id" />
   }

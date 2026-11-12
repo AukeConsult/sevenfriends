@@ -2,7 +2,7 @@
   "backToSignIn": "Back to sign in",
   "back": "‹ Back",
   "yourDataAndPrivacy": "Your data and privacy",
-  "sevenFriendsIsFor": "Seven Friends is for your closest friends, so we keep as little as possible. This page explains in plain words what is stored, who can see it, which rights you have under the GDPR (the European data protection law), and how to delete things.",
+  "sevenFriendsIsFor": "Seven Friends is for sharing inside the app, with one friend or one group at a time. It is not for sending information out of the app.",
   "whatIsStoredAbout": "What is stored about you",
   "strongYourLoginStrong": "<strong>Your login:</strong> how you sign in (Google, email or phone) and the email address or phone number you signed in with.",
   "strongYourProfileStrong": "<strong>Your profile:</strong> your name, and what you choose to add: email, phone number, country, mood and mood message, whether friends say he, she or they about you, social accounts, a picture or an icon.",
@@ -31,7 +31,7 @@
   "profile": "profile",
   "editAMessageYou": "; edit a message you sent.",
   "strongToHaveIt": "<strong>To have it erased:</strong> see \"How to delete\" below. You can erase a message, a friend, or everything.",
-  "strongToTakeIt": "<strong>To take it with you:</strong> there is no export button yet. Pictures, videos and voice messages can be downloaded one by one from the conversation.",
+  "strongToTakeIt": "<strong>To take it with you:</strong> Seven Friends is for sharing inside the app, so there is no export or download button.",
   "strongToObjectOr": "<strong>To object or to restrict:</strong> you can stop any time: put a friend to sleep, turn off sounds and notifications, or delete your account.",
   "strongToComplainStrong": "<strong>To complain:</strong> you can complain to the data protection authority of your country (in Norway: Datatilsynet).",
   "howToDelete": "How to delete",
@@ -44,9 +44,13 @@
   "strongEverythingStrongDelete": "<strong>Everything:</strong> delete your account.",
   "whatDeletingYourAccount": "What deleting your account erases",
   "yourLoginYourProfile": "Your login, your profile and picture, your friend list, every friend request you sent or received, and every message you sent or received, including the pictures, videos and voice messages, in your friends' conversations too. It is erased for good and cannot be undone. You are asked to confirm first.",
-  "whatYourFriendsAlready": "What your friends already saw cannot be taken back: a friend may have downloaded a picture or copied a message to somewhere else, outside the app.",
+  "whatYourFriendsAlready": "What your friends already saw cannot be taken back: a friend may have taken a screenshot or copied a message to somewhere else, outside the app.",
   "deleteMyAccount": "Delete my account…",
   "responsibleForTheService": "Responsible for the service: Blueboot R&D AS, Norway. Questions or requests about your data:",
   "heyBluebootAi": "hey@blueboot.ai",
-  "thisIsAShort": ". This is a short explanation, not a legal contract."
+  "thisIsAShort": ". This is a short explanation, not a legal contract.",
+  "sharingStaysInsideThe": "Sharing stays inside the app",
+  "picturesVideosVoiceMessages": "Pictures, videos, voice messages and files cannot be downloaded or exported.",
+  "whatYouShareWith": "What you share with one friend or group is not passed on to other friendships or groups, and the app has no way to copy or forward it there.",
+  "theAppCannotStop": "The app cannot stop a friend from taking a screenshot or copying a message: only share what you are happy for them to keep."
 }

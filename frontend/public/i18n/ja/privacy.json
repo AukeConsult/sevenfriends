@@ -2,7 +2,7 @@
   "backToSignIn": "ログインに戻る",
   "back": "‹ 戻る",
   "yourDataAndPrivacy": "データとプライバシー",
-  "sevenFriendsIsFor": "Seven Friends は親しい友だちのためのアプリなので、保管する情報は必要最小限にしています。このページでは、何が保管されるか、誰が見られるか、GDPR（EUのデータ保護法）であなたにどんな権利があるか、削除の方法を、やさしい言葉で説明します。",
+  "sevenFriendsIsFor": "Seven Friends はアプリの中で、一度に1人の友だちまたは1つのグループと共有するためのものです。情報をアプリの外へ送るためのものではありません。",
   "whatIsStoredAbout": "保管されるあなたの情報",
   "strongYourLoginStrong": "<strong>ログイン情報:</strong> ログイン方法（Google、メール、電話）と、ログインに使ったメールアドレスまたは電話番号。",
   "strongYourProfileStrong": "<strong>プロフィール:</strong> お名前と、あなたが追加した情報（メールアドレス、電話番号、国、気分と気分のメッセージ、友だちがあなたを指す he・she・they のどれか、SNSアカウント、写真またはアイコン）。",
@@ -31,7 +31,7 @@
   "profile": "プロフィール",
   "editAMessageYou": "。送ったメッセージは編集もできます。",
   "strongToHaveIt": "<strong>消去を求める権利:</strong> 下の「削除の方法」をご覧ください。メッセージ、友だち、すべて、のいずれも消去できます。",
-  "strongToTakeIt": "<strong>持ち出す権利:</strong> エクスポートボタンはまだありません。写真、動画、ボイスメッセージは、会話から1つずつダウンロードできます。",
+  "strongToTakeIt": "<strong>持ち出すには:</strong> Seven Friends はアプリの中で共有するためのものなので、エクスポートやダウンロードのボタンはありません。",
   "strongToObjectOr": "<strong>異議を申し立てる・制限する権利:</strong> いつでも止められます。友だちをスリープにする、サウンドと通知をオフにする、アカウントを削除する、のいずれかです。",
   "strongToComplainStrong": "<strong>苦情を申し立てる権利:</strong> お住まいの国のデータ保護当局に苦情を申し立てられます（ノルウェーでは Datatilsynet）。",
   "howToDelete": "削除の方法",
@@ -44,9 +44,13 @@
   "strongEverythingStrongDelete": "<strong>すべて:</strong> アカウントを削除します。",
   "whatDeletingYourAccount": "アカウントを削除すると消去されるもの",
   "yourLoginYourProfile": "ログイン情報、プロフィールと写真、友だちリスト、送受信したすべての友だちリクエスト、送受信したすべてのメッセージ（写真、動画、ボイスメッセージを含む）が、友だちの会話からも消去されます。完全に消去され、元に戻せません。実行する前に確認があります。",
-  "whatYourFriendsAlready": "友だちがすでに見たものは取り消せません。友だちが写真をダウンロードしたり、メッセージをアプリの外にコピーしたりしている可能性があります。",
+  "whatYourFriendsAlready": "友だちがすでに見たものは取り戻せません。友だちがスクリーンショットを撮ったり、メッセージをアプリの外のどこかへコピーしたりしているかもしれません。",
   "deleteMyAccount": "アカウントを削除…",
   "responsibleForTheService": "サービスの運営者: Blueboot R&D AS（ノルウェー）。データに関するご質問やご依頼:",
   "heyBluebootAi": "hey@blueboot.ai",
-  "thisIsAShort": "。これは簡単な説明であり、法的な契約ではありません。"
+  "thisIsAShort": "。これは簡単な説明であり、法的な契約ではありません。",
+  "sharingStaysInsideThe": "共有はアプリの中にとどまります",
+  "picturesVideosVoiceMessages": "画像、動画、ボイスメッセージ、ファイルはダウンロードやエクスポートできません。",
+  "whatYouShareWith": "1人の友だちまたは1つのグループと共有したものは、他の友だち関係やグループには渡されず、アプリにはそこへコピーや転送をする方法がありません。",
+  "theAppCannotStop": "アプリは友だちがスクリーンショットを撮ったりメッセージをコピーしたりするのを止められません。相手に持たせてもよいものだけ共有してください。"
 }

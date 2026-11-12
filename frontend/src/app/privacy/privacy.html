@@ -38,6 +38,16 @@
   </section>
 
   <section class="vstack gap-2">
+    <h2 class="sf-section-title m-0">{{ t('privacy.sharingStaysInsideThe') || 'Sharing stays inside the app' }}</h2>
+    <ul class="m-0 ps-3">
+      <li>{{ t('privacy.sevenFriendsIsFor') || 'Seven Friends is for sharing inside the app, with one friend or one group at a time. It is not for sending information out of the app.' }}</li>
+      <li>{{ t('privacy.picturesVideosVoiceMessages') || 'Pictures, videos, voice messages and files cannot be downloaded or exported.' }}</li>
+      <li>{{ t('privacy.whatYouShareWith') || 'What you share with one friend or group is not passed on to other friendships or groups, and the app has no way to copy or forward it there.' }}</li>
+      <li>{{ t('privacy.theAppCannotStop') || 'The app cannot stop a friend from taking a screenshot or copying a message: only share what you are happy for them to keep.' }}</li>
+    </ul>
+  </section>
+
+  <section class="vstack gap-2">
     <h2 class="sf-section-title m-0">{{ t('privacy.lockedMessagesAndFiles') || 'Locked messages and files' }}</h2>
     <ul class="m-0 ps-3">
       <li><span [innerHTML]="t('privacy.whenYouAndYour') || 'When you and your friend both have an encryption key, your <strong>messages, pictures, videos and voice messages</strong> are locked on your devices before they are sent. Every message has its own key, locked for you and for your friend.'"></span></li>
@@ -56,7 +66,7 @@
       <li><span [innerHTML]="t('privacy.strongToKnowAnd') || '<strong>To know and to see your data:</strong> your profile, friends and conversations are all visible in the app.'"></span></li>
       <li><span [innerHTML]="t('privacy.strongToCorrectIt') || '<strong>To correct it:</strong> change your name, contact details, country, mood and picture on your'"></span> <a routerLink="/settings/profile">{{ t('privacy.profile') || 'profile' }}</a>{{ t('privacy.editAMessageYou') || '; edit a message you sent.' }}</li>
       <li><span [innerHTML]="t('privacy.strongToHaveIt') || '<strong>To have it erased:</strong> see &quot;How to delete&quot; below. You can erase a message, a friend, or everything.'"></span></li>
-      <li><span [innerHTML]="t('privacy.strongToTakeIt') || '<strong>To take it with you:</strong> there is no export button yet. Pictures, videos and voice messages can be downloaded one by one from the conversation.'"></span></li>
+      <li><span [innerHTML]="t('privacy.strongToTakeIt') || '<strong>To take it with you:</strong> Seven Friends is for sharing inside the app, so there is no export or download button.'"></span></li>
       <li><span [innerHTML]="t('privacy.strongToObjectOr') || '<strong>To object or to restrict:</strong> you can stop any time: put a friend to sleep, turn off sounds and notifications, or delete your account.'"></span></li>
       <li><span [innerHTML]="t('privacy.strongToComplainStrong') || '<strong>To complain:</strong> you can complain to the data protection authority of your country (in Norway: Datatilsynet).'"></span></li>
     </ul>
@@ -82,7 +92,7 @@
         {{ t('privacy.yourLoginYourProfile') || 'Your login, your profile and picture, your friend list, every friend request you sent or received, and every message you sent or received, including the pictures, videos and voice messages, in your friends\' conversations too. It is erased for good and cannot be undone. You are asked to confirm first.' }}
       </p>
       <p class="small text-secondary m-0">
-        {{ t('privacy.whatYourFriendsAlready') || 'What your friends already saw cannot be taken back: a friend may have downloaded a picture or copied a message to somewhere else, outside the app.' }}
+        {{ t('privacy.whatYourFriendsAlready') || 'What your friends already saw cannot be taken back: a friend may have taken a screenshot or copied a message to somewhere else, outside the app.' }}
       </p>
       @if (auth.user()) {
         <a routerLink="/delete-account" class="btn btn-outline-danger btn-sm align-self-start">{{ t('privacy.deleteMyAccount') || 'Delete my account…' }}</a>

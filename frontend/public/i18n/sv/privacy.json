@@ -2,7 +2,7 @@
   "backToSignIn": "Tillbaka till inloggningen",
   "back": "‹ Tillbaka",
   "yourDataAndPrivacy": "Dina uppgifter och din integritet",
-  "sevenFriendsIsFor": "Seven Friends är till för dina närmaste vänner, så vi sparar så lite som möjligt. Den här sidan förklarar med enkla ord vad som lagras, vem som kan se det, vilka rättigheter du har enligt GDPR (EU:s dataskyddsförordning) och hur du raderar saker.",
+  "sevenFriendsIsFor": "Seven Friends är till för att dela i appen, med en vän eller en grupp i taget. Det är inte till för att skicka information ut ur appen.",
   "whatIsStoredAbout": "Vad som lagras om dig",
   "strongYourLoginStrong": "<strong>Din inloggning:</strong> hur du loggar in (Google, e-post eller telefon) och e-postadressen eller telefonnumret du loggade in med.",
   "strongYourProfileStrong": "<strong>Din profil:</strong> ditt namn, och det du väljer att lägga till: e-post, telefonnummer, land, humör och humörmeddelande, om vännerna säger han, hon eller hen om dig, sociala konton, en bild eller en ikon.",
@@ -31,7 +31,7 @@
   "profile": "profil",
   "editAMessageYou": "; redigera ett meddelande du skickat.",
   "strongToHaveIt": "<strong>Att få dem raderade:</strong> se \"Så raderar du\" nedan. Du kan radera ett meddelande, en vän eller allt.",
-  "strongToTakeIt": "<strong>Att ta med dem:</strong> det finns ingen exportknapp ännu. Bilder, videor och röstmeddelanden kan laddas ner en i taget från konversationen.",
+  "strongToTakeIt": "<strong>Att ta med dig:</strong> Seven Friends är till för att dela i appen, så det finns ingen export- eller nedladdningsknapp.",
   "strongToObjectOr": "<strong>Att invända eller begränsa:</strong> du kan sluta när som helst: lägg en vän på vilolistan, stäng av ljud och notiser, eller radera ditt konto.",
   "strongToComplainStrong": "<strong>Att klaga:</strong> du kan klaga hos dataskyddsmyndigheten i ditt land (i Sverige: Integritetsskyddsmyndigheten, IMY; i Norge: Datatilsynet).",
   "howToDelete": "Så raderar du",
@@ -44,9 +44,13 @@
   "strongEverythingStrongDelete": "<strong>Allt:</strong> radera ditt konto.",
   "whatDeletingYourAccount": "Vad som raderas när du raderar ditt konto",
   "yourLoginYourProfile": "Din inloggning, din profil och bild, din vänlista, varje vänförfrågan du skickat eller tagit emot och varje meddelande du skickat eller tagit emot, inklusive bilder, videor och röstmeddelanden, även i dina vänners konversationer. Det raderas för alltid och går inte att ångra. Du får bekräfta först.",
-  "whatYourFriendsAlready": "Det dina vänner redan har sett kan inte tas tillbaka: en vän kan ha laddat ner en bild eller kopierat ett meddelande till någon annanstans, utanför appen.",
+  "whatYourFriendsAlready": "Det dina vänner redan har sett kan inte tas tillbaka: en vän kan ha tagit en skärmdump eller kopierat ett meddelande någon annanstans, utanför appen.",
   "deleteMyAccount": "Radera mitt konto…",
   "responsibleForTheService": "Ansvarig för tjänsten: Blueboot R&D AS, Norge. Frågor eller önskemål om dina uppgifter:",
   "heyBluebootAi": "hey@blueboot.ai",
-  "thisIsAShort": ". Det här är en kort förklaring, inte ett juridiskt avtal."
+  "thisIsAShort": ". Det här är en kort förklaring, inte ett juridiskt avtal.",
+  "sharingStaysInsideThe": "Delning stannar i appen",
+  "picturesVideosVoiceMessages": "Bilder, videor, röstmeddelanden och filer kan inte laddas ner eller exporteras.",
+  "whatYouShareWith": "Det du delar med en vän eller grupp förs inte vidare till andra vänskaper eller grupper, och appen har inget sätt att kopiera eller vidarebefordra det dit.",
+  "theAppCannotStop": "Appen kan inte hindra en vän från att ta en skärmdump eller kopiera ett meddelande: dela bara det du är nöjd med att de behåller."
 }

@@ -2,7 +2,7 @@
   "backToSignIn": "Girişe dön",
   "back": "‹ Geri",
   "yourDataAndPrivacy": "Verilerin ve gizlilik",
-  "sevenFriendsIsFor": "Seven Friends en yakın arkadaşların için olduğundan mümkün olduğunca az şey saklarız. Bu sayfa sade sözlerle nelerin saklandığını, kimin görebildiğini, GDPR'a (Avrupa veri koruma yasası) göre hangi haklarının olduğunu ve nasıl silebileceğini anlatır.",
+  "sevenFriendsIsFor": "Seven Friends uygulama içinde, her seferinde bir arkadaş ya da bir grupla paylaşım içindir. Bilgiyi uygulamanın dışına göndermek için değildir.",
   "whatIsStoredAbout": "Senin hakkında neler saklanır",
   "strongYourLoginStrong": "<strong>Girişin:</strong> nasıl giriş yaptığın (Google, e-posta veya telefon) ve giriş yaptığın e-posta adresi ya da telefon numarası.",
   "strongYourProfileStrong": "<strong>Profilin:</strong> adın ve eklemeyi seçtiklerin: e-posta, telefon numarası, ülke, ruh hali ve ruh hali mesajı, arkadaşlarının senden nasıl söz ettiği (o / onlar), sosyal hesaplar, bir resim ya da simge.",
@@ -31,7 +31,7 @@
   "profile": "profil",
   "editAMessageYou": "; gönderdiğin bir mesajı düzenle.",
   "strongToHaveIt": "<strong>Sildirme:</strong> aşağıdaki \"Nasıl silinir\" bölümüne bak. Bir mesajı, bir arkadaşı ya da her şeyi silebilirsin.",
-  "strongToTakeIt": "<strong>Verilerini alma:</strong> henüz dışa aktarma düğmesi yok. Resimler, videolar ve sesli mesajlar sohbetten tek tek indirilebilir.",
+  "strongToTakeIt": "<strong>Yanınıza almak için:</strong> Seven Friends uygulama içinde paylaşım içindir, bu yüzden dışa aktarma veya indirme düğmesi yoktur.",
   "strongToObjectOr": "<strong>İtiraz etme veya kısıtlama:</strong> istediğin zaman durdurabilirsin: bir arkadaşı uyut, sesleri ve bildirimleri kapat ya da hesabını sil.",
   "strongToComplainStrong": "<strong>Şikâyet etme:</strong> ülkenin veri koruma kurumuna şikâyet edebilirsin (Norveç'te: Datatilsynet).",
   "howToDelete": "Nasıl silinir",
@@ -44,9 +44,13 @@
   "strongEverythingStrongDelete": "<strong>Her şey:</strong> hesabını sil.",
   "whatDeletingYourAccount": "Hesabını silmek nelerin silinmesini sağlar",
   "yourLoginYourProfile": "Girişin, profilin ve resmin, arkadaş listen, gönderdiğin ya da aldığın her arkadaşlık isteği ve gönderdiğin ya da aldığın her mesaj, resimler, videolar ve sesli mesajlar dahil, arkadaşlarının sohbetlerinde de. Kalıcı olarak silinir ve geri alınamaz. Önce onaylaman istenir.",
-  "whatYourFriendsAlready": "Arkadaşlarının zaten gördüğü geri alınamaz: bir arkadaşın bir resmi indirmiş ya da bir mesajı uygulamanın dışında başka bir yere kopyalamış olabilir.",
+  "whatYourFriendsAlready": "Arkadaşlarınızın zaten gördüğü geri alınamaz: bir arkadaş ekran görüntüsü almış ya da bir mesajı uygulamanın dışında başka bir yere kopyalamış olabilir.",
   "deleteMyAccount": "Hesabımı sil…",
   "responsibleForTheService": "Hizmetten sorumlu: Blueboot R&D AS, Norveç. Verilerinle ilgili sorular veya talepler için:",
   "heyBluebootAi": "hey@blueboot.ai",
-  "thisIsAShort": ". Bu kısa bir açıklamadır, hukuki bir sözleşme değildir."
+  "thisIsAShort": ". Bu kısa bir açıklamadır, hukuki bir sözleşme değildir.",
+  "sharingStaysInsideThe": "Paylaşım uygulamada kalır",
+  "picturesVideosVoiceMessages": "Resimler, videolar, sesli mesajlar ve dosyalar indirilemez veya dışa aktarılamaz.",
+  "whatYouShareWith": "Bir arkadaşla ya da grupla paylaştığınız şey başka arkadaşlıklara veya gruplara aktarılmaz ve uygulamada onu oraya kopyalamanın ya da iletmenin bir yolu yoktur.",
+  "theAppCannotStop": "Uygulama bir arkadaşın ekran görüntüsü almasını veya bir mesajı kopyalamasını engelleyemez: yalnızca saklamasına razı olduğunuz şeyleri paylaşın."
 }

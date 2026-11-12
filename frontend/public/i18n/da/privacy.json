@@ -2,7 +2,7 @@
   "backToSignIn": "Tilbage til log ind",
   "back": "‹ Tilbage",
   "yourDataAndPrivacy": "Dine data og dit privatliv",
-  "sevenFriendsIsFor": "Seven Friends er til dine nærmeste venner, så vi gemmer så lidt som muligt. Denne side forklarer på almindeligt dansk, hvad der gemmes, hvem der kan se det, hvilke rettigheder du har efter GDPR (den europæiske databeskyttelseslov), og hvordan du sletter ting.",
+  "sevenFriendsIsFor": "Seven Friends er til deling i appen, med én ven eller én gruppe ad gangen. Det er ikke til at sende oplysninger ud af appen.",
   "whatIsStoredAbout": "Hvad der gemmes om dig",
   "strongYourLoginStrong": "<strong>Dit login:</strong> hvordan du logger ind (Google, e-mail eller telefon) og den e-mailadresse eller det telefonnummer, du loggede ind med.",
   "strongYourProfileStrong": "<strong>Din profil:</strong> dit navn og det, du selv vælger at tilføje: e-mail, telefonnummer, land, humør og humørbesked, om venner siger han, hun eller hen om dig, sociale konti, et billede eller et ikon.",
@@ -31,7 +31,7 @@
   "profile": "profil",
   "editAMessageYou": "; redigér en besked, du har sendt.",
   "strongToHaveIt": "<strong>At få dem slettet:</strong> se \"Sådan sletter du\" nedenfor. Du kan slette en besked, en ven eller alt.",
-  "strongToTakeIt": "<strong>At tage dem med dig:</strong> der er endnu ingen eksportknap. Billeder, videoer og talebeskeder kan downloades én ad gangen fra samtalen.",
+  "strongToTakeIt": "<strong>At tage det med dig:</strong> Seven Friends er til deling i appen, så der er ingen eksport- eller downloadknap.",
   "strongToObjectOr": "<strong>At gøre indsigelse eller begrænse:</strong> du kan stoppe når som helst: læg en ven i dvale, slå lyde og notifikationer fra, eller slet din konto.",
   "strongToComplainStrong": "<strong>At klage:</strong> du kan klage til databeskyttelsesmyndigheden i dit land (i Norge: Datatilsynet).",
   "howToDelete": "Sådan sletter du",
@@ -44,9 +44,13 @@
   "strongEverythingStrongDelete": "<strong>Alt:</strong> slet din konto.",
   "whatDeletingYourAccount": "Hvad sletning af din konto fjerner",
   "yourLoginYourProfile": "Dit login, din profil og dit billede, din venneliste, alle venneanmodninger, du har sendt eller modtaget, og alle beskeder, du har sendt eller modtaget, også billeder, videoer og talebeskeder, i dine venners samtaler. Det slettes for altid og kan ikke fortrydes. Du bliver bedt om at bekræfte først.",
-  "whatYourFriendsAlready": "Det, dine venner allerede har set, kan ikke tages tilbage: en ven kan have downloadet et billede eller kopieret en besked et andet sted hen, uden for appen.",
+  "whatYourFriendsAlready": "Det, dine venner allerede har set, kan ikke tages tilbage: en ven kan have taget et skærmbillede eller kopieret en besked et andet sted hen, uden for appen.",
   "deleteMyAccount": "Slet min konto…",
   "responsibleForTheService": "Ansvarlig for tjenesten: Blueboot R&D AS, Norge. Spørgsmål eller anmodninger om dine data:",
   "heyBluebootAi": "hey@blueboot.ai",
-  "thisIsAShort": ". Dette er en kort forklaring, ikke en juridisk kontrakt."
+  "thisIsAShort": ". Dette er en kort forklaring, ikke en juridisk kontrakt.",
+  "sharingStaysInsideThe": "Deling bliver i appen",
+  "picturesVideosVoiceMessages": "Billeder, videoer, talebeskeder og filer kan ikke downloades eller eksporteres.",
+  "whatYouShareWith": "Det, du deler med én ven eller gruppe, gives ikke videre til andre venskaber eller grupper, og appen har ingen måde at kopiere eller videresende det dertil.",
+  "theAppCannotStop": "Appen kan ikke forhindre en ven i at tage et skærmbillede eller kopiere en besked: del kun det, de må beholde."
 }

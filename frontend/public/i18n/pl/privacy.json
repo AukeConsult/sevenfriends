@@ -2,7 +2,7 @@
   "backToSignIn": "Wróć do logowania",
   "back": "‹ Wstecz",
   "yourDataAndPrivacy": "Twoje dane i prywatność",
-  "sevenFriendsIsFor": "Seven Friends jest dla Twoich najbliższych przyjaciół, więc przechowujemy jak najmniej. Ta strona wyjaśnia prostymi słowami, co jest przechowywane, kto to widzi, jakie prawa masz na mocy RODO (europejskiego prawa o ochronie danych) i jak coś usunąć.",
+  "sevenFriendsIsFor": "Seven Friends służy do dzielenia się w aplikacji, z jednym znajomym lub jedną grupą naraz. Nie służy do wysyłania informacji poza aplikację.",
   "whatIsStoredAbout": "Co o Tobie przechowujemy",
   "strongYourLoginStrong": "<strong>Twoje logowanie:</strong> jak się logujesz (Google, e-mail lub telefon) oraz adres e-mail lub numer telefonu, którym się zalogowałeś.",
   "strongYourProfileStrong": "<strong>Twój profil:</strong> Twoje imię i to, co zechcesz dodać: e-mail, numer telefonu, kraj, nastrój i opis nastroju, czy przyjaciele mówią o Tobie on, ona czy oni, konta społecznościowe, zdjęcie lub ikonę.",
@@ -31,7 +31,7 @@
   "profile": "profilu",
   "editAMessageYou": "; edytuj wysłaną wiadomość.",
   "strongToHaveIt": "<strong>Usunąć je:</strong> zobacz „Jak usunąć” poniżej. Możesz usunąć wiadomość, przyjaciela albo wszystko.",
-  "strongToTakeIt": "<strong>Zabrać je ze sobą:</strong> nie ma jeszcze przycisku eksportu. Zdjęcia, wideo i wiadomości głosowe można pobierać pojedynczo z rozmowy.",
+  "strongToTakeIt": "<strong>Aby zabrać je ze sobą:</strong> Seven Friends służy do dzielenia się w aplikacji, więc nie ma przycisku eksportu ani pobierania.",
   "strongToObjectOr": "<strong>Sprzeciwić się lub ograniczyć:</strong> możesz przestać w każdej chwili: uśpij przyjaciela, wyłącz dźwięki i powiadomienia albo usuń konto.",
   "strongToComplainStrong": "<strong>Złożyć skargę:</strong> możesz złożyć skargę do organu ochrony danych w swoim kraju (w Norwegii: Datatilsynet).",
   "howToDelete": "Jak usunąć",
@@ -44,9 +44,13 @@
   "strongEverythingStrongDelete": "<strong>Wszystko:</strong> usuń swoje konto.",
   "whatDeletingYourAccount": "Co usuwa skasowanie konta",
   "yourLoginYourProfile": "Twoje logowanie, profil i zdjęcie, lista przyjaciół, każde wysłane lub otrzymane zaproszenie i każda wysłana lub otrzymana wiadomość, ze zdjęciami, wideo i wiadomościami głosowymi, także w rozmowach Twoich przyjaciół. Jest usuwane na dobre i nie można tego cofnąć. Najpierw jesteś proszony o potwierdzenie.",
-  "whatYourFriendsAlready": "Tego, co Twoi przyjaciele już widzieli, nie da się cofnąć: przyjaciel mógł pobrać zdjęcie lub skopiować wiadomość gdzieś indziej, poza aplikacją.",
+  "whatYourFriendsAlready": "To, co znajomi już zobaczyli, nie może zostać cofnięte: znajomy mógł zrobić zrzut ekranu lub skopiować wiadomość gdzieś indziej, poza aplikację.",
   "deleteMyAccount": "Usuń moje konto…",
   "responsibleForTheService": "Odpowiedzialny za usługę: Blueboot R&D AS, Norwegia. Pytania lub prośby dotyczące Twoich danych:",
   "heyBluebootAi": "hey@blueboot.ai",
-  "thisIsAShort": ". To krótkie wyjaśnienie, nie umowa prawna."
+  "thisIsAShort": ". To krótkie wyjaśnienie, nie umowa prawna.",
+  "sharingStaysInsideThe": "Udostępnianie zostaje w aplikacji",
+  "picturesVideosVoiceMessages": "Zdjęć, filmów, wiadomości głosowych i plików nie można pobierać ani eksportować.",
+  "whatYouShareWith": "To, czym dzielisz się z jednym znajomym lub grupą, nie jest przekazywane innym znajomościom ani grupom, a aplikacja nie ma sposobu, by to tam skopiować lub przekazać.",
+  "theAppCannotStop": "Aplikacja nie może powstrzymać znajomego przed zrobieniem zrzutu ekranu lub skopiowaniem wiadomości: udostępniaj tylko to, co możesz mu pozwolić zachować."
 }

@@ -2,7 +2,7 @@
   "backToSignIn": "Voltar ao login",
   "back": "‹ Voltar",
   "yourDataAndPrivacy": "Seus dados e privacidade",
-  "sevenFriendsIsFor": "O Seven Friends é para seus amigos mais próximos, por isso guardamos o mínimo possível. Esta página explica em palavras simples o que é guardado, quem pode ver, quais direitos você tem pelo GDPR (a lei europeia de proteção de dados) e como apagar as coisas.",
+  "sevenFriendsIsFor": "O Seven Friends serve para partilhar dentro da app, com um amigo ou um grupo de cada vez. Não serve para enviar informação para fora da app.",
   "whatIsStoredAbout": "O que é guardado sobre você",
   "strongYourLoginStrong": "<strong>Seu login:</strong> como você entra (Google, e-mail ou telefone) e o endereço de e-mail ou número de telefone com que você entrou.",
   "strongYourProfileStrong": "<strong>Seu perfil:</strong> seu nome e o que você escolher adicionar: e-mail, número de telefone, país, humor e mensagem de humor, se os amigos usam ele / ela / neutro para falar de você, contas de redes sociais, uma foto ou um ícone.",
@@ -31,7 +31,7 @@
   "profile": "perfil",
   "editAMessageYou": "; edite uma mensagem que você enviou.",
   "strongToHaveIt": "<strong>Apagá-los:</strong> veja \"Como excluir\" abaixo. Você pode apagar uma mensagem, um amigo ou tudo.",
-  "strongToTakeIt": "<strong>Levá-los com você:</strong> ainda não há botão de exportar. Fotos, vídeos e mensagens de voz podem ser baixados um a um na conversa.",
+  "strongToTakeIt": "<strong>Para levar contigo:</strong> o Seven Friends serve para partilhar dentro da app, por isso não há botão de exportar nem de transferir.",
   "strongToObjectOr": "<strong>Se opor ou restringir:</strong> você pode parar quando quiser: ponha um amigo para dormir, desative sons e notificações, ou exclua sua conta.",
   "strongToComplainStrong": "<strong>Reclamar:</strong> você pode reclamar à autoridade de proteção de dados do seu país (na Noruega: Datatilsynet).",
   "howToDelete": "Como excluir",
@@ -44,9 +44,13 @@
   "strongEverythingStrongDelete": "<strong>Tudo:</strong> exclua sua conta.",
   "whatDeletingYourAccount": "O que a exclusão da conta apaga",
   "yourLoginYourProfile": "Seu login, seu perfil e foto, sua lista de amigos, todo pedido de amizade enviado ou recebido e toda mensagem enviada ou recebida, incluindo fotos, vídeos e mensagens de voz, também nas conversas dos seus amigos. É apagado para sempre e não pode ser desfeito. Você será chamado a confirmar antes.",
-  "whatYourFriendsAlready": "O que seus amigos já viram não pode ser desfeito: um amigo pode ter baixado uma foto ou copiado uma mensagem para outro lugar, fora do app.",
+  "whatYourFriendsAlready": "O que os teus amigos já viram não pode ser retirado: um amigo pode ter feito uma captura de ecrã ou copiado uma mensagem para outro sítio, fora da app.",
   "deleteMyAccount": "Excluir minha conta…",
   "responsibleForTheService": "Responsável pelo serviço: Blueboot R&D AS, Noruega. Perguntas ou pedidos sobre seus dados:",
   "heyBluebootAi": "hey@blueboot.ai",
-  "thisIsAShort": ". Esta é uma explicação curta, não um contrato jurídico."
+  "thisIsAShort": ". Esta é uma explicação curta, não um contrato jurídico.",
+  "sharingStaysInsideThe": "A partilha fica dentro da app",
+  "picturesVideosVoiceMessages": "Imagens, vídeos, mensagens de voz e ficheiros não podem ser transferidos nem exportados.",
+  "whatYouShareWith": "O que partilhas com um amigo ou um grupo não é passado a outras amizades ou grupos, e a app não tem forma de o copiar ou reencaminhar para lá.",
+  "theAppCannotStop": "A app não pode impedir um amigo de fazer uma captura de ecrã ou copiar uma mensagem: partilha só o que não te importes que ele guarde."
 }

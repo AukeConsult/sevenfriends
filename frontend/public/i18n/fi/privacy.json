@@ -2,7 +2,7 @@
   "backToSignIn": "Takaisin kirjautumiseen",
   "back": "‹ Takaisin",
   "yourDataAndPrivacy": "Tietosi ja yksityisyys",
-  "sevenFriendsIsFor": "Seven Friends on lähimpiä ystäviäsi varten, joten säilytämme mahdollisimman vähän. Tällä sivulla kerrotaan selkeästi, mitä tallennetaan, ketkä sen näkevät, mitkä oikeudet sinulla on GDPR:n (EU:n tietosuoja-asetuksen) nojalla ja miten asioita poistetaan.",
+  "sevenFriendsIsFor": "Seven Friends on tarkoitettu jakamiseen sovelluksen sisällä, yhden ystävän tai ryhmän kanssa kerrallaan. Sitä ei ole tarkoitettu tietojen lähettämiseen sovelluksesta ulos.",
   "whatIsStoredAbout": "Mitä sinusta tallennetaan",
   "strongYourLoginStrong": "<strong>Kirjautumisesi:</strong> miten kirjaudut sisään (Google, sähköposti tai puhelin) sekä sähköpostiosoite tai puhelinnumero, jolla kirjauduit.",
   "strongYourProfileStrong": "<strong>Profiilisi:</strong> nimesi ja se, mitä itse lisäät: sähköposti, puhelinnumero, maa, mieliala ja mielialaviesti, mitä pronominia ystävät käyttävät sinusta, sosiaalisen median tilit, kuva tai kuvake.",
@@ -31,7 +31,7 @@
   "profile": "profiilissasi",
   "editAMessageYou": "; muokkaa lähettämääsi viestiä.",
   "strongToHaveIt": "<strong>Poistaa ne:</strong> katso alta \"Näin poistat\". Voit poistaa viestin, ystävän tai kaiken.",
-  "strongToTakeIt": "<strong>Viedä ne mukanasi:</strong> vientipainiketta ei ole vielä. Kuvat, videot ja ääniviestit voi ladata yksitellen keskustelusta.",
+  "strongToTakeIt": "<strong>Mukaan ottaminen:</strong> Seven Friends on tarkoitettu jakamiseen sovelluksen sisällä, joten vienti- tai latauspainiketta ei ole.",
   "strongToObjectOr": "<strong>Vastustaa tai rajoittaa:</strong> voit lopettaa milloin tahansa: laita ystävä nukkumaan, kytke äänet ja ilmoitukset pois tai poista tilisi.",
   "strongToComplainStrong": "<strong>Valittaa:</strong> voit tehdä valituksen oman maasi tietosuojaviranomaiselle (Suomessa: tietosuojavaltuutettu).",
   "howToDelete": "Näin poistat",
@@ -44,9 +44,13 @@
   "strongEverythingStrongDelete": "<strong>Kaikki:</strong> poista tilisi.",
   "whatDeletingYourAccount": "Mitä tilin poistaminen poistaa",
   "yourLoginYourProfile": "Kirjautumisesi, profiilisi ja kuvasi, ystävälistasi, kaikki lähettämäsi ja vastaanottamasi kaveripyynnöt sekä kaikki lähettämäsi ja vastaanottamasi viestit kuvineen, videoineen ja ääniviesteineen, myös ystäviesi keskusteluissa. Ne poistetaan lopullisesti, eikä poistoa voi perua. Sinulta pyydetään ensin vahvistus.",
-  "whatYourFriendsAlready": "Mitä ystäväsi ovat jo nähneet, ei voi ottaa takaisin: ystävä on voinut ladata kuvan tai kopioida viestin johonkin muualle, sovelluksen ulkopuolelle.",
+  "whatYourFriendsAlready": "Sitä, minkä ystäväsi ovat jo nähneet, ei voi ottaa takaisin: ystävä on voinut ottaa kuvakaappauksen tai kopioida viestin muualle sovelluksen ulkopuolelle.",
   "deleteMyAccount": "Poista tilini…",
   "responsibleForTheService": "Palvelusta vastaa: Blueboot R&D AS, Norja. Kysymykset tai pyynnöt tiedoistasi:",
   "heyBluebootAi": "hey@blueboot.ai",
-  "thisIsAShort": ". Tämä on lyhyt selitys, ei oikeudellinen sopimus."
+  "thisIsAShort": ". Tämä on lyhyt selitys, ei oikeudellinen sopimus.",
+  "sharingStaysInsideThe": "Jakaminen pysyy sovelluksessa",
+  "picturesVideosVoiceMessages": "Kuvia, videoita, ääniviestejä ja tiedostoja ei voi ladata eikä viedä.",
+  "whatYouShareWith": "Sitä, mitä jaat yhden ystävän tai ryhmän kanssa, ei välitetä muille ystävyyssuhteille tai ryhmille, eikä sovelluksessa ole tapaa kopioida tai välittää sitä sinne.",
+  "theAppCannotStop": "Sovellus ei voi estää ystävää ottamasta kuvakaappausta tai kopioimasta viestiä: jaa vain se, minkä sallit hänen pitävän."
 }

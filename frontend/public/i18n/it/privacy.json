@@ -2,7 +2,7 @@
   "backToSignIn": "Torna all'accesso",
   "back": "‹ Indietro",
   "yourDataAndPrivacy": "I tuoi dati e la privacy",
-  "sevenFriendsIsFor": "Seven Friends è per i tuoi amici più cari, quindi conserviamo il minimo possibile. Questa pagina spiega con parole semplici cosa viene salvato, chi può vederlo, quali diritti hai secondo il GDPR (la legge europea sulla protezione dei dati) e come eliminare le cose.",
+  "sevenFriendsIsFor": "Seven Friends serve a condividere dentro l’app, con un amico o un gruppo alla volta. Non serve a inviare informazioni fuori dall’app.",
   "whatIsStoredAbout": "Cosa viene salvato su di te",
   "strongYourLoginStrong": "<strong>Il tuo accesso:</strong> come accedi (Google, email o telefono) e l'indirizzo email o il numero di telefono con cui hai effettuato l'accesso.",
   "strongYourProfileStrong": "<strong>Il tuo profilo:</strong> il tuo nome e ciò che scegli di aggiungere: email, numero di telefono, paese, umore e messaggio dell'umore, se gli amici parlano di te al maschile, al femminile o al plurale, account social, una foto o un'icona.",
@@ -31,7 +31,7 @@
   "profile": "profilo",
   "editAMessageYou": "; modifica un messaggio che hai inviato.",
   "strongToHaveIt": "<strong>Farli cancellare:</strong> vedi \"Come eliminare\" qui sotto. Puoi cancellare un messaggio, un amico o tutto.",
-  "strongToTakeIt": "<strong>Portarli con te:</strong> non c'è ancora un pulsante di esportazione. Foto, video e messaggi vocali si possono scaricare uno per uno dalla conversazione.",
+  "strongToTakeIt": "<strong>Per portarli con te:</strong> Seven Friends serve a condividere dentro l’app, quindi non c’è un pulsante di esportazione o download.",
   "strongToObjectOr": "<strong>Opporti o limitarli:</strong> puoi fermarti quando vuoi: metti un amico a dormire, disattiva suoni e notifiche, oppure elimina il tuo account.",
   "strongToComplainStrong": "<strong>Presentare un reclamo:</strong> puoi presentare reclamo all'autorità per la protezione dei dati del tuo paese (in Italia: il Garante per la protezione dei dati personali; in Norvegia: Datatilsynet).",
   "howToDelete": "Come eliminare",
@@ -44,9 +44,13 @@
   "strongEverythingStrongDelete": "<strong>Tutto:</strong> elimina il tuo account.",
   "whatDeletingYourAccount": "Cosa cancella l'eliminazione del tuo account",
   "yourLoginYourProfile": "Il tuo accesso, il tuo profilo e la foto, la tua lista di amici, ogni richiesta di amicizia che hai inviato o ricevuto e ogni messaggio che hai inviato o ricevuto, compresi foto, video e messaggi vocali, anche nelle conversazioni dei tuoi amici. Viene cancellato per sempre e non si può annullare. Prima ti viene chiesto di confermare.",
-  "whatYourFriendsAlready": "Ciò che i tuoi amici hanno già visto non si può riprendere: un amico potrebbe aver scaricato una foto o copiato un messaggio altrove, fuori dall'app.",
+  "whatYourFriendsAlready": "Ciò che i tuoi amici hanno già visto non si può riprendere: un amico può aver fatto uno screenshot o copiato un messaggio altrove, fuori dall’app.",
   "deleteMyAccount": "Elimina il mio account…",
   "responsibleForTheService": "Responsabile del servizio: Blueboot R&D AS, Norvegia. Domande o richieste sui tuoi dati:",
   "heyBluebootAi": "hey@blueboot.ai",
-  "thisIsAShort": ". Questa è una breve spiegazione, non un contratto legale."
+  "thisIsAShort": ". Questa è una breve spiegazione, non un contratto legale.",
+  "sharingStaysInsideThe": "La condivisione resta nell’app",
+  "picturesVideosVoiceMessages": "Immagini, video, messaggi vocali e file non possono essere scaricati né esportati.",
+  "whatYouShareWith": "Ciò che condividi con un amico o un gruppo non viene passato ad altre amicizie o gruppi, e l’app non ha modo di copiarlo o inoltrarlo lì.",
+  "theAppCannotStop": "L’app non può impedire a un amico di fare uno screenshot o copiare un messaggio: condividi solo ciò che sei contento che tenga."
 }

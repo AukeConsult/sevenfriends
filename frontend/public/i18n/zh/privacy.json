@@ -2,7 +2,7 @@
   "backToSignIn": "返回登录",
   "back": "‹ 返回",
   "yourDataAndPrivacy": "你的数据与隐私",
-  "sevenFriendsIsFor": "Seven Friends 是为你最亲近的朋友准备的，所以我们尽可能少地保存信息。本页用大白话说明保存了什么、谁能看到、你在 GDPR（欧洲数据保护法）下有哪些权利，以及如何删除。",
+  "sevenFriendsIsFor": "Seven Friends 用于在应用内分享,每次对一位朋友或一个群组。它不是用来把信息发送到应用之外的。",
   "whatIsStoredAbout": "我们保存了你的哪些信息",
   "strongYourLoginStrong": "<strong>你的登录信息：</strong>你的登录方式（Google、邮箱或手机），以及你用来登录的邮箱地址或手机号。",
   "strongYourProfileStrong": "<strong>你的个人资料：</strong>你的姓名，以及你选择添加的内容：邮箱、手机号、国家、心情和心情留言、朋友称呼你用他、她还是 TA、社交账号、图片或图标。",
@@ -31,7 +31,7 @@
   "profile": "个人资料",
   "editAMessageYou": "里修改姓名、联系方式、国家、心情和图片；也可以编辑你发送的消息。",
   "strongToHaveIt": "<strong>要求删除：</strong>见下面的“如何删除”。你可以删除一条消息、一位朋友，或者全部。",
-  "strongToTakeIt": "<strong>带走你的数据：</strong>暂时还没有导出按钮。图片、视频和语音消息可以在对话中逐个下载。",
+  "strongToTakeIt": "<strong>带走数据:</strong> Seven Friends 用于在应用内分享,因此没有导出或下载按钮。",
   "strongToObjectOr": "<strong>反对或限制：</strong>你随时可以停下来：把朋友放进睡眠、关闭提示音和通知，或删除你的账号。",
   "strongToComplainStrong": "<strong>投诉：</strong>你可以向你所在国家的数据保护机构投诉（挪威：Datatilsynet）。",
   "howToDelete": "如何删除",
@@ -44,9 +44,13 @@
   "strongEverythingStrongDelete": "<strong>全部：</strong>删除你的账号。",
   "whatDeletingYourAccount": "删除账号会清除什么",
   "yourLoginYourProfile": "你的登录信息、个人资料和图片、朋友列表、你发送或收到的每一条好友请求，以及你发送或收到的每一条消息（包括图片、视频和语音消息），在你朋友的对话里也一并清除。它会被永久删除，无法撤销。删除之前会先请你确认。",
-  "whatYourFriendsAlready": "你的朋友已经看到的内容无法收回：朋友可能已经下载了图片，或把消息复制到了应用之外的地方。",
+  "whatYourFriendsAlready": "你的朋友已经看到的内容无法收回:朋友可能已截屏,或把消息复制到应用之外的其他地方。",
   "deleteMyAccount": "删除我的账号…",
   "responsibleForTheService": "服务负责方：Blueboot R&D AS，挪威。关于你的数据的问题或请求：",
   "heyBluebootAi": "hey@blueboot.ai",
-  "thisIsAShort": "。这是一份简短的说明，不是法律合同。"
+  "thisIsAShort": "。这是一份简短的说明，不是法律合同。",
+  "sharingStaysInsideThe": "分享留在应用内",
+  "picturesVideosVoiceMessages": "图片、视频、语音消息和文件无法下载或导出。",
+  "whatYouShareWith": "你与一位朋友或一个群组分享的内容不会转给其他好友关系或群组,应用也没有把它复制或转发到那里的方法。",
+  "theAppCannotStop": "应用无法阻止朋友截屏或复制消息:只分享你愿意让对方保留的内容。"
 }

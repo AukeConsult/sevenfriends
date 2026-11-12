@@ -1,6 +1,6 @@
 <ng-container *transloco="let t">
 <span #box class="sf-media sf-media-video" [class.sf-playing]="src()" [style.--sf-ratio]="ratio()">
-  <a class="sf-media-open" [routerLink]="['/media', media().ownerId, media().objectId]" [queryParams]="friendId() ? { f: friendId() } : null" (click)="stop($event)" [attr.aria-label]="t('mediaVideo.openTheVideoTo') || 'Open the video to download it'">⤓</a>
+  <a class="sf-media-open" [routerLink]="['/media', media().ownerId, media().objectId]" [queryParams]="friendId() ? { f: friendId() } : null" (click)="stop($event)" [attr.aria-label]="t('mediaVideo.openTheVideoTo') || 'Open the video in full screen'">⤓</a>
   @if (src(); as url) {
     <!-- no native controls: Safari and iPhone draw them over the picture, Chrome differently. The same bar is shown under the video everywhere. -->
     <video #video [src]="url" autoplay playsinline [muted]="muted()" (click)="toggle($event)" (play)="playing.set(true)" (pause)="playing.set(false)"

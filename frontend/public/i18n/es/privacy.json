@@ -2,7 +2,7 @@
   "backToSignIn": "Volver a iniciar sesión",
   "back": "‹ Atrás",
   "yourDataAndPrivacy": "Tus datos y privacidad",
-  "sevenFriendsIsFor": "Seven Friends es para tus amigos más cercanos, así que guardamos lo mínimo posible. Esta página explica con palabras sencillas qué se guarda, quién puede verlo, qué derechos tienes según el RGPD (la ley europea de protección de datos) y cómo borrar cosas.",
+  "sevenFriendsIsFor": "Seven Friends es para compartir dentro de la app, con un amigo o un grupo cada vez. No es para enviar información fuera de la app.",
   "whatIsStoredAbout": "Qué se guarda sobre ti",
   "strongYourLoginStrong": "<strong>Tu inicio de sesión:</strong> cómo inicias sesión (Google, correo o teléfono) y el correo o el número de teléfono con el que lo hiciste.",
   "strongYourProfileStrong": "<strong>Tu perfil:</strong> tu nombre y lo que decidas añadir: correo, número de teléfono, país, estado de ánimo y mensaje de ánimo, si tus amigos dicen él o ella de ti, cuentas de redes sociales, una foto o un icono.",
@@ -31,7 +31,7 @@
   "profile": "perfil",
   "editAMessageYou": "; edita un mensaje que enviaste.",
   "strongToHaveIt": "<strong>Que se borren:</strong> mira \"Cómo borrar\" más abajo. Puedes borrar un mensaje, un amigo o todo.",
-  "strongToTakeIt": "<strong>Llevártelos:</strong> todavía no hay botón de exportar. Las fotos, vídeos y mensajes de voz se pueden descargar uno a uno desde la conversación.",
+  "strongToTakeIt": "<strong>Para llevártelo contigo:</strong> Seven Friends es para compartir dentro de la app, así que no hay botón de exportar ni de descargar.",
   "strongToObjectOr": "<strong>Oponerte o limitarlos:</strong> puedes parar cuando quieras: pon a un amigo a descansar, desactiva los sonidos y las notificaciones o elimina tu cuenta.",
   "strongToComplainStrong": "<strong>Reclamar:</strong> puedes reclamar ante la autoridad de protección de datos de tu país (en Noruega: Datatilsynet).",
   "howToDelete": "Cómo borrar",
@@ -44,9 +44,13 @@
   "strongEverythingStrongDelete": "<strong>Todo:</strong> elimina tu cuenta.",
   "whatDeletingYourAccount": "Qué borra eliminar tu cuenta",
   "yourLoginYourProfile": "Tu inicio de sesión, tu perfil y tu foto, tu lista de amigos, todas las solicitudes de amistad que enviaste o recibiste y todos los mensajes que enviaste o recibiste, con las fotos, vídeos y mensajes de voz, también en las conversaciones de tus amigos. Se borra para siempre y no se puede deshacer. Antes se te pide confirmación.",
-  "whatYourFriendsAlready": "Lo que tus amigos ya vieron no se puede recuperar: un amigo puede haber descargado una foto o copiado un mensaje a otro lugar, fuera de la app.",
+  "whatYourFriendsAlready": "Lo que tus amigos ya vieron no se puede recuperar: un amigo puede haber hecho una captura de pantalla o copiado un mensaje a otro sitio, fuera de la app.",
   "deleteMyAccount": "Eliminar mi cuenta…",
   "responsibleForTheService": "Responsable del servicio: Blueboot R&D AS, Noruega. Preguntas o solicitudes sobre tus datos:",
   "heyBluebootAi": "hey@blueboot.ai",
-  "thisIsAShort": ". Esta es una explicación breve, no un contrato legal."
+  "thisIsAShort": ". Esta es una explicación breve, no un contrato legal.",
+  "sharingStaysInsideThe": "Lo compartido se queda en la app",
+  "picturesVideosVoiceMessages": "Las imágenes, los vídeos, los mensajes de voz y los archivos no se pueden descargar ni exportar.",
+  "whatYouShareWith": "Lo que compartes con un amigo o un grupo no se pasa a otras amistades ni grupos, y la app no tiene forma de copiarlo o reenviarlo allí.",
+  "theAppCannotStop": "La app no puede impedir que un amigo haga una captura de pantalla o copie un mensaje: comparte solo lo que te parezca bien que conserve."
 }

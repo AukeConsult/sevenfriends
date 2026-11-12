@@ -35,7 +35,7 @@ const ENDINGS: Record<string, DocType> = {
 /**
  * One file of the safebox, shown by what it is (`/friends/:id/safebox/:itemId`): a picture big, a video and a sound with the
  * app's own player, a PDF, a Word (.docx), an Excel (.xlsx) and a PowerPoint (.pptx) file drawn in the page (`core/office-preview.ts`),
- * a text file as text, and the other files (old .doc / .xls / .ppt, OpenDocument, zip, too big) as a card with a Download button.
+ * a text file as text, and the other files (old .doc / .xls / .ppt, OpenDocument, zip, too big) as a card that says it cannot be shown.
  * Arrows go to the next and the previous file of the box.
  */
 @Component({
@@ -94,7 +94,7 @@ export class SafeboxView {
     if (item.mime.startsWith('text/')) return 'text';
     return ENDINGS[this.ending()] ?? (item.mime === 'application/zip' ? 'zip' : 'other');
   });
-  /** how a document is drawn in the page, or null when it can only be downloaded (old Office files, OpenDocument, zip, too big) */
+  /** how a document is drawn in the page, or null when it cannot be shown (old Office files, OpenDocument, zip, too big) */
   protected readonly drawing = computed<'pdf' | 'docx' | 'xlsx' | 'pptx' | null>(() => {
     const item = this.item();
     if (!item || item.kind !== 'document' || item.bytes > PREVIEW_LIMIT_BYTES) return null;
@@ -122,7 +122,7 @@ export class SafeboxView {
   protected readonly imageUrl = signal<string | null>(null);
   /** an encrypted video or sound, opened here (the media players read the server's file, which is locked) */
   protected readonly mediaUrl = signal<string | null>(null);
-  /** the browser cannot play this video (a .wmv, say): the page says so and offers Download */
+  /** the browser cannot play this video (a .wmv, say): the page says so */
   protected readonly cannotPlay = signal(false);
   protected readonly text = signal<string | null>(null);
   protected readonly cut = signal(false);
@@ -270,24 +270,6 @@ export class SafeboxView {
   protected go(item: SafeboxItem | null): void {
     this.renaming.set(null);
     if (item) void this.router.navigate(['/friends', this.friendId, 'safebox', item.id], { replaceUrl: true });
-  }
-
-  /** Saves the file under its own name. */
-  protected async download(): Promise<void> {
-    const item = this.item();
-    if (!item) return;
-    this.busy.set(true);
-    this.failed.set(false);
-    try {
-      const link = document.createElement('a');
-      link.href = (await this.service.file(this.friendId, item.id)).url;
-      link.download = item.name;
-      link.click();
-    } catch (err) {
-      this.fail(item, err);
-    } finally {
-      this.busy.set(false);
-    }
   }
 
   /** The file could not be read. A locked file says why (no key on this device, locked for another device, or changed); anything else is the connection. */

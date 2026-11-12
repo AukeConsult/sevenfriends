@@ -2,7 +2,7 @@
   "backToSignIn": "로그인으로 돌아가기",
   "back": "‹ 뒤로",
   "yourDataAndPrivacy": "내 데이터와 개인정보",
-  "sevenFriendsIsFor": "Seven Friends는 가장 가까운 친구들을 위한 앱이라서 최소한의 정보만 보관해요. 이 페이지에서는 무엇이 저장되는지, 누가 볼 수 있는지, GDPR(유럽 개인정보 보호법)에 따른 권리는 무엇인지, 어떻게 삭제하는지를 쉬운 말로 설명해요.",
+  "sevenFriendsIsFor": "Seven Friends는 앱 안에서, 한 번에 한 친구 또는 한 그룹과 공유하기 위한 것입니다. 정보를 앱 밖으로 보내기 위한 것이 아닙니다.",
   "whatIsStoredAbout": "저장되는 내 정보",
   "strongYourLoginStrong": "<strong>로그인 정보:</strong> 로그인 방법(Google, 이메일 또는 전화번호)과 로그인에 사용한 이메일 주소 또는 전화번호.",
   "strongYourProfileStrong": "<strong>프로필:</strong> 이름, 그리고 직접 추가한 정보: 이메일, 전화번호, 국가, 기분과 기분 메시지, 친구들이 나를 어떻게 부르는지(그, 그녀, 그들), SNS 계정, 사진 또는 아이콘.",
@@ -31,7 +31,7 @@
   "profile": "프로필",
   "editAMessageYou": "; 보낸 메시지는 수정할 수 있어요.",
   "strongToHaveIt": "<strong>삭제할 권리:</strong> 아래의 \"삭제하는 방법\"을 보세요. 메시지, 친구, 또는 모든 것을 삭제할 수 있어요.",
-  "strongToTakeIt": "<strong>가져갈 권리:</strong> 아직 내보내기 버튼은 없어요. 사진, 동영상, 음성 메시지는 대화에서 하나씩 내려받을 수 있어요.",
+  "strongToTakeIt": "<strong>가져가려면:</strong> Seven Friends는 앱 안에서 공유하기 위한 것이므로 내보내기나 다운로드 버튼이 없습니다.",
   "strongToObjectOr": "<strong>반대하거나 제한할 권리:</strong> 언제든 멈출 수 있어요. 친구를 수면 상태로 두거나, 소리와 알림을 끄거나, 계정을 삭제하세요.",
   "strongToComplainStrong": "<strong>이의를 제기할 권리:</strong> 내 나라의 개인정보 보호 당국에 민원을 제기할 수 있어요 (노르웨이: Datatilsynet).",
   "howToDelete": "삭제하는 방법",
@@ -44,9 +44,13 @@
   "strongEverythingStrongDelete": "<strong>모든 것:</strong> 계정을 삭제하세요.",
   "whatDeletingYourAccount": "계정을 삭제하면 지워지는 것",
   "yourLoginYourProfile": "로그인 정보, 프로필과 사진, 친구 목록, 보내거나 받은 모든 친구 요청, 그리고 보내거나 받은 모든 메시지(사진, 동영상, 음성 메시지 포함)가 친구들의 대화에서도 지워져요. 영구적으로 삭제되며 되돌릴 수 없어요. 먼저 확인을 요청해요.",
-  "whatYourFriendsAlready": "친구들이 이미 본 것은 되돌릴 수 없어요. 친구가 사진을 내려받았거나 메시지를 앱 밖의 다른 곳에 복사했을 수 있어요.",
+  "whatYourFriendsAlready": "친구가 이미 본 것은 되돌릴 수 없습니다. 친구가 스크린샷을 찍었거나 메시지를 앱 밖의 다른 곳에 복사했을 수 있습니다.",
   "deleteMyAccount": "내 계정 삭제…",
   "responsibleForTheService": "서비스 책임자: Blueboot R&D AS, 노르웨이. 내 데이터에 관한 문의나 요청:",
   "heyBluebootAi": "hey@blueboot.ai",
-  "thisIsAShort": ". 이 글은 간단한 설명이며 법적 계약이 아니에요."
+  "thisIsAShort": ". 이 글은 간단한 설명이며 법적 계약이 아니에요.",
+  "sharingStaysInsideThe": "공유는 앱 안에 머뭅니다",
+  "picturesVideosVoiceMessages": "사진, 동영상, 음성 메시지, 파일은 다운로드하거나 내보낼 수 없습니다.",
+  "whatYouShareWith": "한 친구나 그룹과 공유한 내용은 다른 친구 관계나 그룹에 전달되지 않으며, 앱에는 그곳으로 복사하거나 전달할 방법이 없습니다.",
+  "theAppCannotStop": "앱은 친구가 스크린샷을 찍거나 메시지를 복사하는 것을 막을 수 없습니다. 상대가 간직해도 괜찮은 것만 공유하세요."
 }

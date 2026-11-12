@@ -2,7 +2,7 @@
   "backToSignIn": "Zurück zur Anmeldung",
   "back": "‹ Zurück",
   "yourDataAndPrivacy": "Deine Daten und Datenschutz",
-  "sevenFriendsIsFor": "Seven Friends ist für deine engsten Freunde, deshalb speichern wir so wenig wie möglich. Diese Seite erklärt in einfachen Worten, was gespeichert wird, wer es sehen kann, welche Rechte du nach der DSGVO (dem europäischen Datenschutzgesetz) hast und wie du Dinge löschst.",
+  "sevenFriendsIsFor": "Seven Friends dient dem Teilen innerhalb der App, jeweils mit einem Freund oder einer Gruppe. Es ist nicht dafür da, Informationen aus der App hinauszuschicken.",
   "whatIsStoredAbout": "Was über dich gespeichert wird",
   "strongYourLoginStrong": "<strong>Deine Anmeldung:</strong> wie du dich anmeldest (Google, E-Mail oder Telefon) und die E-Mail-Adresse oder Telefonnummer, mit der du dich angemeldet hast.",
   "strongYourProfileStrong": "<strong>Dein Profil:</strong> dein Name und was du hinzufügen möchtest: E-Mail, Telefonnummer, Land, Stimmung und Stimmungsnachricht, ob Freunde „er“, „sie“ oder „they“ über dich sagen, Social-Media-Konten, ein Bild oder ein Symbol.",
@@ -31,7 +31,7 @@
   "profile": "Profil",
   "editAMessageYou": "; bearbeite eine Nachricht, die du gesendet hast.",
   "strongToHaveIt": "<strong>Löschung:</strong> siehe „So löschst du“ unten. Du kannst eine Nachricht, einen Freund oder alles löschen.",
-  "strongToTakeIt": "<strong>Mitnahme deiner Daten:</strong> Es gibt noch keinen Export-Knopf. Bilder, Videos und Sprachnachrichten kannst du einzeln aus der Unterhaltung herunterladen.",
+  "strongToTakeIt": "<strong>Zum Mitnehmen:</strong> Seven Friends ist zum Teilen innerhalb der App gedacht, deshalb gibt es keine Export- oder Download-Taste.",
   "strongToObjectOr": "<strong>Widerspruch oder Einschränkung:</strong> Du kannst jederzeit aufhören: Leg einen Freund schlafen, schalte Töne und Benachrichtigungen aus oder lösch dein Konto.",
   "strongToComplainStrong": "<strong>Beschwerde:</strong> Du kannst dich bei der Datenschutzbehörde deines Landes beschweren (in Norwegen: Datatilsynet).",
   "howToDelete": "So löschst du",
@@ -44,9 +44,13 @@
   "strongEverythingStrongDelete": "<strong>Alles:</strong> Lösch dein Konto.",
   "whatDeletingYourAccount": "Was beim Löschen deines Kontos gelöscht wird",
   "yourLoginYourProfile": "Deine Anmeldung, dein Profil und Bild, deine Freundesliste, jede Freundschaftsanfrage, die du gesendet oder erhalten hast, und jede Nachricht, die du gesendet oder erhalten hast, einschließlich der Bilder, Videos und Sprachnachrichten, auch in den Unterhaltungen deiner Freunde. Es wird endgültig gelöscht und lässt sich nicht rückgängig machen. Vorher wirst du um eine Bestätigung gebeten.",
-  "whatYourFriendsAlready": "Was deine Freunde schon gesehen haben, lässt sich nicht zurücknehmen: Ein Freund könnte ein Bild heruntergeladen oder eine Nachricht außerhalb der App woandershin kopiert haben.",
+  "whatYourFriendsAlready": "Was deine Freunde schon gesehen haben, lässt sich nicht zurückholen: Ein Freund kann einen Screenshot gemacht oder eine Nachricht woandershin außerhalb der App kopiert haben.",
   "deleteMyAccount": "Mein Konto löschen …",
   "responsibleForTheService": "Verantwortlich für den Dienst: Blueboot R&D AS, Norwegen. Fragen oder Anliegen zu deinen Daten:",
   "heyBluebootAi": "hey@blueboot.ai",
-  "thisIsAShort": ". Das ist eine kurze Erklärung, kein Rechtsvertrag."
+  "thisIsAShort": ". Das ist eine kurze Erklärung, kein Rechtsvertrag.",
+  "sharingStaysInsideThe": "Geteiltes bleibt in der App",
+  "picturesVideosVoiceMessages": "Bilder, Videos, Sprachnachrichten und Dateien können nicht heruntergeladen oder exportiert werden.",
+  "whatYouShareWith": "Was du mit einem Freund oder einer Gruppe teilst, wird nicht an andere Freundschaften oder Gruppen weitergegeben, und die App bietet keine Möglichkeit, es dorthin zu kopieren oder weiterzuleiten.",
+  "theAppCannotStop": "Die App kann nicht verhindern, dass ein Freund einen Screenshot macht oder eine Nachricht kopiert: Teile nur, was er behalten darf."
 }
