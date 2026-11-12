@@ -7,7 +7,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AppDatePipe } from '../core/app-date.pipe';
 import { Component, DestroyRef, ElementRef, HostListener, computed, effect, inject, signal, untracked, viewChild } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { Router, RouterLink } from '@angular/router';
+import { NavigationStart, Router, RouterLink } from '@angular/router';
+import { filter } from 'rxjs';
 import { ApiError } from '../core/api.service';
 import { ChatItem } from '../core/message-lock.service';
 import { SafeboxService } from '../core/safebox.service';
@@ -29,6 +30,9 @@ import { ChatMessage, GroupMember, MessageDeleteCriteria } from '../models';
 
 // New messages, edits and deletes arrive live (RealtimeService). This refresh is only a safety net.
 const SAFETY_REFRESH_MS = 30000;
+
+/** Where each feed was scrolled to when the person left it (to a picture, a video, the safebox, another page), kept while the app runs: the feed is shown there again, unless a message came meanwhile (then it shows the newest). */
+const LEFT_AT = new Map<string, { y: number; newest: string | null; desc: boolean }>();
 
 /** The message feed with one friend: /friends/:id (the id of the connection). */
 @Component({
@@ -190,6 +194,11 @@ export class Chat {
       toggleSort: () => this.toggleSort(),
       toggleCleanup: () => this.toggleCleanup(),
     });
+    // leaving the feed (any page): remember where it was scrolled to
+    this.router.events.pipe(filter((e) => e instanceof NavigationStart), takeUntilDestroyed()).subscribe(() => {
+      if (!this.loaded()) return; // the feed was not shown yet: nothing to remember
+      LEFT_AT.set(this.friendId, { y: window.scrollY, newest: this.messages().filter((m) => !m.id.startsWith('pending-')).at(-1)?.id ?? null, desc: this.sortDesc() });
+    });
     this.refresh(true);
 
     // a message from THIS friend arrived: show it at once
@@ -230,7 +239,14 @@ export class Chat {
         await this.chat.markRead(this.friendId); // I am looking at them now
         this.messages.update((list) => list.map((m) => ({ ...m, read: true })));
       }
-      if (changed) this.scrollDown();
+      if (first) {
+        // shown again after a visit to another page: at the same place, unless a message came meanwhile (then the newest)
+        const left = LEFT_AT.get(this.friendId);
+        LEFT_AT.delete(this.friendId);
+        const newest = res.messages.at(-1)?.id ?? null;
+        if (left && left.desc === this.sortDesc() && left.newest === newest) this.scrollBack(left.y);
+        else this.scrollDown();
+      } else if (changed) this.scrollDown(); // a message arrived or was sent: the newest
     } catch (err: any) {
       if (err instanceof ApiError && (err.status === 403 || err.status === 404)) this.blocked.set(err.message);
       else if (first) this.error.set(err.message ?? tr('chat.couldNotLoadThe', 'Could not load the conversation'));
@@ -567,6 +583,11 @@ export class Chat {
       this.cleanupBusy.set(false);
       this.cleanupAsk.set(false);
     }
+  }
+
+  /** Back to the place the feed was left at (again after a while: pictures and videos take their height when they are loaded). */
+  private scrollBack(y: number): void {
+    for (const wait of [50, 400, 1200]) setTimeout(() => window.scrollTo({ top: y }), wait);
   }
 
   private scrollDown(): void {

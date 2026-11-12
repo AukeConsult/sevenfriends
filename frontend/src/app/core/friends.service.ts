@@ -43,7 +43,15 @@ export class FriendsService {
     }
     const res = await this.api.request<{ friends: Friend[] }>(`/circles/${circle.id}/friends`);
     if (generation !== this.active.generation) return;
+    const before = this.friends();
     this.friends.set(res.friends);
+    for (const listener of this.loadedListeners) listener(before, res.friends); // every load tells what changed, whoever asked for it (see `onLoaded`)
+  }
+
+  private readonly loadedListeners: ((before: Friend[], now: Friend[]) => void)[] = [];
+  /** Called after every load of the friend list with the list before and after: the notices (an answer to my request, a friendship that ended) come from here, so a load that the Home page or the heartbeat started does not swallow them. */
+  onLoaded(listener: (before: Friend[], now: Friend[]) => void): void {
+    this.loadedListeners.push(listener);
   }
 
   /** Makes the circle of a type (the circle this app is bound to does not exist yet); when it already exists the list tells. */

@@ -1,7 +1,7 @@
 import { Injectable, effect, inject, signal, untracked } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import type { DocumentData, Query, QuerySnapshot } from 'firebase/firestore'; // types only: the SDK itself is loaded on demand below
-import { LiveMessage, RecoveryItem } from '../models';
+import { Friend, LiveMessage, RecoveryItem } from '../models';
 import { AuthService } from './auth.service';
 import { DesktopNoticeService } from './desktop-notice.service';
 import { ActiveCircleService, circleLabel, circleType } from './active-circle.service';
@@ -78,6 +78,7 @@ export class RealtimeService {
   private seq = 0;
 
   constructor() {
+    this.friends.onLoaded((before, now) => this.announceFriendChanges(before, now)); // whoever loads the list: an answer or an ended friendship is told
     // follow the login: listen while somebody is signed in, stop at sign-out
     effect(() => {
       const uid = this.auth.user()?.uid ?? null;
@@ -280,18 +281,22 @@ export class RealtimeService {
     }
   }
 
-  /** Reload the friends and tell what happened: an answer to a request I sent, or a friend who removed me. */
+  /** Reload the friends (what changed is told by `announceFriendChanges`, which runs after every load). */
   private async onFriendsChanged(): Promise<void> {
-    const before = new Map(this.friends.friends().map((f) => [f.id, f]));
     try {
       await this.friends.load();
     } catch {
-      return;
+      /* the next change or the heartbeat tries again */
     }
-    const now = new Map(this.friends.friends().map((f) => [f.id, f]));
+  }
+
+  /** What happened between two loads of the list: an answer to a request I sent, or a friend who removed me. */
+  private announceFriendChanges(beforeList: Friend[], nowList: Friend[]): void {
+    const before = new Map(beforeList.map((f) => [f.id, f]));
+    const now = new Map(nowList.map((f) => [f.id, f]));
     for (const friend of now.values()) {
       const was = before.get(friend.id);
-      if (was?.status !== 'pending' || friend.incoming) continue; // only answers to MY requests
+      if (was?.status !== 'pending' || friend.incoming || friend.status === 'pending') continue; // only answers to MY requests (a request that is still waiting is not an answer: the list is loaded often now)
       this.ring('answer');
       this.notify('answer', {
         title: friend.status === 'confirmed' ? tr('core.acceptedYourFriendRequest', '{{ friendName }} accepted your friend request', { friendName: friend.name }) : tr('core.rejectedYourFriendRequest', '{{ friendName }} rejected your friend request', { friendName: friend.name }),

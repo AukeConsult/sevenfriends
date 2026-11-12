@@ -276,7 +276,7 @@ export class Notifications {
     });
     this.load();
     void this.checkOwnDetails();
-    if (!this.friendsService.circle()) void this.friendsService.load().catch(() => undefined); // opened directly: the seats come from the list
+    void this.friendsService.load().catch(() => undefined); // always when Home opens (also after a refresh): the seats, pictures and icons are the friends' newest
   }
 
   private async checkOwnDetails(): Promise<void> {

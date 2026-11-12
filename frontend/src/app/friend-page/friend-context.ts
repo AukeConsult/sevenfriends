@@ -152,7 +152,7 @@ export class FriendContext {
     });
     void this.keys.refresh(); // is there a key for me on this device?
     this.loadBoxKeys(); // and for my friend?
-    if (!this.friends.friends().length) void this.friends.load().catch(() => undefined); // opened directly (a reload): the seat comes from the list
+    void this.friends.load().catch(() => undefined); // always when a friend's page opens (also after a reload): the seat, picture and icon are the newest
   }
 
   /** Asks the server for the keys in use of me and of my friend (again when the padlock is tapped while they are still not known). */

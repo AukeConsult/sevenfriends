@@ -32,15 +32,15 @@ export class FriendPictureService {
     const key = `${friendId}@${pictureAt}`;
     if (!this.asked.has(key)) {
       this.asked.add(key);
-      void this.load(friendId, key);
+      void this.load(friendId, key, pictureAt);
     }
     return this.pictures()[key] ?? null;
   }
 
-  private async load(friendId: string, key: string): Promise<void> {
+  private async load(friendId: string, key: string, pictureAt: string): Promise<void> {
     try {
       const generation = this.active.generation;
-      const { image } = await this.api.request<ProfilePicture>(`/circles/${this.friends.circle()?.id ?? this.active.id}/friends/${friendId}/picture`);
+      const { image } = await this.api.request<ProfilePicture>(`/circles/${this.friends.circle()?.id ?? this.active.id}/friends/${friendId}/picture?v=${encodeURIComponent(pictureAt)}`); // the version in the address: an old answer kept by the browser or the app is never used for a new picture
       if (image && generation === this.active.generation) this.pictures.update((all) => ({ ...all, [key]: image }));
     } catch {
       this.asked.delete(key); // the next time it is asked for, it tries again

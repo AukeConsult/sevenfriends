@@ -27,7 +27,10 @@ export class PresenceService {
       const signedIn = Boolean(this.auth.user());
       untracked(() => (signedIn ? this.start() : this.stop()));
     });
-    document.addEventListener('visibilitychange', () => this.report());
+    document.addEventListener('visibilitychange', () => {
+      this.report();
+      if (document.visibilityState === 'visible' && this.friends.circle()) void this.friends.load().catch(() => undefined); // back in the app: my friends may have changed their picture or icon meanwhile
+    });
     // closing the installed app asks first (the browser shows its own question: the text cannot be changed); a browser tab is left alone
     window.addEventListener('beforeunload', (event) => {
       if (!this.auth.user() || !this.install.runsAsApp()) return;
