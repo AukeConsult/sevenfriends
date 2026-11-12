@@ -612,10 +612,11 @@ router-outlet + * { display: block; min-height: 100dvh; }
 // ---- Bar extras (message feed header) ----
 .sf-bar-text { display: flex; flex-direction: column; min-width: 0; }
 .sf-bar .sf-seat + .sf-bar-text { margin-inline-start: 0.75rem; } // room between the picture and the name in a conversation header
-.sf-friend-page .sf-bar > :first-child:not(.sf-back) { margin-inline-start: 0.375rem; } // the header of a friend has no back arrow: the picture sits a little closer to the left edge
+.sf-friend-page .sf-bar > :first-child:not(.sf-back) { margin-inline-start: 0.75rem; } // the header of a friend has no back arrow: the picture sits a little closer to the left edge
 .sf-friend-page .sf-bar { min-height: calc(3.75rem + var(--sf-safe-top)); padding-top: calc(0.625rem + var(--sf-safe-top)); padding-bottom: 0.625rem; } // higher again (phone included)
 .sf-friend-page .sf-bar .sf-tool-btn { min-height: 2.75rem; svg { width: 1.625rem; height: 1.625rem; } } // bigger icons in the header of a friend (26px, was 20-22px)
 @media (max-width: 575.98px) { .sf-friend-page .sf-bar .sf-tool-btn { min-width: 2.75rem; } }
+.sf-friend-page .sf-bar { padding-inline-end: 0; } .sf-friend-page .sf-bar .sf-more .sf-tool-btn { margin-inline-end: -0.5rem; } // the ⋮ sits as far from the right edge as the picture from the left (its 2.75rem tap area reaches the edge)
 .sf-title-dot { display: inline-block; width: 0.75rem; height: 0.75rem; margin-inline-end: 0.5rem; border-radius: 50%; background: var(--sf-red); vertical-align: middle; } // a seat dot to the left of a title
 // The save status of the Profile sits at the right of the title and takes no room of its own
 // a card without its frame: the content sits straight on the page
@@ -1292,9 +1293,9 @@ nav.sf-tabs ~ * > app-page-bar { display: none !important; } // inside Settings 
 @media (max-width: 359.98px) { .sf-wl-cards { grid-template-columns: 1fr; } }
 
 // ---- Home: the seven seats (round pictures in a row), arranging, the silent bucket ----
-.sf-hs { margin-bottom: 1rem; }
+.sf-hs { margin-bottom: 2.5rem; }
 .sf-hs-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 1.25rem; }
-.sf-hs-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.875rem 0.25rem; }
+.sf-hs-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.75rem 0.25rem; }
 .sf-hs-seat { min-width: 0; }
 .sf-hs-friend { display: flex; flex-direction: column; align-items: center; gap: 0.125rem; text-align: center; text-decoration: none; color: var(--sf-text); cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent;
   &:focus-visible { outline: 2px solid var(--sf-primary); outline-offset: 3px; border-radius: var(--sf-radius); }
@@ -1339,7 +1340,7 @@ button.sf-hs-sleep { padding: 0; border: 0; background: none; font: inherit; wid
 .sf-home-name { font-weight: 600; }
 .sf-home-hi { margin: 0; font-size: 1.5rem; font-weight: 600; text-align: center; }
 .sf-home-sub { margin: 0 0 0.75rem; font-size: 0.875rem; color: var(--sf-muted); text-align: center; }
-.sf-home-quiet { margin: 0 0 0.75rem; text-align: center; font-size: 0.875rem; color: var(--sf-muted); }
+.sf-home-quiet { margin: 0 0 2rem; text-align: center; font-size: 0.875rem; color: var(--sf-muted); }
 .sf-checks { margin-bottom: 1rem; padding: 0.5rem 0.75rem; border-radius: var(--sf-radius); background: var(--sf-warn-bg); color: var(--sf-warn-text);
   > summary { cursor: pointer; font-size: 0.875rem; font-weight: 600; list-style: none; &::-webkit-details-marker { display: none; } &::after { content: '▾'; float: right; } }
   &[open] > summary::after { content: '▴'; } }
@@ -1706,3 +1707,6 @@ button.sf-back { padding: 0; border: 0; background: none; } // a back arrow that
 .sf-help-row { display: flex; gap: 0.75rem; align-items: flex-start; }
 .sf-help-icon { flex: none; display: grid; place-items: center; width: 2.25rem; height: 2.25rem; border-radius: 50%; background: var(--sf-surface); color: var(--sf-primary); }
 .sf-help-title { font-size: var(--sf-fs-text); font-weight: 600; }
+
+.sf-home-cards { margin-bottom: 2rem; } // more air between the cards and the link rows on Home
+.sf-home-cards + .sf-link-row { margin-top: 0.75rem; }
