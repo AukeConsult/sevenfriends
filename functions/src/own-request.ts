@@ -1,4 +1,5 @@
-import { DocumentData, FieldValue, Timestamp } from "firebase-admin/firestore";
+import { DocumentData, FieldValue, Timestamp, getFirestore } from "firebase-admin/firestore";
+import { OWN_REQUEST_REMINDERS } from "./constants";
 import { OwnRecoveryRequest } from "./models";
 import { ownRequestCol } from "./paths";
 import { sendPush } from "./push";
@@ -56,7 +57,41 @@ export async function openRequest(uid: string, key: { id: string; label: string;
     url: "/",
     kind: "request",
   });
+  // one more push if nobody has answered in a day (`sendDueOwnRequestReminders`); a new request starts the day again
+  await getFirestore().collection(OWN_REQUEST_REMINDERS).doc(`${uid}_${key.id}`).set({ uid, keyId: key.id, at: Timestamp.fromMillis(Date.now() + DAY_MS) });
   await touchSync(uid, "keysAt");
+}
+
+/**
+ * Pushes the reminders whose day has passed (the scheduled function runs this with the safebox reminders). A reminder is deleted first, so it is sent once, and
+ * only when the request still waits (status "asked": not approved, declined, working or deleted since). Returns how many were sent. Never raises.
+ */
+export async function sendDueOwnRequestReminders(now: Date = new Date()): Promise<number> {
+  let sent = 0;
+  try {
+    const due = await getFirestore().collection(OWN_REQUEST_REMINDERS).where("at", "<=", Timestamp.fromMillis(now.getTime())).limit(200).get();
+    for (const doc of due.docs) {
+      const { uid, keyId } = doc.data() as { uid: string; keyId: string };
+      try {
+        await doc.ref.delete();
+        const request = (await ownRequestCol(uid).doc(keyId).get()).data();
+        if (request?.status !== "asked" || isStale(request)) continue;
+        await sendPush(uid, {
+          id: `own-recovery-${keyId}`, // the same id: it replaces the first push
+          title: `${request.label || "A new device"} is still waiting`,
+          body: "Open the app on a device that opens your old messages, and tap Allow.",
+          url: "/",
+          kind: "request",
+        });
+        sent++;
+      } catch (err) {
+        console.error(`Could not send the reminder for the request ${doc.id}`, err);
+      }
+    }
+  } catch (err) {
+    console.error("Could not read the request reminders", err);
+  }
+  return sent;
 }
 
 /** The work is finished: the asking device is told (a push and a stamp) and shows it, then deletes the request. */

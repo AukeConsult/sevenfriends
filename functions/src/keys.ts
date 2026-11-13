@@ -4,6 +4,7 @@ import { FieldValue, Timestamp, getFirestore } from "firebase-admin/firestore";
 import { asyncHandler, requireAuth } from "./auth";
 import { MyKeys, KeyBackup, MAX_KEYS_PER_PERSON, MAX_KEY_LABEL, PublicKeyJwk, PublishedKey, SignKeyJwk, DeviceList, canonicalPublicKey, canonicalSignKey, checkedDeviceList, deviceListHash, fingerprintOf, keyIdOf } from "./models";
 import { openRequest } from "./own-request";
+import { touchSync } from "./sync";
 import { KEY_BACKUP_DOC } from "./constants";
 import { keyBackupCol, keyBackupDoc, keyCol, keyListCol, ownRequestCol, pushDeviceCol } from "./paths";
 import { text } from "./validation";
@@ -52,15 +53,16 @@ export async function recipientKeysOf(uid: string): Promise<PublishedKey[]> {
  */
 export const isShared = (flag: boolean | undefined, oldest: boolean): boolean => flag === true || (flag === undefined && oldest);
 
-/** My published keys, and whether a backup is stored. A key in use that is not shared yet is marked `waiting`: another device of mine has to approve it. */
+/** My published keys, and whether a backup is stored. A key in use that is neither shared nor in my signed list is marked `waiting`: another device of mine has to approve it. */
 keysRouter.get(
   "/",
   asyncHandler(async (_req, res) => {
     const uid = uidOf(res);
-    const [snap, backups] = await Promise.all([keyCol(uid).get(), keyBackupCol(uid).get()]);
+    const [snap, backups, newest] = await Promise.all([keyCol(uid).get(), keyBackupCol(uid).get(), keyListCol(uid).orderBy("version", "desc").limit(1).get()]);
+    const listed = new Set(((newest.docs[0]?.data().devices ?? []) as { keyId: string }[]).map((d) => d.keyId));
     const keys = snap.docs.map((d) => ({ ...publishedOf(d.id, d.data()), flag: d.data().ownShared as boolean | undefined })).sort((a, b) => (a.createdAt ?? "").localeCompare(b.createdAt ?? ""));
     const oldest = keys.find((k) => !k.revoked)?.id;
-    res.json({ keys: keys.map(({ flag, ...k }) => (!k.revoked && !isShared(flag, k.id === oldest) ? { ...k, waiting: true } : k)), hasBackup: !backups.empty, backups: backups.docs.map((d) => d.id).filter((id) => id !== KEY_BACKUP_DOC) } satisfies MyKeys);
+    res.json({ keys: keys.map(({ flag, ...k }) => (!k.revoked && !isShared(flag, k.id === oldest) && !listed.has(k.id) ? { ...k, waiting: true } : k)), hasBackup: !backups.empty, backups: backups.docs.map((d) => d.id).filter((id) => id !== KEY_BACKUP_DOC) } satisfies MyKeys);
   }),
 );
 
@@ -116,7 +118,6 @@ keysRouter.post(
     if (backup) {
       const saved = { ...backup, savedAt: FieldValue.serverTimestamp() };
       batch.set(keyBackupDoc(uid, id), saved); // the backup of THIS key: another device's words never replace it
-      batch.set(keyBackupDoc(uid), saved); // and the "current" one, as before (the older restore route reads it)
     }
     await batch.commit();
     // a key added next to other keys waits for a device of mine to allow it: that is a request, shown on my other devices (docs/design/recovery-own-devices.md)
@@ -164,7 +165,7 @@ keysRouter.post(
     };
     if (list.version !== (head?.version ?? 0) + 1) refusal = "The version is not the next one";
     else if (head && list.prev !== (await deviceListHash(head))) refusal = "The link to the version before is wrong";
-    else if (head && !head.devices.some((d) => d.keyId === list.signedBy)) refusal = "The signer is not a device of the version before";
+    else if (!list.restart && head && !head.devices.some((d) => d.keyId === list.signedBy)) refusal = "The signer is not a device of the version before"; // a new beginning is signed by its own device
     else if (!list.devices.every(known)) refusal = "A device in the list is not a published key of yours";
     else {
       try {
@@ -177,9 +178,27 @@ keysRouter.post(
       res.status(409).json({ error: refusal });
       return;
     }
+    if (list.restart) await startOver(uid, list); // every device before it is lost: the keys outside the list are retired
     res.status(201).json(list);
   }),
 );
+
+/**
+ * After a new beginning of the signed list: every key of mine that is not in it is retired (its device is lost), with what it leaves behind, and the open
+ * request of the new key goes (it is the only key: nothing is left to approve it). The other devices of mine, if one is still alive, look again.
+ */
+async function startOver(uid: string, list: DeviceList): Promise<void> {
+  const kept = new Set(list.devices.map((d) => d.keyId));
+  for (const doc of (await keyCol(uid).get()).docs) {
+    if (doc.data().revoked === true) continue;
+    if (kept.has(doc.id)) await ownRequestCol(uid).doc(doc.id).delete();
+    else {
+      await doc.ref.set({ revoked: true, revokedAt: FieldValue.serverTimestamp() }, { merge: true });
+      await removeTraces(uid, doc.id);
+    }
+  }
+  await touchSync(uid, "keysAt");
+}
 
 /** What a removed device leaves behind: its open request for approval, its rescue backup and its push registrations, so it asks for nothing and is sent nothing any more. */
 async function removeTraces(uid: string, keyId: string): Promise<void> {
@@ -208,20 +227,6 @@ keysRouter.post(
 
 const B64 = /^[A-Za-z0-9+/]+={0,2}$/;
 
-/** Store the backup of the private key (scrambled on the device): `{ v: 1, iv, data }`, replacing an earlier one. */
-keysRouter.put(
-  "/backup",
-  asyncHandler(async (req, res) => {
-    const backup = backupOf(req.body);
-    if (!backup) {
-      res.status(400).json({ error: "That is not a key backup" });
-      return;
-    }
-    await keyBackupDoc(uidOf(res)).set({ ...backup, savedAt: FieldValue.serverTimestamp() } satisfies Record<string, unknown>);
-    res.json({ ok: true });
-  }),
-);
-
 /** Every backup of mine (one per key, and the older "current"), for restoring: the 24 words open only the one of their own key. */
 keysRouter.get(
   "/backups",
@@ -232,19 +237,5 @@ keysRouter.get(
       return;
     }
     res.json({ backups: snap.docs.map((d) => ({ v: 1, iv: d.data().iv, data: d.data().data }) satisfies KeyBackup) });
-  }),
-);
-
-/** The backup, for restoring the key on a new device. */
-keysRouter.get(
-  "/backup",
-  asyncHandler(async (_req, res) => {
-    const snap = await keyBackupDoc(uidOf(res)).get();
-    if (!snap.exists) {
-      res.status(404).json({ error: "There is no backup" });
-      return;
-    }
-    const d = snap.data() ?? {};
-    res.json({ v: 1, iv: d.iv, data: d.data } satisfies KeyBackup);
   }),
 );

@@ -228,12 +228,10 @@ describe("keys changing back and forth, 5 people with 3 devices each", () => {
             expect(await webcrypto.subtle.verify(ecdsa, key, signature, new TextEncoder().encode(text))).toBe(true);
           }
           // wrong sets of copies are refused: a key that left the list (or was replaced) is no longer wanted, a missing one is wanted
-          const everyone = people.flatMap((q) => [...q.devices, ...q.retired].map((x) => ({ x, q })));
           const unlisted = [me, friend].flatMap((q) => [...q.devices, ...q.retired].filter((x) => !listed(q).includes(x.keyId)).map((x) => ({ x, q })));
-          const gone = unlisted.length ? pick(unlisted).x : undefined;
+          const gone = unlisted.length ? pick(unlisted) : undefined;
           if (gone) {
-            const owner = everyone.find((e) => e.x === gone)!.q;
-            expect((await me.user.raw("post", url, body([...copiesFor(me, friend), wrap(owner.user.p.uid, gone.keyId)]))).status, "a copy for a key that is not in the list").toBe(409);
+            expect((await me.user.raw("post", url, body([...copiesFor(me, friend), wrap(gone.q.user.p.uid, gone.x.keyId)]))).status, "a copy for a key that is not in the list").toBe(409);
           }
           const all = copiesFor(me, friend);
           expect((await me.user.raw("post", url, body(all.slice(1)))).status, "a copy is missing").toBe(409);
@@ -437,6 +435,26 @@ describe("keys changing back and forth, 5 people with 3 devices each", () => {
     expect(friendFeed).toHaveLength(2);
     // the friend's copies hold only the friend's own key wraps: my new key changed nothing there
     for (const m of friendFeed) expect(m.enc.wraps.map((w) => `${w.uid}/${w.keyId}`)).toEqual([`${friend.user.p.uid}/${friend.devices[0].keyId}`]);
+  }, 60000);
+
+  it("a key that is in my list but has no copies approves a new key by adding it to the list; the card then goes away, and a listed key without copies can only be helped by a shared key", async () => {
+    lockPool.push(...(await Promise.all([1, 2, 3].map(generateLock))));
+    const [user] = (await seedPool()).slice(0, 1);
+    const p: Person = { user, devices: [await makeDevice("Laptop"), await makeDevice("Phone"), await makeDevice("New")], revoked: new Set(), retired: [], published: new Set(), lists: [] };
+    const [laptop, phone, fresh] = p.devices;
+    await publishKey(p, laptop);
+    await publishList(p, [laptop], laptop);
+    await approve(p, phone, laptop); // the phone is listed, but never got copies
+    await user.raw("post", `/keys/${laptop.keyId}/revoke`).expect(200); // the one key with copies is gone
+    await publishKey(p, fresh);
+    const pending = async () => ((await user.raw("get", `/own-recovery/pending?me=${phone.keyId}`)).body.keys as { id: string }[]).map((k) => k.id);
+    expect(await pending(), "the phone is asked to approve the new key").toEqual([fresh.keyId]);
+
+    await publishList(p, [phone, fresh], phone); // the phone approves it into the list (the copies it cannot give are skipped)
+
+    expect(await pending(), "the card goes away: the key is in the list").toEqual([]);
+    expect(((await user.raw("get", "/keys")).body.keys as { waiting?: boolean }[]).some((k) => k.waiting), "nothing is 'not approved yet'").toBe(false);
+    expect((await user.raw("post", "/own-recovery/ask", { key: fresh.keyId })).status, "a listed key with no copies is not helped by a key that has none either").toBe(409);
   }, 60000);
 });
 

@@ -35,7 +35,7 @@ export interface BrokenPerson {
 /** How long what was fetched of a friend's lists is used again before they are fetched anew. */
 const LISTS_FRESH_MS = 60_000;
 
-/** Checks a chain of lists: versions 1..n in a row, version 1 signed by one of its own devices, every later one linked to the one before and signed by a device of it. */
+/** Checks a chain of lists: versions 1..n in a row, version 1 signed by one of its own devices, every later one linked to the one before and signed by a device of it (a new beginning: by one of its own). */
 export async function chainHolds(lists: DeviceList[]): Promise<boolean> {
   const sorted = [...lists].sort((a, b) => a.version - b.version);
   for (let i = 0; i < sorted.length; i++) {
@@ -43,7 +43,7 @@ export async function chainHolds(lists: DeviceList[]): Promise<boolean> {
     if (list.version !== i + 1) return false;
     if (i === 0) {
       if (list.prev !== '' || !(await listSignatureHolds(list, list.devices))) return false;
-    } else if (list.prev !== (await deviceListHash(sorted[i - 1])) || !(await listSignatureHolds(list, sorted[i - 1].devices))) return false;
+    } else if (list.prev !== (await deviceListHash(sorted[i - 1])) || !(await listSignatureHolds(list, list.restart ? list.devices : sorted[i - 1].devices))) return false; // a new beginning signs itself
   }
   return true;
 }
@@ -158,6 +158,15 @@ export class FriendListsService {
     return true;
   }
 
+  /** This device started my list over itself: it trusts the list as it is now (the pin of my own list moves to the new beginning). */
+  async trustMine(): Promise<void> {
+    const me = this.auth.user()?.uid;
+    const { lists } = await this.api.request<{ lists: DeviceList[] }>('/keys/list');
+    const head = [...lists].sort((a, b) => a.version - b.version).at(-1);
+    if (me && head && (await chainHolds(lists))) this.writePin(me, { version: head.version, hash: await deviceListHash(head) });
+    this.mineJob = null;
+  }
+
   private async judge(uid: string, lists: DeviceList[]): Promise<PersonDevices> {
     const pinned = this.readPin(uid);
     if (!lists.length) return pinned || linkPinOf(uid) ? { status: 'broken', devices: [], reason: 'gone' } : { status: 'none', devices: [] }; // a list that was seen can not go away
@@ -172,8 +181,11 @@ export class FriendListsService {
     if (fromLink) {
       const at = sorted[fromLink.version - 1];
       if (!at || !(await deviceListHash(at)).startsWith(fromLink.hash)) return { status: 'broken', devices: [], reason: 'pin' };
-      dropLinkPin(uid);
     }
+    // a new beginning after what this device has seen is never taken over by itself: the person is asked first (every device of theirs was lost)
+    const seen = Math.max(pinned?.version ?? 0, fromLink?.version ?? 0);
+    if (seen && sorted.some((l) => l.restart && l.version > seen)) return { status: 'broken', devices: [], reason: 'pin' };
+    if (fromLink) dropLinkPin(uid);
     const head = sorted[sorted.length - 1];
     this.writePin(uid, { version: head.version, hash: await deviceListHash(head) });
     return { status: 'ok', devices: [...sorted].reverse().flatMap((l) => l.devices), current: head.devices, since: sorted[0].since ?? null }; // the date is version 1's

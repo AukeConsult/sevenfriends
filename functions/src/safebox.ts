@@ -147,8 +147,8 @@ safeboxRouter.get(
       connection.peers.map(async (peer) => {
         const snap = await keyListCol(peer.uid).get();
         const lists = snap.docs.map((d) => {
-          const { version, devices, prev, signedBy, signature, since } = d.data() as DeviceList;
-          return { version, devices, prev, signedBy, signature, ...(since ? { since } : {}) } satisfies DeviceList;
+          const { version, devices, prev, signedBy, signature, since, restart } = d.data() as DeviceList;
+          return { version, devices, prev, signedBy, signature, ...(since ? { since } : {}), ...(restart ? { restart } : {}) } satisfies DeviceList;
         });
         return { uid: peer.uid, lists: lists.sort((a, b) => a.version - b.version) };
       }),

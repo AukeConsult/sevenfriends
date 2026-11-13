@@ -33,9 +33,9 @@ const publish = async (user: User, ...keys: JsonWebKey[]) => {
   for (const k of keys) await user.raw("post", "/keys", { publicKey: k, signKey: sign }).expect(201);
 };
 
-const signed = async (version: number, prev: string, keys: JsonWebKey[], since?: string): Promise<DeviceList> => {
+const signed = async (version: number, prev: string, keys: JsonWebKey[], since?: string, restart = false): Promise<DeviceList> => {
   const devices = await Promise.all(keys.map(async (k, i) => ({ keyId: keyIdOf((await fingerprintOf(k))!), lockKey: canonicalPublicKey(k)!, signKey: canonicalSignKey(sign)!, label: `Device ${i}` })));
-  const list = { version, devices, prev, signedBy: devices[0].keyId, signature: "", ...(since ? { since } : {}) };
+  const list = { version, devices, prev, signedBy: devices[0].keyId, signature: "", ...(since ? { since } : {}), ...(restart ? { restart: true as const } : {}) };
   const sig = await webcrypto.subtle.sign({ name: "ECDSA", hash: "SHA-256" }, signPair.privateKey, new TextEncoder().encode(deviceListText(list)));
   return { ...list, signature: Buffer.from(sig).toString("base64") };
 };
@@ -114,6 +114,26 @@ describe("the device list", () => {
     await pool[0].raw("post", "/keys/list", await signed(3, await deviceListHash(v2ok), [lock])).expect(201); // taking it out is fine
   });
 
+  it("can start over when every device was lost: a version signed by its own device, and every other key is retired", async () => {
+    await publish(pool[0], lock, lock2);
+    const v1 = await signed(1, "", [lock]);
+    await pool[0].raw("post", "/keys/list", v1).expect(201);
+    const prev = await deviceListHash(v1);
+    await pool[0].raw("post", "/keys/list", await signed(2, prev, [lock2])).expect(409); // without the mark, lock2 is not a device of version 1
+    await pool[0].raw("post", "/keys/list", { ...(await signed(2, "a".repeat(64), [lock2], undefined, true)) }).expect(409); // the link to version 1 still has to be right
+    await pool[0].raw("post", "/keys/list", { ...(await signed(1, "", [lock2], undefined, true)) }).expect(400); // version 1 is never a new beginning
+    const v2 = await signed(2, prev, [lock2], undefined, true);
+    await pool[0].raw("post", "/keys/list", { ...v2, signedBy: v1.signedBy }).expect(400); // signed by a device that is not in it
+    await pool[0].raw("post", "/keys/list", { ...v2, restart: "yes" }).expect(400);
+    await pool[0].raw("post", "/keys/list", v2).expect(201);
+    const lists = (await pool[0].raw("get", "/keys/list")).body.lists as DeviceList[];
+    expect(lists.map((l) => [l.version, l.restart ?? false])).toEqual([[1, false], [2, true]]); // the history stays: old signatures still verify
+    expect(lists[1].devices.map((d) => d.keyId)).toEqual([v2.devices[0].keyId]);
+    const keys = (await pool[0].raw("get", "/keys")).body.keys as { id: string; revoked: boolean }[];
+    expect(keys.filter((k) => !k.revoked).map((k) => k.id)).toEqual([v2.devices[0].keyId]); // the lost device's key is retired
+    await pool[0].raw("post", "/keys/list", await signed(3, await deviceListHash(v2), [lock2])).expect(201); // and the chain goes on as usual
+  });
+
   it("refuses a badly formed list", async () => {
     await publish(pool[0], lock);
     const good = await signed(1, "", [lock]);
@@ -142,6 +162,16 @@ describe("a friend reading my device lists", () => {
     // a person without a list (an older lock) is listed with none
     const back = await pool[0].raw("get", `/circles/default/friends/${id}/safebox/key-lists`).expect(200);
     expect(back.body.people[0].lists).toEqual([]);
+  });
+
+  it("gets a new beginning with its mark, so the friend's app can ask before taking it over", async () => {
+    await publish(pool[0], lock, lock2);
+    const v1 = await signed(1, "", [lock]);
+    await pool[0].raw("post", "/keys/list", v1).expect(201);
+    await pool[0].raw("post", "/keys/list", await signed(2, await deviceListHash(v1), [lock2], undefined, true)).expect(201);
+    const id = await connect(pool[0], pool[1]);
+    const lists = (await pool[1].raw("get", `/circles/default/friends/${id}/safebox/key-lists`).expect(200)).body.people[0].lists as DeviceList[];
+    expect(lists.map((l) => l.restart ?? false)).toEqual([false, true]);
   });
 });
 

@@ -258,7 +258,6 @@
     "givingItAccessDone": "Giving it access… {{ done }} done. Stay in the app.",
     "wasThisYouAllow": "Was this you? Approve it: it can then open your old messages and files, and your friends will lock new messages for it too. Your friends do not have to approve anything.",
     "allow": "Approve",
-    "notNow": "Not now",
     "sevenSeats": "Seven seats",
     "yourSevenClosestNo": "Your seven closest {{ many }}. No one gets lost.",
     "quiet": "Quiet",

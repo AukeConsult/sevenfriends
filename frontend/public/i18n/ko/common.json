@@ -258,7 +258,6 @@
     "givingItAccessDone": "접근 권한을 주는 중… {{ done }}개 완료. 앱에서 나가지 마세요.",
     "wasThisYouAllow": "본인이 맞나요? 이전 메시지와 파일을 열도록 허용해 주세요. 친구가 따로 승인할 필요는 없습니다.",
     "allow": "허용",
-    "notNow": "나중에",
     "sevenSeats": "일곱 자리",
     "yourSevenClosestNo": "가장 가까운 일곱 명 ({{ many }}). 아무도 놓치지 않아요.",
     "quiet": "조용히",

@@ -33,19 +33,27 @@ const timeOf = (cursor: string): Timestamp | null => {
 };
 
 /**
+ * May my key `by` approve my key `target`: a shared key always (it has the copies to give); a key that is only in my signed list can add a key that is not in the list yet
+ * (the approval is the new list version; what it cannot open it skips). A key that is already listed but has no copies needs a shared key: another list version would not help it.
+ */
+const mayHelp = (by: MyKey, target: MyKey): boolean => by.key.id !== target.key.id && (by.shared || (by.listed && !target.listed));
+
+/**
  * My keys in use, oldest first, with whether each one is shared (see above) and whether it can help: a shared key, or a key in my newest signed device list (a listed
  * device was approved by me, and can add the new key to the list; what it cannot open it skips).
  */
-async function myKeys(uid: string): Promise<{ key: PublishedKey; shared: boolean; helps: boolean }[]> {
-  const [snap, newest] = await Promise.all([keyCol(uid).get(), keyListCol(uid).orderBy("version", "desc").limit(1).get()]);
-  const listed = new Set<string>(((newest.docs[0]?.data().devices ?? []) as { keyId: string }[]).map((d) => d.keyId));
+type MyKey = { key: PublishedKey; shared: boolean; listed: boolean; helps: boolean };
+async function myKeys(uid: string, withList = true): Promise<MyKey[]> {
+  // `withList` false: the caller needs the keys and `shared` only (`listed` and `helps` are then not filled in), and the signed list is not read
+  const [snap, newest] = await Promise.all([keyCol(uid).get(), withList ? keyListCol(uid).orderBy("version", "desc").limit(1).get() : undefined]);
+  const listed = new Set<string>(((newest?.docs[0]?.data().devices ?? []) as { keyId: string }[]).map((d) => d.keyId));
   const keys = snap.docs
     .filter((d) => d.data().revoked !== true)
     .map((d) => ({ key: publishedOf(d.id, d.data()), flag: d.data().ownShared as boolean | undefined }))
     .sort((a, b) => (a.key.createdAt ?? "").localeCompare(b.key.createdAt ?? ""));
   return keys.map((k, i) => {
     const shared = isShared(k.flag, i === 0);
-    return { key: k.key, shared, helps: shared || listed.has(k.key.id) };
+    return { key: k.key, shared, listed: listed.has(k.key.id), helps: shared || listed.has(k.key.id) };
   });
 }
 
@@ -68,13 +76,15 @@ ownRecoveryRouter.get(
     const uid = uidOf(res);
     const keys = await myKeys(uid);
     const me = typeof req.query.me === "string" ? req.query.me : "";
-    const eligible = keys.some((k) => k.key.id === me && k.helps);
+    const mine = keys.find((k) => k.key.id === me);
+    const eligible = !!mine?.helps;
     if (!eligible) {
       res.json({ eligible, keys: [], requests: [] });
       return;
     }
-    for (const k of keys.filter((k) => !k.shared)) if (!(await liveRequest(uid, k.key.id))) await openRequest(uid, k.key);
-    const open = (await liveRequests(uid)).filter((r) => r.id !== me && (r.data.status === "asked" || r.data.status === "working") && keys.some((k) => k.key.id === r.id));
+    // a key waits for approval until it is shared or in my signed list (a listed key with no copies is the business of "Get my old messages back", not of this card)
+    for (const k of keys.filter((k) => !k.shared && !k.listed)) if (!(await liveRequest(uid, k.key.id))) await openRequest(uid, k.key);
+    const open = (await liveRequests(uid)).filter((r) => (r.data.status === "asked" || r.data.status === "working") && keys.some((k) => k.key.id === r.id && mayHelp(mine!, k)));
     res.json({ eligible, keys: open.map((r) => keys.find((k) => k.key.id === r.id)!.key), requests: open.map((r) => requestOf(r.id, r.data)) });
   }),
 );
@@ -104,7 +114,7 @@ ownRecoveryRouter.post(
       res.status(409).json({ error: "That key is not in use" });
       return;
     }
-    if (!keys.some((k) => k.helps && k.key.id !== target.key.id)) {
+    if (!keys.some((k) => mayHelp(k, target))) {
       res.status(409).json({ error: "No other device of yours is approved to help. Use your 24 recovery words, or ask a friend." });
       return;
     }
@@ -113,8 +123,12 @@ ownRecoveryRouter.post(
   }),
 );
 
-/** The key `me` of a device of mine that may allow others (shared), other than the one asking. */
-const helperOk = (keys: { key: PublishedKey; helps: boolean }[], me: unknown, target: string): boolean => keys.some((k) => k.key.id === me && k.helps && k.key.id !== target);
+/** The key `me` is one of my keys that may approve the key `target`. */
+const helperOk = (keys: MyKey[], me: unknown, target: string): boolean => {
+  const by = keys.find((k) => k.key.id === me);
+  const to = keys.find((k) => k.key.id === target);
+  return !!by && !!to && mayHelp(by, to);
+};
 
 /** `{ key, me }`: a device begins the work: the request is `working`, with how many messages and files need a copy. */
 ownRecoveryRouter.post(
@@ -170,7 +184,7 @@ ownRecoveryRouter.post(
 
 /** A key of mine that is waiting (added next to the others), or one that has a live request (asked again, also when it was allowed before). */
 async function waitingKey(uid: string, id: unknown): Promise<PublishedKey | null> {
-  const k = (await myKeys(uid)).find((k) => k.key.id === id);
+  const k = (await myKeys(uid, false)).find((k) => k.key.id === id);
   if (!k) return null;
   if (!k.shared) return k.key;
   const r = await liveRequest(uid, k.key.id);
@@ -282,7 +296,7 @@ ownRecoveryRouter.get(
   "/status",
   asyncHandler(async (req, res) => {
     const me = uidOf(res);
-    const key = (await myKeys(me)).find((k) => k.key.id === req.query.key);
+    const key = (await myKeys(me, false)).find((k) => k.key.id === req.query.key);
     if (!key) {
       res.status(409).json({ error: "That key is not in use" });
       return;
@@ -326,7 +340,7 @@ ownRecoveryRouter.post(
   "/trust",
   asyncHandler(async (req, res) => {
     const me = uidOf(res);
-    const keys = await myKeys(me);
+    const keys = await myKeys(me, false);
     if (!keys.some((k) => k.key.id === req.body?.key)) {
       res.status(409).json({ error: "That key is not in use" });
       return;

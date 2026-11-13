@@ -175,19 +175,38 @@
         </details>
         @if (problem(); as text) { <div class="alert alert-warning m-0" role="alert">{{ text }}</div> }
       }
-    } @else if (keys.state() === 'none') {
-      <details class="sf-expand sf-expand-quiet mt-2">
-        <summary>{{ t('encryption.iAlreadyHaveA') || 'I already have a key (restore it)' }}</summary>
-        <div class="vstack gap-2 mt-2">
-          <p class="small text-secondary m-0">{{ t('encryption.typeTheRecoveryWords') || 'Type the 24 recovery words you wrote down when you made your key. The key is then put on this device.' }}</p>
-          <textarea class="form-control" rows="4" autocomplete="off" autocapitalize="none" spellcheck="false" [attr.aria-label]="t('encryption.theRecoveryWords') || 'The 24 recovery words'"
-                    [value]="typed()" (input)="typed.set($any($event.target).value)"></textarea>
-          <button type="button" class="btn btn-primary align-self-start" [disabled]="busy() || !typed().trim()" (click)="restore()">{{ t('encryption.restoreMyKey') || 'Restore my key' }}</button>
-          @if (restoreText(); as text) { <div class="alert alert-warning m-0" role="alert">{{ text }}</div> }
-        </div>
-      </details>
+    }
+    @if (keys.state() === 'none' || thisKeyWaiting()) {
+      <ng-container *ngTemplateOutlet="restoreBlock" />
+    }
+    @if (thisKeyWaiting()) {
+      <ng-container *ngTemplateOutlet="startOverBlock" />
     }
   }
+<!-- restoring with the 24 words: on a device with no key, and on one whose own new key is not approved yet (the words bring back the key of another device) -->
+<ng-template #restoreBlock>
+  <details class="sf-expand sf-expand-quiet mt-2">
+    <summary>{{ t('encryption.iAlreadyHaveA') || 'I already have a key (restore it)' }}</summary>
+    <div class="vstack gap-2 mt-2">
+      <p class="small text-secondary m-0">{{ t('encryption.typeTheRecoveryWords') || 'Type the 24 recovery words you wrote down when you made your key. The key is then put on this device.' }}</p>
+      <textarea class="form-control" rows="4" autocomplete="off" autocapitalize="none" spellcheck="false" [attr.aria-label]="t('encryption.theRecoveryWords') || 'The 24 recovery words'"
+                [value]="typed()" (input)="typed.set($any($event.target).value)"></textarea>
+      <button type="button" class="btn btn-primary align-self-start" [disabled]="busy() || !typed().trim()" (click)="restore()">{{ t('encryption.restoreMyKey') || 'Restore my key' }}</button>
+      @if (restoreText(); as text) { <div class="alert alert-warning m-0" role="alert">{{ text }}</div> }
+    </div>
+  </details>
+</ng-template>
+<!-- every other device is lost: this one starts the signed list over, and each friend is asked to confirm it (nothing here can approve this device any more) -->
+<ng-template #startOverBlock>
+  <details class="sf-expand sf-expand-quiet mt-2">
+    <summary>{{ t('encryption.startOverTitle') || 'I lost all my other devices' }}</summary>
+    <div class="vstack gap-2 mt-2">
+      <p class="small text-secondary m-0">{{ t('encryption.startOverText') || 'This starts your lock over with this device. Every other device of yours is removed. Each of your friends is asked to confirm that it is really you, and can then help you open your old messages again.' }}</p>
+      <button type="button" class="btn btn-outline-danger btn-sm align-self-start" [disabled]="busy()" (click)="startOver()">{{ t('encryption.startOverButton') || 'Start over with this device' }}</button>
+      @if (startOverText(); as text) { <div class="alert alert-warning m-0" role="alert">{{ text }}</div> }
+    </div>
+  </details>
+</ng-template>
   @if (keys.diagnosis(); as d) {
     <!-- why a key is, or is not, found: nothing secret, only what was looked up -->
     <details class="sf-hint">

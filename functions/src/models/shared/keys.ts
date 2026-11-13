@@ -228,6 +228,11 @@ export interface DeviceList {
    * is a stripped signature. Missing on a list made before this field existed: then an unsigned text is accepted as before.
    */
   since?: string;
+  /**
+   * A new beginning, after every device of the person was lost: a version (never 1) signed by one of ITS OWN devices, because nothing before it can sign any more.
+   * It is part of the signed text. Friends do not take it over by themselves: each one is asked to confirm that it is the person (docs/design/default-key.md).
+   */
+  restart?: true;
   createdAt?: string | null;
 }
 
@@ -235,13 +240,14 @@ export const MAX_DEVICE_LIST_VERSIONS = 1000;
 const SIGNATURE_LENGTH = 88; // 64 bytes (r and s) as base64 with padding
 
 /** The text that is signed and hashed: every field except the signature, in a fixed order. */
-export function deviceListText(list: Pick<DeviceList, "version" | "devices" | "prev" | "signedBy" | "since">): string {
+export function deviceListText(list: Pick<DeviceList, "version" | "devices" | "prev" | "signedBy" | "since" | "restart">): string {
   return JSON.stringify({
     version: list.version,
     devices: list.devices.map((d) => ({ keyId: d.keyId, lockKey: d.lockKey, signKey: d.signKey, label: d.label })),
     prev: list.prev,
     signedBy: list.signedBy,
     ...(list.since ? { since: list.since } : {}), // only when there is one: a list made before the field existed has the same text as before
+    ...(list.restart ? { restart: true } : {}),
   });
 }
 
@@ -256,7 +262,7 @@ export async function deviceListHash(list: DeviceList): Promise<string> {
  */
 export async function checkedDeviceList(value: unknown): Promise<{ list: DeviceList } | { problem: string }> {
   if (!value || typeof value !== "object") return { problem: "That is not a device list" };
-  const v = value as { version?: unknown; devices?: unknown; prev?: unknown; signedBy?: unknown; signature?: unknown; since?: unknown };
+  const v = value as { version?: unknown; devices?: unknown; prev?: unknown; signedBy?: unknown; signature?: unknown; since?: unknown; restart?: unknown };
   if (!Number.isInteger(v.version) || (v.version as number) < 1 || (v.version as number) > MAX_DEVICE_LIST_VERSIONS) return { problem: "The version is not a number" };
   if (!Array.isArray(v.devices) || v.devices.length < 1 || v.devices.length > MAX_KEYS_PER_PERSON) return { problem: `A list holds 1 to ${MAX_KEYS_PER_PERSON} devices` };
   const devices: DeviceListEntry[] = [];
@@ -280,7 +286,11 @@ export async function checkedDeviceList(value: unknown): Promise<{ list: DeviceL
   const since = typeof v.since === "string" && v.since.length <= 40 && !Number.isNaN(Date.parse(v.since)) ? v.since : undefined;
   if (v.since !== undefined && !since) return { problem: "The date is not valid" };
   if (since && version !== 1) return { problem: "Only version 1 has a date" };
-  return { list: { version, devices, prev, signedBy: v.signedBy, signature: v.signature, ...(since ? { since } : {}) } };
+  const restart = v.restart === true;
+  if (v.restart !== undefined && !restart) return { problem: "That is not a new beginning" };
+  if (restart && version === 1) return { problem: "Version 1 can not be a new beginning" };
+  if (restart && !devices.some((d) => d.keyId === v.signedBy)) return { problem: "A new beginning must be signed by one of its own devices" };
+  return { list: { version, devices, prev, signedBy: v.signedBy, signature: v.signature, ...(since ? { since } : {}), ...(restart ? { restart: true as const } : {}) } };
 }
 
 /** One other person of a connection with their device lists (GET .../safebox/key-lists): every version, oldest first; empty = an older lock without a list. */

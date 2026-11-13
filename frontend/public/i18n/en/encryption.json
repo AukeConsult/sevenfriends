@@ -72,5 +72,9 @@
   "inSignedList": "This device is in your signed list ({{ count }} devices).",
   "notInSignedList": "This device is NOT in your signed list ({{ count }} devices), so it cannot send.",
   "removeFromAnother": "To remove this device, open Seven Friends on another device of yours.",
-  "notApprovedYet": "Not approved yet"
+  "notApprovedYet": "Not approved yet",
+  "startOverTitle": "I lost all my other devices",
+  "startOverText": "This starts your lock over with this device. Every other device of yours is removed. Each of your friends is asked to confirm that it is really you, and can then help you open your old messages again.",
+  "startOverButton": "Start over with this device",
+  "startOverFailed": "Could not start over. Check the connection and try again."
 }

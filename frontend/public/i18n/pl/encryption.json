@@ -72,5 +72,9 @@
   "inSignedList": "To urządzenie jest na Twojej podpisanej liście ({{ count }} urządzeń).",
   "notInSignedList": "To urządzenia NIE ma na Twojej podpisanej liście ({{ count }} urządzeń), więc nie może wysyłać.",
   "removeFromAnother": "Aby usunąć to urządzenie, otwórz Seven Friends na innym swoim urządzeniu.",
-  "notApprovedYet": "Jeszcze nie zatwierdzone"
+  "notApprovedYet": "Jeszcze nie zatwierdzone",
+  "startOverTitle": "Zgubiłem(-am) wszystkie moje inne urządzenia",
+  "startOverText": "To zaczyna twoją kłódkę od nowa z tym urządzeniem. Wszystkie twoje inne urządzenia zostaną usunięte. Każdy z twoich znajomych zostanie poproszony o potwierdzenie, że to naprawdę ty, a potem może pomóc ci ponownie otworzyć stare wiadomości.",
+  "startOverButton": "Zacznij od nowa na tym urządzeniu",
+  "startOverFailed": "Nie udało się zacząć od nowa. Sprawdź połączenie i spróbuj ponownie."
 }

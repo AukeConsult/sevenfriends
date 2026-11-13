@@ -16,10 +16,10 @@ export class DeviceListService {
   private readonly api = inject(ApiService);
   private readonly auth = inject(AuthService);
 
-  /** The key IDs of my keys that are in use on the server: a list may only name those (a device that was removed, or a key that was never published, is dropped from the next version). */
-  private async inUse(): Promise<Set<string>> {
-    const { keys } = await this.api.request<{ keys: PublishedKey[] }>('/keys');
-    return new Set(keys.filter((k) => !k.revoked).map((k) => k.id));
+  /** The newest list (none for an older lock) and the IDs of my keys in use: a list may only name those (a device that was removed, or a key that was never published, is left out). */
+  private async load(): Promise<{ head: DeviceList | undefined; inUse: Set<string>; keys: PublishedKey[] }> {
+    const [{ lists }, { keys }] = await Promise.all([this.api.request<{ lists: DeviceList[] }>('/keys/list'), this.api.request<{ keys: PublishedKey[] }>('/keys')]);
+    return { head: [...lists].sort((a, b) => a.version - b.version).at(-1), inUse: new Set(keys.filter((k) => !k.revoked).map((k) => k.id)), keys };
   }
 
   /**
@@ -28,8 +28,7 @@ export class DeviceListService {
    */
   async publishNext(change: { add?: PublishedKey; removeId?: string }, attempt = 0): Promise<boolean> {
     try {
-      const [{ lists }, inUse] = await Promise.all([this.api.request<{ lists: DeviceList[] }>('/keys/list'), this.inUse()]);
-      const head = [...lists].sort((a, b) => a.version - b.version).at(-1);
+      const { head, inUse } = await this.load();
       if (!head) return true; // no list (an older lock): there is nothing to keep up to date
       const mine = await myDeviceKey(this.auth.user()?.uid);
       if (!mine?.signKey || !head.devices.some((d) => d.keyId === mine.keyId)) return false; // this device is not in the list, or can not sign: it can not sign for the person
@@ -56,8 +55,7 @@ export class DeviceListService {
    * so the caller does not go on with the swap.
    */
   async rotate(old: StoredDeviceKey, newKey: StoredDeviceKey, added: PublishedKey): Promise<void> {
-    const [{ lists }, inUse] = await Promise.all([this.api.request<{ lists: DeviceList[] }>('/keys/list'), this.inUse()]);
-    const head = [...lists].sort((a, b) => a.version - b.version).at(-1);
+    const { head, inUse } = await this.load();
     if (!head) {
       const first = await firstDeviceList(newKey, added.label);
       if (!first) throw new Error('The new key has no signing key');
@@ -69,6 +67,27 @@ export class DeviceListService {
     if (!oldEntry || !old.signKey || !entry || !head.devices.some((d) => d.keyId === oldEntry.keyId)) throw new Error('This device can not sign the next version of the list');
     const devices = [...head.devices.filter((d) => d.keyId !== oldEntry.keyId && inUse.has(d.keyId)), entry];
     const next = await signList({ version: head.version + 1, devices, prev: await deviceListHash(head), signedBy: oldEntry.keyId }, old.signKey.privateKey);
+    await this.api.request('/keys/list', { method: 'POST', body: JSON.stringify(next) });
+  }
+
+  /**
+   * Every device of mine is lost and this one starts the list over: the next version holds only this device, is marked as a new beginning and is signed by THIS
+   * device itself (nothing before it can sign any more). The server retires every other key. Friends do not take it over by themselves: each is asked to confirm
+   * that it is me (`FriendListsService`, reason 'pin'). A person with no list yet gets version 1 and the other keys are retired here. Throws when it can not be done.
+   */
+  async restart(): Promise<void> {
+    const { head, keys } = await this.load();
+    const mine = await myDeviceKey(this.auth.user()?.uid);
+    const own = keys.find((k) => !k.revoked && k.id === mine?.keyId);
+    const entry = own ? await entryOfPublished(own) : null;
+    if (!mine?.signKey || !own || !entry) throw new Error('This device has no key that can sign');
+    if (!head) {
+      for (const k of keys.filter((k) => !k.revoked && k.id !== own.id)) await this.api.request(`/keys/${k.id}/revoke`, { method: 'POST', body: JSON.stringify({ by: own.id }) });
+      const first = await signList({ version: 1, devices: [entry], prev: '', signedBy: entry.keyId, since: new Date().toISOString() }, mine.signKey);
+      await this.api.request('/keys/list', { method: 'POST', body: JSON.stringify(first) });
+      return;
+    }
+    const next = await signList({ version: head.version + 1, devices: [entry], prev: await deviceListHash(head), signedBy: entry.keyId, restart: true }, mine.signKey);
     await this.api.request('/keys/list', { method: 'POST', body: JSON.stringify(next) });
   }
 }

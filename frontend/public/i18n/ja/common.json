@@ -258,7 +258,6 @@
     "givingItAccessDone": "アクセスを許可しています… {{ done }} 件完了。アプリを開いたままにしてください。",
     "wasThisYouAllow": "あなたですか？過去のメッセージとファイルを開けるように許可してください。友だちが承認する必要はありません。",
     "allow": "許可",
-    "notNow": "今はしない",
     "sevenSeats": "7つの席",
     "yourSevenClosestNo": "いちばん近い7人の{{ many }}。誰も取りこぼしません。",
     "quiet": "静か",

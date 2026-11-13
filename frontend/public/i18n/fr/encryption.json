@@ -72,5 +72,9 @@
   "inSignedList": "Cet appareil figure dans votre liste signée ({{ count }} appareils).",
   "notInSignedList": "Cet appareil ne figure PAS dans votre liste signée ({{ count }} appareils), il ne peut donc pas envoyer.",
   "removeFromAnother": "Pour retirer cet appareil, ouvrez Seven Friends sur un autre de vos appareils.",
-  "notApprovedYet": "Pas encore approuvé"
+  "notApprovedYet": "Pas encore approuvé",
+  "startOverTitle": "J'ai perdu tous mes autres appareils",
+  "startOverText": "Cela recommence ton verrou avec cet appareil. Tous tes autres appareils sont retirés. Chacun de tes amis est invité à confirmer que c'est bien toi, puis peut t'aider à rouvrir tes anciens messages.",
+  "startOverButton": "Recommencer avec cet appareil",
+  "startOverFailed": "Impossible de recommencer. Vérifie la connexion et réessaie."
 }

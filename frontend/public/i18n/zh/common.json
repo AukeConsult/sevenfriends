@@ -258,7 +258,6 @@
     "givingItAccessDone": "正在授权…… 已完成 {{ done }} 项。请留在应用里。",
     "wasThisYouAllow": "是你本人吗？允许它打开你以前的消息和文件。你的朋友无需批准任何内容。",
     "allow": "允许",
-    "notNow": "暂不",
     "sevenSeats": "七个位置",
     "yourSevenClosestNo": "你最亲近的七位{{ many }}，一个都不会走丢。",
     "quiet": "安静",

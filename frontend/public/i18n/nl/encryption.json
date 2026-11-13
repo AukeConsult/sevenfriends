@@ -72,5 +72,9 @@
   "inSignedList": "Dit apparaat staat in je ondertekende lijst ({{ count }} apparaten).",
   "notInSignedList": "Dit apparaat staat NIET in je ondertekende lijst ({{ count }} apparaten), dus het kan niet verzenden.",
   "removeFromAnother": "Om dit apparaat te verwijderen, open je Seven Friends op een ander apparaat van je.",
-  "notApprovedYet": "Nog niet goedgekeurd"
+  "notApprovedYet": "Nog niet goedgekeurd",
+  "startOverTitle": "Ik ben al mijn andere apparaten kwijt",
+  "startOverText": "Hiermee begint je slot opnieuw met dit apparaat. Al je andere apparaten worden verwijderd. Elk van je vrienden wordt gevraagd te bevestigen dat jij het echt bent, en kan je daarna helpen je oude berichten weer te openen.",
+  "startOverButton": "Opnieuw beginnen met dit apparaat",
+  "startOverFailed": "Opnieuw beginnen is niet gelukt. Controleer de verbinding en probeer het nog eens."
 }

@@ -258,7 +258,6 @@
     "givingItAccessDone": "Erişim veriliyor… {{ done }} tamam. Uygulamada kal.",
     "wasThisYouAllow": "Bu sen miydin? Eski mesajlarını ve dosyalarını açmasına izin ver. Arkadaşlarının hiçbir şeyi onaylaması gerekmez.",
     "allow": "İzin ver",
-    "notNow": "Şimdi değil",
     "sevenSeats": "Yedi yer",
     "yourSevenClosestNo": "En yakın yedi {{ many }}. Kimse kaybolmaz.",
     "quiet": "Sakin",

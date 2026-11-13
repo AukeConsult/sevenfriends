@@ -1,6 +1,6 @@
 import { DeviceList, deviceListHash } from '../models';
 import { chainHolds } from './friend-lists.service';
-import { firstDeviceList, listSignatureHolds } from './device-list';
+import { entryOf, firstDeviceList, listSignatureHolds, signList } from './device-list';
 import { generateIdentityKey } from './device-key';
 
 /** These run in Chrome (karma) with the real Web Crypto: the first device list, its signature, and the chain check. */
@@ -30,5 +30,18 @@ describe('the signed device list', () => {
     const v2: DeviceList = { ...v1, version: 2, prev: await deviceListHash(v1) }; // not signed again: the signature is the one of version 1
     delete (v2 as { since?: string }).since;
     expect(await chainHolds([v1, v2])).toBeFalse();
+  });
+
+  it('a new beginning is signed by its own device, and holds only with the mark', async () => {
+    const lost = await generateIdentityKey();
+    const v1 = (await firstDeviceList(lost, 'Lost phone'))!;
+    const fresh = await generateIdentityKey();
+    const entry = (await entryOf(fresh, 'New phone'))!;
+    const base = { version: 2, devices: [entry], prev: await deviceListHash(v1), signedBy: entry.keyId };
+    const restart = await signList({ ...base, restart: true }, fresh.signKey!.privateKey);
+    expect(await chainHolds([v1, restart])).toBeTrue();
+    const unmarked = await signList(base, fresh.signKey!.privateKey); // signed by a device that is not in version 1, and not marked
+    expect(await chainHolds([v1, unmarked])).toBeFalse();
+    expect(await chainHolds([v1, { ...restart, restart: undefined }])).toBeFalse(); // taking the mark off breaks the signature
   });
 });

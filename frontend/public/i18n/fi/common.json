@@ -258,7 +258,6 @@
     "givingItAccessDone": "Annetaan sille pääsy… {{ done }} valmiina. Pysy sovelluksessa.",
     "wasThisYouAllow": "Olitko se sinä? Salli sen avata vanhat viestisi ja tiedostosi. Ystäviesi ei tarvitse hyväksyä mitään.",
     "allow": "Salli",
-    "notNow": "Ei nyt",
     "sevenSeats": "Seitsemän paikkaa",
     "yourSevenClosestNo": "Seitsemän läheisintäsi: {{ many }}. Kukaan ei huku joukkoon.",
     "quiet": "Rauhallinen",

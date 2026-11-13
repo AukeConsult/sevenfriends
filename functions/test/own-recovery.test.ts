@@ -1,6 +1,7 @@
 import { webcrypto, randomBytes } from "node:crypto";
 import { getFirestore } from "firebase-admin/firestore";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { sendDueOwnRequestReminders } from "../src/own-request";
 import { User, connect, seedPool } from "./helpers";
 import { sentPushes } from "./setup";
 
@@ -115,6 +116,26 @@ describe("a device asks my other devices", () => {
     const pending = (await pool[0].raw("get", own(`/pending?me=${browser}`)).expect(200)).body;
     expect(pending.requests).toEqual([expect.objectContaining({ keyId: phone, status: "asked" })]);
     expect(pending.keys).toEqual([expect.objectContaining({ id: phone })]);
+  });
+
+  it("a request nobody answers gets one more push after a day, and only while it still waits", async () => {
+    await connect(pool[0], pool[1]);
+    const browser = await publish(pool[0], keys[0]);
+    await device();
+    const phone = await publish(pool[0], keys[2]);
+    const hours = (n: number) => new Date(Date.now() + n * 3600000);
+    sentPushes.length = 0;
+    expect(await sendDueOwnRequestReminders(hours(23))).toBe(0); // not yet
+    expect(await sendDueOwnRequestReminders(hours(25))).toBe(1);
+    expect(sentPushes.at(-1)?.data).toMatchObject({ id: `own-recovery-${phone}`, title: expect.stringContaining("still waiting") });
+    expect(await sendDueOwnRequestReminders(hours(50))).toBe(0); // once
+    // a request that was answered before the day is over gets no reminder
+    await pool[0].raw("post", own("/start"), { key: phone, me: browser }).expect(200);
+    await getFirestore().collection("own-recovery-reminders").doc(`${pool[0].p.uid}_${phone}`).set({ uid: pool[0].p.uid, keyId: phone, at: hours(-1) });
+    sentPushes.length = 0;
+    expect(await sendDueOwnRequestReminders()).toBe(0);
+    expect(sentPushes).toHaveLength(0);
+    expect((await getFirestore().collection("own-recovery-reminders").get()).docs).toHaveLength(0); // looked at, so gone
   });
 
   it("works with progress on both sides, and a finished request is told and then deleted", async () => {

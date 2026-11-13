@@ -297,6 +297,12 @@ export class KeysService {
     await this.refresh();
   }
 
+  /** Every other device of mine is lost: this device starts my signed list over (see `DeviceListService.restart`) and the server retires the other keys. */
+  async startOver(): Promise<void> {
+    await this.deviceList.restart();
+    await this.refresh();
+  }
+
   /**
    * Puts this person's key on this device from the 24 recovery words: the backup on the server is opened with them, and the key that fits
    * one of the published public keys is saved here (sealed again). Needs no key on this device yet.
@@ -304,15 +310,12 @@ export class KeysService {
   async restore(words: string[]): Promise<RestoreResult> {
     const recoveryKey = await keyOf(words);
     if (!recoveryKey) return 'bad-words';
+    const strayId = this.thisKeyId(); // a key this device made by itself, still waiting for approval: it is replaced by the restored one
     let backups: KeyBackup[];
     try {
       backups = (await this.api.request<{ backups: KeyBackup[] }>('/keys/backups')).backups;
     } catch {
-      try {
-        backups = [await this.api.request<KeyBackup>('/keys/backup')]; // a server that has only the one backup
-      } catch {
-        return 'no-backup';
-      }
+      return 'no-backup';
     }
     // every device has its own backup: the words open only the backup of their own key
     let pkcs8: Uint8Array | null = null;
@@ -335,7 +338,8 @@ export class KeysService {
         try {
           await restoreDeviceKey(this.uid, key.id, lock, key.publicKey, undefined, sign && key.signKey ? { pkcs8: sign, publicKey: key.signKey } : undefined);
           void keepDeviceKey();
-          await this.refresh();
+          if (strayId && strayId !== key.id) await this.revoke(strayId, false, key.id).catch(() => undefined); // not listed, so nothing to publish
+          else await this.refresh();
           return 'ok';
         } catch {
           /* not this one: the backup belongs to another of the keys */

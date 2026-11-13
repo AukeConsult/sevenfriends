@@ -83,6 +83,7 @@ export const CACHE_ROOT = "sf-cache";
 export const KEY_COLLECTION = "keys";
 export const KEY_LIST_COLLECTION = "key-list";
 export const KEY_BACKUP_COLLECTION = "key-backup";
+/** the backup made before there was one per key: kept for people who have it, no longer written */
 export const KEY_BACKUP_DOC = "current";
 /** recovery-request/{connectionId}: a person with a new key asks their friend to unlock the old messages and files for it (docs/design/message-encryption.md, "Recovery") */
 export const RECOVERY_COLLECTION = "recovery-request";
@@ -92,6 +93,8 @@ export const MAX_GROUP_MEMBERS = 7; // the same as the seven of a circle: a grou
 export const SAFEBOX_ITEMS = "items";
 /** safebox-reminders/{connectionId}_{itemId}: a reminder that waits to be pushed (the moment, who gets it); the document goes when it was sent, or the item goes */
 export const SAFEBOX_REMINDERS = "safebox-reminders";
+/** own-recovery-reminders/{uid}_{keyId}: { uid, keyId, at }: one more push for a device that still waits for approval, 24 hours after its request; the document goes when it was looked at */
+export const OWN_REQUEST_REMINDERS = "own-recovery-reminders";
 export const SAFEBOX_MAX_BYTES = 200 * 1024 * 1024;
 export const SAFEBOX_MAX_ITEMS = 500;
 /** The owner name of a safebox in the media cache: `box-<connectionId>` (the app reads its files through `/api/sf-cache/box-<id>/<itemId>` like any media file). */

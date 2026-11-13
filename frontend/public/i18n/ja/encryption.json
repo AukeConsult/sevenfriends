@@ -72,5 +72,9 @@
   "inSignedList": "この端末は署名付きリストに含まれています({{ count }} 台)。",
   "notInSignedList": "この端末は署名付きリストに含まれていません({{ count }} 台)。そのため送信できません。",
   "removeFromAnother": "この端末を削除するには、別の端末でSeven Friendsを開いてください。",
-  "notApprovedYet": "未承認"
+  "notApprovedYet": "未承認",
+  "startOverTitle": "他のデバイスをすべてなくした",
+  "startOverText": "このデバイスでロックを最初からやり直します。他のデバイスはすべて削除されます。友だち一人ひとりに、本当にあなたかどうかの確認が求められ、その後、古いメッセージをもう一度開く手助けができます。",
+  "startOverButton": "このデバイスでやり直す",
+  "startOverFailed": "やり直せませんでした。接続を確認して、もう一度お試しください。"
 }

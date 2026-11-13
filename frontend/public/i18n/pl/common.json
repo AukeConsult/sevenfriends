@@ -258,7 +258,6 @@
     "givingItAccessDone": "Nadaję dostęp… gotowe: {{ done }}. Zostań w aplikacji.",
     "wasThisYouAllow": "Czy to Ty? Zezwól, żeby otworzył Twoje stare wiadomości i pliki. Twoi znajomi nie muszą niczego zatwierdzać.",
     "allow": "Zezwól",
-    "notNow": "Nie teraz",
     "sevenSeats": "Siedem miejsc",
     "yourSevenClosestNo": "Twoja siódemka najbliższych: {{ many }}. Nikt się nie zgubi.",
     "quiet": "Spokojnie",

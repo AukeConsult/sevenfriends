@@ -45,6 +45,7 @@ export class Encryption {
   protected readonly problem = signal<string | null>(null);
 
   protected readonly typed = signal('');
+  protected readonly startOverText = signal<string | null>(null);
   protected readonly restoreText = signal<string | null>(null);
 
   // ---- what this device cannot open, and the ways to get it back (docs/design/recovery-own-devices.md)
@@ -65,6 +66,8 @@ export class Encryption {
   protected readonly finished = signal(false);
   /** my friends of the circle in use: asking a friend is one friendship at a time */
   protected readonly friendList = computed(() => this.friendsService.friends().filter((f) => f.status === 'confirmed'));
+  /** this device's own key is new and no other device has approved it yet: the 24 words can still bring back a key that is approved */
+  protected readonly thisKeyWaiting = computed(() => !!this.keys.published().find((k) => k.id === this.keys.thisKeyId())?.waiting);
   /** the other devices of mine that have a working key: one of them has to do it */
   protected readonly otherDevices = computed(() => this.keys.published().filter((k) => !k.revoked && k.id !== this.keys.thisKeyId()));
   /** other devices of mine that have a key (they can open my history) */
@@ -188,6 +191,20 @@ export class Encryption {
   protected async newKey(): Promise<void> {
     this.resetting.set(false);
     await this.keySetup().makeKey(true);
+  }
+
+  /** "I lost all my other devices": this device starts my signed list over; friends are asked to confirm it, and help from their side (docs/design/default-key.md). */
+  protected async startOver(): Promise<void> {
+    this.busy.set(true);
+    this.startOverText.set(null);
+    try {
+      await this.keys.startOver();
+      await this.lists.trustMine();
+    } catch {
+      this.startOverText.set(tr('encryption.startOverFailed', 'Could not start over. Check the connection and try again.'));
+    } finally {
+      this.busy.set(false);
+    }
   }
 
   protected async restore(): Promise<void> {

@@ -72,5 +72,9 @@
   "inSignedList": "Tämä laite on allekirjoitetussa luettelossasi ({{ count }} laitetta).",
   "notInSignedList": "Tämä laite EI ole allekirjoitetussa luettelossasi ({{ count }} laitetta), joten se ei voi lähettää.",
   "removeFromAnother": "Poistaaksesi tämän laitteen avaa Seven Friends toisella laitteellasi.",
-  "notApprovedYet": "Ei vielä hyväksytty"
+  "notApprovedYet": "Ei vielä hyväksytty",
+  "startOverTitle": "Olen menettänyt kaikki muut laitteeni",
+  "startOverText": "Tämä aloittaa lukkosi alusta tällä laitteella. Kaikki muut laitteesi poistetaan. Jokaista ystävääsi pyydetään vahvistamaan, että se todella olet sinä, ja sen jälkeen hän voi auttaa avaamaan vanhat viestisi uudelleen.",
+  "startOverButton": "Aloita alusta tällä laitteella",
+  "startOverFailed": "Alusta aloittaminen ei onnistunut. Tarkista yhteys ja yritä uudelleen."
 }

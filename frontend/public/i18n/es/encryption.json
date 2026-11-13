@@ -72,5 +72,9 @@
   "inSignedList": "Este dispositivo está en tu lista firmada ({{ count }} dispositivos).",
   "notInSignedList": "Este dispositivo NO está en tu lista firmada ({{ count }} dispositivos), así que no puede enviar.",
   "removeFromAnother": "Para quitar este dispositivo, abre Seven Friends en otro de tus dispositivos.",
-  "notApprovedYet": "Aún sin aprobar"
+  "notApprovedYet": "Aún sin aprobar",
+  "startOverTitle": "He perdido todos mis otros dispositivos",
+  "startOverText": "Esto reinicia tu candado con este dispositivo. Se quitan todos tus demás dispositivos. Cada uno de tus amigos recibe la petición de confirmar que de verdad eres tú, y después puede ayudarte a abrir de nuevo tus mensajes antiguos.",
+  "startOverButton": "Empezar de nuevo con este dispositivo",
+  "startOverFailed": "No se pudo empezar de nuevo. Comprueba la conexión e inténtalo otra vez."
 }

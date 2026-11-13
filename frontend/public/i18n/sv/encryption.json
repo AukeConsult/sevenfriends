@@ -72,5 +72,9 @@
   "inSignedList": "Den här enheten finns i din signerade lista ({{ count }} enheter).",
   "notInSignedList": "Den här enheten finns INTE i din signerade lista ({{ count }} enheter), så den kan inte skicka.",
   "removeFromAnother": "För att ta bort den här enheten öppnar du Seven Friends på en annan av dina enheter.",
-  "notApprovedYet": "Inte godkänd än"
+  "notApprovedYet": "Inte godkänd än",
+  "startOverTitle": "Jag har förlorat alla mina andra enheter",
+  "startOverText": "Det här startar ditt lås om från början med den här enheten. Alla dina andra enheter tas bort. Var och en av dina vänner ombeds bekräfta att det verkligen är du, och kan sedan hjälpa dig att öppna dina gamla meddelanden igen.",
+  "startOverButton": "Börja om med den här enheten",
+  "startOverFailed": "Det gick inte att börja om. Kontrollera anslutningen och försök igen."
 }

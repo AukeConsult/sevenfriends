@@ -88,32 +88,17 @@ describe("retiring a key", () => {
   });
 });
 
-describe("the backup of the private key", () => {
-  const backup = () => ({ v: 1, iv: Buffer.from(webcrypto.getRandomValues(new Uint8Array(12))).toString("base64"), data: Buffer.from(webcrypto.getRandomValues(new Uint8Array(1900))).toString("base64") });
-
-  it("is stored, listed as present, and given back to its owner only", async () => {
-    const b = backup();
-    await pool[0].raw("put", "/keys/backup", b).expect(200);
-    expect((await pool[0].raw("get", "/keys")).body.hasBackup).toBe(true);
-    expect((await pool[0].raw("get", "/keys/backup").expect(200)).body).toEqual(b);
-    expect((await pool[1].raw("get", "/keys/backup")).status).toBe(404);
-  });
-
-  it("is replaced by a newer one", async () => {
-    await pool[0].raw("put", "/keys/backup", backup()).expect(200);
-    const second = backup();
-    await pool[0].raw("put", "/keys/backup", second).expect(200);
-    expect((await pool[0].raw("get", "/keys/backup")).body).toEqual(second);
-  });
-
+describe("refusing a backup that is not valid", () => {
   it.each([
-    ["a wrong version", { ...{ iv: "AAAAAAAAAAAAAAAA", data: "A".repeat(100) }, v: 2 }],
+    ["a wrong version", { v: 2, iv: "AAAAAAAAAAAAAAAA", data: "A".repeat(100) }],
     ["an iv of the wrong length", { v: 1, iv: "AAAA", data: "A".repeat(100) }],
     ["data that is not base64", { v: 1, iv: "AAAAAAAAAAAAAAAA", data: "!".repeat(100) }],
     ["data that is far too large", { v: 1, iv: "AAAAAAAAAAAAAAAA", data: "A".repeat(9000) }],
-  ])("refuses %s", async (_label, body) => {
-    expect((await pool[0].raw("put", "/keys/backup", body)).status).toBe(400);
-    expect((await pool[0].raw("get", "/keys")).body.hasBackup).toBe(false);
+  ])("refuses %s", async (_label, backup) => {
+    expect((await pool[0].raw("post", "/keys", { publicKey: jwk, backup })).status).toBe(400);
+    const mine = (await pool[0].raw("get", "/keys")).body;
+    expect(mine.keys).toEqual([]);
+    expect(mine.hasBackup).toBe(false);
   });
 });
 
@@ -126,7 +111,7 @@ describe("publishing a key together with its backup", () => {
     expect(res.body.createdAt).toBeTruthy();
     const mine = (await pool[0].raw("get", "/keys")).body;
     expect(mine.hasBackup).toBe(true);
-    expect((await pool[0].raw("get", "/keys/backup").expect(200)).body).toMatchObject(backup);
+    expect((await pool[0].raw("get", "/keys/backups").expect(200)).body.backups[0]).toMatchObject(backup);
   });
 
   it("keeps one backup for each device: the words of one device never replace the backup of another", async () => {
