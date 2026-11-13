@@ -51,5 +51,12 @@
   "alsoWhose": ", myös käyttäjän {{ name }},",
   "openTheItem": "Avaa kohde",
   "signatureBad": "⚠ Viestin kirjoittajaa ei voitu tarkistaa. Älä luota viestiin.",
-  "save": "Tallenna"
+  "save": "Tallenna",
+  "react": "Reagoi tähän viestiin",
+  "reaction_love": "Rakkaus",
+  "reaction_thumbsUp": "Peukku ylös",
+  "reaction_laugh": "Hauska",
+  "reaction_wow": "Vau",
+  "reaction_sad": "Surullinen",
+  "reaction_thanks": "Kiitos"
 }

@@ -27,7 +27,7 @@ import { FriendsService } from '../core/friends.service';
 import { initials } from '../core/initials';
 import { MemberPictureService } from '../core/member-picture.service';
 import { RealtimeService } from '../core/realtime.service';
-import { ChatMessage, GroupMember, MessageDeleteCriteria } from '../models';
+import { ChatMessage, GroupMember, MessageDeleteCriteria, REACTIONS, ReactionId } from '../models';
 
 // New messages, edits and deletes arrive live (RealtimeService). This refresh is only a safety net.
 const SAFETY_REFRESH_MS = 30000;
@@ -279,6 +279,29 @@ export class Chat {
     const hidden = !this.pictureHidden().has(id);
     this.setHidden(id, hidden);
     void this.chat.setHidden(this.friendId, id, hidden).catch(() => this.setHidden(id, !hidden)); // not saved: back to how it was
+  }
+
+  /** The reactions to choose from, and the message whose row of them is open. */
+  protected readonly reactionList = REACTIONS;
+  protected readonly picking = signal<string | null>(null);
+
+  /** The reactions of a message that somebody chose, with their count, in the order of the list. */
+  protected reactionChips(message: ChatItem): { id: ReactionId; emoji: string; count: number }[] {
+    return REACTIONS.map((r) => ({ id: r.id, emoji: r.emoji, count: message.reactions?.[r.id] ?? 0 })).filter((r) => r.count > 0);
+  }
+
+  /** Choose a reaction (the same one again takes it back): shown at once, put back if it is not saved. */
+  protected react(message: ChatItem, id: ReactionId, event: Event): void {
+    event.stopPropagation();
+    this.picking.set(null);
+    const before = { reactions: message.reactions, myReaction: message.myReaction ?? null };
+    const next = before.myReaction === id ? null : id;
+    const apply = (reactions: ChatItem['reactions'], myReaction: ReactionId | null) => this.messages.update((list) => list.map((m) => (m.id === message.id ? { ...m, reactions, myReaction } : m)));
+    const counts = { ...(before.reactions ?? {}) };
+    if (before.myReaction) counts[before.myReaction] = Math.max(0, (counts[before.myReaction] ?? 0) - 1);
+    if (next) counts[next] = (counts[next] ?? 0) + 1;
+    apply(counts, next);
+    void this.chat.setReaction(this.friendId, message.id, next).catch(() => apply(before.reactions, before.myReaction));
   }
 
   private setHidden(id: string, hidden: boolean): void {

@@ -51,5 +51,12 @@
   "alsoWhose": " ({{ name }}의 메시지 포함)",
   "openTheItem": "항목 열기",
   "signatureBad": "⚠ 이 메시지를 누가 썼는지 확인할 수 없습니다. 믿지 마세요.",
-  "save": "저장"
+  "save": "저장",
+  "react": "이 메시지에 반응하기",
+  "reaction_love": "사랑",
+  "reaction_thumbsUp": "엄지 척",
+  "reaction_laugh": "웃겨요",
+  "reaction_wow": "와",
+  "reaction_sad": "슬퍼요",
+  "reaction_thanks": "고마워요"
 }

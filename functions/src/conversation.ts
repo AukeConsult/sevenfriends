@@ -3,7 +3,7 @@ import { DecodedIdToken } from "firebase-admin/auth";
 import { DocumentReference, FieldValue, Timestamp, getFirestore } from "firebase-admin/firestore";
 import { asyncHandler } from "./auth";
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION } from "./constants";
-import { ChatMessage, Conversation, MediaRef, MessageDeleteCriteria, MessageEnc, MessageEncMedia, MessageLink, MessageDeleteResult, NewMedia } from "./models";
+import { ChatMessage, Conversation, MediaRef, REACTIONS, ReactionId, MessageDeleteCriteria, MessageEnc, MessageEncMedia, MessageLink, MessageDeleteResult, NewMedia } from "./models";
 import { circleCol, messageCol, missingIndex, userFields } from "./paths";
 import { nameOf, sendPush } from "./push";
 import { findPeerEntry, shownNameOf } from "./circle-profile";
@@ -99,7 +99,7 @@ conversationRouter.get(
     const feed = messageCol(uid).where("connectionId", "==", connection.id);
     let docs: FirebaseFirestore.QueryDocumentSnapshot[];
     try {
-      docs = (await feed.orderBy("time", "desc").limit(FEED_LIMIT).select("text", "fromUid", "fromName", "read", "time", "editedAt", "hidden", "inBox", "media", "link", "enc").get()).docs;
+      docs = (await feed.orderBy("time", "desc").limit(FEED_LIMIT).select("text", "fromUid", "fromName", "read", "time", "editedAt", "hidden", "inBox", "media", "link", "enc", "likes", "reactions").get()).docs;
     } catch (err) {
       if (!missingIndex(err)) throw err;
       console.warn("The index messages(connectionId, time) is not there yet: reading the whole feed", err); // works, only slower, until the index is built
@@ -108,7 +108,7 @@ conversationRouter.get(
     const messages: ChatMessage[] = docs
       .map((d) => {
         const m = d.data();
-        return { id: d.id, text: m.text as string, mine: m.fromUid === uid, ...(connection.group ? { fromUid: m.fromUid as string, fromName: (m.fromName as string | undefined) ?? "" } : {}), read: Boolean(m.read), time: iso(m.time), edited: Boolean(m.editedAt), hidden: Boolean(m.hidden), inBox: Boolean(m.inBox) || (!m.text && !m.media && !m.link), media: (m.media as MediaRef | undefined) ?? null, link: (m.link as MessageLink | undefined) ?? null, ...(m.enc ? { enc: m.enc as MessageEnc } : {}) };
+        return { id: d.id, text: m.text as string, mine: m.fromUid === uid, ...(connection.group ? { fromUid: m.fromUid as string, fromName: (m.fromName as string | undefined) ?? "" } : {}), read: Boolean(m.read), time: iso(m.time), edited: Boolean(m.editedAt), hidden: Boolean(m.hidden), inBox: Boolean(m.inBox) || (!m.text && !m.media && !m.link), media: (m.media as MediaRef | undefined) ?? null, link: (m.link as MessageLink | undefined) ?? null, ...reactionsOf(m, uid), ...(m.enc ? { enc: m.enc as MessageEnc } : {}) };
       })
       .sort((a, b) => (a.time ?? "").localeCompare(b.time ?? ""))
       .slice(-FEED_LIMIT);
@@ -522,6 +522,65 @@ conversationRouter.put(
     }
     await ref.update({ hidden: req.body.hidden });
     res.json({ id: ref.id, hidden: req.body.hidden });
+  }),
+);
+
+/** Who reacted how on one copy of a message: { uid: reaction id }. The first version stored plain likes (`likes`, a list of uids): they count as "love". */
+function reactionMap(m: Record<string, unknown>): Record<string, string> {
+  const map: Record<string, string> = {};
+  for (const uid of (m.likes as string[] | undefined) ?? []) map[uid] = "love";
+  return { ...map, ...((m.reactions as Record<string, string> | undefined) ?? {}) };
+}
+
+/** The reactions of a message as the feed shows them: the count of each one and the one I chose. */
+function reactionsOf(m: Record<string, unknown>, uid: string): { reactions: Partial<Record<ReactionId, number>>; myReaction: ReactionId | null } {
+  const reactions: Partial<Record<ReactionId, number>> = {};
+  const map = reactionMap(m);
+  for (const id of Object.values(map)) if (REACTION_IDS.includes(id)) reactions[id as ReactionId] = (reactions[id as ReactionId] ?? 0) + 1;
+  return { reactions, myReaction: REACTION_IDS.includes(map[uid]) ? (map[uid] as ReactionId) : null };
+}
+
+const REACTION_IDS: string[] = REACTIONS.map((r) => r.id);
+
+/**
+ * React to a message (`PUT .../messages/:id/reaction { reaction }`): any of the people of the connection, on any message. `reaction` is one of REACTIONS, or
+ * null to take mine back; one per person, a new one replaces the old. It is written on EVERY copy of the message, so everybody sees the same, and the friends'
+ * open feeds reload at once (touchFeedIfExists). It carries no text, so it is not locked. Answers { id, reactions, myReaction }.
+ */
+conversationRouter.put(
+  "/:messageId/reaction",
+  asyncHandler(async (req, res) => {
+    const connection = await connectionOf(req, res);
+    if (!connection) return;
+    const reaction = req.body?.reaction;
+    if (reaction !== null && !(typeof reaction === "string" && REACTION_IDS.includes(reaction))) {
+      res.status(400).json({ error: "reaction must be one of the reactions, or null" });
+      return;
+    }
+    const uid = uidOf(res);
+    const mine = messageCol(uid).doc(req.params.messageId);
+    const data = (await mine.get()).data();
+    if (!data || data.connectionId !== connection.id) {
+      res.status(404).json({ error: "Message not found" });
+      return;
+    }
+    const withMine = (m: Record<string, unknown>) => {
+      const map = reactionMap(m);
+      if (reaction === null) delete map[uid];
+      else map[uid] = reaction;
+      return map;
+    };
+    const batch = getFirestore().batch();
+    batch.update(mine, { reactions: withMine(data), likes: [] });
+    for (const peer of connection.peers) {
+      const copy = messageCol(peer.uid).doc(mine.id);
+      const theirs = await copy.get();
+      if (theirs.exists) batch.update(copy, { reactions: withMine(theirs.data()!), likes: [] });
+      await touchFeedIfExists(batch, peerEntryRef(connection, peer));
+    }
+    touchFeed(batch, (res.locals.circleRef as DocumentReference).collection(FRIENDS_SUBCOLLECTION).doc(connection.id)); // my other devices reload the feed
+    await batch.commit();
+    res.json({ id: mine.id, ...reactionsOf({ reactions: withMine(data) }, uid) });
   }),
 );
 

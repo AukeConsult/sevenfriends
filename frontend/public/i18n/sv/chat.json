@@ -51,5 +51,12 @@
   "alsoWhose": ", även {{ name }}s,",
   "openTheItem": "Öppna objektet",
   "signatureBad": "⚠ Det gick inte att kontrollera vem som skrev det här meddelandet. Lita inte på det.",
-  "save": "Spara"
+  "save": "Spara",
+  "react": "Reagera på det här meddelandet",
+  "reaction_love": "Älskar",
+  "reaction_thumbsUp": "Tummen upp",
+  "reaction_laugh": "Roligt",
+  "reaction_wow": "Wow",
+  "reaction_sad": "Ledsen",
+  "reaction_thanks": "Tack"
 }

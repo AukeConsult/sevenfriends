@@ -51,5 +51,12 @@
   "alsoWhose": ", ayrıca {{ name }} adlı kişinin,",
   "openTheItem": "Öğeyi aç",
   "signatureBad": "⚠ Bu mesajı kimin yazdığı doğrulanamadı. Ona güvenmeyin.",
-  "save": "Kaydet"
+  "save": "Kaydet",
+  "react": "Bu mesaja tepki ver",
+  "reaction_love": "Bayıldım",
+  "reaction_thumbsUp": "Başparmak yukarı",
+  "reaction_laugh": "Komik",
+  "reaction_wow": "Vay",
+  "reaction_sad": "Üzgün",
+  "reaction_thanks": "Teşekkürler"
 }

@@ -51,5 +51,12 @@
   "alsoWhose": ", auch von {{ name }},",
   "openTheItem": "Eintrag öffnen",
   "signatureBad": "⚠ Es konnte nicht geprüft werden, wer diese Nachricht geschrieben hat. Vertraue ihr nicht.",
-  "save": "Speichern"
+  "save": "Speichern",
+  "react": "Auf diese Nachricht reagieren",
+  "reaction_love": "Liebe",
+  "reaction_thumbsUp": "Daumen hoch",
+  "reaction_laugh": "Lustig",
+  "reaction_wow": "Wow",
+  "reaction_sad": "Traurig",
+  "reaction_thanks": "Danke"
 }

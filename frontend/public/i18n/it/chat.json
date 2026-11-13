@@ -51,5 +51,12 @@
   "alsoWhose": ", anche di {{ name }},",
   "openTheItem": "Apri l’elemento",
   "signatureBad": "⚠ Non è stato possibile verificare chi ha scritto questo messaggio. Non fidarti.",
-  "save": "Salva"
+  "save": "Salva",
+  "react": "Reagisci a questo messaggio",
+  "reaction_love": "Amore",
+  "reaction_thumbsUp": "Pollice su",
+  "reaction_laugh": "Divertente",
+  "reaction_wow": "Wow",
+  "reaction_sad": "Triste",
+  "reaction_thanks": "Grazie"
 }

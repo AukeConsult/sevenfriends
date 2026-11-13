@@ -51,5 +51,12 @@
   "alsoWhose": ", в том числе от {{ name }},",
   "openTheItem": "Открыть элемент",
   "signatureBad": "⚠ Не удалось проверить, кто написал это сообщение. Не доверяйте ему.",
-  "save": "Сохранить"
+  "save": "Сохранить",
+  "react": "Отреагировать на сообщение",
+  "reaction_love": "Люблю",
+  "reaction_thumbsUp": "Класс",
+  "reaction_laugh": "Смешно",
+  "reaction_wow": "Ого",
+  "reaction_sad": "Грустно",
+  "reaction_thanks": "Спасибо"
 }

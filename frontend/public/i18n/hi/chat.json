@@ -51,5 +51,12 @@
   "alsoWhose": ", {{ name }} के भी,",
   "openTheItem": "आइटम खोलें",
   "signatureBad": "⚠ यह जाँचा नहीं जा सका कि यह संदेश किसने लिखा। इस पर भरोसा न करें।",
-  "save": "सहेजें"
+  "save": "सहेजें",
+  "react": "इस संदेश पर प्रतिक्रिया दें",
+  "reaction_love": "प्यार",
+  "reaction_thumbsUp": "अंगूठा ऊपर",
+  "reaction_laugh": "मज़ेदार",
+  "reaction_wow": "वाह",
+  "reaction_sad": "उदास",
+  "reaction_thanks": "धन्यवाद"
 }

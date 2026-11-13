@@ -210,3 +210,30 @@ describe("take a message out of my own feed", () => {
     await u(0).call("delete", `${url(id, "nope")}/mine`).expect(404);
   });
 });
+
+describe("react to a message", () => {
+  it("one reaction per person; a new one replaces it, null takes it back; both see the counts", async () => {
+    const id = await connect(u(0), u(1));
+    const m = await sendOne(u(0), id, "nice");
+    const react = (user: User, reaction: string | null) => user.call("put", `${url(id, m)}/reaction`, { reaction });
+    const first = (user: User) => user.feed(id).expect(200).then((r) => r.body.messages[0]);
+    expect((await react(u(1), "thumbsUp").expect(200)).body).toMatchObject({ reactions: { thumbsUp: 1 }, myReaction: "thumbsUp" });
+    expect(await first(u(0))).toMatchObject({ reactions: { thumbsUp: 1 }, myReaction: null });
+    expect(await first(u(1))).toMatchObject({ reactions: { thumbsUp: 1 }, myReaction: "thumbsUp" });
+    await react(u(0), "love").expect(200);
+    await react(u(1), "love").expect(200); // replaces the thumbs up
+    expect(await first(u(0))).toMatchObject({ reactions: { love: 2 }, myReaction: "love" });
+    await react(u(1), null).expect(200);
+    await react(u(0), null).expect(200);
+    expect(await first(u(1))).toMatchObject({ reactions: {}, myReaction: null });
+  });
+
+  it("needs a known reaction, a real message and the right connection", async () => {
+    const id = await connect(u(0), u(1));
+    const m = await sendOne(u(0), id, "x");
+    await u(1).call("put", `${url(id, m)}/reaction`, { reaction: "party" }).expect(400);
+    await u(1).call("put", `${url(id, m)}/reaction`, {}).expect(400);
+    await u(1).call("put", `${url(id, "nope")}/reaction`, { reaction: "love" }).expect(404);
+    await u(2).call("put", `${url(id, m)}/reaction`, { reaction: "love" }).expect(404);
+  });
+});

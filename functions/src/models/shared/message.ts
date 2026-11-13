@@ -1,6 +1,17 @@
 import { MediaRef } from "./media";
 import { SafeboxWrap } from "./safebox";
 
+/** The reactions a person can give a message (one per person per message). The ids are saved; the emoji is only the picture. */
+export const REACTIONS = [
+  { id: "thumbsUp", emoji: "👍" },
+  { id: "laugh", emoji: "😂" },
+  { id: "wow", emoji: "😮" },
+  { id: "sad", emoji: "😢" },
+  { id: "thanks", emoji: "🙏" },
+  { id: "love", emoji: "❤️" },
+] as const;
+export type ReactionId = (typeof REACTIONS)[number]["id"];
+
 /** An unread message, as listed on Home. */
 export interface Message {
   id: string;
@@ -68,6 +79,10 @@ export interface ChatMessage {
   inBox?: boolean;
   /** the first link of the text, or null */
   link: MessageLink | null;
+  /** the reactions to this message: how many people chose each one (a reaction carries no text, so it is never locked) */
+  reactions?: Partial<Record<ReactionId, number>>;
+  /** the reaction I chose, or null */
+  myReaction?: ReactionId | null;
   /** set when the text is locked: `text` is then the locked text (base64) and this holds the iv and MY copies of the message key (see MessageEnc) */
   enc?: MessageEnc;
 }

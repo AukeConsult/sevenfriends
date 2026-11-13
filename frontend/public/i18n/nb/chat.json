@@ -51,5 +51,12 @@
   "alsoWhose": ", og også {{ name }}s,",
   "openTheItem": "Åpne elementet",
   "signatureBad": "⚠ Det kunne ikke sjekkes hvem som skrev denne meldingen. Ikke stol på den.",
-  "save": "Lagre"
+  "save": "Lagre",
+  "react": "Reager på denne meldingen",
+  "reaction_love": "Elsker",
+  "reaction_thumbsUp": "Tommel opp",
+  "reaction_laugh": "Morsomt",
+  "reaction_wow": "Wow",
+  "reaction_sad": "Trist",
+  "reaction_thanks": "Takk"
 }

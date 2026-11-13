@@ -51,5 +51,12 @@
   "alsoWhose": ", also {{ name }}'s,",
   "openTheItem": "Open the item",
   "signatureBad": "⚠ Could not check who wrote this message. Do not trust it.",
-  "save": "Save"
+  "save": "Save",
+  "react": "React to this message",
+  "reaction_love": "Love",
+  "reaction_thumbsUp": "Thumbs up",
+  "reaction_laugh": "Funny",
+  "reaction_wow": "Wow",
+  "reaction_sad": "Sad",
+  "reaction_thanks": "Thank you"
 }

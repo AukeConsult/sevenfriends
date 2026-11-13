@@ -51,5 +51,12 @@
   "alsoWhose": ", ook die van {{ name }},",
   "openTheItem": "Item openen",
   "signatureBad": "⚠ Er kon niet worden gecontroleerd wie dit bericht schreef. Vertrouw het niet.",
-  "save": "Opslaan"
+  "save": "Opslaan",
+  "react": "Reageer op dit bericht",
+  "reaction_love": "Liefde",
+  "reaction_thumbsUp": "Duim omhoog",
+  "reaction_laugh": "Grappig",
+  "reaction_wow": "Wow",
+  "reaction_sad": "Verdrietig",
+  "reaction_thanks": "Dank je"
 }

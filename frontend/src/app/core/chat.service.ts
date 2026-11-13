@@ -1,6 +1,6 @@
 import { ActiveCircleService } from './active-circle.service';
 import { Injectable, inject } from '@angular/core';
-import { ChatMessage, Conversation, MessageDeleteCriteria, MessageDeleteResult, MessageEncMedia, MessageLink, NewMedia } from '../models';
+import { ChatMessage, Conversation, MessageDeleteCriteria, MessageDeleteResult, MessageEncMedia, MessageLink, NewMedia, ReactionId } from '../models';
 import { ApiError, ApiService } from './api.service';
 import { FriendsService } from './friends.service';
 import { ChatItem, MessageLockService, SealedText } from './message-lock.service';
@@ -79,6 +79,11 @@ export class ChatService {
   /** Hides / shows a picture or video in my feed (kept on my copy of the message, so every device of mine shows it the same). */
   async setHidden(friendId: string, messageId: string, hidden: boolean): Promise<void> {
     await this.api.request<unknown>(`${this.base(friendId)}/${messageId}/hidden`, { method: 'PUT', body: JSON.stringify({ hidden }) });
+  }
+
+  /** Sets my reaction to a message (null = take it back); it is kept on every copy of the message, so both people see it. */
+  async setReaction(friendId: string, messageId: string, reaction: ReactionId | null): Promise<void> {
+    await this.api.request<unknown>(`${this.base(friendId)}/${messageId}/reaction`, { method: 'PUT', body: JSON.stringify({ reaction }) });
   }
 
   /** The link of a text and whether its page can be shown in a frame (the same check the server makes when the message is sent). */

@@ -51,5 +51,12 @@
   "alsoWhose": ", e também as de {{ name }},",
   "openTheItem": "Abrir o item",
   "signatureBad": "⚠ Não foi possível verificar quem escreveu esta mensagem. Não confie nela.",
-  "save": "Guardar"
+  "save": "Guardar",
+  "react": "Reagir a esta mensagem",
+  "reaction_love": "Adoro",
+  "reaction_thumbsUp": "Polegar para cima",
+  "reaction_laugh": "Engraçado",
+  "reaction_wow": "Uau",
+  "reaction_sad": "Triste",
+  "reaction_thanks": "Obrigado"
 }

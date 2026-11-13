@@ -51,5 +51,12 @@
   "alsoWhose": ", termasuk milik {{ name }},",
   "openTheItem": "Buka item",
   "signatureBad": "⚠ Tidak dapat memeriksa siapa yang menulis pesan ini. Jangan percayai pesan ini.",
-  "save": "Simpan"
+  "save": "Simpan",
+  "react": "Beri reaksi pada pesan ini",
+  "reaction_love": "Suka sekali",
+  "reaction_thumbsUp": "Jempol",
+  "reaction_laugh": "Lucu",
+  "reaction_wow": "Wow",
+  "reaction_sad": "Sedih",
+  "reaction_thanks": "Terima kasih"
 }

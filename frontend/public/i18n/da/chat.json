@@ -51,5 +51,12 @@
   "alsoWhose": ", også {{ name }}s,",
   "openTheItem": "Åbn emnet",
   "signatureBad": "⚠ Det kunne ikke kontrolleres, hvem der har skrevet denne besked. Stol ikke på den.",
-  "save": "Gem"
+  "save": "Gem",
+  "react": "Reager på denne besked",
+  "reaction_love": "Elsker",
+  "reaction_thumbsUp": "Tommelfinger op",
+  "reaction_laugh": "Sjovt",
+  "reaction_wow": "Wow",
+  "reaction_sad": "Ked af det",
+  "reaction_thanks": "Tak"
 }

@@ -51,5 +51,12 @@
   "alsoWhose": "（也包括 {{ name }} 的）",
   "openTheItem": "打开该项目",
   "signatureBad": "⚠ 无法确认这条消息是谁写的。请不要相信它。",
-  "save": "保存"
+  "save": "保存",
+  "react": "对这条消息作出回应",
+  "reaction_love": "喜爱",
+  "reaction_thumbsUp": "点赞",
+  "reaction_laugh": "好笑",
+  "reaction_wow": "哇",
+  "reaction_sad": "难过",
+  "reaction_thanks": "谢谢"
 }
