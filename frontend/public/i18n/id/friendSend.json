@@ -11,5 +11,6 @@
   "addATextOptional": "Tambahkan teks (opsional)…",
   "writeToFriendname": "Tulis ke {{ friendName }}…",
   "messageToFriendname": "Pesan untuk {{ friendName }}",
-  "hideTheForm": "Sembunyikan formulir"
+  "hideTheForm": "Sembunyikan formulir",
+  "openRecovery": "Buka pemulihan"
 }

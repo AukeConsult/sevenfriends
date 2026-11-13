@@ -11,5 +11,6 @@
   "addATextOptional": "Lisää teksti (valinnainen)…",
   "writeToFriendname": "Kirjoita käyttäjälle {{ friendName }}…",
   "messageToFriendname": "Viesti käyttäjälle {{ friendName }}",
-  "hideTheForm": "Piilota lomake"
+  "hideTheForm": "Piilota lomake",
+  "openRecovery": "Avaa palautus"
 }

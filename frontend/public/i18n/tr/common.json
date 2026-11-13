@@ -256,7 +256,7 @@
     "stayIn": "Şurada kal: {{ here }}",
     "aNewKeyWas": "Hesabına yeni bir anahtar eklendi",
     "givingItAccessDone": "Erişim veriliyor… {{ done }} tamam. Uygulamada kal.",
-    "wasThisYouAllow": "Bu sen miydin? Eski mesajlarını ve dosyalarını açmasına izin ver.",
+    "wasThisYouAllow": "Bu sen miydin? Eski mesajlarını ve dosyalarını açmasına izin ver. Arkadaşlarının hiçbir şeyi onaylaması gerekmez.",
     "allow": "İzin ver",
     "notNow": "Şimdi değil",
     "sevenSeats": "Yedi yer",
@@ -287,9 +287,10 @@
     "chainCannotTrust": "Kilit listesinde bir şey değiştirilmiş ya da çıkarılmış. Burada kabul edilemez.",
     "chainAccept": "Evet, {{ name }} bana söyledi",
     "chainAgain": "Tekrar kontrol et",
-    "noKeyInList": "Bu kişinin hiçbir anahtarı henüz imzalı listesinde değil, bu yüzden onun için hiçbir şey kilitlenemez. Onaylı bir cihazda uygulamayı açmasını isteyin.",
-    "thisDeviceNotApproved": "Bu cihaz henüz onaylanmadı. Başka bir cihazınızda (Ana sayfada) onaylayın, sonra tekrar deneyin.",
-    "invitedBy": "Arkadaşın davet etti: {{ who }}"
+    "noKeyInList": "Gönderilmedi: arkadaşının yeni bir anahtarı var ve bu anahtar henüz onun hesabında onaylanmadı, bu yüzden onun için hiçbir şey kilitlenemez. Ondan, daha önce kullandığı bir cihazda uygulamayı açıp İzin ver'e dokunmasını iste.",
+    "thisDeviceNotApproved": "Gönderilmedi: bu cihaz henüz hesabında onaylanmadı. Uygulamayı diğer cihazlarından birinde aç ve yeni anahtarla ilgili bannerda İzin ver'e dokun, sonra tekrar dene. Başka cihazın yoksa anahtarını 24 gizli kelimenle geri al (Ayarlar → Gizlilik kilidi).",
+    "invitedBy": "Arkadaşın davet etti: {{ who }}",
+    "notInListYet": "Yeni anahtar eski mesajlarını açabilir, ancak bu cihaz onu imzalı listene ekleyemedi, bu yüzden henüz gönderemez."
   },
   "needsYourHelp": "{{ friendName }} yardımına ihtiyaç duyuyor",
   "openToUnlockTheir": "Eski mesajlarının kilidini yeniden açmak için uygulamayı aç.",

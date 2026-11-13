@@ -256,7 +256,7 @@
     "stayIn": "Zostań w {{ here }}",
     "aNewKeyWas": "Do Twojego konta dodano nowy klucz",
     "givingItAccessDone": "Nadaję dostęp… gotowe: {{ done }}. Zostań w aplikacji.",
-    "wasThisYouAllow": "Czy to Ty? Zezwól, żeby otworzył Twoje stare wiadomości i pliki.",
+    "wasThisYouAllow": "Czy to Ty? Zezwól, żeby otworzył Twoje stare wiadomości i pliki. Twoi znajomi nie muszą niczego zatwierdzać.",
     "allow": "Zezwól",
     "notNow": "Nie teraz",
     "sevenSeats": "Siedem miejsc",
@@ -287,9 +287,10 @@
     "chainCannotTrust": "Coś na liście kłódek zostało zmienione lub usunięte. Nie można tego tu zaakceptować.",
     "chainAccept": "Tak, {{ name }} mi powiedział(a)",
     "chainAgain": "Sprawdź ponownie",
-    "noKeyInList": "Żaden klucz tej osoby nie jest jeszcze na jej podpisanej liście, więc nic nie można dla niej zablokować. Poproś ją o otwarcie aplikacji na zatwierdzonym urządzeniu.",
-    "thisDeviceNotApproved": "To urządzenie nie zostało jeszcze zatwierdzone. Zatwierdź je na innym swoim urządzeniu (na stronie głównej) i spróbuj ponownie.",
-    "invitedBy": "Zaprasza Cię Twój znajomy {{ who }}"
+    "noKeyInList": "Nie wysłano: Twój znajomy ma nowy klucz, który nie został jeszcze zatwierdzony na jego koncie, więc nic nie można dla niego zablokować. Poproś go, by otworzył aplikację na urządzeniu, którego używał wcześniej, i dotknął Zezwól.",
+    "thisDeviceNotApproved": "Nie wysłano: to urządzenie nie zostało jeszcze zatwierdzone na Twoim koncie. Otwórz aplikację na innym swoim urządzeniu i dotknij Zezwól w komunikacie o nowym kluczu. Potem spróbuj ponownie. Jeśli nie masz innego urządzenia, przywróć klucz za pomocą 24 tajnych słów (Ustawienia → Blokada prywatności).",
+    "invitedBy": "Zaprasza Cię Twój znajomy {{ who }}",
+    "notInListYet": "Nowy klucz może otwierać Twoje stare wiadomości, ale to urządzenie nie mogło dodać go do podpisanej listy, więc nie może jeszcze wysyłać."
   },
   "needsYourHelp": "{{ friendName }} potrzebuje Twojej pomocy",
   "openToUnlockTheir": "Otwórz aplikację, żeby znów odblokować jej stare wiadomości.",

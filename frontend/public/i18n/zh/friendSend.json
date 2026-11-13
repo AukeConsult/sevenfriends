@@ -11,5 +11,6 @@
   "addATextOptional": "添加文字（选填）…",
   "writeToFriendname": "给 {{ friendName }} 写点什么…",
   "messageToFriendname": "给 {{ friendName }} 的消息",
-  "hideTheForm": "隐藏表单"
+  "hideTheForm": "隐藏表单",
+  "openRecovery": "打开恢复"
 }

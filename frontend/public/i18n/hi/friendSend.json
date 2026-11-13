@@ -11,5 +11,6 @@
   "addATextOptional": "कुछ लिखें (वैकल्पिक)…",
   "writeToFriendname": "{{ friendName }} को लिखें…",
   "messageToFriendname": "{{ friendName }} को संदेश",
-  "hideTheForm": "फ़ॉर्म छिपाएँ"
+  "hideTheForm": "फ़ॉर्म छिपाएँ",
+  "openRecovery": "रिकवरी खोलें"
 }

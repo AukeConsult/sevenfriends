@@ -3,6 +3,7 @@ import { Injectable, computed, effect, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FriendsService } from '../core/friends.service';
 import { initials } from '../core/initials';
+import { FriendListsService } from '../core/friend-lists.service';
 import { KeysService } from '../core/keys.service';
 import { SafeboxService } from '../core/safebox.service';
 import { UiPreferencesService } from '../core/ui-preferences';
@@ -39,6 +40,7 @@ export interface PageTool {
 export class FriendContext {
   private readonly friends = inject(FriendsService);
   private readonly keys = inject(KeysService);
+  private readonly lists = inject(FriendListsService);
   private readonly lock = inject(MessageLockService);
   private readonly safebox = inject(SafeboxService);
   private readonly prefs = inject(UiPreferencesService);
@@ -141,8 +143,10 @@ export class FriendContext {
   readonly whoLacksKey = computed(() => (this.isGroup() ? this.withoutKey().map((o) => o.name).join(', ') || this.friendName() : this.friendName()));
   /** the keys in use of my friend, or of all other members (their codes are shown on the locking page, to compare with what they read from their own device) */
   readonly friendKeys = computed(() => this.others().flatMap((o) => o.keys));
-  /** the fingerprints of my friend's keys (the question "did you change phone?" is asked when one is new on this device). A group has no such check yet. */
-  readonly friendFingerprints = computed(() => (this.isGroup() ? [] : this.friendKeys().filter((k) => !k.revoked).map((k) => k.fingerprint)));
+  /** the keys in the newest signed list of my friend, when that list's chain holds: a key approved by their own devices is accepted by this device without a question */
+  private readonly approvedKeyIds = signal<string[]>([]);
+  /** the fingerprints of my friend's keys that no device list vouches for (the question "did you change phone?" is asked when one is new on this device). A group has no such check yet. */
+  readonly friendFingerprints = computed(() => (this.isGroup() ? [] : this.friendKeys().filter((k) => !k.revoked && !this.approvedKeyIds().includes(k.id)).map((k) => k.fingerprint)));
   readonly readable = readableFingerprint;
   /** how many keys in use the server lists for me and for my friend (for the details line) */
   readonly serverKeys = computed(() => ({ mine: this.boxKeys()?.mine.length ?? 0, friend: this.friendKeys().length }));
@@ -176,6 +180,7 @@ export class FriendContext {
       .then((keys) => {
         this.boxKeys.set(keys);
         if (!keys.friendUid) void this.shareBox(keys); // a group (a friendship has the id of the friend)
+        else void this.lists.devicesOf(this.friendId, keys.friendUid, true).then((d) => this.approvedKeyIds.set(d?.status === 'ok' ? (d.current ?? []).map((e) => e.keyId) : []));
       })
       .catch((err) => {
         console.warn('The keys of the friend could not be loaded', err);

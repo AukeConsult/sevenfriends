@@ -15,7 +15,7 @@
   "cancel": "Abbrechen",
   "removeIt": "Entfernen",
   "remove": "Entfernen",
-  "aRemovedKeyIs": "Ein entfernter Schlüssel wird für neue Dateien nicht mehr verwendet. Dateien, die schon dafür gesperrt sind, lassen sich auf diesem Gerät dann nicht mehr öffnen.",
+  "aRemovedKeyIs": "Ein entfernter Schlüssel wird für neue Dateien nicht mehr verwendet. Dateien, die schon dafür gesperrt sind, lassen sich auf diesem Gerät dann nicht mehr öffnen. Das Gerät bekommt außerdem keine Benachrichtigungen mehr von deinem Konto.",
   "makeANewKey": "Neuen Schlüssel erstellen",
   "useThisIfYou": "Nutz das, wenn du deine Wiederherstellungswörter verloren hast. Dieses Gerät bekommt einen neuen Schlüssel und neue Wiederherstellungswörter, und der bisherige Schlüssel wird entfernt. Dateien, die für den alten Schlüssel gesperrt sind, lassen sich nicht mehr öffnen.",
   "makeANewKey2": "Neuen Schlüssel erstellen …",
@@ -68,5 +68,7 @@
   "noRescueCodeText": "Wenn du alle deine Handys und Computer verlierst, können deine alten Nachrichten und Dateien nicht mehr geöffnet werden. Ein Rettungscode sind 24 Wörter auf Papier, die dein Schloss auf einem neuen Gerät zurückbringen. Er erstellt ein neues Schloss auf diesem Gerät und überträgt deinen Verlauf; das dauert einen Moment.",
   "addARescueCode": "Rettungscode hinzufügen",
   "lockingOldThings": "Deine älteren Nachrichten und Notizen werden mit dem neuen Schlüssel gesperrt. Du kannst die App weiter benutzen.",
-  "someCouldNotBeLocked": "Einige ältere Einträge konnten auf diesem Gerät nicht geöffnet werden. Öffne die App auf einem anderen deiner Geräte, um sie abzuschließen."
+  "someCouldNotBeLocked": "Einige ältere Einträge konnten auf diesem Gerät nicht geöffnet werden. Öffne die App auf einem anderen deiner Geräte, um sie abzuschließen.",
+  "inSignedList": "Dieses Gerät steht in deiner signierten Liste ({{ count }} Geräte).",
+  "notInSignedList": "Dieses Gerät steht NICHT in deiner signierten Liste ({{ count }} Geräte), daher kann es nicht senden."
 }

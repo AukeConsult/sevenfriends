@@ -256,7 +256,7 @@
     "stayIn": "Ficar em {{ here }}",
     "aNewKeyWas": "Uma nova chave foi adicionada à sua conta",
     "givingItAccessDone": "Dando acesso… {{ done }} concluídos. Fique no app.",
-    "wasThisYouAllow": "Foi você? Permita que ela abra suas mensagens e arquivos antigos.",
+    "wasThisYouAllow": "Foi você? Permita que ela abra suas mensagens e arquivos antigos. Os seus amigos não têm de aprovar nada.",
     "allow": "Permitir",
     "notNow": "Agora não",
     "sevenSeats": "Sete lugares",
@@ -287,9 +287,10 @@
     "chainCannotTrust": "Algo na lista de cadeados foi alterado ou retirado. Isso não pode ser aceite aqui.",
     "chainAccept": "Sim, {{ name }} disse-me",
     "chainAgain": "Verificar de novo",
-    "noKeyInList": "Nenhuma chave desta pessoa está ainda na sua lista assinada, por isso nada pode ser bloqueado para ela. Peça-lhe que abra a app num dispositivo aprovado.",
-    "thisDeviceNotApproved": "Este dispositivo ainda não foi aprovado. Aprove-o noutro dispositivo seu (no Início) e tente de novo.",
-    "invitedBy": "Convidado pelo seu amigo {{ who }}"
+    "noKeyInList": "Não enviado: o seu amigo tem uma chave nova que ainda não foi aprovada na conta dele, por isso não é possível bloquear nada para ele. Peça-lhe que abra a app num dispositivo que já usou e toque em Permitir.",
+    "thisDeviceNotApproved": "Não enviado: este dispositivo ainda não foi aprovado na sua conta. Abra a app noutro dos seus dispositivos e toque em Permitir no aviso sobre a nova chave. Depois tente de novo. Se não tiver outro dispositivo, recupere a sua chave com as suas 24 palavras secretas (Ajustes → Cadeado de privacidade).",
+    "invitedBy": "Convidado pelo seu amigo {{ who }}",
+    "notInListYet": "A nova chave consegue abrir as suas mensagens antigas, mas este dispositivo não conseguiu adicioná-la à sua lista assinada, por isso ainda não pode enviar."
   },
   "needsYourHelp": "{{ friendName }} precisa da sua ajuda",
   "openToUnlockTheir": "Abra o app para desbloquear de novo as mensagens antigas.",

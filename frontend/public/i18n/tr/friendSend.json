@@ -11,5 +11,6 @@
   "addATextOptional": "Bir metin ekle (isteğe bağlı)…",
   "writeToFriendname": "Yaz: {{ friendName }}…",
   "messageToFriendname": "Mesaj: {{ friendName }}",
-  "hideTheForm": "Formu gizle"
+  "hideTheForm": "Formu gizle",
+  "openRecovery": "Kurtarmayı aç"
 }

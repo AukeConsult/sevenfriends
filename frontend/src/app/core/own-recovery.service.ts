@@ -25,6 +25,15 @@ export class OwnRecoveryService {
   /** the request of THIS device (made by itself, or by the person), null = none */
   readonly mine = signal<OwnRecoveryRequest | null>(null);
 
+  /** the keys this device made itself: ANOTHER device has to approve them, never this one (a replaced key is published while the old key is still this device's key, so the server cannot tell) */
+  private readonly madeHere = new Set<string>();
+
+  madeKey(keyId: string): void {
+    this.madeHere.add(keyId);
+    this.waiting.update((list) => list.filter((k) => k.id !== keyId));
+    this.requests.update((list) => list.filter((r) => r.keyId !== keyId));
+  }
+
   async check(): Promise<void> {
     const mine = await myDeviceKey(this.auth.user()?.uid);
     if (!mine) {
@@ -34,8 +43,8 @@ export class OwnRecoveryService {
     }
     try {
       const found = await this.api.request<{ eligible: boolean; keys: PublishedKey[]; requests: OwnRecoveryRequest[] }>(`/own-recovery/pending?me=${mine.keyId}`);
-      this.waiting.set(found.keys);
-      this.requests.set(found.requests);
+      this.waiting.set(found.keys.filter((k) => !this.madeHere.has(k.id)));
+      this.requests.set(found.requests.filter((r) => !this.madeHere.has(r.keyId)));
     } catch {
       this.waiting.set([]); // not now: it is asked again later
       this.requests.set([]);
@@ -94,13 +103,13 @@ export class OwnRecoveryService {
   }
 
   /** Gives `target` its copies of every message and file key of mine (100 at a time). Returns how many were done and how many this device could not open. */
-  async allow(target: PublishedKey, progress: (done: number) => void, as?: { uid: string; keyId: string; privateKey: CryptoKey }): Promise<{ done: number; skipped: number }> {
+  async allow(target: PublishedKey, progress: (done: number) => void, as?: { uid: string; keyId: string; privateKey: CryptoKey }): Promise<{ done: number; skipped: number; listed: boolean }> {
     // `as`: a rotation on this device hands over from the OLD key, which is still in memory while the new one is not yet the key of this device (it also makes the list itself)
     const mine = as ?? (await myDeviceKey(this.auth.user()?.uid));
     if (!mine) throw new Error(tr('core.thisDeviceHasNo', 'This device has no key.'));
-    if (!as) await this.deviceList.publishNext({ add: target }); // the person allowed it: it joins the signed list, so friends lock new messages for it too (quiet when this device can not sign)
+    const listed = as ? true : await this.deviceList.publishNext({ add: target }); // the person allowed it: it joins the signed list, so friends accept what it writes and lock new messages for it (false: this device can not sign the list)
     await this.api.request<unknown>('/own-recovery/start', { method: 'POST', body: JSON.stringify({ key: target.id, me: mine.keyId }) }); // the asking device sees that the work has begun
-    const result = { done: 0, skipped: 0 };
+    const result = { done: 0, skipped: 0, listed };
     for (const part of ['messages', 'box'] as const) {
       let after: string | null = null;
       do {

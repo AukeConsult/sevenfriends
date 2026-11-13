@@ -256,7 +256,7 @@
     "stayIn": "Stay in {{ here }}",
     "aNewKeyWas": "A new device wants to join your lock",
     "givingItAccessDone": "Giving it access… {{ done }} done. Stay in the app.",
-    "wasThisYouAllow": "Was this you? Approve it: it can then open your old messages and files, and your friends will lock new messages for it too.",
+    "wasThisYouAllow": "Was this you? Approve it: it can then open your old messages and files, and your friends will lock new messages for it too. Your friends do not have to approve anything.",
     "allow": "Approve",
     "notNow": "Not now",
     "sevenSeats": "Seven seats",
@@ -287,9 +287,10 @@
     "chainCannotTrust": "Something in the list of locks was changed or taken away. It cannot be accepted here.",
     "chainAccept": "Yes, {{ name }} told me",
     "chainAgain": "Check again",
-    "noKeyInList": "None of the keys of this person is in their signed list yet, so nothing can be locked for them. Ask them to open the app on a device that is approved.",
-    "thisDeviceNotApproved": "This device has not been approved yet. Approve it on another device of yours (on Home), then try again.",
-    "invitedBy": "Invited by your friend {{ who }}"
+    "noKeyInList": "Not sent: your friend has a new key that is not approved on their account yet, so nothing can be locked for them. Ask them to open the app on a device they used before and tap Approve.",
+    "thisDeviceNotApproved": "Not sent: this device is not approved on your account yet. Open the app on another device of yours and tap Approve on the banner about the new key, then try again. With no other device, bring your key back with your 24 secret words (Settings → Privacy lock).",
+    "invitedBy": "Invited by your friend {{ who }}",
+    "notInListYet": "The new key can open your old messages, but this device could not add it to your signed list, so it cannot send yet."
   },
   "needsYourHelp": "{{ friendName }} needs your help",
   "openToUnlockTheir": "Open the app to unlock their old messages again.",

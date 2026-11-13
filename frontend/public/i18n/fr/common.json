@@ -256,7 +256,7 @@
     "stayIn": "Rester dans {{ here }}",
     "aNewKeyWas": "Une nouvelle clé a été ajoutée à ton compte",
     "givingItAccessDone": "Accès en cours… {{ done }} terminés. Reste dans l'appli.",
-    "wasThisYouAllow": "C'était toi ? Autorise-le à ouvrir tes anciens messages et fichiers.",
+    "wasThisYouAllow": "C'était toi ? Autorise-le à ouvrir tes anciens messages et fichiers. Vos amis n'ont rien à approuver.",
     "allow": "Autoriser",
     "notNow": "Pas maintenant",
     "sevenSeats": "Sept places",
@@ -287,9 +287,10 @@
     "chainCannotTrust": "Quelque chose a été modifié ou retiré dans la liste des verrous. Cela ne peut pas être accepté ici.",
     "chainAccept": "Oui, {{ name }} me l'a dit",
     "chainAgain": "Vérifier à nouveau",
-    "noKeyInList": "Aucune clé de cette personne n'est encore dans sa liste signée, donc rien ne peut être verrouillé pour elle. Demandez-lui d'ouvrir l'app sur un appareil approuvé.",
-    "thisDeviceNotApproved": "Cet appareil n'a pas encore été approuvé. Approuvez-le sur un autre de vos appareils (sur Accueil), puis réessayez.",
-    "invitedBy": "Invité par ton ami {{ who }}"
+    "noKeyInList": "Non envoyé : votre ami a une nouvelle clé qui n'est pas encore approuvée sur son compte, donc rien ne peut être verrouillé pour lui. Demandez-lui d'ouvrir l'appli sur un appareil qu'il a déjà utilisé et de toucher Autoriser.",
+    "thisDeviceNotApproved": "Non envoyé : cet appareil n'est pas encore approuvé sur votre compte. Ouvrez l'appli sur un autre de vos appareils et touchez Autoriser dans le bandeau sur la nouvelle clé. Puis réessayez. Sans autre appareil, récupérez votre clé avec vos 24 mots secrets (Réglages → Verrou de confidentialité).",
+    "invitedBy": "Invité par ton ami {{ who }}",
+    "notInListYet": "La nouvelle clé peut ouvrir vos anciens messages, mais cet appareil n'a pas pu l'ajouter à votre liste signée, elle ne peut donc pas encore envoyer."
   },
   "needsYourHelp": "{{ friendName }} a besoin de ton aide",
   "openToUnlockTheir": "Ouvre l'app pour déverrouiller de nouveau ses anciens messages.",

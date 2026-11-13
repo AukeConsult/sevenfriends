@@ -15,7 +15,7 @@
   "cancel": "Avbryt",
   "removeIt": "Ta bort den",
   "remove": "Ta bort",
-  "aRemovedKeyIs": "En borttagen nyckel används inte för nya filer. Filer som redan är låsta för den kan då inte längre öppnas på den enheten.",
+  "aRemovedKeyIs": "En borttagen nyckel används inte för nya filer. Filer som redan är låsta för den kan då inte längre öppnas på den enheten. Enheten får inte heller några fler aviseringar från ditt konto.",
   "makeANewKey": "Skapa en ny nyckel",
   "useThisIfYou": "Använd det här om du har tappat bort dina återställningsord. Den här enheten får en ny nyckel och nya återställningsord, och nyckeln den har nu tas bort. Filer som redan är låsta för den gamla nyckeln kan inte längre öppnas.",
   "makeANewKey2": "Skapa en ny nyckel…",
@@ -68,5 +68,7 @@
   "noRescueCodeText": "Om du förlorar alla dina telefoner och datorer kan dina gamla meddelanden och filer inte öppnas igen. En räddningskod är 24 ord på papper som ger tillbaka ditt lås på en ny enhet. Den skapar ett nytt lås på den här enheten och flyttar din historik dit; det tar en stund.",
   "addARescueCode": "Lägg till en räddningskod",
   "lockingOldThings": "Dina äldre meddelanden och anteckningar låses med den nya nyckeln. Du kan fortsätta använda appen.",
-  "someCouldNotBeLocked": "Några äldre saker kunde inte öppnas på den här enheten. Öppna appen på en annan av dina enheter för att slutföra dem."
+  "someCouldNotBeLocked": "Några äldre saker kunde inte öppnas på den här enheten. Öppna appen på en annan av dina enheter för att slutföra dem.",
+  "inSignedList": "Den här enheten finns i din signerade lista ({{ count }} enheter).",
+  "notInSignedList": "Den här enheten finns INTE i din signerade lista ({{ count }} enheter), så den kan inte skicka."
 }

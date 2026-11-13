@@ -15,7 +15,7 @@
   "cancel": "Cancelar",
   "removeIt": "Quitarla",
   "remove": "Quitar",
-  "aRemovedKeyIs": "Una clave eliminada no se usa para archivos nuevos. Los archivos ya bloqueados para ella dejan de poder abrirse en ese dispositivo.",
+  "aRemovedKeyIs": "Una clave eliminada no se usa para archivos nuevos. Los archivos ya bloqueados para ella dejan de poder abrirse en ese dispositivo. El dispositivo tampoco recibirá más notificaciones de tu cuenta.",
   "makeANewKey": "Crear una clave nueva",
   "useThisIfYou": "Úsalo si perdiste tus palabras de recuperación. Este dispositivo recibe una clave nueva y palabras de recuperación nuevas, y se elimina la clave que tiene ahora. Los archivos ya bloqueados para la clave antigua dejan de poder abrirse.",
   "makeANewKey2": "Crear una clave nueva…",
@@ -68,5 +68,7 @@
   "noRescueCodeText": "Si pierdes todos tus teléfonos y ordenadores, tus mensajes y archivos antiguos no se podrán abrir. Un código de rescate son 24 palabras en papel que recuperan tu candado en un dispositivo nuevo. Crea un candado nuevo en este dispositivo y traslada tu historial; tarda un momento.",
   "addARescueCode": "Añadir un código de rescate",
   "lockingOldThings": "Bloqueando tus mensajes y notas antiguos con la clave nueva. Puedes seguir usando la app.",
-  "someCouldNotBeLocked": "Algunos elementos antiguos no se pudieron abrir en este dispositivo. Abre la app en otro dispositivo tuyo para terminarlos."
+  "someCouldNotBeLocked": "Algunos elementos antiguos no se pudieron abrir en este dispositivo. Abre la app en otro dispositivo tuyo para terminarlos.",
+  "inSignedList": "Este dispositivo está en tu lista firmada ({{ count }} dispositivos).",
+  "notInSignedList": "Este dispositivo NO está en tu lista firmada ({{ count }} dispositivos), así que no puede enviar."
 }

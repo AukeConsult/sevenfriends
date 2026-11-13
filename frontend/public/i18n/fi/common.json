@@ -256,7 +256,7 @@
     "stayIn": "Pysy täällä: {{ here }}",
     "aNewKeyWas": "Tilillesi lisättiin uusi avain",
     "givingItAccessDone": "Annetaan sille pääsy… {{ done }} valmiina. Pysy sovelluksessa.",
-    "wasThisYouAllow": "Olitko se sinä? Salli sen avata vanhat viestisi ja tiedostosi.",
+    "wasThisYouAllow": "Olitko se sinä? Salli sen avata vanhat viestisi ja tiedostosi. Ystäviesi ei tarvitse hyväksyä mitään.",
     "allow": "Salli",
     "notNow": "Ei nyt",
     "sevenSeats": "Seitsemän paikkaa",
@@ -287,9 +287,10 @@
     "chainCannotTrust": "Lukkoluettelossa on jotain muutettu tai poistettu. Sitä ei voi hyväksyä täällä.",
     "chainAccept": "Kyllä, {{ name }} kertoi minulle",
     "chainAgain": "Tarkista uudelleen",
-    "noKeyInList": "Yksikään tämän henkilön avain ei ole vielä hänen allekirjoitetussa luettelossaan, joten mitään ei voi lukita hänelle. Pyydä häntä avaamaan sovellus hyväksytyllä laitteella.",
-    "thisDeviceNotApproved": "Tätä laitetta ei ole vielä hyväksytty. Hyväksy se toisella laitteellasi (Etusivulla) ja yritä uudelleen.",
-    "invitedBy": "Kutsunut ystäväsi {{ who }}"
+    "noKeyInList": "Ei lähetetty: ystävälläsi on uusi avain, jota ei ole vielä hyväksytty hänen tilillään, joten mitään ei voi lukita hänelle. Pyydä häntä avaamaan sovellus laitteella, jota hän on käyttänyt aiemmin, ja napauttamaan Salli.",
+    "thisDeviceNotApproved": "Ei lähetetty: tätä laitetta ei ole vielä hyväksytty tililläsi. Avaa sovellus toisella laitteellasi ja napauta Salli uutta avainta koskevassa ilmoituksessa. Yritä sitten uudelleen. Jos sinulla ei ole toista laitetta, palauta avaimesi 24 salaisella sanallasi (Asetukset → Yksityisyyslukko).",
+    "invitedBy": "Kutsunut ystäväsi {{ who }}",
+    "notInListYet": "Uusi avain voi avata vanhat viestisi, mutta tämä laite ei voinut lisätä sitä allekirjoitettuun luetteloosi, joten se ei vielä voi lähettää."
   },
   "needsYourHelp": "{{ friendName }} tarvitsee apuasi",
   "openToUnlockTheir": "Avaa sovellus avataksesi hänen vanhat viestinsä uudelleen.",

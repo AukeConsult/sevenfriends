@@ -58,7 +58,12 @@
     }
 
     @if (error()) {
-      <div class="alert alert-danger" role="alert">{{ error() }}</div>
+      <div class="alert alert-danger d-flex flex-column gap-2" role="alert">
+        {{ error() }}
+        @if (needsApproval()) {
+          <a class="btn btn-primary btn-sm align-self-start" routerLink="/settings/encryption" [queryParams]="{ from: '/friends/' + ctx.friendId }">{{ t('friendSend.openRecovery') || 'Open recovery' }}</a>
+        }
+      </div>
     }
   }
 </main>

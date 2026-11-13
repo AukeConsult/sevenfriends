@@ -11,5 +11,6 @@
   "addATextOptional": "Добавь текст (необязательно)…",
   "writeToFriendname": "Напиши: {{ friendName }}…",
   "messageToFriendname": "Сообщение для {{ friendName }}",
-  "hideTheForm": "Скрыть форму"
+  "hideTheForm": "Скрыть форму",
+  "openRecovery": "Открыть восстановление"
 }

@@ -256,7 +256,7 @@
     "stayIn": "留在 {{ here }}",
     "aNewKeyWas": "你的账号新增了一把密钥",
     "givingItAccessDone": "正在授权…… 已完成 {{ done }} 项。请留在应用里。",
-    "wasThisYouAllow": "是你本人吗？允许它打开你以前的消息和文件。",
+    "wasThisYouAllow": "是你本人吗？允许它打开你以前的消息和文件。你的朋友无需批准任何内容。",
     "allow": "允许",
     "notNow": "暂不",
     "sevenSeats": "七个位置",
@@ -287,9 +287,10 @@
     "chainCannotTrust": "锁列表中有内容被更改或删除。这里无法接受。",
     "chainAccept": "是的，{{ name }} 告诉过我",
     "chainAgain": "再次检查",
-    "noKeyInList": "此人的密钥还没有出现在其已签名的列表中，因此无法为其加锁。请让对方在已批准的设备上打开应用。",
-    "thisDeviceNotApproved": "此设备尚未获批准。请在你的另一台设备上（在首页）批准它，然后重试。",
-    "invitedBy": "你的朋友 {{ who }} 邀请了你"
+    "noKeyInList": "未发送:你的朋友有一个新密钥,尚未在其账号中获得批准,因此无法为其锁定任何内容。请让对方在以前用过的设备上打开应用并点按“允许”。",
+    "thisDeviceNotApproved": "未发送:这台设备尚未在你的账号中获得批准。请在你的另一台设备上打开应用,在关于新密钥的提示条中点按“允许”,然后重试。如果没有其他设备,请用 24 个秘密词找回密钥(设置 → 隐私锁)。",
+    "invitedBy": "你的朋友 {{ who }} 邀请了你",
+    "notInListYet": "新密钥可以打开你的旧消息,但这台设备未能把它加入你的已签名列表,因此它暂时还不能发送。"
   },
   "needsYourHelp": "{{ friendName }} 需要你的帮助",
   "openToUnlockTheir": "打开应用，重新解锁对方的旧消息。",

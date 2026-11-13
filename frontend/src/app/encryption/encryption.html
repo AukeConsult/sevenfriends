@@ -41,7 +41,11 @@
     } @else if (noKeyReason(); as reason) {
       <div class="alert alert-warning m-0" role="status">
         <strong>{{ t('encryption.thisDeviceHasNoWorking') || 'This device has no working key.' }}</strong><br />
-        {{ reason }}
+        @switch (reason) {
+          @case ('removed') { {{ t('encryption.theKeyOnThisRemoved') || 'The key on this device was removed, from another of your devices or with "Not me".' }} }
+          @case ('never') { {{ t('encryption.theKeyOnThisNever') || 'The key on this device was never saved on the server, so it does not count.' }} }
+          @default { {{ t('encryption.thisDeviceHasNoKey') || 'Your account has keys on other devices, but this device has none.' }} }
+        }
         {{ t('encryption.soYourOldMessages') || 'Your old messages and files are locked here until it has one. Restore your key with your 24 words (below), or make a new key and then ask your other devices or a friend to open your history for it.' }}
       </div>
     }
@@ -54,11 +58,11 @@
         <h2 class="sf-section-title m-0">{{ t('encryption.myOtherDevices') || 'My other devices' }}</h2>
         @switch (mine()?.status) {
           @case ('asked') {
-            <p class="m-0">{{ t('encryption.waitingForYourOther') || 'Waiting for one of your other devices to say Allow.' }}</p>
+            <p class="m-0">{{ t('encryption.waitingForYourOther') || 'Waiting for one of your other devices to say Approve.' }}</p>
             <ul class="small m-0 ps-3">
               @for (key of otherDevices(); track key.id) { <li>{{ key.label || 'A device' }}</li> }
             </ul>
-            <p class="small text-secondary m-0">{{ t('encryption.openTheAppOn') || 'Open Seven Friends on one of these devices (it must be logged in and show the same account). A banner asks you to Allow. It does not matter which one.' }}</p>
+            <p class="small text-secondary m-0">{{ t('encryption.openTheAppOn') || 'Open Seven Friends on one of these devices (it must be logged in and show the same account). A banner asks you to Approve. It does not matter which one.' }}</p>
             <div class="progress" role="progressbar" [attr.aria-label]="t('encryption.waiting') || 'Waiting'"><div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 100%"></div></div>
             <button type="button" class="btn btn-outline-secondary btn-sm align-self-start" (click)="askOthers()" [disabled]="askBusy()">{{ t('encryption.askAgain') || 'Ask again' }}</button>
           }
@@ -115,7 +119,7 @@
           <details class="sf-expand sf-expand-quiet">
             <summary>{{ t('encryption.thisDeviceOpensMy') || 'This device opens my old messages' }}</summary>
             <div class="vstack gap-2 mt-2">
-              <p class="small text-secondary m-0">{{ t('encryption.useThisWhenThis') || 'Use this when this device can read your old messages, but no Allow button shows. It then gives your other devices access.' }}</p>
+              <p class="small text-secondary m-0">{{ t('encryption.useThisWhenThis') || 'Use this when this device can read your old messages, but no Approve button shows. It then gives your other devices access.' }}</p>
               <button type="button" class="btn btn-outline-primary btn-sm align-self-start" (click)="trustThis()">{{ t('encryption.useThisDeviceTo') || 'Use this device to give the others access' }}</button>
             </div>
           </details>
@@ -147,7 +151,7 @@
             </li>
           }
         </ul>
-        @if (removing()) { <p class="small text-secondary m-0">{{ t('encryption.aRemovedKeyIs') || 'A removed key is not used for new files. Files already locked for it can then no longer be opened on that device.' }}</p> }
+        @if (removing()) { <p class="small text-secondary m-0">{{ t('encryption.aRemovedKeyIs') || 'A removed key is not used for new files. Files already locked for it can then no longer be opened on that device. The device also gets no more notifications from your account.' }}</p> }
 
         <details class="sf-expand sf-expand-quiet mt-2">
           <summary>{{ t('encryption.makeANewKey') || 'Make a new key' }}</summary>
@@ -166,23 +170,6 @@
           </div>
         </details>
         @if (problem(); as text) { <div class="alert alert-warning m-0" role="alert">{{ text }}</div> }
-    @if (keys.diagnosis(); as d) {
-      <!-- why a key is, or is not, found: nothing secret, only what was looked up -->
-      <details class="sf-hint">
-        <summary>{{ t('encryption.whyIsMyKey') || 'Why is my key (not) found?' }}</summary>
-        <ul class="m-0 ps-3">
-          <li>{{ t('encryption.accountSlice', { slice: d.account.slice(-6) }) || 'Account: …' + d.account.slice(-6) }}</li>
-          <li>{{ t('encryption.keyInThisBrowser', { no: d.localKeyId ? (t('encryption.yesSlice', { slice: d.localKeyId.slice(0, 8) }) || 'yes (' + d.localKeyId.slice(0, 8) + ')') : 'no' }) || 'Key in this browser for this account: ' + (d.localKeyId ? (t('encryption.yesSlice', { slice: d.localKeyId.slice(0, 8) }) || 'yes (' + d.localKeyId.slice(0, 8) + ')') : 'no') }}</li>
-          @if (d.localKeyId) {
-            @let pubState = d.localPublished === 'yes' ? 'yes' : d.localPublished === 'removed' ? 'no, it was removed' : 'no, it was never published';
-            <li>{{ t('encryption.thatKeyIsPublished', { state: pubState }) || 'That key is published: ' + pubState }}</li>
-          }
-          <li>{{ t('encryption.keysPublishedForThis', { active: d.active, removed: d.removed }) || 'Keys published for this account: ' + d.active + ' in use, ' + d.removed + ' removed' }}</li>
-          <li>{{ t('encryption.accountsWithAKey', { accountsInBrowser: d.accountsInBrowser }) || 'Accounts with a key in this browser: ' + d.accountsInBrowser }}</li>
-          @if (d.failed) { <li>{{ t('encryption.theServerCouldNot') || 'The server could not be asked just now. Reload the page to try again.' }}</li> }
-        </ul>
-      </details>
-    }
       }
     } @else if (keys.state() === 'none') {
       <details class="sf-expand sf-expand-quiet mt-2">
@@ -196,6 +183,26 @@
         </div>
       </details>
     }
+  }
+  @if (keys.diagnosis(); as d) {
+    <!-- why a key is, or is not, found: nothing secret, only what was looked up -->
+    <details class="sf-hint">
+      <summary>{{ t('encryption.whyIsMyKey') || 'Why is my key (not) found?' }}</summary>
+      <ul class="m-0 ps-3">
+        <li>{{ t('encryption.accountSlice', { slice: d.account.slice(-6) }) || 'Account: …' + d.account.slice(-6) }}</li>
+        <li>{{ t('encryption.keyInThisBrowser', { no: d.localKeyId ? (t('encryption.yesSlice', { slice: d.localKeyId.slice(0, 8) }) || 'yes (' + d.localKeyId.slice(0, 8) + ')') : 'no' }) || 'Key in this browser for this account: ' + (d.localKeyId ? (t('encryption.yesSlice', { slice: d.localKeyId.slice(0, 8) }) || 'yes (' + d.localKeyId.slice(0, 8) + ')') : 'no') }}</li>
+        @if (d.localKeyId) {
+          @let pubState = d.localPublished === 'yes' ? 'yes' : d.localPublished === 'removed' ? 'no, it was removed' : 'no, it was never published';
+          <li>{{ t('encryption.thatKeyIsPublished', { state: pubState }) || 'That key is published: ' + pubState }}</li>
+        }
+        <li>{{ t('encryption.keysPublishedForThis', { active: d.active, removed: d.removed }) || 'Keys published for this account: ' + d.active + ' in use, ' + d.removed + ' removed' }}</li>
+        @if (listState(); as list) {
+          <li>{{ list.inList ? (t('encryption.inSignedList', { count: list.count }) || 'This device is in your signed list (' + list.count + ' devices).') : (t('encryption.notInSignedList', { count: list.count }) || 'This device is NOT in your signed list (' + list.count + ' devices), so it cannot send.') }}</li>
+        }
+        <li>{{ t('encryption.accountsWithAKey', { accountsInBrowser: d.accountsInBrowser }) || 'Accounts with a key in this browser: ' + d.accountsInBrowser }}</li>
+        @if (d.failed) { <li>{{ t('encryption.theServerCouldNot') || 'The server could not be asked just now. Reload the page to try again.' }}</li> }
+      </ul>
+    </details>
   }
 </main>
 </ng-container>

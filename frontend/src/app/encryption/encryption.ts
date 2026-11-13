@@ -3,6 +3,8 @@ import { AppDatePipe } from '../core/app-date.pipe';
 import { NgTemplateOutlet } from '@angular/common';
 import { Component, DestroyRef, computed, effect, inject, signal, untracked, viewChild } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { AuthService } from '../core/auth.service';
+import { FriendListsService } from '../core/friend-lists.service';
 import { FriendsService } from '../core/friends.service';
 import { LockedItemsService } from '../core/locked-items.service';
 import { OwnRecoveryService } from '../core/own-recovery.service';
@@ -71,17 +73,32 @@ export class Encryption {
     const request = this.mine();
     return request?.total ? Math.min(100, Math.round((request.added / request.total) * 100)) : 0;
   });
-  /** why there is no working key on this device, in words (null = nothing to warn about) */
-  protected readonly noKeyReason = computed((): string | null => {
+  private async loadList(): Promise<void> {
+    const me = this.auth.user()?.uid;
+    const mine = me ? await this.lists.devicesOf('', me, true) : null;
+    const id = this.keys.thisKeyId();
+    this.listState.set(mine?.status === 'ok' && mine.current ? { count: mine.current.length, inList: !!id && mine.current.some((d) => d.keyId === id) } : null);
+  }
+
+  /** why there is no working key on this device (null = nothing to warn about); the template turns it into words, so the text follows the language once it is loaded */
+  protected readonly noKeyReason = computed((): 'removed' | 'never' | 'elsewhere' | null => {
     if (this.keys.state() !== 'none') return null;
-    const d = this.keys.diagnosis();
-    if (d?.localPublished === 'removed') return tr('encryption.theKeyOnThisRemoved', 'The key on this device was removed, from another of your devices or with "Not me".');
-    if (d?.localPublished === 'no') return tr('encryption.theKeyOnThisNever', 'The key on this device was never saved on the server, so it does not count.');
-    if (this.keys.elsewhere()) return tr('encryption.thisDeviceHasNoKey', 'Your account has keys on other devices, but this device has none.');
-    return null;
+    const localPublished = this.keys.diagnosis()?.localPublished;
+    if (localPublished === 'removed') return 'removed';
+    if (localPublished === 'no') return 'never';
+    return this.keys.elsewhere() ? 'elsewhere' : null;
   });
 
+  private readonly lists = inject(FriendListsService);
+  private readonly auth = inject(AuthService);
+  /** my signed device list: how many devices it names and whether THIS device is one of them (null = no list, or not known yet) */
+  protected readonly listState = signal<{ count: number; inList: boolean } | null>(null);
+
   constructor() {
+    effect(() => {
+      this.keys.thisKeyId(); // looked at again when the key of this device is known or changes
+      untracked(() => void this.loadList());
+    });
     void this.own.check();
     void this.own.refreshMine();
     void this.lockedService.check(true);
@@ -143,7 +160,7 @@ export class Encryption {
     this.allowNote.set(null);
     try {
       const result = await this.own.allow(key, (n) => this.allowed.set(n));
-      this.allowNote.set(result.skipped ? tr('encryption.couldNotBeOpened', '{{ skipped }} could not be opened on this device. Try again on the device where that key lives.', { skipped: result.skipped }) : tr('encryption.doneTheOtherDevice', 'Done. The other device can now open your old messages and files.'));
+      this.allowNote.set(result.skipped ? tr('encryption.couldNotBeOpened', '{{ skipped }} could not be opened on this device. Try again on the device where that key lives.', { skipped: result.skipped }) : result.listed ? tr('encryption.doneTheOtherDevice', 'Done. The other device can now open your old messages and files.') : tr('core.notInListYet', 'The new key can open your old messages, but this device could not add it to your signed list, so it cannot send yet.'));
     } catch (err: any) {
       this.allowNote.set(err?.message || tr('encryption.thatDidNotWork', 'That did not work. Try again.'));
     } finally {

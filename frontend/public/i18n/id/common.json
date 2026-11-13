@@ -256,7 +256,7 @@
     "stayIn": "Tetap di {{ here }}",
     "aNewKeyWas": "Kunci baru ditambahkan ke akunmu",
     "givingItAccessDone": "Memberi akses… {{ done }} selesai. Tetap di aplikasi.",
-    "wasThisYouAllow": "Apakah ini kamu? Izinkan untuk membuka pesan dan file lamamu.",
+    "wasThisYouAllow": "Apakah ini kamu? Izinkan untuk membuka pesan dan file lamamu. Teman-temanmu tidak perlu menyetujui apa pun.",
     "allow": "Izinkan",
     "notNow": "Jangan sekarang",
     "sevenSeats": "Tujuh kursi",
@@ -287,9 +287,10 @@
     "chainCannotTrust": "Ada yang diubah atau dihapus dalam daftar kunci. Ini tidak dapat diterima di sini.",
     "chainAccept": "Ya, {{ name }} memberi tahu saya",
     "chainAgain": "Periksa lagi",
-    "noKeyInList": "Belum ada kunci orang ini di daftar bertanda tangan mereka, jadi tidak ada yang dapat dikunci untuk mereka. Minta mereka membuka aplikasi di perangkat yang disetujui.",
-    "thisDeviceNotApproved": "Perangkat ini belum disetujui. Setujui di perangkat Anda yang lain (di Beranda), lalu coba lagi.",
-    "invitedBy": "Diundang oleh temanmu {{ who }}"
+    "noKeyInList": "Tidak terkirim: temanmu punya kunci baru yang belum disetujui di akunnya, jadi tidak ada yang bisa dikunci untuknya. Minta dia membuka aplikasi di perangkat yang pernah dipakainya dan mengetuk Izinkan.",
+    "thisDeviceNotApproved": "Tidak terkirim: perangkat ini belum disetujui di akunmu. Buka aplikasi di perangkatmu yang lain dan ketuk Izinkan pada spanduk tentang kunci baru, lalu coba lagi. Kalau tidak punya perangkat lain, kembalikan kuncimu dengan 24 kata rahasiamu (Pengaturan → Gembok privasi).",
+    "invitedBy": "Diundang oleh temanmu {{ who }}",
+    "notInListYet": "Kunci baru dapat membuka pesan lamamu, tetapi perangkat ini tidak bisa menambahkannya ke daftar bertanda tanganmu, jadi belum bisa mengirim."
   },
   "needsYourHelp": "{{ friendName }} butuh bantuanmu",
   "openToUnlockTheir": "Buka aplikasi untuk membuka kunci pesan lamanya lagi.",

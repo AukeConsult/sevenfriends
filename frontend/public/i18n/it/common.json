@@ -256,7 +256,7 @@
     "stayIn": "Resta in {{ here }}",
     "aNewKeyWas": "Una nuova chiave è stata aggiunta al tuo account",
     "givingItAccessDone": "Le sto dando accesso… {{ done }} fatti. Resta nell'app.",
-    "wasThisYouAllow": "Eri tu? Consentile di aprire i tuoi vecchi messaggi e file.",
+    "wasThisYouAllow": "Eri tu? Consentile di aprire i tuoi vecchi messaggi e file. I tuoi amici non devono approvare nulla.",
     "allow": "Consenti",
     "notNow": "Non ora",
     "sevenSeats": "Sette posti",
@@ -287,9 +287,10 @@
     "chainCannotTrust": "Qualcosa nell'elenco dei lucchetti è stato cambiato o rimosso. Qui non può essere accettato.",
     "chainAccept": "Sì, {{ name }} me l'ha detto",
     "chainAgain": "Controlla di nuovo",
-    "noKeyInList": "Nessuna chiave di questa persona è ancora nel suo elenco firmato, quindi non si può bloccare nulla per lei. Chiedile di aprire l'app su un dispositivo approvato.",
-    "thisDeviceNotApproved": "Questo dispositivo non è ancora approvato. Approvalo su un altro tuo dispositivo (in Home) e riprova.",
-    "invitedBy": "Invitato dal tuo amico {{ who }}"
+    "noKeyInList": "Non inviato: il tuo amico ha una nuova chiave non ancora approvata sul suo account, quindi non si può bloccare nulla per lui. Chiedigli di aprire l'app su un dispositivo che ha già usato e di toccare Consenti.",
+    "thisDeviceNotApproved": "Non inviato: questo dispositivo non è ancora approvato sul tuo account. Apri l'app su un altro tuo dispositivo e tocca Consenti nel banner sulla nuova chiave, poi riprova. Se non hai un altro dispositivo, riporta la tua chiave con le tue 24 parole segrete (Impostazioni → Blocco privacy).",
+    "invitedBy": "Invitato dal tuo amico {{ who }}",
+    "notInListYet": "La nuova chiave può aprire i tuoi vecchi messaggi, ma questo dispositivo non è riuscito ad aggiungerla alla tua lista firmata, quindi non può ancora inviare."
   },
   "needsYourHelp": "{{ friendName }} ha bisogno del tuo aiuto",
   "openToUnlockTheir": "Apri l'app per sbloccare di nuovo i suoi vecchi messaggi.",

@@ -15,7 +15,7 @@
   "cancel": "Annulla",
   "removeIt": "Rimuovila",
   "remove": "Rimuovi",
-  "aRemovedKeyIs": "Una chiave rimossa non viene usata per i nuovi file. I file già bloccati per essa non si potranno più aprire su quel dispositivo.",
+  "aRemovedKeyIs": "Una chiave rimossa non viene usata per i nuovi file. I file già bloccati per essa non si potranno più aprire su quel dispositivo. Il dispositivo non riceve più nemmeno le notifiche del tuo account.",
   "makeANewKey": "Crea una nuova chiave",
   "useThisIfYou": "Usalo se hai perso le parole di recupero. Questo dispositivo riceve una nuova chiave e nuove parole di recupero, e la chiave attuale viene rimossa. I file già bloccati per la vecchia chiave non si potranno più aprire.",
   "makeANewKey2": "Crea una nuova chiave…",
@@ -68,5 +68,7 @@
   "noRescueCodeText": "Se perdi tutti i tuoi telefoni e computer, i tuoi vecchi messaggi e file non potranno più essere aperti. Un codice di recupero sono 24 parole su carta che riportano il tuo lucchetto su un nuovo dispositivo. Crea un nuovo lucchetto su questo dispositivo e vi sposta la tua cronologia; ci vuole un momento.",
   "addARescueCode": "Aggiungi un codice di recupero",
   "lockingOldThings": "Blocco dei tuoi vecchi messaggi e note con la nuova chiave. Puoi continuare a usare l'app.",
-  "someCouldNotBeLocked": "Alcuni vecchi elementi non si sono potuti aprire su questo dispositivo. Apri l'app su un altro tuo dispositivo per completarli."
+  "someCouldNotBeLocked": "Alcuni vecchi elementi non si sono potuti aprire su questo dispositivo. Apri l'app su un altro tuo dispositivo per completarli.",
+  "inSignedList": "Questo dispositivo è nella tua lista firmata ({{ count }} dispositivi).",
+  "notInSignedList": "Questo dispositivo NON è nella tua lista firmata ({{ count }} dispositivi), quindi non può inviare."
 }

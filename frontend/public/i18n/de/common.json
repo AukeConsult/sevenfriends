@@ -256,7 +256,7 @@
     "stayIn": "In {{ here }} bleiben",
     "aNewKeyWas": "Zu deinem Konto wurde ein neuer Schlüssel hinzugefügt",
     "givingItAccessDone": "Zugriff wird erteilt … {{ done }} fertig. Bleib in der App.",
-    "wasThisYouAllow": "Warst du das? Erlaube ihm, deine alten Nachrichten und Dateien zu öffnen.",
+    "wasThisYouAllow": "Warst du das? Erlaube ihm, deine alten Nachrichten und Dateien zu öffnen. Deine Freunde müssen nichts genehmigen.",
     "allow": "Erlauben",
     "notNow": "Nicht jetzt",
     "sevenSeats": "Sieben Plätze",
@@ -287,9 +287,10 @@
     "chainCannotTrust": "In der Liste der Schlösser wurde etwas geändert oder entfernt. Das kann hier nicht akzeptiert werden.",
     "chainAccept": "Ja, {{ name }} hat es mir gesagt",
     "chainAgain": "Erneut prüfen",
-    "noKeyInList": "Kein Schlüssel dieser Person steht schon in ihrer signierten Liste, daher kann nichts für sie gesperrt werden. Bitte sie, die App auf einem genehmigten Gerät zu öffnen.",
-    "thisDeviceNotApproved": "Dieses Gerät wurde noch nicht genehmigt. Genehmige es auf einem anderen Gerät von dir (auf Start) und versuche es dann erneut.",
-    "invitedBy": "Eingeladen von deinem Freund {{ who }}"
+    "noKeyInList": "Nicht gesendet: Dein Freund hat einen neuen Schlüssel, der in seinem Konto noch nicht genehmigt ist, daher kann nichts für ihn gesperrt werden. Bitte ihn, die App auf einem Gerät zu öffnen, das er schon benutzt hat, und auf Erlauben zu tippen.",
+    "thisDeviceNotApproved": "Nicht gesendet: Dieses Gerät ist in deinem Konto noch nicht genehmigt. Öffne die App auf einem anderen Gerät von dir und tippe im Hinweis zum neuen Schlüssel auf Erlauben. Versuche es dann erneut. Hast du kein anderes Gerät, hole deinen Schlüssel mit deinen 24 geheimen Wörtern zurück (Einstellungen → Privatsperre).",
+    "invitedBy": "Eingeladen von deinem Freund {{ who }}",
+    "notInListYet": "Der neue Schlüssel kann deine alten Nachrichten öffnen, aber dieses Gerät konnte ihn nicht in deine signierte Liste aufnehmen, daher kann er noch nicht senden."
   },
   "needsYourHelp": "{{ friendName }} braucht deine Hilfe",
   "openToUnlockTheir": "Öffne die App, um die alten Nachrichten wieder zu entsperren.",

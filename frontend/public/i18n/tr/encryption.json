@@ -15,7 +15,7 @@
   "cancel": "Vazgeç",
   "removeIt": "Kaldır",
   "remove": "Kaldır",
-  "aRemovedKeyIs": "Kaldırılan anahtar yeni dosyalar için kullanılmaz. O anahtar için zaten kilitlenmiş dosyalar da o cihazda artık açılamaz.",
+  "aRemovedKeyIs": "Kaldırılan anahtar yeni dosyalar için kullanılmaz. O anahtar için zaten kilitlenmiş dosyalar da o cihazda artık açılamaz. Cihaz ayrıca hesabından artık bildirim almaz.",
   "makeANewKey": "Yeni anahtar oluştur",
   "useThisIfYou": "Kurtarma kelimelerini kaybettiysen bunu kullan. Bu cihaz yeni bir anahtar ve yeni kurtarma kelimeleri alır, şu anki anahtarı ise kaldırılır. Eski anahtar için zaten kilitlenmiş dosyalar artık açılamaz.",
   "makeANewKey2": "Yeni anahtar oluştur…",
@@ -68,5 +68,7 @@
   "noRescueCodeText": "Tüm telefonlarınızı ve bilgisayarlarınızı kaybederseniz eski mesajlarınız ve dosyalarınız bir daha açılamaz. Kurtarma kodu, kilidinizi yeni bir cihazda geri getiren kâğıttaki 24 kelimedir. Bu cihazda yeni bir kilit oluşturur ve geçmişinizi ona taşır; bir an sürer.",
   "addARescueCode": "Kurtarma kodu ekle",
   "lockingOldThings": "Eski mesajlarınız ve notlarınız yeni anahtarla kilitleniyor. Uygulamayı kullanmaya devam edebilirsiniz.",
-  "someCouldNotBeLocked": "Bazı eski öğeler bu cihazda açılamadı. Bitirmek için uygulamayı başka bir cihazınızda açın."
+  "someCouldNotBeLocked": "Bazı eski öğeler bu cihazda açılamadı. Bitirmek için uygulamayı başka bir cihazınızda açın.",
+  "inSignedList": "Bu cihaz imzalı listende ({{ count }} cihaz).",
+  "notInSignedList": "Bu cihaz imzalı listende DEĞİL ({{ count }} cihaz), bu yüzden gönderemez."
 }

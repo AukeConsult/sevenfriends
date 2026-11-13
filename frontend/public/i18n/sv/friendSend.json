@@ -11,5 +11,6 @@
   "addATextOptional": "Lägg till en text (valfritt)…",
   "writeToFriendname": "Skriv till {{ friendName }}…",
   "messageToFriendname": "Meddelande till {{ friendName }}",
-  "hideTheForm": "Dölj formuläret"
+  "hideTheForm": "Dölj formuläret",
+  "openRecovery": "Öppna återställning"
 }

@@ -11,5 +11,6 @@
   "addATextOptional": "Voeg een tekst toe (optioneel)…",
   "writeToFriendname": "Schrijf naar {{ friendName }}…",
   "messageToFriendname": "Bericht aan {{ friendName }}",
-  "hideTheForm": "Formulier verbergen"
+  "hideTheForm": "Formulier verbergen",
+  "openRecovery": "Herstel openen"
 }

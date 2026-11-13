@@ -15,7 +15,7 @@
   "cancel": "Peruuta",
   "removeIt": "Poista se",
   "remove": "Poista",
-  "aRemovedKeyIs": "Poistettua avainta ei käytetä uusiin tiedostoihin. Sille jo lukittuja tiedostoja ei voi sen jälkeen avata kyseisellä laitteella.",
+  "aRemovedKeyIs": "Poistettua avainta ei käytetä uusiin tiedostoihin. Sille jo lukittuja tiedostoja ei voi sen jälkeen avata kyseisellä laitteella. Laite ei myöskään saa enää ilmoituksia tililtäsi.",
   "makeANewKey": "Tee uusi avain",
   "useThisIfYou": "Käytä tätä, jos hävitit palautussanasi. Tämä laite saa uuden avaimen ja uudet palautussanat, ja nykyinen avain poistetaan. Vanhalle avaimelle jo lukittuja tiedostoja ei voi enää avata.",
   "makeANewKey2": "Tee uusi avain…",
@@ -68,5 +68,7 @@
   "noRescueCodeText": "Jos menetät kaikki puhelimesi ja tietokoneesi, vanhoja viestejäsi ja tiedostojasi ei voi enää avata. Pelastuskoodi on 24 sanaa paperilla, jotka palauttavat lukkosi uudelle laitteelle. Se tekee tälle laitteelle uuden lukon ja siirtää historiasi sinne; se kestää hetken.",
   "addARescueCode": "Lisää pelastuskoodi",
   "lockingOldThings": "Vanhempia viestejäsi ja muistiinpanojasi lukitaan uudella avaimella. Voit jatkaa sovelluksen käyttöä.",
-  "someCouldNotBeLocked": "Joitakin vanhempia kohteita ei voitu avata tällä laitteella. Viimeistele ne avaamalla sovellus toisella laitteellasi."
+  "someCouldNotBeLocked": "Joitakin vanhempia kohteita ei voitu avata tällä laitteella. Viimeistele ne avaamalla sovellus toisella laitteellasi.",
+  "inSignedList": "Tämä laite on allekirjoitetussa luettelossasi ({{ count }} laitetta).",
+  "notInSignedList": "Tämä laite EI ole allekirjoitetussa luettelossasi ({{ count }} laitetta), joten se ei voi lähettää."
 }

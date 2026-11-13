@@ -16,21 +16,24 @@ export class DeviceListService {
   private readonly api = inject(ApiService);
   private readonly auth = inject(AuthService);
 
-  /** Publishes the next version with `add` in it and/or without `removeId`. Returns true when a new version was published, false when nothing needed to change or it could not be done. */
+  /**
+   * Publishes the next version with `add` in it and/or without `removeId`. Returns true when the list is as asked: a new version was published, nothing needed to change,
+   * or the person has no list (nothing to keep). Returns false when a list exists and could not be changed: this device has no signing key or is not in the newest version, or the call failed.
+   */
   async publishNext(change: { add?: PublishedKey; removeId?: string }, attempt = 0): Promise<boolean> {
     try {
-      const mine = await myDeviceKey(this.auth.user()?.uid);
-      if (!mine?.signKey) return false;
       const { lists } = await this.api.request<{ lists: DeviceList[] }>('/keys/list');
       const head = [...lists].sort((a, b) => a.version - b.version).at(-1);
-      if (!head || !head.devices.some((d) => d.keyId === mine.keyId)) return false; // no list, or this device is not in it: it can not sign for the person
+      if (!head) return true; // no list (an older lock): there is nothing to keep up to date
+      const mine = await myDeviceKey(this.auth.user()?.uid);
+      if (!mine?.signKey || !head.devices.some((d) => d.keyId === mine.keyId)) return false; // this device is not in the list, or can not sign: it can not sign for the person
       let devices = head.devices.filter((d) => d.keyId !== change.removeId);
       if (change.add && !devices.some((d) => d.keyId === change.add!.id)) {
         const entry = await entryOfPublished(change.add);
         if (!entry) return false; // the key has no signing key (an older lock): it stays outside the list
         devices = [...devices, entry];
       }
-      if (devices.length === head.devices.length && devices.every((d, i) => d.keyId === head.devices[i].keyId)) return false; // nothing to change
+      if (devices.length === head.devices.length && devices.every((d, i) => d.keyId === head.devices[i].keyId)) return true; // nothing to change
       if (!devices.length) return false; // a list is never empty
       const next = await signList({ version: head.version + 1, devices, prev: await deviceListHash(head), signedBy: mine.keyId }, mine.signKey);
       await this.api.request('/keys/list', { method: 'POST', body: JSON.stringify(next) });

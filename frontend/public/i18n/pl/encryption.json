@@ -15,7 +15,7 @@
   "cancel": "Anuluj",
   "removeIt": "Usuń go",
   "remove": "Usuń",
-  "aRemovedKeyIs": "Usunięty klucz nie jest używany do nowych plików. Pliki już dla niego zablokowane nie da się wtedy otworzyć na tym urządzeniu.",
+  "aRemovedKeyIs": "Usunięty klucz nie jest używany do nowych plików. Pliki już dla niego zablokowane nie da się wtedy otworzyć na tym urządzeniu. Urządzenie nie będzie też już dostawać powiadomień z Twojego konta.",
   "makeANewKey": "Utwórz nowy klucz",
   "useThisIfYou": "Użyj tego, jeśli zgubiłeś słowa odzyskiwania. To urządzenie dostanie nowy klucz i nowe słowa odzyskiwania, a obecny klucz zostanie usunięty. Pliki już zablokowane starym kluczem nie będą się dać otworzyć.",
   "makeANewKey2": "Utwórz nowy klucz…",
@@ -68,5 +68,7 @@
   "noRescueCodeText": "Jeśli stracisz wszystkie telefony i komputery, stare wiadomości i pliki nie będą mogły zostać otwarte. Kod ratunkowy to 24 słowa na papierze, które przywracają twoją kłódkę na nowym urządzeniu. Tworzy nową kłódkę na tym urządzeniu i przenosi na nie twoją historię; to chwilę trwa.",
   "addARescueCode": "Dodaj kod ratunkowy",
   "lockingOldThings": "Blokowanie starszych wiadomości i notatek nowym kluczem. Możesz dalej korzystać z aplikacji.",
-  "someCouldNotBeLocked": "Niektórych starszych elementów nie udało się otworzyć na tym urządzeniu. Otwórz aplikację na innym swoim urządzeniu, aby je dokończyć."
+  "someCouldNotBeLocked": "Niektórych starszych elementów nie udało się otworzyć na tym urządzeniu. Otwórz aplikację na innym swoim urządzeniu, aby je dokończyć.",
+  "inSignedList": "To urządzenie jest na Twojej podpisanej liście ({{ count }} urządzeń).",
+  "notInSignedList": "To urządzenia NIE ma na Twojej podpisanej liście ({{ count }} urządzeń), więc nie może wysyłać."
 }

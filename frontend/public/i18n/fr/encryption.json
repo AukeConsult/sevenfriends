@@ -15,7 +15,7 @@
   "cancel": "Annuler",
   "removeIt": "La supprimer",
   "remove": "Supprimer",
-  "aRemovedKeyIs": "Une clé supprimée n'est plus utilisée pour les nouveaux fichiers. Les fichiers déjà verrouillés pour elle ne pourront plus être ouverts sur cet appareil.",
+  "aRemovedKeyIs": "Une clé supprimée n'est plus utilisée pour les nouveaux fichiers. Les fichiers déjà verrouillés pour elle ne pourront plus être ouverts sur cet appareil. L'appareil ne reçoit plus non plus de notifications de votre compte.",
   "makeANewKey": "Créer une nouvelle clé",
   "useThisIfYou": "Utilise ceci si tu as perdu tes mots de récupération. Cet appareil reçoit une nouvelle clé et de nouveaux mots de récupération, et la clé actuelle est supprimée. Les fichiers déjà verrouillés pour l'ancienne clé ne pourront plus être ouverts.",
   "makeANewKey2": "Créer une nouvelle clé…",
@@ -68,5 +68,7 @@
   "noRescueCodeText": "Si vous perdez tous vos téléphones et ordinateurs, vos anciens messages et fichiers ne pourront plus être ouverts. Un code de secours, ce sont 24 mots sur papier qui rétablissent votre verrou sur un nouvel appareil. Il crée un nouveau verrou sur cet appareil et y déplace votre historique ; cela prend un instant.",
   "addARescueCode": "Ajouter un code de secours",
   "lockingOldThings": "Verrouillage de vos anciens messages et notes avec la nouvelle clé. Vous pouvez continuer à utiliser l'app.",
-  "someCouldNotBeLocked": "Certains anciens éléments n'ont pas pu être ouverts sur cet appareil. Ouvrez l'app sur un autre de vos appareils pour les terminer."
+  "someCouldNotBeLocked": "Certains anciens éléments n'ont pas pu être ouverts sur cet appareil. Ouvrez l'app sur un autre de vos appareils pour les terminer.",
+  "inSignedList": "Cet appareil figure dans votre liste signée ({{ count }} appareils).",
+  "notInSignedList": "Cet appareil ne figure PAS dans votre liste signée ({{ count }} appareils), il ne peut donc pas envoyer."
 }

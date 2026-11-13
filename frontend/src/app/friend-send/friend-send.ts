@@ -1,8 +1,10 @@
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { tr } from '../core/i18n';
+import { RouterLink } from '@angular/router';
 import { Component, ElementRef, HostListener, computed, effect, inject, input, signal, viewChild } from '@angular/core';
 import { AddMedia } from '../add-media/add-media';
 import { ChatService } from '../core/chat.service';
+import { NotApprovedError } from '../core/message-lock.service';
 import { PokeToggle } from '../friend-page/poke-toggle';
 import { Clearable } from '../core/clearable';
 import { EMOJI_GROUPS } from '../core/emojis';
@@ -17,7 +19,7 @@ import { FriendContext } from '../friend-page/friend-context';
  */
 @Component({
   selector: 'app-friend-send',
-  imports: [AddMedia, Clearable, PokeToggle, TranslocoDirective],
+  imports: [AddMedia, Clearable, PokeToggle, RouterLink, TranslocoDirective],
   templateUrl: './friend-send.html',
   providers: [provideTranslocoScope('friendSend')],
 })
@@ -56,6 +58,8 @@ export class FriendSend {
   protected readonly busy = signal(false);
   protected readonly notice = signal<string | null>(null);
   protected readonly error = signal<string | null>(null);
+  /** the error is that this device is not approved yet: the page offers the way to the recovery page */
+  protected readonly needsApproval = signal(false);
 
   // ------------------------------------------------------------------ what opens over the frame
 
@@ -126,6 +130,7 @@ export class FriendSend {
       this.busy.set(true);
     }
     this.error.set(null);
+    this.needsApproval.set(false);
     this.notice.set(`Sending: ${text.length > 40 ? text.slice(0, 40) + '…' : text}`);
     const poke = this.ctx.pokes();
     const pending = this.ctx.feed()?.addPending(text) ?? null; // in the feed at once; the server is asked after
@@ -139,6 +144,7 @@ export class FriendSend {
       if (clear && !this.text().trim()) this.text.set(text); // not sent: the text is back in the frame (unless something new is being written)
       this.notice.set(null);
       this.error.set(err.message ?? tr('friendSend.couldNotSendThe', 'Could not send the message'));
+      this.needsApproval.set(err instanceof NotApprovedError);
     } finally {
       if (!clear) this.busy.set(false);
     }

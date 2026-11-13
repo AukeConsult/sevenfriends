@@ -256,7 +256,7 @@
     "stayIn": "Blijf in {{ here }}",
     "aNewKeyWas": "Er is een nieuwe sleutel aan je account toegevoegd",
     "givingItAccessDone": "Toegang geven… {{ done }} klaar. Blijf in de app.",
-    "wasThisYouAllow": "Was jij dit? Geef toestemming om je oude berichten en bestanden te openen.",
+    "wasThisYouAllow": "Was jij dit? Geef toestemming om je oude berichten en bestanden te openen. Je vrienden hoeven niets goed te keuren.",
     "allow": "Toestaan",
     "notNow": "Nu niet",
     "sevenSeats": "Zeven plekken",
@@ -287,9 +287,10 @@
     "chainCannotTrust": "Er is iets in de lijst met sloten gewijzigd of weggehaald. Dat kan hier niet worden geaccepteerd.",
     "chainAccept": "Ja, {{ name }} heeft het me verteld",
     "chainAgain": "Opnieuw controleren",
-    "noKeyInList": "Geen enkele sleutel van deze persoon staat al in hun ondertekende lijst, dus er kan niets voor hen worden vergrendeld. Vraag hen de app te openen op een goedgekeurd apparaat.",
-    "thisDeviceNotApproved": "Dit apparaat is nog niet goedgekeurd. Keur het goed op een ander apparaat van jou (op Start) en probeer het opnieuw.",
-    "invitedBy": "Uitgenodigd door je vriend {{ who }}"
+    "noKeyInList": "Niet verzonden: je vriend heeft een nieuwe sleutel die nog niet is goedgekeurd voor zijn account, dus er kan niets voor hem worden vergrendeld. Vraag hem de app te openen op een apparaat dat hij eerder gebruikte en op Toestaan te tikken.",
+    "thisDeviceNotApproved": "Niet verzonden: dit apparaat is nog niet goedgekeurd voor je account. Open de app op een ander apparaat van je en tik op Toestaan in de banner over de nieuwe sleutel. Probeer het daarna opnieuw. Heb je geen ander apparaat, haal dan je sleutel terug met je 24 geheime woorden (Instellingen → Privacyslot).",
+    "invitedBy": "Uitgenodigd door je vriend {{ who }}",
+    "notInListYet": "De nieuwe sleutel kan je oude berichten openen, maar dit apparaat kon hem niet aan je ondertekende lijst toevoegen, dus hij kan nog niet verzenden."
   },
   "needsYourHelp": "{{ friendName }} heeft je hulp nodig",
   "openToUnlockTheir": "Open de app om hun oude berichten weer te ontgrendelen.",

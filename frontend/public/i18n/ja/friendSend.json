@@ -11,5 +11,6 @@
   "addATextOptional": "テキストを追加（任意）…",
   "writeToFriendname": "{{ friendName }}さんに書く…",
   "messageToFriendname": "{{ friendName }}さんへのメッセージ",
-  "hideTheForm": "フォームを隠す"
+  "hideTheForm": "フォームを隠す",
+  "openRecovery": "復元を開く"
 }

@@ -7,6 +7,7 @@ import { APP_KIND } from './app-kind';
 import { AuthService } from './auth.service';
 import { DesktopNoticeService } from './desktop-notice.service';
 import { tr } from './i18n';
+import { myDeviceKey } from './my-key';
 
 const ENABLED_KEY = 'sf-push';
 const TOKEN_KEY = 'sf-push-token';
@@ -137,7 +138,7 @@ export class PushService {
   private async refresh(): Promise<void> {
     const token = await this.currentToken();
     if (!token) throw new Error(tr('core.thisBrowserDidNot', 'This browser did not give a push token.'));
-    await this.api.request<void>('/push/devices', { method: 'POST', body: JSON.stringify({ token, app: APP_KIND, circle: this.active.id }) });
+    await this.api.request<void>('/push/devices', { method: 'POST', body: JSON.stringify({ token, app: APP_KIND, circle: this.active.id, keyId: (await myDeviceKey(this.auth.user()?.uid))?.keyId }) });
     this.write(TOKEN_KEY, token);
   }
 

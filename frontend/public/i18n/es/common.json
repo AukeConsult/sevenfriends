@@ -256,7 +256,7 @@
     "stayIn": "Quedarme en {{ here }}",
     "aNewKeyWas": "Se añadió una clave nueva a tu cuenta",
     "givingItAccessDone": "Dándole acceso… {{ done }} listos. Quédate en la app.",
-    "wasThisYouAllow": "¿Fuiste tú? Permítele abrir tus mensajes y archivos antiguos.",
+    "wasThisYouAllow": "¿Fuiste tú? Permítele abrir tus mensajes y archivos antiguos. Tus amigos no tienen que aprobar nada.",
     "allow": "Permitir",
     "notNow": "Ahora no",
     "sevenSeats": "Siete plazas",
@@ -287,9 +287,10 @@
     "chainCannotTrust": "Algo en la lista de candados se cambió o se quitó. Aquí no se puede aceptar.",
     "chainAccept": "Sí, {{ name }} me lo dijo",
     "chainAgain": "Comprobar de nuevo",
-    "noKeyInList": "Ninguna clave de esta persona está aún en su lista firmada, así que no se puede bloquear nada para ella. Pídele que abra la app en un dispositivo aprobado.",
-    "thisDeviceNotApproved": "Este dispositivo aún no está aprobado. Apruébalo en otro dispositivo tuyo (en Inicio) y vuelve a intentarlo.",
-    "invitedBy": "Invitado por tu amigo {{ who }}"
+    "noKeyInList": "No enviado: tu amigo tiene una clave nueva que aún no está aprobada en su cuenta, así que no se puede bloquear nada para él. Pídele que abra la app en un dispositivo que ya haya usado y pulse Permitir.",
+    "thisDeviceNotApproved": "No enviado: este dispositivo aún no está aprobado en tu cuenta. Abre la app en otro de tus dispositivos y pulsa Permitir en el aviso sobre la clave nueva. Luego inténtalo de nuevo. Si no tienes otro dispositivo, recupera tu clave con tus 24 palabras secretas (Ajustes → Candado de privacidad).",
+    "invitedBy": "Invitado por tu amigo {{ who }}",
+    "notInListYet": "La clave nueva puede abrir tus mensajes antiguos, pero este dispositivo no pudo añadirla a tu lista firmada, así que aún no puede enviar."
   },
   "needsYourHelp": "{{ friendName }} necesita tu ayuda",
   "openToUnlockTheir": "Abre la app para desbloquear de nuevo sus mensajes antiguos.",

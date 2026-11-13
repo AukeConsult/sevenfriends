@@ -11,5 +11,6 @@
   "addATextOptional": "הוספת טקסט (לא חובה)…",
   "writeToFriendname": "כתיבה ל{{ friendName }}…",
   "messageToFriendname": "הודעה ל{{ friendName }}",
-  "hideTheForm": "הסתרת הטופס"
+  "hideTheForm": "הסתרת הטופס",
+  "openRecovery": "פתיחת שחזור"
 }

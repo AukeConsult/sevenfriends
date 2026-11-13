@@ -256,7 +256,7 @@
     "stayIn": "Bli i {{ here }}",
     "aNewKeyWas": "En ny nøkkel ble lagt til kontoen din",
     "givingItAccessDone": "Gir tilgang… {{ done }} ferdig. Bli i appen.",
-    "wasThisYouAllow": "Var det deg? Gi den tilgang til å åpne de gamle meldingene og filene dine.",
+    "wasThisYouAllow": "Var det deg? Gi den tilgang til å åpne de gamle meldingene og filene dine. Vennene dine trenger ikke godkjenne noe.",
     "allow": "Tillat",
     "notNow": "Ikke nå",
     "sevenSeats": "Syv plasser",
@@ -287,9 +287,10 @@
     "chainCannotTrust": "Noe i listen over låser er endret eller fjernet. Det kan ikke godtas her.",
     "chainAccept": "Ja, {{ name }} har fortalt meg det",
     "chainAgain": "Sjekk igjen",
-    "noKeyInList": "Ingen av nøklene til denne personen står ennå i den signerte listen deres, så ingenting kan låses for dem. Be dem åpne appen på en godkjent enhet.",
-    "thisDeviceNotApproved": "Denne enheten er ikke godkjent ennå. Godkjenn den på en annen av enhetene dine (på Hjem), og prøv igjen.",
-    "invitedBy": "Invitert av vennen din {{ who }}"
+    "noKeyInList": "Ikke sendt: vennen din har en ny nøkkel som ikke er godkjent på kontoen deres ennå, så ingenting kan låses for dem. Be dem åpne appen på en enhet de har brukt før og trykke Tillat.",
+    "thisDeviceNotApproved": "Ikke sendt: denne enheten er ikke godkjent på kontoen din ennå. Åpne appen på en annen av enhetene dine og trykk Tillat i banneret om den nye nøkkelen. Prøv deretter igjen. Har du ingen annen enhet, får du nøkkelen tilbake med de 24 hemmelige ordene dine (Innstillinger → Personvernlås).",
+    "invitedBy": "Invitert av vennen din {{ who }}",
+    "notInListYet": "Den nye nøkkelen kan åpne de gamle meldingene dine, men denne enheten kunne ikke legge den til i den signerte listen din, så den kan ikke sende ennå."
   },
   "needsYourHelp": "{{ friendName }} trenger hjelp fra deg",
   "openToUnlockTheir": "Åpne appen for å låse opp de gamle meldingene deres igjen.",

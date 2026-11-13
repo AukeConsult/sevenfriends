@@ -11,5 +11,6 @@
   "addATextOptional": "Tilføj en tekst (valgfrit)…",
   "writeToFriendname": "Skriv til {{ friendName }}…",
   "messageToFriendname": "Besked til {{ friendName }}",
-  "hideTheForm": "Skjul formularen"
+  "hideTheForm": "Skjul formularen",
+  "openRecovery": "Åbn gendannelse"
 }

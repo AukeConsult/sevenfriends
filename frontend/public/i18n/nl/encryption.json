@@ -15,7 +15,7 @@
   "cancel": "Annuleren",
   "removeIt": "Verwijderen",
   "remove": "Verwijderen",
-  "aRemovedKeyIs": "Een verwijderde sleutel wordt niet meer gebruikt voor nieuwe bestanden. Bestanden die er al voor vergrendeld zijn, kunnen dan niet meer op dat apparaat worden geopend.",
+  "aRemovedKeyIs": "Een verwijderde sleutel wordt niet meer gebruikt voor nieuwe bestanden. Bestanden die er al voor vergrendeld zijn, kunnen dan niet meer op dat apparaat worden geopend. Het apparaat krijgt ook geen meldingen meer van je account.",
   "makeANewKey": "Een nieuwe sleutel maken",
   "useThisIfYou": "Gebruik dit als je je herstelwoorden kwijt bent. Dit apparaat krijgt een nieuwe sleutel en nieuwe herstelwoorden, en de sleutel die het nu heeft wordt verwijderd. Bestanden die al voor de oude sleutel vergrendeld zijn, kunnen niet meer worden geopend.",
   "makeANewKey2": "Een nieuwe sleutel maken…",
@@ -68,5 +68,7 @@
   "noRescueCodeText": "Als je al je telefoons en computers kwijtraakt, kunnen je oude berichten en bestanden niet meer worden geopend. Een herstelcode is 24 woorden op papier die je slot terugbrengen op een nieuw apparaat. Hij maakt een nieuw slot op dit apparaat en verplaatst je geschiedenis ernaartoe; dat duurt even.",
   "addARescueCode": "Herstelcode toevoegen",
   "lockingOldThings": "Je oudere berichten en notities worden met de nieuwe sleutel vergrendeld. Je kunt de app gewoon blijven gebruiken.",
-  "someCouldNotBeLocked": "Een paar oudere items konden op dit apparaat niet worden geopend. Open de app op een ander apparaat van jou om ze af te maken."
+  "someCouldNotBeLocked": "Een paar oudere items konden op dit apparaat niet worden geopend. Open de app op een ander apparaat van jou om ze af te maken.",
+  "inSignedList": "Dit apparaat staat in je ondertekende lijst ({{ count }} apparaten).",
+  "notInSignedList": "Dit apparaat staat NIET in je ondertekende lijst ({{ count }} apparaten), dus het kan niet verzenden."
 }

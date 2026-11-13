@@ -4,7 +4,7 @@ import { FieldValue, Timestamp, getFirestore } from "firebase-admin/firestore";
 import { asyncHandler, requireAuth } from "./auth";
 import { MyKeys, KeyBackup, MAX_KEYS_PER_PERSON, MAX_KEY_LABEL, PublicKeyJwk, PublishedKey, SignKeyJwk, DeviceList, canonicalPublicKey, canonicalSignKey, checkedDeviceList, deviceListHash, fingerprintOf, keyIdOf } from "./models";
 import { openRequest } from "./own-request";
-import { keyBackupDoc, keyCol, keyListCol } from "./paths";
+import { keyBackupDoc, keyCol, keyListCol, ownRequestCol, pushDeviceCol } from "./paths";
 import { text } from "./validation";
 
 const uidOf = (res: { locals: Record<string, unknown> }) => (res.locals.token as DecodedIdToken).uid;
@@ -169,6 +169,12 @@ keysRouter.post(
   }),
 );
 
+/** What a removed device leaves behind: its open request for approval and its push registrations, so it asks for nothing and is sent nothing any more. */
+async function removeTraces(uid: string, keyId: string): Promise<void> {
+  const pushes = await pushDeviceCol(uid).where("keyId", "==", keyId).get();
+  await Promise.all([ownRequestCol(uid).doc(keyId).delete(), ...pushes.docs.map((d) => d.ref.delete())]);
+}
+
 /** Retire a key of mine (a device that is lost or replaced): it is no longer used for new files. It cannot be turned back on. */
 keysRouter.post(
   "/:id/revoke",
@@ -179,6 +185,7 @@ keysRouter.post(
       return;
     }
     await ref.set({ revoked: true, revokedAt: FieldValue.serverTimestamp() }, { merge: true });
+    await removeTraces(uidOf(res), req.params.id);
     res.json({ ok: true });
   }),
 );

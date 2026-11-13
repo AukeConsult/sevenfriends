@@ -35,6 +35,9 @@ type OwnKey = { uid: string; keyId: string; privateKey: CryptoKey; signKey?: Cry
 /** how long the keys of a conversation are kept before a send reads them again */
 const KEYS_FRESH_MS = 5 * 60_000;
 
+/** This device's key is not in my own device list yet: nothing can be sent from here until another device of mine has approved it (the page shows a way to the recovery page). */
+export class NotApprovedError extends Error {}
+
 @Injectable({ providedIn: 'root' })
 export class MessageLockService {
   private readonly auth = inject(AuthService);
@@ -97,12 +100,12 @@ export class MessageLockService {
       if (person?.status !== 'ok' || !person.current) return list;
       const allowed = new Set(person.current.map((d) => d.keyId));
       const kept = list.filter((k) => allowed.has(k.id));
-      if (list.length && !kept.length) return refuse(tr('core.noKeyInList', 'None of the keys of this person is in their signed list yet, so nothing can be locked for them. Ask them to open the app on a device that is approved.'));
+      if (list.length && !kept.length) return refuse(tr('core.noKeyInList', 'Not sent: your friend has a new key that is not approved on their account yet, so nothing can be locked for them. Ask them to open the app on a device they used before and tap Approve.'));
       return kept;
     };
     const me = await this.lists.devicesOf(friendId, mine.uid);
     if (me?.status === 'ok' && me.current && !me.current.some((d) => d.keyId === mine.keyId)) {
-      refuse(tr('core.thisDeviceNotApproved', 'This device has not been approved yet. Approve it on another device of yours (on Home), then try again.'));
+      throw new NotApprovedError(tr('core.thisDeviceNotApproved', 'Not sent: this device is not approved on your account yet. Open the app on another device of yours and tap Approve on the banner about the new key, then try again. With no other device, bring your key back with your 24 secret words (Settings → Privacy lock).'));
     }
     const others = await Promise.all((keys.others ?? []).map(async (o) => ({ ...o, keys: await limit(o.uid, o.keys) })));
     return { ...keys, mine: await limit(mine.uid, keys.mine), others, friend: keys.friendUid ? (others[0]?.keys ?? []) : [] };

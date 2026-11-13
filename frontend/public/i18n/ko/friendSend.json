@@ -11,5 +11,6 @@
   "addATextOptional": "텍스트 추가 (선택)…",
   "writeToFriendname": "{{ friendName }}님에게 쓰기…",
   "messageToFriendname": "{{ friendName }}님에게 보낼 메시지",
-  "hideTheForm": "양식 숨기기"
+  "hideTheForm": "양식 숨기기",
+  "openRecovery": "복구 열기"
 }

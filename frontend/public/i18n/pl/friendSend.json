@@ -11,5 +11,6 @@
   "addATextOptional": "Dodaj tekst (opcjonalnie)…",
   "writeToFriendname": "Napisz do: {{ friendName }}…",
   "messageToFriendname": "Wiadomość do: {{ friendName }}",
-  "hideTheForm": "Ukryj formularz"
+  "hideTheForm": "Ukryj formularz",
+  "openRecovery": "Otwórz odzyskiwanie"
 }

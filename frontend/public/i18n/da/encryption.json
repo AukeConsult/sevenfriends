@@ -15,7 +15,7 @@
   "cancel": "Annullér",
   "removeIt": "Fjern den",
   "remove": "Fjern",
-  "aRemovedKeyIs": "En fjernet nøgle bruges ikke til nye filer. Filer, der allerede er låst til den, kan så ikke åbnes på den enhed længere.",
+  "aRemovedKeyIs": "En fjernet nøgle bruges ikke til nye filer. Filer, der allerede er låst til den, kan så ikke åbnes på den enhed længere. Enheden får heller ikke flere notifikationer fra din konto.",
   "makeANewKey": "Opret en ny nøgle",
   "useThisIfYou": "Brug det, hvis du har mistet dine gendannelsesord. Denne enhed får en ny nøgle og nye gendannelsesord, og den nøgle, den har nu, bliver fjernet. Filer, der allerede er låst til den gamle nøgle, kan ikke åbnes længere.",
   "makeANewKey2": "Opret en ny nøgle…",
@@ -68,5 +68,7 @@
   "noRescueCodeText": "Hvis du mister alle dine telefoner og computere, kan dine gamle beskeder og filer ikke åbnes igen. En redningskode er 24 ord på papir, der bringer din lås tilbage på en ny enhed. Den laver en ny lås på denne enhed og flytter din historik dertil; det tager et øjeblik.",
   "addARescueCode": "Tilføj en redningskode",
   "lockingOldThings": "Dine ældre beskeder og noter låses med den nye nøgle. Du kan blive ved med at bruge appen.",
-  "someCouldNotBeLocked": "Nogle ældre ting kunne ikke åbnes på denne enhed. Åbn appen på en anden af dine enheder for at gøre dem færdige."
+  "someCouldNotBeLocked": "Nogle ældre ting kunne ikke åbnes på denne enhed. Åbn appen på en anden af dine enheder for at gøre dem færdige.",
+  "inSignedList": "Denne enhed er på din signerede liste ({{ count }} enheder).",
+  "notInSignedList": "Denne enhed er IKKE på din signerede liste ({{ count }} enheder), så den kan ikke sende."
 }

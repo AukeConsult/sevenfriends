@@ -24,7 +24,7 @@ const ASK_AGAIN_MS = 5 * 60 * 1000;
           } @else if (confirming()) {
             <span class="sf-own-key-note">{{ tr('core.removeThisKeyNotYou', 'Remove this key? Then that device can no longer open your messages. If it was not you, also change your login.') }}</span>
           } @else {
-            <span class="sf-own-key-note">{{ tr('core.wasThisYouAllow', 'Was this you? Allow it to open your old messages and files.') }}</span>
+            <span class="sf-own-key-note">{{ tr('core.wasThisYouAllow', 'Was this you? Approve it: it can then open your old messages and files, and your friends will lock new messages for it too. Your friends do not have to approve anything.') }}</span>
           }
         </div>
         @if (!working()) {
@@ -33,7 +33,7 @@ const ASK_AGAIN_MS = 5 * 60 * 1000;
               <button type="button" class="btn btn-danger btn-sm" (click)="notMe()">{{ tr('core.removeIt', 'Remove it') }}</button>
               <button type="button" class="btn btn-outline-secondary btn-sm" (click)="confirming.set(false)">{{ tr('core.cancel', 'Cancel') }}</button>
             } @else {
-              <button type="button" class="btn btn-primary btn-sm" (click)="allow()">{{ tr('core.allow', 'Allow') }}</button>
+              <button type="button" class="btn btn-primary btn-sm" (click)="allow()">{{ tr('core.allow', 'Approve') }}</button>
               <button type="button" class="btn btn-outline-secondary btn-sm" (click)="confirming.set(true)">{{ tr('core.notMe', 'Not me') }}</button>
               <button type="button" class="btn btn-outline-secondary btn-sm" (click)="hide()">{{ tr('core.notNow', 'Not now') }}</button>
             }
@@ -83,8 +83,8 @@ export class OwnKeyPrompt {
     this.message.set(null);
     try {
       const result = await this.service.allow(key, (n) => this.done.set(n));
-      this.message.set(result.skipped ? tr('core.couldNotBeOpened', '{{ skipped }} could not be opened on this device, so the new key is not complete yet. Try again on the device where that key lives.', { skipped: result.skipped }) : null);
-      if (result.skipped) this.hidden.set(false);
+      this.message.set(result.skipped ? tr('core.couldNotBeOpened', '{{ skipped }} could not be opened on this device, so the new key is not complete yet. Try again on the device where that key lives.', { skipped: result.skipped }) : result.listed ? null : tr('core.notInListYet', 'The new key can open your old messages, but this device could not add it to your signed list, so it cannot send yet.'));
+      if (result.skipped || !result.listed) this.hidden.set(false);
     } catch (err: any) {
       this.message.set(err.message ?? tr('core.thatDidNotWork', 'That did not work. Try again.'));
     } finally {

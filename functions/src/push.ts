@@ -7,7 +7,7 @@ import { asyncHandler, requireAuth } from "./auth";
 import { DEFAULT_CIRCLE_ID, PUSH_DEVICE_COLLECTION, circleIdForType, circleTypeOf } from "./constants";
 import { CIRCLE_TYPES, androidKeyOf } from "./models";
 import { setting } from "./settings";
-import { circleCol, pushDeviceCol, readFields, userFields } from "./paths";
+import { circleCol, keyCol, pushDeviceCol, readFields, userFields } from "./paths";
 import { noticesOf } from "./preferences";
 import { deleteRefs } from "./signals";
 import { circleProfileOf, activeCircleOf } from "./circle-profile";
@@ -213,6 +213,12 @@ const circleOfBody = (body: unknown): string | null => {
   return typeof circle === "string" && CIRCLE_IDS.includes(circle) ? circle : null;
 };
 
+/** The key of the device that registers, from `{ keyId }`: when that key is removed from the account, the device stops getting pushes (see `removeDevice` in keys.ts). */
+const keyOfBody = (body: unknown): string | null => {
+  const id = (body as { keyId?: unknown } | undefined)?.keyId;
+  return typeof id === "string" && /^[0-9a-f]{32}$/.test(id) ? id : null;
+};
+
 const tokenOf = (body: unknown): string | null => {
   const token = (body as { token?: unknown } | undefined)?.token;
   return typeof token === "string" && token.length >= 20 && token.length <= 4096 ? token : null;
@@ -246,6 +252,11 @@ pushRouter.post(
       return;
     }
     const uid = (res.locals.token as DecodedIdToken).uid;
+    const keyId = keyOfBody(req.body);
+    if (keyId && (await keyCol(uid).doc(keyId).get()).data()?.revoked === true) {
+      res.status(403).json({ error: "This device was removed from your account." }); // a removed device does not come back by registering again
+      return;
+    }
     const mine = pushDeviceCol(uid).doc(deviceId(token));
 
     const others = (await getFirestore().collectionGroup(PUSH_DEVICE_COLLECTION).where("token", "==", token).select().get()).docs
@@ -255,7 +266,7 @@ pushRouter.post(
 
     const existing = await mine.get();
     await mine.set(
-      { token, app: appKindOf(req.body), ...(circleOfBody(req.body) ? { circleId: circleOfBody(req.body) } : {}), updatedAt: FieldValue.serverTimestamp(), ...(existing.exists ? {} : { createdAt: FieldValue.serverTimestamp() }) },
+      { token, app: appKindOf(req.body), ...(keyOfBody(req.body) ? { keyId: keyOfBody(req.body) } : {}), ...(circleOfBody(req.body) ? { circleId: circleOfBody(req.body) } : {}), updatedAt: FieldValue.serverTimestamp(), ...(existing.exists ? {} : { createdAt: FieldValue.serverTimestamp() }) },
       { merge: true },
     );
     res.status(204).end();

@@ -232,6 +232,7 @@ export class KeysService {
     const replacing = pending.replaces && before ? before : null; // a rotation: the old key is still here and hands its history over before it goes
     const newId = keyIdOf((await fingerprintOf(pending.publicKey))!);
     let published = false;
+    this.ownRecovery.madeKey(newId); // this device made it: it never asks itself to approve it
     try {
       const body = JSON.stringify({ publicKey: pending.publicKey, ...(pending.signKey ? { signKey: pending.signKey } : {}), label: deviceLabel(), backup: pending.backup });
       if (replacing) {

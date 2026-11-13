@@ -11,5 +11,6 @@
   "addATextOptional": "أضِف نصًا (اختياري)…",
   "writeToFriendname": "اكتب إلى {{ friendName }}…",
   "messageToFriendname": "رسالة إلى {{ friendName }}",
-  "hideTheForm": "إخفاء النموذج"
+  "hideTheForm": "إخفاء النموذج",
+  "openRecovery": "فتح الاسترداد"
 }
