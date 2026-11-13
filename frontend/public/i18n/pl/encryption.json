@@ -76,5 +76,7 @@
   "startOverTitle": "Zgubiłem(-am) wszystkie moje inne urządzenia",
   "startOverText": "To zaczyna twoją kłódkę od nowa z tym urządzeniem. Wszystkie twoje inne urządzenia zostaną usunięte. Każdy z twoich znajomych zostanie poproszony o potwierdzenie, że to naprawdę ty, a potem może pomóc ci ponownie otworzyć stare wiadomości.",
   "startOverButton": "Zacznij od nowa na tym urządzeniu",
-  "startOverFailed": "Nie udało się zacząć od nowa. Sprawdź połączenie i spróbuj ponownie."
+  "startOverFailed": "Nie udało się zacząć od nowa. Sprawdź połączenie i spróbuj ponownie.",
+  "hideRemoved": "Ukryj usunięte",
+  "showRemoved": "Pokaż usunięte ({{ count }})"
 }

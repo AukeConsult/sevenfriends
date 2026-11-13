@@ -57,6 +57,8 @@ export interface UiPreferences {
   cleanupDays: number | null;
   /** how the sleepers are shown: small circles or a list of cards */
   sleepView: 'circles' | 'list';
+  /** the Send form over a friend's messages and safebox is open (default) or closed: it opens the same way the next time */
+  sendOpen: boolean;
   /** the setup notes on Home are hidden until this time (ms), or null */
   checksHiddenUntil: number | null;
   /** where each conversation feed was scrolled to when it was left (by connection id; the newest message then and the order): the feed opens there again. UI position only. */
@@ -95,7 +97,7 @@ export const PHONE_TEXT_SCALES: Record<UiPreferences['textSize'], number> = { ti
 const kindIds = (v: unknown): string[] => (Array.isArray(v) ? v.filter((k: unknown): k is string => typeof k === 'string') : []);
 const layoutOf = (v: any): { main: string[]; more: string[] } | null => (v && typeof v === 'object' ? { main: kindIds(v.main), more: kindIds(v.more) } : null);
 
-export const DEFAULTS: UiPreferences = { boxTellNew: true, theme: 'white', textSize: 'normal', settingsTab: 'profile', emojiTab: 'People', chatOrder: 'oldest', enterSends: true, sleepList: true, feedIcons: true, language: '', setup: 'new', lastPage: null, micRaw: false, pendingFriend: null, welcomeUntil: null, boxPlain: false, boxView: 'list', boxKindLayout: null, boxHiddenOpen: false, cleanupWhose: 'mine', cleanupDays: 30, feedPlace: {}, seatMoved: false, sleepView: 'circles', checksHiddenUntil: null };
+export const DEFAULTS: UiPreferences = { boxTellNew: true, theme: 'white', textSize: 'normal', settingsTab: 'profile', emojiTab: 'People', chatOrder: 'oldest', enterSends: true, sleepList: true, feedIcons: true, language: '', setup: 'new', lastPage: null, micRaw: false, pendingFriend: null, welcomeUntil: null, boxPlain: false, boxView: 'list', boxKindLayout: null, boxHiddenOpen: false, cleanupWhose: 'mine', cleanupDays: 30, feedPlace: {}, seatMoved: false, sleepView: 'circles', checksHiddenUntil: null, sendOpen: true };
 
 /** The remembered feed places, checked (at most 30, the newest kept). */
 export function feedPlaceOf(value: unknown): UiPreferences['feedPlace'] {
@@ -164,6 +166,7 @@ function read(): UiPreferences {
       cleanupWhose: saved.cleanupWhose === 'both' ? 'both' : 'mine',
       feedPlace: feedPlaceOf(saved.feedPlace),
       sleepView: saved.sleepView === 'list' ? 'list' : 'circles',
+      sendOpen: saved.sendOpen !== false,
       checksHiddenUntil: typeof saved.checksHiddenUntil === 'number' && Number.isFinite(saved.checksHiddenUntil) ? saved.checksHiddenUntil : null,
       cleanupDays: saved.cleanupDays === null || (typeof saved.cleanupDays === 'number' && Number.isInteger(saved.cleanupDays) && saved.cleanupDays > 0) ? saved.cleanupDays : 30,
     };

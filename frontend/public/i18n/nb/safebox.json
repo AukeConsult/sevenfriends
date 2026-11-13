@@ -35,7 +35,8 @@
     "addAndLink": "Legg til et nytt element og koble det",
     "save": "Lagre",
     "deleteAsk": "Slette dette? Det slettes for dere begge og kan ikke hentes tilbake.",
-    "deleteAskNamed": "Slette «{{ itemName }}»? Det slettes for dere begge og kan ikke hentes tilbake."
+    "deleteAskNamed": "Slette «{{ itemName }}»? Det slettes for dere begge og kan ikke hentes tilbake.",
+    "safebox": "Safe"
   },
   "list": {
     "retry": "Prøv igjen",
@@ -75,7 +76,8 @@
     "lockIt": "Lock it",
     "lockThemNow": "Lock them",
     "notSaved": "Ikke lagret:",
-    "close": "Lukk"
+    "close": "Lukk",
+    "dueNow": "Forfaller nå"
   },
   "object": {
     "unknownKind": "Den typen element er ikke kjent.",

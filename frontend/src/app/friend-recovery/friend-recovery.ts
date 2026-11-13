@@ -110,6 +110,8 @@ export class FriendRecovery {
     try {
       const result = await this.service.help(this.ctx.friendId, request, (done) => this.doneNow.set(done));
       this.skipped.set(result.skipped);
+    } catch (err: any) {
+      this.error.set(err.message ?? tr('friendRecovery.thatDidNotWork', 'That did not work')); // shown at the top of the page; the request stays open, it is not finished
     } finally {
       this.running.set(false);
       await this.refresh();

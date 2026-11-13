@@ -35,7 +35,8 @@
     "addAndLink": "Tambah item baru dan tautkan",
     "save": "Simpan",
     "deleteAsk": "Hapus ini? Ini akan dihapus untuk kalian berdua dan tidak bisa dikembalikan.",
-    "deleteAskNamed": "Hapus “{{ itemName }}”? Ini akan dihapus untuk kalian berdua dan tidak bisa dikembalikan."
+    "deleteAskNamed": "Hapus “{{ itemName }}”? Ini akan dihapus untuk kalian berdua dan tidak bisa dikembalikan.",
+    "safebox": "Brankas"
   },
   "list": {
     "retry": "Coba lagi",
@@ -75,7 +76,8 @@
     "lockIt": "Lock it",
     "lockThemNow": "Lock them",
     "notSaved": "Belum disimpan:",
-    "close": "Tutup"
+    "close": "Tutup",
+    "dueNow": "Jatuh tempo"
   },
   "object": {
     "unknownKind": "Jenis item itu tidak dikenal.",

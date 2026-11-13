@@ -35,7 +35,8 @@
     "addAndLink": "Tilføj et nyt element og kæd det sammen",
     "save": "Gem",
     "deleteAsk": "Slet dette? Det slettes for jer begge og kan ikke bringes tilbage.",
-    "deleteAskNamed": "Slet “{{ itemName }}”? Det slettes for jer begge og kan ikke bringes tilbage."
+    "deleteAskNamed": "Slet “{{ itemName }}”? Det slettes for jer begge og kan ikke bringes tilbage.",
+    "safebox": "Pengeskab"
   },
   "list": {
     "retry": "Prøv igen",
@@ -75,7 +76,8 @@
     "lockIt": "Lock it",
     "lockThemNow": "Lock them",
     "notSaved": "Ikke gemt:",
-    "close": "Luk"
+    "close": "Luk",
+    "dueNow": "Forfalder nu"
   },
   "object": {
     "unknownKind": "Den slags element kendes ikke.",

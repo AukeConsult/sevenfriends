@@ -35,8 +35,11 @@ export class Encryption {
   protected readonly allowNote = signal<string | null>(null);
   /** the recovery words are on the screen: nothing else on the page is offered meanwhile */
   protected readonly showingWords = computed(() => this.keySetup().showingWords());
-  /** the keys that are in use, then the retired ones */
-  protected readonly devices = computed(() => [...this.keys.published()].sort((a, b) => Number(a.revoked) - Number(b.revoked)));
+  /** the removed keys are hidden until "Show removed" is tapped */
+  protected readonly showRemoved = signal(false);
+  protected readonly removedCount = computed(() => this.keys.published().filter((k) => k.revoked).length);
+  /** the keys that are in use, then (only when asked for) the retired ones */
+  protected readonly devices = computed(() => [...this.keys.published()].filter((k) => !k.revoked || this.showRemoved()).sort((a, b) => Number(a.revoked) - Number(b.revoked)));
 
   /** the key that is asked "really remove?" */
   protected readonly removing = signal<string | null>(null);

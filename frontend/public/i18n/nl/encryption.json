@@ -76,5 +76,7 @@
   "startOverTitle": "Ik ben al mijn andere apparaten kwijt",
   "startOverText": "Hiermee begint je slot opnieuw met dit apparaat. Al je andere apparaten worden verwijderd. Elk van je vrienden wordt gevraagd te bevestigen dat jij het echt bent, en kan je daarna helpen je oude berichten weer te openen.",
   "startOverButton": "Opnieuw beginnen met dit apparaat",
-  "startOverFailed": "Opnieuw beginnen is niet gelukt. Controleer de verbinding en probeer het nog eens."
+  "startOverFailed": "Opnieuw beginnen is niet gelukt. Controleer de verbinding en probeer het nog eens.",
+  "hideRemoved": "Verwijderde verbergen",
+  "showRemoved": "Verwijderde tonen ({{ count }})"
 }

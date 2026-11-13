@@ -35,7 +35,8 @@
     "addAndLink": "新しい項目を追加してリンクする",
     "save": "保存",
     "deleteAsk": "これを削除しますか？ふたりの両方から削除され、元に戻せません。",
-    "deleteAskNamed": "「{{ itemName }}」を削除しますか？ふたりの両方から削除され、元に戻せません。"
+    "deleteAskNamed": "「{{ itemName }}」を削除しますか？ふたりの両方から削除され、元に戻せません。",
+    "safebox": "金庫"
   },
   "list": {
     "retry": "再試行",
@@ -75,7 +76,8 @@
     "lockIt": "Lock it",
     "lockThemNow": "Lock them",
     "notSaved": "保存されていません：",
-    "close": "閉じる"
+    "close": "閉じる",
+    "dueNow": "期限です"
   },
   "object": {
     "unknownKind": "その種類の項目は不明です。",

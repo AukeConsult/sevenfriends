@@ -76,5 +76,7 @@
   "startOverTitle": "Jeg har mistet alle de andre enhetene mine",
   "startOverText": "Dette starter låsen din på nytt med denne enheten. Alle de andre enhetene dine fjernes. Hver av vennene dine blir bedt om å bekrefte at det virkelig er deg, og kan deretter hjelpe deg med å åpne de gamle meldingene dine igjen.",
   "startOverButton": "Start på nytt med denne enheten",
-  "startOverFailed": "Kunne ikke starte på nytt. Sjekk tilkoblingen og prøv igjen."
+  "startOverFailed": "Kunne ikke starte på nytt. Sjekk tilkoblingen og prøv igjen.",
+  "hideRemoved": "Skjul fjernede",
+  "showRemoved": "Vis fjernede ({{ count }})"
 }

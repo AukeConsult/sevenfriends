@@ -35,7 +35,8 @@
     "addAndLink": "Ajouter un nouvel élément et le lier",
     "save": "Enregistrer",
     "deleteAsk": "Supprimer ceci ? Ce sera supprimé pour vous deux et ne pourra pas être récupéré.",
-    "deleteAskNamed": "Supprimer « {{ itemName }} » ? Ce sera supprimé pour vous deux et ne pourra pas être récupéré."
+    "deleteAskNamed": "Supprimer « {{ itemName }} » ? Ce sera supprimé pour vous deux et ne pourra pas être récupéré.",
+    "safebox": "Coffre"
   },
   "list": {
     "retry": "Réessayer",
@@ -75,7 +76,8 @@
     "lockIt": "Lock it",
     "lockThemNow": "Lock them",
     "notSaved": "Non enregistré :",
-    "close": "Fermer"
+    "close": "Fermer",
+    "dueNow": "À faire maintenant"
   },
   "object": {
     "unknownKind": "Ce type d'élément n'est pas connu.",

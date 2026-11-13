@@ -35,7 +35,8 @@
     "addAndLink": "Aggiungi un nuovo elemento e collegalo",
     "save": "Salva",
     "deleteAsk": "Eliminare questo? Verrà eliminato per entrambi e non si può recuperare.",
-    "deleteAskNamed": "Eliminare «{{ itemName }}»? Verrà eliminato per entrambi e non si può recuperare."
+    "deleteAskNamed": "Eliminare «{{ itemName }}»? Verrà eliminato per entrambi e non si può recuperare.",
+    "safebox": "Cassaforte"
   },
   "list": {
     "retry": "Riprova",
@@ -75,7 +76,8 @@
     "lockIt": "Lock it",
     "lockThemNow": "Lock them",
     "notSaved": "Non salvato:",
-    "close": "Chiudi"
+    "close": "Chiudi",
+    "dueNow": "In scadenza ora"
   },
   "object": {
     "unknownKind": "Quel tipo di elemento non è noto.",

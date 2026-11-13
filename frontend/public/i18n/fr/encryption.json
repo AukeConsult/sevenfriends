@@ -76,5 +76,7 @@
   "startOverTitle": "J'ai perdu tous mes autres appareils",
   "startOverText": "Cela recommence ton verrou avec cet appareil. Tous tes autres appareils sont retirés. Chacun de tes amis est invité à confirmer que c'est bien toi, puis peut t'aider à rouvrir tes anciens messages.",
   "startOverButton": "Recommencer avec cet appareil",
-  "startOverFailed": "Impossible de recommencer. Vérifie la connexion et réessaie."
+  "startOverFailed": "Impossible de recommencer. Vérifie la connexion et réessaie.",
+  "hideRemoved": "Masquer les retirés",
+  "showRemoved": "Afficher les retirés ({{ count }})"
 }

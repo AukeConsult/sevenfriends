@@ -44,5 +44,6 @@
   "alsoWhenNothing": "Vous pouvez demander à tout moment, même quand rien n’est verrouillé pour vous : {{ friendName }} déverrouille alors tout de nouveau pour tous vos appareils et doit dire oui à chaque fois.",
   "groupTitle": "Retrouver ses anciens messages se fait entre deux personnes",
   "groupText": "Pour rouvrir vos anciens messages, l’app d’un ami les déverrouille de nouveau pour votre nouveau verrou de confidentialité. Un groupe n’a pas d’ami précis qui puisse le faire pour vous : ce n’est donc pas possible dans un groupe.",
-  "groupOther": "Vous pouvez toujours les récupérer avec un autre de vos appareils capable de les ouvrir, ou avec vos 24 mots secrets (Réglages → Verrou de confidentialité)."
+  "groupOther": "Vous pouvez toujours les récupérer avec un autre de vos appareils capable de les ouvrir, ou avec vos 24 mots secrets (Réglages → Verrou de confidentialité).",
+  "nothingCouldBeOpened": "Rien n’a pu être ouvert : cet appareil n’a pas la clé de ces anciens messages et ne peut donc pas aider. Récupérez d’abord votre propre clé (Réglages → Verrou de confidentialité : un autre de vos appareils, ou vos 24 mots)."
 }

@@ -1,8 +1,5 @@
 <ng-container *transloco="let t">
 <section class="sf-hs" [attr.aria-label]="t('homeSeats.yourSevenSeats') || 'Your seven seats'">
-  <div class="sf-hs-head">
-    <h2 class="sf-section m-0">{{ t('homeSeats.yourSeven') || 'Your seven' }}</h2>
-  </div>
   @if (error()) { <p class="text-danger small mb-2" role="alert">{{ error() }}</p> }
 
   <ul class="sf-hs-row list-unstyled m-0">

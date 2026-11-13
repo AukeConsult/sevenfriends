@@ -35,7 +35,8 @@
     "addAndLink": "Dodaj nowy element i powiąż go",
     "save": "Zapisz",
     "deleteAsk": "Usunąć to? Zostanie usunięte u was obojga i nie da się tego cofnąć.",
-    "deleteAskNamed": "Usunąć „{{ itemName }}”? Zostanie usunięte u was obojga i nie da się tego cofnąć."
+    "deleteAskNamed": "Usunąć „{{ itemName }}”? Zostanie usunięte u was obojga i nie da się tego cofnąć.",
+    "safebox": "Sejf"
   },
   "list": {
     "retry": "Spróbuj ponownie",
@@ -75,7 +76,8 @@
     "lockIt": "Lock it",
     "lockThemNow": "Lock them",
     "notSaved": "Niezapisane:",
-    "close": "Zamknij"
+    "close": "Zamknij",
+    "dueNow": "Termin minął"
   },
   "object": {
     "unknownKind": "Taki rodzaj elementu nie jest znany.",

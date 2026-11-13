@@ -35,7 +35,8 @@
     "addAndLink": "Adicionar um novo item e vinculá-lo",
     "save": "Salvar",
     "deleteAsk": "Excluir isto? Será excluído para vocês dois e não pode ser recuperado.",
-    "deleteAskNamed": "Excluir «{{ itemName }}»? Será excluído para vocês dois e não pode ser recuperado."
+    "deleteAskNamed": "Excluir «{{ itemName }}»? Será excluído para vocês dois e não pode ser recuperado.",
+    "safebox": "Cofre"
   },
   "list": {
     "retry": "Tentar de novo",
@@ -75,7 +76,8 @@
     "lockIt": "Lock it",
     "lockThemNow": "Lock them",
     "notSaved": "Não guardado:",
-    "close": "Fechar"
+    "close": "Fechar",
+    "dueNow": "Vence agora"
   },
   "object": {
     "unknownKind": "Esse tipo de item não é conhecido.",

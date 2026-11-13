@@ -76,5 +76,7 @@
   "startOverTitle": "He perdido todos mis otros dispositivos",
   "startOverText": "Esto reinicia tu candado con este dispositivo. Se quitan todos tus demás dispositivos. Cada uno de tus amigos recibe la petición de confirmar que de verdad eres tú, y después puede ayudarte a abrir de nuevo tus mensajes antiguos.",
   "startOverButton": "Empezar de nuevo con este dispositivo",
-  "startOverFailed": "No se pudo empezar de nuevo. Comprueba la conexión e inténtalo otra vez."
+  "startOverFailed": "No se pudo empezar de nuevo. Comprueba la conexión e inténtalo otra vez.",
+  "hideRemoved": "Ocultar eliminados",
+  "showRemoved": "Mostrar eliminados ({{ count }})"
 }

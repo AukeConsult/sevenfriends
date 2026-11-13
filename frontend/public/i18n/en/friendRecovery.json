@@ -44,5 +44,6 @@
   "alsoWhenNothing": "You can ask at any time, also when nothing is locked for you: {{ friendName }} then unlocks everything again for all your devices, and has to say yes each time.",
   "groupTitle": "Getting old messages back is between two people",
   "groupText": "To open your old messages again, a friend’s app unlocks them again for your new privacy lock. A group has no one friend who can do that for you, so this is not available in a group.",
-  "groupOther": "You can still get them back with another device of yours that can open them, or with your 24 secret words (Settings → Privacy lock)."
+  "groupOther": "You can still get them back with another device of yours that can open them, or with your 24 secret words (Settings → Privacy lock).",
+  "nothingCouldBeOpened": "Nothing could be opened: this device has no key for these old messages, so it cannot help. Bring your own key back first (Settings → Privacy lock: another device of yours, or your 24 words)."
 }

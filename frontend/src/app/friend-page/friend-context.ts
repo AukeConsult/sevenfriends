@@ -1,5 +1,5 @@
 import { MessageLockService } from '../core/message-lock.service';
-import { Injectable, computed, effect, inject, signal } from '@angular/core';
+import { Injectable, computed, effect, inject, signal, untracked } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FriendsService } from '../core/friends.service';
 import { initials } from '../core/initials';
@@ -91,8 +91,8 @@ export class FriendContext {
   readonly helpOpen = signal(false);
   /** the writing form of the Send page (the Send icon in the header shows and hides it) */
   readonly sendFormOpen = signal(true);
-  /** the Send form over the feed (the Send icon in the header shows and hides it while the feed is open) */
-  readonly feedSendOpen = signal(false);
+  /** the Send form over the feed: open by default; the Write icon in the header shows it again after it was closed (the icon is hidden while the form is open) */
+  readonly feedSendOpen = signal(this.prefs.get('sendOpen')); // remembered on this device (UiPreferences.sendOpen)
   /** what is written in the Send form: kept here, so the text stays when the form moves (top / bottom) or the page changes */
   readonly sendDraft = signal('');
   /** the height of the header: the message field sticks right under it when the newest message is on top */
@@ -163,6 +163,10 @@ export class FriendContext {
   private seen = false;
 
   constructor() {
+    effect(() => {
+      const open = this.feedSendOpen();
+      untracked(() => { if (this.prefs.get('sendOpen') !== open) this.prefs.set('sendOpen', open); }); // open or closed is kept for the next time (set() reads and writes the preferences: it must not be tracked, or the effect re-runs itself forever)
+    });
     effect(() => {
       if (this.friend()) this.seen = true;
       else if (this.seen && !this.blocked()) this.blocked.set(tr('friendPage.noLongerHere', 'You are not in this group or friendship any more.'));

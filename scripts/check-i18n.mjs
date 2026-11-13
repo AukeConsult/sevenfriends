@@ -21,7 +21,7 @@ let problems = 0;
 const used = new Map();
 for (const file of walk(join(root, 'src/app')).filter((f) => /\.(ts|html)$/.test(f) && !f.endsWith('.spec.ts'))) {
   const text = readFileSync(file, 'utf8');
-  for (const m of text.matchAll(/\b(?:tx?|tr)\(\s*'([A-Za-z][\w.-]*\.[\w.-]+)'/g)) { if (!used.has(m[1])) used.set(m[1], relative(root, file)); }
+  for (const m of text.matchAll(/\b(?:tx?|tr)\(\s*'([A-Za-z][\w.-]*\.[\w.-]+)'(?!\s*\+)/g)) { if (!used.has(m[1])) used.set(m[1], relative(root, file)); }
 }
 for (const [key, file] of used) if (!enKeys.has(key) && !/^(titles\.|circle\.|errors\.)/.test(key)) { console.log(`missing in en: ${key}  (${file})`); problems++; }
 

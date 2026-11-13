@@ -76,5 +76,7 @@
   "startOverTitle": "我丢失了所有其他设备",
   "startOverText": "这会用此设备重新开始你的锁。你的其他所有设备都会被移除。你的每位朋友都会被要求确认这确实是你，之后可以帮你重新打开旧消息。",
   "startOverButton": "用此设备重新开始",
-  "startOverFailed": "无法重新开始。请检查网络连接后重试。"
+  "startOverFailed": "无法重新开始。请检查网络连接后重试。",
+  "hideRemoved": "隐藏已移除的",
+  "showRemoved": "显示已移除的（{{ count }}）"
 }

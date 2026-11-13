@@ -44,5 +44,6 @@
   "alsoWhenNothing": "Kamu bisa meminta kapan saja, juga saat tidak ada yang terkunci untukmu: {{ friendName }} lalu membuka kembali semuanya untuk semua perangkatmu, dan harus menjawab ya setiap kali.",
   "groupTitle": "Mengembalikan pesan lama hanya antara dua orang",
   "groupText": "Untuk membuka lagi pesan lamamu, aplikasi seorang teman membukanya kembali untuk gembok privasi barumu. Grup tidak punya satu teman yang bisa melakukannya untukmu, jadi ini tidak tersedia di grup.",
-  "groupOther": "Kamu masih bisa mengembalikannya dengan perangkat lain milikmu yang bisa membukanya, atau dengan 24 kata rahasiamu (Pengaturan → Gembok privasi)."
+  "groupOther": "Kamu masih bisa mengembalikannya dengan perangkat lain milikmu yang bisa membukanya, atau dengan 24 kata rahasiamu (Pengaturan → Gembok privasi).",
+  "nothingCouldBeOpened": "Tidak ada yang bisa dibuka: perangkat ini tidak punya kunci untuk pesan lama ini, jadi tidak bisa membantu. Pulihkan dulu kuncimu sendiri (Pengaturan → Kunci privasi: perangkat lain milikmu, atau 24 katamu)."
 }

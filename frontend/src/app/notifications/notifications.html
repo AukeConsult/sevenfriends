@@ -196,8 +196,7 @@
       }
     </section>
   } @else if (loaded() && !error() && !quiet().length) {
-    <!-- quiet: a small line, and something useful to do instead of an empty page -->
-    <p class="sf-home-quiet"><span aria-hidden="true">🌙</span> {{ t('notifications.allQuietNothingNeeds') || 'All quiet. Nothing needs you right now.' }}</p>
+    <!-- quiet: no line of text, only something useful to do instead of an empty page -->
     @if (nudge(); as friend) {
       <ul class="sf-list sf-home-cards">
         <li class="sf-list-item">

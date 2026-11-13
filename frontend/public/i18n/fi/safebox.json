@@ -35,7 +35,8 @@
     "addAndLink": "Lisää uusi kohde ja linkitä se",
     "save": "Tallenna",
     "deleteAsk": "Poistetaanko tämä? Se poistuu teiltä molemmilta eikä sitä voi palauttaa.",
-    "deleteAskNamed": "Poistetaanko “{{ itemName }}”? Se poistuu teiltä molemmilta eikä sitä voi palauttaa."
+    "deleteAskNamed": "Poistetaanko “{{ itemName }}”? Se poistuu teiltä molemmilta eikä sitä voi palauttaa.",
+    "safebox": "Kassakaappi"
   },
   "list": {
     "retry": "Yritä uudelleen",
@@ -75,7 +76,8 @@
     "lockIt": "Lock it",
     "lockThemNow": "Lock them",
     "notSaved": "Ei tallennettu:",
-    "close": "Sulje"
+    "close": "Sulje",
+    "dueNow": "Erääntyy nyt"
   },
   "object": {
     "unknownKind": "Tuota kohdetyyppiä ei tunneta.",

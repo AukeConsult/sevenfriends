@@ -155,6 +155,11 @@
             </li>
           }
         </ul>
+        @if (removedCount() > 0) {
+          <div class="d-flex justify-content-center">
+            <button type="button" class="btn btn-light btn-sm" [attr.aria-expanded]="showRemoved()" (click)="showRemoved.set(!showRemoved())">{{ showRemoved() ? (t('encryption.hideRemoved') || 'Hide removed') : (t('encryption.showRemoved', { count: removedCount() }) || 'Show removed (' + removedCount() + ')') }}</button>
+          </div>
+        }
         @if (removing()) { <p class="small text-secondary m-0">{{ t('encryption.aRemovedKeyIs') || 'A removed key is not used for new files. Files already locked for it can then no longer be opened on that device. The device also gets no more notifications from your account.' }}</p> }
 
         <details class="sf-expand sf-expand-quiet mt-2">

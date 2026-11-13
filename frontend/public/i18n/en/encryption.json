@@ -76,5 +76,7 @@
   "startOverTitle": "I lost all my other devices",
   "startOverText": "This starts your lock over with this device. Every other device of yours is removed. Each of your friends is asked to confirm that it is really you, and can then help you open your old messages again.",
   "startOverButton": "Start over with this device",
-  "startOverFailed": "Could not start over. Check the connection and try again."
+  "startOverFailed": "Could not start over. Check the connection and try again.",
+  "hideRemoved": "Hide removed",
+  "showRemoved": "Show removed ({{ count }})"
 }

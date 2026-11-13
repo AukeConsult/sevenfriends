@@ -44,5 +44,6 @@
   "alsoWhenNothing": "Du kan spørre når som helst, også når ingenting er låst for deg: {{ friendName }} låser da opp alt igjen for alle enhetene dine og må si ja hver gang.",
   "groupTitle": "Å få tilbake gamle meldinger skjer mellom to personer",
   "groupText": "For å åpne de gamle meldingene dine igjen, låser en venns app dem opp igjen for den nye personvernlåsen din. En gruppe har ingen enkeltvenn som kan gjøre det for deg, så det er ikke mulig i en gruppe.",
-  "groupOther": "Du kan fortsatt få dem tilbake med en annen av enhetene dine som kan åpne dem, eller med de 24 hemmelige ordene dine (Innstillinger → Personvernlås)."
+  "groupOther": "Du kan fortsatt få dem tilbake med en annen av enhetene dine som kan åpne dem, eller med de 24 hemmelige ordene dine (Innstillinger → Personvernlås).",
+  "nothingCouldBeOpened": "Ingenting kunne åpnes: denne enheten har ingen nøkkel til de gamle meldingene og kan derfor ikke hjelpe. Få først din egen nøkkel tilbake (Innstillinger → Personvernlås: en annen enhet du har, eller de 24 ordene dine)."
 }

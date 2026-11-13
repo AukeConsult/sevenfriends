@@ -35,7 +35,8 @@
     "addAndLink": "添加新项目并关联",
     "save": "保存",
     "deleteAsk": "要删除这个吗？它会为你们两人删除，且无法恢复。",
-    "deleteAskNamed": "要删除“{{ itemName }}”吗？它会为你们两人删除，且无法恢复。"
+    "deleteAskNamed": "要删除“{{ itemName }}”吗？它会为你们两人删除，且无法恢复。",
+    "safebox": "保险箱"
   },
   "list": {
     "retry": "重试",
@@ -75,7 +76,8 @@
     "lockIt": "Lock it",
     "lockThemNow": "Lock them",
     "notSaved": "未保存：",
-    "close": "关闭"
+    "close": "关闭",
+    "dueNow": "已到期"
   },
   "object": {
     "unknownKind": "未知的项目类型。",

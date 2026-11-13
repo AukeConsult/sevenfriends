@@ -76,5 +76,7 @@
   "startOverTitle": "Jeg har mistet alle mine andre enheder",
   "startOverText": "Det starter din lås forfra med denne enhed. Alle dine andre enheder fjernes. Hver af dine venner bliver bedt om at bekræfte, at det virkelig er dig, og kan derefter hjælpe dig med at åbne dine gamle beskeder igen.",
   "startOverButton": "Start forfra med denne enhed",
-  "startOverFailed": "Kunne ikke starte forfra. Tjek forbindelsen og prøv igen."
+  "startOverFailed": "Kunne ikke starte forfra. Tjek forbindelsen og prøv igen.",
+  "hideRemoved": "Skjul fjernede",
+  "showRemoved": "Vis fjernede ({{ count }})"
 }

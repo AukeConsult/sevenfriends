@@ -76,5 +76,7 @@
   "startOverTitle": "Ich habe alle meine anderen Geräte verloren",
   "startOverText": "Damit beginnt dein Schloss mit diesem Gerät neu. Alle anderen Geräte von dir werden entfernt. Jede deiner Freundinnen und jeder deiner Freunde wird gebeten zu bestätigen, dass du es wirklich bist, und kann dir dann helfen, deine alten Nachrichten wieder zu öffnen.",
   "startOverButton": "Mit diesem Gerät neu beginnen",
-  "startOverFailed": "Neubeginn nicht möglich. Prüf die Verbindung und versuch es noch einmal."
+  "startOverFailed": "Neubeginn nicht möglich. Prüf die Verbindung und versuch es noch einmal.",
+  "hideRemoved": "Entfernte ausblenden",
+  "showRemoved": "Entfernte anzeigen ({{ count }})"
 }

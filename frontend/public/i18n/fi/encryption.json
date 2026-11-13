@@ -76,5 +76,7 @@
   "startOverTitle": "Olen menettänyt kaikki muut laitteeni",
   "startOverText": "Tämä aloittaa lukkosi alusta tällä laitteella. Kaikki muut laitteesi poistetaan. Jokaista ystävääsi pyydetään vahvistamaan, että se todella olet sinä, ja sen jälkeen hän voi auttaa avaamaan vanhat viestisi uudelleen.",
   "startOverButton": "Aloita alusta tällä laitteella",
-  "startOverFailed": "Alusta aloittaminen ei onnistunut. Tarkista yhteys ja yritä uudelleen."
+  "startOverFailed": "Alusta aloittaminen ei onnistunut. Tarkista yhteys ja yritä uudelleen.",
+  "hideRemoved": "Piilota poistetut",
+  "showRemoved": "Näytä poistetut ({{ count }})"
 }

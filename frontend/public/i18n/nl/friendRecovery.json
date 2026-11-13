@@ -44,5 +44,6 @@
   "alsoWhenNothing": "Je kunt altijd vragen, ook als er niets voor je vergrendeld is: {{ friendName }} ontgrendelt dan alles opnieuw voor al je apparaten en moet elke keer ja zeggen.",
   "groupTitle": "Oude berichten terugkrijgen gebeurt tussen twee mensen",
   "groupText": "Om je oude berichten weer te openen, ontgrendelt de app van een vriend ze opnieuw voor je nieuwe privacyslot. Een groep heeft niet één vriend die dat voor je kan doen, dus dit kan niet in een groep.",
-  "groupOther": "Je kunt ze nog steeds terugkrijgen met een ander apparaat van jou dat ze kan openen, of met je 24 geheime woorden (Instellingen → Privacyslot)."
+  "groupOther": "Je kunt ze nog steeds terugkrijgen met een ander apparaat van jou dat ze kan openen, of met je 24 geheime woorden (Instellingen → Privacyslot).",
+  "nothingCouldBeOpened": "Er kon niets worden geopend: dit apparaat heeft geen sleutel voor deze oude berichten en kan dus niet helpen. Haal eerst je eigen sleutel terug (Instellingen → Privacyslot: een ander apparaat van jou, of je 24 woorden)."
 }

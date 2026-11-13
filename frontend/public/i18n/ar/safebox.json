@@ -35,7 +35,8 @@
     "addAndLink": "أضف عنصرًا جديدًا واربطه",
     "save": "حفظ",
     "deleteAsk": "حذف هذا العنصر؟ سيُحذف لكما ولا يمكن استرجاعه.",
-    "deleteAskNamed": "حذف «{{ itemName }}»؟ سيُحذف لكما ولا يمكن استرجاعه."
+    "deleteAskNamed": "حذف «{{ itemName }}»؟ سيُحذف لكما ولا يمكن استرجاعه.",
+    "safebox": "الخزنة"
   },
   "list": {
     "retry": "إعادة المحاولة",
@@ -75,7 +76,8 @@
     "lockIt": "Lock it",
     "lockThemNow": "Lock them",
     "notSaved": "لم يُحفظ:",
-    "close": "إغلاق"
+    "close": "إغلاق",
+    "dueNow": "مستحق"
   },
   "object": {
     "unknownKind": "نوع العنصر هذا غير معروف.",

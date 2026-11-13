@@ -95,6 +95,8 @@ export class RecoveryService {
         after = todo.next;
       } while (after);
     }
+    // nothing could be opened here (every copy is locked for a key this device does not have): that is not "done", and the asker is not told it is
+    if (result.done === 0 && result.skipped > 0) throw new Error(tr('friendRecovery.nothingCouldBeOpened', 'Nothing could be opened: this device has no key for these old messages, so it cannot help. Bring your own key back first (Settings → Privacy lock: another device of yours, or your 24 words).'));
     await this.api.request<RecoveryState>(`${this.base(friendId)}/finish`, { method: 'POST' });
     return result;
   }

@@ -35,7 +35,8 @@
     "addAndLink": "Yeni bir öğe ekle ve bağla",
     "save": "Kaydet",
     "deleteAsk": "Bu silinsin mi? İkiniz için de silinir ve geri getirilemez.",
-    "deleteAskNamed": "“{{ itemName }}” silinsin mi? İkiniz için de silinir ve geri getirilemez."
+    "deleteAskNamed": "“{{ itemName }}” silinsin mi? İkiniz için de silinir ve geri getirilemez.",
+    "safebox": "Kasa"
   },
   "list": {
     "retry": "Tekrar dene",
@@ -75,7 +76,8 @@
     "lockIt": "Lock it",
     "lockThemNow": "Lock them",
     "notSaved": "Kaydedilmedi:",
-    "close": "Kapat"
+    "close": "Kapat",
+    "dueNow": "Zamanı geldi"
   },
   "object": {
     "unknownKind": "Bu tür öğe bilinmiyor.",

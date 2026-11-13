@@ -44,5 +44,6 @@
   "alsoWhenNothing": "Du kan spørge når som helst, også når intet er låst for dig: {{ friendName }} låser så alt op igen til alle dine enheder og skal sige ja hver gang.",
   "groupTitle": "At få gamle beskeder tilbage sker mellem to personer",
   "groupText": "For at åbne dine gamle beskeder igen låser en vens app dem op igen til din nye privatlås. En gruppe har ingen enkelt ven, der kan gøre det for dig, så det er ikke muligt i en gruppe.",
-  "groupOther": "Du kan stadig få dem tilbage med en anden af dine enheder, der kan åbne dem, eller med dine 24 hemmelige ord (Indstillinger → Privatlås)."
+  "groupOther": "Du kan stadig få dem tilbage med en anden af dine enheder, der kan åbne dem, eller med dine 24 hemmelige ord (Indstillinger → Privatlås).",
+  "nothingCouldBeOpened": "Intet kunne åbnes: denne enhed har ingen nøgle til de gamle beskeder og kan derfor ikke hjælpe. Få først din egen nøgle tilbage (Indstillinger → Privatlås: en anden enhed af dine, eller dine 24 ord)."
 }

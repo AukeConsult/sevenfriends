@@ -44,5 +44,6 @@
   "alsoWhenNothing": "Du kannst jederzeit fragen, auch wenn für dich nichts gesperrt ist: {{ friendName }} entsperrt dann alles erneut für alle deine Geräte und muss jedes Mal Ja sagen.",
   "groupTitle": "Alte Nachrichten zurückholen geht nur zwischen zwei Personen",
   "groupText": "Um deine alten Nachrichten wieder zu öffnen, entsperrt die App eines Freundes sie erneut für deine neue Privatsperre. In einer Gruppe gibt es keinen einzelnen Freund, der das für dich tun kann, daher ist das in einer Gruppe nicht möglich.",
-  "groupOther": "Du kannst sie trotzdem zurückholen: mit einem anderen deiner Geräte, das sie öffnen kann, oder mit deinen 24 geheimen Wörtern (Einstellungen → Privatsperre)."
+  "groupOther": "Du kannst sie trotzdem zurückholen: mit einem anderen deiner Geräte, das sie öffnen kann, oder mit deinen 24 geheimen Wörtern (Einstellungen → Privatsperre).",
+  "nothingCouldBeOpened": "Es konnte nichts geöffnet werden: Dieses Gerät hat keinen Schlüssel für diese alten Nachrichten und kann deshalb nicht helfen. Hole zuerst deinen eigenen Schlüssel zurück (Einstellungen → Privatsphäre-Sperre: ein anderes Gerät von dir oder deine 24 Wörter)."
 }

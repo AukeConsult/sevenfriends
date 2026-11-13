@@ -76,5 +76,7 @@
   "startOverTitle": "Diğer tüm cihazlarımı kaybettim",
   "startOverText": "Bu, kilidinizi bu cihazla baştan başlatır. Diğer tüm cihazlarınız kaldırılır. Arkadaşlarınızın her birinden gerçekten sizin olduğunuzu onaylaması istenir, ardından eski mesajlarınızı yeniden açmanıza yardımcı olabilir.",
   "startOverButton": "Bu cihazla baştan başla",
-  "startOverFailed": "Baştan başlanamadı. Bağlantıyı kontrol edip tekrar deneyin."
+  "startOverFailed": "Baştan başlanamadı. Bağlantıyı kontrol edip tekrar deneyin.",
+  "hideRemoved": "Kaldırılanları gizle",
+  "showRemoved": "Kaldırılanları göster ({{ count }})"
 }

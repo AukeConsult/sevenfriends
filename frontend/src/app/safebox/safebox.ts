@@ -107,10 +107,20 @@ export class Safebox {
   /** the flag "Due" in the search field: only what is due (its reminder period has begun, or its day) */
   protected readonly dueOnly = signal(false);
   private readonly dueTick = signal(0);
-  protected readonly dueCount = computed(() => {
+  /** how many items are due now (their time has come) and how many only have their reminder period begun ("coming up") */
+  private readonly dueCounts = computed(() => {
     this.dueTick();
-    return this.items().filter((item) => !item.parentId && item.type !== 'relation' && this.service.isDue(this.friendId, item.id)).length;
+    const counts = { due: 0, soon: 0 };
+    for (const item of this.items()) {
+      if (item.parentId || item.type === 'relation') continue;
+      const state = this.service.dueState(this.friendId, item.id);
+      if (state) counts[state]++;
+    }
+    return counts;
   });
+  /** the flag says "Due" with the number that is due when any has reached its time, else "Coming up" with the number in their reminder period */
+  protected readonly anyDueNow = computed(() => this.dueCounts().due > 0);
+  protected readonly dueCount = computed(() => (this.anyDueNow() ? this.dueCounts().due : this.dueCounts().soon));
   /** how many attachments each object has, and the first picture of an album (its cover) */
   private readonly attachmentsOf = computed(() => {
     const map = new Map<string, SafeboxItem[]>();

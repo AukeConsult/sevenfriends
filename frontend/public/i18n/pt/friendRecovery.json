@@ -44,5 +44,6 @@
   "alsoWhenNothing": "Pode pedir a qualquer momento, mesmo quando nada está bloqueado para si: {{ friendName }} desbloqueia então tudo de novo para todos os seus dispositivos e tem de dizer que sim de cada vez.",
   "groupTitle": "Recuperar mensagens antigas é entre duas pessoas",
   "groupText": "Para voltar a abrir as suas mensagens antigas, a app de um amigo desbloqueia-as de novo para o seu novo cadeado de privacidade. Um grupo não tem um amigo específico que o possa fazer por si, por isso não é possível num grupo.",
-  "groupOther": "Ainda as pode recuperar com outro dispositivo seu que as consiga abrir, ou com as suas 24 palavras secretas (Ajustes → Cadeado de privacidade)."
+  "groupOther": "Ainda as pode recuperar com outro dispositivo seu que as consiga abrir, ou com as suas 24 palavras secretas (Ajustes → Cadeado de privacidade).",
+  "nothingCouldBeOpened": "Não foi possível abrir nada: este dispositivo não tem a chave destas mensagens antigas, por isso não pode ajudar. Recupere primeiro a sua própria chave (Definições → Bloqueio de privacidade: outro dispositivo seu, ou as suas 24 palavras)."
 }

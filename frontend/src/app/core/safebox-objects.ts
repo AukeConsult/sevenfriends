@@ -124,7 +124,7 @@ function daysLeft(date: string): string {
  * When an item is DUE, in milliseconds: from the start of its reminder period (the date and time minus the lead of "Remind me") or the start of its day,
  * whichever comes first, to the end of its day (local time). null for an item with no date or with "Don't remind me". A date without a time counts as 09:00 for the reminder.
  */
-export function dueRange(p: ObjectPayload): { from: number; to: number } | null {
+export function dueRange(p: ObjectPayload): { from: number; at: number; to: number } | null {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(p.fields['date'] ?? '');
   if (!m) return null;
   const [y, mo, d] = [+m[1], +m[2] - 1, +m[3]];
@@ -134,7 +134,7 @@ export function dueRange(p: ObjectPayload): { from: number; to: number } | null 
   const start = new Date(y, mo, d).getTime();
   const at = new Date(y, mo, d, +t[1], +t[2]).getTime();
   const to = new Date(y, mo, d + 1).getTime() - 1;
-  return Number.isNaN(start) ? null : { from: Math.min(start, at - lead * 60000), to };
+  return Number.isNaN(start) ? null : { from: Math.min(start, at - lead * 60000), at, to };
 }
 
 /** When a date or a ticket is, for the list and the badges: the day (in the person's language) and the time. '' for the others. */

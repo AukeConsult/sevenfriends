@@ -41,7 +41,7 @@
 <div class="sf-box-search-wrap">
         <input type="search" class="form-control sf-box-search" [value]="query()" (input)="query.set($any($event.target).value)" [placeholder]="t('safebox.list.search') || 'Search the safebox'" [attr.aria-label]="t('safebox.list.search') || 'Search the safebox'" autocomplete="off" spellcheck="false" />
         <!-- the flag "Due": only what is due, the reminder period included -->
-        <button type="button" class="sf-box-due" [class.active]="dueOnly()" [attr.aria-pressed]="dueOnly()" (click)="dueOnly.set(!dueOnly())" [attr.title]="t('safebox.list.dueOnly') || 'Show only what is due, including the reminder period'" [attr.aria-label]="t('safebox.list.dueOnly') || 'Show only what is due, including the reminder period'">{{ t('safebox.list.due') || 'Due' }}@if (dueCount()) { <span class="sf-box-due-count">{{ dueCount() }}</span> }</button>
+        <button type="button" class="sf-box-due" [class.active]="dueOnly()" [attr.aria-pressed]="dueOnly()" (click)="dueOnly.set(!dueOnly())" [attr.title]="t('safebox.list.dueOnly') || 'Show only what is due, including the reminder period'" [attr.aria-label]="t('safebox.list.dueOnly') || 'Show only what is due, including the reminder period'"[class.sf-box-due-now]="anyDueNow()">{{ anyDueNow() ? (t('safebox.list.dueNow') || 'Due') : (t('safebox.list.due') || 'Coming up') }}@if (dueCount()) { <span class="sf-box-due-count">{{ dueCount() }}</span> }</button>
       </div>
     }
     <!-- how the items are shown: list or small icons (remembered on this device) -->

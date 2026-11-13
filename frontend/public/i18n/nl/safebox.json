@@ -35,7 +35,8 @@
     "addAndLink": "Voeg een nieuw item toe en koppel het",
     "save": "Opslaan",
     "deleteAsk": "Dit verwijderen? Het wordt voor jullie allebei verwijderd en kan niet worden teruggehaald.",
-    "deleteAskNamed": "“{{ itemName }}” verwijderen? Het wordt voor jullie allebei verwijderd en kan niet worden teruggehaald."
+    "deleteAskNamed": "“{{ itemName }}” verwijderen? Het wordt voor jullie allebei verwijderd en kan niet worden teruggehaald.",
+    "safebox": "Kluis"
   },
   "list": {
     "retry": "Opnieuw proberen",
@@ -75,7 +76,8 @@
     "lockIt": "Lock it",
     "lockThemNow": "Lock them",
     "notSaved": "Niet opgeslagen:",
-    "close": "Sluiten"
+    "close": "Sluiten",
+    "dueNow": "Nu aan de beurt"
   },
   "object": {
     "unknownKind": "Dat soort item is niet bekend.",

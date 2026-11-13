@@ -35,7 +35,8 @@
     "addAndLink": "הוספת פריט חדש וקישורו",
     "save": "שמירה",
     "deleteAsk": "למחוק את זה? זה יימחק אצל שניכם ולא ניתן יהיה להחזיר אותו.",
-    "deleteAskNamed": "למחוק את «{{ itemName }}»? זה יימחק אצל שניכם ולא ניתן יהיה להחזיר אותו."
+    "deleteAskNamed": "למחוק את «{{ itemName }}»? זה יימחק אצל שניכם ולא ניתן יהיה להחזיר אותו.",
+    "safebox": "כספת"
   },
   "list": {
     "retry": "ניסיון חוזר",
@@ -75,7 +76,8 @@
     "lockIt": "Lock it",
     "lockThemNow": "Lock them",
     "notSaved": "לא נשמר:",
-    "close": "סגירה"
+    "close": "סגירה",
+    "dueNow": "הגיע הזמן"
   },
   "object": {
     "unknownKind": "סוג הפריט הזה לא מוכר.",

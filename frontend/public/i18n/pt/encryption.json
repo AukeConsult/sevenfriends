@@ -76,5 +76,7 @@
   "startOverTitle": "Perdi todos os meus outros dispositivos",
   "startOverText": "Isto recomeça o teu cadeado com este dispositivo. Todos os teus outros dispositivos são removidos. A cada um dos teus amigos é pedido que confirme que és mesmo tu, e depois pode ajudar-te a abrir de novo as tuas mensagens antigas.",
   "startOverButton": "Recomeçar com este dispositivo",
-  "startOverFailed": "Não foi possível recomeçar. Verifica a ligação e tenta de novo."
+  "startOverFailed": "Não foi possível recomeçar. Verifica a ligação e tenta de novo.",
+  "hideRemoved": "Ocultar removidos",
+  "showRemoved": "Mostrar removidos ({{ count }})"
 }

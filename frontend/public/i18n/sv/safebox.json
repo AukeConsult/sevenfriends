@@ -35,7 +35,8 @@
     "addAndLink": "Lägg till ett nytt objekt och länka det",
     "save": "Spara",
     "deleteAsk": "Radera detta? Det raderas för er båda och kan inte hämtas tillbaka.",
-    "deleteAskNamed": "Radera ”{{ itemName }}”? Det raderas för er båda och kan inte hämtas tillbaka."
+    "deleteAskNamed": "Radera ”{{ itemName }}”? Det raderas för er båda och kan inte hämtas tillbaka.",
+    "safebox": "Kassaskåp"
   },
   "list": {
     "retry": "Försök igen",
@@ -75,7 +76,8 @@
     "lockIt": "Lock it",
     "lockThemNow": "Lock them",
     "notSaved": "Inte sparat:",
-    "close": "Stäng"
+    "close": "Stäng",
+    "dueNow": "Förfaller nu"
   },
   "object": {
     "unknownKind": "Det slaget av objekt är inte känt.",

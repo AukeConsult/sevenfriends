@@ -39,7 +39,7 @@ export class SafeboxService {
   /** when each date and ticket is, for the list and the badges */
   private readonly whens = new Map<string, string>();
   /** when each item with a date is due (from the start of its reminder period to the end of its day) */
-  private readonly dues = new Map<string, { from: number; to: number } | null>();
+  private readonly dues = new Map<string, { from: number; at: number; to: number } | null>();
 
   constructor() {
     // another circle: the files, the opened keys and the previews of the old circle are let go (the object URLs too)
@@ -204,6 +204,14 @@ export class SafeboxService {
     const due = this.dues.get(`${friendId}/${itemId}`) ?? null;
     const now = Date.now();
     return !!due && now >= due.from && now <= due.to;
+  }
+
+  /** 'due' when its time has come (until its day is over), 'soon' while only the reminder period has begun, null otherwise. */
+  dueState(friendId: string, itemId: string): 'due' | 'soon' | null {
+    const due = this.dues.get(`${friendId}/${itemId}`) ?? null;
+    const now = Date.now();
+    if (!due || now < due.from || now > due.to) return null;
+    return now >= due.at ? 'due' : 'soon';
   }
 
   /**

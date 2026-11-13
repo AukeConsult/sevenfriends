@@ -44,5 +44,6 @@
   "alsoWhenNothing": "Możesz poprosić w każdej chwili, także gdy nic nie jest dla Ciebie zablokowane: {{ friendName }} odblokowuje wtedy wszystko ponownie dla wszystkich Twoich urządzeń i za każdym razem musi powiedzieć tak.",
   "groupTitle": "Odzyskiwanie starych wiadomości odbywa się między dwiema osobami",
   "groupText": "Aby ponownie otworzyć Twoje stare wiadomości, aplikacja znajomego odblokowuje je ponownie dla Twojej nowej blokady prywatności. W grupie nie ma jednego znajomego, który mógłby to zrobić za Ciebie, więc w grupie nie jest to możliwe.",
-  "groupOther": "Nadal możesz je odzyskać innym swoim urządzeniem, które potrafi je otworzyć, albo za pomocą 24 tajnych słów (Ustawienia → Blokada prywatności)."
+  "groupOther": "Nadal możesz je odzyskać innym swoim urządzeniem, które potrafi je otworzyć, albo za pomocą 24 tajnych słów (Ustawienia → Blokada prywatności).",
+  "nothingCouldBeOpened": "Nic nie dało się otworzyć: to urządzenie nie ma klucza do tych starych wiadomości, więc nie może pomóc. Najpierw odzyskaj własny klucz (Ustawienia → Blokada prywatności: inne Twoje urządzenie lub Twoje 24 słowa)."
 }

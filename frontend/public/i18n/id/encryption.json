@@ -76,5 +76,7 @@
   "startOverTitle": "Saya kehilangan semua perangkat saya yang lain",
   "startOverText": "Ini memulai kunci Anda dari awal dengan perangkat ini. Semua perangkat Anda yang lain dihapus. Setiap teman Anda diminta memastikan bahwa itu benar-benar Anda, lalu dapat membantu Anda membuka pesan lama lagi.",
   "startOverButton": "Mulai dari awal dengan perangkat ini",
-  "startOverFailed": "Tidak dapat memulai dari awal. Periksa koneksi dan coba lagi."
+  "startOverFailed": "Tidak dapat memulai dari awal. Periksa koneksi dan coba lagi.",
+  "hideRemoved": "Sembunyikan yang dihapus",
+  "showRemoved": "Tampilkan yang dihapus ({{ count }})"
 }

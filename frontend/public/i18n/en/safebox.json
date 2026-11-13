@@ -35,7 +35,8 @@
     "addAndLink": "Add a new item and link it",
     "save": "Save",
     "deleteAsk": "Delete this? It is deleted for both of you and cannot be brought back.",
-    "deleteAskNamed": "Delete “{{ itemName }}”? It is deleted for both of you and cannot be brought back."
+    "deleteAskNamed": "Delete “{{ itemName }}”? It is deleted for both of you and cannot be brought back.",
+    "safebox": "Safebox"
   },
   "list": {
     "retry": "Retry",
@@ -75,7 +76,8 @@
     "lockIt": "Lock it",
     "lockThemNow": "Lock them",
     "notSaved": "Not saved:",
-    "close": "Close"
+    "close": "Close",
+    "dueNow": "Due"
   },
   "object": {
     "unknownKind": "That kind of item is not known.",

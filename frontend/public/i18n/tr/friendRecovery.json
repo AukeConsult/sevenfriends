@@ -44,5 +44,6 @@
   "alsoWhenNothing": "İstediğin zaman isteyebilirsin, senin için hiçbir şey kilitli olmasa bile: {{ friendName }} o zaman her şeyi tüm cihazların için yeniden açar ve her seferinde evet demesi gerekir.",
   "groupTitle": "Eski mesajları geri almak iki kişi arasında yapılır",
   "groupText": "Eski mesajlarını yeniden açmak için bir arkadaşının uygulaması bunları yeni gizlilik kilidin için yeniden açar. Bir grupta bunu senin için yapabilecek tek bir arkadaş yoktur, bu yüzden grupta bu mümkün değildir.",
-  "groupOther": "Onları yine de açabilen başka bir cihazınla ya da 24 gizli kelimenle geri alabilirsin (Ayarlar → Gizlilik kilidi)."
+  "groupOther": "Onları yine de açabilen başka bir cihazınla ya da 24 gizli kelimenle geri alabilirsin (Ayarlar → Gizlilik kilidi).",
+  "nothingCouldBeOpened": "Hiçbir şey açılamadı: bu cihazda bu eski mesajların anahtarı yok, bu yüzden yardım edemez. Önce kendi anahtarını geri getir (Ayarlar → Gizlilik kilidi: başka bir cihazın veya 24 kelimen)."
 }
