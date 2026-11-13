@@ -70,5 +70,7 @@
   "lockingOldThings": "Bloqueando tus mensajes y notas antiguos con la clave nueva. Puedes seguir usando la app.",
   "someCouldNotBeLocked": "Algunos elementos antiguos no se pudieron abrir en este dispositivo. Abre la app en otro dispositivo tuyo para terminarlos.",
   "inSignedList": "Este dispositivo está en tu lista firmada ({{ count }} dispositivos).",
-  "notInSignedList": "Este dispositivo NO está en tu lista firmada ({{ count }} dispositivos), así que no puede enviar."
+  "notInSignedList": "Este dispositivo NO está en tu lista firmada ({{ count }} dispositivos), así que no puede enviar.",
+  "removeFromAnother": "Para quitar este dispositivo, abre Seven Friends en otro de tus dispositivos.",
+  "notApprovedYet": "Aún sin aprobar"
 }

@@ -176,7 +176,7 @@ export class Encryption {
     this.busy.set(true);
     this.problem.set(null);
     try {
-      await this.keys.revoke(key.id);
+      await this.keys.revoke(key.id, true, this.keys.thisKeyId() ?? undefined); // a device never removes itself: the server refuses it too
       this.removing.set(null);
     } catch (err: any) {
       this.problem.set(err?.message || tr('encryption.theKeyCouldNot', 'The key could not be removed.'));

@@ -37,7 +37,9 @@ export const keyListCol = (uid: string) => userDoc(uid).collection(KEY_LIST_COLL
 /** the requests of my devices to open my old messages for them (docs/design/recovery-own-devices.md) */
 export const ownRequestCol = (uid: string) => userDoc(uid).collection("own-recovery-request");
 
-export const keyBackupDoc = (uid: string) => userDoc(uid).collection(KEY_BACKUP_COLLECTION).doc(KEY_BACKUP_DOC);
+/** the backups of my private keys: one per key (the document is the key ID; its words are only for that key), and "current" for the one made before there was one per key */
+export const keyBackupCol = (uid: string) => userDoc(uid).collection(KEY_BACKUP_COLLECTION);
+export const keyBackupDoc = (uid: string, keyId: string = KEY_BACKUP_DOC) => keyBackupCol(uid).doc(keyId);
 export const pushDeviceCol = (uid: string) => userDoc(uid).collection(PUSH_DEVICE_COLLECTION);
 /**
  * ONE document, but only some of its fields (a field mask): the rest is not sent to the function. Use it whenever a whole account or

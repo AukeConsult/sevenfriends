@@ -129,6 +129,21 @@ describe("publishing a key together with its backup", () => {
     expect((await pool[0].raw("get", "/keys/backup").expect(200)).body).toMatchObject(backup);
   });
 
+  it("keeps one backup for each device: the words of one device never replace the backup of another", async () => {
+    const laptop = { v: 1, iv: Buffer.alloc(12, 3).toString("base64"), data: Buffer.alloc(100, 4).toString("base64") };
+    const tablet = { v: 1, iv: Buffer.alloc(12, 5).toString("base64"), data: Buffer.alloc(100, 6).toString("base64") };
+    const first = (await pool[0].raw("post", "/keys", { publicKey: jwk, label: "Laptop", backup: laptop }).expect(201)).body.id as string;
+    const second = (await pool[0].raw("post", "/keys", { publicKey: other, label: "Tablet", backup: tablet }).expect(201)).body.id as string;
+    const mine = (await pool[0].raw("get", "/keys")).body;
+    expect(mine.hasBackup).toBe(true);
+    expect([...mine.backups].sort()).toEqual([first, second].sort()); // each key has a backup of its own
+    const all = (await pool[0].raw("get", "/keys/backups").expect(200)).body.backups as { iv: string; data: string }[];
+    expect(all.map((b) => b.data)).toEqual(expect.arrayContaining([laptop.data, tablet.data])); // restoring can try both
+    expect((await pool[1].raw("get", "/keys/backups")).status).toBe(404); // only mine
+    await pool[0].raw("post", `/keys/${first}/revoke`).expect(200); // a removed device keeps no backup
+    expect((await pool[0].raw("get", "/keys")).body.backups).toEqual([second]);
+  });
+
   it("stores neither when the backup is not valid", async () => {
     await pool[0].raw("post", "/keys", { publicKey: jwk, backup: { v: 1, iv: "x", data: "y" } }).expect(400);
     const mine = (await pool[0].raw("get", "/keys")).body;

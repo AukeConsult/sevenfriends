@@ -70,5 +70,7 @@
   "lockingOldThings": "Mengunci pesan dan catatan lama Anda dengan kunci baru. Anda dapat terus menggunakan aplikasi.",
   "someCouldNotBeLocked": "Beberapa item lama tidak dapat dibuka di perangkat ini. Buka aplikasi di perangkat Anda yang lain untuk menyelesaikannya.",
   "inSignedList": "Perangkat ini ada di daftar bertanda tanganmu ({{ count }} perangkat).",
-  "notInSignedList": "Perangkat ini TIDAK ada di daftar bertanda tanganmu ({{ count }} perangkat), jadi tidak bisa mengirim."
+  "notInSignedList": "Perangkat ini TIDAK ada di daftar bertanda tanganmu ({{ count }} perangkat), jadi tidak bisa mengirim.",
+  "removeFromAnother": "Untuk menghapus perangkat ini, buka Seven Friends di perangkatmu yang lain.",
+  "notApprovedYet": "Belum disetujui"
 }

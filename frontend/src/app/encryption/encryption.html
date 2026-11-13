@@ -131,12 +131,16 @@
                 <span class="sf-fs-text">{{ key.label || 'A device' }}
                   @if (key.id === keys.thisKeyId()) { <span class="badge rounded-pill text-bg-success">{{ t('encryption.thisDevice') || 'This device' }}</span> }
                   @if (key.revoked) { <span class="badge rounded-pill text-bg-secondary">{{ t('encryption.removed') || 'Removed' }}</span> }
+                  @if (key.waiting) { <span class="badge rounded-pill text-bg-warning">{{ t('encryption.notApprovedYet') || 'Not approved yet' }}</span> }
                 </span>
                 <small>{{ key.createdAt | appDate: 'd MMM yyyy HH:mm:ss' }} · {{ short(key) }}</small>
               </span>
               @if (isWaiting(key)) {
                 <span class="small text-secondary w-100">{{ t('encryption.waitingForAccessTo') || 'Waiting for access to your old messages and files.' }}</span>
                 <button type="button" class="btn btn-primary btn-sm" (click)="allow(key)" [disabled]="allowing() !== null">{{ allowing() === key.id ? (t('encryption.givingAccessAllowed', { allowed: allowed() }) || 'Giving access… ' + allowed()) : 'Allow' }}</button>
+              }
+              @if (!key.revoked && key.id === keys.thisKeyId() && otherKeys() > 0) {
+                <span class="small text-secondary w-100">{{ t('encryption.removeFromAnother') || 'To remove this device, open Seven Friends on another device of yours.' }}</span>
               }
               @if (!key.revoked && key.id !== keys.thisKeyId()) {
                 @if (removing() === key.id) {

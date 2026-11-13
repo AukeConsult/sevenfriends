@@ -4,10 +4,10 @@ import { DocumentData, FieldValue, Timestamp, getFirestore } from "firebase-admi
 import { asyncHandler, requireAuth } from "./auth";
 import { MAX_WRAPS, wrapValid } from "./box-encryption";
 import { FRIENDS_SUBCOLLECTION } from "./constants";
-import { publishedOf } from "./keys";
+import { isShared, publishedOf } from "./keys";
 import { OwnRecoveryRequest, PublishedKey, RecoveryTodoItem, SafeboxWrap } from "./models";
 import { liveRequest, liveRequests, openRequest, requestOf, tellDone } from "./own-request";
-import { circleCol, keyCol, messageCol, ownRequestCol, safeboxItems } from "./paths";
+import { circleCol, keyCol, keyListCol, messageCol, ownRequestCol, safeboxItems } from "./paths";
 import { touchSync } from "./sync";
 
 /**
@@ -32,11 +32,21 @@ const timeOf = (cursor: string): Timestamp | null => {
   return m ? new Timestamp(Number(m[1]), Number(m[2])) : null;
 };
 
-/** My keys in use, oldest first, with whether each one is shared (see above). */
-async function myKeys(uid: string): Promise<{ key: PublishedKey; shared: boolean }[]> {
-  const docs = (await keyCol(uid).get()).docs.filter((d) => d.data().revoked !== true);
-  const keys = docs.map((d) => ({ key: publishedOf(d.id, d.data()), flag: d.data().ownShared as boolean | undefined })).sort((a, b) => (a.key.createdAt ?? "").localeCompare(b.key.createdAt ?? ""));
-  return keys.map((k, i) => ({ key: k.key, shared: k.flag === true || (k.flag === undefined && i === 0) }));
+/**
+ * My keys in use, oldest first, with whether each one is shared (see above) and whether it can help: a shared key, or a key in my newest signed device list (a listed
+ * device was approved by me, and can add the new key to the list; what it cannot open it skips).
+ */
+async function myKeys(uid: string): Promise<{ key: PublishedKey; shared: boolean; helps: boolean }[]> {
+  const [snap, newest] = await Promise.all([keyCol(uid).get(), keyListCol(uid).orderBy("version", "desc").limit(1).get()]);
+  const listed = new Set<string>(((newest.docs[0]?.data().devices ?? []) as { keyId: string }[]).map((d) => d.keyId));
+  const keys = snap.docs
+    .filter((d) => d.data().revoked !== true)
+    .map((d) => ({ key: publishedOf(d.id, d.data()), flag: d.data().ownShared as boolean | undefined }))
+    .sort((a, b) => (a.key.createdAt ?? "").localeCompare(b.key.createdAt ?? ""));
+  return keys.map((k, i) => {
+    const shared = isShared(k.flag, i === 0);
+    return { key: k.key, shared, helps: shared || listed.has(k.key.id) };
+  });
 }
 
 /** The confirmed friendships of mine (their ids are the ids of the safeboxes). */
@@ -58,7 +68,7 @@ ownRecoveryRouter.get(
     const uid = uidOf(res);
     const keys = await myKeys(uid);
     const me = typeof req.query.me === "string" ? req.query.me : "";
-    const eligible = keys.some((k) => k.key.id === me && k.shared);
+    const eligible = keys.some((k) => k.key.id === me && k.helps);
     if (!eligible) {
       res.json({ eligible, keys: [], requests: [] });
       return;
@@ -94,8 +104,8 @@ ownRecoveryRouter.post(
       res.status(409).json({ error: "That key is not in use" });
       return;
     }
-    if (!keys.some((k) => k.shared && k.key.id !== target.key.id)) {
-      res.status(409).json({ error: "No other device of yours has a key that opens your old messages. Use your 24 recovery words, or ask a friend." });
+    if (!keys.some((k) => k.helps && k.key.id !== target.key.id)) {
+      res.status(409).json({ error: "No other device of yours is approved to help. Use your 24 recovery words, or ask a friend." });
       return;
     }
     await openRequest(uid, target.key, await countLacking(uid, target.key.id));
@@ -104,7 +114,7 @@ ownRecoveryRouter.post(
 );
 
 /** The key `me` of a device of mine that may allow others (shared), other than the one asking. */
-const helperOk = (keys: { key: PublishedKey; shared: boolean }[], me: unknown, target: string): boolean => keys.some((k) => k.key.id === me && k.shared && k.key.id !== target);
+const helperOk = (keys: { key: PublishedKey; helps: boolean }[], me: unknown, target: string): boolean => keys.some((k) => k.key.id === me && k.helps && k.key.id !== target);
 
 /** `{ key, me }`: a device begins the work: the request is `working`, with how many messages and files need a copy. */
 ownRecoveryRouter.post(

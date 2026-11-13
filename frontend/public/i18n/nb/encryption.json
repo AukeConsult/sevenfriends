@@ -70,5 +70,7 @@
   "lockingOldThings": "De eldre meldingene og notatene dine låses med den nye nøkkelen. Du kan fortsette å bruke appen.",
   "someCouldNotBeLocked": "Noen eldre ting kunne ikke åpnes på denne enheten. Åpne appen på en annen av enhetene dine for å fullføre dem.",
   "inSignedList": "Denne enheten står i den signerte listen din ({{ count }} enheter).",
-  "notInSignedList": "Denne enheten står IKKE i den signerte listen din ({{ count }} enheter), så den kan ikke sende."
+  "notInSignedList": "Denne enheten står IKKE i den signerte listen din ({{ count }} enheter), så den kan ikke sende.",
+  "removeFromAnother": "For å fjerne denne enheten må du åpne Seven Friends på en annen av enhetene dine.",
+  "notApprovedYet": "Ikke godkjent ennå"
 }

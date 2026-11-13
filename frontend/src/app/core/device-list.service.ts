@@ -16,18 +16,24 @@ export class DeviceListService {
   private readonly api = inject(ApiService);
   private readonly auth = inject(AuthService);
 
+  /** The key IDs of my keys that are in use on the server: a list may only name those (a device that was removed, or a key that was never published, is dropped from the next version). */
+  private async inUse(): Promise<Set<string>> {
+    const { keys } = await this.api.request<{ keys: PublishedKey[] }>('/keys');
+    return new Set(keys.filter((k) => !k.revoked).map((k) => k.id));
+  }
+
   /**
    * Publishes the next version with `add` in it and/or without `removeId`. Returns true when the list is as asked: a new version was published, nothing needed to change,
    * or the person has no list (nothing to keep). Returns false when a list exists and could not be changed: this device has no signing key or is not in the newest version, or the call failed.
    */
   async publishNext(change: { add?: PublishedKey; removeId?: string }, attempt = 0): Promise<boolean> {
     try {
-      const { lists } = await this.api.request<{ lists: DeviceList[] }>('/keys/list');
+      const [{ lists }, inUse] = await Promise.all([this.api.request<{ lists: DeviceList[] }>('/keys/list'), this.inUse()]);
       const head = [...lists].sort((a, b) => a.version - b.version).at(-1);
       if (!head) return true; // no list (an older lock): there is nothing to keep up to date
       const mine = await myDeviceKey(this.auth.user()?.uid);
       if (!mine?.signKey || !head.devices.some((d) => d.keyId === mine.keyId)) return false; // this device is not in the list, or can not sign: it can not sign for the person
-      let devices = head.devices.filter((d) => d.keyId !== change.removeId);
+      let devices = head.devices.filter((d) => d.keyId !== change.removeId && inUse.has(d.keyId)); // a stale entry (a device removed without a new version) leaves the list now
       if (change.add && !devices.some((d) => d.keyId === change.add!.id)) {
         const entry = await entryOfPublished(change.add);
         if (!entry) return false; // the key has no signing key (an older lock): it stays outside the list
@@ -50,7 +56,7 @@ export class DeviceListService {
    * so the caller does not go on with the swap.
    */
   async rotate(old: StoredDeviceKey, newKey: StoredDeviceKey, added: PublishedKey): Promise<void> {
-    const { lists } = await this.api.request<{ lists: DeviceList[] }>('/keys/list');
+    const [{ lists }, inUse] = await Promise.all([this.api.request<{ lists: DeviceList[] }>('/keys/list'), this.inUse()]);
     const head = [...lists].sort((a, b) => a.version - b.version).at(-1);
     if (!head) {
       const first = await firstDeviceList(newKey, added.label);
@@ -61,7 +67,7 @@ export class DeviceListService {
     const oldEntry = await entryOf(old, '');
     const entry = await entryOfPublished(added);
     if (!oldEntry || !old.signKey || !entry || !head.devices.some((d) => d.keyId === oldEntry.keyId)) throw new Error('This device can not sign the next version of the list');
-    const devices = [...head.devices.filter((d) => d.keyId !== oldEntry.keyId), entry];
+    const devices = [...head.devices.filter((d) => d.keyId !== oldEntry.keyId && inUse.has(d.keyId)), entry];
     const next = await signList({ version: head.version + 1, devices, prev: await deviceListHash(head), signedBy: oldEntry.keyId }, old.signKey.privateKey);
     await this.api.request('/keys/list', { method: 'POST', body: JSON.stringify(next) });
   }

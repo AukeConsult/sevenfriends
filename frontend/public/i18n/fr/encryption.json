@@ -70,5 +70,7 @@
   "lockingOldThings": "Verrouillage de vos anciens messages et notes avec la nouvelle clé. Vous pouvez continuer à utiliser l'app.",
   "someCouldNotBeLocked": "Certains anciens éléments n'ont pas pu être ouverts sur cet appareil. Ouvrez l'app sur un autre de vos appareils pour les terminer.",
   "inSignedList": "Cet appareil figure dans votre liste signée ({{ count }} appareils).",
-  "notInSignedList": "Cet appareil ne figure PAS dans votre liste signée ({{ count }} appareils), il ne peut donc pas envoyer."
+  "notInSignedList": "Cet appareil ne figure PAS dans votre liste signée ({{ count }} appareils), il ne peut donc pas envoyer.",
+  "removeFromAnother": "Pour retirer cet appareil, ouvrez Seven Friends sur un autre de vos appareils.",
+  "notApprovedYet": "Pas encore approuvé"
 }

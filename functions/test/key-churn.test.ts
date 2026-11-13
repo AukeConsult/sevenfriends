@@ -357,12 +357,86 @@ describe("keys changing back and forth, 5 people with 3 devices each", () => {
 
     expect((await user.raw("post", "/push/test")).body.devices, "the phone is registered").toBe(1);
 
+    await user.raw("post", `/keys/${phone.keyId}/revoke`, { by: phone.keyId }).expect(409); // a device never removes itself
+    expect(listed(p)).toEqual([laptop.keyId, phone.keyId]);
     await remove(p, phone, laptop);
 
     expect(listed(p)).toEqual([laptop.keyId]);
     expect((await user.raw("get", `/own-recovery/pending?me=${laptop.keyId}`)).body.requests, "no request from the removed device").toEqual([]);
     expect((await user.raw("post", "/push/test")).body.devices, "no push goes to it").toBe(0);
     await user.raw("post", "/push/devices", { token, keyId: phone.keyId }).expect(403); // and it cannot register again
+  }, 60000);
+
+  it("shows which keys wait for approval, and says why nobody can help when the one approved device is gone", async () => {
+    lockPool.push(...(await Promise.all([1, 2].map(generateLock))));
+    const [user] = (await seedPool()).slice(0, 1);
+    const p: Person = { user, devices: [await makeDevice("Laptop"), await makeDevice("Phone")], revoked: new Set(), retired: [], published: new Set(), lists: [] };
+    const [laptop, phone] = p.devices;
+    await publishKey(p, laptop);
+    await publishKey(p, phone); // added next to the first: waits for approval
+    const waiting = async () => ((await user.raw("get", "/keys")).body.keys as { id: string; waiting?: boolean }[]).filter((k) => k.waiting).map((k) => k.id);
+    expect(await waiting()).toEqual([phone.keyId]);
+    await user.raw("post", `/keys/${laptop.keyId}/revoke`).expect(200); // the one approved device is removed
+    const res = await user.raw("post", "/own-recovery/ask", { key: phone.keyId });
+    expect(res.status).toBe(409);
+    expect(res.body.error).toContain("No other device of yours is approved to help");
+  }, 60000);
+
+  it("a new key can ask the other devices when one of them is in my signed list, even if it never got copies of the old messages", async () => {
+    lockPool.push(...(await Promise.all([1, 2, 3].map(generateLock))));
+    const [user] = (await seedPool()).slice(0, 1);
+    const p: Person = { user, devices: [await makeDevice("Laptop"), await makeDevice("Phone"), await makeDevice("New")], revoked: new Set(), retired: [], published: new Set(), lists: [] };
+    const [laptop, phone, fresh] = p.devices;
+    await publishKey(p, laptop);
+    await publishList(p, [laptop], laptop);
+    await approve(p, phone, laptop); // the phone is in the signed list
+    await user.raw("post", `/keys/${laptop.keyId}/revoke`).expect(200); // the first device is removed
+    await publishKey(p, fresh); // a new key on a device
+    await user.raw("post", "/own-recovery/ask", { key: fresh.keyId }).expect(201); // the phone (in the list) is asked
+    const pending = (await user.raw("get", `/own-recovery/pending?me=${phone.keyId}`)).body;
+    expect(pending.eligible, "the phone may help").toBe(true);
+    expect(pending.requests.map((r: { keyId: string }) => r.keyId)).toContain(fresh.keyId);
+  }, 60000);
+
+  it("a new key made on one device is approved by another device on its own: copies of the old messages, the signed list, and then it can send", async () => {
+    lockPool.push(...(await Promise.all([1, 2, 3].map(generateLock))));
+    const pool = (await seedPool()).slice(0, 2);
+    const [me, friend]: Person[] = pool.map((user) => ({ user, devices: [], revoked: new Set(), retired: [], published: new Set(), lists: [] }));
+    const id = await connect(pool[0], pool[1]);
+    me.devices = [await makeDevice("Laptop"), await makeDevice("New phone")];
+    friend.devices = [await makeDevice("Friend")];
+    const [laptop, phone] = me.devices;
+    for (const [p, d] of [[me, laptop], [friend, friend.devices[0]]] as [Person, Device][]) {
+      await publishKey(p, d);
+      await publishList(p, [d], d);
+    }
+    const url = `/circles/default/friends/${id}/messages`;
+    const send = async (from: Person, wraps: ReturnType<typeof wrap>[]) => (await from.user.raw("post", url, { text: b64(40), enc: { v: 1, iv: b64(12), wraps } }).expect(201)).body.id as string;
+    const old = await send(me, copiesFor(me, friend));
+
+    await publishKey(me, phone); // a new key on another device: it waits
+    expect(mayLock(me, phone, friend), "it cannot send yet").toBe(false);
+
+    // what the laptop does by itself when it sees the key (own-key-prompt.ts, then OwnRecoveryService.allow)
+    const pending = (await me.user.raw("get", `/own-recovery/pending?me=${laptop.keyId}`)).body;
+    expect(pending.keys.map((k: { id: string }) => k.id)).toEqual([phone.keyId]);
+    const todo = (await me.user.raw("get", `/own-recovery/todo?key=${phone.keyId}&part=messages`)).body;
+    expect(todo.items.map((m: { id: string }) => m.id)).toEqual([old]);
+    await me.user.raw("post", "/own-recovery/wraps", { key: phone.keyId, part: "messages", items: todo.items.map((m: { id: string }) => ({ id: m.id, wrap: wrap(me.user.p.uid, phone.keyId) })) }).expect(200);
+    await me.user.raw("post", "/own-recovery/done", { key: phone.keyId }).expect(200);
+    await publishList(me, [laptop, phone], laptop);
+
+    expect((await me.user.raw("get", `/own-recovery/pending?me=${laptop.keyId}`)).body.keys, "nothing waits any more").toEqual([]);
+    expect(isListed(me, phone)).toBe(true);
+    expect(await chainHolds(me.lists), "the friend's check of my chain still holds, no second approval").toBe(true);
+    const feed = (await me.user.feed(id)).body.messages as { id: string; enc: { wraps: { keyId: string }[] } }[];
+    expect(feed.find((m) => m.id === old)!.enc.wraps.map((w) => w.keyId), "the old message opens with the new key").toContain(phone.keyId);
+    expect(mayLock(me, phone, friend), "the new device can send").toBe(true);
+    await send(me, copiesFor(me, friend)); // locked for both of my devices and my friend's
+    const friendFeed = (await friend.user.feed(id)).body.messages as { enc: { wraps: { uid: string; keyId: string }[] } }[];
+    expect(friendFeed).toHaveLength(2);
+    // the friend's copies hold only the friend's own key wraps: my new key changed nothing there
+    for (const m of friendFeed) expect(m.enc.wraps.map((w) => `${w.uid}/${w.keyId}`)).toEqual([`${friend.user.p.uid}/${friend.devices[0].keyId}`]);
   }, 60000);
 });
 

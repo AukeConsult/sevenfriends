@@ -4,7 +4,8 @@ import { FieldValue, Timestamp, getFirestore } from "firebase-admin/firestore";
 import { asyncHandler, requireAuth } from "./auth";
 import { MyKeys, KeyBackup, MAX_KEYS_PER_PERSON, MAX_KEY_LABEL, PublicKeyJwk, PublishedKey, SignKeyJwk, DeviceList, canonicalPublicKey, canonicalSignKey, checkedDeviceList, deviceListHash, fingerprintOf, keyIdOf } from "./models";
 import { openRequest } from "./own-request";
-import { keyBackupDoc, keyCol, keyListCol, ownRequestCol, pushDeviceCol } from "./paths";
+import { KEY_BACKUP_DOC } from "./constants";
+import { keyBackupCol, keyBackupDoc, keyCol, keyListCol, ownRequestCol, pushDeviceCol } from "./paths";
 import { text } from "./validation";
 
 const uidOf = (res: { locals: Record<string, unknown> }) => (res.locals.token as DecodedIdToken).uid;
@@ -45,14 +46,21 @@ export async function recipientKeysOf(uid: string): Promise<PublishedKey[]> {
   return head ? keys.filter((k) => head.devices.some((d) => d.keyId === k.id)) : keys;
 }
 
-/** My published keys, and whether a backup is stored. */
+/**
+ * Is a key of mine `shared`: it has (or needs no) copies of my old messages and files, so it can help the others (own-recovery.ts). `flag` is `ownShared` on the key
+ * (the first key, or one that was approved); a key made before the flag existed counts as shared when it is the oldest one in use (`oldest`).
+ */
+export const isShared = (flag: boolean | undefined, oldest: boolean): boolean => flag === true || (flag === undefined && oldest);
+
+/** My published keys, and whether a backup is stored. A key in use that is not shared yet is marked `waiting`: another device of mine has to approve it. */
 keysRouter.get(
   "/",
   asyncHandler(async (_req, res) => {
     const uid = uidOf(res);
-    const [snap, backup] = await Promise.all([keyCol(uid).get(), keyBackupDoc(uid).get()]);
-    const keys = snap.docs.map((d) => publishedOf(d.id, d.data())).sort((a, b) => (a.createdAt ?? "").localeCompare(b.createdAt ?? ""));
-    res.json({ keys, hasBackup: backup.exists } satisfies MyKeys);
+    const [snap, backups] = await Promise.all([keyCol(uid).get(), keyBackupCol(uid).get()]);
+    const keys = snap.docs.map((d) => ({ ...publishedOf(d.id, d.data()), flag: d.data().ownShared as boolean | undefined })).sort((a, b) => (a.createdAt ?? "").localeCompare(b.createdAt ?? ""));
+    const oldest = keys.find((k) => !k.revoked)?.id;
+    res.json({ keys: keys.map(({ flag, ...k }) => (!k.revoked && !isShared(flag, k.id === oldest) ? { ...k, waiting: true } : k)), hasBackup: !backups.empty, backups: backups.docs.map((d) => d.id).filter((id) => id !== KEY_BACKUP_DOC) } satisfies MyKeys);
   }),
 );
 
@@ -105,7 +113,11 @@ keysRouter.post(
     // `ownShared`: a key that is the first of the person has everything it needs; a key added next to another one waits until a device of the same person allows it (own-recovery.ts)
     const first = !existing.docs.some((d) => d.data().revoked !== true);
     batch.set(ref, already ? { label } : { publicKey: key, ...(signKey ? { signKey } : {}), fingerprint, label, revoked: false, ownShared: first, createdAt: FieldValue.serverTimestamp() }, { merge: true });
-    if (backup) batch.set(keyBackupDoc(uid), { ...backup, savedAt: FieldValue.serverTimestamp() });
+    if (backup) {
+      const saved = { ...backup, savedAt: FieldValue.serverTimestamp() };
+      batch.set(keyBackupDoc(uid, id), saved); // the backup of THIS key: another device's words never replace it
+      batch.set(keyBackupDoc(uid), saved); // and the "current" one, as before (the older restore route reads it)
+    }
     await batch.commit();
     // a key added next to other keys waits for a device of mine to allow it: that is a request, shown on my other devices (docs/design/recovery-own-devices.md)
     if (!already && !first) await openRequest(uid, { id, label, fingerprint });
@@ -169,10 +181,10 @@ keysRouter.post(
   }),
 );
 
-/** What a removed device leaves behind: its open request for approval and its push registrations, so it asks for nothing and is sent nothing any more. */
+/** What a removed device leaves behind: its open request for approval, its rescue backup and its push registrations, so it asks for nothing and is sent nothing any more. */
 async function removeTraces(uid: string, keyId: string): Promise<void> {
   const pushes = await pushDeviceCol(uid).where("keyId", "==", keyId).get();
-  await Promise.all([ownRequestCol(uid).doc(keyId).delete(), ...pushes.docs.map((d) => d.ref.delete())]);
+  await Promise.all([ownRequestCol(uid).doc(keyId).delete(), keyBackupDoc(uid, keyId).delete(), ...pushes.docs.map((d) => d.ref.delete())]);
 }
 
 /** Retire a key of mine (a device that is lost or replaced): it is no longer used for new files. It cannot be turned back on. */
@@ -180,6 +192,10 @@ keysRouter.post(
   "/:id/revoke",
   asyncHandler(async (req, res) => {
     const ref = keyCol(uidOf(res)).doc(req.params.id);
+    if ((req.body ?? {}).by === req.params.id) {
+      res.status(409).json({ error: "A device cannot remove itself. Remove it from another device of yours." }); // `by` = the key of the device that asks
+      return;
+    }
     if (!(await ref.get()).exists) {
       res.status(404).json({ error: "Key not found" });
       return;
@@ -203,6 +219,19 @@ keysRouter.put(
     }
     await keyBackupDoc(uidOf(res)).set({ ...backup, savedAt: FieldValue.serverTimestamp() } satisfies Record<string, unknown>);
     res.json({ ok: true });
+  }),
+);
+
+/** Every backup of mine (one per key, and the older "current"), for restoring: the 24 words open only the one of their own key. */
+keysRouter.get(
+  "/backups",
+  asyncHandler(async (_req, res) => {
+    const snap = await keyBackupCol(uidOf(res)).get();
+    if (snap.empty) {
+      res.status(404).json({ error: "There is no backup" });
+      return;
+    }
+    res.json({ backups: snap.docs.map((d) => ({ v: 1, iv: d.data().iv, data: d.data().data }) satisfies KeyBackup) });
   }),
 );
 

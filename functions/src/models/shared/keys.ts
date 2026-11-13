@@ -29,12 +29,17 @@ export interface PublishedKey {
   publicKey: PublicKeyJwk;
   /** the public signing key of the same device (ECDSA P-256); missing on an older lock (made before signing existed) */
   signKey?: SignKeyJwk;
+  /** a key in use that waits for another device of the person to approve it (it has no copies of the old messages yet, and cannot help the others) */
+  waiting?: boolean;
 }
 
 /** What GET /keys returns: my published keys, and whether a recovery backup of the private key is stored. */
 export interface MyKeys {
   keys: PublishedKey[];
+  /** a recovery backup is stored (for any of my keys) */
   hasBackup: boolean;
+  /** the keys that have a backup of their own: the 24 words of a device are only for that device */
+  backups: string[];
 }
 
 /** What GET .../safebox/keys returns: the keys in use (not retired) of me and of my friend. Files can be locked only when both lists have a key. */

@@ -1,7 +1,7 @@
 import { getAuth } from "firebase-admin/auth";
 import { DocumentReference, Transaction, getFirestore } from "firebase-admin/firestore";
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAIL_COLLECTION } from "./constants";
-import { circleCol, friendRequestCol, keyBackupDoc, keyCol, messageCol, profilePictureDoc, pushDeviceCol, signalCol, userDoc } from "./paths";
+import { circleCol, friendRequestCol, keyBackupCol, keyCol, messageCol, profilePictureDoc, pushDeviceCol, signalCol, userDoc } from "./paths";
 import { leaveGroup } from "./groups";
 import { MediaRef } from "./models";
 import { deleteBox } from "./safebox";
@@ -148,7 +148,7 @@ async function eraseInTransaction(tx: Transaction, uid: string, files: Map<strin
 
   // 7b. my public keys and the backup of my private key
   (await tx.get(keyCol(uid))).docs.forEach((d) => drop(d.ref));
-  drop(keyBackupDoc(uid));
+  (await tx.get(keyBackupCol(uid))).docs.forEach((d) => drop(d.ref)); // one backup per key, and the older "current"
 
   // 8. a picture saved before the media cache existed (the new one is in the cache folder, deleted after the commit)
   drop(profilePictureDoc(uid));

@@ -70,5 +70,7 @@
   "lockingOldThings": "古いメッセージとメモを新しい鍵でロックしています。アプリはそのまま使えます。",
   "someCouldNotBeLocked": "一部の古い項目がこのデバイスで開けませんでした。あなたの別のデバイスでアプリを開いて完了してください。",
   "inSignedList": "この端末は署名付きリストに含まれています({{ count }} 台)。",
-  "notInSignedList": "この端末は署名付きリストに含まれていません({{ count }} 台)。そのため送信できません。"
+  "notInSignedList": "この端末は署名付きリストに含まれていません({{ count }} 台)。そのため送信できません。",
+  "removeFromAnother": "この端末を削除するには、別の端末でSeven Friendsを開いてください。",
+  "notApprovedYet": "未承認"
 }

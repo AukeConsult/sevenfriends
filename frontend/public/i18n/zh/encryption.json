@@ -70,5 +70,7 @@
   "lockingOldThings": "正在用新密钥锁定你较早的消息和笔记。你可以继续使用应用。",
   "someCouldNotBeLocked": "有些较早的项目无法在此设备上打开。请在你的另一台设备上打开应用来完成它们。",
   "inSignedList": "这台设备在你的已签名列表中(共 {{ count }} 台)。",
-  "notInSignedList": "这台设备不在你的已签名列表中(共 {{ count }} 台),因此无法发送。"
+  "notInSignedList": "这台设备不在你的已签名列表中(共 {{ count }} 台),因此无法发送。",
+  "removeFromAnother": "要移除这台设备,请在你的另一台设备上打开 Seven Friends。",
+  "notApprovedYet": "尚未批准"
 }

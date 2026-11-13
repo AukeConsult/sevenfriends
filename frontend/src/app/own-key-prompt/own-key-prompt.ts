@@ -6,8 +6,8 @@ import { tr } from '../core/i18n';
 const ASK_AGAIN_MS = 5 * 60 * 1000;
 
 /**
- * "A new key was added to your account": shown on a device whose key can open everything. One tap on Allow and this device gives the new key its copies
- * (for every friend at once); the new key can then open the old messages and files. "Not now" hides it until the app is opened again.
+ * "A new key was added to your account": shown on a device whose key can open everything. It stays on every page until a device taps Approve (or "Not me" removes the key). Approving gives the new key its copies
+ * (for every friend at once); the new key can then open the old messages and files.
  */
 @Component({
   selector: 'app-own-key-prompt',
@@ -35,7 +35,6 @@ const ASK_AGAIN_MS = 5 * 60 * 1000;
             } @else {
               <button type="button" class="btn btn-primary btn-sm" (click)="allow()">{{ tr('core.allow', 'Approve') }}</button>
               <button type="button" class="btn btn-outline-secondary btn-sm" (click)="confirming.set(true)">{{ tr('core.notMe', 'Not me') }}</button>
-              <button type="button" class="btn btn-outline-secondary btn-sm" (click)="hide()">{{ tr('core.notNow', 'Not now') }}</button>
             }
           </div>
         }
@@ -47,14 +46,13 @@ export class OwnKeyPrompt {
   protected readonly tr = tr;
   private readonly service = inject(OwnRecoveryService);
   private readonly auth = inject(AuthService);
-  protected readonly hidden = signal(false);
   /** "Not me" asks once more before the key is removed (a frame in the card, no pop-up) */
   protected readonly confirming = signal(false);
   protected readonly working = signal(false);
   protected readonly done = signal(0);
   protected readonly message = signal<string | null>(null);
   protected readonly next = () => this.service.waiting()[0] ?? null;
-  protected readonly open = () => !this.hidden() && this.service.waiting().length > 0;
+  protected readonly open = () => this.service.waiting().length > 0; // stays on every page until a device has approved the key (or refused it with "Not me")
 
   constructor() {
     effect((onCleanup) => {
@@ -84,7 +82,6 @@ export class OwnKeyPrompt {
     try {
       const result = await this.service.allow(key, (n) => this.done.set(n));
       this.message.set(result.skipped ? tr('core.couldNotBeOpened', '{{ skipped }} could not be opened on this device, so the new key is not complete yet. Try again on the device where that key lives.', { skipped: result.skipped }) : result.listed ? null : tr('core.notInListYet', 'The new key can open your old messages, but this device could not add it to your signed list, so it cannot send yet.'));
-      if (result.skipped || !result.listed) this.hidden.set(false);
     } catch (err: any) {
       this.message.set(err.message ?? tr('core.thatDidNotWork', 'That did not work. Try again.'));
     } finally {
@@ -105,7 +102,4 @@ export class OwnKeyPrompt {
     }
   }
 
-  protected hide(): void {
-    this.hidden.set(true);
-  }
 }

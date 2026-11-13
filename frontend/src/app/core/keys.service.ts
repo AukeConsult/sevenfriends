@@ -120,14 +120,14 @@ export class KeysService {
       this.fingerprint.set(ready ? fingerprint : null);
       this.thisKeyId.set(ready ? id : null);
       this.elsewhere.set(!ready && mine.keys.some((k) => !k.revoked));
-      this.hasBackup.set(mine.hasBackup);
+      this.hasBackup.set(!!id && (mine.backups?.includes(id) || (!mine.backups?.length && mine.hasBackup))); // the words of THIS device (an account from before there was one per key: its one backup counts)
       this.state.set(ready ? 'ready' : 'none');
       if (ready && mine.keys.some((k) => k.revoked)) void this.reencrypt.run(); // what a retired key could open is locked anew (quiet, at most every 10 minutes)
       if (ready) void keepDeviceKey(); // ask again on every visit: the browser may grant it later, and then it does not clear the key
       if (ready && local && found && found.label !== deviceLabel()) void this.relabel(local.publicKey, found.id);
-      // a person with no key at all gets one without being asked (docs/design/default-key.md); a key that is elsewhere, or one on this device, is never replaced
-      // (also on a second device of a person whose keys were made silently: there is no backup to restore, so this device makes its own key and asks the others to approve it)
-      if (!ready && !local && (!this.elsewhere() || !mine.hasBackup)) {
+      // a device with no key of its own makes one without being asked (docs/design/default-key.md), also when the person has keys on other devices and a rescue code:
+      // the new key waits, and another device of the person approves it by itself. A key on this device (even an unpublished one) is never replaced.
+      if (!ready && !local) {
         if (await this.makeIdentity()) return;
       } else if (ready && local?.signKey) void this.ensureList(local);
     } catch {
@@ -291,9 +291,9 @@ export class KeysService {
   }
 
   /** Retires a key of mine (a lost or replaced device): it is no longer used for new files. */
-  async revoke(id: string, listed = true): Promise<void> {
+  async revoke(id: string, listed = true, by?: string): Promise<void> {
     if (listed) await this.deviceList.publishNext({ removeId: id }); // out of the signed list first, so friends stop locking for it (quiet when this device can not sign)
-    await this.api.request(`/keys/${id}/revoke`, { method: 'POST' });
+    await this.api.request(`/keys/${id}/revoke`, { method: 'POST', body: JSON.stringify({ by }) });
     await this.refresh();
   }
 
@@ -304,13 +304,22 @@ export class KeysService {
   async restore(words: string[]): Promise<RestoreResult> {
     const recoveryKey = await keyOf(words);
     if (!recoveryKey) return 'bad-words';
-    let backup: KeyBackup;
+    let backups: KeyBackup[];
     try {
-      backup = await this.api.request<KeyBackup>('/keys/backup');
+      backups = (await this.api.request<{ backups: KeyBackup[] }>('/keys/backups')).backups;
     } catch {
-      return 'no-backup';
+      try {
+        backups = [await this.api.request<KeyBackup>('/keys/backup')]; // a server that has only the one backup
+      } catch {
+        return 'no-backup';
+      }
     }
-    const pkcs8 = await unlockBackup(backup, recoveryKey);
+    // every device has its own backup: the words open only the backup of their own key
+    let pkcs8: Uint8Array | null = null;
+    for (const backup of backups) {
+      pkcs8 = await unlockBackup(backup, recoveryKey);
+      if (pkcs8) break;
+    }
     recoveryKey.fill(0);
     if (!pkcs8) return 'wrong-code';
     try {

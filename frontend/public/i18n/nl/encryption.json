@@ -70,5 +70,7 @@
   "lockingOldThings": "Je oudere berichten en notities worden met de nieuwe sleutel vergrendeld. Je kunt de app gewoon blijven gebruiken.",
   "someCouldNotBeLocked": "Een paar oudere items konden op dit apparaat niet worden geopend. Open de app op een ander apparaat van jou om ze af te maken.",
   "inSignedList": "Dit apparaat staat in je ondertekende lijst ({{ count }} apparaten).",
-  "notInSignedList": "Dit apparaat staat NIET in je ondertekende lijst ({{ count }} apparaten), dus het kan niet verzenden."
+  "notInSignedList": "Dit apparaat staat NIET in je ondertekende lijst ({{ count }} apparaten), dus het kan niet verzenden.",
+  "removeFromAnother": "Om dit apparaat te verwijderen, open je Seven Friends op een ander apparaat van je.",
+  "notApprovedYet": "Nog niet goedgekeurd"
 }
