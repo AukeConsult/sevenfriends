@@ -1,6 +1,6 @@
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { Component, computed, HostListener, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ActiveCircleService, CIRCLE_CHOICES } from '../core/active-circle.service';
 import { tr } from '../core/i18n';
@@ -20,6 +20,12 @@ const PHONE_WIDTH = 390; // the width the pages are laid out for
 export class ViewWelcome {
   private readonly sanitizer = inject(DomSanitizer);
   protected readonly active = inject(ActiveCircleService);
+  private readonly router = inject(Router);
+
+  /** change the circle and stay on this page (the page is made again in the new circle) */
+  protected choose(id: string): void {
+    this.active.choose(id, this.router.url);
+  }
   protected readonly circles = CIRCLE_CHOICES;
   protected readonly pages: { circle: string; path: string; title: string; note: string; src: SafeResourceUrl }[] = [
     { circle: 'default', path: '/welcome', title: tr('viewWelcome.welcome', 'Welcome'), note: tr('viewWelcome.theNormalFirstPage', 'The normal first page') },
@@ -60,7 +66,7 @@ export class ViewWelcome {
     const measure = () => {
       const doc = frame.contentDocument;
       if (!doc) return;
-      const card = doc.querySelector<HTMLElement>('.sf-yg-card, .sf-wk-card'); // the young and work pages: the card plus the space around it (not the animated parts)
+      const card = doc.querySelector<HTMLElement>('.sf-fr-card'); // the welcome pages: the card plus the space around it (not the animated parts)
       const height = card ? card.offsetHeight + 56 : doc.documentElement.scrollHeight;
       const scale = Math.min(1, box.clientWidth / PHONE_WIDTH);
       frame.style.height = `${height}px`;

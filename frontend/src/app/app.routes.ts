@@ -18,11 +18,8 @@ import { Terms } from './terms/terms';
 import { About } from './about/about';
 import { Login } from './login/login';
 import { Welcome } from './welcome/welcome';
-import { Buddy } from './buddy/buddy';
 import { FriendsWelcome } from './friends-welcome/friends-welcome';
 import { CircleEntry } from './circle-entry/circle-entry';
-import { Work } from './work/work';
-import { Family } from './family/family';
 import { ViewWelcome } from './view-welcome/view-welcome';
 import { LoginEmail } from './login-email/login-email';
 import { LoginLink } from './login-link/login-link';
@@ -112,19 +109,19 @@ export const routes: Routes = [
   { path: 'install/windows', component: InstallDevice, data: { device: 'windows' }, title: 'Install the app – Seven Friends' },
   { path: 'install-app', component: InstallApp, title: 'Install the app – Seven Friends' },
   { path: 'viewwelcome', component: ViewWelcome, title: 'Welcome pages – Seven Friends' },
-  { path: 'family1', component: Family, data: { variant: 1 }, title: 'Seven Family' },
-  { path: 'family2', component: Family, data: { variant: 2 }, title: 'Seven Family' },
-  { path: 'family3', component: Family, data: { variant: 3 }, title: 'Seven Family' },
-  { path: 'work1', component: Work, data: { variant: 1 }, title: 'Seven Work' },
-  { path: 'work2', component: Work, data: { variant: 2 }, title: 'Seven Work' },
-  { path: 'work3', component: Work, data: { variant: 3 }, title: 'Seven Work' },
+  { path: 'family1', component: FriendsWelcome, data: { circle: 'family', variant: 1 }, title: 'Seven Family' },
+  { path: 'family2', component: FriendsWelcome, data: { circle: 'family', variant: 2 }, title: 'Seven Family' },
+  { path: 'family3', component: FriendsWelcome, data: { circle: 'family', variant: 3 }, title: 'Seven Family' },
+  { path: 'work1', component: FriendsWelcome, data: { circle: 'work', variant: 1 }, title: 'Seven Work' },
+  { path: 'work2', component: FriendsWelcome, data: { circle: 'work', variant: 2 }, title: 'Seven Work' },
+  { path: 'work3', component: FriendsWelcome, data: { circle: 'work', variant: 3 }, title: 'Seven Work' },
   // the old addresses of the Buddies welcome pages
   { path: 'young1', redirectTo: 'buddy1' },
   { path: 'young2', redirectTo: 'buddy2' },
   { path: 'young3', redirectTo: 'buddy3' },
-  { path: 'buddy1', component: Buddy, data: { variant: 1 }, title: 'Seven Buddies' },
-  { path: 'buddy2', component: Buddy, data: { variant: 2 }, title: 'Seven Buddies' },
-  { path: 'buddy3', component: Buddy, data: { variant: 3 }, title: 'Seven Buddies' },
+  { path: 'buddy1', component: FriendsWelcome, data: { circle: 'buddies', variant: 1 }, title: 'Seven Buddies' },
+  { path: 'buddy2', component: FriendsWelcome, data: { circle: 'buddies', variant: 2 }, title: 'Seven Buddies' },
+  { path: 'buddy3', component: FriendsWelcome, data: { circle: 'buddies', variant: 3 }, title: 'Seven Buddies' },
   { path: 'buddy', component: CircleEntry, data: { circle: 'buddies' }, title: 'Seven Buddies' },
   { path: 'work', component: CircleEntry, data: { circle: 'work' }, title: 'Seven Work' },
   { path: 'family', component: CircleEntry, data: { circle: 'family' }, title: 'Seven Family' },
@@ -135,6 +132,7 @@ export const routes: Routes = [
   { path: 'friends1', component: FriendsWelcome, data: { variant: 1 }, title: 'Seven Friends' },
   { path: 'friends2', component: FriendsWelcome, data: { variant: 2 }, title: 'Seven Friends' },
   { path: 'friends3', component: FriendsWelcome, data: { variant: 3 }, title: 'Seven Friends' },
+  { path: 'welcome/explain', component: Welcome, data: { explain: true }, title: 'How does it work? – Seven Friends' },
   { path: 'welcome', component: Welcome, title: 'Welcome – Seven Friends' },
   { path: 'login', component: Login, canActivate: [guestGuard], title: 'Sign in – Seven Friends' },
   { path: 'login/email', component: LoginEmail, canActivate: [guestGuard], title: 'Email link – Seven Friends' },

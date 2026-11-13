@@ -7,7 +7,7 @@
     <span [innerHTML]="t('viewWelcome.strongThisAppUses') || '<strong>This app uses the circle</strong>'"></span>
     <div class="sf-vw-seg" role="group">
       @for (c of circles; track c.id) {
-        <button type="button" class="btn btn-sm" [class.btn-primary]="active.id === c.id" [class.btn-outline-primary]="active.id !== c.id" [attr.aria-pressed]="active.id === c.id" (click)="active.choose(c.id)">{{ c.label }}</button>
+        <button type="button" class="btn btn-sm" [class.btn-primary]="active.id === c.id" [class.btn-outline-primary]="active.id !== c.id" [attr.aria-pressed]="active.id === c.id" (click)="choose(c.id)">{{ c.label }}</button>
       }
     </div>
     <label class="sf-vw-all"><input type="checkbox" [checked]="showAll()" (change)="showAll.set($any($event.target).checked)" /> {{ t('viewWelcome.showAllCircles') || 'Show all circles' }}</label>

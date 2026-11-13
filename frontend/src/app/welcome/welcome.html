@@ -1,5 +1,8 @@
 <ng-container *transloco="let t">
 <main class="sf-landing sf-welcome">
+  @if (explainOnly) {
+    <app-page-bar [title]="t('welcome.explainTitle') || 'How does it work?'" [backButton]="true" (backClick)="$event.preventDefault(); back()" />
+  } @else {
   <!-- the top: the logo, the promise, the seven seats, and what that gives you -->
   <div class="sf-hero text-center">
     <div class="sf-logo sf-logo-lg">7</div>
@@ -39,10 +42,12 @@
     }
   </div>
 
+  }
+
   <!-- the app explained in very simple words, on the same page -->
-  <hr class="sf-form-width mx-auto w-100 my-4" />
+  @if (!explainOnly) { <hr class="sf-form-width mx-auto w-100 my-4" /> }
   <div class="sf-form-width mx-auto w-100 vstack gap-4 sf-reading">
-    <h2 class="sf-section-title m-0">{{ t('welcome.explainTitle') || 'How does it work?' }}</h2>
+    @if (!explainOnly) { <h2 class="sf-section-title m-0">{{ t('welcome.explainTitle') || 'How does it work?' }}</h2> }
     @for (b of explain; track b.key) {
       <section class="vstack gap-2">
         <h3 class="sf-section-title m-0 d-flex align-items-center gap-2"><span class="sf-chapter-icon" aria-hidden="true">{{ b.icon }}</span>{{ t('welcome.' + b.key + 'Title') || b.title }}</h3>
@@ -62,5 +67,15 @@
     <p class="sf-hint m-0">{{ t('welcome.contact') || 'Questions? Write to' }} <a href="mailto:hey@blueboot.ai">hey@blueboot.ai</a></p>
     <p class="sf-hint m-0">{{ t('welcome.reserve') || 'We reserve the right to limit the number of users of this app.' }}</p>
   </div>
+  @if (explainOnly) {
+  <div class="sf-form-width mx-auto w-100 vstack gap-3">
+    @if (auth.user()) {
+      <a class="btn btn-primary btn-lg" routerLink="/">{{ t('welcome.continueToYourHome') || 'Continue to your home page' }}</a>
+    }
+    @if (!auth.user()) {
+      <button type="button" class="btn btn-primary btn-lg" (click)="continueInBrowser()">{{ invited() ? (t('welcome.createMyAccount') || 'Create my account') : (t('welcome.continueToTheApp') || 'Continue to the app') }}</button>
+    }
+  </div>
+  }
 </main>
 </ng-container>

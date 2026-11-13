@@ -1,6 +1,8 @@
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Location } from '@angular/common';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { PageBar } from '../page-bar/page-bar';
 import { AuthService } from '../core/auth.service';
 import { ActiveCircleService } from '../core/active-circle.service';
 import { FriendLinkService } from '../core/friend-link.service';
@@ -17,13 +19,16 @@ import { Inviter } from '../inviter/inviter';
  */
 @Component({
   selector: 'app-welcome',
-  imports: [Inviter, RouterLink, SeatDots, WhyTiles, TranslocoDirective],
+  imports: [Inviter, PageBar, RouterLink, SeatDots, WhyTiles, TranslocoDirective],
   templateUrl: './welcome.html',
   providers: [provideTranslocoScope('welcome')],
 })
 export class Welcome {
   private readonly welcome = inject(WelcomeService);
   private readonly router = inject(Router);
+  private readonly location = inject(Location);
+  /** /welcome/explain: page 2, only the explanation (the short Friends pages link to it) */
+  protected readonly explainOnly = inject(ActivatedRoute).snapshot.data['explain'] === true;
   /** signed in: the page is still shown (it is always open at /welcome), with a way on to the home page */
   protected readonly auth = inject(AuthService);
   private readonly friendLinks = inject(FriendLinkService);
@@ -50,7 +55,12 @@ export class Welcome {
     // a link that invites into another circle shows the welcome page of that circle (one of its pages, picked by chance)
     const circle = this.friend()?.circle;
     const pages = circle ? CIRCLE_PAGES[circle] : undefined;
-    if (pages && !this.auth.user()) void this.router.navigateByUrl(pages[Math.floor(Math.random() * pages.length)], { replaceUrl: true });
+    if (pages && !this.auth.user() && !this.explainOnly) void this.router.navigateByUrl(pages[Math.floor(Math.random() * pages.length)], { replaceUrl: true });
+  }
+
+  protected back(): void {
+    if (history.length > 1) this.location.back();
+    else void this.router.navigateByUrl('/friends1');
   }
 
   protected continueInBrowser(): void {
