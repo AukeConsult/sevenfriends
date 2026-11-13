@@ -2,7 +2,8 @@
 <main class="sf-viewer">
   @if (file(); as shown) {
     @if (isVideo(shown)) {
-      <video [src]="shown.url" controls autoplay playsinline [attr.aria-label]="shown.name ?? (t('mediaViewer.video') || 'Video')"></video>
+      <video #player [src]="shown.url" autoplay playsinline preload="metadata" (click)="player.paused ? player.play() : player.pause()" [attr.aria-label]="shown.name ?? (t('mediaViewer.video') || 'Video')"></video>
+      <app-video-bar [video]="player" />
     } @else {
       <div class="sf-viewer-pic" [class.sf-viewer-full]="full()">
         <img [src]="shown.url" [alt]="shown.name ?? (t('mediaViewer.image') || 'Image')" (click)="full.set(!full())" />

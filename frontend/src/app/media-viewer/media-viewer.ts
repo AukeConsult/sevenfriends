@@ -1,3 +1,4 @@
+import { VideoBar } from '../video-bar/video-bar';
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { tr } from '../core/i18n';
 import { Location } from '@angular/common';
@@ -11,7 +12,7 @@ import { MediaService, StoredFile } from '../core/media.service';
  * A tap on an empty place or a swipe left goes back.
  */
 @Component({
-  imports: [TranslocoDirective],
+  imports: [TranslocoDirective, VideoBar],
   selector: 'app-media-viewer',
   templateUrl: './media-viewer.html',
   providers: [provideTranslocoScope('mediaViewer')],

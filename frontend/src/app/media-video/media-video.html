@@ -3,7 +3,7 @@
   <a class="sf-media-open" [routerLink]="['/media', media().ownerId, media().objectId]" [queryParams]="friendId() ? { f: friendId() } : null" (click)="stop($event)" [attr.aria-label]="t('mediaVideo.openTheVideoTo') || 'Open the video in full screen'">⤓</a>
   @if (src(); as url) {
     <!-- no native controls: Safari and iPhone draw them over the picture, Chrome differently. The same bar is shown under the video everywhere. -->
-    <video #video [src]="url" autoplay playsinline [muted]="muted()" (click)="toggle($event)" (play)="playing.set(true)" (pause)="playing.set(false)"
+    <video #video [src]="url" autoplay playsinline preload="metadata" [muted]="muted()" [attr.muted]="muted() ? '' : null" (click)="toggle($event)" (play)="playing.set(true)" (pause)="playing.set(false)"
            (ended)="playing.set(false)" (timeupdate)="tick()" (loadedmetadata)="tick()" (durationchange)="tick()"></video>
     <span class="sf-video-bar" (click)="stop($event)">
       <button type="button" class="sf-video-btn" (click)="toggle($event)" [attr.aria-label]="playing() ? (t('mediaVideo.pause') || 'Pause') : (t('mediaVideo.play') || 'Play')">

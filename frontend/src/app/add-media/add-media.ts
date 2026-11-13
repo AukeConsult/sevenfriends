@@ -1,3 +1,4 @@
+import { VideoBar } from '../video-bar/video-bar';
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { tr } from '../core/i18n';
 import { FriendContext } from '../friend-page/friend-context';
@@ -41,7 +42,7 @@ const textOf = (kind: 'image' | 'video' | 'audio') => ({
  */
 @Component({
   selector: 'app-add-media',
-  imports: [PageBar, Clearable, CaptureButton, TranslocoDirective],
+  imports: [PageBar, Clearable, CaptureButton, TranslocoDirective, VideoBar],
   templateUrl: './add-media.html',
   providers: [provideTranslocoScope('addMedia')],
 })

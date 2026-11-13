@@ -48,6 +48,24 @@ export class VideoBar {
     if (video) video.muted = !video.muted;
   }
 
+  /**
+   * The video fills the screen. An iPhone has no `requestFullscreen` for a video (Safari: `webkitEnterFullscreen`, the system player, which has its own controls);
+   * elsewhere the video gets its native controls while it is full screen, since this bar is not shown then.
+   */
+  protected fullscreen(): void {
+    const video = this.video() as (HTMLVideoElement & { webkitEnterFullscreen?: () => void; webkitRequestFullscreen?: () => void }) | null;
+    if (!video) return;
+    if (video.requestFullscreen) {
+      const back = (): void => {
+        video.controls = document.fullscreenElement === video;
+        if (!video.controls) video.removeEventListener('fullscreenchange', back);
+      };
+      video.addEventListener('fullscreenchange', back);
+      void video.requestFullscreen().catch(() => video.webkitEnterFullscreen?.());
+    } else if (video.webkitRequestFullscreen) video.webkitRequestFullscreen();
+    else video.webkitEnterFullscreen?.();
+  }
+
   protected seek(seconds: string): void {
     const video = this.video();
     if (video) video.currentTime = Number(seconds);

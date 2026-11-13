@@ -46,7 +46,8 @@
       @if (kind === 'image') {
         <img class="sf-attach-preview" [src]="src" [attr.alt]="t('addMedia.theImageYouAre') || 'The image you are about to send'" />
       } @else if (kind === 'video') {
-        <video class="sf-attach-preview" [src]="src" controls playsinline [attr.aria-label]="t('addMedia.theVideoYouAre') || 'The video you are about to send'"></video>
+        <video #player class="sf-attach-preview" [src]="src" playsinline preload="metadata" (click)="player.paused ? player.play() : player.pause()" [attr.aria-label]="t('addMedia.theVideoYouAre') || 'The video you are about to send'"></video>
+        <app-video-bar [video]="player" />
       } @else {
         <audio class="sf-attach-audio" [src]="src" controls controlsList="nodownload noplaybackrate" [attr.aria-label]="t('addMedia.theVoiceMessageYou') || 'The voice message you are about to send'"></audio>
       }

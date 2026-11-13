@@ -147,7 +147,7 @@ export class Camera implements OnInit, OnDestroy {
     this.recorder.onstop = () => {
       clearInterval(this.clock);
       this.recording.set(false);
-      this.recorded.emit({ blob: new Blob(chunks, { type }), durationMs: Math.min(Date.now() - this.startedAt, MAX_VIDEO_SECONDS * 1000) });
+      this.recorded.emit({ blob: new Blob(chunks, { type: type.split(';')[0] }), durationMs: Math.min(Date.now() - this.startedAt, MAX_VIDEO_SECONDS * 1000) });
     };
     this.startedAt = Date.now();
     this.seconds.set(0);

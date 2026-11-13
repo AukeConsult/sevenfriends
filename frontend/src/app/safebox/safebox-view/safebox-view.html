@@ -45,7 +45,7 @@
         }
         @case ('video') {
           @if (item()!.enc) {
-            @if (mediaUrl(); as url) { <video #player class="sf-box-view-image" [src]="url" playsinline (click)="player.paused ? player.play() : player.pause()" (error)="cannotPlay.set(true)"></video> <app-video-bar [video]="player" /> @if (cannotPlay()) { <p class="sf-hint text-center m-0">{{ t('safebox.view.cannotPlayVideo') || 'This browser cannot play this kind of video (a .wmv, for example).' }}</p> } } @else if (!failed()) { <span class="text-secondary">{{ t('safebox.common.opening') || 'Opening…' }}</span> }
+            @if (mediaUrl(); as url) { <video #player class="sf-box-view-image" [src]="url" playsinline preload="metadata" (click)="player.paused ? player.play() : player.pause()" (error)="cannotPlay.set(true)"></video> <app-video-bar [video]="player" /> @if (cannotPlay()) { <p class="sf-hint text-center m-0">{{ t('safebox.view.cannotPlayVideo') || 'This browser cannot play this kind of video (a .wmv, for example).' }}</p> } } @else if (!failed()) { <span class="text-secondary">{{ t('safebox.common.opening') || 'Opening…' }}</span> }
           } @else if (ref(); as media) { <app-media-video [media]="media" /> }
         }
         @case ('audio') {

@@ -42,6 +42,7 @@ async function open(source: Blob): Promise<{ video: HTMLVideoElement; done: () =
   video.src = url;
   await new Promise<void>((resolve, reject) => {
     video.onloadeddata = () => resolve();
+    video.onloadedmetadata = () => resolve(); // Safari on an iPhone ignores preload and sends no data until a seek or a play: the length is enough here
     video.onerror = () => reject(new Error(tr('core.thisVideoCannotBe', 'This video cannot be opened. Try another one.')));
   });
   return { video, done: () => URL.revokeObjectURL(url) };
@@ -155,7 +156,7 @@ async function transcode(video: HTMLVideoElement, seconds: number, onProgress: (
     stream.getTracks().forEach((track) => track.stop());
     void audio.close();
   }
-  return { blob: new Blob(chunks, { type }), width: canvas.width, height: canvas.height, silent: !heard };
+  return { blob: new Blob(chunks, { type: type.split(';')[0] }), width: canvas.width, height: canvas.height, silent: !heard };
 }
 
 const baseName = (name: string) => name.replace(/\.[^./\\]*$/, '') || 'video';
