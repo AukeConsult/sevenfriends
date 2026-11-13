@@ -310,7 +310,8 @@
     "removeThisKeyNotYou": "この鍵を削除しますか？ そのデバイスはあなたのメッセージを開けなくなります。あなたでなければ、ログインも変更してください。",
     "removeIt": "削除する",
     "cancel": "キャンセル",
-    "notMe": "私ではありません"
+    "notMe": "私ではありません",
+    "newKeyDecline": "断る"
   },
   "needsYourHelp": "{{ friendName }}さんがあなたの助けを必要としています",
   "openToUnlockTheir": "アプリを開くと、相手の過去のメッセージのロックをもう一度解除できます。",

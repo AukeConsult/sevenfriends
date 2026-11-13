@@ -310,7 +310,8 @@
     "removeThisKeyNotYou": "Bu anahtar kaldırılsın mı? O zaman o cihaz mesajlarını artık açamaz. Sen değilsen girişini de değiştir.",
     "removeIt": "Kaldır",
     "cancel": "İptal",
-    "notMe": "Ben değilim"
+    "notMe": "Ben değilim",
+    "newKeyDecline": "Reddet"
   },
   "needsYourHelp": "{{ friendName }} yardımına ihtiyaç duyuyor",
   "openToUnlockTheir": "Eski mesajlarının kilidini yeniden açmak için uygulamayı aç.",

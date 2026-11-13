@@ -310,7 +310,8 @@
     "removeThisKeyNotYou": "Diesen Schlüssel entfernen? Dann kann dieses Gerät deine Nachrichten nicht mehr öffnen. Wenn du es nicht warst, ändere auch deine Anmeldung.",
     "removeIt": "Entfernen",
     "cancel": "Abbrechen",
-    "notMe": "Nicht ich"
+    "notMe": "Nicht ich",
+    "newKeyDecline": "Ablehnen"
   },
   "needsYourHelp": "{{ friendName }} braucht deine Hilfe",
   "openToUnlockTheir": "Öffne die App, um die alten Nachrichten wieder zu entsperren.",

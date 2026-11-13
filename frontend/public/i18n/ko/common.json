@@ -310,7 +310,8 @@
     "removeThisKeyNotYou": "이 키를 제거할까요? 그러면 그 기기는 내 메시지를 더 이상 열 수 없어요. 본인이 아니라면 로그인 정보도 바꾸세요.",
     "removeIt": "제거",
     "cancel": "취소",
-    "notMe": "내가 아니에요"
+    "notMe": "내가 아니에요",
+    "newKeyDecline": "거절"
   },
   "needsYourHelp": "{{ friendName }}님이 도움을 필요로 해요",
   "openToUnlockTheir": "앱을 열어 상대의 이전 메시지를 다시 잠금 해제하세요.",

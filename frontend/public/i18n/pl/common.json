@@ -310,7 +310,8 @@
     "removeThisKeyNotYou": "Usunąć ten klucz? Wtedy to urządzenie nie otworzy już Twoich wiadomości. Jeśli to nie Ty, zmień też swoje logowanie.",
     "removeIt": "Usuń",
     "cancel": "Anuluj",
-    "notMe": "To nie ja"
+    "notMe": "To nie ja",
+    "newKeyDecline": "Odrzuć"
   },
   "needsYourHelp": "{{ friendName }} potrzebuje Twojej pomocy",
   "openToUnlockTheir": "Otwórz aplikację, żeby znów odblokować jej stare wiadomości.",

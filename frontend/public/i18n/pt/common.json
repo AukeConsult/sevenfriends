@@ -310,7 +310,8 @@
     "removeThisKeyNotYou": "Remover esta chave? Esse dispositivo deixará de poder abrir as suas mensagens. Se não foi você, altere também o seu início de sessão.",
     "removeIt": "Remover",
     "cancel": "Cancelar",
-    "notMe": "Não sou eu"
+    "notMe": "Não sou eu",
+    "newKeyDecline": "Recusar"
   },
   "needsYourHelp": "{{ friendName }} precisa da sua ajuda",
   "openToUnlockTheir": "Abra o app para desbloquear de novo as mensagens antigas.",

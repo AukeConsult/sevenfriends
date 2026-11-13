@@ -310,7 +310,8 @@
     "removeThisKeyNotYou": "Ta bort den här nyckeln? Då kan den enheten inte längre öppna dina meddelanden. Om det inte var du, byt också din inloggning.",
     "removeIt": "Ta bort den",
     "cancel": "Avbryt",
-    "notMe": "Inte jag"
+    "notMe": "Inte jag",
+    "newKeyDecline": "Avböj"
   },
   "needsYourHelp": "{{ friendName }} behöver din hjälp",
   "openToUnlockTheir": "Öppna appen för att låsa upp deras gamla meddelanden igen.",

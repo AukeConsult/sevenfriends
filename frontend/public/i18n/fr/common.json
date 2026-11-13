@@ -310,7 +310,8 @@
     "removeThisKeyNotYou": "Retirer cette clé ? Cet appareil ne pourra alors plus ouvrir vos messages. Si ce n’était pas vous, changez aussi votre connexion.",
     "removeIt": "La retirer",
     "cancel": "Annuler",
-    "notMe": "Pas moi"
+    "notMe": "Pas moi",
+    "newKeyDecline": "Refuser"
   },
   "needsYourHelp": "{{ friendName }} a besoin de ton aide",
   "openToUnlockTheir": "Ouvre l'app pour déverrouiller de nouveau ses anciens messages.",

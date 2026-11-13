@@ -310,7 +310,8 @@
     "removeThisKeyNotYou": "Fjern denne nøgle? Så kan den enhed ikke længere åbne dine beskeder. Hvis det ikke var dig, så skift også din login.",
     "removeIt": "Fjern den",
     "cancel": "Annuller",
-    "notMe": "Ikke mig"
+    "notMe": "Ikke mig",
+    "newKeyDecline": "Afvis"
   },
   "needsYourHelp": "{{ friendName }} har brug for din hjælp",
   "openToUnlockTheir": "Åbn appen for at låse deres gamle beskeder op igen.",

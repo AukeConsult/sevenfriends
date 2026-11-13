@@ -310,7 +310,8 @@
     "removeThisKeyNotYou": "Hapus kunci ini? Maka perangkat itu tidak bisa lagi membuka pesanmu. Jika itu bukan kamu, ganti juga loginmu.",
     "removeIt": "Hapus",
     "cancel": "Batal",
-    "notMe": "Bukan saya"
+    "notMe": "Bukan saya",
+    "newKeyDecline": "Tolak"
   },
   "needsYourHelp": "{{ friendName }} butuh bantuanmu",
   "openToUnlockTheir": "Buka aplikasi untuk membuka kunci pesan lamanya lagi.",

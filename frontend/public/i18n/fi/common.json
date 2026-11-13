@@ -310,7 +310,8 @@
     "removeThisKeyNotYou": "Poistetaanko tämä avain? Silloin se laite ei voi enää avata viestejäsi. Jos se et ollut sinä, vaihda myös kirjautumisesi.",
     "removeIt": "Poista",
     "cancel": "Peruuta",
-    "notMe": "Ei minä"
+    "notMe": "Ei minä",
+    "newKeyDecline": "Hylkää"
   },
   "needsYourHelp": "{{ friendName }} tarvitsee apuasi",
   "openToUnlockTheir": "Avaa sovellus avataksesi hänen vanhat viestinsä uudelleen.",

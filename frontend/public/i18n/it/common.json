@@ -310,7 +310,8 @@
     "removeThisKeyNotYou": "Rimuovere questa chiave? Poi quel dispositivo non potrà più aprire i tuoi messaggi. Se non eri tu, cambia anche il tuo accesso.",
     "removeIt": "Rimuovila",
     "cancel": "Annulla",
-    "notMe": "Non sono io"
+    "notMe": "Non sono io",
+    "newKeyDecline": "Rifiuta"
   },
   "needsYourHelp": "{{ friendName }} ha bisogno del tuo aiuto",
   "openToUnlockTheir": "Apri l'app per sbloccare di nuovo i suoi vecchi messaggi.",

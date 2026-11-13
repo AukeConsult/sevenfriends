@@ -310,7 +310,8 @@
     "removeThisKeyNotYou": "Remove this key? Then that device can no longer open your messages. If it was not you, also change your login.",
     "removeIt": "Remove it",
     "cancel": "Cancel",
-    "notMe": "Not me"
+    "notMe": "Not me",
+    "newKeyDecline": "Decline"
   },
   "needsYourHelp": "{{ friendName }} needs your help",
   "openToUnlockTheir": "Open the app to unlock their old messages again.",

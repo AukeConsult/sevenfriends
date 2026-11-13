@@ -310,7 +310,8 @@
     "removeThisKeyNotYou": "移除此密钥？这样那台设备就无法再打开你的消息。如果不是你本人，请同时更改你的登录方式。",
     "removeIt": "移除",
     "cancel": "取消",
-    "notMe": "不是我"
+    "notMe": "不是我",
+    "newKeyDecline": "拒绝"
   },
   "needsYourHelp": "{{ friendName }} 需要你的帮助",
   "openToUnlockTheir": "打开应用，重新解锁对方的旧消息。",
