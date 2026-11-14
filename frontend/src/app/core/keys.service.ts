@@ -138,18 +138,20 @@ export class KeysService {
     }
   }
 
-  private readonly identityTried = new Set<string>();
+  /** when the silent key was last tried for each person: a try that failed (the connection, a cut-off sign-up) is made again by the next look, but not more often than every 30 seconds */
+  private readonly identityTriedAt = new Map<string, number>();
   private readonly listChecked = new Set<string>();
 
   /**
    * The silent first sign-in: makes the lock key and the signing key on this device (neither can be read out), publishes them, and publishes
-   * version 1 of the device list. Nothing is shown. Tried once per person per start of the app; if it fails the person simply has no key
-   * (as before) and Settings → Privacy lock still offers one. Returns true when the key is in place.
+   * version 1 of the device list. Nothing is shown. If it fails (a bad connection right after the sign-up, say) the next look at the key tries again, at most every 30 seconds;
+   * until it works the person has no key and Settings → Privacy lock still offers one. Returns true when the key is in place.
    */
   private async makeIdentity(): Promise<boolean> {
     const uid = this.uid;
-    if (this.identityTried.has(uid)) return false;
-    this.identityTried.add(uid);
+    const last = this.identityTriedAt.get(uid);
+    if (last !== undefined && Date.now() - last < 30000) return false;
+    this.identityTriedAt.set(uid, Date.now());
     const key = await generateIdentityKey().catch(() => null);
     const publicKey = key ? canonicalPublicKey(key.publicKey) : null;
     const signKey = key ? canonicalSignKey(key.signKey?.publicKey) : null;
