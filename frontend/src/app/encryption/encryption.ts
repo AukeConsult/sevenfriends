@@ -185,7 +185,7 @@ export class Encryption {
       await this.keys.revoke(key.id, true, this.keys.thisKeyId() ?? undefined); // a device never removes itself: the server refuses it too
       this.removing.set(null);
     } catch (err: any) {
-      this.problem.set(err?.message || tr('encryption.theKeyCouldNot', 'The key could not be removed.'));
+      this.problem.set(err?.message || tr('encryption.theKeyCouldNot', 'The lock could not be removed.'));
     } finally {
       this.busy.set(false);
     }
@@ -218,7 +218,7 @@ export class Encryption {
       if (result === 'ok') this.typed.set('');
       else this.restoreText.set(MESSAGES[result]);
     } catch (err: any) {
-      this.restoreText.set(err?.message || tr('encryption.theKeyCouldNot2', 'The key could not be restored.'));
+      this.restoreText.set(err?.message || tr('encryption.theKeyCouldNot2', 'The lock could not be restored.'));
     } finally {
       this.busy.set(false);
     }
@@ -226,8 +226,8 @@ export class Encryption {
 }
 
 const MESSAGES: Record<Exclude<RestoreResult, 'ok'>, string> = {
-  get 'bad-words'() { return tr('core.thatIsNotA', 'That is not a valid recovery code. It is 24 words; check each word, and that none is missing.'); },
-  get 'no-backup'() { return tr('core.thereIsNoBackup', 'There is no backup of a key on your account. Make a new key instead.'); },
-  get 'wrong-code'() { return tr('core.thoseWordsDoNot', 'Those words do not open the backup. Check them against your copy.'); },
-  get 'no-key'() { return tr('core.theBackupOpenedBut', 'The backup opened, but the key it belongs to has been removed. Make a new key instead.'); },
+  get 'bad-words'() { return tr('core.thatIsNotA', 'That is not a valid set of rescue words. It is 24 words; check each word, and that none is missing.'); },
+  get 'no-backup'() { return tr('core.thereIsNoBackup', 'There are no rescue words saved on your account. Make a new lock instead.'); },
+  get 'wrong-code'() { return tr('core.thoseWordsDoNot', 'Those words do not open your lock. Check them against your copy.'); },
+  get 'no-key'() { return tr('core.theBackupOpenedBut', 'The rescue words worked, but the lock they belong to has been removed. Make a new lock instead.'); },
 };

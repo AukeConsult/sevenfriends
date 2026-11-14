@@ -1,9 +1,9 @@
 <ng-container *transloco="let t">
 @if (words(); as list) {
   <div class="alert alert-warning m-0" role="alert">
-    <span [innerHTML]="t('keySetup.strongSaveTheseWords') || '<strong>Write these 24 secret words on paper and keep them safe.</strong> If you lose this phone or computer, they give you your files back. They are shown only once, and nobody can find them for you, not even us.'"></span>
+    <span [innerHTML]="t('keySetup.strongSaveTheseWords') || '<strong>Write these 24 rescue words on paper and keep them safe.</strong> If you lose this phone or computer, they bring your old messages and files back. They are shown only once, and nobody can find them for you, not even us.'"></span>
   </div>
-  <ol class="sf-recovery-words" [attr.aria-label]="t('keySetup.yourRecoveryWords') || 'Your 24 secret words'">
+  <ol class="sf-recovery-words" [attr.aria-label]="t('keySetup.yourRecoveryWords') || 'Your 24 rescue words'">
     @for (word of list; track $index) { <li>{{ word }}</li> }
   </ol>
   <div class="vstack gap-2 align-items-center text-center">
@@ -11,11 +11,11 @@
       <button type="button" class="btn btn-outline-primary btn-sm" (click)="copyWords()">{{ copied() ? (t('keySetup.copied') || 'Copied') : (t('keySetup.copyTheWords') || 'Copy the words') }}</button>
       <button type="button" class="btn btn-outline-primary btn-sm" (click)="saveFile()">{{ t('keySetup.saveAsFile') || 'Save as a file' }}</button>
     </div>
-    <span class="small text-secondary">{{ copied() ? (t('keySetup.nowPasteThemInto') || 'Now paste them into a file and keep it somewhere safe.') : (t('keySetup.copyThemAndStore') || 'Copy them and store them in a file on your computer, somewhere safe.') }}</span>
+    <span class="small text-secondary">{{ copied() ? (t('keySetup.nowPasteThemInto') || 'Now paste them into a file and keep it somewhere safe.') : (t('keySetup.copyThemAndStore') || 'Paper is safest. You can also copy them or save them as a file.') }}</span>
   </div>
   <div class="card"><div class="card-body vstack gap-2">
-    <span [innerHTML]="t('keySetup.strongCheckThatYou') || '<strong>Check that you saved them</strong>'"></span>
-    <span class="small text-secondary">{{ t('keySetup.typeTheseWordsFrom') || 'Type these words from your copy, to show they are saved:' }}</span>
+    <span [innerHTML]="t('keySetup.strongCheckThatYou') || '<strong>Check that you wrote them down</strong>'"></span>
+    <span class="small text-secondary">{{ t('keySetup.typeTheseWordsFrom') || 'Type this word from your copy:' }}</span>
     @for (position of quiz(); track position; let i = $index) {
       <label class="d-grid gap-1"><span>{{ t('keySetup.wordPosition', { position: position }) || 'Word ' + position }}</span>
         <input type="text" class="form-control" autocomplete="off" autocapitalize="none" spellcheck="false" [value]="answers()[i]" (input)="setAnswer(i, $any($event.target).value)" />
@@ -23,33 +23,33 @@
     }
   </div></div>
   <div class="vstack gap-2 align-items-center text-center">
-    <span class="small text-secondary">{{ t('keySetup.yourKeyIsSaved') || 'Your key is saved on this device and checked when you press Save.' }}</span>
+    <span class="small text-secondary">{{ t('keySetup.yourKeyIsSaved') || 'Your rescue words are saved when you press the button.' }}</span>
     <div class="d-flex flex-wrap gap-3 justify-content-center">
-      <button type="button" class="btn btn-light" [disabled]="busy()" (click)="cancel()">{{ t('keySetup.cancel') || 'Cancel' }}</button>
-      <button type="button" class="btn btn-primary" [disabled]="!proved() || busy()" (click)="done()">{{ busy() ? (t('keySetup.savingAndChecking') || 'Saving and checking…') : (t('keySetup.saveMyKey') || 'Save my key') }}</button>
+      <button type="button" class="btn btn-light" [disabled]="busy()" (click)="cancel()">{{ t('keySetup.cancel') || 'Not now' }}</button>
+      <button type="button" class="btn btn-primary" [disabled]="!proved() || busy()" (click)="done()">{{ busy() ? (t('keySetup.savingAndChecking') || 'Moving your history…') : (t('keySetup.saveMyKey') || 'I saved the words') }}</button>
     </div>
-    <span class="small text-secondary">{{ t('keySetup.cancelMakesNoKey') || 'Cancel makes no key. You can make one later under Settings → Privacy lock.' }}</span>
+    <span class="small text-secondary">{{ t('keySetup.cancelMakesNoKey') || 'Not now changes nothing. You can save your rescue words later under Settings → Privacy lock.' }}</span>
   </div>
   @if (problem(); as text) { <div class="alert alert-warning m-0" role="alert">{{ text }}</div> }
 } @else {
   @switch (keys.state()) {
     @case ('unsupported') {
-      <div class="alert alert-info m-0" role="status">{{ t('keySetup.thisBrowserCannotKeep') || 'This browser cannot keep an encryption key (it needs a secure connection, and storage that is not blocked). Use another browser, or the app.' }}</div>
+      <div class="alert alert-info m-0" role="status">{{ t('keySetup.thisBrowserCannotKeep') || 'This browser cannot turn on privacy lock (it needs a secure connection, and storage that is not blocked). Use another browser, or the app.' }}</div>
     }
     @case ('ready') {
-      <div class="alert alert-success m-0" role="status">{{ t('keySetup.yourKeyIsReady') || '✓ Your key is ready on this device.' }}</div>
-      <details class="sf-expand sf-expand-quiet">
-        <summary>{{ t('keySetup.yourKeyCode') || 'Your key code' }}</summary>
-        <p class="small text-secondary mt-2">{{ t('keySetup.yourFriendsSeeThis') || 'Your friends see this code in your shared safebox, under Advanced. They can compare it with this one, in person or by phone, to be sure it is really your key.' }}</p>
+      <div class="alert alert-success m-0" role="status">{{ t('keySetup.yourKeyIsReady') || '✓ Privacy lock is on for this device.' }}</div>
+      <details class="sf-expand sf-expand-quiet sf-expand-pill">
+        <summary>{{ t('keySetup.yourKeyCode') || 'Your check code' }}</summary>
+        <p class="small text-secondary mt-2">{{ t('keySetup.yourFriendsSeeThis') || 'Your friend can compare this code with you, in person or by phone, to be sure it is really you.' }}</p>
         <pre class="sf-fingerprint m-0">{{ fingerprintText() }}</pre>
       </details>
     }
     @case ('checking') { <p class="text-secondary m-0">{{ t('keySetup.lookingAtThisDevice') || 'Looking at this device…' }}</p> }
     @default {
       <p class="small text-secondary m-0">
-        {{ t('keySetup.filesInYourSafebox') || 'Files in your safebox will be locked with a key that stays on your device, so that only you and your friend can read them, not even the service. This makes the key and gives you 24 recovery words to keep.' }}
+        {{ t('keySetup.filesInYourSafebox') || 'Your files and messages are locked in our storage with a lock that stays on your devices. Next you get 24 rescue words to keep.' }}
       </p>
-      <div class="d-flex justify-content-center"><button type="button" class="btn btn-primary" [disabled]="busy()" (click)="makeKey()">{{ busy() ? (t('keySetup.makingYourKey') || 'Making your key…') : (t('keySetup.makeMyKey') || 'Make my key') }}</button></div>
+      <div class="d-flex justify-content-center"><button type="button" class="btn btn-primary" [disabled]="busy()" (click)="makeKey()">{{ busy() ? (t('keySetup.makingYourKey') || 'Getting ready…') : (t('keySetup.makeMyKey') || 'Turn on privacy lock') }}</button></div>
     }
   }
   @if (problem(); as text) { <div class="alert alert-warning m-0" role="alert">{{ text }}</div> }
