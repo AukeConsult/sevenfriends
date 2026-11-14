@@ -16,7 +16,9 @@
   "enterSendsTheMessage": "Enter wysyła wiadomość",
   "shiftEnterMakesA": "Shift + Enter robi nową linię. Wyłączone: Enter robi nową linię, a Ctrl + Enter wysyła.",
   "useASleepList": "Używaj listy uśpionych",
-  "offAOneYou": "Wyłączone: usunięta osoba ({{ one }}) jest kasowana, a wiersz listy uśpionych jest ukryty, gdy jest pusty.",
+  "offAOneYou": "Wył.: nikt nowy nie trafia na listę uśpionych. Ci, którzy już na niej są, zostają tam po cichu, aż ich obudzisz lub usuniesz.",
+  "acceptAutomatically": "Automatycznie przyjmuj zaproszenia do znajomych",
+  "acceptAutomaticallyHint": "Wył.: każde zaproszenie potwierdzasz sam. Wł.: osoba ze zweryfikowanym e-mailem lub telefonem od razu zostaje twoim przyjacielem, bez pytania cię. Inni nadal czekają na ciebie. Gdy wszystkie miejsca są zajęte, trafiają na listę uśpionych albo czekają na miejsce, jeśli jej nie używasz.",
   "tellWhenIAdd": "Powiadom ich, gdy dodam coś do sejfu",
   "aMessageTellsYour": "Wiadomość informuje twojego znajomego lub grupę, że jest notatka, element lub plik, z linkiem do otwarcia. Wyłączone: nic nie jest wysyłane; dzwonek w elemencie nadal może powiadomić."
 }

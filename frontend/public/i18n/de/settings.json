@@ -16,7 +16,9 @@
   "enterSendsTheMessage": "Enter sendet die Nachricht",
   "shiftEnterMakesA": "Umschalt + Enter macht eine neue Zeile. Aus: Enter macht eine neue Zeile und Strg + Enter sendet.",
   "useASleepList": "Schlafliste verwenden",
-  "offAOneYou": "Aus: Wer als {{ one }} entfernt wird, wird gelöscht, und die Zeile der Schlafliste ist ausgeblendet, solange sie leer ist.",
+  "offAOneYou": "Aus: niemand Neues kommt auf die Schlafliste. Wer schon darauf ist, bleibt dort, still, bis du ihn weckst oder löschst.",
+  "acceptAutomatically": "Freundschaftsanfragen automatisch annehmen",
+  "acceptAutomaticallyHint": "Aus: du bestätigst jede Anfrage selbst. An: wer eine bestätigte E-Mail oder Telefonnummer hat, wird sofort dein Freund, ohne dass du gefragt wirst. Andere warten weiter auf dich. Sind alle Plätze belegt, kommen sie auf die Schlafliste oder warten auf einen Platz, wenn du keine Schlafliste nutzt.",
   "tellWhenIAdd": "Ihnen mitteilen, wenn ich etwas im Tresor hinzufüge",
   "aMessageTellsYour": "Eine Nachricht teilt deinem Freund oder deiner Gruppe mit, dass eine Notiz, ein Eintrag oder eine Datei da ist, mit einem Link zum Öffnen. Aus: Es wird nichts gesendet; die Glocke in einem Eintrag kann es trotzdem mitteilen."
 }

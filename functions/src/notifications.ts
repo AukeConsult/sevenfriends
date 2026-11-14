@@ -2,7 +2,7 @@ import { Router } from "express";
 import { DecodedIdToken } from "firebase-admin/auth";
 import { asyncHandler, requireAuth } from "./auth";
 import { activeCircleOf } from "./circle-profile";
-import { listPendingRequests } from "./friend-requests";
+import { autoAcceptRequests, listPendingRequests } from "./friend-requests";
 import { syncIncomingInvites } from "./invites";
 import { listUnreadMessages } from "./messages";
 import { CheckResult } from "./models";
@@ -27,6 +27,7 @@ export async function runCheck(token: DecodedIdToken, circleId: string): Promise
   try {
     await syncIncomingInvites(token);
     await placeWaitingRequests(token.uid, circleId); // free seat -> pending friend in my circle, else it keeps waiting
+    await autoAcceptRequests(token, circleId); // "accept automatically" (off by default): requests from verified people are confirmed here
   } catch (err) {
     handled = false;
     console.error("Invite check failed", err); // still return what we have

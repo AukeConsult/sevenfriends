@@ -16,7 +16,9 @@
   "enterSendsTheMessage": "Enter mengirim pesan",
   "shiftEnterMakesA": "Shift + Enter membuat baris baru. Mati: Enter membuat baris baru dan Ctrl + Enter mengirim.",
   "useASleepList": "Pakai daftar tidur",
-  "offAOneYou": "Mati: {{ one }} yang kamu keluarkan akan dihapus, dan baris daftar tidur disembunyikan selama kosong.",
+  "offAOneYou": "Mati: tidak ada yang baru ditambahkan ke daftar tidur. Yang sudah ada di dalamnya tetap di sana, diam, sampai kamu membangunkan atau menghapusnya.",
+  "acceptAutomatically": "Terima permintaan pertemanan otomatis",
+  "acceptAutomaticallyHint": "Mati: kamu mengonfirmasi tiap permintaan sendiri. Hidup: orang dengan email atau telepon terverifikasi langsung jadi temanmu, tanpa bertanya. Yang lain tetap menunggumu. Jika semua kursi penuh, mereka masuk daftar tidur, atau menunggu kursi jika kamu tidak memakai daftar tidur.",
   "tellWhenIAdd": "Beri tahu mereka saat saya menambahkan sesuatu ke brankas",
   "aMessageTellsYour": "Sebuah pesan memberi tahu teman atau grup Anda bahwa ada catatan, item, atau berkas, dengan tautan untuk membukanya. Mati: tidak ada yang dikirim; lonceng di item tetap dapat memberi tahu."
 }

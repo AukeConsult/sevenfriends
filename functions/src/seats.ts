@@ -1,7 +1,7 @@
 import { CollectionReference, DocumentData, FieldValue, QueryDocumentSnapshot, Timestamp, Transaction, getFirestore } from "firebase-admin/firestore";
 import { ensureCircle } from "./circles";
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAX_FRIENDS, circleIdOf } from "./constants";
-import { EnsureSeatArgs } from "./models";
+import { EnsureSeatArgs, settingsOf } from "./models";
 import { circleCol, friendRequestCol, userDoc } from "./paths";
 import { signalRefsOf } from "./signals";
 
@@ -43,6 +43,12 @@ function pointsAt(entry: DocumentData, requester: DocumentData): boolean {
   if (email && entry.email === email) return true;
   if (requester.phoneKey && entry.phoneKey === requester.phoneKey) return true;
   return false;
+}
+
+/** Does this person use a sleep list in the circle this friend list belongs to? On unless they switched it off. */
+export async function sleepListOn(friends: CollectionReference): Promise<boolean> {
+  const circle = await friends.parent?.get();
+  return settingsOf(circle?.data()?.settings).sleepList !== false;
 }
 
 /** The seat number (1..MAX_FRIENDS) of an entry, or null when it has none (asleep, or not given yet). */
@@ -93,14 +99,15 @@ const millis = (v: unknown) => (v instanceof Timestamp ? v.toMillis() : 0);
  *  - my entry with that id already exists  -> keep it
  *  - I had added them myself (other id)     -> merge into one connection with the shared id
  *  - otherwise a new entry, if there is room
- * `confirmed` = also mark the entry as confirmed. When every seat is taken, a confirmed friend is still added, on the sleep list (no seat): "asleep".
+ * `confirmed` = also mark the entry as confirmed. When every seat is taken, a confirmed friend is still added, on the sleep list (no seat): "asleep",
+ * but only when I use a sleep list (`sleepListOn`): with it switched off nobody new is put on it, and the answer is "full".
  * Without `confirmed`, nothing is written when it returns "full".
  */
 export function ensureSeat(
   tx: Transaction,
   o: EnsureSeatArgs,
 ): "ok" | "full" | "asleep" {
-  const { myFriends, requestId, request, mySnap, requester, confirmed } = o;
+  const { myFriends, requestId, request, mySnap, requester, confirmed, sleepListOn } = o;
   const confirmedFields = confirmed ? { status: "confirmed", confirmedAt: FieldValue.serverTimestamp() } : {};
 
   const existing = mySnap.docs.find((d) => d.id === requestId);
@@ -112,6 +119,7 @@ export function ensureSeat(
   const mine = mySnap.docs.find((d) => pointsAt(d.data(), { ...requester, uid: request.fromUid }));
   if (mine) {
     const mineSeat = seatOf(mine.data()) ?? freeSeat(mySnap.docs.filter((d) => d.id !== mine.id));
+    if (Boolean(confirmed) && mineSeat === null && !sleepListOn) return "full"; // no seat left and no sleep list: nothing is written
     const sleeps = Boolean(confirmed) && mineSeat === null; // no seat left for a friend who is confirmed now: the sleep list
     tx.set(myFriends.doc(requestId), {
       ...mine.data(),
@@ -135,7 +143,7 @@ export function ensureSeat(
   }
 
   const full = mySnap.docs.filter((d) => d.data().asleep !== true).length >= MAX_FRIENDS; // friends on the sleep list have no seat
-  if (full && !confirmed) return "full";
+  if (full && (!confirmed || !sleepListOn)) return "full";
 
   tx.set(myFriends.doc(requestId), {
     ...entryFromRequester(requester, request),
@@ -167,6 +175,7 @@ export async function placeWaitingRequests(uid: string, circleId: string = DEFAU
   const myFriends = circleCol(uid).doc(circleId).collection(FRIENDS_SUBCOLLECTION);
 
   await assignMissingSeats(myFriends); // friends from before the seat numbers get theirs first
+  const sleepOn = await sleepListOn(myFriends);
   const snap = await friendRequestCol(uid).where("status", "==", "pending").select("seatFriendId", "createdAt", "circleId").get();
   const waiting = snap.docs
     .filter((d) => !d.data().seatFriendId && circleIdOf(d.data()) === circleId)
@@ -196,6 +205,7 @@ export async function placeWaitingRequests(uid: string, circleId: string = DEFAU
         mySnap,
         requester: requesterSnap.data() ?? {},
         confirmed: false,
+        sleepListOn: sleepOn,
       });
 
       if (seat === "full") {

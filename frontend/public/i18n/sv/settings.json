@@ -16,7 +16,9 @@
   "enterSendsTheMessage": "Enter skickar meddelandet",
   "shiftEnterMakesA": "Shift + Enter ger en ny rad. Av: Enter ger en ny rad och Ctrl + Enter skickar.",
   "useASleepList": "Använd en vilolista",
-  "offAOneYou": "Av: en {{ one }} du tar bort raderas, och raden för vilolistan döljs medan den är tom.",
+  "offAOneYou": "Av: ingen ny läggs till på vilolistan. De som redan finns på den stannar där, tysta, tills du väcker eller tar bort dem.",
+  "acceptAutomatically": "Godkänn vänförfrågningar automatiskt",
+  "acceptAutomaticallyHint": "Av: du bekräftar varje förfrågan själv. På: den som har en verifierad e-post eller telefon blir din vän direkt, utan att fråga dig. Andra väntar fortfarande på dig. När alla platser är upptagna hamnar de på vilolistan, eller väntar på en plats om du inte använder någon vilolista.",
   "tellWhenIAdd": "Berätta för dem när jag lägger till något i kassaskåpet",
   "aMessageTellsYour": "Ett meddelande berättar för din vän eller grupp att en anteckning, sak eller fil finns, med en länk för att öppna den. Av: Inget skickas; klockan i en sak kan fortfarande berätta det."
 }

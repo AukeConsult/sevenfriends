@@ -16,7 +16,9 @@
   "enterSendsTheMessage": "Enter sender beskeden",
   "shiftEnterMakesA": "Shift + Enter giver en ny linje. Slået fra: Enter giver en ny linje, og Ctrl + Enter sender.",
   "useASleepList": "Brug en soveliste",
-  "offAOneYou": "Fra: når du fjerner {{ one }}, bliver vedkommende slettet, og rækken med sovelisten er skjult, mens den er tom.",
+  "offAOneYou": "Fra: ingen nye tilføjes til sovelisten. Dem, der allerede er på den, bliver der, stille, indtil du vækker eller sletter dem.",
+  "acceptAutomatically": "Accepter venneanmodninger automatisk",
+  "acceptAutomaticallyHint": "Fra: du bekræfter hver anmodning selv. Til: en person med en bekræftet e-mail eller telefon bliver din ven med det samme, uden at spørge dig. Andre venter stadig på dig. Når alle pladser er optaget, kommer de på sovelisten, eller venter på en plads, hvis du ikke bruger en sovelist.",
   "tellWhenIAdd": "Fortæl dem det, når jeg tilføjer noget til pengeskabet",
   "aMessageTellsYour": "En besked fortæller din ven eller gruppe, at en note, en ting eller en fil er der, med et link til at åbne den. Fra: Der sendes intet; klokken i en ting kan stadig fortælle det."
 }

@@ -16,7 +16,9 @@
   "enterSendsTheMessage": "Entrée envoie le message",
   "shiftEnterMakesA": "Maj + Entrée fait un retour à la ligne. Désactivé : Entrée fait un retour à la ligne et Ctrl + Entrée envoie.",
   "useASleepList": "Utiliser une liste de pause",
-  "offAOneYou": "Désactivé : un {{ one }} que tu retires est supprimé, et la ligne de la liste de pause est masquée tant qu'elle est vide.",
+  "offAOneYou": "Désactivé : personne de nouveau n'est ajouté à la liste de pause. Ceux qui y sont déjà y restent, en silence, jusqu'à ce que tu les réveilles ou les supprimes.",
+  "acceptAutomatically": "Accepter les demandes d'ami automatiquement",
+  "acceptAutomaticallyHint": "Désactivé : tu confirmes chaque demande toi-même. Activé : quelqu'un avec un e-mail ou un téléphone vérifié devient ton ami tout de suite, sans te demander. Les autres attendent toujours ton accord. Quand toutes les places sont prises, ils vont sur la liste de pause, ou attendent une place si tu n'en utilises pas.",
   "tellWhenIAdd": "Les prévenir quand j'ajoute quelque chose au coffre",
   "aMessageTellsYour": "Un message indique à votre ami ou groupe qu'une note, un élément ou un fichier est là, avec un lien pour l'ouvrir. Désactivé : rien n'est envoyé ; la cloche dans un élément peut quand même les prévenir."
 }

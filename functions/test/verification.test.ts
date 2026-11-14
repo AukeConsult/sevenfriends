@@ -149,3 +149,53 @@ describe("anybody can add a friend, verified or not", () => {
     await adder({ emailVerified: false }).addRaw(person(22), "phone").expect(201);
   });
 });
+
+describe("accepting friend requests automatically (off by default; only for people with a verified email or phone)", () => {
+  const on = (user: User) => user.raw("put", "/circles/default/settings", { autoAccept: true }).expect(200);
+
+  it("off: a request waits for me, whoever it is from", async () => {
+    const entry = await u(0).add(person(1), "email");
+    const mine = (await u(1).check()).requests;
+    expect(mine.map((r) => r.id)).toEqual([entry.id]);
+    expect((await u(1).friends()).find((f) => f.id === entry.id)?.status).not.toBe("confirmed");
+  });
+
+  it("on: a person with a verified email or phone becomes a friend at once, and the sender sees it confirmed", async () => {
+    await on(u(1));
+    const entry = await u(0).add(person(1), "email");
+    const answer = await u(1).check();
+    expect(answer.requests).toEqual([]); // nothing left to confirm
+    expect((await u(1).friends()).find((f) => f.id === entry.id)).toMatchObject({ status: "confirmed", asleep: false });
+    expect((await u(0).friends()).find((f) => f.id === entry.id)?.status).toBe("confirmed");
+    await assertConsistent();
+  });
+
+  it("on: a person with nothing verified still waits for me", async () => {
+    await on(u(1));
+    const stranger = await loginAs(10, { emailVerified: false, phoneVerified: false });
+    const entry = await stranger.add(person(1), "email");
+    const answer = await u(1).check();
+    expect(answer.requests.map((r) => r.id)).toEqual([entry.id]);
+    expect((await u(1).friends()).find((f) => f.id === entry.id)?.status).not.toBe("confirmed");
+  });
+
+  it("on with every seat taken: the friend goes on the sleep list, or waits when there is no sleep list", async () => {
+    const { fillCircle } = await import("./helpers");
+    await on(u(1));
+    await fillCircle(u(1));
+    const entry = await u(0).add(person(1), "email");
+    await u(1).check();
+    expect((await u(1).friends()).find((f) => f.id === entry.id)).toMatchObject({ status: "confirmed", asleep: true });
+  });
+
+  it("on with every seat taken and no sleep list: the request waits for a free seat", async () => {
+    const { fillCircle } = await import("./helpers");
+    await on(u(1));
+    await u(1).raw("put", "/circles/default/settings", { sleepList: false }).expect(200);
+    await fillCircle(u(1));
+    const entry = await u(0).add(person(1), "email");
+    const answer = await u(1).check();
+    expect(answer.requests.map((r) => r.id)).toEqual([entry.id]);
+    expect((await u(1).friends()).find((f) => f.id === entry.id)?.status).not.toBe("confirmed");
+  });
+});

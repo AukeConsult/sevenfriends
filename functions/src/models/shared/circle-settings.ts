@@ -25,9 +25,11 @@ export interface CircleSettings {
   feedIcons: boolean;
   /** when I add something to the safebox, a message tells my friend or group */
   boxTellNew: boolean;
+  /** a friend request from a person with a verified email or phone is confirmed at once (default off) */
+  autoAccept: boolean;
 }
 
-const KEYS: readonly (keyof CircleSettings)[] = ["theme", "textSize", "chatOrder", "enterSends", "sleepList", "feedIcons", "boxTellNew"];
+const KEYS: readonly (keyof CircleSettings)[] = ["theme", "textSize", "chatOrder", "enterSends", "sleepList", "feedIcons", "boxTellNew", "autoAccept"];
 
 /** One value checked; undefined = not valid. */
 function valid(key: keyof CircleSettings, value: unknown): CircleSettings[keyof CircleSettings] | undefined {
@@ -38,7 +40,8 @@ function valid(key: keyof CircleSettings, value: unknown): CircleSettings[keyof 
     case "enterSends":
     case "sleepList":
     case "feedIcons":
-    case "boxTellNew": return typeof value === "boolean" ? value : undefined;
+    case "boxTellNew":
+    case "autoAccept": return typeof value === "boolean" ? value : undefined;
   }
 }
 

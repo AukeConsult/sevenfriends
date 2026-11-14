@@ -16,7 +16,9 @@
   "enterSendsTheMessage": "按 Enter 发送消息",
   "shiftEnterMakesA": "Shift + Enter 换行。关闭时：Enter 换行，Ctrl + Enter 发送。",
   "useASleepList": "使用睡眠名单",
-  "offAOneYou": "关闭时：你移除的{{ one }}会被删除，睡眠名单为空时这一行会隐藏。",
+  "offAOneYou": "关闭:不会再有新的朋友加入睡眠名单。已经在名单里的会安静地留在那里,直到你叫醒或删除他们。",
+  "acceptAutomatically": "自动接受好友请求",
+  "acceptAutomaticallyHint": "关闭:每个请求由你自己确认。开启:邮箱或手机号已验证的人会立即成为你的朋友,不再询问你。其他人仍然等你确认。座位全满时,他们会进入睡眠名单;如果你不使用睡眠名单,则等待空位。",
   "tellWhenIAdd": "我向保险箱添加内容时通知他们",
   "aMessageTellsYour": "一条消息会告知你的朋友或群组有笔记、项目或文件，并附上打开它的链接。关闭：不发送任何内容；项目中的铃铛仍可通知他们。"
 }

@@ -23,8 +23,10 @@ export interface UiPreferences {
   chatOrder: 'oldest' | 'newest';
   /** Enter sends the message (Shift+Enter is a new line); off (default) = Enter is a new line and Ctrl+Enter sends */
   enterSends: boolean;
-  /** friends can be put on a sleep list (default) instead of being deleted; off = the card offers Delete only, and the sleep list row is hidden while the list is empty */
+  /** friends can be put on a sleep list (default); off = nobody new goes on it (friends already there stay, and can be woken or deleted) */
   sleepList: boolean;
+  /** a friend request from a person with a verified email or phone is confirmed at once; off (default) = I confirm by hand. Enforced by the server */
+  autoAccept: boolean;
   /** a picture next to every message in a conversation (mine too); off (default) = only the bubbles */
   feedIcons: boolean;
   /** when I add something to the safebox, a message tells my friend or group (default); off = nothing is sent (the bell in the item still can) */
@@ -97,7 +99,7 @@ export const PHONE_TEXT_SCALES: Record<UiPreferences['textSize'], number> = { ti
 const kindIds = (v: unknown): string[] => (Array.isArray(v) ? v.filter((k: unknown): k is string => typeof k === 'string') : []);
 const layoutOf = (v: any): { main: string[]; more: string[] } | null => (v && typeof v === 'object' ? { main: kindIds(v.main), more: kindIds(v.more) } : null);
 
-export const DEFAULTS: UiPreferences = { boxTellNew: true, theme: 'white', textSize: 'normal', settingsTab: 'profile', emojiTab: 'People', chatOrder: 'oldest', enterSends: true, sleepList: true, feedIcons: false, language: '', setup: 'new', lastPage: null, micRaw: false, pendingFriend: null, welcomeUntil: null, boxPlain: false, boxView: 'list', boxKindLayout: null, boxHiddenOpen: false, cleanupWhose: 'mine', cleanupDays: 30, feedPlace: {}, seatMoved: false, sleepView: 'circles', checksHiddenUntil: null, sendOpen: true };
+export const DEFAULTS: UiPreferences = { boxTellNew: true, theme: 'white', textSize: 'normal', settingsTab: 'profile', emojiTab: 'People', chatOrder: 'oldest', enterSends: true, sleepList: true, autoAccept: false, feedIcons: false, language: '', setup: 'new', lastPage: null, micRaw: false, pendingFriend: null, welcomeUntil: null, boxPlain: false, boxView: 'list', boxKindLayout: null, boxHiddenOpen: false, cleanupWhose: 'mine', cleanupDays: 30, feedPlace: {}, seatMoved: false, sleepView: 'circles', checksHiddenUntil: null, sendOpen: true };
 
 /** The remembered feed places, checked (at most 30, the newest kept). */
 export function feedPlaceOf(value: unknown): UiPreferences['feedPlace'] {
@@ -120,7 +122,7 @@ function pendingOf(value: unknown): PendingFriend | null {
 }
 const STORAGE_KEY = 'sf-ui';
 /** The choices that are kept in the DATABASE (on the circle, see LookSyncService): they are never written to this device, only held while the app is open. */
-export const ACCOUNT_KEYS = ['theme', 'textSize', 'chatOrder', 'enterSends', 'sleepList', 'feedIcons', 'boxTellNew'] as const;
+export const ACCOUNT_KEYS = ['theme', 'textSize', 'chatOrder', 'enterSends', 'sleepList', 'autoAccept', 'feedIcons', 'boxTellNew'] as const;
 /** What may be written to this device: the choices about this screen, without the ones that live in the database. */
 function onDevice(all: UiPreferences): Partial<UiPreferences> {
   const rest: Partial<UiPreferences> = { ...all };
@@ -150,6 +152,7 @@ function read(): UiPreferences {
       chatOrder: saved.chatOrder === 'newest' ? 'newest' : 'oldest',
       enterSends: saved.enterSends !== false,
       sleepList: saved.sleepList !== false,
+      autoAccept: saved.autoAccept === true,
       feedIcons: saved.feedIcons === true,
       boxTellNew: saved.boxTellNew !== false,
       language: typeof saved.language === 'string' && isLanguage(saved.language) ? saved.language : '',

@@ -16,7 +16,9 @@
   "enterSendsTheMessage": "Enter sender meldingen",
   "shiftEnterMakesA": "Shift + Enter gir en ny linje. Av: Enter gir en ny linje og Ctrl + Enter sender.",
   "useASleepList": "Bruk en soveliste",
-  "offAOneYou": "Av: når du fjerner {{ one }}, slettes vedkommende, og sovelisten skjules mens den er tom.",
+  "offAOneYou": "Av: ingen nye legges til på sovelisten. De som allerede er på den, blir der, stille, til du vekker eller sletter dem.",
+  "acceptAutomatically": "Godta venneforespørsler automatisk",
+  "acceptAutomaticallyHint": "Av: du bekrefter hver forespørsel selv. På: en person med bekreftet e-post eller telefon blir vennen din med en gang, uten å spørre deg. Andre venter fortsatt på deg. Når alle plassene er tatt, havner de på sovelisten, eller venter på en plass hvis du ikke bruker soveliste.",
   "tellWhenIAdd": "Si fra til dem når jeg legger noe i safen",
   "aMessageTellsYour": "En melding forteller vennen eller gruppen din at et notat, en ting eller en fil er der, med en lenke for å åpne den. Av: Ingenting sendes; bjella i en ting kan fortsatt si fra."
 }

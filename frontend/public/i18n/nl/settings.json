@@ -16,7 +16,9 @@
   "enterSendsTheMessage": "Enter verstuurt het bericht",
   "shiftEnterMakesA": "Shift + Enter maakt een nieuwe regel. Uit: Enter maakt een nieuwe regel en Ctrl + Enter verstuurt.",
   "useASleepList": "Een slaaplijst gebruiken",
-  "offAOneYou": "Uit: een {{ one }} die je weghaalt wordt verwijderd en de rij van de slaaplijst is verborgen zolang hij leeg is.",
+  "offAOneYou": "Uit: er komt niemand nieuw op de slaaplijst. Wie er al op staat, blijft daar, stil, tot je hem wakker maakt of verwijdert.",
+  "acceptAutomatically": "Vriendschapsverzoeken automatisch accepteren",
+  "acceptAutomaticallyHint": "Uit: je bevestigt elk verzoek zelf. Aan: iemand met een geverifieerd e-mailadres of telefoonnummer wordt meteen je vriend, zonder het te vragen. Anderen wachten nog steeds op jou. Als alle plaatsen bezet zijn, komen ze op de slaaplijst, of wachten ze op een plaats als je geen slaaplijst gebruikt.",
   "tellWhenIAdd": "Laat het ze weten als ik iets aan de kluis toevoeg",
   "aMessageTellsYour": "Een bericht laat je vriend of groep weten dat er een notitie, item of bestand is, met een link om het te openen. Uit: er wordt niets verstuurd; de bel in een item kan het nog steeds laten weten."
 }

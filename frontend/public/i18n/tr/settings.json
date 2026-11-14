@@ -16,7 +16,9 @@
   "enterSendsTheMessage": "Enter mesajı gönderir",
   "shiftEnterMakesA": "Shift + Enter yeni satır açar. Kapalıyken: Enter yeni satır açar, Ctrl + Enter gönderir.",
   "useASleepList": "Uyku listesi kullan",
-  "offAOneYou": "Kapalıyken: çıkardığın kişi ({{ one }}) silinir ve boşken uyku listesi satırı gizlenir.",
+  "offAOneYou": "Kapalı: uyku listesine yeni kimse eklenmez. Zaten listede olanlar, sen uyandırana veya silene kadar orada sessizce kalır.",
+  "acceptAutomatically": "Arkadaşlık isteklerini otomatik kabul et",
+  "acceptAutomaticallyHint": "Kapalı: her isteği kendin onaylarsın. Açık: doğrulanmış e-postası veya telefonu olan biri sana sormadan hemen arkadaşın olur. Diğerleri yine seni bekler. Tüm koltuklar doluysa uyku listesine girerler, ya da uyku listesi kullanmıyorsan boş koltuk beklerler.",
   "tellWhenIAdd": "Kasaya bir şey eklediğimde onlara bildir",
   "aMessageTellsYour": "Bir mesaj, arkadaşınıza veya grubunuza bir not, öğe ya da dosya olduğunu ve açmak için bir bağlantı olduğunu bildirir. Kapalı: hiçbir şey gönderilmez; öğedeki zil yine de haber verebilir."
 }

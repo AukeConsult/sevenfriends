@@ -16,7 +16,9 @@
   "enterSendsTheMessage": "Intro envía el mensaje",
   "shiftEnterMakesA": "Mayús + Intro hace un salto de línea. Desactivado: Intro hace un salto de línea y Ctrl + Intro envía.",
   "useASleepList": "Usar una lista de descanso",
-  "offAOneYou": "Desactivado: el {{ one }} que quitas se elimina, y la fila de la lista de descanso se oculta mientras está vacía.",
+  "offAOneYou": "Desactivado: nadie nuevo se añade a la lista de descanso. Los que ya están en ella se quedan ahí, en silencio, hasta que los despiertes o los borres.",
+  "acceptAutomatically": "Aceptar solicitudes de amistad automáticamente",
+  "acceptAutomaticallyHint": "Desactivado: confirmas tú cada solicitud. Activado: quien tenga un correo o teléfono verificado se hace tu amigo al instante, sin preguntarte. Los demás siguen esperándote. Con todos los asientos ocupados van a la lista de descanso, o esperan un asiento si no usas lista de descanso.",
   "tellWhenIAdd": "Avisarles cuando añado algo a la caja fuerte",
   "aMessageTellsYour": "Un mensaje avisa a tu amigo o grupo de que hay una nota, elemento o archivo, con un enlace para abrirlo. Desactivado: no se envía nada; la campana de un elemento aún puede avisar."
 }

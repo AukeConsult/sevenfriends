@@ -5,9 +5,9 @@ import { asyncHandler, requireAuth } from "./auth";
 import { ensureCircle } from "./circles";
 import { circleIdOf, FRIENDS_SUBCOLLECTION } from "./constants";
 import { activeCircleOf, circleProfileOf } from "./circle-profile";
-import { AcceptOutcome, FriendRequest } from "./models";
+import { AcceptOutcome, FriendRequest, settingsOf } from "./models";
 import { circleCol, friendRequestCol, readFields, userDoc, userFields } from "./paths";
-import { assignMissingSeats, ensureSeat } from "./seats";
+import { assignMissingSeats, ensureSeat, sleepListOn } from "./seats";
 import { signalRefsOf } from "./signals";
 import { touchSync } from "./sync";
 import { nameOf, sendPush } from "./push";
@@ -45,84 +45,110 @@ export async function listPendingRequests(uid: string, circleId: string): Promis
 }
 
 /**
- * Confirm a request.
+ * Confirm a request (by hand, or by itself when I switched on "accept automatically").
  *  - The requester's entry becomes "confirmed".
  *  - The requester is also in MY circle as a confirmed friend. Both entries (and the request)
  *    share the same id: one connection, one id.
- *  - If my circle has no free seat, nothing changes: the request stays pending until I free a seat.
+ *  - If my circle has no free seat, the friend goes on my sleep list (when I use one); otherwise nothing changes: the request stays pending until I free a seat.
  */
+export async function confirmRequest(token: DecodedIdToken, circleId: string, requestId: string): Promise<AcceptOutcome> {
+  const uid = token.uid;
+  const requestRef = friendRequestCol(uid).doc(requestId);
+  await ensureCircle(uid, circleId);
+  const myFriends = circleCol(uid).doc(circleId).collection(FRIENDS_SUBCOLLECTION);
+  await assignMissingSeats(myFriends); // friends from before the seat numbers get theirs first
+  const sleepOn = await sleepListOn(myFriends); // with the sleep list switched off a full circle does not take the friend: the request stays pending
+
+  let requester: { uid: string; friendId: string } | null = null; // who is told about the answer
+  const result = await getFirestore().runTransaction<AcceptOutcome>(async (tx) => {
+    requester = null;
+    // ---- reads first ----
+    const requestSnap = await tx.get(requestRef);
+    if (!requestSnap.exists) return "not-found";
+    const request = requestSnap.data()!;
+    if (request.status !== "pending") return request.status === "accepted" ? "confirmed" : "not-found";
+
+    const requesterFriendRef = circleCol(request.fromUid)
+      .doc(request.circleId)
+      .collection(FRIENDS_SUBCOLLECTION)
+      .doc(request.friendId);
+    const requesterFriendSnap = await tx.get(requesterFriendRef);
+    const requesterSnap = await tx.get(userDoc(request.fromUid));
+    const mySnap = await tx.get(myFriends);
+
+    if (!requesterFriendSnap.exists) {
+      tx.delete(requestRef); // the requester deleted the connection in the meantime
+      return "not-found";
+    }
+
+    // ---- writes ----
+    const seat = ensureSeat(tx, {
+      myFriends,
+      requestId: requestRef.id,
+      request,
+      mySnap,
+      requester: requesterSnap.data() ?? {},
+      confirmed: true,
+      sleepListOn: sleepOn,
+    });
+    if (seat === "full") return "no-seats"; // a full circle puts the friend on the sleep list, unless it is switched off: then the request stays pending
+
+    tx.update(requesterFriendRef, {
+      ...(seat === "asleep" ? { theyAsleep: true } : {}), // the requester's app shows that the friend is asleep
+      status: "confirmed",
+      waitingForSeat: false,
+      confirmedAt: FieldValue.serverTimestamp(),
+    });
+    tx.update(requestRef, { status: "accepted", seatFriendId: requestRef.id, acceptedAt: FieldValue.serverTimestamp() });
+    requester = { uid: request.fromUid as string, friendId: request.friendId as string };
+    return "confirmed";
+  });
+
+  if (result === "confirmed" && requester) {
+    const { uid: to, friendId } = requester as { uid: string; friendId: string };
+    const name = await nameOf(uid, token, circleId);
+    await sendPush(to, { circleId, id: `answer-${friendId}-confirmed`, title: `${name} accepted your friend request`, body: "", url: "/", kind: "answer" });
+  }
+  if (result === "confirmed") await touchSync(uid, "requestsAt"); // my other devices drop the request
+  return result;
+}
+
 friendRequestsRouter.post(
   "/:id/accept",
   asyncHandler(async (req, res) => {
     const uid = uidOf(res);
-    const requestRef = friendRequestCol(uid).doc(req.params.id);
     // the request is for one circle; an app in another circle is blind to it
-    const circleId = circleIdOf((await requestRef.get()).data());
+    const circleId = circleIdOf((await friendRequestCol(uid).doc(req.params.id).get()).data());
     if (circleId !== activeCircleOf(req)) {
       res.status(404).json({ error: "Request not found" });
       return;
     }
-    await ensureCircle(uid, circleId);
-    const myFriends = circleCol(uid).doc(circleId).collection(FRIENDS_SUBCOLLECTION);
-    await assignMissingSeats(myFriends); // friends from before the seat numbers get theirs first
-
-    let requester: { uid: string; friendId: string } | null = null; // who is told about the answer
-    const result = await getFirestore().runTransaction<AcceptOutcome>(async (tx) => {
-      requester = null;
-      // ---- reads first ----
-      const requestSnap = await tx.get(requestRef);
-      if (!requestSnap.exists) return "not-found";
-      const request = requestSnap.data()!;
-      if (request.status !== "pending") return request.status === "accepted" ? "confirmed" : "not-found";
-
-      const requesterFriendRef = circleCol(request.fromUid)
-        .doc(request.circleId)
-        .collection(FRIENDS_SUBCOLLECTION)
-        .doc(request.friendId);
-      const requesterFriendSnap = await tx.get(requesterFriendRef);
-      const requesterSnap = await tx.get(userDoc(request.fromUid));
-      const mySnap = await tx.get(myFriends);
-
-      if (!requesterFriendSnap.exists) {
-        tx.delete(requestRef); // the requester deleted the connection in the meantime
-        return "not-found";
-      }
-
-      // ---- writes ----
-      const seat = ensureSeat(tx, {
-        myFriends,
-        requestId: requestRef.id,
-        request,
-        mySnap,
-        requester: requesterSnap.data() ?? {},
-        confirmed: true,
-      });
-      if (seat === "full") return "no-seats"; // not reached when confirming: a full circle puts the friend on the sleep list
-
-      tx.update(requesterFriendRef, {
-        ...(seat === "asleep" ? { theyAsleep: true } : {}), // the requester's app shows that the friend is asleep
-        status: "confirmed",
-        waitingForSeat: false,
-        confirmedAt: FieldValue.serverTimestamp(),
-      });
-      tx.update(requestRef, { status: "accepted", seatFriendId: requestRef.id, acceptedAt: FieldValue.serverTimestamp() });
-      requester = { uid: request.fromUid as string, friendId: request.friendId as string };
-      return "confirmed";
-    });
-
+    const result = await confirmRequest(res.locals.token as DecodedIdToken, circleId, req.params.id);
     if (result === "not-found") {
       res.status(404).json({ error: "Request not found" });
       return;
     }
-    if (result === "confirmed" && requester) {
-      const { uid: to, friendId } = requester as { uid: string; friendId: string };
-      const name = await nameOf(uid, res.locals.token as DecodedIdToken, circleId);
-      await sendPush(to, { circleId, id: `answer-${friendId}-confirmed`, title: `${name} accepted your friend request`, body: "", url: "/", kind: "answer" });
-    }
-    if (result === "confirmed") await touchSync(uid, "requestsAt"); // my other devices drop the request
     res.json({ ok: true, result });
   }),
 );
+
+/**
+ * With "accept automatically" switched on (Settings → Friends, off by default), a request from a person who has a VERIFIED email or phone number is
+ * confirmed at once, in the circle in use, through the same path as a hand confirm (so the seven seats and the sleep list rule still hold: a full
+ * circle puts the friend on the sleep list, or leaves the request waiting when there is no sleep list). A person with nothing verified still waits for me.
+ */
+export async function autoAcceptRequests(token: DecodedIdToken, circleId: string): Promise<void> {
+  const uid = token.uid;
+  const circle = await circleCol(uid).doc(circleId).get();
+  if (settingsOf(circle.data()?.settings).autoAccept !== true) return;
+  const snap = await friendRequestCol(uid).where("status", "==", "pending").get();
+  for (const d of snap.docs) {
+    if (circleIdOf(d.data()) !== circleId) continue;
+    const sender = await userFields(d.data().fromUid as string, "emailVerified", "verifiedPhone");
+    if (!sender || !(sender.emailVerified === true || sender.verifiedPhone)) continue; // nothing proves who they are: I confirm by hand
+    await confirmRequest(token, circleId, d.id);
+  }
+}
 
 /**
  * Reject a request. The requester's entry is DELETED (it goes from their list at once, on all their devices, and they are told "X rejected your

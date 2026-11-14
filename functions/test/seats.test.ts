@@ -87,6 +87,28 @@ describe("the seat numbers", () => {
     expect((await pool[1].friends()).filter((f) => !f.asleep)).toHaveLength(7); // the seven seats are unchanged
     expect((await pool[0].friends()).find((f) => f.id === entry.id)).toMatchObject({ status: "confirmed", sleepsMe: true });
   });
+
+  it("with the sleep list switched off a full circle does not take a confirmed friend: the request stays pending", async () => {
+    const { fillCircle } = await import("./helpers");
+    const entry = await pool[0].add(pool[1].p);
+    await fillCircle(pool[1]);
+    await pool[1].check();
+    await pool[1].raw("put", "/circles/default/settings", { sleepList: false }).expect(200);
+    const answer = await pool[1].confirm(entry.id).expect(200);
+    expect(answer.body.result).toBe("no-seats");
+    expect((await pool[1].friends()).find((f) => f.id === entry.id)?.asleep).not.toBe(true); // not put on a list that is switched off
+  });
+
+  it("switching the sleep list off keeps the friends already on it; nobody new can be put to sleep, and they can still be woken", async () => {
+    const { fillCircle } = await import("./helpers");
+    await fillCircle(pool[1]);
+    const [first, second] = await pool[1].friends();
+    await pool[1].raw("post", `/circles/default/friends/${first.id}/sleep`, { asleep: true }).expect(200);
+    await pool[1].raw("put", "/circles/default/settings", { sleepList: false }).expect(200);
+    expect((await pool[1].friends()).find((f) => f.id === first.id)).toMatchObject({ asleep: true }); // kept
+    await pool[1].raw("post", `/circles/default/friends/${second.id}/sleep`, { asleep: true }).expect(409); // nobody new
+    await pool[1].raw("post", `/circles/default/friends/${first.id}/sleep`, { asleep: false }).expect(200); // the one that sleeps can be woken
+  });
 });
 
 describe("ownerUid on the entries (the app listens to all of a person's circles with one query on it)", () => {

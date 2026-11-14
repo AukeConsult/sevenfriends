@@ -66,6 +66,7 @@ export class SettingsShell {
 
   private readonly tabs = [
     { path: 'profile', key: 'profile', fallback: 'Profile' },
+    { path: 'friends', key: 'friends', fallback: 'Friends' },
     { path: 'preferences', key: 'preferences', fallback: 'Appearance' },
     { path: 'notifications', key: 'notifications', fallback: 'Notifications' },
     { path: 'encryption', key: 'keys', fallback: 'Privacy lock' },

@@ -9,4 +9,6 @@ export interface EnsureSeatArgs {
   requester: DocumentData;
   /** also mark the entry as confirmed */
   confirmed: boolean;
+  /** I use a sleep list in this circle (on unless switched off): with it off, nobody new is put on the list, a full circle answers "full" */
+  sleepListOn: boolean;
 }

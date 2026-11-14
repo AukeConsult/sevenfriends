@@ -82,6 +82,7 @@ export const routes: Routes = [
     children: [
       { path: '', pathMatch: 'full', component: SettingsHome, title: 'Settings – Seven Friends' }, // the front page: one row for each part
       { path: 'profile', component: Profile, title: 'Profile – Seven Friends' },
+      { path: 'friends', component: Settings, data: { section: 'friends' }, title: 'Friends – Seven Friends' },
       { path: 'preferences', component: Settings, data: { section: 'preferences' }, title: 'Preferences – Seven Friends' },
       { path: 'sounds', redirectTo: 'notifications', pathMatch: 'full' },
       { path: 'sounds/:event', component: SoundPicker, title: 'Choose a sound – Seven Friends' },

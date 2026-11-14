@@ -56,14 +56,25 @@
       <span class="small text-secondary">{{ tx('settings.aMessageTellsYour') || 'A message tells your friend or group that a note, item or file is there, with a link to open it. Off: nothing is sent; the bell in an item can still tell them.' }}</span>
     </div>
   </div>
-  <h2 class="sf-section-title m-0 mt-2">{{ w.Many }}</h2>
+} @else if (section === 'friends') {
+  <!-- the choices about my friends: the sleep list -->
   <div class="card">
     <div class="card-body vstack gap-2">
       <div class="form-check form-switch m-0">
         <input class="form-check-input" type="checkbox" role="switch" id="pref-sleep" [checked]="prefs.get('sleepList')" (change)="prefs.set('sleepList', $any($event.target).checked)" />
         <label class="form-check-label" for="pref-sleep">{{ tx('settings.useASleepList') || 'Use a sleep list' }}</label>
       </div>
-      <span class="small text-secondary">{{ tx('settings.offAOneYou', { one: w.one }) || 'Off: a ' + w.one + ' you remove is deleted, and the sleep list row is hidden while it is empty.' }}</span>
+      <span class="small text-secondary">{{ tx('settings.offAOneYou') || 'Off: nobody new is added to the sleep list. Those already on it stay there, quiet, until you wake or delete them.' }}</span>
+    </div>
+  </div>
+  <!-- a request from a person with a verified email or phone is confirmed at once (the server does it; default off) -->
+  <div class="card">
+    <div class="card-body vstack gap-2">
+      <div class="form-check form-switch m-0">
+        <input class="form-check-input" type="checkbox" role="switch" id="pref-auto-accept" [checked]="prefs.get('autoAccept')" (change)="prefs.set('autoAccept', $any($event.target).checked)" />
+        <label class="form-check-label" for="pref-auto-accept">{{ tx('settings.acceptAutomatically') || 'Accept friend requests automatically' }}</label>
+      </div>
+      <span class="small text-secondary">{{ tx('settings.acceptAutomaticallyHint') || 'Off: you confirm each request yourself. On: someone with a verified email or phone becomes your friend at once, without asking you. Others still wait for you. With all seats taken they go on the sleep list, or wait for a seat if you use no sleep list.' }}</span>
     </div>
   </div>
 } @else {

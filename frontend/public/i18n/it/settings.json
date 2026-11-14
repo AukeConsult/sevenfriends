@@ -16,7 +16,9 @@
   "enterSendsTheMessage": "Invio manda il messaggio",
   "shiftEnterMakesA": "Maiusc + Invio va a capo. Disattivato: Invio va a capo e Ctrl + Invio manda.",
   "useASleepList": "Usa una lista del sonno",
-  "offAOneYou": "Disattivato: un {{ one }} che togli viene eliminato e la riga della lista del sonno resta nascosta finché è vuota.",
+  "offAOneYou": "Disattivato: nessuno di nuovo viene aggiunto alla lista di pausa. Chi c'è già resta lì, in silenzio, finché non lo svegli o lo elimini.",
+  "acceptAutomatically": "Accetta automaticamente le richieste di amicizia",
+  "acceptAutomaticallyHint": "Disattivato: confermi tu ogni richiesta. Attivato: chi ha un'email o un telefono verificato diventa subito tuo amico, senza chiedertelo. Gli altri aspettano ancora te. Con tutti i posti occupati vanno nella lista di pausa, o aspettano un posto se non usi una lista di pausa.",
   "tellWhenIAdd": "Avvisali quando aggiungo qualcosa alla cassaforte",
   "aMessageTellsYour": "Un messaggio avvisa il tuo amico o gruppo che c'è una nota, un elemento o un file, con un link per aprirlo. Disattivato: non viene inviato nulla; la campanella in un elemento può comunque avvisare."
 }

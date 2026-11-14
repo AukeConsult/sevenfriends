@@ -25,7 +25,7 @@ import { tellFriendAsleep, touchSync } from "./sync";
 import { nameOf, sendPush } from "./push";
 import { findAccounts, signalRefsOf, writeSignal } from "./signals";
 import { addGroupMember, createGroup, groupPicture, leaveGroup, listGroupMembers, removeGroupMember, updateGroup } from "./groups";
-import { assignMissingSeats, freeSeat, seatOf, stampOwner } from "./seats";
+import { assignMissingSeats, freeSeat, seatOf, sleepListOn, stampOwner } from "./seats";
 import {
   EMAIL_RE,
   PHONE_RE,
@@ -363,11 +363,13 @@ friendsRouter.post(
     const col = friendCol(res);
     const ref = col.doc(req.params.friendId);
     await assignMissingSeats(col);
+    const sleepOn = await sleepListOn(col);
     const result = await getFirestore().runTransaction(async (tx) => {
       const all = await tx.get(col);
       const entry = all.docs.find((d) => d.id === ref.id);
       if (!entry) return "missing" as const;
       if ((entry.data().asleep === true) === asleep) return "ok" as const; // nothing to change
+      if (asleep && !sleepOn) return "off" as const; // nobody new goes on the sleep list while it is switched off (friends already on it stay, and can be woken)
       if (!asleep && all.docs.filter((d) => d.data().asleep !== true).length >= MAX_FRIENDS) return "full" as const;
       // the friend's own entry (same id) is told: `theyAsleep` (their app listens to its list and shows it at once)
       const linked = entry.data().linkedUid as string | null | undefined;
@@ -382,6 +384,10 @@ friendsRouter.post(
     });
     if (result === "missing") {
       res.status(404).json({ error: "Friend not found" });
+      return;
+    }
+    if (result === "off") {
+      res.status(409).json({ error: "The sleep list is switched off. Switch it on in Settings to put a friend to sleep." });
       return;
     }
     if (result === "full") {
