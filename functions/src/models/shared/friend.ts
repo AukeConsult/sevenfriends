@@ -30,6 +30,8 @@ export interface Friend {
   createdAt: string | null;
   /** when the two of you last wrote to each other (either way), for confirmed friends; null = never */
   lastSpokenAt: string | null;
+  /** when I last opened this friend's page (only my own entry; the friend never sees it). Home's "Say hi" counts it like a message. null = never */
+  lastOpenedAt: string | null;
   /** the friend's country (a two-letter code), shown for confirmed friends only; null = not set */
   country: string | null;
   /** the friend's mood (1-4), shown for confirmed friends only; null = none */

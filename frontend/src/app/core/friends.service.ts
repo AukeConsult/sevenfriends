@@ -131,6 +131,16 @@ export class FriendsService {
     return made.id;
   }
 
+  /** I looked in on this friend (opened the page): saved on my account so Home stops asking me to say hi, also on my other devices. Nothing is sent to the friend. */
+  async opened(id: string): Promise<void> {
+    try {
+      const { lastOpenedAt } = await this.api.request<{ lastOpenedAt: string }>(`${this.friendsPath()}/${id}/opened`, { method: 'POST' });
+      this.friends.update((list) => list.map((f) => (f.id === id ? { ...f, lastOpenedAt } : f)));
+    } catch {
+      // only a nicety: a failed note never disturbs the page
+    }
+  }
+
   /** "This is really them": hides the unverified warning of a friend. */
   async trust(id: string): Promise<Friend> {
     const saved = await this.api.request<Friend>(`${this.friendsPath()}/${id}/trust`, { method: 'POST', body: JSON.stringify({ trusted: true }) });

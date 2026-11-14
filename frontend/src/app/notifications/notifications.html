@@ -195,17 +195,8 @@
         </ul>
       }
     </section>
-  } @else if (loaded() && !error() && !quiet().length) {
+  } @else if (loaded() && !error() && !sayHiTo()) {
     <!-- quiet: no line of text, only something useful to do instead of an empty page -->
-    @if (nudge(); as friend) {
-      <ul class="sf-list sf-home-cards">
-        <li class="sf-list-item">
-          <app-friend-avatar [friend]="friend" [small]="true" [size]="36" />
-          <span class="sf-list-text"><strong class="small">{{ t('notifications.sayHiToFriendname', { friendName: friend.name }) || 'Say hi to ' + friend.name + '?' }}</strong><small>{{ lastTalk(friend) }}</small></span>
-          <a [routerLink]="['/friends', friend.id]" class="btn btn-outline-primary btn-sm">{{ t('notifications.sayHi') || 'Say hi' }}</a>
-        </li>
-      </ul>
-    }
     @if (freeSeats() > 0) {
       <a routerLink="/share" class="sf-link-row">
         {{ freeSeats() === 1 ? (t('notifications.youHaveAFree', { one: w.one }) || 'You have a free seat: invite a ' + w.one) : (t('notifications.youHaveFreeseatsFree', { freeSeats: freeSeats(), many: w.many }) || 'You have ' + freeSeats() + ' free seats: invite ' + w.many) }}
@@ -214,18 +205,15 @@
     }
   }
 
-  <!-- 2. keep in touch: only friends who have gone quiet -->
-  @if (quiet().length) {
+  <!-- 2. say hi: ONE friend, the one I have had no word with (and not looked in on) for the longest time, after 14 days -->
+  @if (sayHiTo(); as friend) {
     <section [attr.aria-label]="t('notifications.keepInTouch') || 'Keep in touch'">
-      <h2 class="sf-section">{{ t('notifications.keepInTouch') || 'Keep in touch' }}</h2>
       <ul class="sf-list sf-home-cards">
-        @for (friend of quiet(); track friend.id) {
-          <li class="sf-list-item">
-            <app-friend-avatar [friend]="friend" [small]="true" [size]="36" />
-            <span class="sf-list-text">{{ quietText(friend) }}</span>
-            <a [routerLink]="['/friends', friend.id]" class="btn btn-outline-primary btn-sm">{{ t('notifications.sayHi') || 'Say hi' }}</a>
-          </li>
-        }
+        <li class="sf-list-item">
+          <app-friend-avatar [friend]="friend" [small]="true" [size]="36" />
+          <span class="sf-list-text"><strong class="small">{{ t('notifications.sayHiToFriendname', { friendName: friend.name }) || 'Say hi to ' + friend.name + '?' }}</strong><small>{{ quietText(friend) }}</small></span>
+          <a [routerLink]="['/friends', friend.id]" class="btn btn-outline-primary btn-sm">{{ t('notifications.sayHi') || 'Say hi' }}</a>
+        </li>
       </ul>
     </section>
   }

@@ -161,7 +161,18 @@ export class FriendContext {
   /** the friend (or group) was in the list and is gone: removed from a group while the page was open, or the friendship ended */
   private seen = false;
 
+  /** I have noted on my account that I looked in on this friend (once for each time the page opens) */
+  private noted = false;
+
   constructor() {
+    effect(() => {
+      const friend = this.friend();
+      // looking in on a friend counts like a message for Home's "Say hi" (saved on my account, the friend never sees it)
+      if (friend?.status === 'confirmed' && !this.noted) {
+        this.noted = true;
+        untracked(() => void this.friends.opened(friend.id));
+      }
+    });
     effect(() => {
       if (this.friend()) this.seen = true;
       else if (this.seen && !this.blocked()) this.blocked.set(tr('friendPage.noLongerHere', 'You are not in this group or friendship any more.'));

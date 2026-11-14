@@ -12,6 +12,22 @@ beforeEach(async () => {
 
 const friendOf = async (user: User, id: string) => (await user.friends()).find((f) => f.id === id)!;
 
+describe("looked in on", () => {
+  it("opening a friend is saved on my entry only, and the friend never sees it", async () => {
+    const id = await connect(u(0), u(1));
+    expect((await friendOf(u(0), id)).lastOpenedAt).toBeNull();
+    const res = await u(0).raw("post", `/circles/default/friends/${id}/opened`).expect(200);
+    expect(res.body.lastOpenedAt).toBeTruthy();
+    expect((await friendOf(u(0), id)).lastOpenedAt).toBe(res.body.lastOpenedAt);
+    expect((await friendOf(u(1), id)).lastOpenedAt).toBeNull(); // the friend's own entry is untouched
+    expect((await friendOf(u(0), id)).lastSpokenAt).toBeNull(); // it is not a message
+  });
+
+  it("an unknown friend is 404", async () => {
+    await u(0).raw("post", "/circles/default/friends/nobody/opened").expect(404);
+  });
+});
+
 describe("last spoken to", () => {
   it("never at first; a message in either direction sets it for both", async () => {
     const id = await connect(u(0), u(1));

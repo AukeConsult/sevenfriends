@@ -87,6 +87,7 @@ function toJson(doc: FirebaseFirestore.DocumentSnapshot): Friend {
     message: (data.message as string | null | undefined) ?? null,
     invite: inviteOf(data),
     lastSpokenAt: iso(data.lastMessageAt),
+    lastOpenedAt: iso(data.lastOpenedAt),
     country: null, // filled in by withUnverified (confirmed friends only)
     mood: null, // filled in by withUnverified (confirmed friends only)
     moodMessage: null,
@@ -321,6 +322,24 @@ friendsRouter.post(
     await ref.update({ trusted });
     const saved = await ref.get();
     res.json(await withUnverified(toJson(saved), saved.data(), uidOfRequest(res)));
+  }),
+);
+
+/**
+ * "I looked in on this friend": stamps `lastOpenedAt` on MY entry only (the friend never sees it). Home counts it like a message
+ * when it decides whom to say hi to, so opening the conversation without writing also ends the nudge. Answers with the time.
+ */
+friendsRouter.post(
+  "/:friendId/opened",
+  asyncHandler(async (req, res) => {
+    const ref = friendCol(res).doc(req.params.friendId);
+    if (!(await ref.get()).exists) {
+      res.status(404).json({ error: "Friend not found" });
+      return;
+    }
+    const now = Timestamp.now();
+    await ref.update({ lastOpenedAt: now });
+    res.json({ lastOpenedAt: now.toDate().toISOString() });
   }),
 );
 

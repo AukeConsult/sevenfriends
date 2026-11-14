@@ -31,7 +31,7 @@ import { PushService } from '../core/push.service';
 /** How long a note that fades out stays: it is gone when the fade ends (see `.sf-fade` in styles.scss, same time). */
 const NOTICE_FADE_MS = 5000;
 
-/** Without a word for this many days, a friend gets a gentle "Say hi". */
+/** Without a word or a visit for this many days, a friend gets a gentle "Say hi" (one friend at a time). */
 const SAY_HI_AFTER_DAYS = 14;
 
 /** The unread messages of one friend, as one row on Home. */
@@ -136,14 +136,18 @@ export class Notifications {
 
   private readonly now = Date.now();
 
-  /** friends I have not talked to for a while (or ever): at most two gentle nudges, the longest silence first */
-  protected readonly quiet = computed(() =>
-    this.friendsService
+  /**
+   * The ONE friend to say hi to: a confirmed friend in a seat whose last "touch" is more than 14 days ago (or who never had one),
+   * the oldest touch first. A touch is a message either way, or me opening the friend's page without writing (`lastOpenedAt`).
+   */
+  protected readonly sayHiTo = computed<Friend | null>(() => {
+    const touch = (f: Friend) => [f.lastSpokenAt, f.lastOpenedAt].filter((t): t is string => !!t).sort().pop() ?? '';
+    const due = this.friendsService
       .awake()
-      .filter((f) => f.status === 'confirmed' && this.sayHi(f))
-      .sort((a, b) => (a.lastSpokenAt ?? '').localeCompare(b.lastSpokenAt ?? ''))
-      .slice(0, 2),
-  );
+      .filter((f) => f.status === 'confirmed' && (!touch(f) || this.now - new Date(touch(f)).getTime() > SAY_HI_AFTER_DAYS * 86_400_000))
+      .sort((a, b) => touch(a).localeCompare(touch(b)) || (a.createdAt ?? '').localeCompare(b.createdAt ?? ''));
+    return due[0] ?? null;
+  });
 
   /** the unread messages, one row for each friend (the latest line, how many), the friend with the newest message first */
   protected readonly groups = computed<MessageGroup[]>(() => {
@@ -356,27 +360,6 @@ export class Notifications {
 
   /** seats still free */
   protected readonly freeSeats = computed(() => 7 - this.friendsService.awake().length);
-
-  /** when it is quiet: the friend I have not talked to for the longest time (a confirmed friend), to say hi to */
-  protected readonly nudge = computed<Friend | null>(
-    () =>
-      this.friendsService
-        .awake()
-        .filter((f) => f.status === 'confirmed')
-        .sort((a, b) => (a.lastSpokenAt ?? '').localeCompare(b.lastSpokenAt ?? ''))[0] ?? null,
-  );
-
-  /** "You last spoke 3 days ago" */
-  protected lastTalk(friend: Friend): string {
-    if (!friend.lastSpokenAt) return tr('notifications.youHavenTTalked', 'You haven\'t talked to {{ friendName }} yet', { friendName: friend.name });
-    const days = Math.floor((this.now - new Date(friend.lastSpokenAt).getTime()) / 86_400_000);
-    return days < 1 ? tr('notifications.youSpokeToday', 'You spoke today') : days === 1 ? tr('notifications.youLastSpokeYesterday', 'You last spoke yesterday') : tr('notifications.youLastSpokeDays', 'You last spoke {{ days }} days ago', { days });
-  }
-
-  /** a friend I have not talked to for a while (or never): a gentle nudge */
-  protected sayHi(friend: Friend): boolean {
-    return !friend.lastSpokenAt || this.now - new Date(friend.lastSpokenAt).getTime() > SAY_HI_AFTER_DAYS * 86_400_000;
-  }
 
   protected setReply(key: string, text: string): void {
     this.replies.update((all) => ({ ...all, [key]: text }));
