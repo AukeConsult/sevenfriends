@@ -35,7 +35,7 @@ Settings -> "Send me a test notification" calls `POST /push/test` and shows how 
 - The push text is still English: the backend texts are translated in the last step.
 
 ## Badge
-`AttentionService` sets the app icon count (`navigator.setAppBadge`) from unread messages + waiting requests in the circle in use, plus one for each other circle with activity (the total across circles). The Android launcher shows its own dot for the notifications it has.
+`AttentionService` sets the app icon count (`navigator.setAppBadge`) from unread messages + waiting requests in the circle in use, plus one for each other circle with activity (the total across circles). The Android launcher shows its own dot for the notifications it has: `MainActivity.onResume` cancels all delivered notifications of the app, so opening the app clears the dot.
 
 ## Not done
 Sleep / quiet hours handling (postponed); Windows WNS.

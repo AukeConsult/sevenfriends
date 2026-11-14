@@ -48,6 +48,12 @@ public class MainActivity extends BridgeActivity {
     @Override
     public void onResume() {
         super.onResume();
+        // the app is open: what its pushes left in the tray (and so the dot on the launcher icon) is cleared; the page shows what is new
+        android.app.NotificationManager nm = getSystemService(android.app.NotificationManager.class);
+        if (nm != null) nm.cancelAll();
+        // the WebView does not always tell the page that the app is back in front (no visibilitychange): the page is told here (app-update, Home and presence listen)
+        final WebView web = getBridge() != null ? getBridge().getWebView() : null;
+        if (web != null) web.evaluateJavascript("window.dispatchEvent(new Event('sf-resume'))", null);
         if (nativeNotices != null) {
             nativeNotices.pushToApp(); // and the app is given what Android has now (nothing is sent when it is the same as last time)
         }

@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
 
+/** True while the app reloads itself for a new version (the "close the app?" question of an installed app must not come then). */
+export const appIsUpdating = { value: false };
+
 /** Looking again when the app comes to the front is not needed more often than this. */
 const CHECK_EVERY_MS = 20 * 1000;
 /** A window that stays open (an installed browser app, a tab) looks at least this often. */
@@ -26,10 +29,12 @@ export class AppUpdateService {
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible') void this.check();
     });
+    window.addEventListener('sf-resume', () => void this.check()); // the Android app tells the page that it is back (the WebView may not send visibilitychange)
+    window.addEventListener('pageshow', () => void this.check());
     void this.check();
     setInterval(() => void this.check(true), HOURLY_MS);
     setInterval(() => {
-      if (this.waiting && this.safeToReload()) location.reload();
+      if (this.waiting && this.safeToReload()) this.reload();
     }, RETRY_MS);
   }
 
@@ -50,7 +55,7 @@ export class AppUpdateService {
       if (!res.ok) return;
       const latest = /<script[^>]+src="([^"]*main-[^"]+\.js)"/.exec(await res.text())?.[1]?.split('/').pop();
       if (latest && latest !== mine) {
-        if (this.safeToReload()) location.reload();
+        if (this.safeToReload()) this.reload();
         else this.waiting = true;
       }
     } catch {
@@ -58,6 +63,11 @@ export class AppUpdateService {
     } finally {
       this.checking = false;
     }
+  }
+
+  private reload(): void {
+    appIsUpdating.value = true;
+    location.reload();
   }
 
   private safeToReload(): boolean {

@@ -259,7 +259,11 @@ export class Notifications {
       if (document.visibilityState === 'visible') void this.openHome(); // back in the app: look for news quietly
     };
     document.addEventListener('visibilitychange', recheck);
-    inject(DestroyRef).onDestroy(() => document.removeEventListener('visibilitychange', recheck));
+    window.addEventListener('sf-resume', recheck); // the Android app tells the page that it is back in front
+    inject(DestroyRef).onDestroy(() => {
+      document.removeEventListener('visibilitychange', recheck);
+      window.removeEventListener('sf-resume', recheck);
+    });
     // a friend finished my recovery request: told once, as a note that fades
     effect(() => {
       const names = this.recovery.finished();

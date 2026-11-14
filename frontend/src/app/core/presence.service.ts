@@ -4,6 +4,7 @@ import { ApiService } from './api.service';
 import { AuthService } from './auth.service';
 import { FriendsService } from './friends.service';
 import { InstallService } from './install.service';
+import { appIsUpdating } from './app-update.service';
 
 /** How often a signed-in app reports (the server counts a silent app as offline after 2.5 minutes). */
 const HEARTBEAT_MS = 60000;
@@ -31,9 +32,13 @@ export class PresenceService {
       this.report();
       if (document.visibilityState === 'visible' && this.friends.circle()) void this.friends.load().catch(() => undefined); // back in the app: my friends may have changed their picture or icon meanwhile
     });
+    window.addEventListener('sf-resume', () => { // the Android app is back in front (the WebView may not send visibilitychange)
+      this.report('active');
+      if (this.friends.circle()) void this.friends.load().catch(() => undefined);
+    });
     // closing the installed app asks first (the browser shows its own question: the text cannot be changed); a browser tab is left alone
     window.addEventListener('beforeunload', (event) => {
-      if (!this.auth.user() || !this.install.runsAsApp()) return;
+      if (!this.auth.user() || !this.install.runsAsApp() || appIsUpdating.value) return;
       event.preventDefault();
       event.returnValue = '';
     });
