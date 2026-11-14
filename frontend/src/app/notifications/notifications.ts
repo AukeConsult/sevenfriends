@@ -56,7 +56,7 @@ interface MessageGroup {
 })
 export class Notifications {
   protected readonly w = inject(ActiveCircleService).words;
-  private readonly notifications = inject(NotificationsService);
+  protected readonly notifications = inject(NotificationsService);
   private readonly friendsService = inject(FriendsService);
   private readonly messagesService = inject(MessagesService);
   private readonly chat = inject(ChatService);

@@ -9,14 +9,17 @@
   } @else {
   <!-- a slim top: the small logo and the name, then a greeting and who is around -->
   <app-home-top />
-  <h1 class="sf-home-hi">{{ greeting() }}</h1>
-  <p class="sf-home-sub">{{ around() }}</p>
+  <!-- all of this waits for the one Home call, so the page draws once, complete (no mood, count or seats that appear one by one) -->
+  @if (loaded()) {
+    <h1 class="sf-home-hi">{{ greeting() }}</h1>
+    <p class="sf-home-sub">{{ around() }}</p>
 
-  <!-- my mood, small, right under the greeting -->
-  <app-mood-editor class="d-block mb-3" />
+    <!-- my mood, small, right under the greeting (from the same call) -->
+    <app-mood-editor class="d-block mb-3" [profile]="notifications.profile()" />
 
-  <!-- the seven seats: pictures in a row, the empty seats too; arrange them and the silent bucket -->
-  <app-home-seats (silent)="silentOpen.set(true)" (add)="addOpen.set(true)" />
+    <!-- the seven seats: pictures in a row, the empty seats too; arrange them and the silent bucket -->
+    <app-home-seats (silent)="silentOpen.set(true)" (add)="addOpen.set(true)" />
+  }
 
   @if (error()) {
     <div class="alert alert-danger d-flex align-items-center justify-content-between" role="alert">

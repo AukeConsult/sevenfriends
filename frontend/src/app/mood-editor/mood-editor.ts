@@ -1,7 +1,7 @@
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { tr } from '../core/i18n';
 import { Clearable } from '../core/clearable';
-import { Component, DestroyRef, ElementRef, inject, signal } from '@angular/core';
+import { Component, DestroyRef, ElementRef, OnInit, inject, input, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ApiService } from '../core/api.service';
 import { MOODS, moodIcon, moodLabel } from '../core/moods';
@@ -21,7 +21,7 @@ const SAVE_MESSAGE_MS = 800;
   templateUrl: './mood-editor.html',
   providers: [provideTranslocoScope('moodEditor')],
 })
-export class MoodEditor {
+export class MoodEditor implements OnInit {
   private readonly api = inject(ApiService);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly live = inject(LiveChanges);
@@ -39,8 +39,19 @@ export class MoodEditor {
   private timer: ReturnType<typeof setTimeout> | undefined;
   private messageDirty = false;
 
+  /** my details when the page already has them (Home gets them in its one call): no request of its own then */
+  readonly profile = input<ProfileDetails | null>(null);
+
+  ngOnInit(): void {
+    const given = this.profile();
+    if (given) {
+      this.mood.set(given.mood);
+      this.message.set(given.moodMessage ?? '');
+      this.loaded.set(true);
+    } else void this.load();
+  }
+
   constructor() {
-    void this.load();
     // my mood was changed on another device of mine: show it here too (not while I am typing a message)
     this.live.on('profile').pipe(takeUntilDestroyed()).subscribe(() => {
       if (!this.messageDirty) void this.load();
