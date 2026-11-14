@@ -56,5 +56,14 @@
   "checking": "Vérification…",
   "iVerified": "J'ai ouvert le lien : vérifier maintenant",
   "notYet": "Pas encore confirmé. Ouvrez d'abord le lien dans l'e-mail (regardez aussi dans les spams).",
-  "checkFailed": "Vérification impossible pour le moment. Vérifiez la connexion et réessayez."
+  "checkFailed": "Vérification impossible pour le moment. Vérifiez la connexion et réessayez.",
+  "visibilityTitle": "Qui peut te trouver",
+  "visibilityPublic": "Public",
+  "visibilityPublicHint": "Tu apparais dans les recherches d'amis et, plus tard, sur les pages publiques des personnes.",
+  "visibilitySearchable": "Recherchable",
+  "visibilitySearchableHint": "Seule une personne qui connaît ton e-mail ou ton numéro de téléphone complet peut te trouver. C'est le réglage par défaut.",
+  "visibilityPrivate": "Privé",
+  "visibilityPrivateHint": "Personne ne peut te trouver par e-mail ou téléphone. Seules les personnes à qui tu donnes ton lien d'ami peuvent t'ajouter.",
+  "save": "Enregistrer",
+  "saved": "Enregistré"
 }

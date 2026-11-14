@@ -56,5 +56,14 @@
   "checking": "Sjekker…",
   "iVerified": "Jeg har åpnet lenken: sjekk nå",
   "notYet": "Ikke bekreftet ennå. Åpne lenken i e-posten først (se i søppelpost også).",
-  "checkFailed": "Kunne ikke sjekke nå. Sjekk forbindelsen og prøv igjen."
+  "checkFailed": "Kunne ikke sjekke nå. Sjekk forbindelsen og prøv igjen.",
+  "visibilityTitle": "Hvem kan finne deg",
+  "visibilityPublic": "Offentlig",
+  "visibilityPublicHint": "Du vises i søk etter venner og senere på folks offentlige sider.",
+  "visibilitySearchable": "Kan søkes",
+  "visibilitySearchableHint": "Bare den som kjenner hele e-posten eller telefonnummeret ditt, kan finne deg. Dette er standard.",
+  "visibilityPrivate": "Privat",
+  "visibilityPrivateHint": "Ingen kan finne deg med e-post eller telefon. Bare folk du gir venne-lenken din, kan legge deg til.",
+  "save": "Lagre",
+  "saved": "Lagret"
 }

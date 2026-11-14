@@ -199,3 +199,41 @@ describe("accepting friend requests automatically (off by default; only for peop
     expect((await u(1).friends()).find((f) => f.id === entry.id)?.status).not.toBe("confirmed");
   });
 });
+
+describe("who can find me: public, searchable (the default) or private", () => {
+  const set = (user: User, visibility: unknown) => user.raw("put", "/profile", { visibility });
+
+  it("searchable is the default, and a wrong value is refused", async () => {
+    expect((await u(1).raw("get", "/profile").expect(200)).body.visibility).toBe("searchable");
+    await set(u(1), "everyone").expect(400);
+    expect((await set(u(1), "public").expect(200)).body.visibility).toBe("public");
+    expect((await u(1).raw("get", "/profile").expect(200)).body.visibility).toBe("public");
+  });
+
+  it("searchable and public: somebody who knows my email gets the ping and the request", async () => {
+    for (const visibility of ["searchable", "public"]) {
+      await set(u(1), visibility).expect(200);
+      const entry = await u(0).add(person(1), "email");
+      expect((await signalsOf(person(1).uid)).map((s) => s.id)).toContain(entry.id);
+      expect((await u(1).check()).requests.map((r) => r.id)).toContain(entry.id);
+      await u(0).remove(entry.id).expect(204);
+    }
+  });
+
+  it("private: nobody finds me by email or phone, no ping and no request, and the adder sees nothing different from an unknown person", async () => {
+    await set(u(1), "private").expect(200);
+    const entry = await u(0).add(person(1), "email");
+    expect((await signalsOf(person(1).uid)).map((s) => s.id)).not.toContain(entry.id);
+    expect((await u(1).check()).requests).toEqual([]);
+    const listed = (await u(0).friends()).find((f) => f.id === entry.id)!;
+    expect(listed.status).not.toBe("confirmed");
+    const byPhone = await u(0).add(person(1), "phone");
+    expect((await u(1).check()).requests.map((r) => r.id)).not.toContain(byPhone.id);
+  });
+
+  it("private: an entry that was added before I switched it on does not reach me either", async () => {
+    const entry = await u(0).add(person(1), "email");
+    await set(u(1), "private").expect(200);
+    expect((await u(1).check()).requests.map((r) => r.id)).not.toContain(entry.id);
+  });
+});

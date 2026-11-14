@@ -56,5 +56,14 @@
   "checking": "Memeriksa…",
   "iVerified": "Saya sudah membuka tautan: periksa sekarang",
   "notYet": "Belum terverifikasi. Buka dulu tautan di email (periksa juga di spam).",
-  "checkFailed": "Tidak dapat memeriksa sekarang. Periksa koneksi dan coba lagi."
+  "checkFailed": "Tidak dapat memeriksa sekarang. Periksa koneksi dan coba lagi.",
+  "visibilityTitle": "Siapa yang bisa menemukanmu",
+  "visibilityPublic": "Publik",
+  "visibilityPublicHint": "Kamu muncul di pencarian teman, dan nanti di halaman publik orang-orang.",
+  "visibilitySearchable": "Bisa dicari",
+  "visibilitySearchableHint": "Hanya orang yang tahu email atau nomor teleponmu lengkap yang bisa menemukanmu. Ini pengaturan bawaan.",
+  "visibilityPrivate": "Pribadi",
+  "visibilityPrivateHint": "Tidak ada yang bisa menemukanmu lewat email atau telepon. Hanya orang yang kamu beri tautan pertemanan yang bisa menambahkanmu.",
+  "save": "Simpan",
+  "saved": "Tersimpan"
 }

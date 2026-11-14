@@ -5,7 +5,7 @@ import { asyncHandler, requireAuth } from "./auth";
 import { touchSync } from "./sync";
 import { avatarOf, parsePicture, readAvatar, removeAvatar, saveAvatar } from "./avatar";
 import { DEFAULT_CIRCLE_ID, MAX_FRIENDS, MAX_MOOD_MESSAGE, MAX_NAME_LENGTH, MOOD_COUNT } from "./constants";
-import { ProfileDetails, ProfilePicture, profileColorKey, pronounKey } from "./models";
+import { ProfileDetails, ProfilePicture, VISIBILITIES, profileColorKey, pronounKey, visibilityKey } from "./models";
 import { circleCol, userDoc } from "./paths";
 import { activeCircleOf, circleProfileOf, saveCircleProfile, touchFriends } from "./circle-profile";
 import { isLanguage } from "./models/shared/languages";
@@ -31,6 +31,7 @@ function detailsOf(data: Record<string, unknown>): ProfileDetails {
     mood: Number.isInteger(data.mood) ? (data.mood as number) : null,
     moodMessage: (data.moodMessage as string | null | undefined) ?? null,
     pronoun: pronounKey(data.pronoun),
+    visibility: visibilityKey(data.visibility),
   };
 }
 
@@ -122,6 +123,13 @@ profileRouter.put(
       return;
     }
 
+    // who can find me: public, searchable or private; left out = unchanged
+    const visibilityGiven = "visibility" in body;
+    if (visibilityGiven && !VISIBILITIES.some((v) => v === body.visibility)) {
+      res.status(400).json({ error: "Visibility must be public, searchable or private" });
+      return;
+    }
+
     const circleId = activeCircleOf(req);
     const first = circleId === DEFAULT_CIRCLE_ID; // the first circle keeps name, colour and icon on the account; another circle on itself
     const ref = userDoc(uidOf(res));
@@ -138,6 +146,7 @@ profileRouter.put(
         ...(countryGiven ? { country } : {}),
         ...(languageGiven ? { language } : {}),
         ...(pronounGiven ? { pronoun: body.pronoun } : {}),
+        ...(visibilityGiven ? { visibility: body.visibility } : {}),
         // only what the request carries is changed: a save that leaves the phone out keeps it
         ...(phoneGiven || verifiedPhone
           ? { phone: verifiedPhone ?? phone, phoneKey: phoneKey(verifiedPhone ?? phone) } // reachable by this number, verified or not

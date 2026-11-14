@@ -56,5 +56,14 @@
   "checking": "Controllo…",
   "iVerified": "Ho aperto il link: controlla ora",
   "notYet": "Non ancora verificata. Apri prima il link nell'e-mail (guarda anche nello spam).",
-  "checkFailed": "Impossibile controllare ora. Verifica la connessione e riprova."
+  "checkFailed": "Impossibile controllare ora. Verifica la connessione e riprova.",
+  "visibilityTitle": "Chi può trovarti",
+  "visibilityPublic": "Pubblico",
+  "visibilityPublicHint": "Compari nelle ricerche di amici e, più avanti, nelle pagine pubbliche delle persone.",
+  "visibilitySearchable": "Ricercabile",
+  "visibilitySearchableHint": "Solo chi conosce la tua email o il tuo numero di telefono completo può trovarti. È l'impostazione predefinita.",
+  "visibilityPrivate": "Privato",
+  "visibilityPrivateHint": "Nessuno può trovarti con email o telefono. Solo chi riceve il tuo link di amicizia può aggiungerti.",
+  "save": "Salva",
+  "saved": "Salvato"
 }

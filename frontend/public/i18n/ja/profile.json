@@ -56,5 +56,14 @@
   "checking": "確認中…",
   "iVerified": "リンクを開きました：今すぐ確認",
   "notYet": "まだ確認されていません。まずメールのリンクを開いてください（迷惑メールも確認してください）。",
-  "checkFailed": "今は確認できませんでした。接続を確認してもう一度お試しください。"
+  "checkFailed": "今は確認できませんでした。接続を確認してもう一度お試しください。",
+  "visibilityTitle": "あなたを見つけられる人",
+  "visibilityPublic": "公開",
+  "visibilityPublicHint": "友だち検索に表示され、今後は人々の公開ページにも表示されます。",
+  "visibilitySearchable": "検索可能",
+  "visibilitySearchableHint": "メールアドレスまたは電話番号を完全に知っている人だけがあなたを見つけられます。これが初期設定です。",
+  "visibilityPrivate": "非公開",
+  "visibilityPrivateHint": "メールや電話ではだれもあなたを見つけられません。友だちリンクを渡した人だけがあなたを追加できます。",
+  "save": "保存",
+  "saved": "保存しました"
 }

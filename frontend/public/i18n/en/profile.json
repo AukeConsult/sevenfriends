@@ -56,5 +56,14 @@
   "checking": "Checking…",
   "iVerified": "I opened the link: check now",
   "notYet": "Not verified yet. Open the link in the email first (look in spam too).",
-  "checkFailed": "Could not check now. Check the connection and try again."
+  "checkFailed": "Could not check now. Check the connection and try again.",
+  "visibilityTitle": "Who can find you",
+  "visibilityPublic": "Public",
+  "visibilityPublicHint": "You show up in searches for friends, and later on public pages of people.",
+  "visibilitySearchable": "Searchable",
+  "visibilitySearchableHint": "Only someone who knows your full email or phone number can find you. This is the default.",
+  "visibilityPrivate": "Private",
+  "visibilityPrivateHint": "Nobody can find you by email or phone. Only people you give your friend link to can add you.",
+  "save": "Save",
+  "saved": "Saved"
 }

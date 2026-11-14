@@ -12,6 +12,18 @@ export function pronounKey(value: unknown): Pronoun | null {
   return PRONOUNS.find((p) => p === value) ?? null;
 }
 
+/**
+ * Who can find a person in a search for friendships: "public" = in searches and, later, on public pages of people; "searchable" (the default) =
+ * only by someone who knows the full email or phone number; "private" = not found by email or phone at all (a friend link still works: they gave it).
+ */
+export const VISIBILITIES = ["public", "searchable", "private"] as const;
+export type Visibility = (typeof VISIBILITIES)[number];
+
+/** The stored value when it is one of VISIBILITIES, otherwise the default: searchable. */
+export function visibilityKey(value: unknown): Visibility {
+  return VISIBILITIES.find((v) => v === value) ?? "searchable";
+}
+
 /** My profile as the profile page edits it: name and phone number. */
 export type ProfileDetails = {
   name: string | null;
@@ -37,6 +49,8 @@ export type ProfileDetails = {
   moodMessage: string | null;
   /** he or she, which confirmed friends see in sentences about this person; null = not chosen (they say "their") */
   pronoun: Pronoun | null;
+  /** who can find me: public, searchable (the default) or private (see VISIBILITIES) */
+  visibility: Visibility;
 };
 
 /** What GET /profile/picture returns: the uploaded picture as a data URL (a small JPEG / PNG / WebP), or null. */

@@ -56,5 +56,14 @@
   "checking": "A verificar…",
   "iVerified": "Abri o link: verificar agora",
   "notYet": "Ainda não confirmado. Abra primeiro o link no e-mail (veja também no spam).",
-  "checkFailed": "Não foi possível verificar agora. Verifique a ligação e tente de novo."
+  "checkFailed": "Não foi possível verificar agora. Verifique a ligação e tente de novo.",
+  "visibilityTitle": "Quem pode te encontrar",
+  "visibilityPublic": "Público",
+  "visibilityPublicHint": "Você aparece nas buscas de amigos e, mais tarde, nas páginas públicas das pessoas.",
+  "visibilitySearchable": "Pesquisável",
+  "visibilitySearchableHint": "Só quem sabe seu e-mail ou telefone completo pode te encontrar. É a opção padrão.",
+  "visibilityPrivate": "Privado",
+  "visibilityPrivateHint": "Ninguém pode te encontrar por e-mail ou telefone. Só quem recebe seu link de amizade pode te adicionar.",
+  "save": "Salvar",
+  "saved": "Salvo"
 }

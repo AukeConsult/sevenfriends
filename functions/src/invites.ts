@@ -18,7 +18,8 @@ import { phoneKey } from "./validation";
  */
 export async function syncIncomingInvites(token: DecodedIdToken): Promise<void> {
   const uid = token.uid;
-  const account = (await userFields(uid, "phoneKey")) ?? {};
+  const account = (await userFields(uid, "phoneKey", "visibility")) ?? {};
+  if (account.visibility === "private") return; // private: nobody finds me by my email or phone, so no request reaches me that way
 
   const probes: [string, string][] = [];
   const email = token.email?.toLowerCase();

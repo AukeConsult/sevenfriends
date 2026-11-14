@@ -15,9 +15,9 @@ export async function findAccounts(email: string | null, phoneKey: string | null
   const found = new Set<string>();
   for (const [field, value] of probes) {
     if (!value) continue;
-    const snap = await getFirestore().collection(USER_ACCOUNT_COLLECTION).where(field, "==", value).limit(5).select().get();
+    const snap = await getFirestore().collection(USER_ACCOUNT_COLLECTION).where(field, "==", value).limit(5).select("visibility").get();
     snap.docs.forEach((d) => {
-      if (d.id !== excludeUid) found.add(d.id);
+      if (d.id !== excludeUid && d.data().visibility !== "private") found.add(d.id); // a private person is not found by email or phone (to the adder they look like no account)
     });
   }
   return [...found];

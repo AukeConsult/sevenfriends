@@ -56,5 +56,14 @@
   "checking": "Wird geprüft…",
   "iVerified": "Ich habe den Link geöffnet: jetzt prüfen",
   "notYet": "Noch nicht bestätigt. Öffne zuerst den Link in der E-Mail (schau auch im Spam-Ordner).",
-  "checkFailed": "Prüfen gerade nicht möglich. Prüfe die Verbindung und versuche es erneut."
+  "checkFailed": "Prüfen gerade nicht möglich. Prüfe die Verbindung und versuche es erneut.",
+  "visibilityTitle": "Wer dich finden kann",
+  "visibilityPublic": "Öffentlich",
+  "visibilityPublicHint": "Du erscheinst in der Suche nach Freunden und später auf öffentlichen Seiten von Personen.",
+  "visibilitySearchable": "Auffindbar",
+  "visibilitySearchableHint": "Nur wer deine vollständige E-Mail-Adresse oder Telefonnummer kennt, kann dich finden. Das ist die Voreinstellung.",
+  "visibilityPrivate": "Privat",
+  "visibilityPrivateHint": "Niemand kann dich über E-Mail oder Telefon finden. Nur Leute, denen du deinen Freundes-Link gibst, können dich hinzufügen.",
+  "save": "Speichern",
+  "saved": "Gespeichert"
 }

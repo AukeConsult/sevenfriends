@@ -56,5 +56,14 @@
   "checking": "Kontrollerar…",
   "iVerified": "Jag har öppnat länken: kontrollera nu",
   "notYet": "Inte bekräftad ännu. Öppna länken i e-postmeddelandet först (titta även i skräpposten).",
-  "checkFailed": "Kunde inte kontrollera nu. Kontrollera anslutningen och försök igen."
+  "checkFailed": "Kunde inte kontrollera nu. Kontrollera anslutningen och försök igen.",
+  "visibilityTitle": "Vem kan hitta dig",
+  "visibilityPublic": "Offentlig",
+  "visibilityPublicHint": "Du syns i sökningar efter vänner och senare på människors offentliga sidor.",
+  "visibilitySearchable": "Sökbar",
+  "visibilitySearchableHint": "Bara den som känner till din fullständiga e-post eller ditt telefonnummer kan hitta dig. Detta är standard.",
+  "visibilityPrivate": "Privat",
+  "visibilityPrivateHint": "Ingen kan hitta dig via e-post eller telefon. Bara de som får din vänlänk kan lägga till dig.",
+  "save": "Spara",
+  "saved": "Sparat"
 }

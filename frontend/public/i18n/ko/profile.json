@@ -56,5 +56,14 @@
   "checking": "확인하는 중…",
   "iVerified": "링크를 열었어요: 지금 확인",
   "notYet": "아직 인증되지 않았습니다. 먼저 이메일의 링크를 여세요(스팸함도 확인하세요).",
-  "checkFailed": "지금은 확인할 수 없습니다. 연결을 확인하고 다시 시도하세요."
+  "checkFailed": "지금은 확인할 수 없습니다. 연결을 확인하고 다시 시도하세요.",
+  "visibilityTitle": "나를 찾을 수 있는 사람",
+  "visibilityPublic": "공개",
+  "visibilityPublicHint": "친구 검색에 나타나고, 나중에는 사람들의 공개 페이지에도 나타나요.",
+  "visibilitySearchable": "검색 가능",
+  "visibilitySearchableHint": "이메일이나 전화번호 전체를 아는 사람만 나를 찾을 수 있어요. 기본 설정이에요.",
+  "visibilityPrivate": "비공개",
+  "visibilityPrivateHint": "이메일이나 전화번호로는 아무도 나를 찾을 수 없어요. 친구 링크를 준 사람만 나를 추가할 수 있어요.",
+  "save": "저장",
+  "saved": "저장됨"
 }

@@ -56,5 +56,14 @@
   "checking": "Kontrol ediliyor…",
   "iVerified": "Bağlantıyı açtım: şimdi kontrol et",
   "notYet": "Henüz doğrulanmadı. Önce e-postadaki bağlantıyı açın (spam klasörüne de bakın).",
-  "checkFailed": "Şu an kontrol edilemedi. Bağlantıyı kontrol edip tekrar deneyin."
+  "checkFailed": "Şu an kontrol edilemedi. Bağlantıyı kontrol edip tekrar deneyin.",
+  "visibilityTitle": "Seni kimler bulabilir",
+  "visibilityPublic": "Herkese açık",
+  "visibilityPublicHint": "Arkadaş aramalarında ve ileride kişilerin herkese açık sayfalarında görünürsün.",
+  "visibilitySearchable": "Aranabilir",
+  "visibilitySearchableHint": "Seni sadece tam e-postanı veya telefon numaranı bilen biri bulabilir. Varsayılan budur.",
+  "visibilityPrivate": "Gizli",
+  "visibilityPrivateHint": "Kimse seni e-posta veya telefonla bulamaz. Sadece arkadaşlık bağlantını verdiğin kişiler seni ekleyebilir.",
+  "save": "Kaydet",
+  "saved": "Kaydedildi"
 }

@@ -56,5 +56,14 @@
   "checking": "Tjekker…",
   "iVerified": "Jeg har åbnet linket: tjek nu",
   "notYet": "Endnu ikke bekræftet. Åbn først linket i e-mailen (kig også i spam).",
-  "checkFailed": "Kunne ikke tjekke nu. Tjek forbindelsen og prøv igen."
+  "checkFailed": "Kunne ikke tjekke nu. Tjek forbindelsen og prøv igen.",
+  "visibilityTitle": "Hvem kan finde dig",
+  "visibilityPublic": "Offentlig",
+  "visibilityPublicHint": "Du vises i søgninger efter venner og senere på folks offentlige sider.",
+  "visibilitySearchable": "Kan søges",
+  "visibilitySearchableHint": "Kun en, der kender din fulde e-mail eller dit telefonnummer, kan finde dig. Det er standard.",
+  "visibilityPrivate": "Privat",
+  "visibilityPrivateHint": "Ingen kan finde dig via e-mail eller telefon. Kun folk, du giver dit venne-link, kan tilføje dig.",
+  "save": "Gem",
+  "saved": "Gemt"
 }

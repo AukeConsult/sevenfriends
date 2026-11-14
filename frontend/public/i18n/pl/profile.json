@@ -56,5 +56,14 @@
   "checking": "Sprawdzanie…",
   "iVerified": "Otworzyłem(-am) link: sprawdź teraz",
   "notYet": "Jeszcze niepotwierdzony. Najpierw otwórz link w e-mailu (zajrzyj też do spamu).",
-  "checkFailed": "Nie udało się teraz sprawdzić. Sprawdź połączenie i spróbuj ponownie."
+  "checkFailed": "Nie udało się teraz sprawdzić. Sprawdź połączenie i spróbuj ponownie.",
+  "visibilityTitle": "Kto może cię znaleźć",
+  "visibilityPublic": "Publiczny",
+  "visibilityPublicHint": "Pojawiasz się w wyszukiwaniu znajomych, a później na publicznych stronach ludzi.",
+  "visibilitySearchable": "Można wyszukać",
+  "visibilitySearchableHint": "Tylko ktoś, kto zna twój pełny e-mail lub numer telefonu, może cię znaleźć. To ustawienie domyślne.",
+  "visibilityPrivate": "Prywatny",
+  "visibilityPrivateHint": "Nikt nie może cię znaleźć przez e-mail ani telefon. Tylko osoby, którym dasz swój link do znajomości, mogą cię dodać.",
+  "save": "Zapisz",
+  "saved": "Zapisano"
 }
