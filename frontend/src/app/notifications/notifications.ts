@@ -243,10 +243,9 @@ export class Notifications {
   private noticeTimer: ReturnType<typeof setTimeout> | undefined;
 
   /** everything Home shows is here (the one call and this device's key); until then the page shows only its slim top */
-  private readonly ready = signal(false);
   /** resolves when this browser's first look at notifications (can it do them, are they on) is done */
   private readonly pushChecked = firstValueFrom(toObservable(this.push.checked).pipe(filter(Boolean)));
-  protected readonly loaded = this.ready.asReadonly();
+  protected readonly loaded = this.notifications.homeReady;
   protected readonly error = this.notifications.error;
 
   constructor() {
@@ -255,7 +254,10 @@ export class Notifications {
       void this.router.navigateByUrl('/setup');
     }
     // the person may have changed the browser's permission in its settings: look again when the page comes back
-    const recheck = () => this.permission.set(typeof Notification === 'undefined' ? 'denied' : Notification.permission);
+    const recheck = () => {
+      this.permission.set(typeof Notification === 'undefined' ? 'denied' : Notification.permission);
+      if (document.visibilityState === 'visible') void this.openHome(); // back in the app: look for news quietly
+    };
     document.addEventListener('visibilitychange', recheck);
     inject(DestroyRef).onDestroy(() => document.removeEventListener('visibilitychange', recheck));
     // a friend finished my recovery request: told once, as a note that fades
@@ -289,10 +291,15 @@ export class Notifications {
    * done. A device that has to make its key first does not hold the page back for more than a moment.
    */
   private async openHome(): Promise<void> {
+    if (this.notifications.homeReady()) {
+      // shown before in this circle: the page is complete at once, the news comes in quietly
+      await this.notifications.openHome();
+      return;
+    }
     await this.notifications.openHome();
     // what only this device can tell (its key, whether this browser can do notifications) is looked at together, so the "things to check" line does not appear later
     await Promise.race([Promise.all([this.keys.refresh(this.notifications.keys() ?? undefined), this.pushChecked]), new Promise<void>((resolve) => setTimeout(resolve, 1500))]);
-    this.ready.set(true);
+    this.notifications.homeReady.set(true);
   }
 
   protected load(): Promise<void> {

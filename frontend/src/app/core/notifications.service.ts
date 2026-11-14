@@ -30,12 +30,15 @@ export class NotificationsService {
   readonly profile = signal<ProfileDetails | null>(null);
   /** my published keys from the last `openHome` (the privacy-lock check of Home uses them instead of asking again) */
   readonly keys = signal<MyKeys | null>(null);
+  /** Home has shown everything once in this circle (the page sets it): later visits show what is here and refresh quietly */
+  readonly homeReady = signal(false);
   private homeInflight: Promise<void> | null = null;
 
   /** Opens Home with ONE call: requests, unread messages, the circle, the friends and my details (`POST /home`). Safe to call often: one that is running is reused. */
   openHome(): Promise<void> {
     if (this.homeInflight) return this.homeInflight;
     const generation = this.active.generation;
+    const quiet = this.homeLoaded(); // a refresh of a Home that is already shown: a failure keeps what is there
     const run: Promise<void> = (async () => {
       try {
         const res = await this.api.request<HomeResult>('/home', { method: 'POST' });
@@ -47,7 +50,7 @@ export class NotificationsService {
         this.keys.set(res.keys);
         this.error.set(null);
       } catch (err: any) {
-        if (generation === this.active.generation) this.error.set(err.message ?? tr('core.couldNotLoadNotifications', 'Could not load notifications'));
+        if (generation === this.active.generation && !quiet) this.error.set(err.message ?? tr('core.couldNotLoadNotifications', 'Could not load notifications'));
       } finally {
         if (generation === this.active.generation) {
           this.homeLoaded.set(true);
@@ -65,6 +68,7 @@ export class NotificationsService {
       this.inflight = null;
       this.homeInflight = null;
       this.homeLoaded.set(false);
+      this.homeReady.set(false);
       this.profile.set(null);
       this.keys.set(null);
       this.loading.set(false);

@@ -28,7 +28,7 @@ export class BottomNav {
 
   /** Clicking Home runs the invite + message check (also when already on Home). */
   protected onHome(): void {
-    this.notifications.refresh();
+    void this.notifications.openHome(); // the same one call as opening Home: the page stays as it is and the news comes in quietly
   }
 
   /** a tap anywhere else closes the drop-up */
