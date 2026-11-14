@@ -1,5 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { CheckResult } from '../models';
+import { CheckResult, HomeResult, ProfileDetails } from '../models';
 import { ActiveCircleService } from './active-circle.service';
 import { ApiService } from './api.service';
 import { FriendsService } from './friends.service';
@@ -24,10 +24,45 @@ export class NotificationsService {
 
   private inflight: Promise<void> | null = null;
 
+  /** Home has everything it shows (set by `openHome` only, so a plain `refresh` cannot draw Home half-filled) */
+  readonly homeLoaded = signal(false);
+  /** my own details from the last `openHome` (Home warns when none of my email or phone is verified) */
+  readonly profile = signal<ProfileDetails | null>(null);
+  private homeInflight: Promise<void> | null = null;
+
+  /** Opens Home with ONE call: requests, unread messages, the circle, the friends and my details (`POST /home`). Safe to call often: one that is running is reused. */
+  openHome(): Promise<void> {
+    if (this.homeInflight) return this.homeInflight;
+    const generation = this.active.generation;
+    const run: Promise<void> = (async () => {
+      try {
+        const res = await this.api.request<HomeResult>('/home', { method: 'POST' });
+        if (generation !== this.active.generation) return; // the circle was changed meanwhile: this answer is about the old one
+        this.friends.requests.set(res.requests);
+        this.messages.replace(res.messages);
+        this.friends.replaceAll(res.circle, res.friends);
+        this.profile.set(res.profile);
+        this.error.set(null);
+      } catch (err: any) {
+        if (generation === this.active.generation) this.error.set(err.message ?? tr('core.couldNotLoadNotifications', 'Could not load notifications'));
+      } finally {
+        if (generation === this.active.generation) {
+          this.homeLoaded.set(true);
+          this.homeInflight = null;
+        }
+      }
+    })();
+    this.homeInflight = run;
+    return run;
+  }
+
   constructor() {
     // another circle: a check that is still running was asked in the old one, so a new one is made for the new circle
     this.active.onSwitch(() => {
       this.inflight = null;
+      this.homeInflight = null;
+      this.homeLoaded.set(false);
+      this.profile.set(null);
       this.loading.set(false);
       this.loaded.set(false);
       this.error.set(null);

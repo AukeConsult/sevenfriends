@@ -192,16 +192,21 @@ friendsRouter.use(
 friendsRouter.get(
   "/",
   asyncHandler(async (_req, res) => {
-    const snap = await friendCol(res).orderBy("createdAt", "asc").get();
-    await stampOwner(snap.docs, uidOfRequest(res));
-    // every friend in a seat has a seat number: older entries get theirs now (and keep it)
-    const seats = await assignMissingSeats(friendCol(res));
-    const friends = await Promise.all(
-      snap.docs.map((d) => withUnverified({ ...toJson(d), seat: seats.get(d.id) ?? null }, d.data(), uidOfRequest(res))),
-    );
-    res.json({ friends, max: MAX_FRIENDS });
+    res.json({ friends: await listFriends(friendCol(res), uidOfRequest(res)), max: MAX_FRIENDS });
   }),
 );
+
+/** The friends of one circle, as the Friends page shows them (also answered by the Home check, so Home needs one call). */
+export async function listFriends(col: FirebaseFirestore.CollectionReference, uid: string): Promise<Friend[]> {
+  const snap = await col.orderBy("createdAt", "asc").get();
+  await stampOwner(snap.docs, uid);
+  // every friend in a seat has a seat number: older entries get theirs now (and keep it)
+  const seats = await assignMissingSeats(col);
+  return Promise.all(snap.docs.map((d) => withUnverified({ ...toJson(d), seat: seats.get(d.id) ?? null }, d.data(), uid)));
+}
+
+/** The friends collection of one of MY circles (for the Home check). */
+export const friendColOf = (uid: string, circleId: string) => circleCol(uid).doc(circleId).collection(FRIENDS_SUBCOLLECTION);
 
 /** What a person in each circle is called (for the messages of the server). */
 const ONE_PERSON: Record<string, string> = { default: "friend", buddies: "buddy", work: "contact", family: "family member" };

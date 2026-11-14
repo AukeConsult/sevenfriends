@@ -48,6 +48,14 @@ export class FriendsService {
     for (const listener of this.loadedListeners) listener(before, res.friends); // every load tells what changed, whoever asked for it (see `onLoaded`)
   }
 
+  /** The circle and its friends came with another answer (opening Home): the same as a load, and the notices of what changed are told. */
+  replaceAll(circle: Circle, friends: Friend[]): void {
+    const before = this.friends();
+    this.circle.set(circle);
+    this.friends.set(friends);
+    for (const listener of this.loadedListeners) listener(before, friends);
+  }
+
   private readonly loadedListeners: ((before: Friend[], now: Friend[]) => void)[] = [];
   /** Called after every load of the friend list with the list before and after: the notices (an answer to my request, a friendship that ended) come from here, so a load that the Home page or the heartbeat started does not swallow them. */
   onLoaded(listener: (before: Friend[], now: Friend[]) => void): void {

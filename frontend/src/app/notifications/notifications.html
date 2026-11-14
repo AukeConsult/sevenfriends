@@ -31,10 +31,6 @@
     </div>
   }
 
-  @if (!loaded()) {
-    <p class="text-secondary">{{ t('notifications.checkingForNews') || 'Checking for news…' }}</p>
-  }
-
   <!-- the setup notes (sound, notifications, unverified details) fold into one line that opens -->
   @if (checkCount() > 0 && !checksHidden()) {
     <details class="sf-checks">

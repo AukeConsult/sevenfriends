@@ -62,7 +62,7 @@ export async function moveOldSettings(uid: string): Promise<void> {
   });
 }
 
-function circleJson(doc: DocumentSnapshot, account: DocumentData): Circle {
+export function circleJson(doc: DocumentSnapshot, account: DocumentData): Circle {
   const data = doc.data() ?? {};
   return {
     id: doc.id,

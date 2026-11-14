@@ -129,3 +129,24 @@ describe("adding a friend without a name", () => {
     expect((await u(0).feed(entry.id)).body.friend.name).toBe(u(1).p.name); // and in the conversation
   });
 });
+
+describe("home in one call", () => {
+  it("answers the circle, the friends, the requests and my details at once; the separate calls still work", async () => {
+    const id = await connect(u(0), u(1));
+    const home = (await u(0).raw("post", "/home").expect(200)).body;
+    expect(home.circle.id).toBe("default");
+    expect(home.friends.map((f: { id: string }) => f.id)).toEqual([id]);
+    expect(home.requests).toEqual([]);
+    expect(home.messages).toEqual([]);
+    expect(home.profile.emailVerified).toBe(true);
+    // the same friends as the Friends page lists, and the old check still answers
+    expect(home.friends).toEqual(await u(0).friends());
+    await u(0).raw("post", "/notifications/check").expect(200);
+  });
+
+  it("is for signed-in people only", async () => {
+    const request = (await import("supertest")).default;
+    const { server } = await import("./helpers");
+    expect((await request(server()).post("/api/home")).status).toBe(401);
+  });
+});

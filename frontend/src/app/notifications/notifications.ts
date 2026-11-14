@@ -8,7 +8,6 @@ import { Component, DestroyRef, computed, effect, inject, signal, untracked } fr
 import { Router, RouterLink } from '@angular/router';
 import { ChatService } from '../core/chat.service';
 import { RecoveryInboxService } from '../core/recovery-inbox.service';
-import { ApiService } from '../core/api.service';
 import { MoodEditor } from '../mood-editor/mood-editor';
 import { CircleActivity } from '../circle-activity/circle-activity';
 import { CircleActivityService } from '../core/circle-activity.service';
@@ -23,7 +22,7 @@ import { MessagesService } from '../core/messages.service';
 import { NotificationsService } from '../core/notifications.service';
 import { InstallService } from '../core/install.service';
 import { UiPreferencesService } from '../core/ui-preferences';
-import { Friend, FriendRequest, Message, Notice, ProfileDetails, RecoveryItem } from '../models';
+import { Friend, FriendRequest, Message, Notice, RecoveryItem } from '../models';
 import { AndroidChannelsService } from '../core/android-channels.service';
 import { KeysService } from '../core/keys.service';
 import { PushService } from '../core/push.service';
@@ -60,7 +59,6 @@ export class Notifications {
   private readonly notifications = inject(NotificationsService);
   private readonly friendsService = inject(FriendsService);
   private readonly messagesService = inject(MessagesService);
-  private readonly api = inject(ApiService);
   private readonly chat = inject(ChatService);
   private readonly router = inject(Router);
 
@@ -242,7 +240,7 @@ export class Notifications {
   protected readonly notice = signal<Notice | null>(null);
   private noticeTimer: ReturnType<typeof setTimeout> | undefined;
 
-  protected readonly loaded = this.notifications.loaded;
+  protected readonly loaded = this.notifications.homeLoaded;
   protected readonly error = this.notifications.error;
 
   constructor() {
@@ -264,29 +262,25 @@ export class Notifications {
         this.fadeNotice({ kind: 'success', fade: true, text: names.length === 1 ? tr('notifications.openedYourHistory', '{{ friendName }} opened your history.', { friendName: names[0] }) : tr('notifications.openedYourHistoryMany', '{{ friendNames }} opened your history.', { friendNames: names.join(', ') }) });
       });
     });
-    this.load();
-    void this.checkOwnDetails();
-    void this.friendsService.load().catch(() => undefined); // always when Home opens (also after a refresh): the seats, pictures and icons are the friends' newest
-  }
-
-  private async checkOwnDetails(): Promise<void> {
-    try {
-      const profile = await this.api.request<ProfileDetails>('/profile');
+    // ONE call fills Home: requests, unread messages, the circle, the friends (always fresh: seats, pictures, icons) and my details
+    void this.notifications.openHome();
+    // the warning "verify your email" comes from my details in that answer
+    effect(() => {
+      const profile = this.notifications.profile();
+      if (!profile) return;
       const missing: ('email' | 'phone')[] = [];
       // one verified detail is enough to prove who I am: the warning only shows when nothing is verified
       if (!profile.emailVerified && !profile.phoneVerified) {
-        if (this.user()?.email) missing.push('email');
+        if (untracked(() => this.user())?.email) missing.push('email');
         // TODO: bring back when SMS verification is ready (the phone cannot be verified until then)
         // if (profile.phone) missing.push('phone');
       }
       this.unverified.set(missing);
-    } catch {
-      /* the banner is a help, not a requirement: the page works without it */
-    }
+    });
   }
 
   protected load(): Promise<void> {
-    return this.notifications.refresh();
+    return this.notifications.openHome();
   }
 
   protected async accept(request: FriendRequest): Promise<void> {

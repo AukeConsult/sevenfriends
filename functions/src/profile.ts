@@ -38,7 +38,7 @@ function detailsOf(data: Record<string, unknown>): ProfileDetails {
  * My details as I show them in the circle the app is in: the name, colour, icon, mood and mood message are that circle's (the first circle keeps them on
  * the account); the phone, country, language, pronoun and picture are the same in every circle.
  */
-async function detailsIn(uid: string, circleId: string, account: Record<string, unknown>): Promise<ProfileDetails> {
+export async function detailsIn(uid: string, circleId: string, account: Record<string, unknown>): Promise<ProfileDetails> {
   const details = detailsOf(account);
   if (circleId === DEFAULT_CIRCLE_ID) return details;
   const mine = circleProfileOf(circleId, (await circleCol(uid).doc(circleId).get()).data(), account);

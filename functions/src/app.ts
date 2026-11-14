@@ -6,6 +6,7 @@ import { cacheRouter } from "./media";
 import { inviteRouter, invitePublicRouter } from "./invite";
 import { linkPreviewRouter } from "./link-preview";
 import { messagesRouter } from "./messages";
+import { homeRouter } from "./home";
 import { notificationsRouter } from "./notifications";
 import { preferencesRouter } from "./preferences";
 import { keysRouter } from "./keys";
@@ -50,6 +51,7 @@ export function createApp(): express.Express {
   router.use("/invite", inviteRouter);
   router.use("/link-preview", linkPreviewRouter);
   router.use("/notifications", notificationsRouter);
+  router.use("/home", homeRouter);
   router.use("/profile", profileRouter);
   router.use("/keys", keysRouter);
   router.use("/own-recovery", ownRecoveryRouter);
