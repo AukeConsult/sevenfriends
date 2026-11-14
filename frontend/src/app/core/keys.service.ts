@@ -94,8 +94,8 @@ export class KeysService {
     return uid;
   }
 
-  /** Looks at this device and at the server: is there a key here whose public part is published? */
-  async refresh(): Promise<void> {
+  /** Looks at this device and at the server: is there a key here whose public part is published? `known` = what the server already told (Home gets it in its one call): then it is not asked again. */
+  async refresh(known?: MyKeys): Promise<void> {
     if (!deviceKeySupported()) {
       this.state.set('unsupported');
       return;
@@ -103,7 +103,7 @@ export class KeysService {
     try {
       const local = await getDeviceKey(this.uid);
       const fingerprint = local ? await fingerprintOf(local.publicKey) : null;
-      const mine = await this.api.request<MyKeys>('/keys');
+      const mine = known ?? (await this.api.request<MyKeys>('/keys'));
       this.published.set(mine.keys);
       const id = fingerprint ? keyIdOf(fingerprint) : null;
       const found = id ? mine.keys.find((k) => k.id === id) : undefined;

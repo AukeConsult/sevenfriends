@@ -1,5 +1,6 @@
 import { Circle } from "./circle";
 import { Friend, FriendRequest } from "./friend";
+import { MyKeys } from "./keys";
 import { Message } from "./message";
 import { ProfileDetails } from "./profile";
 
@@ -17,4 +18,6 @@ export interface HomeResult extends CheckResult {
   friends: Friend[];
   /** my own details (Home warns when none of my email or phone is verified) */
   profile: ProfileDetails;
+  /** my published device keys and backups, as `GET /keys` answers (Home warns when the privacy lock is off) */
+  keys: MyKeys;
 }

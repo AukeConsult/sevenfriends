@@ -1,5 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { CheckResult, HomeResult, ProfileDetails } from '../models';
+import { CheckResult, HomeResult, MyKeys, ProfileDetails } from '../models';
 import { ActiveCircleService } from './active-circle.service';
 import { ApiService } from './api.service';
 import { FriendsService } from './friends.service';
@@ -28,6 +28,8 @@ export class NotificationsService {
   readonly homeLoaded = signal(false);
   /** my own details from the last `openHome` (Home warns when none of my email or phone is verified) */
   readonly profile = signal<ProfileDetails | null>(null);
+  /** my published keys from the last `openHome` (the privacy-lock check of Home uses them instead of asking again) */
+  readonly keys = signal<MyKeys | null>(null);
   private homeInflight: Promise<void> | null = null;
 
   /** Opens Home with ONE call: requests, unread messages, the circle, the friends and my details (`POST /home`). Safe to call often: one that is running is reused. */
@@ -42,6 +44,7 @@ export class NotificationsService {
         this.messages.replace(res.messages);
         this.friends.replaceAll(res.circle, res.friends);
         this.profile.set(res.profile);
+        this.keys.set(res.keys);
         this.error.set(null);
       } catch (err: any) {
         if (generation === this.active.generation) this.error.set(err.message ?? tr('core.couldNotLoadNotifications', 'Could not load notifications'));
@@ -63,6 +66,7 @@ export class NotificationsService {
       this.homeInflight = null;
       this.homeLoaded.set(false);
       this.profile.set(null);
+      this.keys.set(null);
       this.loading.set(false);
       this.loaded.set(false);
       this.error.set(null);

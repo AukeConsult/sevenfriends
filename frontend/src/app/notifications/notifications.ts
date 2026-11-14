@@ -5,6 +5,8 @@ import { ActiveCircleService } from '../core/active-circle.service';
 import { Capacitor } from '@capacitor/core';
 import { AppDatePipe } from '../core/app-date.pipe';
 import { Component, DestroyRef, computed, effect, inject, signal, untracked } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { filter, firstValueFrom } from 'rxjs';
 import { Router, RouterLink } from '@angular/router';
 import { ChatService } from '../core/chat.service';
 import { RecoveryInboxService } from '../core/recovery-inbox.service';
@@ -240,11 +242,14 @@ export class Notifications {
   protected readonly notice = signal<Notice | null>(null);
   private noticeTimer: ReturnType<typeof setTimeout> | undefined;
 
-  protected readonly loaded = this.notifications.homeLoaded;
+  /** everything Home shows is here (the one call and this device's key); until then the page shows only its slim top */
+  private readonly ready = signal(false);
+  /** resolves when this browser's first look at notifications (can it do them, are they on) is done */
+  private readonly pushChecked = firstValueFrom(toObservable(this.push.checked).pipe(filter(Boolean)));
+  protected readonly loaded = this.ready.asReadonly();
   protected readonly error = this.notifications.error;
 
   constructor() {
-    void this.keys.refresh(); // the reminder "privacy lock is off" needs to know
     // a freshly installed app has nothing of what was set up in the browser (key, notifications, microphone): the setup wizard continues here, once
     if (this.install.separateApp && this.prefs.get('setup') === 'new') {
       void this.router.navigateByUrl('/setup');
@@ -263,7 +268,7 @@ export class Notifications {
       });
     });
     // ONE call fills Home: requests, unread messages, the circle, the friends (always fresh: seats, pictures, icons) and my details
-    void this.notifications.openHome();
+    void this.openHome();
     // the warning "verify your email" comes from my details in that answer
     effect(() => {
       const profile = this.notifications.profile();
@@ -279,8 +284,19 @@ export class Notifications {
     });
   }
 
+  /**
+   * The one Home call, then the look at this device's key with the keys the call brought (the reminder "privacy lock is off" needs it): Home shows when both are
+   * done. A device that has to make its key first does not hold the page back for more than a moment.
+   */
+  private async openHome(): Promise<void> {
+    await this.notifications.openHome();
+    // what only this device can tell (its key, whether this browser can do notifications) is looked at together, so the "things to check" line does not appear later
+    await Promise.race([Promise.all([this.keys.refresh(this.notifications.keys() ?? undefined), this.pushChecked]), new Promise<void>((resolve) => setTimeout(resolve, 1500))]);
+    this.ready.set(true);
+  }
+
   protected load(): Promise<void> {
-    return this.notifications.openHome();
+    return this.openHome();
   }
 
   protected async accept(request: FriendRequest): Promise<void> {
