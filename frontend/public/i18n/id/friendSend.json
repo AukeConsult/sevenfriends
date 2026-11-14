@@ -12,5 +12,6 @@
   "writeToFriendname": "Tulis ke {{ friendName }}…",
   "messageToFriendname": "Pesan untuk {{ friendName }}",
   "hideTheForm": "Sembunyikan formulir",
-  "openRecovery": "Buka pemulihan"
+  "openRecovery": "Buka pemulihan",
+  "typeAMessage": "Pesan"
 }

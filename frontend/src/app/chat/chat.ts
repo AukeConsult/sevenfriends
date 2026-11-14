@@ -12,6 +12,7 @@ import { NavigationStart, Router, RouterLink } from '@angular/router';
 import { filter } from 'rxjs';
 import { ApiError } from '../core/api.service';
 import { ChatItem } from '../core/message-lock.service';
+import { usesSideways } from '../core/swipe';
 import { SafeboxService } from '../core/safebox.service';
 import { FriendAvatar } from '../friend-avatar/friend-avatar';
 import { MediaAudio } from '../media-audio/media-audio';
@@ -500,7 +501,7 @@ export class Chat {
   protected onTouchStart(event: TouchEvent): void {
     const touch = event.touches[0];
     // only one finger, and not on something that uses sideways movement itself (text, sliders, players, scrolling strips)
-    this.swipe = event.touches.length === 1 && touch && !this.usesSideways(event.target as Element | null) ? { x: touch.clientX, y: touch.clientY, time: Date.now() } : null;
+    this.swipe = event.touches.length === 1 && touch && !usesSideways(event.target as Element | null) ? { x: touch.clientX, y: touch.clientY, time: Date.now() } : null;
   }
 
   @HostListener('document:touchend', ['$event'])
@@ -519,14 +520,6 @@ export class Chat {
     // round robin: after the last friend comes the first, and before the first comes the last
     const next = friends[(at + (dx < 0 ? 1 : -1) + friends.length) % friends.length];
     void this.router.navigate(['/friends', next.id]);
-  }
-
-  private usesSideways(element: Element | null): boolean {
-    for (let e = element; e && e !== document.body; e = e.parentElement) {
-      if (e.matches('input, textarea, select, button, a, audio, video, iframe, [contenteditable], [role="slider"]')) return true;
-      if (e.scrollWidth > e.clientWidth + 1 && /auto|scroll/.test(getComputedStyle(e).overflowX)) return true;
-    }
-    return false;
   }
 
   /** A click somewhere else closes the open things: the delete frame (its criteria are forgotten) and the Edit / Delete buttons of a message. Escape does the same. */

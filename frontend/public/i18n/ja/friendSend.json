@@ -12,5 +12,6 @@
   "writeToFriendname": "{{ friendName }}さんに書く…",
   "messageToFriendname": "{{ friendName }}さんへのメッセージ",
   "hideTheForm": "フォームを隠す",
-  "openRecovery": "復元を開く"
+  "openRecovery": "復元を開く",
+  "typeAMessage": "メッセージ"
 }

@@ -12,5 +12,6 @@
   "writeToFriendname": "Yaz: {{ friendName }}…",
   "messageToFriendname": "Mesaj: {{ friendName }}",
   "hideTheForm": "Formu gizle",
-  "openRecovery": "Kurtarmayı aç"
+  "openRecovery": "Kurtarmayı aç",
+  "typeAMessage": "Mesaj"
 }

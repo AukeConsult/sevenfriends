@@ -12,5 +12,6 @@
   "writeToFriendname": "Kirjoita käyttäjälle {{ friendName }}…",
   "messageToFriendname": "Viesti käyttäjälle {{ friendName }}",
   "hideTheForm": "Piilota lomake",
-  "openRecovery": "Avaa palautus"
+  "openRecovery": "Avaa palautus",
+  "typeAMessage": "Viesti"
 }

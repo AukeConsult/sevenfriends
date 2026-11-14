@@ -15,8 +15,6 @@
   "installText": "앱은 다른 앱처럼 열리고, 알림도 앱에서 가장 안정적으로 와요.",
   "installed": "이 기기에 앱이 설치되어 있어요.",
   "installApp": "앱 설치",
-  "ios": "Safari에서 <strong>공유</strong>를 누른 다음 <strong>홈 화면에 추가</strong>를 누르세요. 그런 다음 홈 화면에서 {{ app }}을 여세요.",
-  "noInstall": "이 브라우저에는 설치 버튼이 없어요. 메뉴에서 <strong>앱 설치</strong>를 찾아보거나, 설정 → 앱 설치를 보세요.",
   "thenOpen": "그런 다음 앱을 열고 같은 계정으로 로그인하세요.",
   "thenContinues": "설정은 앱에서 알림, 마이크와 카메라, 글자 크기, 키로 이어져요.",
   "finishApp": "완료, 앱에서 계속할게요",

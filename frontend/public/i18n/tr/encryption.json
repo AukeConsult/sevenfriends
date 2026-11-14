@@ -78,5 +78,7 @@
   "startOverButton": "Bu cihazla baştan başla",
   "startOverFailed": "Baştan başlanamadı. Bağlantıyı kontrol edip tekrar deneyin.",
   "hideRemoved": "Kaldırılanları gizle",
-  "showRemoved": "Kaldırılanları göster ({{ count }})"
+  "showRemoved": "Kaldırılanları göster ({{ count }})",
+  "rowRecover": "Eski mesajlarımı geri al",
+  "rowReplace": "Anahtarı geri yükle veya değiştir"
 }

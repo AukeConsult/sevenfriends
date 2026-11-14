@@ -1,6 +1,4 @@
-import { inject } from '@angular/core';
 import { Routes } from '@angular/router';
-import { UiPreferencesService } from './core/ui-preferences';
 import { authGuard, guestGuard } from './core/auth.guard';
 import { AddFriend } from './add-friend/add-friend';
 import { AddMedia } from './add-media/add-media';
@@ -34,6 +32,7 @@ import { Settings } from './settings/settings';
 import { Setup } from './setup/setup';
 import { Encryption } from './encryption/encryption';
 import { SettingsShell } from './settings-shell/settings-shell';
+import { SettingsHome } from './settings-home/settings-home';
 import { SoundPicker } from './sound-picker/sound-picker';
 
 export const routes: Routes = [
@@ -81,13 +80,17 @@ export const routes: Routes = [
     component: SettingsShell,
     canActivate: [authGuard],
     children: [
-      { path: '', pathMatch: 'full', redirectTo: () => inject(UiPreferencesService).get('settingsTab') }, // the tab that was open last
+      { path: '', pathMatch: 'full', component: SettingsHome, title: 'Settings – Seven Friends' }, // the front page: one row for each part
       { path: 'profile', component: Profile, title: 'Profile – Seven Friends' },
       { path: 'preferences', component: Settings, data: { section: 'preferences' }, title: 'Preferences – Seven Friends' },
       { path: 'sounds', redirectTo: 'notifications', pathMatch: 'full' },
       { path: 'sounds/:event', component: SoundPicker, title: 'Choose a sound – Seven Friends' },
       { path: 'notifications', component: Settings, data: { section: 'notifications' }, title: 'Notifications – Seven Friends' },
-      { path: 'encryption', component: Encryption, title: 'Encryption keys – Seven Friends' },
+      { path: 'encryption', component: Encryption, data: { view: 'home' }, title: 'Privacy lock – Seven Friends' },
+      { path: 'encryption/devices', component: Encryption, data: { view: 'devices' }, title: 'Privacy lock – Seven Friends' },
+      { path: 'encryption/recover', component: Encryption, data: { view: 'recover' }, title: 'Privacy lock – Seven Friends' },
+      { path: 'encryption/replace', component: Encryption, data: { view: 'replace' }, title: 'Privacy lock – Seven Friends' },
+      { path: 'encryption/why', component: Encryption, data: { view: 'why' }, title: 'Privacy lock – Seven Friends' },
       { path: 'locking', component: Locking, title: 'Locking – Seven Friends' },
       { path: 'install', component: InstallApp, title: 'Install the app – Seven Friends' },
       // the same three pages without the tabs, for someone who is not signed in (the sign-in page links to them)

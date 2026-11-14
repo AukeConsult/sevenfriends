@@ -61,7 +61,7 @@
   </div>
 </div>
 
-<main class="sf-feed" [style.padding-bottom]="sortDesc() ? null : ctx.feedSendOpen() ? '0.5rem' : 'calc(3.5rem + 1rem + var(--sf-float-gap) + env(safe-area-inset-bottom))'">
+<main class="sf-feed" [style.padding-bottom]="sortDesc() ? null : '0.5rem'">
   @if (blocked()) {
     <div class="alert alert-warning" role="alert">{{ blocked() }}</div>
     <a routerLink="/" class="btn btn-primary">{{ t('chat.backToHome') || 'Back to home' }}</a>

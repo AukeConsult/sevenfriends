@@ -78,5 +78,7 @@
   "startOverButton": "להתחיל מחדש עם המכשיר הזה",
   "startOverFailed": "לא ניתן היה להתחיל מחדש. בדוק את החיבור ונסה שוב.",
   "hideRemoved": "הסתר שהוסרו",
-  "showRemoved": "הצג שהוסרו ({{ count }})"
+  "showRemoved": "הצג שהוסרו ({{ count }})",
+  "rowRecover": "שחזור ההודעות הישנות שלי",
+  "rowReplace": "שחזור או החלפה של המפתח"
 }

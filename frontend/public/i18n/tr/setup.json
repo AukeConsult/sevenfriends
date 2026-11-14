@@ -15,8 +15,6 @@
   "installText": "Uygulama diğer uygulamalar gibi açılır ve bildirimler en çok ondan güvenilir çalışır.",
   "installed": "Uygulama bu cihaza yüklü.",
   "installApp": "Uygulamayı yükle",
-  "ios": "Safari'de <strong>Paylaş</strong>'a, sonra <strong>Ana Ekrana Ekle</strong>'ye dokun. Sonra ana ekranından {{ app }} uygulamasını aç.",
-  "noInstall": "Tarayıcında burada yükleme düğmesi yok. Menüsünde <strong>Uygulamayı yükle</strong>'ye bak ya da Ayarlar → Uygulamayı yükle'ye göz at.",
   "thenOpen": "Sonra uygulamayı aç ve aynı hesapla giriş yap.",
   "thenContinues": "Kurulum orada bildirimler, mikrofon ve kamera, yazı boyutu ve anahtarınla devam eder.",
   "finishApp": "Bitir, uygulamada devam edeceğim",

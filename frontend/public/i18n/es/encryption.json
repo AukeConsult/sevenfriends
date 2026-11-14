@@ -78,5 +78,7 @@
   "startOverButton": "Empezar de nuevo con este dispositivo",
   "startOverFailed": "No se pudo empezar de nuevo. Comprueba la conexión e inténtalo otra vez.",
   "hideRemoved": "Ocultar eliminados",
-  "showRemoved": "Mostrar eliminados ({{ count }})"
+  "showRemoved": "Mostrar eliminados ({{ count }})",
+  "rowRecover": "Recuperar mis mensajes antiguos",
+  "rowReplace": "Restaurar o reemplazar la clave"
 }

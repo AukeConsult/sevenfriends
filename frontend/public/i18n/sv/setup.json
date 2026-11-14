@@ -15,8 +15,6 @@
   "installText": "Appen öppnas som vilken annan app som helst, och notiserna är pålitligast från den.",
   "installed": "Appen är installerad på den här enheten.",
   "installApp": "Installera appen",
-  "ios": "Tryck på <strong>Dela</strong> i Safari och sedan på <strong>Lägg till på hemskärmen</strong>. Öppna sedan {{ app }} från hemskärmen.",
-  "noInstall": "Din webbläsare har ingen installationsknapp här. Leta efter <strong>Installera app</strong> i menyn, eller se Inställningar → Installera appen.",
   "thenOpen": "Öppna sedan appen och logga in med samma konto.",
   "thenContinues": "Installationen fortsätter där med notiser, mikrofon och kamera, textstorlek och din nyckel.",
   "finishApp": "Klar, jag fortsätter i appen",

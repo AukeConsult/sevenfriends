@@ -78,5 +78,7 @@
   "startOverButton": "Recomeçar com este dispositivo",
   "startOverFailed": "Não foi possível recomeçar. Verifica a ligação e tenta de novo.",
   "hideRemoved": "Ocultar removidos",
-  "showRemoved": "Mostrar removidos ({{ count }})"
+  "showRemoved": "Mostrar removidos ({{ count }})",
+  "rowRecover": "Recuperar minhas mensagens antigas",
+  "rowReplace": "Restaurar ou substituir a chave"
 }

@@ -3,8 +3,6 @@
   "headerTitle": "Bagian atas",
   "pictureTitle": "Gambar, titik, dan suasana hati",
   "pictureText": "Ketuk gambar untuk melihat profil temanmu. Titik kecil menunjukkan apakah temanmu sedang aktif, pergi, atau offline. Wajah kecil menunjukkan suasana hati yang diatur temanmu.",
-  "sendTitle": "Kirim",
-  "sendText": "Tulis pesan baru. Kamu bisa menambahkan emoji, gambar, video, dan pesan suara, lalu mengetuk pesan siap pakai untuk mengirimnya.",
   "messagesTitle": "Pesan",
   "messagesText": "Percakapan dengan temanmu. Titik kecil muncul di sini saat ada pesan baru.",
   "safeboxTitle": "Safebox",
@@ -36,5 +34,9 @@
   "ownText": "Ketuk salah satu pesanmu untuk mengedit, menyalin, atau menghapusnya. Pesan yang dihapus hilang untuk kalian berdua.",
   "hideTitle": "Sembunyikan",
   "hideText": "Kamu bisa menyembunyikan gambar atau video di umpanmu dan menampilkannya lagi.",
-  "hide": "Mengerti, sembunyikan bantuan"
+  "hide": "Mengerti, sembunyikan bantuan",
+  "writeTitle": "Tulis",
+  "writeText": "Gunakan kolom di bagian bawah pesan. Emoji senyum menambahkan emoji, dan ikon gambar, video, dan mikrofon mengirim gambar, video, atau pesan suara. Tombol kirim muncul saat kamu sudah mengetik sesuatu.",
+  "reactTitle": "Beri reaksi",
+  "reactText": "Ketuk jempol di bawah pesan untuk memilih reaksi. Ketuk lagi reaksimu untuk membatalkannya."
 }

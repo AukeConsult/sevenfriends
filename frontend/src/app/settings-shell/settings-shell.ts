@@ -1,45 +1,75 @@
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
-import { Component, inject } from '@angular/core';
-import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
-import { InstallService } from '../core/install.service';
-import { SettingsTab, UiPreferencesService } from '../core/ui-preferences';
+import { Component, HostListener, computed, inject, signal } from '@angular/core';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { swipeOf, usesSideways } from '../core/swipe';
 import { PageBar } from '../page-bar/page-bar';
 
-/** The Settings page: one tab for each part (the part itself is the page shown under the tabs). */
+/** Settings: the header bar (the name of the part that is open, a back arrow to the list) above the page that is open. The list itself is `SettingsHome`. */
 @Component({
   selector: 'app-settings-shell',
-  imports: [PageBar, RouterLink, RouterOutlet, TranslocoDirective],
+  imports: [PageBar, RouterOutlet, TranslocoDirective],
   templateUrl: './settings-shell.html',
-  providers: [provideTranslocoScope('settingsShell')],
+  providers: [provideTranslocoScope('settingsShell', 'settings')],
 })
 export class SettingsShell {
-  /** `install.native`: the Android app has no "Install the app" page */
-  protected readonly install = inject(InstallService);
   private readonly router = inject(Router);
-  private readonly prefs = inject(UiPreferencesService);
+
+  /** the address that is open now */
+  private readonly url = signal(this.router.url);
 
   constructor() {
-    // the tab that is open is remembered: Settings opens on it the next time (app.routes.ts)
     this.router.events.subscribe((event) => {
-      if (!(event instanceof NavigationEnd)) return;
-      const open = this.tabs.find((tab) => this.on(tab));
-      if (open && !(open.browserOnly && this.install.native)) this.prefs.set('settingsTab', open.path as SettingsTab);
+      if (event instanceof NavigationEnd) this.url.set(this.router.url);
     });
   }
 
-  /** the tab is lit on its own page, and the Info tab also on the terms and the privacy page */
-  protected on(tab: { path: string; also?: string[] }): boolean {
+  // Swipe to the left: back, like the arrow of the bar (a part goes to the list, the list goes to Home).
+  private swipe: { x: number; y: number; time: number } | null = null;
+
+  @HostListener('document:touchstart', ['$event'])
+  protected onTouchStart(event: TouchEvent): void {
+    const touch = event.touches[0];
+    this.swipe = event.touches.length === 1 && touch && !usesSideways(event.target as Element | null) ? { x: touch.clientX, y: touch.clientY, time: Date.now() } : null;
+  }
+
+  @HostListener('document:touchend', ['$event'])
+  protected onTouchEnd(event: TouchEvent): void {
+    const start = this.swipe;
+    this.swipe = null;
+    const touch = event.changedTouches[0];
+    if (!start || !touch || window.getSelection()?.toString()) return;
+    if (swipeOf(start, touch) < 0) void this.router.navigateByUrl(this.backTo() ?? '/');
+  }
+
+  /** the part that is open (its name is the title of the bar), or null on the list and on pages that are not a part */
+  protected readonly title = computed(() => {
+    this.url();
+    return this.tabs.find((tab) => this.on(tab)) ?? null;
+  });
+
+  /** where the back arrow goes: a part goes back to the list, a page inside a part (a sound, the terms) to its part; the list has no arrow */
+  protected readonly backTo = computed<string | null>(() => {
+    const path = this.url().split(/[?#]/)[0].replace(/\/$/, '');
+    if (path === '/settings') return null;
+    if (path.startsWith('/settings/encryption/')) return '/settings/encryption';
+    if (path.startsWith('/settings/sounds')) return '/settings/notifications';
+    if (path === '/settings/terms' || path === '/settings/privacy' || path === '/settings/locking') return '/settings/about';
+    return '/settings';
+  });
+
+  /** the part is the open page (its own pages count too: the terms, the privacy page and Locking belong to About and rules) */
+  private on(tab: { path: string; also?: string[] }): boolean {
     return [tab.path, ...(tab.also ?? [])].some((path) =>
       this.router.isActive('/settings/' + path, { paths: 'subset', queryParams: 'ignored', fragment: 'ignored', matrixParams: 'ignored' }),
     );
   }
 
-  protected readonly tabs = [
+  private readonly tabs = [
     { path: 'profile', key: 'profile', fallback: 'Profile' },
-    { path: 'preferences', key: 'preferences', fallback: 'Display and chat' },
+    { path: 'preferences', key: 'preferences', fallback: 'Appearance' },
     { path: 'notifications', key: 'notifications', fallback: 'Notifications' },
     { path: 'encryption', key: 'keys', fallback: 'Privacy lock' },
-    { path: 'install', key: 'install', fallback: 'Install', browserOnly: true },
-    { path: 'about', key: 'info', fallback: 'About and rules', also: ['terms', 'privacy'] },
+    { path: 'install', key: 'install', fallback: 'Install' },
+    { path: 'about', key: 'info', fallback: 'About and rules', also: ['terms', 'privacy', 'locking'] },
   ];
 }

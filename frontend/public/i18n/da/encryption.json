@@ -78,5 +78,7 @@
   "startOverButton": "Start forfra med denne enhed",
   "startOverFailed": "Kunne ikke starte forfra. Tjek forbindelsen og prøv igen.",
   "hideRemoved": "Skjul fjernede",
-  "showRemoved": "Vis fjernede ({{ count }})"
+  "showRemoved": "Vis fjernede ({{ count }})",
+  "rowRecover": "Få mine gamle beskeder tilbage",
+  "rowReplace": "Gendan eller skift nøglen"
 }

@@ -681,14 +681,14 @@ router-outlet + * { display: block; min-height: 100dvh; }
   img { display: block; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; } }
 .sf-feed-initials { display: grid; place-items: center; width: 100%; height: 100%; border-radius: 50%; background: var(--bs-primary-bg-subtle); color: var(--sf-primary); font-size: 0.7rem; font-weight: 700; }
 .sf-bubble {
-  padding: 0.5rem 0.75rem;
-  border-radius: 1.25rem 1.25rem 1.25rem 0.25rem;
+  padding: 0.1875rem 0.5rem;
+  border-radius: 0.875rem 0.875rem 0.875rem 0.1875rem;
   background: var(--sf-friend, var(--sf-card));
   color: var(--sf-friend-ink, inherit);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
   white-space: pre-wrap;
   overflow-wrap: anywhere;
-  .sf-mine & { border-radius: 1.25rem 1.25rem 0.25rem 1.25rem; background: var(--sf-my, linear-gradient(135deg, var(--sf-primary), var(--sf-primary-2))); color: var(--sf-my-ink, #fff); }
+  .sf-mine & { border-radius: 0.875rem 0.875rem 0.1875rem 0.875rem; background: var(--sf-my, linear-gradient(135deg, var(--sf-primary), var(--sf-primary-2))); color: var(--sf-my-ink, #fff); }
 }
 // the image / video / voice panel above the message field (see add-media)
 .sf-attach-panel { display: flex; flex-direction: column; gap: 0.5rem; width: 100%; max-width: var(--sf-media-max); margin: 0 auto; padding: 0.5rem var(--sf-gutter); max-height: 70dvh; overflow-y: auto; border-bottom: 1px solid var(--sf-border);
@@ -1062,19 +1062,19 @@ app-voice { display: contents; }
 .sf-send-quick { border-radius: 1.25rem 1.25rem 0.25rem 1.25rem; background: var(--sf-card); border: 1px solid var(--sf-border); color: inherit; white-space: pre-wrap; overflow-wrap: anywhere; &.sf-mine-bubble { background: var(--sf-my, linear-gradient(135deg, var(--sf-primary), var(--sf-primary-2))); color: var(--sf-my-ink, #fff); border-color: transparent; } }
 // the large frame to write in (Send a message): white, with a border; what opens covers it
 .sf-inline-edit { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.5rem; width: 100%; max-width: var(--sf-list-max-width); margin-left: auto; textarea { resize: none; max-height: 40dvh; field-sizing: content; } } // my message being edited: a field in its place, with Cancel and Save
-.sf-send-bottom { position: sticky; bottom: calc(3.5rem + 1rem + var(--sf-float-gap) + env(safe-area-inset-bottom)); margin-bottom: calc(3.5rem + 1rem + var(--sf-float-gap) + env(safe-area-inset-bottom)); background: var(--sf-feed-bg, var(--sf-bg)); z-index: 2; } // the Send form under an oldest-first feed: stays above the bottom menu
+.sf-send-bottom { position: sticky; bottom: calc(4rem + env(safe-area-inset-bottom)); margin-bottom: calc(4rem + env(safe-area-inset-bottom)); background: transparent; z-index: 2; } // the Send form under an oldest-first feed: stays above the bottom menu
 app-poke-toggle { display: contents; } // the empty host would be one more row of the page (and one more gap)
 .sf-send-embedded { padding-bottom: 0.5rem; gap: 0.5rem; } // the Send form over the feed: the feed follows right under it (no room for the bottom menu here)
-.sf-send-frame { position: relative; display: flex; flex-direction: column; background: var(--sf-card); border: 1px solid var(--sf-border); border-radius: 1rem; &:focus-within { border-color: var(--sf-primary); } }
-.sf-send-hide { position: absolute; top: 0.25rem; inset-inline-end: 0.25rem; z-index: 1; width: 1.75rem; height: 1.75rem; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: none; color: var(--sf-muted); &:hover, &:focus-visible { background: var(--sf-surface); color: var(--sf-text); } } // a small hide button in the top right corner of the writing frame
-.sf-send-text { width: 100%; resize: none; border: 0; outline: 0; background: transparent; color: inherit; padding: 0.875rem 2.25rem 0.25rem 1rem; min-height: calc(1.4em + 1.125rem); max-height: 40dvh; overflow-y: auto; line-height: 1.4; font: inherit; border-radius: 1rem 1rem 0 0; }
-.sf-send-tools { display: flex; align-items: center; gap: 0.375rem; padding: 0.5rem 0.625rem; }
-.sf-send-tool { display: grid; place-items: center; width: 2.25rem; height: 2.25rem; border: 0; border-radius: 50%; color: var(--sf-primary); background: linear-gradient(135deg, #ffe27a, #fbbf24); box-shadow: 0 0.125rem 0.5rem rgb(0 0 0 / 0.2); &[aria-expanded='true'] { box-shadow: 0 0 0 2px var(--sf-primary); } } // the round yellow buttons of the message row in the conversation
-.sf-send-go { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; padding: 0; border: 0; border-radius: 50%; background: var(--sf-my, linear-gradient(135deg, var(--sf-primary), var(--sf-primary-2))); color: var(--sf-my-ink, #fff); &:disabled { opacity: 0.45; } } // the round Send button, in my colour
+.sf-send-row { display: flex; align-items: flex-end; gap: 0.5rem; } // WhatsApp style: the writing pill and the round main button side by side
+.sf-send-frame { position: relative; flex: 1; min-width: 0; display: flex; align-items: flex-end; gap: 0; padding: 0 0.125rem; background: var(--sf-card); border: 1px solid var(--sf-border); border-radius: 1.5rem; &:focus-within { border-color: var(--sf-primary); } }
+.sf-send-text { flex: 1; min-width: 0; resize: none; border: 0; outline: 0; background: transparent; color: inherit; box-sizing: border-box; padding: calc((2.75rem - 1.4em) / 2) 0.25rem; min-height: 2.75rem; max-height: 40dvh; overflow-y: auto; font: inherit; line-height: 1.4; }
+.sf-send-tool { flex: none; display: grid; place-items: center; width: 2.25rem; height: 2.75rem; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--sf-muted); &[aria-expanded='true'] { color: var(--sf-primary); } } // the quiet icons inside the pill: emoji, image, video
+.sf-send-go { flex: none; margin-bottom: 1px; display: grid; place-items: center; width: 2.75rem; height: 2.75rem; padding: 0; border: 0; border-radius: 50%; background: var(--sf-my, linear-gradient(135deg, var(--sf-primary), var(--sf-primary-2))); color: var(--sf-my-ink, #fff); &:disabled { opacity: 0.45; } } // the round main button: microphone while the field is empty, Send once there is something to send
 .sf-send-attach { background: var(--sf-card); border: 1px solid var(--sf-border); border-radius: 1rem; .sf-attach-panel { border-bottom: 0; max-width: none; max-height: 60dvh; } } // the image / video / voice card: in the page, above the frame
 .sf-send-bubbles { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 .sf-send-add { border: 1px dashed var(--sf-primary); border-radius: 1.25rem; color: var(--sf-primary); background: transparent; }
 .sf-send-addframe { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.5rem; padding: 0.75rem; background: var(--sf-card); border: 1px solid var(--sf-border); border-radius: 1rem; }
+.sf-box-tools:not(:has(details[open])) { position: sticky; top: var(--sf-bar-h, 3.75rem); z-index: 2; padding-block: 0.375rem; margin-bottom: 0; background: var(--sf-bg); } // New, the padlock and the search stay under the header while the list scrolls (not while a frame of it is open: it would cover the page)
 .sf-box-tools { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: center; gap: 0.5rem; margin-top: 0; margin-bottom: 0.25rem; > details { margin: 0; } > details[open] { flex: 1 1 100%; } } // the padlock and the Add files frame side by side
 .sf-box-newnote { display: inline-flex; align-items: center; gap: 0.375rem; min-height: var(--sf-touch); padding: 0.5rem 0.875rem; border: 1px solid var(--sf-border); border-radius: 999px; background: var(--sf-card); color: var(--sf-primary); font-size: var(--sf-fs-description); font-weight: 600; text-decoration: none; } // the "New note" pill beside the round Add files icon
 .sf-box-new:not([open]) { border-radius: 999px; summary { gap: 0.375rem; padding: 0.5rem 0.875rem; font-size: var(--sf-fs-description); font-weight: 600; color: var(--sf-primary); &::after { display: none; } } } // the New frame, closed: one pill; open: the whole frame with a pill for each kind
@@ -1237,13 +1237,16 @@ html[data-theme='dark'] .sf-feed-tinted { background: color-mix(in srgb, var(--s
   .sf-narrow:not(app-page-bar + *) { padding-top: calc(2.75rem + var(--sf-safe-top)); }
 }
 // ---- The tabs of Settings are the header of those pages: a band at least 44px high (status bar space on top), the chosen tab marked along the bottom ----
-nav.sf-tabs {
-  gap: 0; padding: 0 var(--sf-gutter); align-items: stretch; background: var(--sf-header); border-bottom-color: var(--sf-header-border);
-  .sf-tab { display: flex; align-items: center; min-height: 2.75rem; padding: 0 0.9rem; border-radius: 0; border-bottom: 3px solid transparent; background: none;
-    &:hover { background: none; border-bottom-color: var(--sf-header-border); }
-    &.active { background: none; color: var(--sf-primary); border-bottom-color: var(--sf-primary); } }
+app-settings-shell > router-outlet ~ * > app-page-bar { display: none !important; } // inside Settings the one bar above the page is the header; the page's own bar (when it is also used on its own) is not shown
+// ---- the front page of Settings: one row for each part ----
+.sf-setlist { display: flex; flex-direction: column; background: var(--sf-card); border: 1px solid var(--sf-border); border-radius: 1rem; overflow: hidden; }
+.sf-setrow { display: flex; align-items: center; gap: 0.75rem; min-height: 3.25rem; padding: 0 1rem; color: var(--sf-text); text-decoration: none; border-bottom: 1px solid var(--sf-border);
+  &:last-child { border-bottom: 0; }
+  &:active { background: var(--sf-surface); }
+  svg { flex: none; color: var(--sf-primary); }
+  .sf-setrow-text { flex: 1; min-width: 0; }
+  .sf-setrow-go { flex: none; color: var(--sf-muted); font-size: var(--sf-fs-title); }
 }
-nav.sf-tabs ~ * > app-page-bar { display: none !important; } // inside Settings the one bar above the tabs is the header; the page's own bar (when it is also used on its own) is not shown
 
 @media (max-width: 575.98px) {
   .sf-choice-round img { --sf-pick: calc((100vw - 2 * var(--sf-gutter) - 1rem) / 2 - 0.75rem); width: var(--sf-pick); height: var(--sf-pick); max-width: 10rem; max-height: 10rem; } // the icons of the profile on a phone: two in a row, as big as the width allows (at most 10rem)
@@ -1323,10 +1326,8 @@ nav.sf-tabs ~ * > app-page-bar { display: none !important; } // inside Settings 
 .sf-hs-name { max-width: 100%; font-size: 0.8125rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sf-hs-sub { display: inline-flex; align-items: center; gap: 0.2rem; max-width: 100%; font-size: 0.6875rem; line-height: 1.2; color: var(--sf-muted); overflow: hidden; white-space: nowrap; img { flex: none; } }
 .sf-hs-free .sf-hs-ring { background: none; border: 2px dashed var(--sf-border); padding: 0; display: grid; place-items: center; color: var(--sf-muted); }
-.sf-share-ic { display: inline-grid; place-items: center; width: 2.25rem; height: 2.25rem; border-radius: 50%; background: var(--bs-primary-bg-subtle); color: var(--sf-primary); }
 app-invite-diagram { display: block; }
 .sf-share-diagram { display: block; color: var(--sf-primary); width: 100%; max-width: 18rem; height: auto; margin: 0 auto 0.25rem; } // the picture on top of a share card: no text in it, so it needs no translation
-.sf-share-mini { flex: none; display: inline-flex; margin-top: 0.15rem; color: var(--sf-primary); }
 .sf-hs-tip { margin: 0.5rem 0 0; text-align: center; font-size: 0.625rem; line-height: 1.2; color: var(--sf-muted); }
 button.sf-hs-free { padding: 0; border: 0; background: none; font: inherit; width: 100%; }
 .sf-hs-plus { font-size: 1.5rem; line-height: 1; }

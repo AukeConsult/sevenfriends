@@ -78,5 +78,7 @@
   "startOverButton": "Mit diesem Gerät neu beginnen",
   "startOverFailed": "Neubeginn nicht möglich. Prüf die Verbindung und versuch es noch einmal.",
   "hideRemoved": "Entfernte ausblenden",
-  "showRemoved": "Entfernte anzeigen ({{ count }})"
+  "showRemoved": "Entfernte anzeigen ({{ count }})",
+  "rowRecover": "Meine alten Nachrichten zurückholen",
+  "rowReplace": "Schlüssel wiederherstellen oder ersetzen"
 }

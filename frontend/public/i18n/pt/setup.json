@@ -15,8 +15,6 @@
   "installText": "O app abre como qualquer outro app, e as notificações são mais confiáveis por ele.",
   "installed": "O app está instalado neste dispositivo.",
   "installApp": "Instalar o app",
-  "ios": "No Safari, toque em <strong>Compartilhar</strong> e depois em <strong>Adicionar à Tela de Início</strong>. Depois abra o {{ app }} pela tela inicial.",
-  "noInstall": "Seu navegador não tem um botão de instalar aqui. Procure <strong>Instalar app</strong> no menu dele, ou veja Ajustes → Instalar o app.",
   "thenOpen": "Depois abra o app e entre com a mesma conta.",
   "thenContinues": "A configuração continua lá, com notificações, microfone e câmera, tamanho do texto e sua chave.",
   "finishApp": "Concluir, vou continuar no app",

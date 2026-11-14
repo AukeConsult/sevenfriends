@@ -10,9 +10,7 @@
   "seats": "מקומות",
   "youHaveFreeseatsFree": "{{ seats }} פנויים אצלך: {{ freeSeats }}. אפשר להזמין את מי שחשובים לך: {{ many }}.",
   "yourOneLink": "הקישור שלך: {{ one }}",
-  "linkHasPrivateCode": "בקישור יש קוד פרטי. הוא אינו כולל את מספר הטלפון או את האימייל שלך.",
   "strongShareTheApp": "<strong>שיתוף האפליקציה</strong>",
   "shareTheAppText": "ספר למישהו על האפליקציה. הקישור הזה פותח רק את דף הפתיחה: לא נשלחת בקשת חברות.",
-  "linkIsGeneral": "הקישור אינו כולל שום דבר אישי.",
   "appLink": "קישור לאפליקציה"
 }

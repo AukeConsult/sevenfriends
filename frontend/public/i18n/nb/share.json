@@ -10,9 +10,7 @@
   "seats": "plasser",
   "youHaveFreeseatsFree": "Du har {{ freeSeats }} {{ seats }} ledig. Inviter {{ many }} som betyr noe for deg.",
   "yourOneLink": "Din {{ one }}-lenke",
-  "linkHasPrivateCode": "Lenken har en privat kode. Den inneholder verken telefonnummeret eller e-posten din.",
   "strongShareTheApp": "<strong>Del appen</strong>",
   "shareTheAppText": "Fortell noen om appen. Denne lenken åpner bare startsiden: Det sendes ingen venneforespørsel.",
-  "linkIsGeneral": "Lenken inneholder ikke noe personlig.",
   "appLink": "Lenke til appen"
 }

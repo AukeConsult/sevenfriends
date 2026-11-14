@@ -15,8 +15,6 @@
   "installText": "Die App öffnet sich wie jede andere App, und Benachrichtigungen sind darüber am zuverlässigsten.",
   "installed": "Die App ist auf diesem Gerät installiert.",
   "installApp": "App installieren",
-  "ios": "Tipp in Safari auf <strong>Teilen</strong> und dann auf <strong>Zum Home-Bildschirm</strong>. Öffne danach {{ app }} von deinem Home-Bildschirm.",
-  "noInstall": "Dein Browser hat hier keinen Installieren-Knopf. Such im Menü nach <strong>App installieren</strong>, oder schau unter Einstellungen → App installieren.",
   "thenOpen": "Öffne danach die App und melde dich mit demselben Konto an.",
   "thenContinues": "Die Einrichtung geht dort weiter mit Benachrichtigungen, Mikrofon und Kamera, Textgröße und deinem Schlüssel.",
   "finishApp": "Fertig, ich mache in der App weiter",

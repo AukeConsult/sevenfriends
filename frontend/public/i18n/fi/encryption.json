@@ -78,5 +78,7 @@
   "startOverButton": "Aloita alusta tällä laitteella",
   "startOverFailed": "Alusta aloittaminen ei onnistunut. Tarkista yhteys ja yritä uudelleen.",
   "hideRemoved": "Piilota poistetut",
-  "showRemoved": "Näytä poistetut ({{ count }})"
+  "showRemoved": "Näytä poistetut ({{ count }})",
+  "rowRecover": "Hae vanhat viestini takaisin",
+  "rowReplace": "Palauta tai vaihda avain"
 }

@@ -25,7 +25,7 @@ export interface UiPreferences {
   enterSends: boolean;
   /** friends can be put on a sleep list (default) instead of being deleted; off = the card offers Delete only, and the sleep list row is hidden while the list is empty */
   sleepList: boolean;
-  /** a picture next to every message in a conversation (mine too); off = only the bubbles */
+  /** a picture next to every message in a conversation (mine too); off (default) = only the bubbles */
   feedIcons: boolean;
   /** when I add something to the safebox, a message tells my friend or group (default); off = nothing is sent (the bell in the item still can) */
   boxTellNew: boolean;
@@ -97,7 +97,7 @@ export const PHONE_TEXT_SCALES: Record<UiPreferences['textSize'], number> = { ti
 const kindIds = (v: unknown): string[] => (Array.isArray(v) ? v.filter((k: unknown): k is string => typeof k === 'string') : []);
 const layoutOf = (v: any): { main: string[]; more: string[] } | null => (v && typeof v === 'object' ? { main: kindIds(v.main), more: kindIds(v.more) } : null);
 
-export const DEFAULTS: UiPreferences = { boxTellNew: true, theme: 'white', textSize: 'normal', settingsTab: 'profile', emojiTab: 'People', chatOrder: 'oldest', enterSends: true, sleepList: true, feedIcons: true, language: '', setup: 'new', lastPage: null, micRaw: false, pendingFriend: null, welcomeUntil: null, boxPlain: false, boxView: 'list', boxKindLayout: null, boxHiddenOpen: false, cleanupWhose: 'mine', cleanupDays: 30, feedPlace: {}, seatMoved: false, sleepView: 'circles', checksHiddenUntil: null, sendOpen: true };
+export const DEFAULTS: UiPreferences = { boxTellNew: true, theme: 'white', textSize: 'normal', settingsTab: 'profile', emojiTab: 'People', chatOrder: 'oldest', enterSends: true, sleepList: true, feedIcons: false, language: '', setup: 'new', lastPage: null, micRaw: false, pendingFriend: null, welcomeUntil: null, boxPlain: false, boxView: 'list', boxKindLayout: null, boxHiddenOpen: false, cleanupWhose: 'mine', cleanupDays: 30, feedPlace: {}, seatMoved: false, sleepView: 'circles', checksHiddenUntil: null, sendOpen: true };
 
 /** The remembered feed places, checked (at most 30, the newest kept). */
 export function feedPlaceOf(value: unknown): UiPreferences['feedPlace'] {
@@ -150,7 +150,7 @@ function read(): UiPreferences {
       chatOrder: saved.chatOrder === 'newest' ? 'newest' : 'oldest',
       enterSends: saved.enterSends !== false,
       sleepList: saved.sleepList !== false,
-      feedIcons: saved.feedIcons !== false,
+      feedIcons: saved.feedIcons === true,
       boxTellNew: saved.boxTellNew !== false,
       language: typeof saved.language === 'string' && isLanguage(saved.language) ? saved.language : '',
       setup: saved.setup === 'done' || saved.setup === 'skipped' || saved.setup === 'start' ? saved.setup : 'new',

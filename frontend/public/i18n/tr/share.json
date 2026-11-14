@@ -10,9 +10,7 @@
   "seats": "yer",
   "youHaveFreeseatsFree": "{{ freeSeats }} boş {{ seats }} var. Önemli olanları davet et: {{ many }}.",
   "yourOneLink": "{{ one }} bağlantın",
-  "linkHasPrivateCode": "Bağlantıda özel bir kod var. Telefon numaranı ya da e-postanı içermez.",
   "strongShareTheApp": "<strong>Uygulamayı paylaş</strong>",
   "shareTheAppText": "Uygulamayı birine anlat. Bu bağlantı yalnızca başlangıç sayfasını açar: arkadaşlık isteği gönderilmez.",
-  "linkIsGeneral": "Bağlantı kişisel hiçbir şey içermez.",
   "appLink": "Uygulamanın bağlantısı"
 }

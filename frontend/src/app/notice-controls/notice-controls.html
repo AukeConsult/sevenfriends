@@ -35,7 +35,7 @@
   </div>
   }
 
-  @if (!native) {
+  @if (!native && push.supported()) {
     <h2 class="sf-section-title m-0 mt-2">{{ t('noticeControls.whenTheAppIs') || 'When the app is closed' }}</h2>
     <p class="small text-secondary m-0">{{ t('noticeControls.thisDeviceIsWoken') || 'This device is woken for a new message or friend request, also when the screen is locked.' }}</p>
     <div class="card">

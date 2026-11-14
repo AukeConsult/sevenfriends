@@ -78,5 +78,7 @@
   "startOverButton": "이 기기로 다시 시작",
   "startOverFailed": "다시 시작할 수 없습니다. 연결을 확인하고 다시 시도하세요.",
   "hideRemoved": "제거된 항목 숨기기",
-  "showRemoved": "제거된 항목 보기 ({{ count }})"
+  "showRemoved": "제거된 항목 보기 ({{ count }})",
+  "rowRecover": "이전 메시지 되찾기",
+  "rowReplace": "키 복원 또는 교체"
 }

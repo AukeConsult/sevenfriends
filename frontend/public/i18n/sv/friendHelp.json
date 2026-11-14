@@ -3,8 +3,6 @@
   "headerTitle": "Sidhuvudet",
   "pictureTitle": "Bild, prick och humör",
   "pictureText": "Tryck på bilden för att se din väns profil. Den lilla pricken visar om din vän är aktiv nu, borta eller offline. Det lilla ansiktet visar det humör din vän har ställt in.",
-  "sendTitle": "Skicka",
-  "sendText": "Skriv ett nytt meddelande. Du kan lägga till emojis, bilder, videor och röstmeddelanden, och trycka på ett färdigt meddelande för att skicka det.",
   "messagesTitle": "Meddelanden",
   "messagesText": "Samtalet med din vän. En liten prick visas här när det finns ett nytt meddelande.",
   "safeboxTitle": "Kassaskåpet",
@@ -36,5 +34,9 @@
   "ownText": "Tryck på ett av dina egna meddelanden för att redigera, kopiera eller radera det. Ett raderat meddelande försvinner för er båda.",
   "hideTitle": "Dölj",
   "hideText": "Du kan dölja en bild eller video i ditt flöde och visa den igen.",
-  "hide": "Uppfattat, dölj hjälpen"
+  "hide": "Uppfattat, dölj hjälpen",
+  "writeTitle": "Skriv",
+  "writeText": "Använd fältet längst ned bland meddelandena. Smileyn lägger till emojis, och ikonerna för bild, video och mikrofon skickar en bild, en video eller ett röstmeddelande. Skicka-knappen visas när du har skrivit något.",
+  "reactTitle": "Reagera",
+  "reactText": "Tryck på tummen under ett meddelande för att välja en reaktion. Tryck på din egen reaktion igen för att ta bort den."
 }

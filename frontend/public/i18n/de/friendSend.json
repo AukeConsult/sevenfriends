@@ -12,5 +12,6 @@
   "writeToFriendname": "An {{ friendName }} schreiben …",
   "messageToFriendname": "Nachricht an {{ friendName }}",
   "hideTheForm": "Formular ausblenden",
-  "openRecovery": "Wiederherstellung öffnen"
+  "openRecovery": "Wiederherstellung öffnen",
+  "typeAMessage": "Nachricht"
 }

@@ -1,0 +1,20 @@
+<ng-container *transloco="let t">
+<main class="sf-narrow">
+  <nav class="sf-setlist" [attr.aria-label]="t('settingsShell.settings') || 'Settings'">
+    @for (row of rows; track row.path) {
+      @if (!row.browserOnly || !install.native) {
+        <a class="sf-setrow" [routerLink]="row.path">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path [attr.d]="row.icon" /></svg>
+          <span class="sf-setrow-text">{{ t('settingsShell.' + row.key) || row.fallback }}</span>
+          <span class="sf-setrow-go" aria-hidden="true">›</span>
+        </a>
+      }
+    }
+    <a class="sf-setrow" routerLink="/setup">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 4V2M15 16v-2M8 9h2M20 9h2M17.8 11.8L19 13M17.8 6.2L19 5M3 21l9-9M12.2 6.2L11 5" /></svg>
+      <span class="sf-setrow-text">{{ t('settings.openTheSetupWizard') || 'Open the setup wizard' }}</span>
+      <span class="sf-setrow-go" aria-hidden="true">›</span>
+    </a>
+  </nav>
+</main>
+</ng-container>

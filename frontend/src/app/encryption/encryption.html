@@ -1,5 +1,7 @@
 <ng-container *transloco="let t">
 <main class="sf-narrow">
+  @switch (view) {
+  @case ('home') {
   <p class="small text-secondary m-0">
     {{ t('encryption.yourKeyStaysOn') || 'Your key stays on this device. Files in the safebox are locked with it, so that only you and your friend can read them. Not even we can. Messages are locked with it too, with their pictures, videos and voice messages, when you and your friend both have a key.' }}
   </p>
@@ -13,7 +15,6 @@
   }
 
   @if (!showingWords()) {
-    <!-- does this device have a working key, and can it open everything? what to do when not -->
     @if (finished()) { <div class="alert alert-success m-0" role="status">{{ t('encryption.doneYourHistoryIs') || 'Done. Your history is open on this device.' }}</div> }
     @if (keys.state() === 'ready' && !keys.hasBackup()) {
       <div class="alert alert-info m-0 d-flex flex-column gap-2" role="status">
@@ -24,19 +25,13 @@
     }
     @if (keys.state() === 'ready') {
       @if (lockedTotal() > 0) {
-        <div class="alert alert-warning m-0" role="status">
-          <strong>{{ t('encryption.someThingsAreLocked') || 'Some of your old messages and files are locked on this device.' }}</strong><br />
+        <div class="alert alert-warning m-0 d-flex flex-column gap-2" role="status">
+          <span>
+            <strong>{{ t('encryption.someThingsAreLocked') || 'Some of your old messages and files are locked on this device.' }}</strong><br />
           {{ t('encryption.lockedCounts', { messages: lockedCounts()?.messages ?? 0, files: lockedCounts()?.files ?? 0 }) || (lockedCounts()?.messages ?? 0) + ' messages and ' + (lockedCounts()?.files ?? 0) + ' files are locked on this device. Choose a way below to get them back.' }}
+          </span>
+          <a class="btn btn-primary btn-sm align-self-start" routerLink="/settings/encryption/recover">{{ t('encryption.rowRecover') || 'Get my old messages back' }}</a>
         </div>
-        <ng-container *ngTemplateOutlet="ways" />
-      } @else {
-        <details class="sf-expand sf-expand-quiet">
-          <summary>{{ lockedCounts() ? (t('encryption.keyWorksNothingLocked') || '✓ Your key works. Nothing is locked on this device.') : (t('encryption.askOrTryRecovery') || 'Recovery: ask my other devices or a friend, even when all is fine') }}</summary>
-          <div class="vstack gap-2 mt-2">
-            <p class="small text-secondary m-0">{{ t('encryption.youCanAskAnyTime') || 'You can still ask at any time, for example to make sure that all your devices open everything.' }}</p>
-            <ng-container *ngTemplateOutlet="ways" />
-          </div>
-        </details>
       }
     } @else if (noKeyReason(); as reason) {
       <div class="alert alert-warning m-0" role="status">
@@ -49,8 +44,146 @@
         {{ t('encryption.soYourOldMessages') || 'Your old messages and files are locked here until it has one. Restore your key with your 24 words (below), or make a new key and then ask your other devices or a friend to open your history for it.' }}
       </div>
     }
+    <nav class="sf-setlist" [attr.aria-label]="t('settingsShell.keys') || 'Privacy lock'">
+      @if (keys.state() === 'ready') {
+      <a class="sf-setrow" routerLink="/settings/encryption/devices">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16v10H4zM8 20h8M12 16v4" /></svg>
+        <span class="sf-setrow-text">{{ t('encryption.yourDevices') || 'Your devices' }}</span>
+        <span class="sf-setrow-go" aria-hidden="true">›</span>
+      </a>
+      }
+      <a class="sf-setrow" routerLink="/settings/encryption/recover">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8v4l3 2M3 12a9 9 0 109-9 9 9 0 00-6.4 2.6M3 4v5h5" /></svg>
+        <span class="sf-setrow-text">{{ t('encryption.rowRecover') || 'Get my old messages back' }}</span>
+        <span class="sf-setrow-go" aria-hidden="true">›</span>
+      </a>
+      <a class="sf-setrow" routerLink="/settings/encryption/replace">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 11-3-6.7M21 4v5h-5" /></svg>
+        <span class="sf-setrow-text">{{ t('encryption.rowReplace') || 'Restore or replace the key' }}</span>
+        <span class="sf-setrow-go" aria-hidden="true">›</span>
+      </a>
+      @if (keys.diagnosis()) {
+      <a class="sf-setrow" routerLink="/settings/encryption/why">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21a9 9 0 100-18 9 9 0 000 18zM9.5 9.5a2.5 2.5 0 015 .5c0 1.7-2.5 2-2.5 3.5M12 17h.01" /></svg>
+        <span class="sf-setrow-text">{{ t('encryption.whyIsMyKey') || 'Why is my key (not) found?' }}</span>
+        <span class="sf-setrow-go" aria-hidden="true">›</span>
+      </a>
+      }
+    </nav>
   }
+  }
+  @case ('devices') {
+  @if (!showingWords() && keys.state() === 'ready') {
+        <h2 class="sf-section-title m-0 mt-2">{{ t('encryption.yourDevices') || 'Your devices' }}</h2>
+        @if (allowNote()) { <p class="small m-0">{{ allowNote() }}</p> }
+        @if (severalKeys() && own.waiting().length === 0) {
+          <details class="sf-expand sf-expand-quiet">
+            <summary>{{ t('encryption.thisDeviceOpensMy') || 'This device opens my old messages' }}</summary>
+            <div class="vstack gap-2 mt-2">
+              <p class="small text-secondary m-0">{{ t('encryption.useThisWhenThis') || 'Use this when this device can read your old messages, but no Approve button shows. It then gives your other devices access.' }}</p>
+              <button type="button" class="btn btn-outline-primary btn-sm align-self-start" (click)="trustThis()">{{ t('encryption.useThisDeviceTo') || 'Use this device to give the others access' }}</button>
+            </div>
+          </details>
+        }
+        <ul class="sf-list">
+          @for (key of devices(); track key.id) {
+            <li class="sf-list-item flex-wrap gap-2">
+              <span class="sf-list-text">
+                <span class="sf-fs-text">{{ key.label || 'A device' }}
+                  @if (key.id === keys.thisKeyId()) { <span class="badge rounded-pill text-bg-success">{{ t('encryption.thisDevice') || 'This device' }}</span> }
+                  @if (key.revoked) { <span class="badge rounded-pill text-bg-secondary">{{ t('encryption.removed') || 'Removed' }}</span> }
+                  @if (key.waiting) { <span class="badge rounded-pill text-bg-warning">{{ t('encryption.notApprovedYet') || 'Not approved yet' }}</span> }
+                </span>
+                <small>{{ key.createdAt | appDate: 'd MMM yyyy HH:mm:ss' }} · {{ short(key) }}</small>
+              </span>
+              @if (isWaiting(key)) {
+                <span class="small text-secondary w-100">{{ t('encryption.waitingForAccessTo') || 'Waiting for access to your old messages and files.' }}</span>
+                <button type="button" class="btn btn-primary btn-sm" (click)="allow(key)" [disabled]="allowing() !== null">{{ allowing() === key.id ? (t('encryption.givingAccessAllowed', { allowed: allowed() }) || 'Giving access… ' + allowed()) : 'Allow' }}</button>
+              }
+              @if (!key.revoked && key.id === keys.thisKeyId() && otherKeys() > 0) {
+                <span class="small text-secondary w-100">{{ t('encryption.removeFromAnother') || 'To remove this device, open Seven Friends on another device of yours.' }}</span>
+              }
+              @if (!key.revoked && key.id !== keys.thisKeyId()) {
+                @if (removing() === key.id) {
+                  <div class="sf-msg-actions w-100 justify-content-end">
+                    <button type="button" class="btn btn-light btn-sm" (click)="removing.set(null)" [disabled]="busy()">{{ t('encryption.cancel') || 'Cancel' }}</button>
+                    <button type="button" class="btn btn-danger btn-sm" (click)="remove(key)" [disabled]="busy()">{{ t('encryption.removeIt') || 'Remove it' }}</button>
+                  </div>
+                } @else {
+                  <button type="button" class="btn btn-light btn-sm" (click)="removing.set(key.id)">{{ t('encryption.remove') || 'Remove' }}</button>
+                }
+              }
+            </li>
+          }
+        </ul>
+        @if (removedCount() > 0) {
+          <div class="d-flex justify-content-center">
+            <button type="button" class="btn btn-light btn-sm" [attr.aria-expanded]="showRemoved()" (click)="showRemoved.set(!showRemoved())">{{ showRemoved() ? (t('encryption.hideRemoved') || 'Hide removed') : (t('encryption.showRemoved', { count: removedCount() }) || 'Show removed (' + removedCount() + ')') }}</button>
+          </div>
+        }
+        @if (removing()) { <p class="small text-secondary m-0">{{ t('encryption.aRemovedKeyIs') || 'A removed key is not used for new files. Files already locked for it can then no longer be opened on that device. The device also gets no more notifications from your account.' }}</p> }
 
+  }
+  }
+  @case ('recover') {
+  @if (!showingWords()) {
+    <ng-container *ngTemplateOutlet="ways" />
+  }
+  }
+  @case ('replace') {
+  <app-key-setup (finished)="keys.refresh()" />
+  @if (!showingWords()) {
+    @if (keys.state() === 'ready') {
+        <details class="sf-expand sf-expand-quiet mt-2">
+          <summary>{{ t('encryption.makeANewKey') || 'Make a new key' }}</summary>
+          <div class="vstack gap-2 mt-2">
+            <p class="small text-secondary m-0">
+              {{ t('encryption.useThisIfYou') || 'Use this if you lost your recovery words. This device gets a new key and new recovery words, and the key it has now is removed. Files that are already locked for the old key can no longer be opened.' }}
+            </p>
+            @if (resetting()) {
+              <div class="sf-msg-actions justify-content-end">
+                <button type="button" class="btn btn-light btn-sm" (click)="resetting.set(false)">{{ t('encryption.cancel') || 'Cancel' }}</button>
+                <button type="button" class="btn btn-danger btn-sm" (click)="newKey()">{{ t('encryption.makeANewKey') || 'Make a new key' }}</button>
+              </div>
+            } @else {
+              <button type="button" class="btn btn-outline-danger align-self-start btn-sm" (click)="resetting.set(true)">{{ t('encryption.makeANewKey2') || 'Make a new key…' }}</button>
+            }
+          </div>
+        </details>
+        @if (problem(); as text) { <div class="alert alert-warning m-0" role="alert">{{ text }}</div> }
+    }
+    @if (keys.state() === 'none' || thisKeyWaiting()) {
+      <ng-container *ngTemplateOutlet="restoreBlock" />
+    }
+    @if (thisKeyWaiting()) {
+      <ng-container *ngTemplateOutlet="startOverBlock" />
+    }
+  }
+  }
+  @case ('why') {
+  @if (keys.diagnosis(); as d) {
+    <!-- why a key is, or is not, found: nothing secret, only what was looked up -->
+    <div class="vstack gap-2">
+      <h2 class="sf-section-title m-0">{{ t('encryption.whyIsMyKey') || 'Why is my key (not) found?' }}</h2>
+      <ul class="sf-hint m-0 ps-3">
+        <li>{{ t('encryption.accountSlice', { slice: d.account.slice(-6) }) || 'Account: …' + d.account.slice(-6) }}</li>
+        <li>{{ t('encryption.keyInThisBrowser', { no: d.localKeyId ? (t('encryption.yesSlice', { slice: d.localKeyId.slice(0, 8) }) || 'yes (' + d.localKeyId.slice(0, 8) + ')') : 'no' }) || 'Key in this browser for this account: ' + (d.localKeyId ? (t('encryption.yesSlice', { slice: d.localKeyId.slice(0, 8) }) || 'yes (' + d.localKeyId.slice(0, 8) + ')') : 'no') }}</li>
+        @if (d.localKeyId) {
+          @let pubState = d.localPublished === 'yes' ? 'yes' : d.localPublished === 'removed' ? 'no, it was removed' : 'no, it was never published';
+          <li>{{ t('encryption.thatKeyIsPublished', { state: pubState }) || 'That key is published: ' + pubState }}</li>
+        }
+        <li>{{ t('encryption.keysPublishedForThis', { active: d.active, removed: d.removed }) || 'Keys published for this account: ' + d.active + ' in use, ' + d.removed + ' removed' }}</li>
+        @if (listState(); as list) {
+          <li>{{ list.inList ? (t('encryption.inSignedList', { count: list.count }) || 'This device is in your signed list (' + list.count + ' devices).') : (t('encryption.notInSignedList', { count: list.count }) || 'This device is NOT in your signed list (' + list.count + ' devices), so it cannot send.') }}</li>
+        }
+        <li>{{ t('encryption.accountsWithAKey', { accountsInBrowser: d.accountsInBrowser }) || 'Accounts with a key in this browser: ' + d.accountsInBrowser }}</li>
+        @if (d.failed) { <li>{{ t('encryption.theServerCouldNot') || 'The server could not be asked just now. Reload the page to try again.' }}</li> }
+      </ul>
+    </div>
+  }
+  }
+  }
+</main>
   <ng-template #ways>
     <div class="vstack gap-3">
       <!-- 1. my other devices -->
@@ -107,87 +240,6 @@
     </div>
   </ng-template>
 
-  @if (!showingWords()) {
-    @if (keys.state() === 'ready') {
-      <div class="d-flex justify-content-center">
-        <button type="button" class="btn btn-light btn-sm" [attr.aria-expanded]="advanced()" (click)="advanced.set(!advanced())">{{ advanced() ? 'Hide advanced' : 'Advanced' }}</button>
-      </div>
-      @if (advanced()) {
-        <h2 class="sf-section-title m-0 mt-2">{{ t('encryption.yourDevices') || 'Your devices' }}</h2>
-        @if (allowNote()) { <p class="small m-0">{{ allowNote() }}</p> }
-        @if (severalKeys() && own.waiting().length === 0) {
-          <details class="sf-expand sf-expand-quiet">
-            <summary>{{ t('encryption.thisDeviceOpensMy') || 'This device opens my old messages' }}</summary>
-            <div class="vstack gap-2 mt-2">
-              <p class="small text-secondary m-0">{{ t('encryption.useThisWhenThis') || 'Use this when this device can read your old messages, but no Approve button shows. It then gives your other devices access.' }}</p>
-              <button type="button" class="btn btn-outline-primary btn-sm align-self-start" (click)="trustThis()">{{ t('encryption.useThisDeviceTo') || 'Use this device to give the others access' }}</button>
-            </div>
-          </details>
-        }
-        <ul class="sf-list">
-          @for (key of devices(); track key.id) {
-            <li class="sf-list-item flex-wrap gap-2">
-              <span class="sf-list-text">
-                <span class="sf-fs-text">{{ key.label || 'A device' }}
-                  @if (key.id === keys.thisKeyId()) { <span class="badge rounded-pill text-bg-success">{{ t('encryption.thisDevice') || 'This device' }}</span> }
-                  @if (key.revoked) { <span class="badge rounded-pill text-bg-secondary">{{ t('encryption.removed') || 'Removed' }}</span> }
-                  @if (key.waiting) { <span class="badge rounded-pill text-bg-warning">{{ t('encryption.notApprovedYet') || 'Not approved yet' }}</span> }
-                </span>
-                <small>{{ key.createdAt | appDate: 'd MMM yyyy HH:mm:ss' }} · {{ short(key) }}</small>
-              </span>
-              @if (isWaiting(key)) {
-                <span class="small text-secondary w-100">{{ t('encryption.waitingForAccessTo') || 'Waiting for access to your old messages and files.' }}</span>
-                <button type="button" class="btn btn-primary btn-sm" (click)="allow(key)" [disabled]="allowing() !== null">{{ allowing() === key.id ? (t('encryption.givingAccessAllowed', { allowed: allowed() }) || 'Giving access… ' + allowed()) : 'Allow' }}</button>
-              }
-              @if (!key.revoked && key.id === keys.thisKeyId() && otherKeys() > 0) {
-                <span class="small text-secondary w-100">{{ t('encryption.removeFromAnother') || 'To remove this device, open Seven Friends on another device of yours.' }}</span>
-              }
-              @if (!key.revoked && key.id !== keys.thisKeyId()) {
-                @if (removing() === key.id) {
-                  <div class="sf-msg-actions w-100 justify-content-end">
-                    <button type="button" class="btn btn-light btn-sm" (click)="removing.set(null)" [disabled]="busy()">{{ t('encryption.cancel') || 'Cancel' }}</button>
-                    <button type="button" class="btn btn-danger btn-sm" (click)="remove(key)" [disabled]="busy()">{{ t('encryption.removeIt') || 'Remove it' }}</button>
-                  </div>
-                } @else {
-                  <button type="button" class="btn btn-light btn-sm" (click)="removing.set(key.id)">{{ t('encryption.remove') || 'Remove' }}</button>
-                }
-              }
-            </li>
-          }
-        </ul>
-        @if (removedCount() > 0) {
-          <div class="d-flex justify-content-center">
-            <button type="button" class="btn btn-light btn-sm" [attr.aria-expanded]="showRemoved()" (click)="showRemoved.set(!showRemoved())">{{ showRemoved() ? (t('encryption.hideRemoved') || 'Hide removed') : (t('encryption.showRemoved', { count: removedCount() }) || 'Show removed (' + removedCount() + ')') }}</button>
-          </div>
-        }
-        @if (removing()) { <p class="small text-secondary m-0">{{ t('encryption.aRemovedKeyIs') || 'A removed key is not used for new files. Files already locked for it can then no longer be opened on that device. The device also gets no more notifications from your account.' }}</p> }
-
-        <details class="sf-expand sf-expand-quiet mt-2">
-          <summary>{{ t('encryption.makeANewKey') || 'Make a new key' }}</summary>
-          <div class="vstack gap-2 mt-2">
-            <p class="small text-secondary m-0">
-              {{ t('encryption.useThisIfYou') || 'Use this if you lost your recovery words. This device gets a new key and new recovery words, and the key it has now is removed. Files that are already locked for the old key can no longer be opened.' }}
-            </p>
-            @if (resetting()) {
-              <div class="sf-msg-actions justify-content-end">
-                <button type="button" class="btn btn-light btn-sm" (click)="resetting.set(false)">{{ t('encryption.cancel') || 'Cancel' }}</button>
-                <button type="button" class="btn btn-danger btn-sm" (click)="newKey()">{{ t('encryption.makeANewKey') || 'Make a new key' }}</button>
-              </div>
-            } @else {
-              <button type="button" class="btn btn-outline-danger align-self-start btn-sm" (click)="resetting.set(true)">{{ t('encryption.makeANewKey2') || 'Make a new key…' }}</button>
-            }
-          </div>
-        </details>
-        @if (problem(); as text) { <div class="alert alert-warning m-0" role="alert">{{ text }}</div> }
-      }
-    }
-    @if (keys.state() === 'none' || thisKeyWaiting()) {
-      <ng-container *ngTemplateOutlet="restoreBlock" />
-    }
-    @if (thisKeyWaiting()) {
-      <ng-container *ngTemplateOutlet="startOverBlock" />
-    }
-  }
 <!-- restoring with the 24 words: on a device with no key, and on one whose own new key is not approved yet (the words bring back the key of another device) -->
 <ng-template #restoreBlock>
   <details class="sf-expand sf-expand-quiet mt-2">
@@ -212,25 +264,4 @@
     </div>
   </details>
 </ng-template>
-  @if (keys.diagnosis(); as d) {
-    <!-- why a key is, or is not, found: nothing secret, only what was looked up -->
-    <details class="sf-hint">
-      <summary>{{ t('encryption.whyIsMyKey') || 'Why is my key (not) found?' }}</summary>
-      <ul class="m-0 ps-3">
-        <li>{{ t('encryption.accountSlice', { slice: d.account.slice(-6) }) || 'Account: …' + d.account.slice(-6) }}</li>
-        <li>{{ t('encryption.keyInThisBrowser', { no: d.localKeyId ? (t('encryption.yesSlice', { slice: d.localKeyId.slice(0, 8) }) || 'yes (' + d.localKeyId.slice(0, 8) + ')') : 'no' }) || 'Key in this browser for this account: ' + (d.localKeyId ? (t('encryption.yesSlice', { slice: d.localKeyId.slice(0, 8) }) || 'yes (' + d.localKeyId.slice(0, 8) + ')') : 'no') }}</li>
-        @if (d.localKeyId) {
-          @let pubState = d.localPublished === 'yes' ? 'yes' : d.localPublished === 'removed' ? 'no, it was removed' : 'no, it was never published';
-          <li>{{ t('encryption.thatKeyIsPublished', { state: pubState }) || 'That key is published: ' + pubState }}</li>
-        }
-        <li>{{ t('encryption.keysPublishedForThis', { active: d.active, removed: d.removed }) || 'Keys published for this account: ' + d.active + ' in use, ' + d.removed + ' removed' }}</li>
-        @if (listState(); as list) {
-          <li>{{ list.inList ? (t('encryption.inSignedList', { count: list.count }) || 'This device is in your signed list (' + list.count + ' devices).') : (t('encryption.notInSignedList', { count: list.count }) || 'This device is NOT in your signed list (' + list.count + ' devices), so it cannot send.') }}</li>
-        }
-        <li>{{ t('encryption.accountsWithAKey', { accountsInBrowser: d.accountsInBrowser }) || 'Accounts with a key in this browser: ' + d.accountsInBrowser }}</li>
-        @if (d.failed) { <li>{{ t('encryption.theServerCouldNot') || 'The server could not be asked just now. Reload the page to try again.' }}</li> }
-      </ul>
-    </details>
-  }
-</main>
 </ng-container>

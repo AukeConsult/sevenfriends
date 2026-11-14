@@ -15,8 +15,6 @@
   "installText": "Appen åpnes som alle andre apper, og varsler er mest pålitelige fra den.",
   "installed": "Appen er installert på denne enheten.",
   "installApp": "Installer appen",
-  "ios": "I Safari trykker du på <strong>Del</strong>, deretter <strong>Legg til på Hjem-skjerm</strong>. Åpne så {{ app }} fra startskjermen.",
-  "noInstall": "Nettleseren din har ingen installeringsknapp her. Se etter <strong>Installer app</strong> i menyen, eller se Innstillinger → Installer appen.",
   "thenOpen": "Åpne så appen og logg inn med den samme kontoen.",
   "thenContinues": "Oppsettet fortsetter der med varsler, mikrofon og kamera, tekststørrelse og nøkkelen din.",
   "finishApp": "Ferdig, jeg fortsetter i appen",

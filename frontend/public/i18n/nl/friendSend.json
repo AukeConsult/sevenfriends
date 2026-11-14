@@ -12,5 +12,6 @@
   "writeToFriendname": "Schrijf naar {{ friendName }}…",
   "messageToFriendname": "Bericht aan {{ friendName }}",
   "hideTheForm": "Formulier verbergen",
-  "openRecovery": "Herstel openen"
+  "openRecovery": "Herstel openen",
+  "typeAMessage": "Bericht"
 }

@@ -78,5 +78,7 @@
   "startOverButton": "Börja om med den här enheten",
   "startOverFailed": "Det gick inte att börja om. Kontrollera anslutningen och försök igen.",
   "hideRemoved": "Dölj borttagna",
-  "showRemoved": "Visa borttagna ({{ count }})"
+  "showRemoved": "Visa borttagna ({{ count }})",
+  "rowRecover": "Få tillbaka mina gamla meddelanden",
+  "rowReplace": "Återställ eller byt nyckeln"
 }

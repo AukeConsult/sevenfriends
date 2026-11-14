@@ -1,12 +1,6 @@
 <ng-container *transloco="let tx">
 <main class="sf-narrow">
 @if (section === 'preferences') {
-  <div class="card">
-    <div class="card-body d-flex flex-wrap align-items-center justify-content-between gap-2">
-      <span>{{ tx('settings.setupWizardTheMost') || 'Setup wizard: the most important settings for a first start, step by step.' }}</span>
-      <a routerLink="/setup" class="btn btn-outline-primary btn-sm">{{ tx('settings.openTheSetupWizard') || 'Open the setup wizard' }}</a>
-    </div>
-  </div>
   <p class="small text-secondary m-0">{{ tx('settings.theseChoicesAreSaved') || 'These choices are saved with your circle, so every device you sign in on shows the same.' }}</p>
   <h2 class="sf-section-title m-0 mt-2">{{ tx('settings.display') || 'Display' }}</h2>
   <div class="card">
@@ -28,6 +22,21 @@
     </div>
   </div>
   <h2 class="sf-section-title m-0 mt-2">{{ tx('settings.conversation') || 'Conversation' }}</h2>
+  <div class="card">
+    <div class="card-body">
+      <!-- my colour: my {{ w.many }} see it on their list and in the header of our conversation -->
+      <div role="radiogroup" [attr.aria-label]="tx('profile.colour') || 'Your colour'">
+        <span class="form-label small text-secondary m-0">{{ tx('profile.colour') || 'Your colour' }} <span class="text-secondary">({{ tx('profile.colourSee', { many: w.many }) || 'your ' + w.many + ' see it' }})</span></span>
+        <div class="sf-colors mt-1">
+          <button type="button" class="sf-color sf-color-none" role="radio" [attr.aria-checked]="!color()" [class.sf-chosen]="!color()" [attr.aria-label]="tx('profile.noColour') || 'No colour'" [attr.title]="tx('profile.noColour') || 'No colour'" [disabled]="!colorLoaded()" (click)="chooseColor(null)"></button>
+          @for (c of colors; track c.key) {
+            <button type="button" class="sf-color" role="radio" [attr.aria-checked]="color() === c.key" [class.sf-chosen]="color() === c.key" [style.background]="c.hex"
+                    [attr.aria-label]="c.label" [title]="c.label" [disabled]="!colorLoaded()" (click)="chooseColor(c.key)"></button>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="card">
     <div class="card-body vstack gap-2">
       <div class="form-check form-switch m-0">

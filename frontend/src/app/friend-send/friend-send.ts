@@ -5,8 +5,6 @@ import { Component, ElementRef, HostListener, computed, effect, inject, input, s
 import { AddMedia } from '../add-media/add-media';
 import { ChatService } from '../core/chat.service';
 import { NotApprovedError } from '../core/message-lock.service';
-import { PokeToggle } from '../friend-page/poke-toggle';
-import { Clearable } from '../core/clearable';
 import { EMOJI_GROUPS } from '../core/emojis';
 import { UiPreferencesService } from '../core/ui-preferences';
 import { FriendContext } from '../friend-page/friend-context';
@@ -19,7 +17,7 @@ import { FriendContext } from '../friend-page/friend-context';
  */
 @Component({
   selector: 'app-friend-send',
-  imports: [AddMedia, Clearable, PokeToggle, RouterLink, TranslocoDirective],
+  imports: [AddMedia, RouterLink, TranslocoDirective],
   templateUrl: './friend-send.html',
   providers: [provideTranslocoScope('friendSend')],
 })
@@ -44,12 +42,6 @@ export class FriendSend {
         field.style.height = `${field.scrollHeight}px`;
       });
     });
-  }
-
-  /** the small button in the corner of the frame: hide the Send form (the Send icon in the header shows it again) */
-  protected hide(): void {
-    if (this.embedded()) this.ctx.feedSendOpen.set(false);
-    else this.ctx.sendFormOpen.set(false);
   }
 
   protected readonly field = viewChild<ElementRef<HTMLTextAreaElement>>('field');

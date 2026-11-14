@@ -78,5 +78,7 @@
   "startOverButton": "Recommencer avec cet appareil",
   "startOverFailed": "Impossible de recommencer. Vérifie la connexion et réessaie.",
   "hideRemoved": "Masquer les retirés",
-  "showRemoved": "Afficher les retirés ({{ count }})"
+  "showRemoved": "Afficher les retirés ({{ count }})",
+  "rowRecover": "Récupérer mes anciens messages",
+  "rowReplace": "Restaurer ou remplacer la clé"
 }

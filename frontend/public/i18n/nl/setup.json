@@ -15,8 +15,6 @@
   "installText": "De app opent zoals elke andere app en meldingen zijn er het betrouwbaarst mee.",
   "installed": "De app is op dit apparaat geïnstalleerd.",
   "installApp": "De app installeren",
-  "ios": "Tik in Safari op <strong>Deel</strong>, dan op <strong>Zet op beginscherm</strong>. Open daarna {{ app }} vanaf je beginscherm.",
-  "noInstall": "Je browser heeft hier geen installatieknop. Zoek <strong>App installeren</strong> in het menu, of zie Instellingen → De app installeren.",
   "thenOpen": "Open daarna de app en log in met hetzelfde account.",
   "thenContinues": "De installatie gaat daar verder met meldingen, microfoon en camera, tekstgrootte en je sleutel.",
   "finishApp": "Afronden, ik ga verder in de app",

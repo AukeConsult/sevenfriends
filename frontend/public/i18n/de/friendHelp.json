@@ -3,8 +3,6 @@
   "headerTitle": "Die Kopfzeile",
   "pictureTitle": "Bild, Punkt und Stimmung",
   "pictureText": "Tippe auf das Bild, um das Profil deines Freundes zu sehen. Der kleine Punkt zeigt, ob dein Freund gerade aktiv, abwesend oder offline ist. Das kleine Gesicht zeigt die Stimmung, die dein Freund eingestellt hat.",
-  "sendTitle": "Senden",
-  "sendText": "Schreibe eine neue Nachricht. Du kannst Emojis, Bilder, Videos und Sprachnachrichten hinzufügen und auf eine fertige Nachricht tippen, um sie zu senden.",
   "messagesTitle": "Nachrichten",
   "messagesText": "Das Gespräch mit deinem Freund. Ein kleiner Punkt erscheint hier, wenn es eine neue Nachricht gibt.",
   "safeboxTitle": "Der Tresor",
@@ -36,5 +34,9 @@
   "ownText": "Tippe auf eine deiner Nachrichten, um sie zu bearbeiten, zu kopieren oder zu löschen. Eine gelöschte Nachricht verschwindet für euch beide.",
   "hideTitle": "Ausblenden",
   "hideText": "Du kannst ein Bild oder Video in deinem Verlauf ausblenden und wieder einblenden.",
-  "hide": "Verstanden, Hilfe ausblenden"
+  "hide": "Verstanden, Hilfe ausblenden",
+  "writeTitle": "Schreiben",
+  "writeText": "Nutze das Feld unten bei den Nachrichten. Der Smiley fügt Emojis hinzu, die Symbole für Bild, Video und Mikrofon senden ein Bild, ein Video oder eine Sprachnachricht. Die Senden-Taste erscheint, sobald du etwas getippt hast.",
+  "reactTitle": "Reagieren",
+  "reactText": "Tippe unter einer Nachricht auf den Daumen, um eine Reaktion zu wählen. Tippe erneut auf deine Reaktion, um sie zurückzunehmen."
 }

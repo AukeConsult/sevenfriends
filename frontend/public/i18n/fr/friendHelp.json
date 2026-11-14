@@ -3,8 +3,6 @@
   "headerTitle": "L’en-tête",
   "pictureTitle": "Photo, point et humeur",
   "pictureText": "Touchez la photo pour voir le profil de votre ami. Le petit point indique si votre ami est actif, absent ou hors ligne. Le petit visage montre l’humeur que votre ami a choisie.",
-  "sendTitle": "Envoyer",
-  "sendText": "Écrivez un nouveau message. Vous pouvez ajouter des émojis, des images, des vidéos et des messages vocaux, et toucher un message prêt à l’emploi pour l’envoyer.",
   "messagesTitle": "Messages",
   "messagesText": "La conversation avec votre ami. Un petit point apparaît ici lorsqu’il y a un nouveau message.",
   "safeboxTitle": "Le coffre-fort",
@@ -36,5 +34,9 @@
   "ownText": "Touchez l’un de vos messages pour le modifier, le copier ou le supprimer. Un message supprimé disparaît pour vous deux.",
   "hideTitle": "Masquer",
   "hideText": "Vous pouvez masquer une image ou une vidéo dans votre fil et l’afficher de nouveau.",
-  "hide": "Compris, masquer l’aide"
+  "hide": "Compris, masquer l’aide",
+  "writeTitle": "Écrire",
+  "writeText": "Utilisez le champ en bas des messages. Le smiley ajoute des emojis, et les icônes d’image, de vidéo et de micro envoient une image, une vidéo ou un message vocal. Le bouton d’envoi apparaît dès que vous avez écrit quelque chose.",
+  "reactTitle": "Réagir",
+  "reactText": "Touchez le pouce sous un message pour choisir une réaction. Touchez à nouveau votre réaction pour la retirer."
 }

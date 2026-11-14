@@ -15,8 +15,6 @@
   "installText": "The app opens like any other app, and notifications are most reliable from it.",
   "installed": "The app is installed on this device.",
   "installApp": "Install the app",
-  "ios": "In Safari, tap <strong>Share</strong>, then <strong>Add to Home Screen</strong>. Then open {{ app }} from your home screen.",
-  "noInstall": "Your browser has no install button here. Look for <strong>Install app</strong> in its menu, or see Settings → Install the app.",
   "thenOpen": "Then open the app and sign in with the same account.",
   "thenContinues": "The setup continues there with notifications.",
   "finishApp": "Finish, I will continue in the app",

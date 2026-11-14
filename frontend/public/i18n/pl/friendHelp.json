@@ -3,8 +3,6 @@
   "headerTitle": "Nagłówek",
   "pictureTitle": "Zdjęcie, kropka i nastrój",
   "pictureText": "Dotknij zdjęcia, aby zobaczyć profil znajomego. Mała kropka pokazuje, czy znajomy jest teraz aktywny, nieobecny czy offline. Mała buźka pokazuje nastrój ustawiony przez znajomego.",
-  "sendTitle": "Wyślij",
-  "sendText": "Napisz nową wiadomość. Możesz dodać emoji, zdjęcia, filmy i wiadomości głosowe oraz dotknąć gotowej wiadomości, aby ją wysłać.",
   "messagesTitle": "Wiadomości",
   "messagesText": "Rozmowa ze znajomym. Mała kropka pojawia się tutaj, gdy jest nowa wiadomość.",
   "safeboxTitle": "Sejf",
@@ -36,5 +34,9 @@
   "ownText": "Dotknij własnej wiadomości, aby ją edytować, skopiować lub usunąć. Usunięta wiadomość znika u Was obojga.",
   "hideTitle": "Ukrywanie",
   "hideText": "Możesz ukryć obraz lub film w swoim kanale i pokazać go ponownie.",
-  "hide": "Rozumiem, ukryj pomoc"
+  "hide": "Rozumiem, ukryj pomoc",
+  "writeTitle": "Pisz",
+  "writeText": "Użyj pola na dole wiadomości. Buźka dodaje emoji, a ikony zdjęcia, wideo i mikrofonu wysyłają zdjęcie, film lub wiadomość głosową. Przycisk wysyłania pojawia się, gdy coś wpiszesz.",
+  "reactTitle": "Reaguj",
+  "reactText": "Stuknij kciuk pod wiadomością, aby wybrać reakcję. Stuknij swoją reakcję ponownie, aby ją cofnąć."
 }

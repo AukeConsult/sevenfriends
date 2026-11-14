@@ -23,13 +23,7 @@
   </div>
   @if (!ctx.blocked()) {
     <div class="sf-bar-actions">
-      <!-- the icons that switch what is under the header: sending one message, the messages, and the safebox -->
-      @if (!(sendOver() && ctx.feedSendOpen())) {
-      <a [routerLink]="sendOver() ? null : ['/friends', ctx.friendId, 'send']"[attr.role]="sendOver() ? 'button' : null" [attr.tabindex]="sendOver() ? 0 : null" (keydown.enter)="sendOver() && toggleSendForm($event)" class="sf-tool-btn" [class.sf-current]="sendOver() ? ctx.feedSendOpen() : onSend() && ctx.sendFormOpen()" [attr.aria-pressed]="sendOver() ? ctx.feedSendOpen() : onSend() ? ctx.sendFormOpen() : null" (click)="toggleSendForm($event)" [attr.aria-expanded]="sendOver() ? ctx.feedSendOpen() : onSend() ? ctx.sendFormOpen() : null" [attr.aria-label]="t('friendPage.sendAMessage') || 'Send a message'" [attr.title]="t('friendPage.sendAMessage') || 'Send a message'">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22z" /><path d="M8 12h8M12 8v8" /></svg>
-        <span class="sf-tool-label" aria-hidden="true">{{ t('friendPage.write') || 'Write' }}</span>
-      </a>
-      }
+      <!-- the icons that switch what is under the header: the messages and the safebox -->
       @if (!onFeed()) {
       <a [routerLink]="['/friends', ctx.friendId]" routerLinkActive="sf-current" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page" class="sf-tool-btn" [attr.aria-label]="t('friendPage.messages') || 'Messages'" [attr.title]="t('friendPage.messages') || 'Messages'">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 8V6a2 2 0 012-2h8a2 2 0 012 2v5a2 2 0 01-2 2h-1" /><path d="M4 10a2 2 0 012-2h7a2 2 0 012 2v5a2 2 0 01-2 2H9l-3 3v-3a2 2 0 01-2-2z" /></svg>
@@ -112,12 +106,11 @@
 <div class="sf-expand" [class.open]="ctx.helpOpen()" [attr.inert]="ctx.helpOpen() ? null : ''">
   <div class="sf-expand-inner"><app-feed-help (closed)="ctx.helpOpen.set(false)" /></div>
 </div>
-@if (sendOver() && !sendAtBottom()) {
-  <!-- Expanding frame: the Send form on top of the feed (newest first) or the safebox (the Send icon in the header) -->
-  <div class="sf-expand" [class.open]="ctx.feedSendOpen()" [attr.inert]="ctx.feedSendOpen() ? null : ''">
-    <div class="sf-expand-inner">@if (ctx.feedSendOpen()) { <app-friend-send [embedded]="true" /> }</div>
-  </div>
+@if (onFeed() && !sendAtBottom()) {
+  <!-- the feed is newest first: the Send form is under the header, on the messages page only (not on the safebox) -->
+  <app-friend-send [embedded]="true" />
 }
+@if (onFeed()) { <app-poke-toggle /> } <!-- on the messages page: my friend has me on their sleep list, a tick to poke anyway -->
 <app-lock-chain-band [friendId]="ctx.friendId" [name]="ctx.friendName()" />
 <app-key-changed-band [friendId]="ctx.friendId" [name]="ctx.friendName()" [fingerprints]="ctx.friendFingerprints()" />
 @if (ctx.lockedMessages() + ctx.lockedFiles() > 0) { <app-locked-band [friendId]="ctx.friendId" [name]="ctx.friendName()" [messages]="ctx.lockedMessages()" [files]="ctx.lockedFiles()" /> }
@@ -132,7 +125,7 @@
 </div>
 
 <router-outlet />
-@if (sendAtBottom() && ctx.feedSendOpen()) {
+@if (sendAtBottom()) {
   <!-- the feed is oldest first: the Send form is under the messages, where the newest one is (it follows the order of the feed) -->
   <div class="sf-send-bottom"><app-friend-send [embedded]="true" /></div>
 }

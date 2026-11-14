@@ -3,8 +3,6 @@
   "headerTitle": "O cabeçalho",
   "pictureTitle": "Foto, ponto e humor",
   "pictureText": "Toque na foto para ver o perfil do seu amigo. O pontinho mostra se o seu amigo está ativo agora, ausente ou offline. A carinha mostra o humor que o seu amigo definiu.",
-  "sendTitle": "Enviar",
-  "sendText": "Escreva uma nova mensagem. Pode adicionar emojis, imagens, vídeos e mensagens de voz, e tocar numa mensagem pronta para a enviar.",
   "messagesTitle": "Mensagens",
   "messagesText": "A conversa com o seu amigo. Aparece aqui um pontinho quando há uma nova mensagem.",
   "safeboxTitle": "O cofre",
@@ -36,5 +34,9 @@
   "ownText": "Toque numa das suas mensagens para a editar, copiar ou apagar. Uma mensagem apagada desaparece para os dois.",
   "hideTitle": "Ocultar",
   "hideText": "Pode ocultar uma imagem ou um vídeo no seu feed e voltar a mostrá-lo.",
-  "hide": "Entendido, ocultar a ajuda"
+  "hide": "Entendido, ocultar a ajuda",
+  "writeTitle": "Escrever",
+  "writeText": "Use o campo na parte de baixo das mensagens. O smiley adiciona emojis, e os ícones de imagem, vídeo e microfone enviam uma imagem, um vídeo ou uma mensagem de voz. O botão de enviar aparece quando você escreve algo.",
+  "reactTitle": "Reagir",
+  "reactText": "Toque no polegar sob uma mensagem para escolher uma reação. Toque na sua reação de novo para retirá-la."
 }

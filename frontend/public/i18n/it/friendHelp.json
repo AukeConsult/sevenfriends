@@ -3,8 +3,6 @@
   "headerTitle": "L’intestazione",
   "pictureTitle": "Foto, punto e umore",
   "pictureText": "Tocca la foto per vedere il profilo del tuo amico. Il puntino mostra se il tuo amico è attivo ora, assente o offline. La faccina mostra l’umore impostato dal tuo amico.",
-  "sendTitle": "Invia",
-  "sendText": "Scrivi un nuovo messaggio. Puoi aggiungere emoji, immagini, video e messaggi vocali, e toccare un messaggio già pronto per inviarlo.",
   "messagesTitle": "Messaggi",
   "messagesText": "La conversazione con il tuo amico. Qui compare un puntino quando c’è un nuovo messaggio.",
   "safeboxTitle": "La cassaforte",
@@ -36,5 +34,9 @@
   "ownText": "Tocca uno dei tuoi messaggi per modificarlo, copiarlo o eliminarlo. Un messaggio eliminato sparisce per entrambi.",
   "hideTitle": "Nascondere",
   "hideText": "Puoi nascondere un’immagine o un video nel tuo feed e mostrarli di nuovo.",
-  "hide": "Ho capito, nascondi l’aiuto"
+  "hide": "Ho capito, nascondi l’aiuto",
+  "writeTitle": "Scrivi",
+  "writeText": "Usa il campo in fondo ai messaggi. La faccina aggiunge emoji, e le icone di immagine, video e microfono inviano un’immagine, un video o un messaggio vocale. Il pulsante di invio compare quando hai scritto qualcosa.",
+  "reactTitle": "Reagisci",
+  "reactText": "Tocca il pollice sotto un messaggio per scegliere una reazione. Tocca di nuovo la tua reazione per toglierla."
 }

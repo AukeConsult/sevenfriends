@@ -1,6 +1,6 @@
 import { ActiveCircleService } from '../core/active-circle.service';
 import { Component, computed, effect, inject, signal } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { tr } from '../core/i18n';
 import { LanguageService, deviceCountry } from '../core/language.service';
@@ -31,7 +31,7 @@ type SetupStep = 'profile' | 'friend' | 'notify' | 'install' | 'done';
  */
 @Component({
   selector: 'app-setup',
-  imports: [PageBar, NoticeControls, TranslocoDirective],
+  imports: [PageBar, NoticeControls, RouterLink, TranslocoDirective],
   providers: [provideTranslocoScope('setup')],
   templateUrl: './setup.html',
 })
@@ -168,10 +168,6 @@ export class Setup {
   /** "Add a friend": on the add page, which returns to the wizard afterwards */
   protected addFriend(): void {
     void this.router.navigate(['/friends/add'], { queryParams: { setup: 1 } });
-  }
-
-  protected async installApp(): Promise<void> {
-    await this.install.install();
   }
 
   /** The notification step: for a new account the text of a message is kept off the lock screen (the switch in the list can turn it back on). */

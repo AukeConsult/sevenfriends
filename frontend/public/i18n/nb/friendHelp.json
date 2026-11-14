@@ -3,8 +3,6 @@
   "headerTitle": "Toppen",
   "pictureTitle": "Bilde, prikk og humør",
   "pictureText": "Trykk på bildet for å se profilen til vennen din. Den lille prikken viser om vennen din er aktiv nå, borte eller frakoblet. Det lille ansiktet viser humøret vennen din har valgt.",
-  "sendTitle": "Send",
-  "sendText": "Skriv en ny melding. Du kan legge til emojier, bilder, videoer og talemeldinger, og trykke på en ferdig melding for å sende den.",
   "messagesTitle": "Meldinger",
   "messagesText": "Samtalen med vennen din. En liten prikk vises her når det er en ny melding.",
   "safeboxTitle": "Safeboksen",
@@ -36,5 +34,9 @@
   "ownText": "Trykk på en av dine egne meldinger for å redigere, kopiere eller slette den. En slettet melding forsvinner for dere begge.",
   "hideTitle": "Skjul",
   "hideText": "Du kan skjule et bilde eller en video i feeden din og vise det igjen.",
-  "hide": "Forstått, skjul hjelpen"
+  "hide": "Forstått, skjul hjelpen",
+  "writeTitle": "Skriv",
+  "writeText": "Bruk feltet nederst i meldingene. Smileyen legger til emojier, og ikonene for bilde, video og mikrofon sender et bilde, en video eller en talemelding. Send-knappen vises når du har skrevet noe.",
+  "reactTitle": "Reager",
+  "reactText": "Trykk på tommelen under en melding for å velge en reaksjon. Trykk på din egen reaksjon igjen for å fjerne den."
 }

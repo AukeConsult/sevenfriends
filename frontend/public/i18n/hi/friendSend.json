@@ -12,5 +12,6 @@
   "writeToFriendname": "{{ friendName }} को लिखें…",
   "messageToFriendname": "{{ friendName }} को संदेश",
   "hideTheForm": "फ़ॉर्म छिपाएँ",
-  "openRecovery": "रिकवरी खोलें"
+  "openRecovery": "रिकवरी खोलें",
+  "typeAMessage": "संदेश"
 }

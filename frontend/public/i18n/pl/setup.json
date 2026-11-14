@@ -15,8 +15,6 @@
   "installText": "Aplikacja otwiera się jak każda inna, a powiadomienia działają z niej najpewniej.",
   "installed": "Aplikacja jest zainstalowana na tym urządzeniu.",
   "installApp": "Zainstaluj aplikację",
-  "ios": "W Safari dotknij <strong>Udostępnij</strong>, potem <strong>Do ekranu początkowego</strong>. Potem otwórz {{ app }} z ekranu głównego.",
-  "noInstall": "Twoja przeglądarka nie ma tu przycisku instalacji. Poszukaj <strong>Zainstaluj aplikację</strong> w jej menu albo zobacz Ustawienia → Zainstaluj aplikację.",
   "thenOpen": "Potem otwórz aplikację i zaloguj się na to samo konto.",
   "thenContinues": "Konfiguracja będzie kontynuowana tam: powiadomienia, mikrofon i kamera, rozmiar tekstu i Twój klucz.",
   "finishApp": "Zakończ, dokończę w aplikacji",

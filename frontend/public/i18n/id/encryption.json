@@ -78,5 +78,7 @@
   "startOverButton": "Mulai dari awal dengan perangkat ini",
   "startOverFailed": "Tidak dapat memulai dari awal. Periksa koneksi dan coba lagi.",
   "hideRemoved": "Sembunyikan yang dihapus",
-  "showRemoved": "Tampilkan yang dihapus ({{ count }})"
+  "showRemoved": "Tampilkan yang dihapus ({{ count }})",
+  "rowRecover": "Pulihkan pesan lama saya",
+  "rowReplace": "Pulihkan atau ganti kunci"
 }

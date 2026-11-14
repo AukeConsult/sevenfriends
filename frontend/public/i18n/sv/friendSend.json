@@ -12,5 +12,6 @@
   "writeToFriendname": "Skriv till {{ friendName }}…",
   "messageToFriendname": "Meddelande till {{ friendName }}",
   "hideTheForm": "Dölj formuläret",
-  "openRecovery": "Öppna återställning"
+  "openRecovery": "Öppna återställning",
+  "typeAMessage": "Meddelande"
 }

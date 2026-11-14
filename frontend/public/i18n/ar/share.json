@@ -10,9 +10,7 @@
   "seats": "مقاعد",
   "youHaveFreeseatsFree": "{{ freeSeats }} {{ seats }} شاغرة لديك. ادعُ من يهمك من {{ many }}.",
   "yourOneLink": "رابط {{ one }} الخاص بك",
-  "linkHasPrivateCode": "يحتوي الرابط على رمز خاص. ولا يحتوي على رقم هاتفك أو بريدك الإلكتروني.",
   "strongShareTheApp": "<strong>شارك التطبيق</strong>",
   "shareTheAppText": "أخبر أحدًا عن التطبيق. يفتح هذا الرابط الصفحة الرئيسية فقط: ولا يُرسل أي طلب صداقة.",
-  "linkIsGeneral": "لا يحتوي الرابط على أي شيء شخصي.",
   "appLink": "رابط التطبيق"
 }

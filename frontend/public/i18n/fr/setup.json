@@ -15,8 +15,6 @@
   "installText": "L'appli s'ouvre comme n'importe quelle autre appli, et les notifications y sont plus fiables.",
   "installed": "L'appli est installée sur cet appareil.",
   "installApp": "Installer l'appli",
-  "ios": "Dans Safari, appuie sur <strong>Partager</strong>, puis sur <strong>Sur l'écran d'accueil</strong>. Ouvre ensuite {{ app }} depuis ton écran d'accueil.",
-  "noInstall": "Ton navigateur n'a pas de bouton d'installation ici. Cherche <strong>Installer l'appli</strong> dans son menu, ou va dans Réglages → Installer l'appli.",
   "thenOpen": "Ouvre ensuite l'appli et connecte-toi avec le même compte.",
   "thenContinues": "La configuration continue là-bas avec les notifications, le microphone et la caméra, la taille du texte et ta clé.",
   "finishApp": "Terminer, je continue dans l'appli",

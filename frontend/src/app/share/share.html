@@ -11,36 +11,32 @@
     <a routerLink="/install-app" class="sf-install-chip align-self-start"><span aria-hidden="true">📲</span> {{ t('share.installTheApp') || 'Install the app' }}</a>
   }
   @if (friendLink(); as url) {
-    <div class="card card-body vstack gap-2">
-      <app-invite-diagram />
-      <div class="d-flex align-items-center gap-2"><span class="sf-share-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1"/></svg></span><span [innerHTML]="t('share.strongInviteFriendsWith') || '<strong>Invite as a friend</strong>'"></span></div>
-      <p class="m-0 d-flex gap-2 align-items-start"><span class="sf-share-mini"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2 20a7 7 0 0114 0"/><circle cx="17" cy="9" r="3"/><path d="M16 14.5a6 6 0 016 5.5"/></svg></span><span>{{ t('share.sendThisLinkTo') || 'Send this link to someone you want as a friend. When they open it, sign in (or create an account) and confirm, a friend request is sent to you.' }}</span></p>
+    <section class="card card-body vstack gap-2">
+      <h2 class="sf-section-title m-0"><span [innerHTML]="t('share.strongInviteFriendsWith') || '<strong>Invite as a friend</strong>'"></span></h2>
+      <p class="m-0 text-secondary">{{ t('share.sendThisLinkTo') || 'Send this link to someone you want as a friend. When they open it, sign in (or create an account) and confirm, a friend request is sent to you.' }}</p>
       @if (!invite.canShare) {
         <input type="text" class="form-control" [value]="url" readonly [attr.aria-label]="(t('share.yourOneLink', { one: w.one }) || 'Your ' + w.one + ' link')" (focus)="$any($event.target).select()" />
       }
       <div class="d-flex flex-wrap gap-2">
-        <button type="button" class="btn btn-primary btn-sm" (click)="share('invite', url)"><span class="me-1"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 10.6l6.8-4M8.6 13.4l6.8 4"/></svg></span>{{ t('share.shareLink') || 'Share link' }}</button>
-        @if (!invite.canShare) { <button type="button" class="btn btn-light btn-sm" (click)="copy('invite', url)"><span class="me-1"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 012-2h9"/></svg></span>{{ t('share.copyLink') || 'Copy link' }}</button> }
+        <button type="button" class="btn btn-primary btn-sm" (click)="share('invite', url)">{{ t('share.shareLink') || 'Share link' }}</button>
+        @if (!invite.canShare) { <button type="button" class="btn btn-light btn-sm" (click)="copy('invite', url)">{{ t('share.copyLink') || 'Copy link' }}</button> }
       </div>
       @if (noteFor() === 'invite' && invite.note(); as note) { <span class="small text-secondary" role="status">{{ note }}</span> }
-      <span class="small text-secondary d-flex align-items-center gap-1"><span class="sf-share-mini"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg></span>{{ t('share.linkHasPrivateCode') || 'The link has a private code. It does not contain your phone number or email.' }}</span>
-    </div>
+    </section>
   }
-  @if (appLink(); as appUrl) {
-    <div class="card card-body vstack gap-2">
-      <svg class="sf-share-diagram" viewBox="0 0 300 76" aria-hidden="true" focusable="false"><g transform="translate(40 0)"><circle cx="0" cy="22" r="9" fill="var(--bs-primary-bg-subtle)" stroke="currentColor" stroke-width="2"/><path d="M-16 50a16 16 0 0132 0z" fill="var(--bs-primary-bg-subtle)" stroke="currentColor" stroke-width="2"/></g><g transform="translate(150 0)"><circle cx="0" cy="22" r="9" fill="var(--bs-primary-bg-subtle)" stroke="currentColor" stroke-width="2"/><path d="M-16 50a16 16 0 0132 0z" fill="var(--bs-primary-bg-subtle)" stroke="currentColor" stroke-width="2"/></g><path d="M64 20H118" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M112 15l7 5-7 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M180 20H226" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M220 15l7 5-7 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/><rect x="236" y="4" width="34" height="56" rx="7" fill="var(--bs-primary-bg-subtle)" stroke="currentColor" stroke-width="2"/><circle cx="253" cy="32" r="8" fill="currentColor"/><text x="253" y="36" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">7</text></svg>
-      <div class="d-flex align-items-center gap-2"><span class="sf-share-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1"/></svg></span><span [innerHTML]="t('share.strongShareTheApp') || '<strong>Share the app</strong>'"></span></div>
-      <p class="m-0 d-flex gap-2 align-items-start"><span class="sf-share-mini"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2 20a7 7 0 0114 0"/><circle cx="17" cy="9" r="3"/><path d="M16 14.5a6 6 0 016 5.5"/></svg></span><span>{{ t('share.shareTheAppText') || 'Tell someone about the app. This link only opens the start page: no friend request is sent.' }}</span></p>
+  @if (appLink(); as url) {
+    <section class="card card-body vstack gap-2">
+      <h2 class="sf-section-title m-0"><span [innerHTML]="t('share.strongShareTheApp') || '<strong>Share the app</strong>'"></span></h2>
+      <p class="m-0 text-secondary">{{ t('share.shareTheAppText') || 'Tell someone about the app. This link only opens the start page: no friend request is sent.' }}</p>
       @if (!invite.canShare) {
-        <input type="text" class="form-control" [value]="appUrl" readonly [attr.aria-label]="(t('share.appLink') || 'Link to the app')" (focus)="$any($event.target).select()" />
+        <input type="text" class="form-control" [value]="url" readonly [attr.aria-label]="(t('share.appLink') || 'Link to the app')" (focus)="$any($event.target).select()" />
       }
       <div class="d-flex flex-wrap gap-2">
-        <button type="button" class="btn btn-primary btn-sm" (click)="share('app', appUrl)"><span class="me-1"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 10.6l6.8-4M8.6 13.4l6.8 4"/></svg></span>{{ t('share.shareLink') || 'Share link' }}</button>
-        @if (!invite.canShare) { <button type="button" class="btn btn-light btn-sm" (click)="copy('app', appUrl)"><span class="me-1"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 012-2h9"/></svg></span>{{ t('share.copyLink') || 'Copy link' }}</button> }
+        <button type="button" class="btn btn-primary btn-sm" (click)="share('app', url)">{{ t('share.shareLink') || 'Share link' }}</button>
+        @if (!invite.canShare) { <button type="button" class="btn btn-light btn-sm" (click)="copy('app', url)">{{ t('share.copyLink') || 'Copy link' }}</button> }
       </div>
       @if (noteFor() === 'app' && invite.note(); as note) { <span class="small text-secondary" role="status">{{ note }}</span> }
-      <span class="small text-secondary d-flex align-items-center gap-1"><span class="sf-share-mini"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg></span>{{ t('share.linkIsGeneral') || 'The link contains nothing personal.' }}</span>
-    </div>
+    </section>
   }
 </main>
 </ng-container>

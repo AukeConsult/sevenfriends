@@ -78,5 +78,7 @@
   "startOverButton": "Zacznij od nowa na tym urządzeniu",
   "startOverFailed": "Nie udało się zacząć od nowa. Sprawdź połączenie i spróbuj ponownie.",
   "hideRemoved": "Ukryj usunięte",
-  "showRemoved": "Pokaż usunięte ({{ count }})"
+  "showRemoved": "Pokaż usunięte ({{ count }})",
+  "rowRecover": "Odzyskaj moje stare wiadomości",
+  "rowReplace": "Przywróć lub wymień klucz"
 }

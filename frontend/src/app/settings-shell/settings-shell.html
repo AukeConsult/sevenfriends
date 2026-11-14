@@ -1,11 +1,4 @@
 <ng-container *transloco="let t">
-<app-page-bar [title]="t('settingsShell.settings') || 'Settings'" />
-<nav class="sf-tabs" [attr.aria-label]="t('settingsShell.settings') || 'Settings'">
-  @for (tab of tabs; track tab.path) {
-    @if (!tab.browserOnly || !install.native) {
-      <a class="sf-tab" [routerLink]="['/settings', tab.path]" [class.active]="on(tab)" [attr.aria-current]="on(tab) ? 'page' : null">{{ t('settingsShell.' + tab.key) || tab.fallback }}</a>
-    }
-  }
-</nav>
+<app-page-bar [title]="title() ? (t('settingsShell.' + title()!.key) || title()!.fallback) : (t('settingsShell.settings') || 'Settings')" [backTo]="backTo()" />
 <router-outlet />
 </ng-container>

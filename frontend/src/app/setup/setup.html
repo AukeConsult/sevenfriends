@@ -49,12 +49,8 @@
       <p class="small text-secondary m-0">{{ t('setup.installText') || 'The app opens like any other app, and notifications are most reliable from it.' }}</p>
       @if (install.installed()) {
         <div class="alert alert-success m-0" role="status">✓ {{ t('setup.installed') || 'The app is installed on this device.' }}</div>
-      } @else if (install.canInstall()) {
-        <button type="button" class="btn btn-sm btn-primary align-self-center" (click)="installApp()">{{ t('setup.installApp') || 'Install the app' }}</button>
-      } @else if (install.ios) {
-        <div class="alert alert-info m-0" role="status"><span [innerHTML]="t('setup.ios', { app: w.app }) || 'In Safari, tap <strong>Share</strong>, then <strong>Add to Home Screen</strong>. Then open {{ app }} from your home screen.'"></span></div>
       } @else {
-        <div class="alert alert-info m-0" role="status"><span [innerHTML]="t('setup.noInstall') || 'Your browser has no install button here. Look for <strong>Install app</strong> in its menu, or see Settings → Install the app.'"></span></div>
+        <a routerLink="/install-app" class="btn btn-sm btn-primary align-self-center">{{ t('setup.installApp') || 'Install the app' }}</a>
       }
       @if (install.mobile) {
         <div class="alert alert-secondary m-0" role="note">

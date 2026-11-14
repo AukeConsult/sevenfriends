@@ -15,8 +15,6 @@
   "installText": "应用像其他应用一样打开，通知从应用里接收最可靠。",
   "installed": "应用已安装在这台设备上。",
   "installApp": "安装应用",
-  "ios": "在 Safari 中点<strong>分享</strong>，然后点<strong>添加到主屏幕</strong>。然后从主屏幕打开 {{ app }}。",
-  "noInstall": "你的浏览器在这里没有安装按钮。请在它的菜单里找<strong>安装应用</strong>，或查看 设置 → 安装应用。",
   "thenOpen": "然后打开应用，用同一个账号登录。",
   "thenContinues": "设置会在应用里继续：通知、麦克风和摄像头、文字大小，以及你的密钥。",
   "finishApp": "完成，我去应用里继续",

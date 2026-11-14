@@ -12,5 +12,6 @@
   "writeToFriendname": "اكتب إلى {{ friendName }}…",
   "messageToFriendname": "رسالة إلى {{ friendName }}",
   "hideTheForm": "إخفاء النموذج",
-  "openRecovery": "فتح الاسترداد"
+  "openRecovery": "فتح الاسترداد",
+  "typeAMessage": "رسالة"
 }

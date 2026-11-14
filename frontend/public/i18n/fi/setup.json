@@ -15,8 +15,6 @@
   "installText": "Sovellus aukeaa kuten mikä tahansa sovellus, ja ilmoitukset toimivat sillä luotettavimmin.",
   "installed": "Sovellus on asennettu tälle laitteelle.",
   "installApp": "Asenna sovellus",
-  "ios": "Napauta Safarissa <strong>Jaa</strong> ja sitten <strong>Lisää Koti-valikkoon</strong>. Avaa sitten {{ app }} aloitusnäytöltäsi.",
-  "noInstall": "Selaimessasi ei ole tässä asennuspainiketta. Etsi valikosta <strong>Asenna sovellus</strong> tai katso Asetukset → Asenna sovellus.",
   "thenOpen": "Avaa sitten sovellus ja kirjaudu sisään samalla tilillä.",
   "thenContinues": "Käyttöönotto jatkuu siellä ilmoituksilla, mikrofonilla ja kameralla, tekstin koolla ja avaimellasi.",
   "finishApp": "Valmis, jatkan sovelluksessa",

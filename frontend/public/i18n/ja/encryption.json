@@ -78,5 +78,7 @@
   "startOverButton": "このデバイスでやり直す",
   "startOverFailed": "やり直せませんでした。接続を確認して、もう一度お試しください。",
   "hideRemoved": "削除済みを隠す",
-  "showRemoved": "削除済みを表示（{{ count }}）"
+  "showRemoved": "削除済みを表示（{{ count }}）",
+  "rowRecover": "古いメッセージを取り戻す",
+  "rowReplace": "鍵を復元または交換する"
 }

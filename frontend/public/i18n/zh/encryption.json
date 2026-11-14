@@ -78,5 +78,7 @@
   "startOverButton": "用此设备重新开始",
   "startOverFailed": "无法重新开始。请检查网络连接后重试。",
   "hideRemoved": "隐藏已移除的",
-  "showRemoved": "显示已移除的（{{ count }}）"
+  "showRemoved": "显示已移除的（{{ count }}）",
+  "rowRecover": "找回我的旧消息",
+  "rowReplace": "恢复或更换密钥"
 }

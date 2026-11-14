@@ -5,7 +5,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { tr } from '../core/i18n';
-import { InviteLinkService } from '../core/invite-link.service';
 import { LanguageService } from '../core/language.service';
 import { ApiService } from '../core/api.service';
 import { authMessage } from '../core/auth-errors';
@@ -15,7 +14,7 @@ import { PresenceService } from '../core/presence.service';
 import { PushService } from '../core/push.service';
 import { defaultLanguage, languagesFor } from '../models/shared/languages';
 import { countries, dialCode, fullNumber, isValidPhone, nationalNumber } from '../core/countries';
-import { PROFILE_COLORS, ProfileDetails, ProfileDraft, ProfilePicture, SaveState, profileColorHex } from '../models';
+import { ProfileDetails, ProfileDraft, ProfilePicture, SaveState, profileColorHex } from '../models';
 
 /** Changes are saved by themselves: a moment after you stop typing, and when you leave a field or the page. */
 const AUTOSAVE_MS = 800;
@@ -40,9 +39,6 @@ export class Profile {
 
   protected readonly user = this.auth.user;
 
-  protected readonly invite = inject(InviteLinkService);
-  /** "New link…" asks first: the old link stops working */
-  protected readonly confirmNewLink = signal(false);
 
   protected readonly form = signal<ProfileDraft>({ name: '', phone: '', country: '', language: '', pronoun: '' });
   protected readonly loading = signal(true);
@@ -50,7 +46,6 @@ export class Profile {
   protected readonly icon = signal<number | null>(null);
   /** the colour I chose for my profile (a key of PROFILE_COLORS), shown to my friends; null = none */
   protected readonly color = signal<string | null>(null);
-  protected readonly colors = PROFILE_COLORS;
   protected readonly colorHex = computed(() => profileColorHex(this.color()));
   /** the picture I uploaded (a data URL), when I have one */
   protected readonly picture = signal<string | null>(null);
@@ -113,7 +108,6 @@ export class Profile {
   private loadFailed = false;
 
   constructor() {
-    void this.invite.load();
     // verifying the phone or email changes what the server knows about this person: load again
     let first = true;
     effect(() => {
@@ -280,13 +274,6 @@ export class Profile {
     this.iconsOpen.update((open) => !open);
   }
 
-  protected chooseColor(key: string | null): void {
-    this.color.set(key);
-    this.dirty = true;
-    this.state.set('dirty');
-    void this.flush();
-  }
-
   protected chooseIcon(n: number): void {
     this.iconsOpen.set(false); // chosen: the row closes again
     this.icon.set(n);
@@ -330,7 +317,6 @@ export class Profile {
             ...(name ? { name } : {}),
             ...(!sent.phone.trim() || isValidPhone(sent.phone) ? { phone: sent.phone.trim() || null } : {}),
             icon: this.icon(),
-            color: this.color(),
             country: sent.country || null,
             language: sent.language || null,
             pronoun: sent.pronoun || null,

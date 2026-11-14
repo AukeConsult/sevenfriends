@@ -15,8 +15,6 @@
   "installText": "Appen åbner som enhver anden app, og notifikationer er mest pålidelige fra den.",
   "installed": "Appen er installeret på denne enhed.",
   "installApp": "Installér appen",
-  "ios": "Tryk i Safari på <strong>Del</strong>, derefter på <strong>Føj til hjemmeskærm</strong>. Åbn derefter {{ app }} fra din startskærm.",
-  "noInstall": "Din browser har ingen installationsknap her. Led efter <strong>Installér app</strong> i dens menu, eller se Indstillinger → Installér appen.",
   "thenOpen": "Åbn derefter appen og log ind med den samme konto.",
   "thenContinues": "Opsætningen fortsætter dér med notifikationer, mikrofon og kamera, tekststørrelse og din nøgle.",
   "finishApp": "Færdig, jeg fortsætter i appen",

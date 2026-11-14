@@ -23,18 +23,18 @@ import { tr } from '../core/i18n';
   providers: [provideTranslocoScope('encryption')],
 })
 export class Encryption {
-  /** the page shows the key status and the way to make or restore a key; the devices, the details and a new key are behind the Advanced button */
-  protected readonly advanced = signal(false);
+  /** which page of Privacy lock this is (the route says): the status with the list, my devices, getting old messages back, restoring or replacing the key, or why a key is (not) found */
+  protected readonly view = inject(ActivatedRoute).snapshot.data['view'] as 'home' | 'devices' | 'recover' | 'replace' | 'why';
   protected readonly keys = inject(KeysService);
   protected readonly reencrypt = inject(ReencryptService);
-  private readonly keySetup = viewChild.required(KeySetup);
+  private readonly keySetup = viewChild(KeySetup);
   protected readonly own = inject(OwnRecoveryService);
   /** the key being given its copies now, and how far it got */
   protected readonly allowing = signal<string | null>(null);
   protected readonly allowed = signal(0);
   protected readonly allowNote = signal<string | null>(null);
   /** the recovery words are on the screen: nothing else on the page is offered meanwhile */
-  protected readonly showingWords = computed(() => this.keySetup().showingWords());
+  protected readonly showingWords = computed(() => this.keySetup()?.showingWords() ?? false);
   /** the removed keys are hidden until "Show removed" is tapped */
   protected readonly showRemoved = signal(false);
   protected readonly removedCount = computed(() => this.keys.published().filter((k) => k.revoked).length);
@@ -193,7 +193,7 @@ export class Encryption {
 
   protected async newKey(): Promise<void> {
     this.resetting.set(false);
-    await this.keySetup().makeKey(true);
+    await this.keySetup()?.makeKey(true);
   }
 
   /** "I lost all my other devices": this device starts my signed list over; friends are asked to confirm it, and help from their side (docs/design/default-key.md). */

@@ -12,5 +12,6 @@
   "writeToFriendname": "Напиши: {{ friendName }}…",
   "messageToFriendname": "Сообщение для {{ friendName }}",
   "hideTheForm": "Скрыть форму",
-  "openRecovery": "Открыть восстановление"
+  "openRecovery": "Открыть восстановление",
+  "typeAMessage": "Сообщение"
 }

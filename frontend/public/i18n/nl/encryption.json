@@ -78,5 +78,7 @@
   "startOverButton": "Opnieuw beginnen met dit apparaat",
   "startOverFailed": "Opnieuw beginnen is niet gelukt. Controleer de verbinding en probeer het nog eens.",
   "hideRemoved": "Verwijderde verbergen",
-  "showRemoved": "Verwijderde tonen ({{ count }})"
+  "showRemoved": "Verwijderde tonen ({{ count }})",
+  "rowRecover": "Mijn oude berichten terugkrijgen",
+  "rowReplace": "Sleutel herstellen of vervangen"
 }

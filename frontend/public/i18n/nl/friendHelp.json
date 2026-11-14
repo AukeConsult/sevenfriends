@@ -3,8 +3,6 @@
   "headerTitle": "De kop",
   "pictureTitle": "Foto, stip en stemming",
   "pictureText": "Tik op de foto om het profiel van je vriend te zien. De kleine stip laat zien of je vriend nu actief, afwezig of offline is. Het kleine gezichtje toont de stemming die je vriend heeft ingesteld.",
-  "sendTitle": "Versturen",
-  "sendText": "Schrijf een nieuw bericht. Je kunt emoji’s, afbeeldingen, video’s en spraakberichten toevoegen en op een kant-en-klaar bericht tikken om het te versturen.",
   "messagesTitle": "Berichten",
   "messagesText": "Het gesprek met je vriend. Hier verschijnt een kleine stip als er een nieuw bericht is.",
   "safeboxTitle": "De kluis",
@@ -36,5 +34,9 @@
   "ownText": "Tik op een van je eigen berichten om het te bewerken, te kopiëren of te verwijderen. Een verwijderd bericht verdwijnt voor jullie allebei.",
   "hideTitle": "Verbergen",
   "hideText": "Je kunt een afbeelding of video in je feed verbergen en weer tonen.",
-  "hide": "Begrepen, verberg de help"
+  "hide": "Begrepen, verberg de help",
+  "writeTitle": "Schrijven",
+  "writeText": "Gebruik het veld onderaan de berichten. De smiley voegt emoji toe, en de pictogrammen voor foto, video en microfoon sturen een foto, een video of een spraakbericht. De verzendknop verschijnt zodra je iets hebt getypt.",
+  "reactTitle": "Reageren",
+  "reactText": "Tik op de duim onder een bericht om een reactie te kiezen. Tik nogmaals op je eigen reactie om hem weg te halen."
 }

@@ -12,5 +12,6 @@
   "writeToFriendname": "כתיבה ל{{ friendName }}…",
   "messageToFriendname": "הודעה ל{{ friendName }}",
   "hideTheForm": "הסתרת הטופס",
-  "openRecovery": "פתיחת שחזור"
+  "openRecovery": "פתיחת שחזור",
+  "typeAMessage": "הודעה"
 }

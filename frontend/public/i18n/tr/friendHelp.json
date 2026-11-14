@@ -3,8 +3,6 @@
   "headerTitle": "Üst çubuk",
   "pictureTitle": "Resim, nokta ve ruh hali",
   "pictureText": "Arkadaşının profilini görmek için resme dokun. Küçük nokta, arkadaşının şu an aktif, uzakta ya da çevrimdışı olduğunu gösterir. Küçük yüz, arkadaşının ayarladığı ruh halini gösterir.",
-  "sendTitle": "Gönder",
-  "sendText": "Yeni bir mesaj yaz. Emoji, resim, video ve sesli mesaj ekleyebilir, hazır bir mesaja dokunarak onu gönderebilirsin.",
   "messagesTitle": "Mesajlar",
   "messagesText": "Arkadaşınla konuşman. Yeni bir mesaj olduğunda burada küçük bir nokta görünür.",
   "safeboxTitle": "Kasa",
@@ -36,5 +34,9 @@
   "ownText": "Kendi mesajlarından birine dokunarak onu düzenleyebilir, kopyalayabilir veya silebilirsin. Silinen mesaj ikiniz için de kaybolur.",
   "hideTitle": "Gizle",
   "hideText": "Akışındaki bir resmi veya videoyu gizleyip yeniden gösterebilirsin.",
-  "hide": "Anladım, yardımı gizle"
+  "hide": "Anladım, yardımı gizle",
+  "writeTitle": "Yaz",
+  "writeText": "Mesajların altındaki alanı kullan. Gülen yüz emoji ekler; resim, video ve mikrofon simgeleri bir resim, video veya sesli mesaj gönderir. Bir şey yazdığında gönder düğmesi görünür.",
+  "reactTitle": "Tepki ver",
+  "reactText": "Tepki seçmek için mesajın altındaki başparmağa dokun. Kendi tepkini geri almak için ona tekrar dokun."
 }

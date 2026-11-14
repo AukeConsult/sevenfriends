@@ -78,5 +78,7 @@
   "startOverButton": "Start på nytt med denne enheten",
   "startOverFailed": "Kunne ikke starte på nytt. Sjekk tilkoblingen og prøv igjen.",
   "hideRemoved": "Skjul fjernede",
-  "showRemoved": "Vis fjernede ({{ count }})"
+  "showRemoved": "Vis fjernede ({{ count }})",
+  "rowRecover": "Få tilbake mine gamle meldinger",
+  "rowReplace": "Gjenopprett eller bytt nøkkelen"
 }

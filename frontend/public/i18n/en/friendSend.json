@@ -12,5 +12,6 @@
   "writeToFriendname": "Write to {{ friendName }}…",
   "messageToFriendname": "Message to {{ friendName }}",
   "hideTheForm": "Hide the form",
-  "openRecovery": "Open recovery"
+  "openRecovery": "Open recovery",
+  "typeAMessage": "Message"
 }

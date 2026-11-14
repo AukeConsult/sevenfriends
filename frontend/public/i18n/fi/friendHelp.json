@@ -3,8 +3,6 @@
   "headerTitle": "Yläpalkki",
   "pictureTitle": "Kuva, piste ja mieliala",
   "pictureText": "Napauta kuvaa nähdäksesi ystäväsi profiilin. Pieni piste kertoo, onko ystäväsi nyt aktiivinen, poissa vai offline-tilassa. Pieni kasvo näyttää ystäväsi asettaman mielialan.",
-  "sendTitle": "Lähetä",
-  "sendText": "Kirjoita uusi viesti. Voit lisätä emojeja, kuvia, videoita ja ääniviestejä ja napauttaa valmista viestiä lähettääksesi sen.",
   "messagesTitle": "Viestit",
   "messagesText": "Keskustelu ystäväsi kanssa. Pieni piste näkyy tässä, kun on uusi viesti.",
   "safeboxTitle": "Kassakaappi",
@@ -36,5 +34,9 @@
   "ownText": "Napauta omaa viestiäsi muokataksesi, kopioidaksesi tai poistaaksesi sen. Poistettu viesti katoaa teiltä molemmilta.",
   "hideTitle": "Piilota",
   "hideText": "Voit piilottaa kuvan tai videon syötteessäsi ja näyttää sen uudelleen.",
-  "hide": "Selvä, piilota ohje"
+  "hide": "Selvä, piilota ohje",
+  "writeTitle": "Kirjoita",
+  "writeText": "Käytä viestien alareunan kenttää. Hymiö lisää emojeja, ja kuvan, videon ja mikrofonin kuvakkeet lähettävät kuvan, videon tai ääniviestin. Lähetyspainike tulee näkyviin, kun olet kirjoittanut jotain.",
+  "reactTitle": "Reagoi",
+  "reactText": "Valitse reaktio napauttamalla peukkua viestin alla. Poista oma reaktiosi napauttamalla sitä uudelleen."
 }

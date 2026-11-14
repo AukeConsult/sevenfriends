@@ -12,5 +12,6 @@
   "writeToFriendname": "Skriv til {{ friendName }}…",
   "messageToFriendname": "Besked til {{ friendName }}",
   "hideTheForm": "Skjul formularen",
-  "openRecovery": "Åbn gendannelse"
+  "openRecovery": "Åbn gendannelse",
+  "typeAMessage": "Besked"
 }

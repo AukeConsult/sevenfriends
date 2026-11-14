@@ -18,7 +18,6 @@ export class FeedHelp {
       title: "The header",
       rows: [
         { key: "picture", icon: "person", title: "Picture, dot and mood", text: "Tap the picture to see the profile of your friend. The small dot shows if your friend is active now, away or offline. The small face shows the mood your friend has set." },
-        { key: "send", icon: "send", title: "Send", text: "Write a new message. You can add emojis, pictures, videos and voice messages, and tap a ready-made message to send it." },
         { key: "messages", icon: "messages", title: "Messages", text: "The conversation with your friend. A small dot shows here when there is a new message." },
         { key: "safebox", icon: "safebox", title: "Safebox", text: "The box you share with this friend. See \"The safebox\" below." },
         { key: "helpIcon", icon: "help", title: "Help", text: "Shows or hides this help." },
@@ -42,6 +41,8 @@ export class FeedHelp {
       key: "feedTitle",
       title: "The messages",
       rows: [
+        { key: "write", icon: "send", title: "Write", text: "Use the field at the bottom of the messages. The smiley adds emojis, and the picture, video and microphone icons send an image, a video or a voice message. The send button appears when you have typed something." },
+        { key: "react", icon: "heart", title: "React", text: "Tap the thumbs-up under a message to choose a reaction. Tap your own reaction again to take it back." },
         { key: "sides", icon: "messages", title: "Who wrote what", text: "Your messages are on the right and your friend's messages are on the left. The time under a message shows when it was sent." },
         { key: "pictures", icon: "image", title: "Pictures and videos", text: "Tap a picture to open it in full size, where you can zoom in. A video can be played in the feed or opened in full." },
         { key: "own", icon: "pencil", title: "Change or delete", text: "Tap one of your own messages to edit it, copy it or delete it. A deleted message disappears for both of you." },

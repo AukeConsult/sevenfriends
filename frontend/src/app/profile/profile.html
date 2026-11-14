@@ -51,17 +51,6 @@
           </div>
         }
       }
-      <!-- my colour: my {{ w.many }} see it on their list and in the header of our conversation -->
-      <div class="mt-3 text-center">
-        <span class="form-label small text-secondary m-0">{{ t('profile.colour') || 'Your colour' }} <span class="text-secondary">({{ t('profile.colourSee', { many: w.many }) || 'your ' + w.many + ' see it' }})</span></span>
-        <div class="sf-colors justify-content-center mt-1" role="radiogroup" [attr.aria-label]="t('profile.colour') || 'Your colour'">
-          <button type="button" class="sf-color sf-color-none" role="radio" [attr.aria-checked]="!color()" [class.sf-chosen]="!color()" [attr.aria-label]="t('profile.noColour') || 'No colour'" [attr.title]="t('profile.noColour') || 'No colour'" [disabled]="loading()" (click)="chooseColor(null)"></button>
-          @for (c of colors; track c.key) {
-            <button type="button" class="sf-color" role="radio" [attr.aria-checked]="color() === c.key" [class.sf-chosen]="color() === c.key" [style.background]="c.hex"
-                    [attr.aria-label]="c.label" [title]="c.label" [disabled]="loading()" (click)="chooseColor(c.key)"></button>
-          }
-        </div>
-      </div>
       <label class="d-grid gap-1 mt-2 text-start">
         <span class="form-label small text-secondary m-0">{{ t('profile.name') || 'Name' }}</span>
         <input type="text" class="form-control" [class.is-invalid]="nameMissing() && !loading()" [value]="form().name"
@@ -169,35 +158,6 @@
     </div>
   </div>
 
-  <div class="card mt-2">
-    <div class="card-body vstack gap-2">
-      <h2 class="sf-section-title m-0">{{ t('profile.inviteTitle') || 'Your invite link' }}</h2>
-      <p class="small text-secondary m-0">{{ t('profile.inviteText', { one: w.one }) || 'Send this link to someone. When they open it, sign in (or create an account) and confirm, a ' + w.one + ' request is sent to you.' }}</p>
-      @if (invite.link(); as url) {
-        @if (!invite.canShare) {
-          <input type="text" class="form-control" [value]="url" readonly [attr.aria-label]="t('profile.inviteTitle') || 'Your invite link'" (focus)="$any($event.target).select()" />
-        }
-        <div class="d-flex flex-wrap gap-2">
-          <button type="button" class="btn btn-primary btn-sm" (click)="invite.share()">{{ t('profile.shareLink') || 'Share link' }}</button>
-          @if (!invite.canShare) { <button type="button" class="btn btn-light btn-sm" (click)="invite.copy()">{{ t('profile.copyLink') || 'Copy link' }}</button> }
-          @if (confirmNewLink()) {
-            <span class="small align-self-center">{{ t('profile.oldStops') || 'The old link stops working.' }}</span>
-            <button type="button" class="btn btn-outline-danger btn-sm" (click)="confirmNewLink.set(false); invite.reset()">{{ t('profile.makeNew') || 'Make new link' }}</button>
-            <button type="button" class="btn btn-light btn-sm" (click)="confirmNewLink.set(false)">{{ t('profile.cancel') || 'Cancel' }}</button>
-          } @else {
-            <button type="button" class="btn btn-light btn-sm" (click)="confirmNewLink.set(true)">{{ t('profile.newLink') || 'New link…' }}</button>
-          }
-        </div>
-        @if (invite.note(); as note) { <p class="small text-secondary m-0" role="status">{{ note }}</p> }
-      } @else if (invite.problem(); as why) {
-        <p class="small text-danger m-0" role="alert">{{ why }}</p>
-        <button type="button" class="btn btn-light btn-sm align-self-start" (click)="invite.load()">{{ t('profile.tryAgain') || 'Try again' }}</button>
-      } @else {
-        <p class="small text-secondary m-0">{{ t('profile.loading') || 'Loading…' }}</p>
-      }
-    </div>
-  </div>
-
   <section class="card mt-2 mb-3" aria-labelledby="account-title">
     <div class="card-body vstack gap-3">
       <h2 class="sf-section-title m-0" id="account-title">{{ t('profile.account') || 'Account' }}</h2>
@@ -205,8 +165,10 @@
         <span>{{ t('profile.logOut') || 'Log out' }}</span>
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" /></svg>
       </button>
-      <hr class="m-0" />
-      <button type="button" class="btn btn-link text-danger p-0 align-self-start" (click)="flush(); deleteAccount()">{{ t('profile.deleteAccount') || 'Delete my account…' }}</button>
+      <button type="button" class="btn btn-outline-danger w-100 d-flex align-items-center justify-content-between" (click)="flush(); deleteAccount()">
+        <span>{{ t('profile.deleteAccount') || 'Delete my account…' }}</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6M10 11v6M14 11v6" /></svg>
+      </button>
     </div>
   </section>
 </main>

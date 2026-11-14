@@ -3,8 +3,6 @@
   "headerTitle": "La cabecera",
   "pictureTitle": "Foto, punto y estado de ánimo",
   "pictureText": "Toca la foto para ver el perfil de tu amigo. El punto pequeño muestra si tu amigo está activo ahora, ausente o sin conexión. La carita muestra el estado de ánimo que ha puesto tu amigo.",
-  "sendTitle": "Enviar",
-  "sendText": "Escribe un mensaje nuevo. Puedes añadir emojis, imágenes, vídeos y mensajes de voz, y tocar un mensaje predefinido para enviarlo.",
   "messagesTitle": "Mensajes",
   "messagesText": "La conversación con tu amigo. Aquí aparece un punto pequeño cuando hay un mensaje nuevo.",
   "safeboxTitle": "La caja fuerte",
@@ -36,5 +34,9 @@
   "ownText": "Toca uno de tus mensajes para editarlo, copiarlo o borrarlo. Un mensaje borrado desaparece para los dos.",
   "hideTitle": "Ocultar",
   "hideText": "Puedes ocultar una imagen o un vídeo en tu conversación y volver a mostrarlo.",
-  "hide": "Entendido, ocultar la ayuda"
+  "hide": "Entendido, ocultar la ayuda",
+  "writeTitle": "Escribir",
+  "writeText": "Usa el campo al final de los mensajes. La carita añade emojis, y los iconos de imagen, vídeo y micrófono envían una imagen, un vídeo o un mensaje de voz. El botón de enviar aparece cuando has escrito algo.",
+  "reactTitle": "Reaccionar",
+  "reactText": "Toca el pulgar bajo un mensaje para elegir una reacción. Toca tu reacción otra vez para quitarla."
 }

@@ -10,9 +10,7 @@
   "seats": "paikkaa",
   "youHaveFreeseatsFree": "Vapaana: {{ freeSeats }} {{ seats }}. Kutsu sinulle tärkeät {{ many }}.",
   "yourOneLink": "Linkkisi ({{ one }})",
-  "linkHasPrivateCode": "Linkissä on yksityinen koodi. Se ei sisällä puhelinnumeroasi eikä sähköpostiosoitettasi.",
   "strongShareTheApp": "<strong>Jaa sovellus</strong>",
   "shareTheAppText": "Kerro sovelluksesta jollekulle. Tämä linkki avaa vain aloitussivun: ystäväpyyntöä ei lähetetä.",
-  "linkIsGeneral": "Linkki ei sisällä mitään henkilökohtaista.",
   "appLink": "Linkki sovellukseen"
 }

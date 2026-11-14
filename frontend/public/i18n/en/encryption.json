@@ -78,5 +78,7 @@
   "startOverButton": "Start over with this device",
   "startOverFailed": "Could not start over. Check the connection and try again.",
   "hideRemoved": "Hide removed",
-  "showRemoved": "Show removed ({{ count }})"
+  "showRemoved": "Show removed ({{ count }})",
+  "rowRecover": "Get my old messages back",
+  "rowReplace": "Restore or replace the key"
 }

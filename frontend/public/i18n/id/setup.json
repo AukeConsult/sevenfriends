@@ -15,8 +15,6 @@
   "installText": "Aplikasi terbuka seperti aplikasi lain, dan notifikasi paling andal dari sana.",
   "installed": "Aplikasi sudah terpasang di perangkat ini.",
   "installApp": "Pasang aplikasi",
-  "ios": "Di Safari, ketuk <strong>Bagikan</strong>, lalu <strong>Tambah ke Layar Utama</strong>. Setelah itu buka {{ app }} dari layar utamamu.",
-  "noInstall": "Browsermu tidak punya tombol pasang di sini. Cari <strong>Pasang aplikasi</strong> di menunya, atau lihat Pengaturan → Pasang aplikasi.",
   "thenOpen": "Lalu buka aplikasinya dan masuk dengan akun yang sama.",
   "thenContinues": "Pengaturan dilanjutkan di sana dengan notifikasi, mikrofon dan kamera, ukuran teks, dan kuncimu.",
   "finishApp": "Selesai, aku lanjut di aplikasi",
