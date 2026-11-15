@@ -1,5 +1,5 @@
 import { getFirestore } from "firebase-admin/firestore";
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { sendPush } from "../src/push";
 import { User, assertConsistent, connect, person, seedPool, server } from "./helpers";
 import { deadPushTokens, pushBreaks, sentPushes } from "./setup";
@@ -264,10 +264,16 @@ describe("when sending goes wrong", () => {
   it("a push that fails never fails the request", async () => {
     const id = await connect(u(0), u(1));
     await register(u(1), token(1));
-    pushBreaks.on = true;
-    await u(0).send(id, "hello").expect(201);
-    await u(0).add(u(2).p);
-    await assertConsistent();
+    const logged = vi.spyOn(console, "error").mockImplementation(() => undefined); // the failure is logged on purpose: it is checked here, not printed
+    try {
+      pushBreaks.on = true;
+      await u(0).send(id, "hello").expect(201);
+      await u(0).add(u(2).p);
+      await assertConsistent();
+      expect(logged).toHaveBeenCalledWith("Could not send the push notification:", expect.objectContaining({ message: "FCM is down" }));
+    } finally {
+      logged.mockRestore();
+    }
   });
 });
 

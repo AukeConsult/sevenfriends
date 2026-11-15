@@ -14,7 +14,6 @@ npm run test:emulator              # same tests on the real Firestore emulator (
 - `preferences.test.ts`: sounds on the account (null at first, saved, replaced, one per person, bad ids / volumes refused and nothing saved, login needed, erased with the account) and that `GET /profile` says whether the email is verified.
 - `media.test.ts`: the media cache (see "Media cache").
 - `picture.test.ts` / `mood.test.ts`: the uploaded picture (formats, size, first bytes, replace, remove, erase) and the mood (values, who sees it, friends are told).
-- `mail.test.ts`: the mail trigger (see Sending email).
 - `invitations.test.ts`: (also the unverified-friend warning) the message with a request (kept, trimmed, 500 limit, reaches the other person), who is offered an invitation (email, SMS, nobody if they have an account), sending (outbox content, once only, owner only, not after sign-up, daily limit, erased with the sender).
 - `push.test.ts`: push devices and what is pushed (see Push notifications).
 - `erase.test.ts`: deleting an account and closing a friendship wipe everything on both sides, in one transaction.

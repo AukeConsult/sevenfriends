@@ -331,11 +331,17 @@ describe("a deleted account leaves nothing, and its login cannot make anything a
   });
 
   it("when Firebase cannot be asked (it is down), nobody is locked out", async () => {
-    authBreaks.on = true;
-    vi.useFakeTimers({ toFake: ["Date"] });
-    vi.setSystemTime(Date.now() + 3_600_000); // no earlier look is trusted any more
-    await pool[3].raw("get", "/keys").expect(200);
-    await pool[3].raw("post", "/home").expect(200);
+    const logged = vi.spyOn(console, "error").mockImplementation(() => undefined); // the failure is logged on purpose: it is checked here, not printed
+    try {
+      authBreaks.on = true;
+      vi.useFakeTimers({ toFake: ["Date"] });
+      vi.setSystemTime(Date.now() + 3_600_000); // no earlier look is trusted any more
+      await pool[3].raw("get", "/keys").expect(200);
+      await pool[3].raw("post", "/home").expect(200);
+      expect(logged).toHaveBeenCalledWith("Could not look up a login (requests are let through):", expect.objectContaining({ message: "Firebase is down" }));
+    } finally {
+      logged.mockRestore();
+    }
   });
 
   it("erasing twice is harmless, and the second time the login is already gone", async () => {
