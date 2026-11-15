@@ -4,6 +4,7 @@ import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ApiService } from '../core/api.service';
 import { AuthService } from '../core/auth.service';
+import { wipeAllLocalData } from '../core/local-wipe';
 import { PageBar } from '../page-bar/page-bar';
 
 /** The word that must be typed, so nobody erases themselves by accident. */
@@ -44,6 +45,8 @@ export class DeleteAccount {
     } catch {
       /* the login no longer exists; nothing more to sign out of */
     }
+    // then nothing of this person stays in this browser: every key, every local choice, every database, the caches and the service workers
+    await wipeAllLocalData();
     // open the front page again with a clean start: a full reload drops everything this device still remembers
     location.assign('/');
   }

@@ -2,7 +2,8 @@ import { Injectable, effect, inject, signal, untracked } from '@angular/core';
 import { DeviceList, KeyBackup, MyKeys, PublishedKey, canonicalPublicKey, canonicalSignKey, fingerprintOf, keyIdOf } from '../models';
 import { ApiService } from './api.service';
 import { AuthService } from './auth.service';
-import { StoredDeviceKey, unpackBackup, deleteDeviceKey, deviceKeySupported, deviceKeyWorks, generateDeviceKey, generateIdentityKey, getDeviceKey, keepDeviceKey, restoreDeviceKey, saveDeviceKey, storedKeyOwners } from './device-key';
+import { rememberAccount } from './account-registry';
+import { StoredDeviceKey, unpackBackup, deleteDeviceKey, wipeDeviceKeys, deviceKeySupported, deviceKeyWorks, generateDeviceKey, generateIdentityKey, getDeviceKey, keepDeviceKey, restoreDeviceKey, saveDeviceKey, storedKeyOwners } from './device-key';
 import { lockBackup, unlockBackup } from './key-backup';
 import { keyOf, newRecoveryKey, wordsOf } from './recovery-code';
 import { tr } from './i18n';
@@ -44,6 +45,13 @@ export type EncryptionState = 'checking' | 'unsupported' | 'none' | 'ready';
  * step 2). Setting up makes the key pair on the device, publishes the public key, stores the scrambled backup of the private key on the
  * server, and hands back the 24 recovery words, which are shown once and never kept.
  */
+/** A short, readable reason for a failure of the key (the name and the message of the error). */
+function describeFailure(err: unknown): string {
+  const e = err as { name?: string; message?: string } | null;
+  const text = e && (e.name || e.message) ? [e.name, e.message].filter(Boolean).join(': ') : String(err);
+  return text.slice(0, 160);
+}
+
 @Injectable({ providedIn: 'root' })
 export class KeysService {
   private readonly api = inject(ApiService);
@@ -82,6 +90,7 @@ export class KeysService {
         this.thisKeyId.set(null);
         this.published.set([]);
         this.elsewhere.set(false);
+        this.accountId.set('');
         this.diagnosis.set(null);
         if (uid) void this.refresh();
       });
@@ -101,10 +110,16 @@ export class KeysService {
       return;
     }
     try {
-      const local = await getDeviceKey(this.uid);
+      // the key store of this browser cannot be read: for a brand-new account it is wiped and started again (anybody else keeps what they have)
+      let local = await getDeviceKey(this.uid).catch(async (err) => {
+        if (!this.auth.isFreshAccount(this.uid)) throw err;
+        await wipeDeviceKeys();
+        return null;
+      });
       const fingerprint = local ? await fingerprintOf(local.publicKey) : null;
       const mine = known ?? (await this.api.request<MyKeys>('/keys'));
       this.published.set(mine.keys);
+      local = await this.reconcileStamp(local, mine.accountId);
       const id = fingerprint ? keyIdOf(fingerprint) : null;
       const found = id ? mine.keys.find((k) => k.id === id) : undefined;
       this.diagnosis.set({
@@ -129,6 +144,10 @@ export class KeysService {
       // the new key waits, and another device of the person approves it by itself. A key on this device (even an unpublished one) is never replaced.
       if (!ready && !local) {
         if (await this.makeIdentity()) return;
+      } else if (!ready && local && !found) {
+        // a key was made on this device but never reached the server (the page closed, or the connection was lost, in between): it is published now,
+        // so the person does not have to make another one. A key the server has retired (found, revoked) is never published again.
+        if (await this.publishLocal(local)) return;
       } else if (ready && local?.signKey) void this.ensureList(local);
     } catch {
       // the server (or the key store) could not be asked: a key that was known to be ready stays; otherwise the person can still try to set up
@@ -139,7 +158,46 @@ export class KeysService {
   }
 
   /** when the silent key was last tried for each person: a try that failed (the connection, a cut-off sign-up) is made again by the next look, but not more often than every 30 seconds */
+  /**
+   * The stamp of the account (the server's `accountId`): this browser remembers the pair (user id, stamp) so a deleted account can be found and wiped, and the key
+   * of this device carries it. A key with no stamp gets it now (accounts and keys from before the stamp existed); a key with ANOTHER stamp belongs to a life of the
+   * account that is gone (the account was deleted and made again): it is dropped and a new key is made. An empty stamp (not known) changes nothing.
+   */
+  private async reconcileStamp(local: StoredDeviceKey | null, accountId: string | undefined): Promise<StoredDeviceKey | null> {
+    const uid = this.uid;
+    if (!accountId) return local;
+    rememberAccount(uid, accountId);
+    this.accountId.set(accountId);
+    if (!local) return null;
+    if (local.accountId && local.accountId !== accountId) {
+      await deleteDeviceKey(uid).catch(() => undefined);
+      return null;
+    }
+    if (!local.accountId) {
+      const stamped = { ...local, accountId };
+      try {
+        await saveDeviceKey(uid, stamped);
+        return stamped;
+      } catch {
+        return local; // not stamped now: the next look does it
+      }
+    }
+    return local;
+  }
+
+  /** the stamp of this account, once the server has told it ("" = not known yet) */
+  readonly accountId = signal('');
   private readonly identityTriedAt = new Map<string, number>();
+  /** why the last try to make the silent key failed (shown on Settings → Privacy lock, with a way to try again); null = no failure */
+  readonly createError = signal<string | null>(null);
+
+  /** "Try again" on the Privacy lock page: makes the key now, not after the 30 seconds. */
+  async retryIdentity(): Promise<void> {
+    this.identityTriedAt.clear();
+    this.createError.set(null);
+    await this.refresh();
+  }
+
   private readonly listChecked = new Set<string>();
 
   /**
@@ -152,23 +210,50 @@ export class KeysService {
     const last = this.identityTriedAt.get(uid);
     if (last !== undefined && Date.now() - last < 30000) return false;
     this.identityTriedAt.set(uid, Date.now());
-    const key = await generateIdentityKey().catch(() => null);
+    let failure: unknown = null;
+    const key = await generateIdentityKey().catch((err) => { failure = err; return null; });
     const publicKey = key ? canonicalPublicKey(key.publicKey) : null;
     const signKey = key ? canonicalSignKey(key.signKey?.publicKey) : null;
-    if (!key || !publicKey || !signKey) return false;
+    if (!key || !publicKey || !signKey) {
+      this.createError.set(describeFailure(failure ?? new Error('The browser made no key')));
+      return false;
+    }
     try {
-      await saveDeviceKey(uid, key);
+      // a brand-new account starts from an empty key store: no old key of anybody stays in this browser (an old key that was stuck, as seen on iPhone)
+      if (this.auth.isFreshAccount(uid)) await wipeDeviceKeys();
+      await saveDeviceKey(uid, this.accountId() ? { ...key, accountId: this.accountId() } : key); // the key carries the stamp of its account from the start
       await this.api.request('/keys', { method: 'POST', body: JSON.stringify({ publicKey, signKey, label: deviceLabel() }) });
       await this.refresh();
       if (this.thisKeyId() !== keyIdOf((await fingerprintOf(publicKey))!) || !(await deviceKeyWorks(uid, key.publicKey))) throw new Error('The key could not be checked');
+      this.auth.doneFresh(); // the first key of this new account is in place: the key store is never wiped again for it
+      this.createError.set(null);
       return true;
-    } catch {
+    } catch (err) {
+      this.createError.set(describeFailure(err));
       // put this device back as it was: no key (the server may hold a public key that no device has; it is retired so it is not used)
       await deleteDeviceKey(uid).catch(() => undefined);
       const id = keyIdOf((await fingerprintOf(publicKey)) ?? '');
       if (id) await this.api.request(`/keys/${id}/revoke`, { method: 'POST' }).catch(() => undefined);
       await this.refresh();
       return false;
+    }
+  }
+
+  /** Publishes the public parts of the key that is on this device (idempotent: a key the server already has only gets its name). At most every 30 seconds. Returns true when the key is ready now. */
+  private async publishLocal(local: StoredDeviceKey): Promise<boolean> {
+    const uid = this.uid;
+    const last = this.identityTriedAt.get(uid + ':publish');
+    if (last !== undefined && Date.now() - last < 30000) return false;
+    this.identityTriedAt.set(uid + ':publish', Date.now());
+    const publicKey = canonicalPublicKey(local.publicKey);
+    if (!publicKey) return false;
+    const signKey = local.signKey ? canonicalSignKey(local.signKey.publicKey) : null;
+    try {
+      await this.api.request('/keys', { method: 'POST', body: JSON.stringify({ publicKey, ...(signKey ? { signKey } : {}), label: deviceLabel() }) });
+      await this.refresh();
+      return this.state() === 'ready';
+    } catch {
+      return false; // the next look tries again
     }
   }
 

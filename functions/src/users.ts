@@ -4,7 +4,10 @@ import { FieldValue, getFirestore } from "firebase-admin/firestore";
 import { asyncHandler, requireAuth } from "./auth";
 import { ensureDefaultCircle } from "./circles";
 import { USER_ACCOUNT_COLLECTION } from "./constants";
+import { randomUUID } from "node:crypto";
 import { eraseUser } from "./erase";
+import { ensureAccountId, stampKeys } from "./accounts";
+import { keyCol } from "./paths";
 import { verifiedIdentity } from "./validation";
 
 export const usersRouter = Router();
@@ -36,6 +39,8 @@ usersRouter.post(
         provider: token.firebase?.sign_in_provider ?? null,
         lastLoginAt: FieldValue.serverTimestamp(),
         loginCount: FieldValue.increment(1),
+        // the stamp of the account: made with the account, in the same step, and never changed (an old account that has none gets it now)
+        accountId: (snap.data()?.accountId as string | undefined) || randomUUID(),
       };
       if (snap.exists) {
         tx.update(ref, profile);
@@ -45,9 +50,11 @@ usersRouter.post(
     });
 
     await ensureDefaultCircle(token.uid);
+    const accountId = await ensureAccountId(token.uid);
+    await stampKeys(accountId, (await keyCol(token.uid).get()).docs); // the keys of an old account get the stamp now, not only at the next look at the keys
 
     const saved = await ref.get();
-    res.json({ ok: true, user: saved.data() });
+    res.json({ ok: true, accountId, user: saved.data() });
   }),
 );
 

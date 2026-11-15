@@ -85,5 +85,7 @@
   "whyRecoverTitle": "Pourquoi dois-je faire ça ?",
   "whyRecoverText": "Tes anciens messages et fichiers sont verrouillés. Le verrou qui les ouvre est sur ton ancien téléphone ou ordinateur, pas sur celui-ci, et nous ne pouvons pas les ouvrir pour toi. Laisse un autre appareil, tes 24 mots de secours ou un ami donner accès à cet appareil.",
   "noneOfThese": "Aucun de ceux-là",
-  "recoverQuestion": "Qu'as-tu ?"
+  "recoverQuestion": "Qu'as-tu ?",
+  "makeFailed": "Le verrou n'a pas pu être créé sur cet appareil : {{ error }}",
+  "tryAgain": "Réessayer"
 }

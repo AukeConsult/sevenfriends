@@ -85,5 +85,7 @@
   "whyRecoverTitle": "Waarom moet ik dit doen?",
   "whyRecoverText": "Je oude berichten en bestanden zijn vergrendeld. Het slot dat ze opent staat op je oude telefoon of computer, niet op deze, en wij kunnen ze niet voor je openen. Laat een ander apparaat, je 24 herstelwoorden of een vriend dit apparaat toegang geven.",
   "noneOfThese": "Geen van deze",
-  "recoverQuestion": "Wat heb je?"
+  "recoverQuestion": "Wat heb je?",
+  "makeFailed": "Het slot kon niet worden gemaakt op dit apparaat: {{ error }}",
+  "tryAgain": "Opnieuw proberen"
 }

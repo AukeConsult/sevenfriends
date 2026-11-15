@@ -85,5 +85,7 @@
   "whyRecoverTitle": "为什么我需要这样做?",
   "whyRecoverText": "你的旧消息和文件被锁住了。打开它们的锁在你的旧手机或电脑上，不在这台设备上，我们也无法替你打开。请让另一台设备、你的 24 个救援词或一位朋友给这台设备访问权限。",
   "noneOfThese": "都不是",
-  "recoverQuestion": "你有什么？"
+  "recoverQuestion": "你有什么？",
+  "makeFailed": "无法在这台设备上创建锁:{{ error }}",
+  "tryAgain": "重试"
 }

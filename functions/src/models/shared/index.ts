@@ -1,5 +1,6 @@
 // The shared models: types and plain data, no imports from outside this folder.
 // scripts/sync-models.mjs copies this folder into the frontend (frontend/src/app/models/shared) on build/start.
+export * from "./account";
 export * from "./circle";
 export * from "./circle-settings";
 export * from "./friend";

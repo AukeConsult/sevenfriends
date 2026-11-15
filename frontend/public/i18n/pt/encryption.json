@@ -85,5 +85,7 @@
   "whyRecoverTitle": "Por que preciso fazer isto?",
   "whyRecoverText": "Suas mensagens e arquivos antigos estão trancados. O cadeado que os abre está no seu celular ou computador antigo, não neste, e nós não podemos abri-los por você. Deixe outro dispositivo, suas 24 palavras de resgate ou um amigo dar acesso a este dispositivo.",
   "noneOfThese": "Nenhuma dessas",
-  "recoverQuestion": "O que você tem?"
+  "recoverQuestion": "O que você tem?",
+  "makeFailed": "Não foi possível criar o cadeado neste dispositivo: {{ error }}",
+  "tryAgain": "Tentar de novo"
 }

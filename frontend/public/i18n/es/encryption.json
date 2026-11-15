@@ -85,5 +85,7 @@
   "whyRecoverTitle": "¿Por qué tengo que hacer esto?",
   "whyRecoverText": "Tus mensajes y archivos antiguos están bloqueados. El candado que los abre está en tu teléfono u ordenador antiguo, no en este, y nosotros no podemos abrirlos por ti. Deja que otro dispositivo, tus 24 palabras de rescate o un amigo den acceso a este dispositivo.",
   "noneOfThese": "Ninguna de estas",
-  "recoverQuestion": "¿Qué tienes?"
+  "recoverQuestion": "¿Qué tienes?",
+  "makeFailed": "No se pudo crear el candado en este dispositivo: {{ error }}",
+  "tryAgain": "Intentar de nuevo"
 }

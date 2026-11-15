@@ -85,5 +85,7 @@
   "whyRecoverTitle": "왜 이걸 해야 하나요?",
   "whyRecoverText": "이전 메시지와 파일은 잠겨 있어요. 이를 여는 잠금은 이전 휴대폰이나 컴퓨터에 있고 이 기기에는 없으며, 저희가 대신 열 수도 없어요. 다른 기기, 복구 단어 24개 또는 친구가 이 기기에 접근 권한을 주도록 하세요.",
   "noneOfThese": "둘 다 아니에요",
-  "recoverQuestion": "무엇이 있나요?"
+  "recoverQuestion": "무엇이 있나요?",
+  "makeFailed": "이 기기에서 잠금을 만들 수 없었어요: {{ error }}",
+  "tryAgain": "다시 시도"
 }

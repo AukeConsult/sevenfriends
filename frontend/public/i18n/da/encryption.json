@@ -85,5 +85,7 @@
   "whyRecoverTitle": "Hvorfor skal jeg gøre det her?",
   "whyRecoverText": "Dine gamle beskeder og filer er låst. Låsen, der åbner dem, er på din gamle telefon eller computer, ikke på denne, og vi kan ikke åbne dem for dig. Lad en anden enhed, dine 24 gendannelsesord eller en ven give denne enhed adgang.",
   "noneOfThese": "Ingen af disse",
-  "recoverQuestion": "Hvad har du?"
+  "recoverQuestion": "Hvad har du?",
+  "makeFailed": "Låsen kunne ikke laves på denne enhed: {{ error }}",
+  "tryAgain": "Prøv igen"
 }

@@ -41,6 +41,11 @@ export interface StoredDeviceKey {
    * read. A key without it is an older lock: it is used as it is and gets a signing key only when it is replaced.
    */
   signKey?: { publicKey: JsonWebKey; privateKey: CryptoKey };
+  /**
+   * The stamp of the account this key was made for (the server's `accountId`, see the account check): it ties the key to ONE life of the account. A key
+   * without it is stamped the first time the server tells the stamp; a key whose stamp is not the account's stamp is from a life that is gone and is dropped.
+   */
+  accountId?: string;
 }
 
 /** What a new key gives back: the key itself, and (only when asked for) the private key as bytes for the backup. */
@@ -64,14 +69,30 @@ export function deviceKeySupported(): boolean {
 
 // ---------------------------------------------------------------------------------------------------- the store in IndexedDB
 
-function open(): Promise<IDBDatabase> {
+function openOnce(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
+    // Safari on an iPhone sometimes never answers the first open after the app started: give up on that try after a few seconds and try again
+    const timer = setTimeout(() => reject(new Error(tr('core.theKeyStoreIs', 'The key store is busy'))), 4000);
     const request = indexedDB.open(DATABASE, 1);
     request.onupgradeneeded = () => request.result.createObjectStore(STORE);
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error ?? new Error(tr('core.theKeyStoreCould', 'The key store could not be opened')));
-    request.onblocked = () => reject(new Error(tr('core.theKeyStoreIs', 'The key store is busy')));
+    request.onsuccess = () => { clearTimeout(timer); resolve(request.result); };
+    request.onerror = () => { clearTimeout(timer); reject(request.error ?? new Error(tr('core.theKeyStoreCould', 'The key store could not be opened'))); };
+    request.onblocked = () => { clearTimeout(timer); reject(new Error(tr('core.theKeyStoreIs', 'The key store is busy'))); };
   });
+}
+
+/** Opens the key database; Safari on an iPhone can lose the connection to it ("Connection to Indexed Database server lost") or not answer at first, so a failed open is tried again, three times in all. */
+async function open(): Promise<IDBDatabase> {
+  let last: unknown;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      return await openOnce();
+    } catch (err) {
+      last = err;
+      await new Promise((resolve) => setTimeout(resolve, 200 * (attempt + 1)));
+    }
+  }
+  throw last;
 }
 
 async function run<T>(mode: IDBTransactionMode, work: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
@@ -184,16 +205,25 @@ export const SIGN_KEY_ALGORITHM: EcKeyGenParams = { name: 'ECDSA', namedCurve: '
  */
 export async function generateIdentityKey(): Promise<StoredDeviceKey> {
   if (!deviceKeySupported()) throw new Error(tr('core.thisBrowserCannotKeep', 'This browser cannot keep an encryption key (it needs a secure page).'));
-  const lock = await crypto.subtle.generateKey(DEVICE_KEY_ALGORITHM, false, ['encrypt', 'decrypt', 'wrapKey', 'unwrapKey']);
-  const sign = await crypto.subtle.generateKey(SIGN_KEY_ALGORITHM, false, ['sign', 'verify']);
-  return {
-    id: randomId(),
-    publicKey: await crypto.subtle.exportKey('jwk', lock.publicKey),
-    privateKey: lock.privateKey,
-    createdAt: new Date().toISOString(),
-    version: VERSION,
-    signKey: { publicKey: await crypto.subtle.exportKey('jwk', sign.publicKey), privateKey: sign.privateKey },
-  };
+  try {
+    const lock = await crypto.subtle.generateKey(DEVICE_KEY_ALGORITHM, false, ['encrypt', 'decrypt', 'wrapKey', 'unwrapKey']);
+    const sign = await crypto.subtle.generateKey(SIGN_KEY_ALGORITHM, false, ['sign', 'verify']);
+    return {
+      id: randomId(),
+      publicKey: await crypto.subtle.exportKey('jwk', lock.publicKey),
+      privateKey: lock.privateKey,
+      createdAt: new Date().toISOString(),
+      version: VERSION,
+      signKey: { publicKey: await crypto.subtle.exportKey('jwk', sign.publicKey), privateKey: sign.privateKey },
+    };
+  } catch {
+    // Some versions of Safari cannot export the public half of a pair that was made unextractable. The pair is then made extractable for this moment only,
+    // exported, and imported again as sealed keys; the bytes are wiped at once (the same way the keys of the rescue words are made).
+    const { key, pkcs8, signPkcs8 } = await generate(true);
+    new Uint8Array(pkcs8).fill(0);
+    if (signPkcs8) new Uint8Array(signPkcs8).fill(0);
+    return key;
+  }
 }
 
 /**
@@ -280,6 +310,31 @@ export async function restoreDeviceKey(uid: string, id: string, pkcs8: Uint8Arra
 export async function deleteDeviceKey(uid: string, store: KeyStore = indexedDbKeyStore): Promise<void> {
   if (!deviceKeySupported()) return;
   await store.remove(uid);
+}
+
+/**
+ * Removes EVERY key of every account from this browser (the whole key database), for a clean start: used when an account is deleted and before a
+ * new key is made, so no old or damaged key stays behind (an old key that is stuck, as seen on iPhone). The database is deleted; when the browser
+ * refuses that (a connection is still open), the store is emptied instead. Never throws.
+ */
+export async function wipeDeviceKeys(): Promise<void> {
+  if (typeof indexedDB === 'undefined') return;
+  const deleted = await new Promise<boolean>((resolve) => {
+    try {
+      const request = indexedDB.deleteDatabase(DATABASE);
+      request.onsuccess = () => resolve(true);
+      request.onerror = () => resolve(false);
+      request.onblocked = () => resolve(false);
+    } catch {
+      resolve(false);
+    }
+  });
+  if (deleted) return;
+  try {
+    await run('readwrite', (store) => store.clear());
+  } catch {
+    /* the key store cannot be opened at all: nothing more can be done from here */
+  }
 }
 
 /**

@@ -85,5 +85,7 @@
   "whyRecoverTitle": "Kenapa aku harus melakukan ini?",
   "whyRecoverText": "Pesan dan file lamamu terkunci. Gembok yang membukanya ada di ponsel atau komputer lamamu, bukan di perangkat ini, dan kami tidak bisa membukanya untukmu. Biarkan perangkat lain, 24 kata pemulihanmu, atau seorang teman memberi akses ke perangkat ini.",
   "noneOfThese": "Tidak ada",
-  "recoverQuestion": "Apa yang kamu punya?"
+  "recoverQuestion": "Apa yang kamu punya?",
+  "makeFailed": "Kunci tidak bisa dibuat di perangkat ini: {{ error }}",
+  "tryAgain": "Coba lagi"
 }

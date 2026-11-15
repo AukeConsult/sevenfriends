@@ -1,3 +1,4 @@
+import { rememberAccount } from './account-registry';
 import { Injectable, Injector, inject, signal } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import {
@@ -31,7 +32,7 @@ import { tr } from './i18n';
 /** Where the email is kept between asking for a sign-in link and opening it (same device). */
 const EMAIL_KEY = 'sf-email-for-sign-in';
 /** who signed in last on this browser (an id, nothing else) */
-const LAST_UID_KEY = 'sf-last-uid';
+export const LAST_UID_KEY = 'sf-last-uid';
 /** the small things kept in this browser about the person using it (see clearLocalSession) */
 
 @Injectable({ providedIn: 'root' })
@@ -239,6 +240,16 @@ export class AuthService {
   }
 
   private newAccount = false;
+  /** the account that was created by this sign-in and has not made its first key yet: the key store is wiped before that key (see KeysService) */
+  private freshUid: string | null = null;
+
+  isFreshAccount(uid: string): boolean {
+    return this.freshUid === uid;
+  }
+
+  doneFresh(): void {
+    this.freshUid = null;
+  }
 
   /**
    * Where to go after signing in: always Home. A brand-new account sees the front page first, with a notice ("Finish setup") that
@@ -285,6 +296,7 @@ export class AuthService {
     // the account was created by this very sign-in (any method: Google, password, link, phone)
     this.newAccount = user.metadata.creationTime === user.metadata.lastSignInTime;
     this.createdAt = this.newAccount ? Date.now() : 0;
+    this.freshUid = this.newAccount ? user.uid : null;
     // a new account, or somebody else than the last person who signed in here: nothing of the other person's local choices stays
     this.clearLocalSession(user.uid);
     try {
@@ -310,5 +322,9 @@ export class AuthService {
     if (!res.ok) {
       throw new Error(tr('core.userSyncFailed', 'User sync failed ({{ status }})', { status: res.status }));
     }
+    // the server says the stamp of this account: this browser remembers it, so the account can be wiped here if it is deleted elsewhere (AccountWatchService)
+    const body: unknown = await res.json().catch(() => null);
+    const accountId = (body as { accountId?: unknown } | null)?.accountId;
+    if (typeof accountId === 'string') rememberAccount(user.uid, accountId);
   }
 }

@@ -40,6 +40,8 @@ export interface MyKeys {
   hasBackup: boolean;
   /** the keys that have a backup of their own: the 24 words of a device are only for that device */
   backups: string[];
+  /** the stamp of my account (see accounts.ts): a device remembers it with its key and wipes what it holds when the account is gone; "" = not known */
+  accountId: string;
 }
 
 /** What GET .../safebox/keys returns: the keys in use (not retired) of me and of my friend. Files can be locked only when both lists have a key. */

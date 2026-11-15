@@ -85,5 +85,7 @@
   "whyRecoverTitle": "Miksi minun pitää tehdä tämä?",
   "whyRecoverText": "Vanhat viestisi ja tiedostosi on lukittu. Ne avaava lukko on vanhassa puhelimessasi tai tietokoneessasi, ei tässä, emmekä voi avata niitä puolestasi. Anna toisen laitteen, 24 pelastussanasi tai ystävän antaa tälle laitteelle pääsy.",
   "noneOfThese": "Ei mikään näistä",
-  "recoverQuestion": "Mitä sinulla on?"
+  "recoverQuestion": "Mitä sinulla on?",
+  "makeFailed": "Lukkoa ei voitu tehdä tällä laitteella: {{ error }}",
+  "tryAgain": "Yritä uudelleen"
 }

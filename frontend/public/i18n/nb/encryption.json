@@ -85,5 +85,7 @@
   "whyRecoverTitle": "Hvorfor må jeg gjøre dette?",
   "whyRecoverText": "De gamle meldingene og filene dine er låst. Låsen som åpner dem, ligger på den gamle telefonen eller datamaskinen din, ikke på denne, og vi kan ikke åpne dem for deg. La en annen enhet, de 24 gjenopprettingsordene dine eller en venn gi denne enheten tilgang.",
   "noneOfThese": "Ingen av disse",
-  "recoverQuestion": "Hva har du?"
+  "recoverQuestion": "Hva har du?",
+  "makeFailed": "Låsen kunne ikke lages på denne enheten: {{ error }}",
+  "tryAgain": "Prøv igjen"
 }

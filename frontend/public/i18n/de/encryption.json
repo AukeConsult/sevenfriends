@@ -85,5 +85,7 @@
   "whyRecoverTitle": "Warum muss ich das tun?",
   "whyRecoverText": "Deine alten Nachrichten und Dateien sind gesperrt. Das Schloss, das sie öffnet, ist auf deinem alten Handy oder Computer, nicht auf diesem, und wir können sie nicht für dich öffnen. Lass ein anderes Gerät, deine 24 Rettungswörter oder einen Freund diesem Gerät Zugriff geben.",
   "noneOfThese": "Keins davon",
-  "recoverQuestion": "Was hast du?"
+  "recoverQuestion": "Was hast du?",
+  "makeFailed": "Das Schloss konnte auf diesem Gerät nicht erstellt werden: {{ error }}",
+  "tryAgain": "Erneut versuchen"
 }

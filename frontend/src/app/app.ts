@@ -6,6 +6,7 @@ import { CircleSwitch } from './circle-switch/circle-switch';
 import { OwnKeyPrompt } from './own-key-prompt/own-key-prompt';
 import { AndroidChannelsService } from './core/android-channels.service';
 import { AppUpdateService } from './core/app-update.service';
+import { AccountWatchService } from './core/account-watch.service';
 import { KeysService } from './core/keys.service';
 import { ActiveCircleService } from './core/active-circle.service';
 import { AuthService } from './core/auth.service';
@@ -65,6 +66,7 @@ export class App {
     inject(KeysService); // looks at the key of this device when somebody signs in, and keeps its name (kind and device) up to date
     inject(PresenceService); // tells the system when the person is active, away or offline (the dot on their friends)
     inject(AndroidChannelsService); // Android's notification channels follow the sounds chosen here
+    inject(AccountWatchService); // finds out when an account this device holds was deleted elsewhere, and wipes it from this device
     inject(AppUpdateService); // a new version of the web app is loaded when the app comes to the front, and at least once an hour
 
     // The page that was open last is remembered (UiPreferences.lastPage) and shown again when the app is opened at its start page.

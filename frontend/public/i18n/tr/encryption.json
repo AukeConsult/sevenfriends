@@ -85,5 +85,7 @@
   "whyRecoverTitle": "Bunu neden yapmam gerekiyor?",
   "whyRecoverText": "Eski mesajların ve dosyaların kilitli. Onları açan kilit bu cihazda değil, eski telefonunda veya bilgisayarında ve onları senin yerine biz açamayız. Başka bir cihazın, 24 kurtarma kelimenin veya bir arkadaşının bu cihaza erişim vermesini sağla.",
   "noneOfThese": "Hiçbiri",
-  "recoverQuestion": "Elinde ne var?"
+  "recoverQuestion": "Elinde ne var?",
+  "makeFailed": "Bu cihazda kilit oluşturulamadı: {{ error }}",
+  "tryAgain": "Tekrar dene"
 }

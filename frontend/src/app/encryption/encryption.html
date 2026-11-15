@@ -9,6 +9,14 @@
 
   <app-key-setup (finished)="keys.refresh()" />
 
+  <!-- the silent key could not be made on this device: the reason, and a way to try again (iPhone Safari can fail at first) -->
+  @if (keys.state() !== 'ready' && keys.createError(); as problem) {
+    <div class="alert alert-warning m-0 d-flex flex-column gap-2" role="alert">
+      <span>{{ t('encryption.makeFailed', { error: problem }) || 'The lock could not be made on this device: ' + problem }}</span>
+      <button type="button" class="btn btn-primary btn-sm align-self-start" (click)="keys.retryIdentity()">{{ t('encryption.tryAgain') || 'Try again' }}</button>
+    </div>
+  }
+
   @if (reencrypt.running()) {
     <div class="alert alert-info m-0" role="status">{{ t('encryption.lockingOldThings') || 'Locking your older messages and notes with the new lock. You can keep using the app.' }} ({{ reencrypt.done() }})</div>
   } @else if (reencrypt.skipped() > 0) {

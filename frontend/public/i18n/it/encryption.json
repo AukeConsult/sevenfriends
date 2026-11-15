@@ -85,5 +85,7 @@
   "whyRecoverTitle": "Perché devo farlo?",
   "whyRecoverText": "I tuoi vecchi messaggi e file sono bloccati. Il lucchetto che li apre è sul tuo vecchio telefono o computer, non su questo, e noi non possiamo aprirli per te. Lascia che un altro dispositivo, le tue 24 parole di recupero o un amico diano accesso a questo dispositivo.",
   "noneOfThese": "Nessuna di queste",
-  "recoverQuestion": "Che cosa hai?"
+  "recoverQuestion": "Che cosa hai?",
+  "makeFailed": "Non è stato possibile creare il lucchetto su questo dispositivo: {{ error }}",
+  "tryAgain": "Riprova"
 }

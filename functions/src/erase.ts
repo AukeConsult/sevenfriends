@@ -1,7 +1,8 @@
 import { getAuth } from "firebase-admin/auth";
+import { forgetLogin } from "./auth";
 import { DocumentReference, Transaction, getFirestore } from "firebase-admin/firestore";
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAIL_COLLECTION, OWN_REQUEST_REMINDERS } from "./constants";
-import { circleCol, friendRequestCol, keyBackupCol, keyCol, messageCol, profilePictureDoc, pushDeviceCol, signalCol, userDoc } from "./paths";
+import { circleCol, friendRequestCol, keyBackupCol, keyCol, keyListCol, messageCol, ownRequestCol, profilePictureDoc, pushDeviceCol, signalCol, userDoc } from "./paths";
 import { leaveGroup } from "./groups";
 import { MediaRef } from "./models";
 import { deleteBox } from "./safebox";
@@ -55,6 +56,14 @@ export async function eraseUser(uid: string): Promise<void> {
   } catch (err: any) {
     if (err?.code !== "auth/user-not-found") throw err; // "not found" is fine (a repeated erase)
   }
+  forgetLogin(uid); // the next request with an old token is refused at once (on this server)
+
+  // a last sweep: whatever a device made between the first pass and the end of the login (a request still on its way) goes too
+  const last = new Map<string, MediaRef>();
+  await getFirestore().runTransaction((tx) => eraseInTransaction(tx, uid, last, true, boxes));
+  await deleteObjects([...last.values()]);
+  for (const id of boxes) await deleteBox(id);
+  await deleteFolder(uid);
 }
 
 /** Leave every group the person is in: their entry, their copies of the messages and their items in its box go, the others keep the group. */
@@ -149,6 +158,8 @@ async function eraseInTransaction(tx: Transaction, uid: string, files: Map<strin
   // 7b. my public keys and the backup of my private key
   (await tx.get(keyCol(uid))).docs.forEach((d) => drop(d.ref));
   (await tx.get(keyBackupCol(uid))).docs.forEach((d) => drop(d.ref)); // one backup per key, and the older "current"
+  (await tx.get(keyListCol(uid))).docs.forEach((d) => drop(d.ref)); // every version of my signed device list
+  (await tx.get(ownRequestCol(uid))).docs.forEach((d) => drop(d.ref)); // my requests (from my new devices) for my old messages
   (await tx.get(db.collection(OWN_REQUEST_REMINDERS).where("uid", "==", uid))).docs.forEach((d) => drop(d.ref));
 
   // 8. a picture saved before the media cache existed (the new one is in the cache folder, deleted after the commit)

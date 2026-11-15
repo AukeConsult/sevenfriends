@@ -45,10 +45,18 @@ vi.mock("firebase-admin/storage", async () => {
 /** logins removed by `deleteUser` (the erase route), so tests can check the login went too */
 export const deletedLogins: Set<string> = ((globalThis as any).__deletedLogins ??= new Set<string>());
 
+/** when on, looking up a login fails for another reason than "not found" (Firebase is down): requests must still go through */
+export const authBreaks: { on: boolean } = ((globalThis as any).__authBreaks ??= { on: false });
+
 vi.mock("firebase-admin/auth", () => ({
   getAuth: () => ({
     deleteUser: async (uid: string) => {
       ((globalThis as any).__deletedLogins as Set<string>).add(uid);
+    },
+    getUser: async (uid: string) => {
+      if (((globalThis as any).__authBreaks as { on: boolean }).on) throw Object.assign(new Error("Firebase is down"), { code: "auth/internal-error" });
+      if (((globalThis as any).__deletedLogins as Set<string>).has(uid)) throw Object.assign(new Error("no such user"), { code: "auth/user-not-found" });
+      return { uid };
     },
     verifyIdToken: async (token: string) => {
       const decoded = JSON.parse(token);

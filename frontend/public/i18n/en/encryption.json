@@ -85,5 +85,7 @@
   "whyRecoverTitle": "Why do I need to do this?",
   "whyRecoverText": "Your old messages and files are locked. The lock that opens them is on your old phone or computer, not on this one, and we cannot open them for you. Let another device, your 24 rescue words or a friend give this device access.",
   "noneOfThese": "None of these",
-  "recoverQuestion": "What do you have?"
+  "recoverQuestion": "What do you have?",
+  "makeFailed": "The lock could not be made on this device: {{ error }}",
+  "tryAgain": "Try again"
 }

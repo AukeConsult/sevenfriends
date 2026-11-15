@@ -16,6 +16,7 @@ import { recoveryListRouter } from "./recovery";
 import { profileRouter } from "./profile";
 import { pushRouter } from "./push";
 import { usersRouter } from "./users";
+import { accountsRouter } from "./accounts";
 
 /** The addresses of the app that may call the API from a browser. */
 const ALLOWED_ORIGINS = [
@@ -43,6 +44,7 @@ export function createApp(): express.Express {
     res.json({ status: "ok", app: "sevenfriends" });
   });
   router.use("/users", usersRouter);
+  router.use("/accounts", accountsRouter); // before sign-in: a device asks whether the account it holds is still there
   router.use("/sf-cache", cacheRouter);
   router.use("/circles", circlesRouter);
   router.use("/friend-requests", friendRequestsRouter);

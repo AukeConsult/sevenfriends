@@ -85,5 +85,7 @@
   "whyRecoverTitle": "Varför måste jag göra det här?",
   "whyRecoverText": "Dina gamla meddelanden och filer är låsta. Låset som öppnar dem finns på din gamla telefon eller dator, inte på den här, och vi kan inte öppna dem åt dig. Låt en annan enhet, dina 24 räddningsord eller en vän ge den här enheten åtkomst.",
   "noneOfThese": "Inget av dessa",
-  "recoverQuestion": "Vad har du?"
+  "recoverQuestion": "Vad har du?",
+  "makeFailed": "Låset kunde inte skapas på den här enheten: {{ error }}",
+  "tryAgain": "Försök igen"
 }

@@ -2,6 +2,7 @@ import { Injectable, Injector, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import type { User } from 'firebase/auth';
 import { environment } from '../../environments/environment';
+import { AccountWatchService } from './account-watch.service';
 import { ActiveCircleService } from './active-circle.service';
 import { AuthService } from './auth.service';
 import { tr } from './i18n';
@@ -87,6 +88,7 @@ export class ApiService {
 
   private async signOutDeadSession(reason: string): Promise<void> {
     await this.auth.forceLogout(reason);
+    void this.injector.get(AccountWatchService).checkAll(true); // was the account deleted? then what this device holds of it goes (it is looked up here, not imported: no cycle)
     await this.injector.get(Router).navigateByUrl('/login');
   }
 }

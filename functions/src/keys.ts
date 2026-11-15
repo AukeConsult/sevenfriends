@@ -6,6 +6,7 @@ import { MyKeys, KeyBackup, MAX_KEYS_PER_PERSON, MAX_KEY_LABEL, PublicKeyJwk, Pu
 import { openRequest } from "./own-request";
 import { touchSync } from "./sync";
 import { KEY_BACKUP_DOC } from "./constants";
+import { ensureAccountId, stampKeys } from "./accounts";
 import { keyBackupCol, keyBackupDoc, keyCol, keyListCol, ownRequestCol, pushDeviceCol } from "./paths";
 import { text } from "./validation";
 
@@ -55,11 +56,12 @@ export const isShared = (flag: boolean | undefined, oldest: boolean): boolean =>
 
 /** My published keys, and whether a backup is stored. A key in use that is neither shared nor in my signed list is marked `waiting`: another device of mine has to approve it. */
 export async function myKeysOf(uid: string): Promise<MyKeys> {
-  const [snap, backups, newest] = await Promise.all([keyCol(uid).get(), keyBackupCol(uid).get(), keyListCol(uid).orderBy("version", "desc").limit(1).get()]);
+  const [snap, backups, newest, accountId] = await Promise.all([keyCol(uid).get(), keyBackupCol(uid).get(), keyListCol(uid).orderBy("version", "desc").limit(1).get(), ensureAccountId(uid)]);
+  await stampKeys(accountId, snap.docs); // an account and keys from before the stamp existed get it the first time they are read
   const listed = new Set(((newest.docs[0]?.data().devices ?? []) as { keyId: string }[]).map((d) => d.keyId));
   const keys = snap.docs.map((d) => ({ ...publishedOf(d.id, d.data()), flag: d.data().ownShared as boolean | undefined })).sort((a, b) => (a.createdAt ?? "").localeCompare(b.createdAt ?? ""));
   const oldest = keys.find((k) => !k.revoked)?.id;
-  return { keys: keys.map(({ flag, ...k }) => (!k.revoked && !isShared(flag, k.id === oldest) && !listed.has(k.id) ? { ...k, waiting: true } : k)), hasBackup: !backups.empty, backups: backups.docs.map((d) => d.id).filter((id) => id !== KEY_BACKUP_DOC) };
+  return { keys: keys.map(({ flag, ...k }) => (!k.revoked && !isShared(flag, k.id === oldest) && !listed.has(k.id) ? { ...k, waiting: true } : k)), hasBackup: !backups.empty, backups: backups.docs.map((d) => d.id).filter((id) => id !== KEY_BACKUP_DOC), accountId };
 }
 
 keysRouter.get(
@@ -113,11 +115,12 @@ keysRouter.post(
       res.status(409).json({ error: `At most ${MAX_KEYS_PER_PERSON} devices can have a key` });
       return;
     }
+    const accountId = await ensureAccountId(uid); // every key carries the stamp of its account
     const ref = keyCol(uid).doc(id);
     const batch = getFirestore().batch();
     // `ownShared`: a key that is the first of the person has everything it needs; a key added next to another one waits until a device of the same person allows it (own-recovery.ts)
     const first = !existing.docs.some((d) => d.data().revoked !== true);
-    batch.set(ref, already ? { label } : { publicKey: key, ...(signKey ? { signKey } : {}), fingerprint, label, revoked: false, ownShared: first, createdAt: FieldValue.serverTimestamp() }, { merge: true });
+    batch.set(ref, already ? { label, ...(accountId ? { accountId } : {}) } : { ...(accountId ? { accountId } : {}), publicKey: key, ...(signKey ? { signKey } : {}), fingerprint, label, revoked: false, ownShared: first, createdAt: FieldValue.serverTimestamp() }, { merge: true });
     if (backup) {
       const saved = { ...backup, savedAt: FieldValue.serverTimestamp() };
       batch.set(keyBackupDoc(uid, id), saved); // the backup of THIS key: another device's words never replace it

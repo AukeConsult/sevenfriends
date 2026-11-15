@@ -85,5 +85,7 @@
   "whyRecoverTitle": "Dlaczego muszę to zrobić?",
   "whyRecoverText": "Twoje stare wiadomości i pliki są zablokowane. Blokada, która je otwiera, jest na Twoim starym telefonie lub komputerze, a nie na tym, i nie możemy ich otworzyć za Ciebie. Pozwól, by inne urządzenie, Twoje 24 słowa ratunkowe lub przyjaciel dali temu urządzeniu dostęp.",
   "noneOfThese": "Żadne z nich",
-  "recoverQuestion": "Co masz?"
+  "recoverQuestion": "Co masz?",
+  "makeFailed": "Nie udało się utworzyć kłódki na tym urządzeniu: {{ error }}",
+  "tryAgain": "Spróbuj ponownie"
 }

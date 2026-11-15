@@ -66,7 +66,7 @@ describe("erase my account", () => {
   it("another person who later signs up with my email does not receive old requests", async () => {
     await u(3).add(person(0));
     await erase(u(0)).expect(204);
-    const newcomer = new User(person(0), {});
+    const newcomer = new User({ ...person(0), uid: "uid-newcomer" }, {}); // the same email, but a new person has a new login and a new user id
     const { requests } = await newcomer.check();
     expect(requests).toEqual([]);
   });
@@ -74,7 +74,11 @@ describe("erase my account", () => {
   it("running it twice is harmless", async () => {
     await connect(u(0), u(1));
     await erase(u(0)).expect(204);
+    deletedLogins.clear(); // a repeat that reaches the server before the login is gone at Firebase
     await erase(u(0)).expect(204);
+    expect(await traces("uid00")).toEqual([]);
+    deletedLogins.add("uid00"); // once the login is gone, the same token is refused and nothing is made again
+    await erase(u(0)).expect(401);
     expect(await traces("uid00")).toEqual([]);
   });
 
@@ -90,6 +94,23 @@ describe("erase my account", () => {
     ]);
     expect(await traces("uid00")).toEqual([]);
     await assertConsistent();
+  });
+
+  it("leaves no trace of the keys: the public keys, the backups, the signed device list, the requests of my new devices, the push devices", async () => {
+    const uid = u(0).p.uid;
+    const mine = getFirestore().collection("user-account").doc(uid);
+    await u(0).raw("get", "/profile").expect(200); // the account exists
+    const groups = ["keys", "key-list", "key-backup", "own-recovery-request", "push-device", "sync"];
+    for (const group of groups) await mine.collection(group).doc(group === "sync" ? "state" : "x").set({ made: true });
+    await getFirestore().collection("own-recovery-reminders").doc(`${uid}_x`).set({ uid, keyId: "x", at: new Date() });
+    await erase(u(0)).expect(204);
+    for (const group of groups) {
+      const left = (await getFirestore().collectionGroup(group).get()).docs.filter((d) => d.ref.path.includes(`user-account/${uid}/`));
+      expect(left.map((d) => d.ref.path)).toEqual([]);
+    }
+    expect((await getFirestore().collection("own-recovery-reminders").get()).docs.filter((d) => d.data().uid === uid)).toEqual([]);
+    expect((await mine.get()).exists).toBe(false);
+    expect(await traces(uid)).toEqual([]);
   });
 
   it("everybody erased: the database is empty", async () => {

@@ -5,7 +5,7 @@ import { createApp } from "../src/app";
 import { MAX_FRIENDS } from "../src/constants";
 import { resetFakeFirestore } from "./fake-firestore";
 import { resetFakeStorage } from "./fake-storage";
-import { PROJECT, USING_EMULATOR } from "./setup";
+import { PROJECT, USING_EMULATOR, authBreaks, deletedLogins } from "./setup";
 import type { Claims, Entry, Friend, Incoming, Person, Req, Via } from "./types";
 
 /** One server for every request of a test file: supertest(app) would open (and close) a new port for each call, and Windows runs out of ports. */
@@ -163,6 +163,8 @@ export async function forEachUser<T>(list: User[], fn: (user: User, i: number) =
 
 /** Fresh database with everyone signed up (batches of 15 at a time). */
 export async function seedPool(size = POOL_SIZE): Promise<User[]> {
+  deletedLogins.clear(); // a login deleted by an earlier test is a login again: every test starts with all of its people able to sign in
+  authBreaks.on = false;
   await clearDatabase();
   const all = users(makePool(size));
   for (let i = 0; i < all.length; i += 15) {
