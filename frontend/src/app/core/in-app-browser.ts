@@ -4,13 +4,15 @@ import { Capacitor } from '@capacitor/core';
 /**
  * The lock key of a person is made and kept in the storage of the browser the account was made in. So an account must be made, and signed in to, in the browser that is
  * right for the device, and in that browser only:
- *   iPhone / iPad: Safari (or the app on the home screen, which is Safari),
+ *   iPhone / iPad: the APP ON THE HOME SCREEN. Safari and the home-screen app keep SEPARATE storage (logins, keys: Apple's rule), so an account made in a Safari tab would need a new login and
+ *   a second key in the app. So in a Safari tab ('home-screen') a person who is signed out is guided to Add to Home Screen and to make the account in the app; Safari is only used to add it.
+ *   In any other browser or in the browser of another app on an iPhone: 'safari' (open it in Safari first, which then asks for the home screen),
  *   Android: Chrome (or the Android app of Seven Friends),
  *   Windows and the rest: a real browser (or the Windows app of Seven Friends), never the built-in browser of another app.
  * The built-in browser of another app (Messenger, Facebook, Instagram ...) is none of them: it has its own storage, which is not the one of Safari or Chrome, so a key made
  * there would be lost and the messages could not be opened. Another browser on the phone (Chrome on an iPhone, Firefox or Samsung Internet on Android) has its own storage too.
  */
-export type RequiredBrowser = 'safari' | 'chrome' | 'browser';
+export type RequiredBrowser = 'safari' | 'chrome' | 'browser' | 'home-screen';
 
 export interface BrowserEnv {
   /** this is the Android app of Seven Friends (Capacitor) */
@@ -46,7 +48,7 @@ export function requiredBrowser(ua: string, env: BrowserEnv): RequiredBrowser | 
   if (ios) {
     if (env.standalone && !inApp) return null; // the app on the home screen (it has no "Safari" in its identity, but it is Safari)
     const safari = /Safari\//.test(ua) && !/CriOS|FxiOS|EdgiOS|OPiOS|OPT\/|GSA\/|DuckDuckGo|YaBrowser|UCBrowser/i.test(ua);
-    return safari && !inApp ? null : 'safari';
+    return safari && !inApp ? 'home-screen' : 'safari'; // a Safari tab: install first; anything else: Safari first
   }
   if (/android/i.test(ua)) {
     const chrome = /Chrome\//.test(ua) && !/; wv\)|EdgA|OPR\/|SamsungBrowser|Firefox|UCBrowser|YaBrowser|DuckDuckGo|Vivaldi/i.test(ua);

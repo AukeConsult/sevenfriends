@@ -8,5 +8,14 @@
   "step3": "そこにリンクを貼り付ける",
   "copy": "リンクをコピー",
   "copied": "リンクをコピーしました",
-  "note": "Messenger などのアプリ内では使えません。"
+  "note": "Messenger などのアプリ内では使えません。",
+  "homeStepCopy": "招待をコピーする",
+  "homeStepShare": "「共有」をタップし、「ホーム画面に追加」を選ぶ",
+  "homeStepOpenPaste": "アイコンから Seven Friends を開き、「{{ label }}」をタップして招待を貼り付け、アカウントを作成する",
+  "homeStepOpen": "アイコンから Seven Friends を開き、そこでアカウントを作成する",
+  "homeNote": "Safari とホーム画面のアプリはログインを共有しないため、アカウントはアプリで作成します。",
+  "sorry": "手順が増えてしまい申し訳ありません。iPhone では Seven Friends をホーム画面に置く必要があります。アカウントとロックの鍵を一か所で安全に保つためです。",
+  "thenHome": "そのあと Safari が、Seven Friends をホーム画面に追加する方法を表示します。アカウントはそこで作成します。",
+  "menuStep": "⋯（またはコンパスのアイコン）をタップして「Safari で開く」を選ぶ",
+  "menuFallback": "見つからない場合は、リンクをコピーし、Safari を開いて貼り付けてください。"
 }

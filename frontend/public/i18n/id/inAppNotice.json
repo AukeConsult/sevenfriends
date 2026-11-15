@@ -8,5 +8,14 @@
   "step3": "Tempel tautan di sana",
   "copy": "Salin tautan",
   "copied": "Tautan disalin",
-  "note": "Tidak berfungsi di dalam Messenger atau aplikasi lain."
+  "note": "Tidak berfungsi di dalam Messenger atau aplikasi lain.",
+  "homeStepCopy": "Salin undangan",
+  "homeStepShare": "Ketuk Bagikan, lalu Tambah ke Layar Utama",
+  "homeStepOpenPaste": "Buka Seven Friends dari ikonnya, ketuk “{{ label }}”, tempel undangan, lalu buat akun Anda",
+  "homeStepOpen": "Buka Seven Friends dari ikonnya dan buat akun Anda di sana",
+  "homeNote": "Safari dan aplikasi di layar utama tidak berbagi login, jadi akun dibuat di aplikasi.",
+  "sorry": "Maaf atas langkah tambahannya! Di iPhone, Seven Friends harus ada di layar utama Anda, agar akun dan kunci Anda tetap aman di satu tempat.",
+  "thenHome": "Setelah itu, Safari menunjukkan cara menambahkan Seven Friends ke layar utama, tempat Anda membuat akun.",
+  "menuStep": "Ketuk ⋯ (atau ikon kompas), lalu Buka di Safari",
+  "menuFallback": "Tidak menemukannya? Salin tautan, buka Safari, dan tempel di sana."
 }

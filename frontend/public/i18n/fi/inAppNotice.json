@@ -8,5 +8,14 @@
   "step3": "Liitä linkki sinne",
   "copy": "Kopioi linkki",
   "copied": "Linkki kopioitu",
-  "note": "Se ei toimi Messengerin tai muiden sovellusten sisällä."
+  "note": "Se ei toimi Messengerin tai muiden sovellusten sisällä.",
+  "homeStepCopy": "Kopioi kutsu",
+  "homeStepShare": "Napauta Jaa ja sitten Lisää Koti-valikkoon",
+  "homeStepOpenPaste": "Avaa Seven Friends kuvakkeesta, napauta “{{ label }}”, liitä kutsu ja luo tili",
+  "homeStepOpen": "Avaa Seven Friends kuvakkeesta ja luo tilisi siellä",
+  "homeNote": "Safari ja Koti-valikon sovellus eivät jaa kirjautumista, joten tili luodaan sovelluksessa.",
+  "sorry": "Anteeksi lisävaiheet! iPhonessa Seven Friends on oltava Koti-valikossa, jotta tilisi ja lukka-avaimesi pysyvät turvassa yhdessä paikassa.",
+  "thenHome": "Sen jälkeen Safari näyttää, miten Seven Friends lisätään Koti-valikkoon, jossa luot tilisi.",
+  "menuStep": "Napauta ⋯ (tai kompassikuvaketta) ja valitse Avaa Safarissa",
+  "menuFallback": "Etkö löydä sitä? Kopioi linkki, avaa Safari ja liitä se sinne."
 }

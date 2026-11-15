@@ -8,5 +8,14 @@
   "step3": "Wklej tam link",
   "copy": "Kopiuj link",
   "copied": "Link skopiowany",
-  "note": "To nie działa w Messengerze ani w innych aplikacjach."
+  "note": "To nie działa w Messengerze ani w innych aplikacjach.",
+  "homeStepCopy": "Skopiuj zaproszenie",
+  "homeStepShare": "Dotknij Udostępnij, potem Dodaj do ekranu głównego",
+  "homeStepOpenPaste": "Otwórz Seven Friends z ikony, dotknij „{{ label }}”, wklej zaproszenie i załóż konto",
+  "homeStepOpen": "Otwórz Seven Friends z ikony i załóż tam konto",
+  "homeNote": "Safari i aplikacja na ekranie głównym nie współdzielą logowania, więc konto zakładasz w aplikacji.",
+  "sorry": "Przepraszamy za dodatkowe kroki! Na iPhonie Seven Friends musi być na ekranie głównym, żeby Twoje konto i klucz blokady były bezpieczne w jednym miejscu.",
+  "thenHome": "Potem Safari pokaże, jak dodać Seven Friends do ekranu głównego, gdzie założysz konto.",
+  "menuStep": "Dotknij ⋯ (lub ikony kompasu), potem Otwórz w Safari",
+  "menuFallback": "Nie możesz tego znaleźć? Skopiuj link, otwórz Safari i wklej go tam."
 }

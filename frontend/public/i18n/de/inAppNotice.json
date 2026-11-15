@@ -8,5 +8,14 @@
   "step3": "Füge den Link dort ein",
   "copy": "Link kopieren",
   "copied": "Link kopiert",
-  "note": "Es funktioniert nicht in Messenger oder anderen Apps."
+  "note": "Es funktioniert nicht in Messenger oder anderen Apps.",
+  "homeStepCopy": "Einladung kopieren",
+  "homeStepShare": "Tippe auf Teilen, dann auf Zum Home-Bildschirm",
+  "homeStepOpenPaste": "Öffne Seven Friends über das Symbol, tippe auf „{{ label }}“, füge die Einladung ein und erstelle dein Konto",
+  "homeStepOpen": "Öffne Seven Friends über das Symbol und erstelle dort dein Konto",
+  "homeNote": "Safari und die App auf dem Home-Bildschirm teilen keine Anmeldung, daher wird das Konto in der App erstellt.",
+  "sorry": "Entschuldige die zusätzlichen Schritte! Auf dem iPhone muss Seven Friends auf deinem Home-Bildschirm liegen, damit dein Konto und dein Schlüssel an einem Ort sicher bleiben.",
+  "thenHome": "Danach zeigt dir Safari, wie du Seven Friends zum Home-Bildschirm hinzufügst, wo du dein Konto erstellst.",
+  "menuStep": "Tippe auf ⋯ (oder das Kompass-Symbol) und dann auf In Safari öffnen",
+  "menuFallback": "Nicht zu finden? Kopiere den Link, öffne Safari und füge ihn dort ein."
 }

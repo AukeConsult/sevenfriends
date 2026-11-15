@@ -111,7 +111,7 @@ describe('Login page: the ways in', () => {
   });
 
   it('in the WRONG browser (Safari / Chrome / a real browser is required) there is nothing to sign in with, and no way to create an account', () => {
-    for (const need of ['safari', 'chrome', 'browser'] as RequiredBrowser[]) {
+    for (const need of ['safari', 'chrome', 'browser', 'home-screen'] as RequiredBrowser[]) {
       for (const invited of [true, false]) {
         const { page } = build(invited, need);
         const found = ways(page);

@@ -15,7 +15,7 @@ import { REQUIRED_BROWSER } from '../core/in-app-browser';
   selector: 'app-in-app-notice',
   imports: [TranslocoDirective],
   templateUrl: './in-app-notice.html',
-  providers: [provideTranslocoScope('inAppNotice')],
+  providers: [provideTranslocoScope('inAppNotice', 'login')],
 })
 export class InAppNotice {
   private readonly friendLinks = inject(FriendLinkService);

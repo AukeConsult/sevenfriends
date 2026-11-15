@@ -8,5 +8,14 @@
   "step3": "Plak de link daar",
   "copy": "Link kopiëren",
   "copied": "Link gekopieerd",
-  "note": "Het werkt niet in Messenger of andere apps."
+  "note": "Het werkt niet in Messenger of andere apps.",
+  "homeStepCopy": "Kopieer de uitnodiging",
+  "homeStepShare": "Tik op Deel en dan op Zet op beginscherm",
+  "homeStepOpenPaste": "Open Seven Friends via het icoon, tik op ‘{{ label }}’, plak de uitnodiging en maak je account aan",
+  "homeStepOpen": "Open Seven Friends via het icoon en maak daar je account aan",
+  "homeNote": "Safari en de app op je beginscherm delen geen login, dus het account maak je in de app.",
+  "sorry": "Sorry voor de extra stappen! Op iPhone moet Seven Friends op je beginscherm staan, zodat je account en slotsleutel veilig op één plek blijven.",
+  "thenHome": "Daarna laat Safari zien hoe je Seven Friends op je beginscherm zet, waar je je account aanmaakt.",
+  "menuStep": "Tik op ⋯ (of het kompaspictogram) en kies Open in Safari",
+  "menuFallback": "Niet te vinden? Kopieer de link, open Safari en plak hem daar."
 }

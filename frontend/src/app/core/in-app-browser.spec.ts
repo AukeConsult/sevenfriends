@@ -31,7 +31,7 @@ const env = (over: Partial<BrowserEnv> = {}): BrowserEnv => ({ native: false, st
 /** An account is made, and signed in to, in the right browser only: Safari on iPhone / iPad, Chrome on Android, a real browser on Windows. */
 describe('requiredBrowser: which browser a device must use', () => {
   describe('iPhone and iPad: Safari', () => {
-    it('Safari is the right one', () => expect(requiredBrowser(SAFARI_IPHONE, env())).toBeNull());
+    it('a Safari TAB is not enough: the app on the home screen is the right place (Safari and the app keep separate logins and keys)', () => expect(requiredBrowser(SAFARI_IPHONE, env())).toBe('home-screen'));
     it('the app on the home screen is Safari too (it has no "Safari" in its identity, the page says it is standalone)', () => {
       expect(requiredBrowser(HOME_SCREEN_IPHONE, env({ standalone: true }))).toBeNull();
     });
@@ -51,7 +51,7 @@ describe('requiredBrowser: which browser a device must use', () => {
       for (const ua of [CHROME_IPHONE, FIREFOX_IPHONE, EDGE_IPHONE]) expect(requiredBrowser(ua, env())).withContext(ua).toBe('safari');
     });
     it('an iPad (it says it is a Mac) is held to the same rule', () => {
-      expect(requiredBrowser(IPAD_AS_MAC, env({ touchMac: true }))).toBeNull();
+      expect(requiredBrowser(IPAD_AS_MAC, env({ touchMac: true }))).toBe('home-screen');
       expect(requiredBrowser(`${IPAD_AS_MAC} [FBAN/FBIOS]`, env({ touchMac: true }))).toBe('safari');
     });
     it('a real Mac with Safari is just a computer', () => expect(requiredBrowser(MAC_SAFARI, env())).toBeNull());

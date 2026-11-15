@@ -52,7 +52,7 @@ describe('App', () => {
       return fixture.nativeElement as HTMLElement;
     };
 
-    for (const need of ['safari', 'chrome', 'browser'] as RequiredBrowser[]) {
+    for (const need of ['safari', 'chrome', 'browser', 'home-screen'] as RequiredBrowser[]) {
       for (const url of ['/', '/login', '/login/email', '/welcome', '/welcome/friends', '/friends1']) {
         it('(' + need + ') ' + url + ': only the browser page, no sign-in page, no menu, no other page', async () => {
           const page = await open(need, url);

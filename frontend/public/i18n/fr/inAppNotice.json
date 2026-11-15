@@ -8,5 +8,14 @@
   "step3": "Collez-y le lien",
   "copy": "Copier le lien",
   "copied": "Lien copié",
-  "note": "Cela ne fonctionne pas dans Messenger ni dans d'autres applications."
+  "note": "Cela ne fonctionne pas dans Messenger ni dans d'autres applications.",
+  "homeStepCopy": "Copiez l'invitation",
+  "homeStepShare": "Touchez Partager puis Sur l'écran d'accueil",
+  "homeStepOpenPaste": "Ouvrez Seven Friends depuis son icône, touchez « {{ label }} », collez l'invitation et créez votre compte",
+  "homeStepOpen": "Ouvrez Seven Friends depuis son icône et créez-y votre compte",
+  "homeNote": "Safari et l'app de l'écran d'accueil ne partagent pas la connexion : le compte se crée donc dans l'app.",
+  "sorry": "Désolé pour les étapes en plus ! Sur iPhone, Seven Friends doit être sur votre écran d'accueil, pour que votre compte et votre clé restent en sécurité au même endroit.",
+  "thenHome": "Ensuite, Safari vous montre comment ajouter Seven Friends à votre écran d'accueil, où vous créez votre compte.",
+  "menuStep": "Touchez ⋯ (ou l'icône de boussole), puis Ouvrir dans Safari",
+  "menuFallback": "Vous ne le trouvez pas ? Copiez le lien, ouvrez Safari et collez-le."
 }

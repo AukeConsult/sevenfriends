@@ -4,28 +4,78 @@
     <div class="sf-logo sf-logo-lg mx-auto">7</div>
     <h1 class="m-0">{{ invited() ? (t('inAppNotice.headline') || 'You\'re invited to Seven Friends') : (t('inAppNotice.welcome') || 'Welcome to Seven Friends') }}</h1>
 
-    <ol class="sf-steps text-start">
-      <li class="sf-step" [class.sf-step-done]="copied()">
-        <span class="sf-step-num" aria-hidden="true">{{ copied() ? '✓' : '1' }}</span>
-        <span>{{ t('inAppNotice.step1') || 'Copy the link' }}</span>
-      </li>
-      <li class="sf-step" [class.sf-step-next]="copied()">
-        <span class="sf-step-num" aria-hidden="true">2</span>
-        <span>{{ need === 'safari' ? (t('inAppNotice.step2Safari') || 'Open Safari') : need === 'chrome' ? (t('inAppNotice.step2Chrome') || 'Open Chrome') : (t('inAppNotice.step2Browser') || 'Open your browser') }}</span>
-      </li>
-      <li class="sf-step" [class.sf-step-next]="copied()">
-        <span class="sf-step-num" aria-hidden="true">3</span>
-        <span>{{ t('inAppNotice.step3') || 'Paste the link there' }}</span>
-      </li>
-    </ol>
+    @if (need === 'safari' || need === 'home-screen') {
+      <!-- iPhone / iPad: an apology and the reason, before the steps (the app must be on the home screen) -->
+      <p class="m-0">{{ t('inAppNotice.sorry') || 'Sorry for the extra steps! On iPhone, Seven Friends must be on your home screen, so your account and lock key stay safe in one place.' }}</p>
+    }
+
+    @if (need === 'home-screen') {
+      <!-- iPhone, in a Safari tab: Safari and the app on the home screen keep separate storage (logins, keys), so the account is made IN THE APP -->
+      <ol class="sf-steps text-start">
+        @if (invited()) {
+          <li class="sf-step" [class.sf-step-done]="copied()">
+            <span class="sf-step-num" aria-hidden="true">{{ copied() ? '✓' : '1' }}</span>
+            <span>{{ t('inAppNotice.homeStepCopy') || 'Copy the invitation' }}</span>
+          </li>
+          <li class="sf-step" [class.sf-step-next]="copied()">
+            <span class="sf-step-num" aria-hidden="true">2</span>
+            <span>{{ t('inAppNotice.homeStepShare') || 'Tap Share, then Add to Home Screen' }}</span>
+          </li>
+          <li class="sf-step" [class.sf-step-next]="copied()">
+            <span class="sf-step-num" aria-hidden="true">3</span>
+            <span>{{ t('inAppNotice.homeStepOpenPaste', { label: t('login.haveInvite') || 'I have an invitation' }) || 'Open Seven Friends from its icon, tap “' + (t('login.haveInvite') || 'I have an invitation') + '”, paste the invitation and create your account' }}</span>
+          </li>
+        } @else {
+          <li class="sf-step">
+            <span class="sf-step-num" aria-hidden="true">1</span>
+            <span>{{ t('inAppNotice.homeStepShare') || 'Tap Share, then Add to Home Screen' }}</span>
+          </li>
+          <li class="sf-step">
+            <span class="sf-step-num" aria-hidden="true">2</span>
+            <span>{{ t('inAppNotice.homeStepOpen') || 'Open Seven Friends from its icon and create your account there' }}</span>
+          </li>
+        }
+      </ol>
+    } @else {
+      @if (need === 'safari') {
+        <!-- iPhone in the browser of another app: the menu of that browser has "Open in Safari" (one tap); copying the link is the fallback -->
+        <ol class="sf-steps text-start">
+          <li class="sf-step">
+            <span class="sf-step-num" aria-hidden="true">1</span>
+            <span>{{ t('inAppNotice.menuStep') || 'Tap ⋯ (or the compass icon), then Open in Safari' }}</span>
+          </li>
+        </ol>
+        <p class="sf-hint m-0">{{ t('inAppNotice.menuFallback') || 'Can\'t find it? Copy the link, open Safari and paste it there.' }}</p>
+      } @else {
+        <ol class="sf-steps text-start">
+          <li class="sf-step" [class.sf-step-done]="copied()">
+            <span class="sf-step-num" aria-hidden="true">{{ copied() ? '✓' : '1' }}</span>
+            <span>{{ t('inAppNotice.step1') || 'Copy the link' }}</span>
+          </li>
+          <li class="sf-step" [class.sf-step-next]="copied()">
+            <span class="sf-step-num" aria-hidden="true">2</span>
+            <span>{{ need === 'chrome' ? (t('inAppNotice.step2Chrome') || 'Open Chrome') : (t('inAppNotice.step2Browser') || 'Open your browser') }}</span>
+          </li>
+          <li class="sf-step" [class.sf-step-next]="copied()">
+            <span class="sf-step-num" aria-hidden="true">3</span>
+            <span>{{ t('inAppNotice.step3') || 'Paste the link there' }}</span>
+          </li>
+        </ol>
+      }
+      @if (need === 'safari') {
+        <p class="sf-hint m-0">{{ t('inAppNotice.thenHome') || 'After that, Safari shows you how to add Seven Friends to your home screen, where you create your account.' }}</p>
+      }
+    }
 
     @if (manual(); as link) {
       <input class="form-control" type="text" readonly [value]="link" (focus)="$any($event.target).select()" [attr.aria-label]="t('inAppNotice.copy') || 'Copy link'" />
     }
-    <button type="button" class="btn w-100" [class.btn-primary]="!copied()" [class.btn-success]="copied()" (click)="copy()">
-      {{ copied() ? (t('inAppNotice.copied') || 'Link copied') : (t('inAppNotice.copy') || 'Copy link') }}
-    </button>
-    <p class="sf-hint m-0" role="note">{{ t('inAppNotice.note') || 'It does not work inside Messenger or other apps.' }}</p>
+    @if (need !== 'home-screen' || invited()) {
+      <button type="button" class="btn w-100" [class.btn-primary]="!copied()" [class.btn-success]="copied()" (click)="copy()">
+        {{ copied() ? (t('inAppNotice.copied') || 'Link copied') : (t('inAppNotice.copy') || 'Copy link') }}
+      </button>
+    }
+    <p class="sf-hint m-0" role="note">{{ need === 'home-screen' ? (t('inAppNotice.homeNote') || 'Safari and the app on your home screen do not share logins, so the account is made in the app.') : (t('inAppNotice.note') || 'It does not work inside Messenger or other apps.') }}</p>
   </div>
 </main>
 </ng-container>

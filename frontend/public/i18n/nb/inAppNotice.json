@@ -8,5 +8,14 @@
   "step3": "Lim inn lenken der",
   "copy": "Kopier lenke",
   "copied": "Lenken er kopiert",
-  "note": "Det fungerer ikke inni Messenger eller andre apper."
+  "note": "Det fungerer ikke inni Messenger eller andre apper.",
+  "homeStepCopy": "Kopier invitasjonen",
+  "homeStepShare": "Trykk på Del og deretter Legg til på Hjem-skjermen",
+  "homeStepOpenPaste": "Åpne Seven Friends fra ikonet, trykk på «{{ label }}», lim inn invitasjonen og opprett kontoen din",
+  "homeStepOpen": "Åpne Seven Friends fra ikonet og opprett kontoen din der",
+  "homeNote": "Safari og appen på Hjem-skjermen deler ikke innlogging, så kontoen opprettes i appen.",
+  "sorry": "Beklager de ekstra trinnene! På iPhone må Seven Friends ligge på Hjem-skjermen, slik at kontoen og låsenøkkelen din er trygge på ett sted.",
+  "thenHome": "Etterpå viser Safari hvordan du legger Seven Friends til på Hjem-skjermen, der du oppretter kontoen din.",
+  "menuStep": "Trykk på ⋯ (eller kompassikonet), og velg Åpne i Safari",
+  "menuFallback": "Finner du det ikke? Kopier lenken, åpne Safari og lim den inn der."
 }

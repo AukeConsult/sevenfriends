@@ -8,5 +8,14 @@
   "step3": "Cole lá a ligação",
   "copy": "Copiar ligação",
   "copied": "Ligação copiada",
-  "note": "Não funciona dentro do Messenger nem de outras aplicações."
+  "note": "Não funciona dentro do Messenger nem de outras aplicações.",
+  "homeStepCopy": "Copie o convite",
+  "homeStepShare": "Toque em Partilhar e depois em Adicionar ao ecrã principal",
+  "homeStepOpenPaste": "Abra o Seven Friends pelo ícone, toque em “{{ label }}”, cole o convite e crie a sua conta",
+  "homeStepOpen": "Abra o Seven Friends pelo ícone e crie lá a sua conta",
+  "homeNote": "O Safari e a app no ecrã principal não partilham o início de sessão, por isso a conta é criada na app.",
+  "sorry": "Desculpe os passos extra! No iPhone, o Seven Friends tem de estar no ecrã principal, para que a sua conta e a sua chave fiquem seguras num só lugar.",
+  "thenHome": "Depois, o Safari mostra como adicionar o Seven Friends ao ecrã principal, onde cria a sua conta.",
+  "menuStep": "Toque em ⋯ (ou no ícone da bússola) e depois em Abrir no Safari",
+  "menuFallback": "Não encontra? Copie a ligação, abra o Safari e cole-a lá."
 }

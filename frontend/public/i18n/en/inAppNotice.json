@@ -8,5 +8,14 @@
   "step3": "Paste the link there",
   "copy": "Copy link",
   "copied": "Link copied",
-  "note": "It does not work inside Messenger or other apps."
+  "note": "It does not work inside Messenger or other apps.",
+  "homeStepCopy": "Copy the invitation",
+  "homeStepShare": "Tap Share, then Add to Home Screen",
+  "homeStepOpenPaste": "Open Seven Friends from its icon, tap “{{ label }}”, paste the invitation and create your account",
+  "homeStepOpen": "Open Seven Friends from its icon and create your account there",
+  "homeNote": "Safari and the app on your home screen do not share logins, so the account is made in the app.",
+  "sorry": "Sorry for the extra steps! On iPhone, Seven Friends must be on your home screen, so your account and lock key stay safe in one place.",
+  "thenHome": "After that, Safari shows you how to add Seven Friends to your home screen, where you create your account.",
+  "menuStep": "Tap ⋯ (or the compass icon), then Open in Safari",
+  "menuFallback": "Can't find it? Copy the link, open Safari and paste it there."
 }

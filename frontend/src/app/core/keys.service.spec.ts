@@ -253,7 +253,7 @@ describe('KeysService: the key of this device', () => {
   });
 
   describe('the wrong browser (Messenger, WhatsApp, Chrome on an iPhone ...): no key is ever made', () => {
-    for (const need of ['safari', 'chrome', 'browser'] as RequiredBrowser[]) {
+    for (const need of ['safari', 'chrome', 'browser', 'home-screen'] as RequiredBrowser[]) {
       it('a new account: no key is made, nothing is saved or sent, and the keys are not ready (' + need + ')', async () => {
         const uid = person();
         const server = new FakeServer();
