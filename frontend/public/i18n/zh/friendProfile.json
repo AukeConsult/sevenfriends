@@ -42,5 +42,6 @@
   "leave": "退出",
   "alreadyInGroup": "已在群组中",
   "notConfirmedYet": "还没有确认好友关系",
-  "groupIsFull": "群组已有 7 人，已达上限"
+  "groupIsFull": "群组已有 7 人，已达上限",
+  "resendInvitation": "重新发送邀请链接"
 }

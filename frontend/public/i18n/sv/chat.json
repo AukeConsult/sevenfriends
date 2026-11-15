@@ -58,5 +58,7 @@
   "reaction_laugh": "Roligt",
   "reaction_wow": "Wow",
   "reaction_sad": "Ledsen",
-  "reaction_thanks": "Tack"
+  "reaction_thanks": "Tack",
+  "notConfirmedTitle": "Inte bekräftat än",
+  "notConfirmedText": "Du kan skriva till {{ name }} när kontakten är bekräftad."
 }

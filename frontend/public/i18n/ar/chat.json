@@ -58,5 +58,7 @@
   "reaction_laugh": "مضحك",
   "reaction_wow": "واو",
   "reaction_sad": "حزين",
-  "reaction_thanks": "شكرًا"
+  "reaction_thanks": "شكرًا",
+  "notConfirmedTitle": "لم يتم التأكيد بعد",
+  "notConfirmedText": "يمكنك مراسلة {{ name }} بعد تأكيد الاتصال."
 }

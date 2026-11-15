@@ -314,8 +314,12 @@ export class Notifications {
     return this.openHome();
   }
 
+  /** the request that is being confirmed (the button shows it works: confirming may wait a moment for my keys) */
+  protected readonly accepting = signal<string | null>(null);
+
   protected async accept(request: FriendRequest): Promise<void> {
     this.notice.set(null);
+    this.accepting.set(request.id);
     try {
       const result = await this.friendsService.acceptRequest(request.id);
       if (result === 'confirmed') {
@@ -328,6 +332,8 @@ export class Notifications {
       });
     } catch (err: any) {
       await this.failed(err);
+    } finally {
+      this.accepting.set(null);
     }
   }
 

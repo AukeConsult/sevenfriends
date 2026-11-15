@@ -42,5 +42,6 @@
   "leave": "Esci",
   "alreadyInGroup": "Già nel gruppo",
   "notConfirmedYet": "Non ha ancora confermato l'amicizia",
-  "groupIsFull": "Il gruppo ha 7 persone, il massimo"
+  "groupIsFull": "Il gruppo ha 7 persone, il massimo",
+  "resendInvitation": "Invia di nuovo il link di invito"
 }

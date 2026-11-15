@@ -63,8 +63,18 @@
 
 <main class="sf-feed" [style.padding-bottom]="sortDesc() ? null : '0.5rem'">
   @if (blocked()) {
-    <div class="alert alert-warning" role="alert">{{ blocked() }}</div>
-    <a routerLink="/" class="btn btn-primary">{{ t('chat.backToHome') || 'Back to home' }}</a>
+    <div class="card sf-card-soft mt-3">
+      <div class="card-body text-center vstack gap-2 align-items-center">
+        <div class="sf-empty-icon" aria-hidden="true">{{ notConfirmed() ? '⏳' : '🔒' }}</div>
+        @if (notConfirmed()) {
+          <h2 class="sf-section m-0">{{ t('chat.notConfirmedTitle') || 'Not confirmed yet' }}</h2>
+          <p class="text-secondary m-0">{{ t('chat.notConfirmedText', { name: name() }) || 'You can write to ' + name() + ' once the connection is confirmed.' }}</p>
+        } @else {
+          <p class="text-secondary m-0">{{ blocked() }}</p>
+        }
+        <a routerLink="/" class="btn btn-primary mt-2">{{ t('chat.backToHome') || 'Back to home' }}</a>
+      </div>
+    </div>
   } @else {
     @if (!loaded()) {
       <p class="sf-hint-center">{{ t('chat.loading') || 'Loading…' }}</p>

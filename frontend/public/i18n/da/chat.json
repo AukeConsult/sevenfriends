@@ -58,5 +58,7 @@
   "reaction_laugh": "Sjovt",
   "reaction_wow": "Wow",
   "reaction_sad": "Ked af det",
-  "reaction_thanks": "Tak"
+  "reaction_thanks": "Tak",
+  "notConfirmedTitle": "Ikke bekræftet endnu",
+  "notConfirmedText": "Du kan skrive til {{ name }}, når forbindelsen er bekræftet."
 }

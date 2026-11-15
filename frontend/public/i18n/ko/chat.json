@@ -58,5 +58,7 @@
   "reaction_laugh": "웃겨요",
   "reaction_wow": "와",
   "reaction_sad": "슬퍼요",
-  "reaction_thanks": "고마워요"
+  "reaction_thanks": "고마워요",
+  "notConfirmedTitle": "아직 확인되지 않음",
+  "notConfirmedText": "연결이 확인되면 {{ name }}님에게 메시지를 보낼 수 있습니다."
 }

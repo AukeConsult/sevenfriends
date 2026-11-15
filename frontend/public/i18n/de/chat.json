@@ -58,5 +58,7 @@
   "reaction_laugh": "Lustig",
   "reaction_wow": "Wow",
   "reaction_sad": "Traurig",
-  "reaction_thanks": "Danke"
+  "reaction_thanks": "Danke",
+  "notConfirmedTitle": "Noch nicht bestätigt",
+  "notConfirmedText": "Du kannst {{ name }} schreiben, sobald die Verbindung bestätigt ist."
 }

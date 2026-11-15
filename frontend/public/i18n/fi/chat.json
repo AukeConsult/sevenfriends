@@ -58,5 +58,7 @@
   "reaction_laugh": "Hauska",
   "reaction_wow": "Vau",
   "reaction_sad": "Surullinen",
-  "reaction_thanks": "Kiitos"
+  "reaction_thanks": "Kiitos",
+  "notConfirmedTitle": "Ei vielä vahvistettu",
+  "notConfirmedText": "Voit kirjoittaa henkilölle {{ name }}, kun yhteys on vahvistettu."
 }

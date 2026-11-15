@@ -152,7 +152,7 @@
                 }
               </span>
               <span class="sf-home-actions">
-                <button type="button" class="btn btn-primary btn-sm" (click)="accept(request)">{{ t('notifications.confirm') || 'Confirm' }}</button>
+                <button type="button" class="btn btn-primary btn-sm" [disabled]="accepting() === request.id" (click)="accept(request)">{{ accepting() === request.id ? '…' : (t('notifications.confirm') || 'Confirm') }}</button>
                 <button type="button" class="btn btn-outline-secondary btn-sm" (click)="reject(request)">{{ t('notifications.reject') || 'Reject' }}</button>
               </span>
             </li>

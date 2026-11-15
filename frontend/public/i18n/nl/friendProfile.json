@@ -42,5 +42,6 @@
   "leave": "Verlaten",
   "alreadyInGroup": "Zit al in de groep",
   "notConfirmedYet": "Heeft de vriendschap nog niet bevestigd",
-  "groupIsFull": "De groep heeft 7 personen, meer kan niet"
+  "groupIsFull": "De groep heeft 7 personen, meer kan niet",
+  "resendInvitation": "Uitnodigingslink opnieuw sturen"
 }

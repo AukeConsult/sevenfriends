@@ -1,0 +1,48 @@
+<ng-container *transloco="let t">
+@if (state; as s) {
+  <app-page-bar [title]="t('addFriend.addAOne', { one: w.one }) || 'Add a ' + w.one" [backTo]="'/friends/add'" />
+
+  <main class="sf-narrow vstack gap-3">
+    @if (saved()) {
+      <div class="alert alert-success m-0" role="status">
+        <strong>✓ {{ t('addFriend.invitationReady') || 'Invitation ready' }}</strong><br />
+        {{ t('addFriend.invitationWaits', { to: s.to, app: w.app }) || 'Your invitation is saved for ' + s.to + '. The next time they sign up or log on to ' + w.app + ' with this email, your friend request is waiting for them.' }}
+      </div>
+    } @else {
+      <ul class="sf-list m-0">
+        <li class="sf-list-item"><span class="sf-list-text"><strong>{{ s.to }}</strong><br /><span class="small text-secondary">{{ t('addFriend.notThereYet', { app: w.app }) || 'is not on ' + w.app + ' yet.' }}</span></span></li>
+      </ul>
+      <p class="m-0">{{ byEmail ? (t('addFriend.sendLinkSave') || 'Send them the link. When you send it, we save your invitation too.') : (t('addFriend.sendLinkNoSave') || 'Send them the link. An invitation needs an email, so nothing is saved for a phone number.') }}</p>
+    }
+
+    @if (error()) {
+      <div class="alert alert-danger m-0" role="alert">{{ error() }}</div>
+    }
+
+    @if (saved()) {
+      <ul class="sf-list m-0">
+        <li class="sf-list-item"><span class="sf-list-text"><strong>{{ s.to }}</strong><br /><span class="small text-secondary">{{ t('addFriend.invitedWaiting') || 'Invited, waiting for sign-up' }}</span></span></li>
+      </ul>
+    }
+
+    @if (!saved()) {
+    <div class="vstack gap-2">
+      <button type="button" class="btn btn-primary" [disabled]="saving()" (click)="share()">{{ t('addFriend.shareInviteLink') || 'Share invite link' }}</button>
+      <button type="button" class="btn btn-light" [disabled]="saving()" (click)="copy()">{{ t('addFriend.copyLink') || 'Copy link' }}</button>
+      <button type="button" class="btn btn-light" [disabled]="saving()" (click)="done()">{{ t('addFriend.cancel') || 'Cancel' }}</button>
+      @if (invite.note(); as note) { <p class="small m-0" role="status">{{ note }}</p> }
+    </div>
+    }
+
+    @if (!saved() && byEmail) {
+      <p class="sf-hint m-0">{{ t('addFriend.nothingSavedYet') || 'Nothing is saved until the link is sent.' }}</p>
+    }
+
+    @if (saved()) {
+      <div class="sf-actions">
+        <button type="button" class="btn btn-primary flex-fill" (click)="done()">{{ t('addFriend.done') || 'Done' }}</button>
+      </div>
+    }
+  </main>
+}
+</ng-container>

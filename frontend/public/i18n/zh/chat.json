@@ -58,5 +58,7 @@
   "reaction_laugh": "好笑",
   "reaction_wow": "哇",
   "reaction_sad": "难过",
-  "reaction_thanks": "谢谢"
+  "reaction_thanks": "谢谢",
+  "notConfirmedTitle": "尚未确认",
+  "notConfirmedText": "连接确认后，你就可以给 {{ name }} 发消息了。"
 }

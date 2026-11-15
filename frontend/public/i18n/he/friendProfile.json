@@ -42,5 +42,6 @@
   "leave": "עזיבה",
   "alreadyInGroup": "כבר בקבוצה",
   "notConfirmedYet": "עדיין לא אישר את החברות",
-  "groupIsFull": "בקבוצה 7 אנשים, המקסימום"
+  "groupIsFull": "בקבוצה 7 אנשים, המקסימום",
+  "resendInvitation": "שלח שוב את קישור ההזמנה"
 }

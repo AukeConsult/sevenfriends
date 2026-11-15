@@ -121,7 +121,7 @@ export class KeysService {
    * Waits (at most `ms`) until the keys are properly set (`inviteReady`), asking the server again meanwhile. True = ready; false = not within the time (a key that could not be
    * made, or a device that nobody approved yet). Used before a friendship is started or confirmed.
    */
-  async untilInviteReady(ms = 20000): Promise<boolean> {
+  async untilInviteReady(ms = 8000): Promise<boolean> {
     if (this.inviteReady()) return true;
     void this.refresh();
     const end = Date.now() + ms;
@@ -235,7 +235,9 @@ export class KeysService {
     await this.refresh();
   }
 
+  /** the keys (person + key id) whose device list has been looked at (started), and the ones for which it is known to be in place (done): a person who signs out and in again in the same open app is ready at once */
   private readonly listChecked = new Set<string>();
+  private readonly listDone = new Set<string>();
   private readonly joined = new Set<string>();
 
   /**
@@ -318,22 +320,28 @@ export class KeysService {
 
   /** Publishes version 1 of the device list when there is none and this device is the only one (also when an earlier try was cut off). */
   private async ensureList(local: StoredDeviceKey): Promise<void> {
-    const uid = this.uid;
-    if (this.listChecked.has(uid)) return;
-    this.listChecked.add(uid);
+    const mark = `${this.uid}:${this.thisKeyId() ?? ''}`; // this person and THIS key: another key (a new device, a new account life) is looked at again
+    if (this.listDone.has(mark)) {
+      this.listOk.set(true); // looked at before in this open app (signing out clears `listOk`, signing in again must not leave it off)
+      return;
+    }
+    if (this.listChecked.has(mark)) return;
+    this.listChecked.add(mark);
     try {
       const { lists } = await this.api.request<{ lists: DeviceList[] }>('/keys/list');
       if (lists.length || this.published().filter((k) => !k.revoked).length !== 1) {
         this.listOk.set(true); // a list exists (or none can be made here): whether this key is in it is the server's `waiting`
+        this.listDone.add(mark);
         return;
       }
       const list = await firstDeviceList(local, deviceLabel());
       if (list) {
         await this.api.request('/keys/list', { method: 'POST', body: JSON.stringify(list) });
         this.listOk.set(true);
+        this.listDone.add(mark);
       }
     } catch {
-      this.listChecked.delete(uid); // the next refresh tries again
+      this.listChecked.delete(mark); // the next refresh tries again
     }
   }
 

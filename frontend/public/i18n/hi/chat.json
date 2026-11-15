@@ -58,5 +58,7 @@
   "reaction_laugh": "मज़ेदार",
   "reaction_wow": "वाह",
   "reaction_sad": "उदास",
-  "reaction_thanks": "धन्यवाद"
+  "reaction_thanks": "धन्यवाद",
+  "notConfirmedTitle": "अभी पुष्टि नहीं हुई",
+  "notConfirmedText": "कनेक्शन की पुष्टि होने पर आप {{ name }} को संदेश भेज सकेंगे।"
 }

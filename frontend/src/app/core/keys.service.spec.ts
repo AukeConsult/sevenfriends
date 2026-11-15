@@ -532,6 +532,36 @@ describe('KeysService: the key of this device', () => {
       expect(never.inviteReady()).toBe(false);
     });
 
+    it('the same person signs out and in again in the same open app (or switches account and back): the keys are ready again, not stuck', async () => {
+      const uid = person();
+      const server = new FakeServer();
+      const user = signal<{ uid: string } | null>({ uid });
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        providers: [
+          { provide: ApiService, useValue: server.api },
+          { provide: AuthService, useValue: { user, isFreshAccount: () => false, doneFresh: () => undefined } },
+          { provide: DeviceListService, useValue: {} },
+          { provide: OwnRecoveryService, useValue: { madeKey: () => undefined } },
+          { provide: ReencryptService, useValue: { run: async () => undefined } },
+          { provide: REQUIRED_BROWSER, useValue: null },
+        ],
+      });
+      const keys = TestBed.inject(KeysService);
+      await keys.refresh();
+      await settle();
+      expect(keys.inviteReady()).toBe(true);
+      user.set(null); // signs out: what was known is dropped
+      TestBed.tick();
+      expect(keys.inviteReady()).toBe(false);
+      user.set({ uid }); // and in again as the same person, in the same open app
+      TestBed.tick();
+      await keys.refresh();
+      await settle();
+      expect(keys.inviteReady()).toBe(true);
+      expect(server.lists.length).toBe(1); // and no second list was made
+    });
+
     it('another person signing in does not inherit it', async () => {
       const server = new FakeServer();
       const keys = start(person(), server, true);

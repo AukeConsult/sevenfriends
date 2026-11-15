@@ -58,5 +58,7 @@
   "reaction_laugh": "Смішно",
   "reaction_wow": "Ого",
   "reaction_sad": "Сумно",
-  "reaction_thanks": "Дякую"
+  "reaction_thanks": "Дякую",
+  "notConfirmedTitle": "Ще не підтверджено",
+  "notConfirmedText": "Ви зможете написати {{ name }}, коли зв'язок буде підтверджено."
 }

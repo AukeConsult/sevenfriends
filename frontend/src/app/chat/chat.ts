@@ -62,6 +62,8 @@ export class Chat {
   protected readonly friend = this.ctx.friend;
   protected readonly seat = this.ctx.seat;
   protected readonly blocked = this.ctx.blocked;
+  /** the connection is still waiting for them to confirm: the page says so in friendly words (the server's sentence is English only) */
+  protected readonly notConfirmed = computed(() => this.ctx.friend()?.status === 'pending');
   protected readonly barHeight = this.ctx.barHeight;
 
   /** The friend's picture next to a message: opens the profile under the header. */

@@ -58,5 +58,7 @@
   "reaction_laugh": "Grappig",
   "reaction_wow": "Wow",
   "reaction_sad": "Verdrietig",
-  "reaction_thanks": "Dank je"
+  "reaction_thanks": "Dank je",
+  "notConfirmedTitle": "Nog niet bevestigd",
+  "notConfirmedText": "Je kunt {{ name }} een bericht sturen zodra de verbinding is bevestigd."
 }

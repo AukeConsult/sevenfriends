@@ -58,5 +58,7 @@
   "reaction_laugh": "Komik",
   "reaction_wow": "Vay",
   "reaction_sad": "Üzgün",
-  "reaction_thanks": "Teşekkürler"
+  "reaction_thanks": "Teşekkürler",
+  "notConfirmedTitle": "Henüz onaylanmadı",
+  "notConfirmedText": "Bağlantı onaylandığında {{ name }} kişisine yazabilirsiniz."
 }

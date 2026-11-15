@@ -1,7 +1,7 @@
 <ng-container *transloco="let t">
 <main class="sf-lock-page sf-send-page" [class.sf-send-embedded]="embedded()">
   @if (ctx.blocked(); as why) {
-    <div class="alert alert-warning" role="alert">{{ why }}</div>
+    @if (!embedded()) { <div class="alert alert-warning" role="alert">{{ why }}</div> } <!-- under the feed the feed says it already (once) -->
   } @else {
     @if (ctx.sendFormOpen() || embedded()) {
     <!-- the frame to write in; what opens (emojis, image / video / voice) expands above it, and closes when focus goes elsewhere -->

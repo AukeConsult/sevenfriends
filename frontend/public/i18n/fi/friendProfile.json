@@ -42,5 +42,6 @@
   "leave": "Poistu",
   "alreadyInGroup": "On jo ryhmässä",
   "notConfirmedYet": "Ei ole vielä vahvistanut ystävyyttä",
-  "groupIsFull": "Ryhmässä on 7 henkilöä, enemmän ei voi olla"
+  "groupIsFull": "Ryhmässä on 7 henkilöä, enemmän ei voi olla",
+  "resendInvitation": "Lähetä kutsulinkki uudelleen"
 }

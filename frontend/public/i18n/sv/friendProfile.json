@@ -42,5 +42,6 @@
   "leave": "Lämna",
   "alreadyInGroup": "Redan i gruppen",
   "notConfirmedYet": "Har inte bekräftat vänskapen än",
-  "groupIsFull": "Gruppen har 7 personer, det högsta antalet"
+  "groupIsFull": "Gruppen har 7 personer, det högsta antalet",
+  "resendInvitation": "Skicka inbjudningslänken igen"
 }

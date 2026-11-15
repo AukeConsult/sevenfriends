@@ -58,5 +58,7 @@
   "reaction_laugh": "Смешно",
   "reaction_wow": "Ого",
   "reaction_sad": "Грустно",
-  "reaction_thanks": "Спасибо"
+  "reaction_thanks": "Спасибо",
+  "notConfirmedTitle": "Ещё не подтверждено",
+  "notConfirmedText": "Вы сможете написать {{ name }}, когда связь будет подтверждена."
 }

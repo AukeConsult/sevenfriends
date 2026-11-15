@@ -42,5 +42,6 @@
   "leave": "Ayrıl",
   "alreadyInGroup": "Zaten grupta",
   "notConfirmedYet": "Arkadaşlığı henüz onaylamadı",
-  "groupIsFull": "Grupta 7 kişi var, bu en fazla"
+  "groupIsFull": "Grupta 7 kişi var, bu en fazla",
+  "resendInvitation": "Davet bağlantısını yeniden gönder"
 }

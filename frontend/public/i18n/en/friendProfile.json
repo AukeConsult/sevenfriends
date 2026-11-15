@@ -42,5 +42,6 @@
   "leave": "Leave",
   "alreadyInGroup": "Already in the group",
   "notConfirmedYet": "Has not confirmed the friendship yet",
-  "groupIsFull": "The group has 7 people, the most there can be"
+  "groupIsFull": "The group has 7 people, the most there can be",
+  "resendInvitation": "Resend invitation link"
 }

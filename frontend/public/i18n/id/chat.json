@@ -58,5 +58,7 @@
   "reaction_laugh": "Lucu",
   "reaction_wow": "Wow",
   "reaction_sad": "Sedih",
-  "reaction_thanks": "Terima kasih"
+  "reaction_thanks": "Terima kasih",
+  "notConfirmedTitle": "Belum dikonfirmasi",
+  "notConfirmedText": "Anda bisa menulis kepada {{ name }} setelah koneksi dikonfirmasi."
 }

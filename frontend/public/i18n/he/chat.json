@@ -58,5 +58,7 @@
   "reaction_laugh": "מצחיק",
   "reaction_wow": "וואו",
   "reaction_sad": "עצוב",
-  "reaction_thanks": "תודה"
+  "reaction_thanks": "תודה",
+  "notConfirmedTitle": "עדיין לא אושר",
+  "notConfirmedText": "תוכל לכתוב ל-{{ name }} לאחר שהחיבור יאושר."
 }

@@ -58,5 +58,7 @@
   "reaction_laugh": "面白い",
   "reaction_wow": "わあ",
   "reaction_sad": "悲しい",
-  "reaction_thanks": "ありがとう"
+  "reaction_thanks": "ありがとう",
+  "notConfirmedTitle": "まだ確認されていません",
+  "notConfirmedText": "つながりが確認されると、{{ name }} にメッセージを送れます。"
 }

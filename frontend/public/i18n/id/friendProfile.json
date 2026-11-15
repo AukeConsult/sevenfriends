@@ -42,5 +42,6 @@
   "leave": "Keluar",
   "alreadyInGroup": "Sudah ada di grup",
   "notConfirmedYet": "Belum mengonfirmasi pertemanan",
-  "groupIsFull": "Grup berisi 7 orang, jumlah terbanyak"
+  "groupIsFull": "Grup berisi 7 orang, jumlah terbanyak",
+  "resendInvitation": "Kirim ulang tautan undangan"
 }

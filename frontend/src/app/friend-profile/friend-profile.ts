@@ -4,6 +4,7 @@ import { Component, HostListener, computed, effect, inject, signal, untracked } 
 import { Router, RouterLink } from '@angular/router';
 import { NgTemplateOutlet } from '@angular/common';
 import { FriendsService } from '../core/friends.service';
+import { InviteLinkService } from '../core/invite-link.service';
 import { UiPreferencesService } from '../core/ui-preferences';
 import { Friend, GroupMember } from '../models';
 import { squareJpeg } from '../core/resize-image';
@@ -37,6 +38,7 @@ export class FriendProfile {
   private readonly countryNames = new Map(countries().map((c) => [c.code, c.name]));
 
   private readonly friendsService = inject(FriendsService);
+  protected readonly invite = inject(InviteLinkService);
   private readonly prefs = inject(UiPreferencesService);
   private readonly router = inject(Router);
   protected readonly error = signal<string | null>(null);
@@ -228,6 +230,12 @@ export class FriendProfile {
   }
 
   /** Confirm a friend who invited me (a pending seat). */
+  /** An invitation of mine that is still waiting: the friend link goes out again (the share sheet, or copied where there is none). */
+  protected async resendInvitation(): Promise<void> {
+    await this.invite.load();
+    await this.invite.share();
+  }
+
   protected confirm(friend: Friend): Promise<void> {
     return friend.requestId ? this.run(() => this.friendsService.acceptRequest(friend.requestId!)) : Promise.resolve();
   }

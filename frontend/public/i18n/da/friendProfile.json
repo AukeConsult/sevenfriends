@@ -42,5 +42,6 @@
   "leave": "Forlad",
   "alreadyInGroup": "Allerede i gruppen",
   "notConfirmedYet": "Har ikke bekræftet venskabet endnu",
-  "groupIsFull": "Gruppen har 7 personer, det højeste antal"
+  "groupIsFull": "Gruppen har 7 personer, det højeste antal",
+  "resendInvitation": "Send invitationslinket igen"
 }

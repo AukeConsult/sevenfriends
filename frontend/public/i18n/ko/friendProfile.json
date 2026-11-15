@@ -42,5 +42,6 @@
   "leave": "나가기",
   "alreadyInGroup": "이미 그룹에 있습니다",
   "notConfirmedYet": "아직 친구 관계를 확인하지 않았습니다",
-  "groupIsFull": "그룹은 7명으로, 더 늘릴 수 없습니다"
+  "groupIsFull": "그룹은 7명으로, 더 늘릴 수 없습니다",
+  "resendInvitation": "초대 링크 다시 보내기"
 }
