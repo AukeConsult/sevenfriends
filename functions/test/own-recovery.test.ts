@@ -4,6 +4,7 @@ import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { sendDueOwnRequestReminders } from "../src/own-request";
 import { User, connect, seedPool } from "./helpers";
 import { sentPushes } from "./setup";
+import { keyListCol, ownRequestCol } from "../src/paths";
 
 /** Recovery from my own other device: the key of a device that can open my messages gives my other keys their copies, for every friend at once. */
 let pool: User[];
@@ -191,5 +192,76 @@ describe("a device asks my other devices", () => {
     expect((await pool[1].raw("get", own(`/request?key=${s.phone}`)).expect(200)).body.request).toBeNull();
     await pool[1].raw("post", own("/decline"), { key: s.phone, me: s.browser }).expect(409);
     await pool[1].raw("post", own("/ask"), { key: s.phone }).expect(409);
+  });
+});
+
+/** A new device that is not approved asks all my other devices by itself, and a device that really holds everything says so, so it can approve (no device is retired). */
+describe("automatic approval of a new device", () => {
+  const listOf = (uid: string, ids: string[]) => keyListCol(uid).doc("1").set({ version: 1, devices: ids.map((keyId) => ({ keyId })) });
+  const waitingOf = async (user: User) => ((await user.raw("get", "/keys").expect(200)).body.keys as { id: string; waiting?: boolean }[]).filter((k) => k.waiting).map((k) => k.id);
+
+  it("a key that holds the copies but is not in my signed list still waits, and a device that is in the list is asked to approve it", async () => {
+    const s = await story();
+    await listOf(s.u0, [s.browser]);
+    await pool[0].raw("post", own("/wraps"), { key: s.phone, part: "messages", items: [{ id: s.sent, wrap: wrap(s.u0, s.phone) }] }).expect(200);
+    await pool[0].raw("post", own("/done"), { key: s.phone }).expect(200); // it has every copy now (shared) but the list does not name it
+    await ownRequestCol(s.u0).doc(s.phone).delete(); // and nobody asked (an old device, or the request was dismissed)
+    expect(await waitingOf(pool[0])).toEqual([s.phone]);
+    const found = (await pool[0].raw("get", own(`/pending?me=${s.browser}`)).expect(200)).body;
+    expect(found.eligible).toBe(true);
+    expect(found.keys.map((k: { id: string }) => k.id)).toEqual([s.phone]);
+    expect(found.requests.map((r: { keyId: string }) => r.keyId)).toEqual([s.phone]); // the request was made by itself
+  });
+
+  it("once the list names the key it no longer waits", async () => {
+    const s = await story();
+    await listOf(s.u0, [s.browser, s.phone]);
+    expect(await waitingOf(pool[0])).toEqual([]);
+  });
+
+  it("without a list the old rule stays: a key waits until it is shared", async () => {
+    const s = await story();
+    expect(await waitingOf(pool[0])).toEqual([s.phone]);
+    await pool[0].raw("post", own("/wraps"), { key: s.phone, part: "messages", items: [{ id: s.sent, wrap: wrap(s.u0, s.phone) }] }).expect(200);
+    await pool[0].raw("post", own("/done"), { key: s.phone }).expect(200);
+    expect(await waitingOf(pool[0])).toEqual([]);
+  });
+
+  it("/works: a key that lacks copies is refused, one that holds everything becomes a helper next to the others, an unknown key and another person's key are refused", async () => {
+    const s = await story();
+    await pool[0].raw("post", own("/works"), { key: s.phone }).expect(409); // one message has no copy for it
+    await pool[0].raw("post", own("/works"), { key: "nope" }).expect(409);
+    await pool[1].raw("post", own("/works"), { key: s.phone }).expect(409); // not his key
+    expect((await pool[0].raw("get", own(`/pending?me=${s.phone}`)).expect(200)).body.eligible).toBe(false);
+    await pool[0].raw("post", own("/wraps"), { key: s.phone, part: "messages", items: [{ id: s.sent, wrap: wrap(s.u0, s.phone) }] }).expect(200);
+    await pool[0].raw("post", own("/works"), { key: s.phone }).expect(200);
+    await pool[0].raw("post", own("/works"), { key: s.phone }).expect(200); // again: the same
+    expect((await pool[0].raw("get", own(`/pending?me=${s.phone}`)).expect(200)).body.eligible).toBe(true);
+    expect((await pool[0].raw("get", own(`/pending?me=${s.browser}`)).expect(200)).body.eligible).toBe(true); // the first key still helps: nobody was retired
+    expect((await pool[0].raw("get", "/keys").expect(200)).body.keys.every((k: { revoked?: boolean }) => !k.revoked)).toBe(true);
+  });
+
+  it("an old install that no device holds any more (the oldest key) no longer decides: the device that works can approve a new one", async () => {
+    const ghost = await publish(pool[0], keys[0]);
+    const real = await publish(pool[0], keys[1]);
+    await pool[0].raw("post", own("/works"), { key: real }).expect(200); // nothing is locked for it yet: it holds everything
+    const fresh = await publish(pool[0], keys[2]);
+    await pool[0].raw("post", own("/ask"), { key: fresh }).expect(201);
+    const found = (await pool[0].raw("get", own(`/pending?me=${real}`)).expect(200)).body;
+    expect(found).toMatchObject({ eligible: true });
+    expect(found.keys.map((k: { id: string }) => k.id)).toContain(fresh);
+    expect(found.keys.map((k: { id: string }) => k.id)).not.toContain(real);
+    expect(ghost).not.toBe(real);
+  });
+
+  it("the new device approved by another one can then send: it is in the signed list and gets its copies (the whole path)", async () => {
+    const s = await story();
+    await pool[0].raw("post", own("/ask"), { key: s.phone }).expect(201);
+    await pool[0].raw("post", own("/start"), { key: s.phone, me: s.browser }).expect(200);
+    await pool[0].raw("post", own("/wraps"), { key: s.phone, part: "messages", items: [{ id: s.sent, wrap: wrap(s.u0, s.phone) }] }).expect(200);
+    await pool[0].raw("post", own("/done"), { key: s.phone }).expect(200);
+    await listOf(s.u0, [s.browser, s.phone]); // what the approving device signs
+    expect(await waitingOf(pool[0])).toEqual([]);
+    expect((await pool[0].raw("get", own(`/pending?me=${s.phone}`)).expect(200)).body.eligible).toBe(true);
   });
 });

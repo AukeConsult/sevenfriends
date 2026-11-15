@@ -82,8 +82,10 @@ ownRecoveryRouter.get(
       res.json({ eligible, keys: [], requests: [] });
       return;
     }
-    // a key waits for approval until it is shared or in my signed list (a listed key with no copies is the business of "Get my old messages back", not of this card)
-    for (const k of keys.filter((k) => !k.shared && !k.listed)) if (!(await liveRequest(uid, k.key.id))) await openRequest(uid, k.key);
+    // a key waits for approval until it is in my signed list: when I have a list, a key that is not in it needs the list to name it, also when it already has the copies
+    // (a device approved before lists existed); without a list, until it is shared. (A listed key with no copies is the business of "Get my old messages back", not of this card.)
+    const hasList = !(await keyListCol(uid).limit(1).get()).empty;
+    for (const k of keys.filter((k) => !k.listed && (hasList || !k.shared))) if (!(await liveRequest(uid, k.key.id))) await openRequest(uid, k.key);
     const open = (await liveRequests(uid)).filter((r) => (r.data.status === "asked" || r.data.status === "working") && keys.some((k) => k.key.id === r.id && mayHelp(mine!, k)));
     res.json({ eligible, keys: open.map((r) => keys.find((k) => k.key.id === r.id)!.key), requests: open.map((r) => requestOf(r.id, r.data)) });
   }),
@@ -326,6 +328,32 @@ ownRecoveryRouter.post(
     if (request) {
       await ownRequestCol(me).doc(target.id).update({ status: "done", added: request.total ?? 0 });
       await tellDone(me, { id: target.id, label: target.label });
+    }
+    res.json({ ok: true });
+  }),
+);
+
+/**
+ * `{ key }`: this device says that its key opens ALL of my old messages and files, so it can approve my other devices. Checked here: the key is marked shared only when nothing of
+ * mine lacks a copy for it (409 and nothing changes otherwise). It is added to the helpers and nothing else changes: the other keys keep their place, so several devices can
+ * help at once, and the automatic "oldest key" guess (a key of an old install that no device holds any more) can no longer leave nobody able to approve.
+ */
+ownRecoveryRouter.post(
+  "/works",
+  asyncHandler(async (req, res) => {
+    const me = uidOf(res);
+    const key = (await myKeys(me, false)).find((k) => k.key.id === req.body?.key);
+    if (!key) {
+      res.status(409).json({ error: "That key is not in use" });
+      return;
+    }
+    if (!key.shared) {
+      const { messages, files } = await countLacking(me, key.key.id);
+      if (messages + files) {
+        res.status(409).json({ error: `${messages + files} messages or files still have no copy for that key.`, missing: messages + files });
+        return;
+      }
+      await keyCol(me).doc(key.key.id).update({ ownShared: true, ownSharedAt: FieldValue.serverTimestamp() });
     }
     res.json({ ok: true });
   }),

@@ -38,11 +38,16 @@ describe('KeysService: the key of this device', () => {
     posts = 0;
     failPosts = 0;
     revoked: string[] = [];
+    /** the keys this device said "opens everything" for (POST /own-recovery/works); `worksStatus` = what the server answers (409 = it lacks copies) */
+    works: string[] = [];
+    worksStatus = 200;
+    /** mark every key of mine `waiting` (it is not in my signed list) */
+    allWaiting = false;
 
     readonly api = {
       request: async (path: string, init?: { method?: string; body?: string }): Promise<unknown> => {
         const method = init?.method ?? 'GET';
-        if (path === '/keys' && method === 'GET') return { keys: this.keys.map((k) => ({ ...k })), hasBackup: false, backups: [], accountId: this.accountId } satisfies MyKeys;
+        if (path === '/keys' && method === 'GET') return { keys: this.keys.map((k) => ({ ...k, ...(this.allWaiting ? { waiting: true } : {}) })), hasBackup: false, backups: [], accountId: this.accountId } satisfies MyKeys;
         if (path === '/keys' && method === 'POST') {
           this.posts++;
           if (this.failPosts > 0) {
@@ -62,6 +67,11 @@ describe('KeysService: the key of this device', () => {
         if (path === '/keys/list' && method === 'POST') {
           this.lists.push(JSON.parse(init!.body!));
           return {};
+        }
+        if (path === '/own-recovery/works' && method === 'POST') {
+          this.works.push(JSON.parse(init!.body!).key);
+          if (this.worksStatus !== 200) throw new Error('409');
+          return { ok: true };
         }
         const revoke = /^\/keys\/([^/]+)\/revoke$/.exec(path);
         if (revoke && method === 'POST') {
@@ -332,6 +342,75 @@ describe('KeysService: the key of this device', () => {
       const keys = start(person(), new FakeServer(), true);
       await keys.refresh();
       expect(rememberedAccounts().find((a) => a.uid === 'someone-else')?.accountId).toBe('their-stamp');
+    });
+  });
+
+  describe('approval by my other devices (no tap, no device retired)', () => {
+    /** the service with a stub of the approval service that records what it is asked */
+    const withApproval = (uid: string, server: FakeServer, mine: { value: unknown }) => {
+      const calls = { refreshMine: 0, ask: 0 };
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        providers: [
+          { provide: ApiService, useValue: server.api },
+          { provide: AuthService, useValue: { user: signal({ uid }), isFreshAccount: () => false, doneFresh: () => undefined } },
+          { provide: DeviceListService, useValue: {} },
+          { provide: OwnRecoveryService, useValue: { madeKey: () => undefined, mine: () => mine.value, refreshMine: async () => { calls.refreshMine++; }, ask: async () => { calls.ask++; mine.value = { status: 'asked' }; } } },
+          { provide: ReencryptService, useValue: { run: async () => undefined } },
+        ],
+      });
+      return { keys: TestBed.inject(KeysService), calls };
+    };
+    const settle = () => new Promise((resolve) => setTimeout(resolve, 200));
+
+    it('a device that is not approved asks my other devices by itself, once, with no tap', async () => {
+      const uid = person();
+      const server = new FakeServer();
+      const mine = { value: null as unknown };
+      const { keys, calls } = withApproval(uid, server, mine);
+      await keys.refresh(); // makes its key
+      server.allWaiting = true; // the server says it is not in my list
+      await keys.refresh();
+      await settle();
+      expect(calls.ask).toBe(1);
+      await keys.refresh();
+      await keys.refresh();
+      await settle();
+      expect(calls.ask).toBe(1); // not again at every look
+      expect(server.revoked).toEqual([]); // nobody was retired
+    });
+
+    it('a device that already has a request does not make another', async () => {
+      const uid = person();
+      const server = new FakeServer();
+      const { keys, calls } = withApproval(uid, server, { value: { status: 'asked' } });
+      await keys.refresh();
+      server.allWaiting = true;
+      await keys.refresh();
+      await settle();
+      expect(calls.ask).toBe(0);
+    });
+
+    it('an approved device says that its key opens everything, once, and never asks', async () => {
+      const uid = person();
+      const server = new FakeServer();
+      const { keys, calls } = withApproval(uid, server, { value: null });
+      await keys.refresh();
+      await keys.refresh();
+      await settle();
+      expect(server.works).toEqual([keys.thisKeyId()!]);
+      expect(calls.ask).toBe(0);
+    });
+
+    it('when the server says some copies are missing, nothing breaks and the device still works', async () => {
+      const uid = person();
+      const server = new FakeServer();
+      server.worksStatus = 409;
+      const { keys } = withApproval(uid, server, { value: null });
+      await keys.refresh();
+      await settle();
+      expect(keys.state()).toBe('ready');
+      expect(server.works.length).toBe(1);
     });
   });
 });

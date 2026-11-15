@@ -54,14 +54,14 @@ export async function recipientKeysOf(uid: string): Promise<PublishedKey[]> {
  */
 export const isShared = (flag: boolean | undefined, oldest: boolean): boolean => flag === true || (flag === undefined && oldest);
 
-/** My published keys, and whether a backup is stored. A key in use that is neither shared nor in my signed list is marked `waiting`: another device of mine has to approve it. */
+/** My published keys, and whether a backup is stored. A key in use that is not in my signed list (when I have one; without a list: that is not shared) is marked `waiting`: another device of mine has to approve it. */
 export async function myKeysOf(uid: string): Promise<MyKeys> {
   const [snap, backups, newest, accountId] = await Promise.all([keyCol(uid).get(), keyBackupCol(uid).get(), keyListCol(uid).orderBy("version", "desc").limit(1).get(), ensureAccountId(uid)]);
   await stampKeys(accountId, snap.docs); // an account and keys from before the stamp existed get it the first time they are read
   const listed = new Set(((newest.docs[0]?.data().devices ?? []) as { keyId: string }[]).map((d) => d.keyId));
   const keys = snap.docs.map((d) => ({ ...publishedOf(d.id, d.data()), flag: d.data().ownShared as boolean | undefined })).sort((a, b) => (a.createdAt ?? "").localeCompare(b.createdAt ?? ""));
   const oldest = keys.find((k) => !k.revoked)?.id;
-  return { keys: keys.map(({ flag, ...k }) => (!k.revoked && !isShared(flag, k.id === oldest) && !listed.has(k.id) ? { ...k, waiting: true } : k)), hasBackup: !backups.empty, backups: backups.docs.map((d) => d.id).filter((id) => id !== KEY_BACKUP_DOC), accountId };
+  return { keys: keys.map(({ flag, ...k }) => (!k.revoked && !listed.has(k.id) && (listed.size > 0 || !isShared(flag, k.id === oldest)) ? { ...k, waiting: true } : k)), hasBackup: !backups.empty, backups: backups.docs.map((d) => d.id).filter((id) => id !== KEY_BACKUP_DOC), accountId };
 }
 
 keysRouter.get(

@@ -174,7 +174,7 @@ The backend settings (email texts, `APP_URL`, limits) are listed in `functions/.
 
 - **Android**: `npm run android:config`, then `npm run android:sync` and `npm run android:open` (Android Studio).
 - **iPhone**: `npm run ios:config`, `npm run ios:sync`, `npm run ios:open` (macOS and Xcode only).
-- **Windows**: `npm run windows:run` to try it, `npm run windows:release` to build, pack the installer and copy it to the website downloads in one go (.NET 8 SDK and Inno Setup 6).
+- **Windows**: `npm run windows:run` to try it, `npm run windows:release` to build, pack the installer, copy it to the website downloads and deploy the hosting in one go (`-- --no-deploy` skips the deploy; .NET 8 SDK and Inno Setup 6).
 
 More in [`docs/guide/apps-and-login.md`](docs/guide/apps-and-login.md), `ios/README.md` and `windows/README.md`.
 

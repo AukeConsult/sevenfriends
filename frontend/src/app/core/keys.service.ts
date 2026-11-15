@@ -149,6 +149,7 @@ export class KeysService {
         // so the person does not have to make another one. A key the server has retired (found, revoked) is never published again.
         if (await this.publishLocal(local)) return;
       } else if (ready && local?.signKey) void this.ensureList(local);
+      if (ready && id) void this.joinOthers(id, !!found?.waiting);
     } catch {
       // the server (or the key store) could not be asked: a key that was known to be ready stays; otherwise the person can still try to set up
       if (this.state() !== 'ready') this.state.set('none');
@@ -199,6 +200,28 @@ export class KeysService {
   }
 
   private readonly listChecked = new Set<string>();
+  private readonly joined = new Set<string>();
+
+  /**
+   * Once for each key in each run of the app, with no tap: a device that is NOT approved yet (the server marks its key `waiting`) asks all my other devices to approve it
+   * (they show "Approve"; no device is retired), unless it has asked already. A device that is approved tells the server that its key opens everything (`/own-recovery/works`,
+   * which only says yes when no message or file lacks a copy for it), so it can approve the others too. Quiet: a failure is tried again at the next start.
+   */
+  private async joinOthers(keyId: string, waiting: boolean): Promise<void> {
+    const mark = `${this.uid}:${keyId}:${waiting}`;
+    if (this.joined.has(mark)) return;
+    this.joined.add(mark);
+    try {
+      if (!waiting) {
+        await this.api.request('/own-recovery/works', { method: 'POST', body: JSON.stringify({ key: keyId }) }).catch(() => undefined); // 409 = it does not hold everything: nothing changes
+        return;
+      }
+      await this.ownRecovery.refreshMine();
+      if (!this.ownRecovery.mine()) await this.ownRecovery.ask();
+    } catch {
+      this.joined.delete(mark); // nobody could help yet, or no connection: the next look asks again
+    }
+  }
 
   /**
    * The silent first sign-in: makes the lock key and the signing key on this device (neither can be read out), publishes them, and publishes
