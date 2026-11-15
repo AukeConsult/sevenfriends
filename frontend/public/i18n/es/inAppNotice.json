@@ -14,8 +14,11 @@
   "homeStepOpenPaste": "Abre Seven Friends desde su icono, toca «{{ label }}», pega la invitación y crea tu cuenta",
   "homeStepOpen": "Abre Seven Friends desde su icono y crea allí tu cuenta",
   "homeNote": "Safari y la app de la pantalla de inicio no comparten sesión, así que la cuenta se crea en la app.",
-  "sorry": "¡Perdona los pasos extra! En iPhone, Seven Friends debe estar en tu pantalla de inicio, para que tu cuenta y tu llave queden seguras en un solo lugar.",
+  "sorry": "¡Perdona los pasos extra! En iPhone, Seven Friends funciona mejor en tu pantalla de inicio, así tu cuenta y tu llave quedan seguras en un solo lugar.",
   "thenHome": "Después, Safari te muestra cómo añadir Seven Friends a tu pantalla de inicio, donde creas tu cuenta.",
   "menuStep": "Toca ⋯ (o el icono de la brújula) y luego Abrir en Safari",
-  "menuFallback": "¿No lo encuentras? Copia el enlace, abre Safari y pégalo allí."
+  "menuFallback": "¿No lo encuentras? Copia el enlace, abre Safari y pégalo allí.",
+  "recommended": "Recomendado",
+  "continueSafari": "Continuar en Safari en su lugar",
+  "safariRisk": "En Safari, tu cuenta y tu llave pueden borrarse si no lo abres durante una semana. Añade la app a tu pantalla de inicio cuanto antes y apruébala desde Safari."
 }

@@ -1,5 +1,12 @@
 import UIKit
 import Capacitor
+// Firebase Messaging turns the APNs token into the Firebase token the backend sends to. It is added once in Xcode
+// (File > Add Package Dependencies > https://github.com/firebase/firebase-ios-sdk, product FirebaseMessaging); see ios/README.md.
+// Without it the app still builds, and push on iPhone simply gives no token.
+#if canImport(FirebaseMessaging)
+import FirebaseCore
+import FirebaseMessaging
+#endif
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -7,7 +14,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        #if canImport(FirebaseMessaging)
+        if FirebaseApp.app() == nil { FirebaseApp.configure() }
+        Messaging.messaging().delegate = self
+        #endif
         return true
     }
 
@@ -44,10 +54,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     // push notifications: hand the token (or the failure) to the Capacitor push plugin
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        #if canImport(FirebaseMessaging)
+        // the Firebase token (not the APNs one) goes to the plugin, as a String: that is the one the backend can send to
+        Messaging.messaging().apnsToken = deviceToken
+        Messaging.messaging().token { token, error in
+            if let token = token {
+                NotificationCenter.default.post(name: .capacitorDidRegisterForRemoteNotifications, object: token)
+            } else if let error = error {
+                NotificationCenter.default.post(name: .capacitorDidFailToRegisterForRemoteNotifications, object: error)
+            }
+        }
+        #else
         NotificationCenter.default.post(name: .capacitorDidRegisterForRemoteNotifications, object: deviceToken)
+        #endif
     }
 
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
         NotificationCenter.default.post(name: .capacitorDidFailToRegisterForRemoteNotifications, object: error)
     }
 }
+
+#if canImport(FirebaseMessaging)
+extension AppDelegate: MessagingDelegate {
+    // the Firebase token changes now and then: the app page asks for it again the next time it registers
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {}
+}
+#endif

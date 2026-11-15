@@ -10,8 +10,18 @@ A thin iPhone app (Capacitor, Swift Package Manager) that loads the web app from
 - `GoogleService-Info.plist`: put the service account key in `.env` and run `npm run ios:config` (it finds or creates the iOS app in
   Firebase and writes `ios/App/App/GoogleService-Info.plist`, which is in `.gitignore`). Add the file to the App target in Xcode.
 
-Needs a Mac with Xcode and an Apple Developer account (99 USD a year) to build, run on a phone and publish. Not done yet:
-- In Apple's developer site: an APNs key (a `.p8` file, never committed) uploaded in Firebase console → Project settings → Cloud Messaging.
-- Setting the Team in Xcode (Signing & Capabilities) and adding the Push Notifications capability if Xcode asks.
-- On iPhone the plugin gives the APNs token, not the Firebase one: the Firebase messaging SDK has to be added so the existing backend can
-  send to it. Also sign-in inside the app (Google's popup does not work in a WebView) and the sound.
+Needs a Mac with Xcode and an Apple Developer account (99 USD a year) to build, run on a phone and publish. Not tried on a Mac yet
+(written on Windows). What is built:
+- Push token: `AppDelegate.swift` hands the **Firebase** token (not the APNs one) to the push plugin when `FirebaseMessaging` is linked
+  (`#if canImport`); without it the app builds and gives the APNs token. The backend (`functions/src/push.ts`, `deliver`) sends an `apns`
+  alert with the phone's own sound ("No sound" = silent) next to the Android and web parts.
+- Google sign-in: `@capacitor-firebase/authentication` (run `npm run ios:sync` to add it to `Package.swift`) and the reversed client id
+  as a URL scheme in `Info.plist`.
+
+Still to do by hand:
+- In Xcode: File > Add Package Dependencies > `https://github.com/firebase/firebase-ios-sdk`, add the product **FirebaseMessaging** to the App target.
+- `GoogleService-Info.plist` must be in `ios/App/App/` and in the App target (a copy now sits in `ios/App/`: move it).
+- Apple developer site: an APNs key (`.p8`, never committed), uploaded in Firebase console > Project settings > Cloud Messaging.
+- The Team in Xcode (Signing & Capabilities) and the Push Notifications capability if Xcode asks.
+- Sounds: on the Mac run `npm run ios:sounds` (makes `drill.caf`, `hyper.caf`, `acidbreaks.caf` in `ios/App/App/` from the Android mp3 files, and warns about
+  one over 30 s), commit them. The Xcode project already lists them, so it does not build until they exist. The push names the file; the other choices play the phone's own sound.

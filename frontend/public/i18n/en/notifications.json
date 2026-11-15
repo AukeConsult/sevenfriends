@@ -66,5 +66,7 @@
   "unverifiedRequestHint": "Do you know them? Then confirm. If not, reject.",
   "sendConfirmationEmail": "Send confirmation email",
   "confirmationSent": "Sent. Open the link in the email, then come back here.",
-  "confirmationFailed": "Could not send the email. Please try again."
+  "confirmationFailed": "Could not send the email. Please try again.",
+  "iosInstallNow": "Put Seven Friends on your home screen now: tap Share, then Add to Home Screen. Then open the app from its icon, sign in, and come back here to tap Approve. Safari can wipe what is stored here if you do not open it for a week.",
+  "waitingApproval": "This device is waiting for approval. Open Seven Friends on another device of yours (on an iPhone, in Safari) and tap Approve."
 }

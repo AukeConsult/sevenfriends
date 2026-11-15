@@ -6,7 +6,7 @@ import { DocumentReference, FieldValue, getFirestore } from "firebase-admin/fire
 import { getMessaging } from "firebase-admin/messaging";
 import { asyncHandler, requireAuth } from "./auth";
 import { DEFAULT_CIRCLE_ID, PUSH_DEVICE_COLLECTION, circleIdForType, circleTypeOf } from "./constants";
-import { CIRCLE_TYPES, androidKeyOf } from "./models";
+import { CIRCLE_TYPES, SOUNDS, androidKeyOf } from "./models";
 import { setting } from "./settings";
 import { circleCol, keyCol, pushDeviceCol, readFields, userFields } from "./paths";
 import { noticesOf } from "./preferences";
@@ -105,6 +105,15 @@ const pushTtlSeconds = (): number | null => {
   return days <= 0 ? null : Math.min(28, days) * 24 * 60 * 60;
 };
 
+/**
+ * The sound of a push on the iPhone app: a jingle is a file in the app (`<key>.caf`, made by `npm run ios:sounds`, the same key as the Android
+ * channel `friends_<kind>_<key>`); any other choice plays the phone's own sound.
+ */
+const iosSoundOf = (channelId: string): string => {
+  const key = channelId.split("_").pop() ?? "";
+  return SOUNDS.some((s) => s.kind === "jingle" && s.androidKey === key) ? `${key}.caf` : "default";
+};
+
 /** One FCM send to some devices; the devices FCM says are gone are removed. Returns how many were reached. */
 async function deliver(devices: Device[], message: { data: Record<string, string>; android: { priority: "high"; notification: { channelId: string; title: string; body: string } } }): Promise<number> {
   const ttl = pushTtlSeconds();
@@ -115,6 +124,17 @@ async function deliver(devices: Device[], message: { data: Record<string, string
     webpush: { headers: { Urgency: "high", ...(ttl === null ? {} : { TTL: String(ttl) }) } },
     // the notification block is what lets Android show it in the chosen channel (with its jingle) while the app is closed
     android: { ...message.android, ...(ttl === null ? {} : { ttl: ttl * 1000 }) },
+    // the iPhone app (APNs through FCM): a visible alert, a jingle file or the phone's own sound, nothing for "No sound", the same expiry as the others
+    apns: {
+      headers: { "apns-priority": "10", ...(ttl === null ? {} : { "apns-expiration": String(Math.floor(Date.now() / 1000) + ttl) }) },
+      payload: {
+        aps: {
+          alert: { title: message.android.notification.title, body: message.android.notification.body },
+          ...(message.data.silent === "1" ? {} : { sound: iosSoundOf(message.android.notification.channelId) }),
+          "thread-id": message.data.circle,
+        },
+      },
+    },
   });
   const dead: DocumentReference[] = [];
   result.responses.forEach((r, i) => {

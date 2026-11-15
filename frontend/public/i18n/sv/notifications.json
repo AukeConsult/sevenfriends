@@ -66,5 +66,7 @@
   "unverifiedRequestHint": "Känner du dem? Bekräfta då. Annars, avvisa.",
   "sendConfirmationEmail": "Skicka bekräftelsemejl",
   "confirmationSent": "Skickat. Öppna länken i mejlet och kom tillbaka hit.",
-  "confirmationFailed": "Mejlet kunde inte skickas. Försök igen."
+  "confirmationFailed": "Mejlet kunde inte skickas. Försök igen.",
+  "iosInstallNow": "Lägg Seven Friends på hemskärmen nu: tryck på Dela och sedan Lägg till på hemskärmen. Öppna sedan appen från ikonen, logga in och kom tillbaka hit för att trycka på Godkänn. Safari kan radera det som är sparat här om du inte öppnar det på en vecka.",
+  "waitingApproval": "Den här enheten väntar på godkännande. Öppna Seven Friends på en annan av dina enheter (på iPhone i Safari) och tryck på Godkänn."
 }

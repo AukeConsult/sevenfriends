@@ -14,8 +14,11 @@
   "homeStepOpenPaste": "Åbn Seven Friends fra ikonet, tryk på “{{ label }}”, sæt invitationen ind og opret din konto",
   "homeStepOpen": "Åbn Seven Friends fra ikonet og opret din konto dér",
   "homeNote": "Safari og appen på hjemmeskærmen deler ikke login, så kontoen oprettes i appen.",
-  "sorry": "Beklager de ekstra trin! På iPhone skal Seven Friends ligge på din hjemmeskærm, så din konto og din låsenøgle er sikre ét sted.",
+  "sorry": "Beklager de ekstra trin! På iPhone fungerer Seven Friends bedst på din hjemmeskærm, så din konto og din låsenøgle er sikre ét sted.",
   "thenHome": "Bagefter viser Safari, hvordan du føjer Seven Friends til din hjemmeskærm, hvor du opretter din konto.",
   "menuStep": "Tryk på ⋯ (eller kompasikonet), og vælg Åbn i Safari",
-  "menuFallback": "Kan du ikke finde det? Kopiér linket, åbn Safari og sæt det ind dér."
+  "menuFallback": "Kan du ikke finde det? Kopiér linket, åbn Safari og sæt det ind dér.",
+  "recommended": "Anbefalet",
+  "continueSafari": "Fortsæt i Safari i stedet",
+  "safariRisk": "I Safari kan din konto og din låsenøgle blive slettet, hvis du ikke åbner den i en uge. Føj appen til din hjemmeskærm så hurtigt som muligt, og godkend den fra Safari."
 }

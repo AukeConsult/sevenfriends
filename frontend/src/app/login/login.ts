@@ -10,7 +10,7 @@ import { AuthService } from '../core/auth.service';
 import { FriendLinkService } from '../core/friend-link.service';
 import { AuthMode } from '../models';
 import { Inviter } from '../inviter/inviter';
-import { REQUIRED_BROWSER } from '../core/in-app-browser';
+import { BrowserRuleService } from '../core/browser-rule.service';
 
 @Component({
   selector: 'app-login',
@@ -24,7 +24,10 @@ export class Login {
   private readonly friendLinks = inject(FriendLinkService);
   protected readonly link = this.friendLinks.pending;
   /** this is not the browser that is right for the device (Safari on an iPhone, Chrome on Android, a real browser on Windows: often the browser inside Messenger): nothing to sign in with is shown, the notice at the top says which browser to open it in (see InAppNotice) */
-  protected readonly inOtherApp = inject(REQUIRED_BROWSER) !== null;
+  private readonly browserRule = inject(BrowserRuleService);
+  protected get inOtherApp(): boolean {
+    return this.browserRule.blocking();
+  }
   /** "I have an invitation": the box to paste a link or code (for an app installed after the link was opened in the browser) */
   protected readonly inviteOpen = signal(false);
   protected readonly inviteProblem = signal(false);

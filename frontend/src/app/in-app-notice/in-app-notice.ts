@@ -2,6 +2,7 @@ import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { Component, inject, signal } from '@angular/core';
 import { APP_ORIGIN } from '../core/app-origin';
 import { FriendLinkService } from '../core/friend-link.service';
+import { BrowserRuleService } from '../core/browser-rule.service';
 import { REQUIRED_BROWSER } from '../core/in-app-browser';
 
 /**
@@ -19,6 +20,7 @@ import { REQUIRED_BROWSER } from '../core/in-app-browser';
 })
 export class InAppNotice {
   private readonly friendLinks = inject(FriendLinkService);
+  private readonly browserRule = inject(BrowserRuleService);
   /** the browser this device must use */
   protected readonly need = inject(REQUIRED_BROWSER);
   /** an invitation waits (the link has its code): the page says so */
@@ -32,6 +34,11 @@ export class InAppNotice {
   private link(): string {
     const pending = this.friendLinks.pending();
     return pending ? this.friendLinks.linkText(pending) : APP_ORIGIN;
+  }
+
+  /** iPhone, a Safari tab: the person goes on in Safari instead of installing the app first (the page then gives way to the sign-in page). */
+  protected continueSafari(): void {
+    this.browserRule.continueInSafari();
   }
 
   protected async copy(): Promise<void> {

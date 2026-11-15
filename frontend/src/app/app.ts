@@ -5,7 +5,7 @@ import { BottomNav } from './bottom-nav/bottom-nav';
 import { CircleSwitch } from './circle-switch/circle-switch';
 import { OwnKeyPrompt } from './own-key-prompt/own-key-prompt';
 import { InAppNotice } from './in-app-notice/in-app-notice';
-import { REQUIRED_BROWSER } from './core/in-app-browser';
+import { BrowserRuleService } from './core/browser-rule.service';
 import { AndroidChannelsService } from './core/android-channels.service';
 import { AppUpdateService } from './core/app-update.service';
 import { AccountWatchService } from './core/account-watch.service';
@@ -58,9 +58,9 @@ export class App {
   private readonly friendLink = inject(FriendLinkService);
   private readonly autoInvite = inject(AutoInviteService);
   private readonly keys = inject(KeysService);
-  private readonly requiredBrowser = inject(REQUIRED_BROWSER);
+  private readonly browserRule = inject(BrowserRuleService);
   /** this is not the browser that is right for the device and nobody is signed in: the app shows only the page that says which browser to use (see InAppNotice) */
-  protected readonly wrongBrowser = computed(() => this.requiredBrowser !== null && !this.auth.user());
+  protected readonly wrongBrowser = computed(() => this.browserRule.blocking() && !this.auth.user());
   protected readonly active = inject(ActiveCircleService);
 
   private readonly toJoinPage = () => void this.router.navigateByUrl('/friends/join', { replaceUrl: true });

@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { TranslocoLoader, provideTransloco, TRANSLOCO_MISSING_HANDLER } from '@jsverse/transloco';
 import { of } from 'rxjs';
 import { FriendLinkService } from '../core/friend-link.service';
+import { BrowserRuleService } from '../core/browser-rule.service';
 import { REQUIRED_BROWSER, RequiredBrowser } from '../core/in-app-browser';
 import { EmptyMissingHandler } from '../core/transloco-missing.handler';
 import { InAppNotice } from './in-app-notice';
@@ -69,9 +70,9 @@ describe('InAppNotice: the page for the wrong browser', () => {
     }
     for (const need of ['safari', 'home-screen'] as RequiredBrowser[]) {
       const { page } = build(need);
-      expect(page.querySelectorAll('button').length).withContext(need).toBe(1);
+      expect(page.querySelectorAll('button').length).withContext(need).toBe(need === 'home-screen' ? 2 : 1); // (home screen: Copy link, and Continue in Safari instead)
       expect(page.querySelectorAll('a, input').length).withContext(need).toBe(0);
-      expect(text(page).length).withContext(need).toBeLessThan(560); // with the apology and the next step: still a short page
+      expect(text(page).length).withContext(need).toBeLessThan(need === 'home-screen' ? 900 : 560);
     }
   });
 
@@ -93,16 +94,16 @@ describe('InAppNotice: the page for the wrong browser', () => {
     expect(text(page)).toContain("You're invited to Seven Friends");
   });
 
-  it('an iPhone in a Safari tab with no invitation: two steps and no button (nothing to copy)', () => {
+  it('an iPhone in a Safari tab with no invitation: two steps and no copy button (nothing to copy)', () => {
     const { page } = build('home-screen', false);
     expect(steps(page)).toEqual(['1 Tap Share, then Add to Home Screen', '2 Open Seven Friends from its icon and create your account there']);
-    expect(page.querySelectorAll('button').length).toBe(0);
+    expect(Array.from(page.querySelectorAll('button')).map((b) => (b.textContent ?? '').trim())).toEqual(['Continue in Safari instead']); // nothing to copy: only the other way
     expect(text(page)).toContain('Welcome to Seven Friends');
   });
 
   it('on an iPhone (the browser inside Messenger, or a Safari tab) the page says sorry and why the app must be on the home screen; elsewhere it does not', () => {
     for (const need of ['safari', 'home-screen'] as RequiredBrowser[]) {
-      expect(text(build(need).page)).withContext(need).toContain('Sorry for the extra steps! On iPhone, Seven Friends must be on your home screen, so your account and lock key stay safe in one place.');
+      expect(text(build(need).page)).withContext(need).toContain('Sorry for the extra steps! On iPhone, Seven Friends works best on your home screen, so your account and lock key stay safe in one place.');
     }
     for (const need of ['chrome', 'browser'] as RequiredBrowser[]) {
       expect(text(build(need).page)).withContext(need).not.toContain('Sorry for the extra steps');
@@ -112,6 +113,24 @@ describe('InAppNotice: the page for the wrong browser', () => {
   it('from the browser inside Messenger on an iPhone the page also says what comes after Safari: the home screen, where the account is made', () => {
     expect(text(build('safari').page)).toContain('After that, Safari shows you how to add Seven Friends to your home screen, where you create your account.');
     expect(text(build('chrome').page)).not.toContain('add Seven Friends to your home screen');
+  });
+
+  it('an iPhone Safari tab offers TWO ways: the install steps marked Recommended, and "Continue in Safari instead" with the risk said plainly', () => {
+    const { page } = build('home-screen');
+    expect(text(page)).toContain('Recommended');
+    expect(text(page)).toContain('In Safari, your account and lock key can be wiped if you do not open it for a week.');
+    expect(Array.from(page.querySelectorAll('button')).map((b) => (b.textContent ?? '').trim())).toEqual(['Copy link', 'Continue in Safari instead']);
+  });
+
+  it('"Continue in Safari instead" makes the choice (the page then gives way to the sign-in page); no other page has it', () => {
+    const { page } = build('home-screen');
+    const rule = TestBed.inject(BrowserRuleService);
+    const chose = spyOn(rule, 'continueInSafari');
+    (Array.from(page.querySelectorAll('button')).find((b) => (b.textContent ?? '').trim() === 'Continue in Safari instead') as HTMLButtonElement).click();
+    expect(chose).toHaveBeenCalledTimes(1);
+    for (const other of ['safari', 'chrome', 'browser'] as RequiredBrowser[]) {
+      expect(text(build(other).page)).withContext(other).not.toContain('Continue in Safari instead');
+    }
   });
 
   it('there is nothing to sign in with on the install page either: no links, no form', () => {

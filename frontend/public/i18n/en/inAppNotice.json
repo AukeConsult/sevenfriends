@@ -14,8 +14,11 @@
   "homeStepOpenPaste": "Open Seven Friends from its icon, tap “{{ label }}”, paste the invitation and create your account",
   "homeStepOpen": "Open Seven Friends from its icon and create your account there",
   "homeNote": "Safari and the app on your home screen do not share logins, so the account is made in the app.",
-  "sorry": "Sorry for the extra steps! On iPhone, Seven Friends must be on your home screen, so your account and lock key stay safe in one place.",
+  "sorry": "Sorry for the extra steps! On iPhone, Seven Friends works best on your home screen, so your account and lock key stay safe in one place.",
   "thenHome": "After that, Safari shows you how to add Seven Friends to your home screen, where you create your account.",
   "menuStep": "Tap ⋯ (or the compass icon), then Open in Safari",
-  "menuFallback": "Can't find it? Copy the link, open Safari and paste it there."
+  "menuFallback": "Can't find it? Copy the link, open Safari and paste it there.",
+  "recommended": "Recommended",
+  "continueSafari": "Continue in Safari instead",
+  "safariRisk": "In Safari, your account and lock key can be wiped if you do not open it for a week. Add the app to your home screen as soon as you can, and approve it from Safari."
 }

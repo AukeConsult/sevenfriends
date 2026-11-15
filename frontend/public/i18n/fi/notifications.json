@@ -66,5 +66,7 @@
   "unverifiedRequestHint": "Tunnetko hänet? Vahvista silloin. Jos et, hylkää.",
   "sendConfirmationEmail": "Lähetä vahvistussähköposti",
   "confirmationSent": "Lähetetty. Avaa viestin linkki ja palaa tänne.",
-  "confirmationFailed": "Sähköpostin lähetys epäonnistui. Yritä uudelleen."
+  "confirmationFailed": "Sähköpostin lähetys epäonnistui. Yritä uudelleen.",
+  "iosInstallNow": "Lisää Seven Friends Koti-valikkoon nyt: napauta Jaa ja sitten Lisää Koti-valikkoon. Avaa sitten sovellus kuvakkeesta, kirjaudu sisään ja tule takaisin tänne napauttamaan Hyväksy. Safari voi poistaa tänne tallennetun, jos et avaa sitä viikkoon.",
+  "waitingApproval": "Tämä laite odottaa hyväksyntää. Avaa Seven Friends toisella laitteellasi (iPhonessa Safarissa) ja napauta Hyväksy."
 }

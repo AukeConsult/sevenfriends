@@ -65,6 +65,30 @@ describe('App', () => {
       }
     }
 
+    it('an iPhone Safari tab where the person chose to continue in Safari: the app is shown as in any browser (the choice is kept on the device)', async () => {
+      try {
+        localStorage.setItem('sf-ui', JSON.stringify({ iosSafariOk: true }));
+        const page = await open('home-screen', '/login');
+        expect(page.querySelector('app-in-app-notice')).toBeNull();
+        expect(page.querySelector('router-outlet')).not.toBeNull();
+      } finally {
+        localStorage.removeItem('sf-ui');
+      }
+    });
+
+    it('the choice is only for an iPhone Safari tab: Messenger\'s browser, Chrome on an iPhone, Android and Windows stay blocked even when it was made', async () => {
+      try {
+        localStorage.setItem('sf-ui', JSON.stringify({ iosSafariOk: true }));
+        for (const need of ['safari', 'chrome', 'browser'] as RequiredBrowser[]) {
+          const page = await open(need, '/login');
+          expect(page.querySelector('app-in-app-notice')).withContext(need).not.toBeNull();
+          expect(page.querySelector('router-outlet')).withContext(need).toBeNull();
+        }
+      } finally {
+        localStorage.removeItem('sf-ui');
+      }
+    });
+
     it('in the right browser the app is as before: the pages are there, and the browser page is not', async () => {
       const page = await open(null, '/login');
       expect(page.querySelector('app-in-app-notice')).toBeNull();

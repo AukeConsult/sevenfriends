@@ -14,8 +14,11 @@
   "homeStepOpenPaste": "Avaa Seven Friends kuvakkeesta, napauta “{{ label }}”, liitä kutsu ja luo tili",
   "homeStepOpen": "Avaa Seven Friends kuvakkeesta ja luo tilisi siellä",
   "homeNote": "Safari ja Koti-valikon sovellus eivät jaa kirjautumista, joten tili luodaan sovelluksessa.",
-  "sorry": "Anteeksi lisävaiheet! iPhonessa Seven Friends on oltava Koti-valikossa, jotta tilisi ja lukka-avaimesi pysyvät turvassa yhdessä paikassa.",
+  "sorry": "Anteeksi lisävaiheet! iPhonessa Seven Friends toimii parhaiten Koti-valikossa, jolloin tilisi ja lukka-avaimesi pysyvät turvassa yhdessä paikassa.",
   "thenHome": "Sen jälkeen Safari näyttää, miten Seven Friends lisätään Koti-valikkoon, jossa luot tilisi.",
   "menuStep": "Napauta ⋯ (tai kompassikuvaketta) ja valitse Avaa Safarissa",
-  "menuFallback": "Etkö löydä sitä? Kopioi linkki, avaa Safari ja liitä se sinne."
+  "menuFallback": "Etkö löydä sitä? Kopioi linkki, avaa Safari ja liitä se sinne.",
+  "recommended": "Suositus",
+  "continueSafari": "Jatka sen sijaan Safarissa",
+  "safariRisk": "Safarissa tilisi ja lukka-avaimesi voidaan poistaa, jos et avaa sitä viikkoon. Lisää sovellus Koti-valikkoon mahdollisimman pian ja hyväksy se Safarissa."
 }

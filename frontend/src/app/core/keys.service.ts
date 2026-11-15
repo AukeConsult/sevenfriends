@@ -13,7 +13,7 @@ import { myDeviceKey } from './my-key';
 import { DeviceListService } from './device-list.service';
 import { OwnRecoveryService } from './own-recovery.service';
 import { ReencryptService } from './reencrypt.service';
-import { REQUIRED_BROWSER } from './in-app-browser';
+import { BrowserRuleService } from './browser-rule.service';
 
 /** How a restore from the recovery words ended. */
 export type RestoreResult = 'ok' | 'bad-words' | 'no-backup' | 'wrong-code' | 'no-key';
@@ -61,7 +61,7 @@ export class KeysService {
   private readonly ownRecovery = inject(OwnRecoveryService);
   private readonly reencrypt = inject(ReencryptService);
   /** not the browser that is right for the device (the browser of another app such as Messenger, Chrome on an iPhone ...): its storage is not the one of Safari / Chrome, so a key made there would be lost */
-  private readonly inOtherApp = inject(REQUIRED_BROWSER) !== null;
+  private readonly browserRule = inject(BrowserRuleService);
 
   readonly state = signal<EncryptionState>('checking');
   /** the fingerprint of this device's key (64 hex characters), once it is ready */
@@ -72,6 +72,9 @@ export class KeysService {
   readonly thisKeyId = signal<string | null>(null);
 
   readonly diagnosis = signal<KeyDiagnosis | null>(null);
+
+  /** the key of THIS device is published but not in my signed list yet: another device of mine has to approve it (shown on Home, the other device shows Approve) */
+  readonly thisWaiting = computed(() => this.published().find((k) => k.id === this.thisKeyId() && !k.revoked)?.waiting === true);
 
   /** my signed device list is in place (published by this device, or already there), or this device needs none: set by `ensureList` and `refresh` */
   private readonly listOk = signal(false);
@@ -138,7 +141,7 @@ export class KeysService {
       this.state.set('unsupported');
       return;
     }
-    if (this.inOtherApp && !(await getDeviceKey(this.auth.user()?.uid ?? '').catch(() => null))) {
+    if (this.browserRule.blocking() && !(await getDeviceKey(this.auth.user()?.uid ?? '').catch(() => null))) {
       this.state.set('none'); // no key is made (or looked for on the server) in the wrong browser
       this.createError.set('This is not the right browser: open Seven Friends in Safari (iPhone), Chrome (Android) or a browser (Windows).');
       return;

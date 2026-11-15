@@ -219,7 +219,12 @@ export class Notifications {
   protected readonly prominentChecks = computed(() => isNewUser(this.auth.user()?.metadata?.creationTime, this.setupLeft()));
 
   /** the setup notes: sound and notifications not set up, the phone's notification switch, details not verified (folded into one line on Home); privacy lock off is one of them */
-  protected readonly checkCount = computed(() => [this.setupLeft(), this.lockOff(), this.androidOff() !== null, this.pushOff() !== null, this.unverified().length > 0].filter(Boolean).length);
+  /** an iPhone in a Safari tab (the account was made there): put the app on the home screen NOW and approve it from Safari, before Safari wipes what it stores (a week without opening) */
+  protected readonly iosInstallOff = computed(() => this.install.ios && !this.install.installed());
+  /** the key of THIS device waits for another device of mine to approve it */
+  protected readonly waitingApproval = computed(() => this.keys.thisWaiting());
+
+  protected readonly checkCount = computed(() => [this.setupLeft(), this.lockOff(), this.androidOff() !== null, this.pushOff() !== null, this.unverified().length > 0, this.iosInstallOff(), this.waitingApproval()].filter(Boolean).length);
 
   /** what needs me from people: requests, a request waiting for a seat, unread messages, activity in another circle */
   protected readonly needsYou = computed(() => this.seated().length > 0 || this.waitingCount() > 0 || this.groups().length > 0 || this.otherCircles().length > 0 || this.toHelp().length > 0 || this.declined().length > 0);

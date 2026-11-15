@@ -43,6 +43,8 @@ export interface UiPreferences {
   pendingFriend: PendingFriend | null;
   /** "Continue in the browser" on the welcome page was chosen: it is not shown again until this time (milliseconds since 1970); null = show it */
   welcomeUntil: number | null;
+  /** iPhone: the person chose to continue in a Safari TAB instead of installing the app first (see BrowserRuleService); kept on this device */
+  iosSafariOk: boolean;
   /** the safebox: files added are NOT encrypted even when both friends have a key (ticked on the safebox page); off (default) = they are encrypted */
   boxPlain: boolean;
   /** how the safebox shows its items: a list (default) or small icons floating side by side */
@@ -101,7 +103,7 @@ export const PHONE_TEXT_SCALES: Record<UiPreferences['textSize'], number> = { ti
 const kindIds = (v: unknown): string[] => (Array.isArray(v) ? v.filter((k: unknown): k is string => typeof k === 'string') : []);
 const layoutOf = (v: any): { main: string[]; more: string[] } | null => (v && typeof v === 'object' ? { main: kindIds(v.main), more: kindIds(v.more) } : null);
 
-export const DEFAULTS: UiPreferences = { boxTellNew: true, theme: 'white', textSize: 'normal', settingsTab: 'profile', emojiTab: 'People', chatOrder: 'oldest', enterSends: true, sleepList: true, autoAccept: false, feedIcons: false, language: '', setup: 'new', lastPage: null, micRaw: false, pendingFriend: null, welcomeUntil: null, boxPlain: false, boxView: 'list', boxKindLayout: null, boxHiddenOpen: false, cleanupWhose: 'mine', cleanupDays: 30, feedPlace: {}, seatMoved: false, sleepView: 'circles', checksHiddenUntil: null, sendOpen: true };
+export const DEFAULTS: UiPreferences = { boxTellNew: true, theme: 'white', textSize: 'normal', settingsTab: 'profile', emojiTab: 'People', chatOrder: 'oldest', enterSends: true, sleepList: true, autoAccept: false, feedIcons: false, language: '', setup: 'new', lastPage: null, micRaw: false, pendingFriend: null, welcomeUntil: null, iosSafariOk: false, boxPlain: false, boxView: 'list', boxKindLayout: null, boxHiddenOpen: false, cleanupWhose: 'mine', cleanupDays: 30, feedPlace: {}, seatMoved: false, sleepView: 'circles', checksHiddenUntil: null, sendOpen: true };
 
 /** The remembered feed places, checked (at most 30, the newest kept). */
 export function feedPlaceOf(value: unknown): UiPreferences['feedPlace'] {
@@ -163,6 +165,7 @@ function read(): UiPreferences {
       micRaw: saved.micRaw === true,
       pendingFriend: pendingOf(saved.pendingFriend),
       welcomeUntil: typeof saved.welcomeUntil === 'number' && Number.isFinite(saved.welcomeUntil) ? saved.welcomeUntil : null,
+      iosSafariOk: saved.iosSafariOk === true,
       boxPlain: saved.boxPlain === true,
       boxView: saved.boxView === 'icons' ? 'icons' : 'list',
       boxKindLayout: layoutOf(saved.boxKindLayout),
@@ -235,7 +238,7 @@ export class UiPreferencesService {
    */
   clearAccountChoices(): void {
     const old = read();
-    const next: UiPreferences = { ...DEFAULTS, pendingFriend: old.pendingFriend, welcomeUntil: old.welcomeUntil, language: old.language, theme: old.theme, textSize: old.textSize };
+    const next: UiPreferences = { ...DEFAULTS, pendingFriend: old.pendingFriend, welcomeUntil: old.welcomeUntil, iosSafariOk: old.iosSafariOk, language: old.language, theme: old.theme, textSize: old.textSize };
     this.state.set(next);
     this.applyLook();
     try {

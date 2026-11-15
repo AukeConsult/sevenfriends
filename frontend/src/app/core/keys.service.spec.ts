@@ -269,6 +269,21 @@ describe('KeysService: the key of this device', () => {
       });
     }
 
+    it('an iPhone Safari tab where the person chose to continue in Safari: the key is made as in any browser', async () => {
+      try {
+        localStorage.setItem('sf-ui', JSON.stringify({ iosSafariOk: true }));
+        const uid = person();
+        const server = new FakeServer();
+        const keys = start(uid, server, true, 'home-screen');
+        await keys.refresh();
+        await new Promise((resolve) => setTimeout(resolve, 150));
+        expect(keys.state()).toBe('ready');
+        expect(server.keys.length).toBe(1);
+      } finally {
+        localStorage.removeItem('sf-ui');
+      }
+    });
+
     it('and it keeps no key of an earlier visit out of the way: an account that already has a key here still works', async () => {
       const uid = person();
       const server = new FakeServer();
@@ -560,6 +575,20 @@ describe('KeysService: the key of this device', () => {
       await settle();
       expect(keys.inviteReady()).toBe(true);
       expect(server.lists.length).toBe(1); // and no second list was made
+    });
+
+    it('thisWaiting says when the key of THIS device waits for another device to approve it (Home shows the note), and not otherwise', async () => {
+      const server = new FakeServer();
+      const keys = start(person(), server, true);
+      await keys.refresh();
+      await settle();
+      expect(keys.thisWaiting()).toBe(false);
+      server.allWaiting = true;
+      await keys.refresh();
+      expect(keys.thisWaiting()).toBe(true);
+      server.allWaiting = false;
+      await keys.refresh();
+      expect(keys.thisWaiting()).toBe(false);
     });
 
     it('another person signing in does not inherit it', async () => {

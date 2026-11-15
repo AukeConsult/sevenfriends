@@ -14,8 +14,11 @@
   "homeStepOpenPaste": "Buka Seven Friends dari ikonnya, ketuk “{{ label }}”, tempel undangan, lalu buat akun Anda",
   "homeStepOpen": "Buka Seven Friends dari ikonnya dan buat akun Anda di sana",
   "homeNote": "Safari dan aplikasi di layar utama tidak berbagi login, jadi akun dibuat di aplikasi.",
-  "sorry": "Maaf atas langkah tambahannya! Di iPhone, Seven Friends harus ada di layar utama Anda, agar akun dan kunci Anda tetap aman di satu tempat.",
+  "sorry": "Maaf atas langkah tambahannya! Di iPhone, Seven Friends bekerja paling baik di layar utama, sehingga akun dan kunci Anda tetap aman di satu tempat.",
   "thenHome": "Setelah itu, Safari menunjukkan cara menambahkan Seven Friends ke layar utama, tempat Anda membuat akun.",
   "menuStep": "Ketuk ⋯ (atau ikon kompas), lalu Buka di Safari",
-  "menuFallback": "Tidak menemukannya? Salin tautan, buka Safari, dan tempel di sana."
+  "menuFallback": "Tidak menemukannya? Salin tautan, buka Safari, dan tempel di sana.",
+  "recommended": "Disarankan",
+  "continueSafari": "Lanjutkan di Safari saja",
+  "safariRisk": "Di Safari, akun dan kunci Anda bisa terhapus jika tidak dibuka selama seminggu. Tambahkan aplikasi ke layar utama secepatnya, lalu setujui dari Safari."
 }

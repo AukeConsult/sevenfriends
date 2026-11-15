@@ -14,8 +14,11 @@
   "homeStepOpenPaste": "Apri Seven Friends dalla sua icona, tocca «{{ label }}», incolla l'invito e crea il tuo account",
   "homeStepOpen": "Apri Seven Friends dalla sua icona e crea lì il tuo account",
   "homeNote": "Safari e l'app nella schermata Home non condividono l'accesso, quindi l'account si crea nell'app.",
-  "sorry": "Scusa per i passaggi in più! Su iPhone Seven Friends deve stare nella schermata Home, così il tuo account e la tua chiave restano al sicuro in un solo posto.",
+  "sorry": "Scusa per i passaggi in più! Su iPhone Seven Friends funziona al meglio nella schermata Home, così il tuo account e la tua chiave restano al sicuro in un solo posto.",
   "thenHome": "Dopo, Safari ti mostra come aggiungere Seven Friends alla schermata Home, dove crei il tuo account.",
   "menuStep": "Tocca ⋯ (o l'icona della bussola), poi Apri in Safari",
-  "menuFallback": "Non lo trovi? Copia il link, apri Safari e incollalo lì."
+  "menuFallback": "Non lo trovi? Copia il link, apri Safari e incollalo lì.",
+  "recommended": "Consigliato",
+  "continueSafari": "Continua invece in Safari",
+  "safariRisk": "In Safari il tuo account e la tua chiave possono essere cancellati se non lo apri per una settimana. Aggiungi l'app alla schermata Home il prima possibile e approvala da Safari."
 }

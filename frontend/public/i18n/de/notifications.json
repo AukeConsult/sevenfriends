@@ -66,5 +66,7 @@
   "unverifiedRequestHint": "Kennst du die Person? Dann bestätige. Wenn nicht, lehne ab.",
   "sendConfirmationEmail": "Bestätigungs-E-Mail senden",
   "confirmationSent": "Gesendet. Öffne den Link in der E-Mail und komm dann hierher zurück.",
-  "confirmationFailed": "Die E-Mail konnte nicht gesendet werden. Bitte versuche es erneut."
+  "confirmationFailed": "Die E-Mail konnte nicht gesendet werden. Bitte versuche es erneut.",
+  "iosInstallNow": "Lege Seven Friends jetzt auf deinen Home-Bildschirm: tippe auf Teilen, dann auf Zum Home-Bildschirm. Öffne die App danach über das Symbol, melde dich an und komm hierher zurück, um Freigeben zu tippen. Safari kann das hier Gespeicherte löschen, wenn du es eine Woche nicht öffnest.",
+  "waitingApproval": "Dieses Gerät wartet auf Freigabe. Öffne Seven Friends auf einem anderen deiner Geräte (beim iPhone in Safari) und tippe auf Freigeben."
 }

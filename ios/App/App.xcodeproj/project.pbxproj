@@ -16,6 +16,9 @@
 		504EC3121FED79650016851F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 504EC3101FED79650016851F /* LaunchScreen.storyboard */; };
 		50B271D11FEDC1A000F3C39B /* public in Resources */ = {isa = PBXBuildFile; fileRef = 50B271D01FEDC1A000F3C39B /* public */; };
 		9582B6832FE993A70072D4E8 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9582B6822FE993A50072D4E8 /* SceneDelegate.swift */; };
+		A1B2C3D4E5F6071800000011 /* drill.caf in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6071800000001 /* drill.caf */; };
+		A1B2C3D4E5F6071800000012 /* hyper.caf in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6071800000002 /* hyper.caf */; };
+		A1B2C3D4E5F6071800000013 /* acidbreaks.caf in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6071800000003 /* acidbreaks.caf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +33,9 @@
 		50B271D01FEDC1A000F3C39B /* public */ = {isa = PBXFileReference; lastKnownFileType = folder; path = public; sourceTree = "<group>"; };
 		9582B6822FE993A50072D4E8 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		958DCC722DB07C7200EA8C5F /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = ../debug.xcconfig; sourceTree = SOURCE_ROOT; };
+		A1B2C3D4E5F6071800000001 /* drill.caf */ = {isa = PBXFileReference; lastKnownFileType = audio.caf; path = drill.caf; sourceTree = "<group>"; };
+		A1B2C3D4E5F6071800000002 /* hyper.caf */ = {isa = PBXFileReference; lastKnownFileType = audio.caf; path = hyper.caf; sourceTree = "<group>"; };
+		A1B2C3D4E5F6071800000003 /* acidbreaks.caf */ = {isa = PBXFileReference; lastKnownFileType = audio.caf; path = acidbreaks.caf; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,6 +79,9 @@
 				504EC3131FED79650016851F /* Info.plist */,
 				2FAD9762203C412B000D30F8 /* config.xml */,
 				50B271D01FEDC1A000F3C39B /* public */,
+				A1B2C3D4E5F6071800000001 /* drill.caf */,
+				A1B2C3D4E5F6071800000002 /* hyper.caf */,
+				A1B2C3D4E5F6071800000003 /* acidbreaks.caf */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -148,6 +157,9 @@
 				50379B232058CBB4000EE86E /* capacitor.config.json in Resources */,
 				504EC30D1FED79650016851F /* Main.storyboard in Resources */,
 				2FAD9763203C412B000D30F8 /* config.xml in Resources */,
+				A1B2C3D4E5F6071800000011 /* drill.caf in Resources */,
+				A1B2C3D4E5F6071800000012 /* hyper.caf in Resources */,
+				A1B2C3D4E5F6071800000013 /* acidbreaks.caf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

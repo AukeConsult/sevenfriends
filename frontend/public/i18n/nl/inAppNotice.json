@@ -14,8 +14,11 @@
   "homeStepOpenPaste": "Open Seven Friends via het icoon, tik op ‘{{ label }}’, plak de uitnodiging en maak je account aan",
   "homeStepOpen": "Open Seven Friends via het icoon en maak daar je account aan",
   "homeNote": "Safari en de app op je beginscherm delen geen login, dus het account maak je in de app.",
-  "sorry": "Sorry voor de extra stappen! Op iPhone moet Seven Friends op je beginscherm staan, zodat je account en slotsleutel veilig op één plek blijven.",
+  "sorry": "Sorry voor de extra stappen! Op iPhone werkt Seven Friends het best op je beginscherm, zodat je account en slotsleutel veilig op één plek blijven.",
   "thenHome": "Daarna laat Safari zien hoe je Seven Friends op je beginscherm zet, waar je je account aanmaakt.",
   "menuStep": "Tik op ⋯ (of het kompaspictogram) en kies Open in Safari",
-  "menuFallback": "Niet te vinden? Kopieer de link, open Safari en plak hem daar."
+  "menuFallback": "Niet te vinden? Kopieer de link, open Safari en plak hem daar.",
+  "recommended": "Aanbevolen",
+  "continueSafari": "Liever doorgaan in Safari",
+  "safariRisk": "In Safari kunnen je account en slotsleutel worden gewist als je het een week niet opent. Zet de app zo snel mogelijk op je beginscherm en keur hem goed vanuit Safari."
 }

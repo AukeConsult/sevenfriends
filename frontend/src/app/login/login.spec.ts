@@ -125,6 +125,17 @@ describe('Login page: the ways in', () => {
     }
   });
 
+  it('an iPhone Safari tab where the person chose to continue in Safari: every way in is offered, as in any browser', () => {
+    try {
+      localStorage.setItem('sf-ui', JSON.stringify({ iosSafariOk: true }));
+      const { page } = build(true, 'home-screen');
+      const found = ways(page);
+      expect(found.google && found.emailLink && found.email && found.password).toBe(true);
+    } finally {
+      localStorage.removeItem('sf-ui');
+    }
+  });
+
   it('the password form is still below them in both modes', () => {
     const invited = build(true).page;
     expect(invited.querySelector('input[type="password"]')).not.toBeNull();

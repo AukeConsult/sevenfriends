@@ -66,5 +66,7 @@
   "unverifiedRequestHint": "아는 사람인가요? 그렇다면 수락하고, 아니면 거절하세요.",
   "sendConfirmationEmail": "확인 이메일 보내기",
   "confirmationSent": "보냈습니다. 이메일의 링크를 연 다음 여기로 돌아오세요.",
-  "confirmationFailed": "이메일을 보내지 못했습니다. 다시 시도하세요."
+  "confirmationFailed": "이메일을 보내지 못했습니다. 다시 시도하세요.",
+  "iosInstallNow": "지금 Seven Friends를 홈 화면에 추가하세요. 공유를 누른 다음 홈 화면에 추가를 선택합니다. 그다음 아이콘에서 앱을 열어 로그인하고, 여기로 돌아와 승인을 누르세요. 일주일 동안 열지 않으면 Safari가 여기에 저장된 내용을 지울 수 있습니다.",
+  "waitingApproval": "이 기기는 승인을 기다리고 있습니다. 다른 기기(iPhone에서는 Safari)에서 Seven Friends를 열고 승인을 누르세요."
 }

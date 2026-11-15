@@ -14,8 +14,11 @@
   "homeStepOpenPaste": "Otwórz Seven Friends z ikony, dotknij „{{ label }}”, wklej zaproszenie i załóż konto",
   "homeStepOpen": "Otwórz Seven Friends z ikony i załóż tam konto",
   "homeNote": "Safari i aplikacja na ekranie głównym nie współdzielą logowania, więc konto zakładasz w aplikacji.",
-  "sorry": "Przepraszamy za dodatkowe kroki! Na iPhonie Seven Friends musi być na ekranie głównym, żeby Twoje konto i klucz blokady były bezpieczne w jednym miejscu.",
+  "sorry": "Przepraszamy za dodatkowe kroki! Na iPhonie Seven Friends działa najlepiej na ekranie głównym, dzięki czemu Twoje konto i klucz blokady są bezpieczne w jednym miejscu.",
   "thenHome": "Potem Safari pokaże, jak dodać Seven Friends do ekranu głównego, gdzie założysz konto.",
   "menuStep": "Dotknij ⋯ (lub ikony kompasu), potem Otwórz w Safari",
-  "menuFallback": "Nie możesz tego znaleźć? Skopiuj link, otwórz Safari i wklej go tam."
+  "menuFallback": "Nie możesz tego znaleźć? Skopiuj link, otwórz Safari i wklej go tam.",
+  "recommended": "Zalecane",
+  "continueSafari": "Kontynuuj zamiast tego w Safari",
+  "safariRisk": "W Safari Twoje konto i klucz blokady mogą zostać usunięte, jeśli nie otworzysz go przez tydzień. Dodaj aplikację do ekranu głównego jak najszybciej i zatwierdź ją w Safari."
 }

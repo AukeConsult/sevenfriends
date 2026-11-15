@@ -14,8 +14,11 @@
   "homeStepOpenPaste": "Seven Friends'i simgesinden açın, “{{ label }}”e dokunun, daveti yapıştırın ve hesabınızı oluşturun",
   "homeStepOpen": "Seven Friends'i simgesinden açın ve hesabınızı orada oluşturun",
   "homeNote": "Safari ile ana ekrandaki uygulama oturumu paylaşmaz, bu yüzden hesap uygulamada oluşturulur.",
-  "sorry": "Fazladan adımlar için özür dileriz! iPhone'da Seven Friends'in ana ekranınızda olması gerekir; böylece hesabınız ve kilit anahtarınız tek bir yerde güvende kalır.",
+  "sorry": "Fazladan adımlar için özür dileriz! iPhone'da Seven Friends en iyi ana ekranda çalışır; böylece hesabınız ve kilit anahtarınız tek bir yerde güvende kalır.",
   "thenHome": "Sonrasında Safari, Seven Friends'i ana ekrana nasıl ekleyeceğinizi gösterir; hesabınızı orada oluşturursunuz.",
   "menuStep": "⋯'ya (veya pusula simgesine) dokunun, sonra Safari'de aç'ı seçin",
-  "menuFallback": "Bulamıyor musunuz? Bağlantıyı kopyalayın, Safari'yi açın ve oraya yapıştırın."
+  "menuFallback": "Bulamıyor musunuz? Bağlantıyı kopyalayın, Safari'yi açın ve oraya yapıştırın.",
+  "recommended": "Önerilir",
+  "continueSafari": "Bunun yerine Safari'de devam et",
+  "safariRisk": "Safari'de bir hafta açmazsanız hesabınız ve kilit anahtarınız silinebilir. Uygulamayı mümkün olan en kısa sürede ana ekrana ekleyin ve Safari'den onaylayın."
 }

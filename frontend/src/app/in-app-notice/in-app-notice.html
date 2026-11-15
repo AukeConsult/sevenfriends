@@ -6,11 +6,12 @@
 
     @if (need === 'safari' || need === 'home-screen') {
       <!-- iPhone / iPad: an apology and the reason, before the steps (the app must be on the home screen) -->
-      <p class="m-0">{{ t('inAppNotice.sorry') || 'Sorry for the extra steps! On iPhone, Seven Friends must be on your home screen, so your account and lock key stay safe in one place.' }}</p>
+      <p class="m-0">{{ t('inAppNotice.sorry') || 'Sorry for the extra steps! On iPhone, Seven Friends works best on your home screen, so your account and lock key stay safe in one place.' }}</p>
     }
 
     @if (need === 'home-screen') {
       <!-- iPhone, in a Safari tab: Safari and the app on the home screen keep separate storage (logins, keys), so the account is made IN THE APP -->
+      <span class="badge text-bg-primary align-self-center">{{ t('inAppNotice.recommended') || 'Recommended' }}</span>
       <ol class="sf-steps text-start">
         @if (invited()) {
           <li class="sf-step" [class.sf-step-done]="copied()">
@@ -74,6 +75,12 @@
       <button type="button" class="btn w-100" [class.btn-primary]="!copied()" [class.btn-success]="copied()" (click)="copy()">
         {{ copied() ? (t('inAppNotice.copied') || 'Link copied') : (t('inAppNotice.copy') || 'Copy link') }}
       </button>
+    }
+    @if (need === 'home-screen') {
+      <!-- the other way: create the account in Safari and add the app later (its key is approved from Safari) -->
+      <hr class="m-0" />
+      <button type="button" class="btn btn-outline-secondary w-100" (click)="continueSafari()">{{ t('inAppNotice.continueSafari') || 'Continue in Safari instead' }}</button>
+      <p class="sf-hint m-0">{{ t('inAppNotice.safariRisk') || 'In Safari, your account and lock key can be wiped if you do not open it for a week. Add the app to your home screen as soon as you can, and approve it from Safari.' }}</p>
     }
     <p class="sf-hint m-0" role="note">{{ need === 'home-screen' ? (t('inAppNotice.homeNote') || 'Safari and the app on your home screen do not share logins, so the account is made in the app.') : (t('inAppNotice.note') || 'It does not work inside Messenger or other apps.') }}</p>
   </div>

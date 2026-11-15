@@ -29,6 +29,7 @@
     "android:sync": "node scripts/sync-android-sounds.mjs && npm --prefix frontend run build && npm --prefix frontend exec cap -- sync android",
     "android:config": "node scripts/android-config.mjs",
     "ios:config": "node scripts/ios-config.mjs",
+    "ios:sounds": "node scripts/ios-sounds.mjs",
     "ios:sync": "npm --prefix frontend run build && npm --prefix frontend exec cap -- sync ios",
     "ios:open": "npm --prefix frontend exec cap -- open ios",
     "android:open": "node scripts/sync-android-sounds.mjs && npm --prefix frontend exec cap -- open android",

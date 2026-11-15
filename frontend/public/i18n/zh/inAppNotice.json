@@ -14,8 +14,11 @@
   "homeStepOpenPaste": "从图标打开 Seven Friends，点按“{{ label }}”，粘贴邀请并创建账户",
   "homeStepOpen": "从图标打开 Seven Friends，并在那里创建账户",
   "homeNote": "Safari 和主屏幕上的应用不共享登录，所以账户要在应用中创建。",
-  "sorry": "抱歉多了几个步骤！在 iPhone 上，Seven Friends 必须放在主屏幕上，这样你的账户和锁密钥才能安全地保存在同一个地方。",
+  "sorry": "抱歉多了几个步骤！在 iPhone 上，Seven Friends 放在主屏幕上效果最好，这样你的账户和锁密钥会安全地保存在同一个地方。",
   "thenHome": "之后 Safari 会告诉你如何把 Seven Friends 添加到主屏幕，你在那里创建账户。",
   "menuStep": "点按 ⋯（或指南针图标），然后选择“在 Safari 中打开”",
-  "menuFallback": "找不到？复制链接，打开 Safari，然后粘贴到那里。"
+  "menuFallback": "找不到？复制链接，打开 Safari，然后粘贴到那里。",
+  "recommended": "推荐",
+  "continueSafari": "改为在 Safari 中继续",
+  "safariRisk": "在 Safari 中，如果一周不打开，你的账户和锁密钥可能会被清除。请尽快把应用添加到主屏幕，并在 Safari 中批准它。"
 }
