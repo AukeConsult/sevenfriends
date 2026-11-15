@@ -8,7 +8,6 @@
   "add": "+ Toevoegen",
   "couldNotSendThe": "Kon het bericht niet versturen",
   "addEmoji": "{{ emoji }} toevoegen",
-  "addATextOptional": "Voeg een tekst toe (optioneel)…",
   "writeToFriendname": "Schrijf naar {{ friendName }}…",
   "messageToFriendname": "Bericht aan {{ friendName }}",
   "hideTheForm": "Formulier verbergen",

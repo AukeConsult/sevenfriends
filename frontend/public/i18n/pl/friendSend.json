@@ -8,7 +8,6 @@
   "add": "+ Dodaj",
   "couldNotSendThe": "Nie udało się wysłać wiadomości",
   "addEmoji": "Dodaj {{ emoji }}",
-  "addATextOptional": "Dodaj tekst (opcjonalnie)…",
   "writeToFriendname": "Napisz do: {{ friendName }}…",
   "messageToFriendname": "Wiadomość do: {{ friendName }}",
   "hideTheForm": "Ukryj formularz",

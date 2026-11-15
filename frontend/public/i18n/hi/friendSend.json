@@ -8,7 +8,6 @@
   "add": "+ जोड़ें",
   "couldNotSendThe": "संदेश भेजा नहीं जा सका",
   "addEmoji": "{{ emoji }} जोड़ें",
-  "addATextOptional": "कुछ लिखें (वैकल्पिक)…",
   "writeToFriendname": "{{ friendName }} को लिखें…",
   "messageToFriendname": "{{ friendName }} को संदेश",
   "hideTheForm": "फ़ॉर्म छिपाएँ",

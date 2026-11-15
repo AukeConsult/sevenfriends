@@ -57,11 +57,11 @@ export class AddMedia implements OnInit, OnDestroy {
   /** given when it is shown inside the feed; without them it is a page and takes both from its address */
   readonly kindIn = input<'image' | 'video' | 'audio' | null>(null, { alias: 'kind' });
   readonly friendIn = input<string | null>(null, { alias: 'friendId' });
-  /** hosted by a page that has its own writing frame and Send button (Send a message): the text comes from `caption`, the page calls `send()`, and a ✕ closes the card */
+  /** hosted by the Send a message page: the card sits in its frame (the normal writing row is hidden meanwhile), a ✕ closes it, and it has its own text field and Send button */
   readonly hosted = input(false);
+  /** the text that was already written when the card was opened: it is the start of the text of the card, and is not lost when the card is closed (`captionChange`) */
   readonly captionIn = input('', { alias: 'caption' });
-  /** a file is ready to be sent (chosen or recorded, and nothing is being done to it) */
-  readonly hasFile = computed(() => !!this.file() && !this.working());
+  readonly captionChange = output<string>();
   readonly closed = output<void>();
   readonly sent = output<ChatItem>();
   protected embedded = false;
@@ -102,6 +102,13 @@ export class AddMedia implements OnInit, OnDestroy {
     this.friendId = this.friendIn() ?? this.route.snapshot.paramMap.get('id') ?? '';
     this.text = textOf(this.kind);
     this.canCapture = captureSupport(this.kind).available;
+    this.caption.set(this.captionIn().slice(0, 500));
+  }
+
+  /** the text of the message with the file (the page that hosts the card keeps what is written, so closing the card loses nothing) */
+  protected setCaption(value: string): void {
+    this.caption.set(value);
+    this.captionChange.emit(value);
   }
 
   /** a file is chosen, the camera or the voice recorder is open, or something is being sent: tapping elsewhere must not close the panel (it would lose it) */
@@ -250,7 +257,7 @@ export class AddMedia implements OnInit, OnDestroy {
       this.working.set(tr('addMedia.sending', 'Sending…'));
       const size = 'width' in file && !this.sealed ? { width: file.width, height: file.height } : {}; // a locked file's size is inside the lock
       sending = true;
-      const message = await this.chat.sendMedia(this.friendId, (this.hosted() ? this.captionIn() : this.caption()).trim(), { objectId: this.stored.objectId, ...size, durationMs: this.sealed ? undefined : (this.durationMs() ?? undefined) }, this.sealed ?? undefined, this.ctx?.pokes() ?? false);
+      const message = await this.chat.sendMedia(this.friendId, this.caption().trim(), { objectId: this.stored.objectId, ...size, durationMs: this.sealed ? undefined : (this.durationMs() ?? undefined) }, this.sealed ?? undefined, this.ctx?.pokes() ?? false);
       this.ctx?.poke.set(false);
       if (this.embedded) this.sent.emit(message); // the feed adds it and closes this panel
       else await this.router.navigate(['/friends', this.friendId]); // the conversation loads the message, and the file, from the server

@@ -8,7 +8,6 @@
   "add": "+ 添加",
   "couldNotSendThe": "无法发送消息",
   "addEmoji": "添加 {{ emoji }}",
-  "addATextOptional": "添加文字（选填）…",
   "writeToFriendname": "给 {{ friendName }} 写点什么…",
   "messageToFriendname": "给 {{ friendName }} 的消息",
   "hideTheForm": "隐藏表单",

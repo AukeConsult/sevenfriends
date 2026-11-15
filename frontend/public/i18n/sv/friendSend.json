@@ -8,7 +8,6 @@
   "add": "+ Lägg till",
   "couldNotSendThe": "Kunde inte skicka meddelandet",
   "addEmoji": "Lägg till {{ emoji }}",
-  "addATextOptional": "Lägg till en text (valfritt)…",
   "writeToFriendname": "Skriv till {{ friendName }}…",
   "messageToFriendname": "Meddelande till {{ friendName }}",
   "hideTheForm": "Dölj formuläret",

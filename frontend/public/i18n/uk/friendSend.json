@@ -8,7 +8,6 @@
   "add": "+ Додати",
   "couldNotSendThe": "Не вдалося надіслати повідомлення",
   "addEmoji": "Додати {{ emoji }}",
-  "addATextOptional": "Додай текст (необов’язково)…",
   "writeToFriendname": "Напиши {{ friendName }}…",
   "messageToFriendname": "Повідомлення для {{ friendName }}",
   "hideTheForm": "Сховати форму",

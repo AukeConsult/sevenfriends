@@ -8,7 +8,6 @@
   "add": "+ Tambah",
   "couldNotSendThe": "Tidak bisa mengirim pesan",
   "addEmoji": "Tambah {{ emoji }}",
-  "addATextOptional": "Tambahkan teks (opsional)…",
   "writeToFriendname": "Tulis ke {{ friendName }}…",
   "messageToFriendname": "Pesan untuk {{ friendName }}",
   "hideTheForm": "Sembunyikan formulir",

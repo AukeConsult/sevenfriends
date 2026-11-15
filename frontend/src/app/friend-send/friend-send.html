@@ -25,16 +25,18 @@
     @if (attach(); as kind) {
         <div class="sf-send-attach">
           @for (k of [kind]; track k + '') {
-            <app-add-media [kind]="k" [friendId]="ctx.friendId" [hosted]="true" [caption]="text()" (closed)="attach.set(null)" (sent)="attached()" />
+            <app-add-media [kind]="k" [friendId]="ctx.friendId" [hosted]="true" [caption]="text()" (captionChange)="text.set($event)" (closed)="attach.set(null)" (sent)="attached()" />
           }
         </div>
       }
+    @if (!attach()) {
+    <!-- while an image, a video or a voice message is being made, the card above has its own text field and Send button: this row is hidden, so there is one way to send -->
     <div class="sf-send-row">
     <div class="sf-send-frame">
       <button type="button" data-send="emoji" class="sf-send-tool" (click)="toggleEmoji()" [attr.aria-expanded]="emojiOpen()" [attr.aria-label]="t('friendSend.addAnEmoji') || 'Add an emoji'" [attr.title]="t('friendSend.addAnEmoji') || 'Add an emoji'">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M8 14a4 4 0 008 0M9 9.5h.01M15 9.5h.01" /></svg>
       </button>
-      <textarea #field class="sf-send-text" rows="1" maxlength="2000" [placeholder]="mediaReady() ? (t('friendSend.addATextOptional') || 'Add a text (optional)…') : (t('friendSend.typeAMessage') || 'Message')" [attr.aria-label]="(t('friendSend.messageToFriendname', { friendName: friendName() }) || 'Message to ' + friendName())"
+      <textarea #field class="sf-send-text" rows="1" maxlength="2000" [placeholder]="t('friendSend.typeAMessage') || 'Message'" [attr.aria-label]="(t('friendSend.messageToFriendname', { friendName: friendName() }) || 'Message to ' + friendName())"
                 [value]="text()" (input)="text.set($any($event.target).value)" (focus)="emojiOpen.set(false)" (keydown.enter)="enterPressed($event)" [disabled]="busy()"></textarea>
       @if (!text().trim()) {
       <button type="button" data-send="attach" class="sf-send-tool" (click)="openAttach('image')" [attr.aria-expanded]="attach() === 'image'" [attr.aria-label]="t('friendSend.sendAnImage') || 'Send an image'" [attr.title]="t('friendSend.sendAnImage') || 'Send an image'">
@@ -48,12 +50,13 @@
       </button>
       }
     </div>
-      @if (text().trim() || mediaReady()) {
+      @if (text().trim()) {
         <button type="button" class="sf-send-go" [disabled]="busy()" (click)="go()" [attr.aria-label]="t('friendSend.send') || 'Send'" [attr.title]="t('friendSend.send') || 'Send'">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
         </button>
       }
     </div>
+    }
     }
 
     @if (error()) {

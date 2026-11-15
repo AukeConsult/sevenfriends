@@ -8,7 +8,6 @@
   "add": "+ Lisää",
   "couldNotSendThe": "Viestiä ei voitu lähettää",
   "addEmoji": "Lisää {{ emoji }}",
-  "addATextOptional": "Lisää teksti (valinnainen)…",
   "writeToFriendname": "Kirjoita käyttäjälle {{ friendName }}…",
   "messageToFriendname": "Viesti käyttäjälle {{ friendName }}",
   "hideTheForm": "Piilota lomake",

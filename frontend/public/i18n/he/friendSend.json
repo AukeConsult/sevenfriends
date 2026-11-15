@@ -8,7 +8,6 @@
   "add": "+ הוספה",
   "couldNotSendThe": "לא ניתן היה לשלוח את ההודעה",
   "addEmoji": "הוספת {{ emoji }}",
-  "addATextOptional": "הוספת טקסט (לא חובה)…",
   "writeToFriendname": "כתיבה ל{{ friendName }}…",
   "messageToFriendname": "הודעה ל{{ friendName }}",
   "hideTheForm": "הסתרת הטופס",

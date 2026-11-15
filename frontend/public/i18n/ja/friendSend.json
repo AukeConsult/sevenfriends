@@ -8,7 +8,6 @@
   "add": "+ 追加",
   "couldNotSendThe": "メッセージを送信できませんでした",
   "addEmoji": "{{ emoji }}を追加",
-  "addATextOptional": "テキストを追加（任意）…",
   "writeToFriendname": "{{ friendName }}さんに書く…",
   "messageToFriendname": "{{ friendName }}さんへのメッセージ",
   "hideTheForm": "フォームを隠す",

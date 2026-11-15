@@ -142,12 +142,8 @@ export class FriendSend {
     }
   }
 
-  /** a file is waiting in the panel above the frame: Send sends it, with the text of the frame as its text */
-  protected readonly mediaReady = computed(() => !!this.attach() && !!this.media()?.hasFile());
-
   protected go(): void {
-    if (this.mediaReady()) void this.media()?.send();
-    else void this.deliver(this.text(), true);
+    void this.deliver(this.text(), true);
   }
 
   protected enterPressed(event: Event): void {

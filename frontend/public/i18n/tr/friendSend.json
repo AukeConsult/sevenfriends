@@ -8,7 +8,6 @@
   "add": "+ Ekle",
   "couldNotSendThe": "Mesaj gönderilemedi",
   "addEmoji": "Ekle: {{ emoji }}",
-  "addATextOptional": "Bir metin ekle (isteğe bağlı)…",
   "writeToFriendname": "Yaz: {{ friendName }}…",
   "messageToFriendname": "Mesaj: {{ friendName }}",
   "hideTheForm": "Formu gizle",
