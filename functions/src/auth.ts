@@ -9,6 +9,7 @@ import { getAuth } from "firebase-admin/auth";
  */
 const CHECK_LOGIN_EVERY_MS = 15_000;
 const loginSeen = new Map<string, number>();
+let lastLookupError = 0;
 
 export function forgetLogin(uid: string): void {
   loginSeen.delete(uid);
@@ -26,6 +27,10 @@ async function loginExists(uid: string): Promise<boolean> {
     if ((err as { code?: string })?.code === "auth/user-not-found") {
       loginSeen.delete(uid);
       return false;
+    }
+    if (Date.now() - lastLookupError > 300_000) {
+      lastLookupError = Date.now();
+      console.error("Could not look up a login (requests are let through):", err); // seen in the logs: the protection against a deleted login is off meanwhile
     }
     return true;
   }

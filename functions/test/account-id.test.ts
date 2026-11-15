@@ -2,6 +2,7 @@ import { webcrypto } from "node:crypto";
 import { getFirestore } from "firebase-admin/firestore";
 import request from "supertest";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { resetCheckLimit } from "../src/accounts";
 import { fingerprintOf } from "../src/models";
 import { User, person, seedPool, server } from "./helpers";
 import { authBreaks, deletedLogins } from "./setup";
@@ -25,6 +26,7 @@ beforeAll(async () => {
 }, 120000);
 
 beforeEach(async () => {
+  resetCheckLimit();
   pool = await seedPool();
   deletedLogins.clear();
   authBreaks.on = false;
@@ -371,5 +373,22 @@ describe("a deleted account leaves nothing, and its login cannot make anything a
     expect(docs).toHaveLength(1); // the old key did not come back
     expect(docs[0].data().accountId).toBe(second);
     expect(JSON.stringify(docs.map((d) => d.data()))).not.toContain(first);
+  });
+});
+
+describe("the check cannot be used to drive up the load", () => {
+  it("after a lot of questions from one caller the answer is 429, which is not an answer about any account; a minute later it answers again", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    const stamp = await sync(pool[0]);
+    let refused = 0;
+    for (let i = 0; i < 300; i++) {
+      const res = await check({ uid: pool[0].p.uid, accountId: stamp });
+      if (res.status === 429) refused++;
+      else expect(res.body).toEqual({ status: "active" });
+    }
+    expect(refused).toBeGreaterThan(0);
+    expect(refused).toBeLessThan(300);
+    vi.setSystemTime(Date.now() + 61_000);
+    expect((await check({ uid: pool[0].p.uid, accountId: stamp }).expect(200)).body).toEqual({ status: "active" });
   });
 });

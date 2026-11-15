@@ -46,6 +46,28 @@ export async function stampKeys(accountId: string, docs: QueryDocumentSnapshot[]
 
 export const accountsRouter = Router();
 
+/** The check needs no sign-in, so it is limited: at most this many answers a minute for each caller (a device asks a few times a day). Over it, the answer is 429, which a device reads as "unknown": it never wipes on it. */
+const CHECK_LIMIT = 240;
+const CHECK_WINDOW_MS = 60_000;
+const callers = new Map<string, { count: number; since: number }>();
+
+function allowed(caller: string): boolean {
+  const now = Date.now();
+  if (callers.size > 10_000) callers.clear(); // never grows without end
+  const seen = callers.get(caller);
+  if (!seen || now - seen.since > CHECK_WINDOW_MS) {
+    callers.set(caller, { count: 1, since: now });
+    return true;
+  }
+  seen.count++;
+  return seen.count <= CHECK_LIMIT;
+}
+
+/** For the tests: forget who asked. */
+export function resetCheckLimit(): void {
+  callers.clear();
+}
+
 /**
  * Is this account still there? `{ uid, accountId }` -> `{ status: "active" | "gone" }`. No sign-in is needed (a device asks about an account it can no
  * longer sign in to). "gone" = no such account, or the stamp does not belong to it. To get "active" a caller must know the user id AND the secret
@@ -54,6 +76,10 @@ export const accountsRouter = Router();
 accountsRouter.post(
   "/check",
   asyncHandler(async (req, res) => {
+    if (!allowed(req.ip ?? "unknown")) {
+      res.status(429).json({ error: "Too many requests" });
+      return;
+    }
     const { uid, accountId } = (req.body ?? {}) as { uid?: unknown; accountId?: unknown };
     const valid = (v: unknown): v is string => typeof v === "string" && v.length > 0 && v.length <= 128;
     let status: AccountStatus = "gone";
