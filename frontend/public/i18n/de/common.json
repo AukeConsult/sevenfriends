@@ -288,6 +288,7 @@
     "chainAgain": "Erneut prüfen",
     "noKeyInList": "Nicht gesendet: Dein Freund hat einen neuen Schlüssel, der in seinem Konto noch nicht genehmigt ist, daher kann nichts für ihn gesperrt werden. Bitte ihn, die App auf einem Gerät zu öffnen, das er schon benutzt hat, und auf Erlauben zu tippen.",
     "thisDeviceNotApproved": "Nicht gesendet: Dieses Gerät ist in deinem Konto noch nicht genehmigt. Öffne die App auf einem anderen Gerät von dir und tippe im Hinweis zum neuen Schlüssel auf Erlauben. Versuche es dann erneut. Hast du kein anderes Gerät, hole deinen Schlüssel mit deinen 24 geheimen Wörtern zurück (Einstellungen → Privatsperre).",
+    "keysNotReady": "Dein Schloss wird auf diesem Gerät noch eingerichtet, daher geht das noch nicht. Warte einen Moment und versuche es erneut.",
     "invitedBy": "Eingeladen von deinem Freund {{ who }}",
     "notInListYet": "Der neue Schlüssel kann deine alten Nachrichten öffnen, aber dieses Gerät konnte ihn nicht in deine signierte Liste aufnehmen, daher kann er noch nicht senden.",
     "thisItemCouldNot": "Dieses Element konnte nicht geöffnet werden: Es wurde geändert oder ist beschädigt.",

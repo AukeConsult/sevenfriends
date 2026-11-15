@@ -288,6 +288,7 @@
     "chainAgain": "Check again",
     "noKeyInList": "Not sent: your friend has a new key that is not approved on their account yet, so nothing can be locked for them. Ask them to open the app on a device they used before and tap Approve.",
     "thisDeviceNotApproved": "Not sent: this device is not approved on your account yet. Open the app on another device of yours and tap Approve on the banner about the new key, then try again. With no other device, bring your key back with your 24 secret words (Settings → Privacy lock).",
+    "keysNotReady": "Your lock is still being set up on this device, so this cannot be done yet. Wait a moment and try again.",
     "invitedBy": "Invited by your friend {{ who }}",
     "notInListYet": "The new key can open your old messages, but this device could not add it to your signed list, so it cannot send yet.",
     "thisItemCouldNot": "This item could not be opened: it was changed or damaged.",

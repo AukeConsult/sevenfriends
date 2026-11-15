@@ -41,6 +41,9 @@ describe('KeysService: the key of this device', () => {
     /** the keys this device said "opens everything" for (POST /own-recovery/works); `worksStatus` = what the server answers (409 = it lacks copies) */
     works: string[] = [];
     worksStatus = 200;
+    /** the signed list is not accepted until this is released (null = at once); `failLists` = how many list posts fail first */
+    listGate: Promise<void> | null = null;
+    failLists = 0;
     /** mark every key of mine `waiting` (it is not in my signed list) */
     allWaiting = false;
 
@@ -65,6 +68,11 @@ describe('KeysService: the key of this device', () => {
         }
         if (path === '/keys/list' && method === 'GET') return { lists: this.lists };
         if (path === '/keys/list' && method === 'POST') {
+          if (this.listGate) await this.listGate;
+          if (this.failLists > 0) {
+            this.failLists--;
+            throw new Error('The connection was lost');
+          }
           this.lists.push(JSON.parse(init!.body!));
           return {};
         }
@@ -411,6 +419,99 @@ describe('KeysService: the key of this device', () => {
       await settle();
       expect(keys.state()).toBe('ready');
       expect(server.works.length).toBe(1);
+    });
+  });
+
+  describe('the keys are properly set (inviteReady): a friend link waits for it', () => {
+    const settle = () => new Promise((resolve) => setTimeout(resolve, 200));
+
+    it('is false while the key is being made, and while the signed device list is not published yet, then true', async () => {
+      const uid = person();
+      const server = new FakeServer();
+      let release!: () => void;
+      server.listGate = new Promise<void>((resolve) => (release = resolve));
+      const keys = start(uid, server, true);
+      expect(keys.inviteReady()).toBe(false); // nothing is known yet
+      await keys.refresh();
+      expect(keys.state()).toBe('ready');
+      await settle();
+      expect(server.lists.length).toBe(0);
+      expect(keys.inviteReady()).toBe(false); // the key is there but the list is not
+      release();
+      await settle();
+      expect(server.lists.length).toBe(1);
+      expect(keys.inviteReady()).toBe(true);
+    });
+
+    it('stays false when the list could not be published, and becomes true at the next look that succeeds', async () => {
+      const uid = person();
+      const server = new FakeServer();
+      server.failLists = 1;
+      const keys = start(uid, server, true);
+      await keys.refresh();
+      await settle();
+      expect(keys.inviteReady()).toBe(false);
+      await keys.refresh(); // the next look tries the list again
+      await settle();
+      expect(server.lists.length).toBe(1);
+      expect(keys.inviteReady()).toBe(true);
+    });
+
+    it('is false when no key could be made (the link keeps waiting), and true once it is made', async () => {
+      const uid = person();
+      const server = new FakeServer();
+      server.failPosts = 1;
+      const keys = start(uid, server, true);
+      await keys.refresh();
+      expect(keys.state()).toBe('none');
+      expect(keys.inviteReady()).toBe(false);
+      await keys.retryIdentity();
+      await settle();
+      expect(keys.state()).toBe('ready');
+      expect(keys.inviteReady()).toBe(true);
+    });
+
+    it('is false for a device that another device has not approved yet, and true when it is approved', async () => {
+      const uid = person();
+      const server = new FakeServer();
+      const keys = start(uid, server, true);
+      await keys.refresh();
+      await settle();
+      expect(keys.inviteReady()).toBe(true);
+      server.allWaiting = true; // the server says this key is not in my signed list
+      await keys.refresh();
+      expect(keys.inviteReady()).toBe(false);
+      server.allWaiting = false; // approved
+      await keys.refresh();
+      expect(keys.inviteReady()).toBe(true);
+    });
+
+    it('untilInviteReady waits for the list and says true, and says false when the keys never become ready', async () => {
+      const server = new FakeServer();
+      let release!: () => void;
+      server.listGate = new Promise<void>((resolve) => (release = resolve));
+      const keys = start(person(), server, true);
+      await keys.refresh();
+      const waiting = keys.untilInviteReady(5000);
+      setTimeout(release, 300);
+      expect(await waiting).toBe(true);
+      expect(keys.inviteReady()).toBe(true);
+
+      const broken = new FakeServer();
+      broken.failPosts = 100; // the key can never be published
+      const never = start(person(), broken, true);
+      expect(await never.untilInviteReady(700)).toBe(false);
+      expect(never.inviteReady()).toBe(false);
+    });
+
+    it('another person signing in does not inherit it', async () => {
+      const server = new FakeServer();
+      const keys = start(person(), server, true);
+      await keys.refresh();
+      await settle();
+      expect(keys.inviteReady()).toBe(true);
+      const other = start(person(), new FakeServer(), true); // a fresh service: nothing known yet
+      expect(other.inviteReady()).toBe(false);
     });
   });
 });

@@ -288,6 +288,7 @@
     "chainAgain": "Sjekk igjen",
     "noKeyInList": "Ikke sendt: vennen din har en ny nøkkel som ikke er godkjent på kontoen deres ennå, så ingenting kan låses for dem. Be dem åpne appen på en enhet de har brukt før og trykke Tillat.",
     "thisDeviceNotApproved": "Ikke sendt: denne enheten er ikke godkjent på kontoen din ennå. Åpne appen på en annen av enhetene dine og trykk Tillat i banneret om den nye nøkkelen. Prøv deretter igjen. Har du ingen annen enhet, får du nøkkelen tilbake med de 24 hemmelige ordene dine (Innstillinger → Personvernlås).",
+    "keysNotReady": "Låsen din settes fortsatt opp på denne enheten, så dette går ikke ennå. Vent litt og prøv igjen.",
     "invitedBy": "Invitert av vennen din {{ who }}",
     "notInListYet": "Den nye nøkkelen kan åpne de gamle meldingene dine, men denne enheten kunne ikke legge den til i den signerte listen din, så den kan ikke sende ennå.",
     "thisItemCouldNot": "Dette elementet kunne ikke åpnes: det er endret eller skadet.",

@@ -288,6 +288,7 @@
     "chainAgain": "Verificar de novo",
     "noKeyInList": "Não enviado: o seu amigo tem uma chave nova que ainda não foi aprovada na conta dele, por isso não é possível bloquear nada para ele. Peça-lhe que abra a app num dispositivo que já usou e toque em Permitir.",
     "thisDeviceNotApproved": "Não enviado: este dispositivo ainda não foi aprovado na sua conta. Abra a app noutro dos seus dispositivos e toque em Permitir no aviso sobre a nova chave. Depois tente de novo. Se não tiver outro dispositivo, recupere a sua chave com as suas 24 palavras secretas (Ajustes → Cadeado de privacidade).",
+    "keysNotReady": "O seu cadeado ainda está a ser configurado neste dispositivo, por isso ainda não é possível. Aguarde um momento e tente novamente.",
     "invitedBy": "Convidado pelo seu amigo {{ who }}",
     "notInListYet": "A nova chave consegue abrir as suas mensagens antigas, mas este dispositivo não conseguiu adicioná-la à sua lista assinada, por isso ainda não pode enviar.",
     "thisItemCouldNot": "Não foi possível abrir este item: foi alterado ou está danificado.",

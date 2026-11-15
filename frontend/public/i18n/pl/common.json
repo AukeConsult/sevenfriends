@@ -288,6 +288,7 @@
     "chainAgain": "Sprawdź ponownie",
     "noKeyInList": "Nie wysłano: Twój znajomy ma nowy klucz, który nie został jeszcze zatwierdzony na jego koncie, więc nic nie można dla niego zablokować. Poproś go, by otworzył aplikację na urządzeniu, którego używał wcześniej, i dotknął Zezwól.",
     "thisDeviceNotApproved": "Nie wysłano: to urządzenie nie zostało jeszcze zatwierdzone na Twoim koncie. Otwórz aplikację na innym swoim urządzeniu i dotknij Zezwól w komunikacie o nowym kluczu. Potem spróbuj ponownie. Jeśli nie masz innego urządzenia, przywróć klucz za pomocą 24 tajnych słów (Ustawienia → Blokada prywatności).",
+    "keysNotReady": "Twoja blokada jest jeszcze konfigurowana na tym urządzeniu, więc na razie nie można tego zrobić. Poczekaj chwilę i spróbuj ponownie.",
     "invitedBy": "Zaprasza Cię Twój znajomy {{ who }}",
     "notInListYet": "Nowy klucz może otwierać Twoje stare wiadomości, ale to urządzenie nie mogło dodać go do podpisanej listy, więc nie może jeszcze wysyłać.",
     "thisItemCouldNot": "Nie udało się otworzyć tego elementu: został zmieniony lub uszkodzony.",

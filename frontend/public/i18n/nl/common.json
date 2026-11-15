@@ -288,6 +288,7 @@
     "chainAgain": "Opnieuw controleren",
     "noKeyInList": "Niet verzonden: je vriend heeft een nieuwe sleutel die nog niet is goedgekeurd voor zijn account, dus er kan niets voor hem worden vergrendeld. Vraag hem de app te openen op een apparaat dat hij eerder gebruikte en op Toestaan te tikken.",
     "thisDeviceNotApproved": "Niet verzonden: dit apparaat is nog niet goedgekeurd voor je account. Open de app op een ander apparaat van je en tik op Toestaan in de banner over de nieuwe sleutel. Probeer het daarna opnieuw. Heb je geen ander apparaat, haal dan je sleutel terug met je 24 geheime woorden (Instellingen → Privacyslot).",
+    "keysNotReady": "Je slot wordt op dit apparaat nog ingesteld, dus dit kan nog niet. Wacht even en probeer het opnieuw.",
     "invitedBy": "Uitgenodigd door je vriend {{ who }}",
     "notInListYet": "De nieuwe sleutel kan je oude berichten openen, maar dit apparaat kon hem niet aan je ondertekende lijst toevoegen, dus hij kan nog niet verzenden.",
     "thisItemCouldNot": "Dit item kon niet worden geopend: het is gewijzigd of beschadigd.",

@@ -8,6 +8,7 @@ import { AuthService } from '../core/auth.service';
 import { ActiveCircleService, CIRCLE_CHOICES } from '../core/active-circle.service';
 import { FriendLinkService } from '../core/friend-link.service';
 import { FriendsService } from '../core/friends.service';
+import { KeysService } from '../core/keys.service';
 import { NotificationsService } from '../core/notifications.service';
 import { Friend, FriendRequest } from '../models';
 import { PageBar } from '../page-bar/page-bar';
@@ -43,6 +44,7 @@ export class FriendJoin {
   private readonly notifications = inject(NotificationsService);
   private readonly router = inject(Router);
   private readonly active = inject(ActiveCircleService);
+  private readonly keys = inject(KeysService);
 
   protected readonly loading = signal(true);
   protected readonly target = signal<Target | null>(null);
@@ -70,6 +72,11 @@ export class FriendJoin {
   private async start(): Promise<void> {
     const pending = this.link.pending();
     if (!pending) {
+      await this.router.navigateByUrl('/', { replaceUrl: true });
+      return;
+    }
+    // the link is not answered before the keys are properly set (the app takes the person back here by itself when they are); it stays kept
+    if (!this.keys.inviteReady()) {
       await this.router.navigateByUrl('/', { replaceUrl: true });
       return;
     }

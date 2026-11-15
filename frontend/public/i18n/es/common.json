@@ -288,6 +288,7 @@
     "chainAgain": "Comprobar de nuevo",
     "noKeyInList": "No enviado: tu amigo tiene una clave nueva que aún no está aprobada en su cuenta, así que no se puede bloquear nada para él. Pídele que abra la app en un dispositivo que ya haya usado y pulse Permitir.",
     "thisDeviceNotApproved": "No enviado: este dispositivo aún no está aprobado en tu cuenta. Abre la app en otro de tus dispositivos y pulsa Permitir en el aviso sobre la clave nueva. Luego inténtalo de nuevo. Si no tienes otro dispositivo, recupera tu clave con tus 24 palabras secretas (Ajustes → Candado de privacidad).",
+    "keysNotReady": "Tu candado todavía se está configurando en este dispositivo, así que aún no se puede hacer. Espera un momento e inténtalo de nuevo.",
     "invitedBy": "Invitado por tu amigo {{ who }}",
     "notInListYet": "La clave nueva puede abrir tus mensajes antiguos, pero este dispositivo no pudo añadirla a tu lista firmada, así que aún no puede enviar.",
     "thisItemCouldNot": "No se pudo abrir este elemento: fue modificado o está dañado.",

@@ -4,12 +4,14 @@ import { AcceptResult, Circle, Friend, FriendRequest, GroupChange, GroupMember, 
 import { UiPreferencesService } from './ui-preferences';
 import { ActiveCircleService } from './active-circle.service';
 import { tr } from './i18n';
+import { KeysService } from './keys.service';
 
 @Injectable({ providedIn: 'root' })
 export class FriendsService {
   private readonly api = inject(ApiService);
   private readonly prefs = inject(UiPreferencesService);
   private readonly active = inject(ActiveCircleService);
+  private readonly keys = inject(KeysService);
 
   readonly circle = signal<Circle | null>(null);
   readonly friends = signal<Friend[]>([]);
@@ -78,8 +80,11 @@ export class FriendsService {
   /**
    * Confirm a request: the requester becomes my friend too.
    * Returns 'no-seats' when my circle is full: the request then stays pending.
+   * A friendship never starts before MY keys are properly set (the key of this device published, my signed device list naming it): it waits a few seconds for that, and
+   * if it is still not so, nothing is confirmed and the request stays as it is.
    */
   async acceptRequest(id: string): Promise<AcceptResult> {
+    if (!(await this.keys.untilInviteReady())) throw new ApiError(tr('core.keysNotReady', 'Your lock is still being set up on this device, so this cannot be done yet. Wait a moment and try again.'), 409);
     const res = await this.api.request<{ ok: boolean; result: AcceptResult }>(
       `/friend-requests/${id}/accept`,
       { method: 'POST' },
@@ -103,7 +108,12 @@ export class FriendsService {
     return (await this.api.request<{ status: PersonLookup }>(`${this.friendsPath()}/lookup`, { method: 'POST', body: JSON.stringify({ email, phone }) })).status;
   }
 
+  /**
+   * Sends a friend request. Nobody is asked before MY keys are properly set (the key of this device published, my signed device list naming it): every way of asking
+   * (Add a friend, a friend link, the page that answers a link) comes through here, and it sends nothing when the keys are not ready within a few seconds.
+   */
   async add(friend: NewFriend): Promise<Friend> {
+    if (!(await this.keys.untilInviteReady())) throw new ApiError(tr('core.keysNotReady', 'Your lock is still being set up on this device, so this cannot be done yet. Wait a moment and try again.'), 409);
     if (!this.circle()) await this.load(); // the first load may have failed: try again
     if (!this.circle()) throw new ApiError(tr('core.couldNotLoadYour', 'Could not load your circle. Is the backend running?'), 503);
     const created = await this.api.request<Friend>(`${this.friendsPath()}`, {

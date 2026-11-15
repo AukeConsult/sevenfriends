@@ -1,4 +1,4 @@
-import { Injectable, effect, inject, signal, untracked } from '@angular/core';
+import { Injectable, computed, effect, inject, signal, untracked } from '@angular/core';
 import { DeviceList, KeyBackup, MyKeys, PublishedKey, canonicalPublicKey, canonicalSignKey, fingerprintOf, keyIdOf } from '../models';
 import { ApiService } from './api.service';
 import { AuthService } from './auth.service';
@@ -70,6 +70,16 @@ export class KeysService {
 
   readonly diagnosis = signal<KeyDiagnosis | null>(null);
 
+  /** the key of this device is not in my signed list yet: another device of mine has to approve it (the server's `waiting`) */
+  private readonly waitingHere = signal(false);
+  /** my signed device list is in place (published by this device, or already there), or this device needs none: set by `ensureList` and `refresh` */
+  private readonly listOk = signal(false);
+  /**
+   * The keys are properly set: the key of this device is made and published, my signed device list is in place and names it (it is approved). Until then nothing that
+   * needs the keys is done for the person, such as answering a friend link (see AutoInviteService). A browser that cannot keep a key never gets one: nothing to wait for.
+   */
+  readonly inviteReady = computed(() => this.state() === 'unsupported' || (this.state() === 'ready' && !this.waitingHere() && this.listOk()));
+
   /** true = no usable key is on THIS device, but keys of mine are published (made on another device, or the key of this browser was cleared): restoring it with the 24 words brings it back */
   readonly elsewhere = signal(false);
   /** a recovery backup of a key of mine is stored (a key made with the 24 words); false = the keys of this person were made silently and can not be restored, only approved */
@@ -90,6 +100,8 @@ export class KeysService {
         this.thisKeyId.set(null);
         this.published.set([]);
         this.elsewhere.set(false);
+        this.waitingHere.set(false);
+        this.listOk.set(false);
         this.accountId.set('');
         this.diagnosis.set(null);
         if (uid) void this.refresh();
@@ -101,6 +113,21 @@ export class KeysService {
     const uid = this.auth.user()?.uid;
     if (!uid) throw new Error(tr('core.notSignedIn', 'Not signed in'));
     return uid;
+  }
+
+  /**
+   * Waits (at most `ms`) until the keys are properly set (`inviteReady`), asking the server again meanwhile. True = ready; false = not within the time (a key that could not be
+   * made, or a device that nobody approved yet). Used before a friendship is started or confirmed.
+   */
+  async untilInviteReady(ms = 20000): Promise<boolean> {
+    if (this.inviteReady()) return true;
+    void this.refresh();
+    const end = Date.now() + ms;
+    while (Date.now() < end) {
+      await new Promise((resolve) => setTimeout(resolve, 250));
+      if (this.inviteReady()) return true;
+    }
+    return false;
   }
 
   /** Looks at this device and at the server: is there a key here whose public part is published? `known` = what the server already told (Home gets it in its one call): then it is not asked again. */
@@ -137,6 +164,9 @@ export class KeysService {
       this.elsewhere.set(!ready && mine.keys.some((k) => !k.revoked));
       this.hasBackup.set(!!id && (mine.backups?.includes(id) || (!mine.backups?.length && mine.hasBackup))); // the words of THIS device (an account from before there was one per key: its one backup counts)
       this.state.set(ready ? 'ready' : 'none');
+      this.waitingHere.set(ready && !!found?.waiting);
+      if (!ready) this.listOk.set(false);
+      else if (local && !local.signKey) this.listOk.set(true); // an older key with no signing key has no list to wait for
       if (ready && mine.keys.some((k) => k.revoked)) void this.reencrypt.run(); // what a retired key could open is locked anew (quiet, at most every 10 minutes)
       if (ready) void keepDeviceKey(); // ask again on every visit: the browser may grant it later, and then it does not clear the key
       if (ready && local && found && found.label !== deviceLabel()) void this.relabel(local.publicKey, found.id);
@@ -287,9 +317,15 @@ export class KeysService {
     this.listChecked.add(uid);
     try {
       const { lists } = await this.api.request<{ lists: DeviceList[] }>('/keys/list');
-      if (lists.length || this.published().filter((k) => !k.revoked).length !== 1) return;
+      if (lists.length || this.published().filter((k) => !k.revoked).length !== 1) {
+        this.listOk.set(true); // a list exists (or none can be made here): whether this key is in it is the server's `waiting`
+        return;
+      }
       const list = await firstDeviceList(local, deviceLabel());
-      if (list) await this.api.request('/keys/list', { method: 'POST', body: JSON.stringify(list) });
+      if (list) {
+        await this.api.request('/keys/list', { method: 'POST', body: JSON.stringify(list) });
+        this.listOk.set(true);
+      }
     } catch {
       this.listChecked.delete(uid); // the next refresh tries again
     }

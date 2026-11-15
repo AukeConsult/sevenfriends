@@ -55,7 +55,10 @@ export class App {
   private readonly prefs = inject(UiPreferencesService);
   private readonly friendLink = inject(FriendLinkService);
   private readonly autoInvite = inject(AutoInviteService);
+  private readonly keys = inject(KeysService);
   protected readonly active = inject(ActiveCircleService);
+
+  private readonly toJoinPage = () => void this.router.navigateByUrl('/friends/join', { replaceUrl: true });
 
   constructor() {
     this.active.watchHistory(); // the back button never opens a page of another circle
@@ -63,26 +66,26 @@ export class App {
     inject(RealtimeService); // starts listening for live updates (friend requests, messages) once somebody is signed in
     inject(LookSyncService); // the theme and the text size are kept on the account, so every device shows them
     inject(InstallService); // catches the browser's install offer early (it can arrive soon after the page opens)
-    inject(KeysService); // looks at the key of this device when somebody signs in, and keeps its name (kind and device) up to date
+    // (KeysService looks at the key of this device when somebody signs in, and keeps its name (kind and device) up to date)
     inject(PresenceService); // tells the system when the person is active, away or offline (the dot on their friends)
     inject(AndroidChannelsService); // Android's notification channels follow the sounds chosen here
     inject(AccountWatchService); // finds out when an account this device holds was deleted elsewhere, and wipes it from this device
     inject(AppUpdateService); // a new version of the web app is loaded when the app comes to the front, and at least once an hour
+
+    // the keys became ready while a friend link waits: it is answered now
+    effect(() => {
+      if (!this.keys.inviteReady() || !this.auth.user() || !this.friendLink.pending()) return;
+      untracked(() => this.autoInvite.answer(this.router.url.split('?')[0].split('#')[0], this.toJoinPage));
+    });
 
     // The page that was open last is remembered (UiPreferences.lastPage) and shown again when the app is opened at its start page.
     let first = true;
     this.router.events.subscribe((event) => {
       if (!(event instanceof NavigationEnd)) return;
       const url = event.urlAfterRedirects.split('?')[0].split('#')[0];
-      // somebody opened a friend link and is signed in: answer it first (signed out, the login page shows what it is about)
-      if (this.auth.user() && this.friendLink.pending() && url !== '/friends/join') {
-        if (this.autoInvite.busy()) return;
-        // an account made just now answers the link by itself (creating it is the yes); everybody else is asked on the page
-        const toPage = () => void this.router.navigateByUrl('/friends/join', { replaceUrl: true });
-        if (this.auth.takeNewAccount()) void this.autoInvite.run().then((done) => (done ? undefined : toPage()));
-        else toPage();
-        return;
-      }
+      // somebody opened a friend link and is signed in with their keys ready: answer it first (signed out, the login page shows what it is about; until the keys are
+      // ready the link waits, see AutoInviteService)
+      if (this.autoInvite.answer(url, this.toJoinPage)) return;
       if (first) {
         first = false;
         const back = url === '/' ? mediaReturn(null) : null;

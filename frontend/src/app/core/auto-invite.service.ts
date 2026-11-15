@@ -4,11 +4,16 @@ import { ApiService } from './api.service';
 import { AuthService } from './auth.service';
 import { FriendLinkService } from './friend-link.service';
 import { FriendsService } from './friends.service';
+import { KeysService } from './keys.service';
 
 /**
  * A new account that was made from a friend link answers the link by itself: creating the account is the yes, so the friend
  * request to the person who made the link is sent at once, with nothing to confirm. Anything unusual (another circle, the
  * inviter already asked me, a failure) is left to the page `/friends/join`, which asks as before.
+ *
+ * A friend link is NOT touched until the account is fully made and its keys are properly set (`KeysService.inviteReady`: the key of this device is published, my signed
+ * device list names it): a request sent before that would reach the inviter from an account that cannot lock or sign anything yet. The link stays kept (it survives a reload)
+ * and is answered as soon as the keys are ready.
  */
 @Injectable({ providedIn: 'root' })
 export class AutoInviteService {
@@ -17,9 +22,23 @@ export class AutoInviteService {
   private readonly link = inject(FriendLinkService);
   private readonly friends = inject(FriendsService);
   private readonly active = inject(ActiveCircleService);
+  private readonly keys = inject(KeysService);
 
   /** the request is being sent: the link must not be taken to the confirm page meanwhile */
   readonly busy = signal(false);
+
+  /**
+   * Called at every page change and when the keys become ready: deals with a waiting friend link when the person is signed in AND the keys are ready, and returns true
+   * (the caller does nothing else). With no link, a signed-out person, keys that are not ready yet, or the join page already open, it does nothing and returns false.
+   * An account made just now answers by itself; anybody else is taken to `toPage` (the page that asks).
+   */
+  answer(url: string, toPage: () => void): boolean {
+    if (!this.auth.user() || !this.link.pending() || url === '/friends/join' || !this.keys.inviteReady()) return false;
+    if (this.busy()) return true;
+    if (this.auth.takeNewAccount()) void this.run().then((done) => (done ? undefined : toPage()));
+    else toPage();
+    return true;
+  }
 
   /** true = the link is answered (a request was sent, or there was nothing to send); false = the confirm page should handle it */
   async run(): Promise<boolean> {

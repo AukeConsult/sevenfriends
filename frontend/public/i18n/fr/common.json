@@ -288,6 +288,7 @@
     "chainAgain": "Vérifier à nouveau",
     "noKeyInList": "Non envoyé : votre ami a une nouvelle clé qui n'est pas encore approuvée sur son compte, donc rien ne peut être verrouillé pour lui. Demandez-lui d'ouvrir l'appli sur un appareil qu'il a déjà utilisé et de toucher Autoriser.",
     "thisDeviceNotApproved": "Non envoyé : cet appareil n'est pas encore approuvé sur votre compte. Ouvrez l'appli sur un autre de vos appareils et touchez Autoriser dans le bandeau sur la nouvelle clé. Puis réessayez. Sans autre appareil, récupérez votre clé avec vos 24 mots secrets (Réglages → Verrou de confidentialité).",
+    "keysNotReady": "Votre verrou est encore en cours de configuration sur cet appareil, donc ce n'est pas encore possible. Attendez un instant et réessayez.",
     "invitedBy": "Invité par ton ami {{ who }}",
     "notInListYet": "La nouvelle clé peut ouvrir vos anciens messages, mais cet appareil n'a pas pu l'ajouter à votre liste signée, elle ne peut donc pas encore envoyer.",
     "thisItemCouldNot": "Cet élément n’a pas pu être ouvert : il a été modifié ou endommagé.",

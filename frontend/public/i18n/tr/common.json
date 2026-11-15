@@ -288,6 +288,7 @@
     "chainAgain": "Tekrar kontrol et",
     "noKeyInList": "Gönderilmedi: arkadaşının yeni bir anahtarı var ve bu anahtar henüz onun hesabında onaylanmadı, bu yüzden onun için hiçbir şey kilitlenemez. Ondan, daha önce kullandığı bir cihazda uygulamayı açıp İzin ver'e dokunmasını iste.",
     "thisDeviceNotApproved": "Gönderilmedi: bu cihaz henüz hesabında onaylanmadı. Uygulamayı diğer cihazlarından birinde aç ve yeni anahtarla ilgili bannerda İzin ver'e dokun, sonra tekrar dene. Başka cihazın yoksa anahtarını 24 gizli kelimenle geri al (Ayarlar → Gizlilik kilidi).",
+    "keysNotReady": "Kilidiniz bu cihazda hâlâ ayarlanıyor, bu yüzden şu an yapılamıyor. Biraz bekleyin ve tekrar deneyin.",
     "invitedBy": "Arkadaşın davet etti: {{ who }}",
     "notInListYet": "Yeni anahtar eski mesajlarını açabilir, ancak bu cihaz onu imzalı listene ekleyemedi, bu yüzden henüz gönderemez.",
     "thisItemCouldNot": "Bu öğe açılamadı: değiştirilmiş veya hasar görmüş.",

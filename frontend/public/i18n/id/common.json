@@ -288,6 +288,7 @@
     "chainAgain": "Periksa lagi",
     "noKeyInList": "Tidak terkirim: temanmu punya kunci baru yang belum disetujui di akunnya, jadi tidak ada yang bisa dikunci untuknya. Minta dia membuka aplikasi di perangkat yang pernah dipakainya dan mengetuk Izinkan.",
     "thisDeviceNotApproved": "Tidak terkirim: perangkat ini belum disetujui di akunmu. Buka aplikasi di perangkatmu yang lain dan ketuk Izinkan pada spanduk tentang kunci baru, lalu coba lagi. Kalau tidak punya perangkat lain, kembalikan kuncimu dengan 24 kata rahasiamu (Pengaturan → Gembok privasi).",
+    "keysNotReady": "Kunci Anda masih disiapkan di perangkat ini, jadi belum bisa dilakukan. Tunggu sebentar lalu coba lagi.",
     "invitedBy": "Diundang oleh temanmu {{ who }}",
     "notInListYet": "Kunci baru dapat membuka pesan lamamu, tetapi perangkat ini tidak bisa menambahkannya ke daftar bertanda tanganmu, jadi belum bisa mengirim.",
     "thisItemCouldNot": "Item ini tidak dapat dibuka: sudah diubah atau rusak.",
