@@ -24,5 +24,8 @@
   "sendALinkIn": "Bağlantıyı SMS, WhatsApp, sosyal medya ya da istediğiniz yerden gönderin. Kişi onunla kayıt olana kadar hiçbir şey kaydedilmez.",
   "shareInviteLink": "Davet bağlantısını paylaş",
   "findAndSend": "Bul ve istek gönder",
-  "joinAGroup": "Zaten var olan bir gruba katılmak için o grubun bir üyesinin sizi davet etmesi gerekir."
+  "joinAGroup": "Zaten var olan bir gruba katılmak için o grubun bir üyesinin sizi davet etmesi gerekir.",
+  "lookupChecking": "Aranıyor…",
+  "lookupFound": "Bu kişi {{ app }} üzerinde. İsteği gönderebilirsin.",
+  "lookupLimit": "Kısa sürede çok fazla arama yaptın. Biraz bekle ve tekrar dene."
 }

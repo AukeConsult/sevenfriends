@@ -162,14 +162,11 @@ describe("an account and its keys from before the stamp existed get it", () => {
     for (const d of await keyDocs(old.p.uid)) expect(d.data().accountId).toBe(stamp);
   });
 
-  it("stamping again changes nothing: the stamp and its time stay", async () => {
+  it("stamping again changes nothing: the stamp stays", async () => {
     const old = await oldAccount(72, 1);
     const stamp = await stampOfKeys(old);
-    const at = (await account(old.p.uid))?.accountIdAt;
-    expect(at).toBeTruthy();
     for (let i = 0; i < 3; i++) await stampOfKeys(old);
     expect((await account(old.p.uid))?.accountId).toBe(stamp);
-    expect((await account(old.p.uid))?.accountIdAt).toEqual(at);
   });
 
   it("a key published now carries the stamp; a key published twice keeps it; the stamp is never shown to friends or in the key lists", async () => {

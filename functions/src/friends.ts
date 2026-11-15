@@ -219,6 +219,37 @@ friendsRouter.get("/:friendId/group/members", asyncHandler(async (req, res) => l
 friendsRouter.post("/:friendId/group/members", asyncHandler(async (req, res) => addGroupMember(req, res, req.params.friendId)));
 friendsRouter.delete("/:friendId/group/members/:memberUid", asyncHandler(async (req, res) => removeGroupMember(req, res, req.params.friendId, req.params.memberUid)));
 
+/**
+ * Is somebody on the app with this email or phone number? { email?, phone? } -> { status: "found" | "none" | "self" | "invalid" }, so the Add a friend page can say so
+ * while it is typed. The same rules as adding a friend: nothing but found / not found is told (no name, no id), a person who made themselves private is not found, my own
+ * address is "self", and every look counts against the same searches an hour as sending a request (finding out who has an account is not a free tool: 429 over it).
+ */
+friendsRouter.post(
+  "/lookup",
+  asyncHandler(async (req, res) => {
+    const { data } = parseFriend({ email: req.body?.email, phone: req.body?.phone });
+    if (!data) {
+      res.json({ status: "invalid" });
+      return;
+    }
+    const token = res.locals.token as DecodedIdToken;
+    const keys = { phoneKey: phoneKey(data.phone) };
+    const mine = await userFields(token.uid, "emailLower", "phoneKey");
+    const myEmails = [token.email, mine?.emailLower].filter(Boolean).map((e) => String(e).toLowerCase());
+    const myPhones = [phoneKey(token.phone_number), mine?.phoneKey].filter(Boolean);
+    if ((data.email && myEmails.includes(data.email.toLowerCase())) || (keys.phoneKey && myPhones.includes(keys.phoneKey))) {
+      res.json({ status: "self" });
+      return;
+    }
+    if (tooManySearches(token.uid)) {
+      res.status(429).json({ error: "You searched many times in a short while. Wait a little and try again." });
+      return;
+    }
+    const accounts = await findAccounts(data.email, keys.phoneKey, token.uid);
+    res.json({ status: accounts.length ? "found" : "none" });
+  }),
+);
+
 /** Add a friend to the circle (max 7 per circle). */
 friendsRouter.post(
   "/",

@@ -63,7 +63,5 @@
   "visibilitySearchable": "Aranabilir",
   "visibilitySearchableHint": "Seni sadece tam e-postanı veya telefon numaranı bilen biri bulabilir. Varsayılan budur.",
   "visibilityPrivate": "Gizli",
-  "visibilityPrivateHint": "Kimse seni e-posta veya telefonla bulamaz. Sadece arkadaşlık bağlantını verdiğin kişiler seni ekleyebilir.",
-  "save": "Kaydet",
-  "saved": "Kaydedildi"
+  "visibilityPrivateHint": "Kimse seni e-posta veya telefonla bulamaz. Sadece arkadaşlık bağlantını verdiğin kişiler seni ekleyebilir."
 }

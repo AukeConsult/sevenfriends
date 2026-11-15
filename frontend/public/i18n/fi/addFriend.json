@@ -24,5 +24,8 @@
   "sendALinkIn": "Lähetä linkki tekstiviestillä, WhatsAppissa, somessa tai missä vain. Mitään ei tallenneta, ennen kuin he rekisteröityvät sen kautta.",
   "shareInviteLink": "Jaa kutsulinkki",
   "findAndSend": "Hae ja lähetä pyyntö",
-  "joinAGroup": "Jos haluat liittyä jo olemassa olevaan ryhmään, ryhmän jäsenen on kutsuttava sinut."
+  "joinAGroup": "Jos haluat liittyä jo olemassa olevaan ryhmään, ryhmän jäsenen on kutsuttava sinut.",
+  "lookupChecking": "Katsotaan…",
+  "lookupFound": "Tämä henkilö on sovelluksessa {{ app }}. Voit lähettää pyynnön.",
+  "lookupLimit": "Olet hakenut monta kertaa lyhyessä ajassa. Odota hetki ja yritä uudelleen."
 }

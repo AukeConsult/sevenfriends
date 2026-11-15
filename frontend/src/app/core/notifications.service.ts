@@ -24,8 +24,6 @@ export class NotificationsService {
 
   private inflight: Promise<void> | null = null;
 
-  /** Home has everything it shows (set by `openHome` only, so a plain `refresh` cannot draw Home half-filled) */
-  readonly homeLoaded = signal(false);
   /** my own details from the last `openHome` (Home warns when none of my email or phone is verified) */
   readonly profile = signal<ProfileDetails | null>(null);
   /** my published keys from the last `openHome` (the privacy-lock check of Home uses them instead of asking again) */
@@ -38,7 +36,7 @@ export class NotificationsService {
   openHome(): Promise<void> {
     if (this.homeInflight) return this.homeInflight;
     const generation = this.active.generation;
-    const quiet = this.homeLoaded(); // a refresh of a Home that is already shown: a failure keeps what is there
+    const quiet = this.homeReady(); // a refresh of a Home that is already shown: a failure keeps what is there
     const run: Promise<void> = (async () => {
       try {
         const res = await this.api.request<HomeResult>('/home', { method: 'POST' });
@@ -53,7 +51,6 @@ export class NotificationsService {
         if (generation === this.active.generation && !quiet) this.error.set(err.message ?? tr('core.couldNotLoadNotifications', 'Could not load notifications'));
       } finally {
         if (generation === this.active.generation) {
-          this.homeLoaded.set(true);
           this.homeInflight = null;
         }
       }
@@ -67,7 +64,6 @@ export class NotificationsService {
     this.active.onSwitch(() => {
       this.inflight = null;
       this.homeInflight = null;
-      this.homeLoaded.set(false);
       this.homeReady.set(false);
       this.profile.set(null);
       this.keys.set(null);

@@ -312,6 +312,21 @@ export async function deleteDeviceKey(uid: string, store: KeyStore = indexedDbKe
   await store.remove(uid);
 }
 
+/** Deletes one IndexedDB database. true = it is gone; false = the browser refused (another connection holds it open), did not answer within 3 seconds, or cannot. Never throws. */
+export function deleteDatabaseNamed(name: string): Promise<boolean> {
+  return new Promise((resolve) => {
+    try {
+      const timer = setTimeout(() => resolve(false), 3000);
+      const request = indexedDB.deleteDatabase(name);
+      request.onsuccess = () => { clearTimeout(timer); resolve(true); };
+      request.onerror = () => { clearTimeout(timer); resolve(false); };
+      request.onblocked = () => { clearTimeout(timer); resolve(false); };
+    } catch {
+      resolve(false);
+    }
+  });
+}
+
 /**
  * Removes EVERY key of every account from this browser (the whole key database), for a clean start: used when an account is deleted and before a
  * new key is made, so no old or damaged key stays behind (an old key that is stuck, as seen on iPhone). The database is deleted; when the browser
@@ -319,17 +334,7 @@ export async function deleteDeviceKey(uid: string, store: KeyStore = indexedDbKe
  */
 export async function wipeDeviceKeys(): Promise<void> {
   if (typeof indexedDB === 'undefined') return;
-  const deleted = await new Promise<boolean>((resolve) => {
-    try {
-      const request = indexedDB.deleteDatabase(DATABASE);
-      request.onsuccess = () => resolve(true);
-      request.onerror = () => resolve(false);
-      request.onblocked = () => resolve(false);
-    } catch {
-      resolve(false);
-    }
-  });
-  if (deleted) return;
+  if (await deleteDatabaseNamed(DATABASE)) return;
   try {
     await run('readwrite', (store) => store.clear());
   } catch {

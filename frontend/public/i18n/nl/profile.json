@@ -63,7 +63,5 @@
   "visibilitySearchable": "Vindbaar",
   "visibilitySearchableHint": "Alleen wie je volledige e-mailadres of telefoonnummer kent, kan je vinden. Dit is de standaard.",
   "visibilityPrivate": "Privé",
-  "visibilityPrivateHint": "Niemand kan je vinden via e-mail of telefoon. Alleen mensen aan wie je je vriendenlink geeft, kunnen je toevoegen.",
-  "save": "Opslaan",
-  "saved": "Opgeslagen"
+  "visibilityPrivateHint": "Niemand kan je vinden via e-mail of telefoon. Alleen mensen aan wie je je vriendenlink geeft, kunnen je toevoegen."
 }

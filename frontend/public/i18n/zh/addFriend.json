@@ -24,5 +24,8 @@
   "sendALinkIn": "通过短信、WhatsApp、社交媒体或任何方式发送链接。对方通过它注册之前,不会保存任何内容。",
   "shareInviteLink": "分享邀请链接",
   "findAndSend": "查找并发送请求",
-  "joinAGroup": "要加入已有的群组,必须由该群组的成员邀请你。"
+  "joinAGroup": "要加入已有的群组,必须由该群组的成员邀请你。",
+  "lookupChecking": "正在查找…",
+  "lookupFound": "这个人在 {{ app }} 上。你可以发送请求。",
+  "lookupLimit": "你在短时间内搜索了太多次。请稍等再试。"
 }

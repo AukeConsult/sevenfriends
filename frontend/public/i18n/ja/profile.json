@@ -63,7 +63,5 @@
   "visibilitySearchable": "検索可能",
   "visibilitySearchableHint": "メールアドレスまたは電話番号を完全に知っている人だけがあなたを見つけられます。これが初期設定です。",
   "visibilityPrivate": "非公開",
-  "visibilityPrivateHint": "メールや電話ではだれもあなたを見つけられません。友だちリンクを渡した人だけがあなたを追加できます。",
-  "save": "保存",
-  "saved": "保存しました"
+  "visibilityPrivateHint": "メールや電話ではだれもあなたを見つけられません。友だちリンクを渡した人だけがあなたを追加できます。"
 }

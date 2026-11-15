@@ -63,7 +63,5 @@
   "visibilitySearchable": "Searchable",
   "visibilitySearchableHint": "Only someone who knows your full email or phone number can find you. This is the default.",
   "visibilityPrivate": "Private",
-  "visibilityPrivateHint": "Nobody can find you by email or phone. Only people you give your friend link to can add you.",
-  "save": "Save",
-  "saved": "Saved"
+  "visibilityPrivateHint": "Nobody can find you by email or phone. Only people you give your friend link to can add you."
 }

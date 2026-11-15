@@ -63,7 +63,5 @@
   "visibilitySearchable": "Kan søkes",
   "visibilitySearchableHint": "Bare den som kjenner hele e-posten eller telefonnummeret ditt, kan finne deg. Dette er standard.",
   "visibilityPrivate": "Privat",
-  "visibilityPrivateHint": "Ingen kan finne deg med e-post eller telefon. Bare folk du gir venne-lenken din, kan legge deg til.",
-  "save": "Lagre",
-  "saved": "Lagret"
+  "visibilityPrivateHint": "Ingen kan finne deg med e-post eller telefon. Bare folk du gir venne-lenken din, kan legge deg til."
 }

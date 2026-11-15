@@ -38,18 +38,18 @@ type Peer = { uid: string | null; circleId: string | null; signaled: string[] };
  */
 export async function eraseUser(uid: string): Promise<void> {
   await leaveGroups(uid); // first: the groups go on without me (the last one out deletes the group), and nothing below treats a group as a friendship
-  const files = new Map<string, MediaRef>(); // the files of the messages that go (they may be in the friends' folders)
   const boxes = new Set<string>(); // the connections of the person: each has a safebox
-  await getFirestore().runTransaction((tx) => eraseInTransaction(tx, uid, files, false, boxes)); // read only: which files will go
-  await deleteObjects([...files.values()]);
-  for (const id of boxes) await deleteBox(id);
-  await deleteFolder(uid); // everything I have in the media cache: pictures, anything not sent yet
-
-  const late = new Map<string, MediaRef>();
-  await getFirestore().runTransaction((tx) => eraseInTransaction(tx, uid, late, true, boxes));
-  await deleteObjects([...late.values()]); // messages that arrived while the first pass ran
-  for (const id of boxes) await deleteBox(id);
-  await deleteFolder(uid);
+  // one pass: the data (write: deleted; otherwise only read, to find the files that will go), then the files of the messages (they may be in the friends' folders),
+  // the safeboxes and everything the person has in the media cache (pictures, anything not sent yet)
+  const pass = async (write: boolean): Promise<void> => {
+    const files = new Map<string, MediaRef>();
+    await getFirestore().runTransaction((tx) => eraseInTransaction(tx, uid, files, write, boxes));
+    await deleteObjects([...files.values()]);
+    for (const id of boxes) await deleteBox(id);
+    await deleteFolder(uid);
+  };
+  await pass(false); // read only: which files will go, and they go
+  await pass(true); // the data; and messages that arrived while the first pass ran
 
   try {
     await getAuth().deleteUser(uid);
@@ -58,12 +58,8 @@ export async function eraseUser(uid: string): Promise<void> {
   }
   forgetLogin(uid); // the next request with an old token is refused at once (on this server)
 
-  // a last sweep: whatever a device made between the first pass and the end of the login (a request still on its way) goes too
-  const last = new Map<string, MediaRef>();
-  await getFirestore().runTransaction((tx) => eraseInTransaction(tx, uid, last, true, boxes));
-  await deleteObjects([...last.values()]);
-  for (const id of boxes) await deleteBox(id);
-  await deleteFolder(uid);
+  // a last sweep: whatever a device made between the second pass and the end of the login (a request still on its way) goes too
+  await pass(true);
 }
 
 /** Leave every group the person is in: their entry, their copies of the messages and their items in its box go, the others keep the group. */

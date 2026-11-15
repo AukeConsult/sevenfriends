@@ -1,23 +1,7 @@
-import { deleteDeviceKey, wipeDeviceKeys } from './device-key';
+import { deleteDatabaseNamed, deleteDeviceKey, wipeDeviceKeys } from './device-key';
 
-/** Databases that a browser without `indexedDB.databases()` (older Safari) cannot list: the ones our own code and Firebase make. */
-const KNOWN_DATABASES = ['sf-keys', 'firebaseLocalStorageDb', 'firebase-heartbeat-database', 'firebase-installations-database', 'firebase-messaging-database'];
-
-/** Deletes one IndexedDB database; never throws and never waits for ever (a database that another tab holds open is given up after a few seconds). */
-function deleteDatabase(name: string): Promise<void> {
-  return new Promise((resolve) => {
-    try {
-      const timer = setTimeout(resolve, 3000);
-      const request = indexedDB.deleteDatabase(name);
-      const done = () => { clearTimeout(timer); resolve(); };
-      request.onsuccess = done;
-      request.onerror = done;
-      request.onblocked = done;
-    } catch {
-      resolve();
-    }
-  });
-}
+/** Databases (besides the key database, which `wipeDeviceKeys` deletes) that a browser without `indexedDB.databases()` (older Safari) cannot list: the ones our own code and Firebase make. */
+const KNOWN_DATABASES = ['firebaseLocalStorageDb', 'firebase-heartbeat-database', 'firebase-installations-database', 'firebase-messaging-database'];
 
 /** The local things of ONE account: its key, and the pins of the friends' lists it holds. Never throws. (Everything of everybody is `wipeAllLocalData`.) */
 export async function wipeAccountLocal(uid: string): Promise<void> {
@@ -50,7 +34,7 @@ export async function wipeAllLocalData(): Promise<void> {
   try {
     const names = new Set<string>(KNOWN_DATABASES);
     for (const db of (await indexedDB.databases?.()) ?? []) if (db.name) names.add(db.name);
-    for (const name of names) await deleteDatabase(name);
+    for (const name of names) await deleteDatabaseNamed(name);
   } catch { /* no databases to list */ }
   try {
     for (const key of await caches.keys()) await caches.delete(key);

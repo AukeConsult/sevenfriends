@@ -1,3 +1,4 @@
+import { getFirestore } from "firebase-admin/firestore";
 import { beforeEach, describe, expect, it } from "vitest";
 import { MAX_NAME_LENGTH } from "../src/constants";
 import { User, assertConsistent, connect, person, seedPool } from "./helpers";
@@ -256,5 +257,54 @@ describe("my pronoun", () => {
     const res = await u(0).raw("put", "/profile", { pronoun: bad });
     expect(res.status).toBe(400);
     expect((await profile(u(0))).pronoun).toBe("she");
+  });
+});
+
+describe("the email is the account and is never changed from the profile", () => {
+  const doc = async (user: User) => (await getFirestore().collection("user-account").doc(user.p.uid).get()).data()!;
+  const identity = (d: Record<string, unknown>) => ({ uid: d.uid, email: d.email, emailLower: d.emailLower, emailVerified: d.emailVerified, verifiedPhone: d.verifiedPhone, accountId: d.accountId, provider: d.provider });
+
+  it("a save with an email in it (or any other part of the account) changes none of it", async () => {
+    const before = identity(await doc(u(0)));
+    expect(before.email).toBe(u(0).p.email);
+    const res = await u(0).raw("put", "/profile", {
+      name: "Changed name",
+      email: "hacker@evil.test",
+      emailLower: "hacker@evil.test",
+      uid: "someone-else",
+      emailVerified: false,
+      verifiedPhone: "+4799999999",
+      accountId: "stolen",
+      provider: "password",
+    });
+    expect(res.status).toBe(200);
+    expect(res.body.name).toBe("Changed name"); // the name did change
+    expect(identity(await doc(u(0)))).toEqual(before); // the account did not
+    expect(JSON.stringify(res.body)).not.toContain("hacker@evil.test");
+  });
+
+  it("many autosaves of the whole form, in any order, leave the email and the account as they were", async () => {
+    const before = identity(await doc(u(1)));
+    const payloads = [
+      { name: "A", phone: "+4790000011", icon: 3, country: "NO", language: "nb", pronoun: "he", visibility: "private" },
+      { name: "B", phone: null, icon: null, country: null, language: null, pronoun: null, visibility: "public" },
+      { name: "C", phone: "", icon: 7, country: "SE", language: "sv", pronoun: "she", visibility: "searchable" },
+      { name: "A" },
+      {},
+    ];
+    for (const body of [...payloads, ...payloads.slice().reverse()]) await u(1).raw("put", "/profile", body).expect(200);
+    expect(identity(await doc(u(1)))).toEqual(before);
+  });
+
+  it("the email comes from the login only: signing in again with another body keeps it", async () => {
+    const before = identity(await doc(u(2)));
+    await u(2).raw("post", "/users/sync", { email: "hacker@evil.test", emailLower: "hacker@evil.test" }).expect(200);
+    expect(identity(await doc(u(2)))).toEqual(before);
+  });
+
+  it("the mood and the other saves of the profile do not touch it either", async () => {
+    const before = identity(await doc(u(3)));
+    await u(3).raw("put", "/profile/mood", { mood: 2, moodMessage: "fine", email: "hacker@evil.test" }).expect(200);
+    expect(identity(await doc(u(3)))).toEqual(before);
   });
 });

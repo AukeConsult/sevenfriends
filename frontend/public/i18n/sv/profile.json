@@ -63,7 +63,5 @@
   "visibilitySearchable": "Sökbar",
   "visibilitySearchableHint": "Bara den som känner till din fullständiga e-post eller ditt telefonnummer kan hitta dig. Detta är standard.",
   "visibilityPrivate": "Privat",
-  "visibilityPrivateHint": "Ingen kan hitta dig via e-post eller telefon. Bara de som får din vänlänk kan lägga till dig.",
-  "save": "Spara",
-  "saved": "Sparat"
+  "visibilityPrivateHint": "Ingen kan hitta dig via e-post eller telefon. Bara de som får din vänlänk kan lägga till dig."
 }

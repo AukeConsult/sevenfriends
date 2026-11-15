@@ -24,5 +24,8 @@
   "sendALinkIn": "Kirim tautan lewat SMS, WhatsApp, media sosial, atau di mana saja. Tidak ada yang disimpan sampai mereka mendaftar dengannya.",
   "shareInviteLink": "Bagikan tautan undangan",
   "findAndSend": "Cari dan kirim permintaan",
-  "joinAGroup": "Untuk bergabung dengan grup yang sudah ada, anggota grup itu harus mengundang Anda."
+  "joinAGroup": "Untuk bergabung dengan grup yang sudah ada, anggota grup itu harus mengundang Anda.",
+  "lookupChecking": "Mencari…",
+  "lookupFound": "Orang ini ada di {{ app }}. Kamu bisa mengirim permintaan.",
+  "lookupLimit": "Kamu mencari terlalu sering dalam waktu singkat. Tunggu sebentar lalu coba lagi."
 }

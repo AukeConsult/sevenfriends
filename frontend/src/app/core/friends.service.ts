@@ -1,6 +1,6 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { ApiError, ApiService } from './api.service';
-import { AcceptResult, Circle, Friend, FriendRequest, GroupChange, GroupMember, NewFriend } from '../models';
+import { AcceptResult, Circle, Friend, FriendRequest, GroupChange, GroupMember, NewFriend, PersonLookup } from '../models';
 import { UiPreferencesService } from './ui-preferences';
 import { ActiveCircleService } from './active-circle.service';
 import { tr } from './i18n';
@@ -94,6 +94,13 @@ export class FriendsService {
   async rejectRequest(id: string): Promise<void> {
     await this.api.request<void>(`/friend-requests/${id}/reject`, { method: 'POST' });
     this.requests.update((list) => list.filter((r) => r.id !== id));
+  }
+
+  /** Is somebody on the app with this email or phone number? Asked while it is typed; the server counts every look as one of the searches an hour. */
+  async lookup(email: string | null, phone: string | null): Promise<PersonLookup> {
+    if (!this.circle()) await this.load();
+    if (!this.circle()) throw new ApiError(tr('core.couldNotLoadYour', 'Could not load your circle. Is the backend running?'), 503);
+    return (await this.api.request<{ status: PersonLookup }>(`${this.friendsPath()}/lookup`, { method: 'POST', body: JSON.stringify({ email, phone }) })).status;
   }
 
   async add(friend: NewFriend): Promise<Friend> {

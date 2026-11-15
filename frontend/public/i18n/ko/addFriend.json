@@ -24,5 +24,8 @@
   "sendALinkIn": "문자, WhatsApp, SNS 등 원하는 곳으로 링크를 보내세요. 상대가 링크로 가입하기 전에는 아무것도 저장되지 않습니다.",
   "shareInviteLink": "초대 링크 공유",
   "findAndSend": "찾아서 요청 보내기",
-  "joinAGroup": "이미 있는 그룹에 들어가려면 그 그룹의 구성원이 초대해야 합니다."
+  "joinAGroup": "이미 있는 그룹에 들어가려면 그 그룹의 구성원이 초대해야 합니다.",
+  "lookupChecking": "찾는 중…",
+  "lookupFound": "이 사람은 {{ app }}에 있어요. 요청을 보낼 수 있어요.",
+  "lookupLimit": "짧은 시간에 너무 많이 검색했어요. 잠시 기다린 뒤 다시 시도해 주세요."
 }

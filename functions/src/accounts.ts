@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { Router } from "express";
-import { FieldValue, QueryDocumentSnapshot, getFirestore } from "firebase-admin/firestore";
+import { QueryDocumentSnapshot, getFirestore } from "firebase-admin/firestore";
 import { asyncHandler } from "./auth";
 import { AccountStatus } from "./models";
 import { userDoc } from "./paths";
@@ -23,7 +23,7 @@ export async function ensureAccountId(uid: string): Promise<string> {
     const again = snap.data()?.accountId; // another request may have stamped it meanwhile: that one stays
     if (typeof again === "string" && again) return again;
     const accountId = randomUUID();
-    tx.update(ref, { accountId, accountIdAt: FieldValue.serverTimestamp() });
+    tx.update(ref, { accountId });
     return accountId;
   });
 }

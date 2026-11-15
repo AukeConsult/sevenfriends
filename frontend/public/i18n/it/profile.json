@@ -63,7 +63,5 @@
   "visibilitySearchable": "Ricercabile",
   "visibilitySearchableHint": "Solo chi conosce la tua email o il tuo numero di telefono completo può trovarti. È l'impostazione predefinita.",
   "visibilityPrivate": "Privato",
-  "visibilityPrivateHint": "Nessuno può trovarti con email o telefono. Solo chi riceve il tuo link di amicizia può aggiungerti.",
-  "save": "Salva",
-  "saved": "Salvato"
+  "visibilityPrivateHint": "Nessuno può trovarti con email o telefono. Solo chi riceve il tuo link di amicizia può aggiungerti."
 }

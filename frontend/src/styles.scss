@@ -1328,8 +1328,6 @@ app-settings-shell > router-outlet ~ * > app-page-bar { display: none !important
 .sf-hs-name { max-width: 100%; font-size: 0.8125rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sf-hs-sub { display: inline-flex; align-items: center; gap: 0.2rem; max-width: 100%; font-size: 0.6875rem; line-height: 1.2; color: var(--sf-muted); overflow: hidden; white-space: nowrap; img { flex: none; } }
 .sf-hs-free .sf-hs-ring { background: none; border: 2px dashed var(--sf-border); padding: 0; display: grid; place-items: center; color: var(--sf-muted); }
-app-invite-diagram { display: block; }
-.sf-share-diagram { display: block; color: var(--sf-primary); width: 100%; max-width: 18rem; height: auto; margin: 0 auto 0.25rem; } // the picture on top of a share card: no text in it, so it needs no translation
 .sf-hs-tip { margin: 0.5rem 0 0; text-align: center; font-size: 0.625rem; line-height: 1.2; color: var(--sf-muted); }
 button.sf-hs-free { padding: 0; border: 0; background: none; font: inherit; width: 100%; }
 .sf-hs-plus { font-size: 1.5rem; line-height: 1; }

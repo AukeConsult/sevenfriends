@@ -63,7 +63,5 @@
   "visibilitySearchable": "검색 가능",
   "visibilitySearchableHint": "이메일이나 전화번호 전체를 아는 사람만 나를 찾을 수 있어요. 기본 설정이에요.",
   "visibilityPrivate": "비공개",
-  "visibilityPrivateHint": "이메일이나 전화번호로는 아무도 나를 찾을 수 없어요. 친구 링크를 준 사람만 나를 추가할 수 있어요.",
-  "save": "저장",
-  "saved": "저장됨"
+  "visibilityPrivateHint": "이메일이나 전화번호로는 아무도 나를 찾을 수 없어요. 친구 링크를 준 사람만 나를 추가할 수 있어요."
 }

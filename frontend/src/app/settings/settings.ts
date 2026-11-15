@@ -18,7 +18,6 @@ export class Settings {
   protected readonly w = inject(ActiveCircleService).words;
   /** which page this is (the route says): the preferences, the sounds, or the notifications */
   protected readonly section = inject(ActivatedRoute).snapshot.data['section'] as 'preferences' | 'friends' | 'notifications';
-  protected readonly title = { preferences: 'Preferences', friends: 'Friends', notifications: 'Notifications' }[this.section];
   protected readonly prefs = inject(UiPreferencesService);
 
   protected readonly themes = THEMES;

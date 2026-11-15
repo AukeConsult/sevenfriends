@@ -1,15 +1,18 @@
-import { InviteDiagram } from '../invite-diagram/invite-diagram';
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { tr } from '../core/i18n';
 import { circleLink } from '../core/friend-link.service';
 import { Clearable } from '../core/clearable';
 import { ActiveCircleService } from '../core/active-circle.service';
 import { Component, computed, inject, input, output, signal } from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { debounceTime, from, switchMap, tap } from 'rxjs';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../core/auth.service';
 import { FriendsService } from '../core/friends.service';
 import { InviteLinkService } from '../core/invite-link.service';
 import { ApiError } from '../core/api.service';
+import { isValidPhone } from '../core/countries';
+import { Friend } from '../models';
 import { PageBar } from '../page-bar/page-bar';
 
 /**
@@ -18,7 +21,7 @@ import { PageBar } from '../page-bar/page-bar';
  */
 @Component({
   selector: 'app-add-friend',
-  imports: [PageBar, InviteDiagram, RouterLink, Clearable, TranslocoDirective],
+  imports: [PageBar, RouterLink, Clearable, TranslocoDirective],
   templateUrl: './add-friend.html',
   providers: [provideTranslocoScope('addFriend')],
 })
@@ -50,6 +53,14 @@ export class AddFriend {
   protected readonly error = signal<string | null>(null);
   /** nobody with what was typed is on the app: the invite link under it is what to use */
   protected readonly notFound = signal(false);
+  /**
+   * What is known about what was typed, while it is typed (asked a moment after the last key, and only when it is a complete email or phone number):
+   * 'checking', 'found' (somebody is on the app), 'none', 'note' (my own address, or somebody already on my list: `lookupText` says which), 'limit' (too many searches)
+   */
+  protected readonly lookup = signal<'idle' | 'checking' | 'found' | 'none' | 'note' | 'limit'>('idle');
+  protected readonly lookupText = signal('');
+  /** the answers already got in this visit (a value that is typed again is not asked again: every look counts as a search) */
+  private readonly looked = new Map<string, 'found' | 'none'>();
 
   /** My own email or phone number (the same rule as on the server, which has the last word). */
   private isMe(email: string, phone: string): boolean {
@@ -63,6 +74,54 @@ export class AddFriend {
 
   constructor() {
     void this.invite.load(); // the link is ready when it is tapped
+    // what was typed is looked up a moment after the last key: somebody is on the app, or not
+    toObservable(this.query)
+      .pipe(
+        tap(() => this.lookup.set('idle')),
+        debounceTime(700),
+        switchMap((value) => from(this.check(value))), // a look that is overtaken by the next key is dropped
+        takeUntilDestroyed(),
+      )
+      .subscribe((state) => this.lookup.set(state));
+  }
+
+  /** Somebody on my list with this email or phone number (the same rule as on the server, which has the last word). */
+  private sameFriend(email: string, phone: string): Friend | undefined {
+    const digits = (v: string | null | undefined) => (v ?? '').replace(/\D/g, '').slice(-8);
+    return this.friends.friends().find(
+      (f) => f.status !== 'rejected' && ((email && f.email?.toLowerCase() === email.toLowerCase()) || (digits(phone).length >= 8 && digits(f.phone) === digits(phone))),
+    );
+  }
+
+  /** The state to show for what was typed: nothing is asked until it is a complete email address or a phone number. */
+  private async check(raw: string): Promise<'idle' | 'checking' | 'found' | 'none' | 'note' | 'limit'> {
+    const value = raw.trim();
+    if (this.mode() !== 'person' || !value) return 'idle';
+    const email = value.includes('@') ? value : '';
+    const phone = value.includes('@') ? '' : value;
+    const complete = email ? /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) : phone.replace(/\D/g, '').length >= 8 && isValidPhone(phone);
+    if (!complete) return 'idle';
+    if (this.isMe(email, phone)) {
+      this.lookupText.set(tr('addFriend.thatIsYouAdd', 'That is you. Add the email or phone number of a {{ one }}.', { one: this.w.one }));
+      return 'note';
+    }
+    const same = this.sameFriend(email, phone);
+    if (same) {
+      this.lookupText.set(same.status === 'confirmed' ? tr('addFriend.isAlreadyYour', '{{ sameName }} is already your {{ one }}.', { sameName: same.name, one: this.w.one }) : tr('addFriend.youHaveAlreadyAdded', 'You have already added {{ sameName }}: the request waits for them.', { sameName: same.name }));
+      return 'note';
+    }
+    const key = email ? email.toLowerCase() : phone.replace(/\D/g, '').slice(-8);
+    const known = this.looked.get(key);
+    if (known) return known;
+    this.lookup.set('checking');
+    try {
+      const status = await this.friends.lookup(email || null, phone || null);
+      if (status !== 'found' && status !== 'none') return 'idle';
+      this.looked.set(key, status);
+      return status;
+    } catch (err) {
+      return err instanceof ApiError && err.status === 429 ? 'limit' : 'idle'; // any other failure: nothing is said (sending the request still tells)
+    }
   }
 
   protected shareLink(): void {
@@ -113,10 +172,7 @@ export class AddFriend {
     }
 
     // already on this list: say so, and send nothing (the server refuses it too)
-    const digits = (v: string | null | undefined) => (v ?? '').replace(/\D/g, '').slice(-8);
-    const same = this.friends.friends().find(
-      (f) => f.status !== 'rejected' && ((email && f.email?.toLowerCase() === email.toLowerCase()) || (digits(phone).length >= 8 && digits(f.phone) === digits(phone))),
-    );
+    const same = this.sameFriend(email, phone);
     if (same) {
       this.error.set(same.status === 'confirmed' ? tr('addFriend.isAlreadyYour', '{{ sameName }} is already your {{ one }}.', { sameName: same.name, one: this.w.one }) : tr('addFriend.youHaveAlreadyAdded', 'You have already added {{ sameName }}: the request waits for them.', { sameName: same.name }));
       return;

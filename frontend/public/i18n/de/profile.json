@@ -63,7 +63,5 @@
   "visibilitySearchable": "Auffindbar",
   "visibilitySearchableHint": "Nur wer deine vollständige E-Mail-Adresse oder Telefonnummer kennt, kann dich finden. Das ist die Voreinstellung.",
   "visibilityPrivate": "Privat",
-  "visibilityPrivateHint": "Niemand kann dich über E-Mail oder Telefon finden. Nur Leute, denen du deinen Freundes-Link gibst, können dich hinzufügen.",
-  "save": "Speichern",
-  "saved": "Gespeichert"
+  "visibilityPrivateHint": "Niemand kann dich über E-Mail oder Telefon finden. Nur Leute, denen du deinen Freundes-Link gibst, können dich hinzufügen."
 }

@@ -16,7 +16,9 @@ import { countries, dialCode, fullNumber, isValidPhone, nationalNumber } from '.
 import { ProfileDetails, ProfileDraft, ProfilePicture, SaveState, profileColorHex } from '../models';
 
 /** Changes are saved by themselves: a moment after you stop typing, and when you leave a field or the page. */
+const AUTOSAVE_MS = 800;
 /** A save that failed (offline, a server hiccup) is tried again after this long, until it works. */
+const RETRY_MS = 5000;
 
 @Component({
   selector: 'app-profile',
@@ -98,6 +100,8 @@ export class Profile {
     return created ? new Date(created).toLocaleDateString(this.lang.lang()) : null;
   });
 
+  private timer: ReturnType<typeof setTimeout> | undefined;
+  private retryTimer: ReturnType<typeof setTimeout> | undefined;
   private dirty = false; // something changed that is not saved yet
   private saving = false;
   private loadFailed = false;
@@ -114,12 +118,29 @@ export class Profile {
     this.live.on('profile').pipe(takeUntilDestroyed()).subscribe(() => void this.refreshLive());
     void this.refreshVerification();
     this.load();
-    // nothing on this page is saved by itself: only the Save button saves (a change that is not saved is lost when the page is left)
+    // nothing may be lost: save when the page is hidden or closed (the request is allowed to finish after the page is gone)
+    // and try again when the connection is back
     const onHide = () => {
+      if (document.visibilityState === 'hidden' && this.dirty) void this.flush(true);
       if (document.visibilityState === 'visible' && this.verificationSent() && !this.emailVerified()) void this.checkVerification(); // back from the mail: look again by itself
     };
+    const onClose = () => {
+      if (this.dirty) void this.flush(true);
+    };
+    const onOnline = () => {
+      if (this.dirty) void this.flush();
+    };
     document.addEventListener('visibilitychange', onHide);
-    inject(DestroyRef).onDestroy(() => document.removeEventListener('visibilitychange', onHide));
+    window.addEventListener('pagehide', onClose);
+    window.addEventListener('online', onOnline);
+    inject(DestroyRef).onDestroy(() => {
+      document.removeEventListener('visibilitychange', onHide);
+      window.removeEventListener('pagehide', onClose);
+      window.removeEventListener('online', onOnline);
+      clearTimeout(this.timer);
+      clearTimeout(this.retryTimer);
+      if (this.dirty) void this.flush(true); // leaving the page: save what is left (the request finishes by itself)
+    });
   }
 
   /** Picks up a verification done in another tab or on another device. */
@@ -133,6 +154,7 @@ export class Profile {
 
   /** Log out: the profile is saved first; friends see the gray dot at once, and this device stops getting my pushes. */
   protected async logout(): Promise<void> {
+    await this.flush();
     await this.presence.goOffline();
     await this.push.forgetDevice();
     await this.auth.logout();
@@ -256,6 +278,7 @@ export class Profile {
     this.icon.set(n);
     this.dirty = true;
     this.state.set('dirty');
+    void this.flush();
   }
 
   /** "Try again": load the profile if that failed, otherwise save again. */
@@ -268,10 +291,14 @@ export class Profile {
     this.form.update((f) => ({ ...f, [field]: value }));
     this.dirty = true;
     this.state.set('dirty');
+    clearTimeout(this.timer);
+    this.timer = setTimeout(() => void this.flush(), AUTOSAVE_MS);
   }
 
   /** Saves now if anything changed (also called when a field loses focus, and by "Try again"). */
   protected async flush(keepalive = false): Promise<void> {
+    clearTimeout(this.timer);
+    clearTimeout(this.retryTimer);
     if (!this.dirty || this.saving) return; // a save that is running repeats itself if more changed
     this.saving = true;
     this.state.set('saving');
@@ -307,6 +334,7 @@ export class Profile {
       this.dirty = true; // not saved: try again by itself in a few seconds (and when the connection is back), on the next change, a blur or "Try again"
       this.state.set('error');
       this.error.set(err.message ?? tr('profile.saveFailed', 'Could not save'));
+      this.retryTimer = setTimeout(() => void this.flush(), RETRY_MS);
     } finally {
       this.saving = false;
     }

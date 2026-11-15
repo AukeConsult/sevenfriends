@@ -1,6 +1,7 @@
 import { getFirestore } from "firebase-admin/firestore";
+import request from "supertest";
 import { beforeEach, describe, expect, it } from "vitest";
-import { User, assertConsistent, person, seedPool, signalsOf } from "./helpers";
+import { User, assertConsistent, contactOf, person, seedPool, server, signalsOf } from "./helpers";
 
 /**
  * Everybody is reachable by their email or phone number, verified or not. But whoever is connected to a person who
@@ -235,5 +236,83 @@ describe("who can find me: public, searchable (the default) or private", () => {
     const entry = await u(0).add(person(1), "email");
     await set(u(1), "private").expect(200);
     expect((await u(1).check()).requests.map((r) => r.id)).not.toContain(entry.id);
+  });
+});
+
+describe("telling whether somebody is on the app while an email or phone number is typed", () => {
+  const look = (user: User, body: object) => user.raw("post", "/circles/default/friends/lookup", body);
+  const status = async (user: User, body: object) => (await look(user, body).expect(200)).body.status;
+
+  it("found by email and by phone, in any way of writing the number; the answer holds nothing but the status", async () => {
+    expect(await status(u(0), { email: u(5).p.email })).toBe("found");
+    expect(await status(u(0), { email: u(5).p.email.toUpperCase() })).toBe("found");
+    expect(await status(u(0), { phone: u(5).p.phone })).toBe("found");
+    expect(await status(u(0), { phone: u(5).p.phone.replace("+47", "") })).toBe("found"); // without the country code
+    expect((await look(u(0), { email: u(5).p.email }).expect(200)).body).toEqual({ status: "found" }); // no name, no id, nothing else
+  });
+
+  it("none for an address nobody has, and for an account that was deleted", async () => {
+    expect(await status(u(0), { email: "nobody-here@test.dev" })).toBe("none");
+    expect(await status(u(0), { phone: "+4790099999" })).toBe("none");
+    await u(6).raw("delete", "/users/me", { confirm: "DELETE" }).expect(204);
+    expect(await status(u(0), { email: u(6).p.email })).toBe("none");
+  });
+
+  it("invalid while the address is not complete, and for nothing", async () => {
+    for (const body of [{}, { email: "" }, { email: "abc" }, { email: "abc@" }, { email: "a@b" }, { phone: "12" }, { phone: "abc" }, { email: 5 }, { phone: [1] }, { email: { a: 1 } }]) {
+      expect(await status(u(0), body), JSON.stringify(body)).toBe("invalid");
+    }
+  });
+
+  it("self for my own email and my own phone number", async () => {
+    expect(await status(u(7), { email: u(7).p.email })).toBe("self");
+    expect(await status(u(7), { phone: u(7).p.phone })).toBe("self");
+  });
+
+  it("a person who made themselves private is not found, and looks the same as nobody; public and searchable are found", async () => {
+    await u(8).raw("put", "/profile", { visibility: "private" }).expect(200);
+    expect(await status(u(0), { email: u(8).p.email })).toBe("none");
+    expect(await status(u(0), { phone: u(8).p.phone })).toBe("none");
+    for (const visibility of ["public", "searchable"]) {
+      await u(8).raw("put", "/profile", { visibility }).expect(200);
+      expect(await status(u(0), { email: u(8).p.email })).toBe("found");
+    }
+  });
+
+  it("the answer is the same as what sending a request would find", async () => {
+    await u(9).raw("put", "/profile", { visibility: "private" }).expect(200);
+    for (const [target, expected] of [[u(5), "found"], [u(9), "none"]] as const) {
+      expect(await status(u(1), { email: target.p.email })).toBe(expected);
+      const sent = await u(1).raw("post", "/circles/default/friends", { ...contactOf(target.p, "email"), onlyIfOnApp: true });
+      expect(expected === "found" ? sent.status === 201 : sent.status === 422).toBe(true);
+    }
+  });
+
+  it("needs a sign-in", async () => {
+    await request(server()).post("/api/circles/default/friends/lookup").send({ email: u(5).p.email }).expect(401);
+  });
+
+  it("counts against the same searches an hour as sending a request: over the limit it is 429, and it never says who is there", async () => {
+    const searcher = u(30);
+    let refused = 0;
+    for (let i = 0; i < 40; i++) {
+      const res = await look(searcher, { email: i % 2 ? u(5).p.email : `nobody${i}@test.dev` });
+      if (res.status === 429) {
+        refused++;
+        expect(res.body).toEqual({ error: expect.any(String) });
+      } else expect(res.body.status).toMatch(/found|none/);
+    }
+    expect(refused).toBeGreaterThan(0);
+    expect(refused).toBeLessThan(40);
+    const sent = await searcher.raw("post", "/circles/default/friends", { ...contactOf(u(5).p, "email"), onlyIfOnApp: true });
+    expect(sent.status).toBe(429); // the quota is shared
+  });
+
+  it("looking does not save, send or change anything", async () => {
+    const before = (await u(2).friends()).length;
+    await look(u(2), { email: u(5).p.email }).expect(200);
+    await look(u(2), { email: "nobody-here@test.dev" }).expect(200);
+    expect(await u(2).friends()).toHaveLength(before);
+    expect((await u(5).check()).requests).toEqual([]); // the other person was not told anything
   });
 });

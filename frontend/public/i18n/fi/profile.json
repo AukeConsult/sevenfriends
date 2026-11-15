@@ -63,7 +63,5 @@
   "visibilitySearchable": "Haettavissa",
   "visibilitySearchableHint": "Vain se, joka tuntee täydellisen sähköpostisi tai puhelinnumerosi, voi löytää sinut. Tämä on oletus.",
   "visibilityPrivate": "Yksityinen",
-  "visibilityPrivateHint": "Kukaan ei löydä sinua sähköpostilla tai puhelimella. Vain ne, joille annat ystävälinkkisi, voivat lisätä sinut.",
-  "save": "Tallenna",
-  "saved": "Tallennettu"
+  "visibilityPrivateHint": "Kukaan ei löydä sinua sähköpostilla tai puhelimella. Vain ne, joille annat ystävälinkkisi, voivat lisätä sinut."
 }

@@ -6,7 +6,7 @@ import { ensureDefaultCircle } from "./circles";
 import { USER_ACCOUNT_COLLECTION } from "./constants";
 import { randomUUID } from "node:crypto";
 import { eraseUser } from "./erase";
-import { ensureAccountId, stampKeys } from "./accounts";
+import { stampKeys } from "./accounts";
 import { keyCol } from "./paths";
 import { verifiedIdentity } from "./validation";
 
@@ -50,10 +50,9 @@ usersRouter.post(
     });
 
     await ensureDefaultCircle(token.uid);
-    const accountId = await ensureAccountId(token.uid);
-    await stampKeys(accountId, (await keyCol(token.uid).get()).docs); // the keys of an old account get the stamp now, not only at the next look at the keys
-
     const saved = await ref.get();
+    const accountId = (saved.data()?.accountId as string | undefined) ?? ""; // set in the step above
+    await stampKeys(accountId, (await keyCol(token.uid).get()).docs); // the keys of an old account get the stamp now, not only at the next look at the keys
     res.json({ ok: true, accountId, user: saved.data() });
   }),
 );

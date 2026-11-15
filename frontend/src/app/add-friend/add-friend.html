@@ -19,18 +19,16 @@
       <input appClear type="text" class="form-control" [value]="query()" (input)="query.set($any($event.target).value); notFound.set(false)"
              inputmode="email" autocomplete="off" autocapitalize="off" spellcheck="false" />
     </label>
-    @if (notFound()) {
+    @switch (lookup()) {
+      @case ('checking') { <p class="small text-secondary m-0" role="status">{{ t('addFriend.lookupChecking') || 'Looking…' }}</p> }
+      @case ('found') { <div class="alert alert-success m-0" role="status">✓ {{ t('addFriend.lookupFound', { app: w.app }) || 'This person is on ' + w.app + '. You can send the request.' }}</div> }
+      @case ('none') { <div class="alert alert-info m-0" role="status">{{ t('addFriend.nobodyWithThatIs', { app: w.app }) || 'Nobody with that email or phone number is on ' + w.app + ' yet. Send them an invite link below.' }}</div> }
+      @case ('note') { <div class="alert alert-info m-0" role="status">{{ lookupText() }}</div> }
+      @case ('limit') { <div class="alert alert-warning m-0" role="status">{{ t('addFriend.lookupLimit') || 'You searched many times in a short while. Wait a little and try again.' }}</div> }
+    }
+    @if (notFound() && lookup() !== 'none') {
       <div class="alert alert-info m-0" role="status">{{ t('addFriend.nobodyWithThatIs', { app: w.app }) || 'Nobody with that email or phone number is on ' + w.app + ' yet. Send them an invite link below.' }}</div>
     }
-
-    <h2 class="sf-section m-0">{{ t('addFriend.notOnAppYet', { app: w.app }) || 'Not on ' + w.app + ' yet?' }}</h2>
-    <app-invite-diagram />
-    <p class="small text-secondary m-0">{{ t('addFriend.sendALinkIn') || 'Send a link in a text message, WhatsApp, social media or anywhere else. Nothing is saved until they sign up with it.' }}</p>
-    <div class="d-flex flex-wrap gap-2">
-      <button type="button" class="btn btn-outline-primary btn-sm" (click)="shareLink()">{{ t('addFriend.shareInviteLink') || 'Share invite link' }}</button>
-      @if (!invite.canShare) { <button type="button" class="btn btn-light btn-sm" (click)="copyLink()">{{ t('addFriend.copyLink') || 'Copy link' }}</button> }
-    </div>
-    @if (invite.note(); as note) { <p class="small m-0" role="status">{{ note }}</p> }
     }
 
     @if (error()) {
@@ -44,5 +42,20 @@
         {{ sending() ? (t('addFriend.sending') || 'Sending…') : (mode() === 'group' ? (t('addFriend.makeTheGroup') || 'Create the new group') : (t('addFriend.findAndSend') || 'Find and send request')) }}
       </button>
     </div>
+
+    @if (mode() === 'person') {
+      <!-- not on the app yet: the invitation link, in a frame under the buttons -->
+      <div class="card mt-4">
+        <div class="card-body vstack gap-2">
+          <h2 class="sf-section m-0">{{ t('addFriend.notOnAppYet', { app: w.app }) || 'Not on ' + w.app + ' yet?' }}</h2>
+          <p class="small text-secondary m-0">{{ t('addFriend.sendALinkIn') || 'Send a link in a text message, WhatsApp, social media or anywhere else. Nothing is saved until they sign up with it.' }}</p>
+          <div class="d-flex flex-wrap gap-2">
+            <button type="button" class="btn btn-outline-primary btn-sm" (click)="shareLink()">{{ t('addFriend.shareInviteLink') || 'Share invite link' }}</button>
+            @if (!invite.canShare) { <button type="button" class="btn btn-light btn-sm" (click)="copyLink()">{{ t('addFriend.copyLink') || 'Copy link' }}</button> }
+          </div>
+          @if (invite.note(); as note) { <p class="small m-0" role="status">{{ note }}</p> }
+        </div>
+      </div>
+    }
   </form>
 </ng-container>

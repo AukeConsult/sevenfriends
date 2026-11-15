@@ -80,6 +80,9 @@ export interface FriendInvite {
   sentAt: string | null;
 }
 
+/** What the app is told about an email or phone number while it is typed on the Add a friend page: someone is on the app ("found"), nobody is ("none"; a person who made themselves private looks the same), it is my own ("self"), or it is not complete yet ("invalid"). */
+export type PersonLookup = "found" | "none" | "self" | "invalid";
+
 /** What is sent when adding a friend. */
 export type NewFriend = Pick<Friend, "name" | "email" | "phone"> & {
   message?: string | null;

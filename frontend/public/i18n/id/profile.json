@@ -63,7 +63,5 @@
   "visibilitySearchable": "Bisa dicari",
   "visibilitySearchableHint": "Hanya orang yang tahu email atau nomor teleponmu lengkap yang bisa menemukanmu. Ini pengaturan bawaan.",
   "visibilityPrivate": "Pribadi",
-  "visibilityPrivateHint": "Tidak ada yang bisa menemukanmu lewat email atau telepon. Hanya orang yang kamu beri tautan pertemanan yang bisa menambahkanmu.",
-  "save": "Simpan",
-  "saved": "Tersimpan"
+  "visibilityPrivateHint": "Tidak ada yang bisa menemukanmu lewat email atau telepon. Hanya orang yang kamu beri tautan pertemanan yang bisa menambahkanmu."
 }

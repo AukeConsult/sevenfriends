@@ -24,5 +24,8 @@
   "sendALinkIn": "Skicka en länk via sms, WhatsApp, sociala medier eller var som helst. Inget sparas förrän personen registrerar sig med den.",
   "shareInviteLink": "Dela inbjudningslänk",
   "findAndSend": "Sök och skicka förfrågan",
-  "joinAGroup": "För att gå med i en grupp som redan finns måste en medlem i gruppen bjuda in dig."
+  "joinAGroup": "För att gå med i en grupp som redan finns måste en medlem i gruppen bjuda in dig.",
+  "lookupChecking": "Letar…",
+  "lookupFound": "Den här personen finns på {{ app }}. Du kan skicka förfrågan.",
+  "lookupLimit": "Du har sökt många gånger på kort tid. Vänta lite och försök igen."
 }

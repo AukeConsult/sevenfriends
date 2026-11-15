@@ -63,7 +63,5 @@
   "visibilitySearchable": "Recherchable",
   "visibilitySearchableHint": "Seule une personne qui connaît ton e-mail ou ton numéro de téléphone complet peut te trouver. C'est le réglage par défaut.",
   "visibilityPrivate": "Privé",
-  "visibilityPrivateHint": "Personne ne peut te trouver par e-mail ou téléphone. Seules les personnes à qui tu donnes ton lien d'ami peuvent t'ajouter.",
-  "save": "Enregistrer",
-  "saved": "Enregistré"
+  "visibilityPrivateHint": "Personne ne peut te trouver par e-mail ou téléphone. Seules les personnes à qui tu donnes ton lien d'ami peuvent t'ajouter."
 }

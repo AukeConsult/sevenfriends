@@ -1,12 +1,11 @@
 <ng-container *transloco="let t">
 
 <main class="sf-page">
-  <!-- Nothing here saves by itself: the Save button does -->
+  <!-- Everything on this page saves itself -->
   <p class="sf-status" role="status" aria-live="polite" [class.text-danger]="state() === 'error'">
         @switch (state()) {
           @case ('dirty') { {{ t('profile.dirty') || 'Changes not saved yet…' }} }
           @case ('saving') { {{ t('profile.saving') || 'Saving…' }} }
-          @case ('saved') { {{ t('profile.saved') || 'Saved' }} }
           @case ('error') {
             {{ error() }}
             <button type="button" class="btn btn-link p-0 align-baseline" (click)="retry()">{{ t('profile.tryAgain') || 'Try again' }}</button>
@@ -55,7 +54,7 @@
       <label class="d-grid gap-1 mt-2 text-start">
         <span class="form-label small text-secondary m-0">{{ t('profile.name') || 'Name' }}</span>
         <input type="text" class="form-control" [class.is-invalid]="nameMissing() && !loading()" [value]="form().name"
-               (input)="setField('name', $any($event.target).value)"
+               (input)="setField('name', $any($event.target).value)" (blur)="flush()"
                maxlength="100" autocomplete="off" data-lpignore="true" data-1p-ignore data-form-type="other" [disabled]="loading()" />
         @if (nameMissing() && !loading()) {
           <span class="invalid-feedback d-block">{{ t('profile.nameNeeded') || 'A name is needed. Your old name stays until you type a new one.' }}</span>
@@ -63,7 +62,7 @@
       </label>
       <label class="d-grid gap-1 mt-2 text-start">
         <span class="form-label small text-secondary m-0">{{ t('profile.pronounLabel', { Many: w.Many }) || w.Many + ' say about you' }}</span>
-        <select class="form-select" [value]="form().pronoun" (change)="setField('pronoun', $any($event.target).value)" [disabled]="loading()">
+        <select class="form-select" [value]="form().pronoun" (change)="setField('pronoun', $any($event.target).value)" (blur)="flush()" [disabled]="loading()">
           <option value="" [selected]="!form().pronoun"></option>
           <option value="he" [selected]="form().pronoun === 'he'">{{ t('profile.he') || 'He / his' }}</option>
           <option value="she" [selected]="form().pronoun === 'she'">{{ t('profile.she') || 'She / her' }}</option>
@@ -77,32 +76,27 @@
     <div class="card-body vstack gap-2" role="radiogroup" [attr.aria-label]="t('profile.visibilityTitle') || 'Who can find you'">
       <span class="form-label small text-secondary m-0">{{ t('profile.visibilityTitle') || 'Who can find you' }}</span>
       <div class="form-check m-0">
-        <input class="form-check-input" type="radio" name="visibility" id="visibility-public" value="public" [checked]="form().visibility === 'public'" [disabled]="loading()" (change)="setField('visibility', 'public')" />
+        <input class="form-check-input" type="radio" name="visibility" id="visibility-public" value="public" [checked]="form().visibility === 'public'" [disabled]="loading()" (change)="setField('visibility', 'public'); flush()" />
         <label class="form-check-label" for="visibility-public">
           <span>{{ t('profile.visibilityPublic') || 'Public' }}</span><br />
           <span class="small text-secondary">{{ t('profile.visibilityPublicHint') || 'You show up in searches for friends, and later on public pages of people.' }}</span>
         </label>
       </div>
       <div class="form-check m-0">
-        <input class="form-check-input" type="radio" name="visibility" id="visibility-searchable" value="searchable" [checked]="form().visibility === 'searchable'" [disabled]="loading()" (change)="setField('visibility', 'searchable')" />
+        <input class="form-check-input" type="radio" name="visibility" id="visibility-searchable" value="searchable" [checked]="form().visibility === 'searchable'" [disabled]="loading()" (change)="setField('visibility', 'searchable'); flush()" />
         <label class="form-check-label" for="visibility-searchable">
           <span>{{ t('profile.visibilitySearchable') || 'Searchable' }}</span><br />
           <span class="small text-secondary">{{ t('profile.visibilitySearchableHint') || 'Only someone who knows your full email or phone number can find you. This is the default.' }}</span>
         </label>
       </div>
       <div class="form-check m-0">
-        <input class="form-check-input" type="radio" name="visibility" id="visibility-private" value="private" [checked]="form().visibility === 'private'" [disabled]="loading()" (change)="setField('visibility', 'private')" />
+        <input class="form-check-input" type="radio" name="visibility" id="visibility-private" value="private" [checked]="form().visibility === 'private'" [disabled]="loading()" (change)="setField('visibility', 'private'); flush()" />
         <label class="form-check-label" for="visibility-private">
           <span>{{ t('profile.visibilityPrivate') || 'Private' }}</span><br />
           <span class="small text-secondary">{{ t('profile.visibilityPrivateHint') || 'Nobody can find you by email or phone. Only people you give your friend link to can add you.' }}</span>
         </label>
       </div>
     </div>
-  </div>
-
-  <!-- nothing is saved until this is pressed -->
-  <div class="d-flex justify-content-center mt-3">
-    <button type="button" class="btn btn-primary" [disabled]="loading() || state() === 'saving' || (state() !== 'dirty' && state() !== 'error')" (click)="flush()">{{ state() === 'saving' ? (t('profile.saving') || 'Saving…') : (t('profile.save') || 'Save') }}</button>
   </div>
 
   <p class="text-secondary text-center mt-2 mb-0 sf-fs-description">
@@ -139,7 +133,7 @@
 
       <div class="d-flex gap-2"><!-- the country, and the language of the app on the same line -->
         <label class="d-grid gap-1 flex-fill min-w-0"><span class="form-label small text-secondary m-0">{{ t('profile.country') || 'Country' }}</span>
-          <select class="form-select" [value]="form().country" (change)="setCountry($any($event.target).value)"
+          <select class="form-select" [value]="form().country" (change)="setCountry($any($event.target).value)" (blur)="flush()"
                   autocomplete="off" [disabled]="loading()">
             <option value="" [selected]="!form().country">{{ t('profile.notSet') || 'Not set' }}</option>
             @for (c of countries; track c.code) {
@@ -149,7 +143,7 @@
         </label>
         @if (form().country) {
           <label class="d-grid gap-1 min-w-0 sf-lang-field"><span class="form-label small text-secondary m-0">{{ t('profile.language') || 'Language' }}</span>
-            <select class="form-select" [value]="languageShown()" (change)="setLanguage($any($event.target).value)" [disabled]="loading()">
+            <select class="form-select" [value]="languageShown()" (change)="setLanguage($any($event.target).value)" (blur)="flush()" [disabled]="loading()">
               @for (l of languageChoices(); track l.code) {
                 <option [value]="l.code" [selected]="l.code === languageShown()">{{ l.name }}</option>
               }
@@ -164,7 +158,7 @@
             <span class="input-group-text fw-semibold sf-ltr" [attr.aria-label]="t('profile.countryCode') || 'Country code'">+{{ dial() }}</span>
           }
           <input type="tel" class="form-control" [placeholder]="showCode() ? '900 00 000' : '+47 900 00 000'" [value]="phoneField()"
-                 (input)="setPhone($any($event.target).value)"
+                 (input)="setPhone($any($event.target).value)" (blur)="flush()"
                  inputmode="tel" autocomplete="off" data-lpignore="true" data-1p-ignore data-form-type="other" [disabled]="loading() || phoneVerified()" />
           @if (phoneVerified()) {
             <span class="input-group-text text-success fw-semibold">{{ t('profile.verified') || 'Verified' }}</span>
@@ -199,7 +193,7 @@
         <span>{{ t('profile.logOut') || 'Log out' }}</span>
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" /></svg>
       </button>
-      <button type="button" class="btn btn-outline-danger w-100 d-flex align-items-center justify-content-between" (click)="deleteAccount()">
+      <button type="button" class="btn btn-outline-danger w-100 d-flex align-items-center justify-content-between" (click)="flush(); deleteAccount()">
         <span>{{ t('profile.deleteAccount') || 'Delete my account…' }}</span>
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6M10 11v6M14 11v6" /></svg>
       </button>

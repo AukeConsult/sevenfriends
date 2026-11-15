@@ -1,5 +1,6 @@
 import { Injectable, OnDestroy, inject, signal } from '@angular/core';
 import { environment } from '../../environments/environment';
+import { AccountStatus } from '../models';
 import { forgetAccount, rememberedAccounts } from './account-registry';
 import { AuthService, LAST_UID_KEY } from './auth.service';
 import { storedKeyOwners } from './device-key';
@@ -9,7 +10,7 @@ import { UiPreferencesService } from './ui-preferences';
 /** Asking again is not needed more often than this (a quick switch back and forth does not ask the server each time). */
 const CHECK_EVERY_MS = 30_000;
 
-export type AccountAnswer = 'active' | 'gone' | 'unknown';
+export type AccountAnswer = AccountStatus | 'unknown';
 
 /**
  * A device that holds data of an account that was deleted somewhere else (the person deleted it on another device) must not keep it. The server stamps every
@@ -81,7 +82,7 @@ export class AccountWatchService implements OnDestroy {
   }
 
   /** The server's answer for one pair; anything but a clear answer is "unknown". */
-  async ask(uid: string, accountId: string): Promise<AccountAnswer> {
+  private async ask(uid: string, accountId: string): Promise<AccountAnswer> {
     try {
       const res = await fetch(`${environment.apiBase}/accounts/check`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ uid, accountId }) });
       if (!res.ok) return 'unknown';

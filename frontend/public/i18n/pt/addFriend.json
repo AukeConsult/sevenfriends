@@ -24,5 +24,8 @@
   "sendALinkIn": "Envie um link por SMS, WhatsApp, redes sociais ou onde quiser. Nada é guardado até a pessoa se registar com ele.",
   "shareInviteLink": "Partilhar link de convite",
   "findAndSend": "Procurar e enviar pedido",
-  "joinAGroup": "Para entrar num grupo que já existe, um membro desse grupo tem de te convidar."
+  "joinAGroup": "Para entrar num grupo que já existe, um membro desse grupo tem de te convidar.",
+  "lookupChecking": "Procurando…",
+  "lookupFound": "Esta pessoa está no {{ app }}. Você pode enviar o pedido.",
+  "lookupLimit": "Você pesquisou muitas vezes em pouco tempo. Espere um pouco e tente de novo."
 }
