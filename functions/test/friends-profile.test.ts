@@ -103,8 +103,10 @@ describe("adding a friend without a name", () => {
   it("is fine with an email or a phone number: that is shown instead", async () => {
     const byEmail = await u(0).call("post", "/circles/default/friends", { email: "nobody@nowhere.test" }).expect(201);
     expect(byEmail.body.name).toBe("nobody@nowhere.test");
-    const byPhone = await u(0).call("post", "/circles/default/friends", { phone: "+4790012345" }).expect(201);
-    expect(byPhone.body.name).toBe("+4790012345");
+    // by phone number: somebody who is on the app (a number nobody has saves nothing: an invitation needs an email)
+    const byPhone = await u(0).call("post", "/circles/default/friends", { phone: u(2).p.phone }).expect(201);
+    expect(byPhone.body.name).toBe(u(2).p.phone);
+    await u(0).call("post", "/circles/default/friends", { phone: "+4790012345" }).expect(422);
   });
 
   it("still needs an email or a phone number", async () => {

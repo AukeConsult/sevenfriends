@@ -36,7 +36,7 @@
 
   <!-- the setup notes (sound, notifications, unverified details) fold into one line that opens -->
   @if (loaded() && checkCount() > 0 && !checksHidden()) {
-    <details class="sf-checks">
+    <details class="sf-checks" [class.sf-checks-new]="prominentChecks()" [open]="prominentChecks()">
       <summary><span aria-hidden="true">⚠️</span> {{ t('notifications.checkcountThingsToCheck', { checkCount: checkCount(), things: checkCount() === 1 ? 'thing' : 'things' }) || checkCount() + ' ' + (checkCount() === 1 ? 'thing' : 'things') + ' to check in your setup' }}<button type="button" class="sf-checks-x" [attr.aria-label]="t('notifications.hideTheseForHours') || 'Hide these for 24 hours'" [attr.title]="t('notifications.hideForHours') || 'Hide for 24 hours'" (click)="$event.preventDefault(); $event.stopPropagation(); hideChecks()">✕</button></summary>
       <div class="vstack gap-2 mt-2">
       @if (setupLeft()) {

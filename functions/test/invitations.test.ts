@@ -43,10 +43,10 @@ describe("who is offered an invitation", () => {
     expect(await docs("mail")).toEqual([]); // nothing is sent before the address is confirmed
   });
 
-  it("only a phone number: no invitation (there is no SMS invitation), and nothing can be sent", async () => {
-    const entry = (await addByPhone(u(0)).expect(201)).body;
-    expect(entry.invite).toBeNull();
-    await invite(u(0), entry.id).expect(409);
+  it("only a phone number nobody has: no invitation (there is no SMS invitation): nothing is saved, an invitation needs an email", async () => {
+    const refused = await addByPhone(u(0)).expect(422);
+    expect(refused.body).toMatchObject({ needsEmail: true });
+    expect(await u(0).friends()).toEqual([]);
     expect(await docs("mail")).toEqual([]);
   });
 

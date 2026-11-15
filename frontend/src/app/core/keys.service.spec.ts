@@ -502,17 +502,14 @@ describe('KeysService: the key of this device', () => {
       expect(keys.inviteReady()).toBe(true);
     });
 
-    it('is false for a device that another device has not approved yet, and true when it is approved', async () => {
+    it('a device that another device has not approved yet is ready too: being approved is not needed to send invitations and requests', async () => {
       const uid = person();
       const server = new FakeServer();
       const keys = start(uid, server, true);
       await keys.refresh();
       await settle();
       expect(keys.inviteReady()).toBe(true);
-      server.allWaiting = true; // the server says this key is not in my signed list
-      await keys.refresh();
-      expect(keys.inviteReady()).toBe(false);
-      server.allWaiting = false; // approved
+      server.allWaiting = true; // the server says this key is not in my signed list yet
       await keys.refresh();
       expect(keys.inviteReady()).toBe(true);
     });

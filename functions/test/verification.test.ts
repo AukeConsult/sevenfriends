@@ -78,7 +78,7 @@ describe("an unverified person is still reachable, and their friends are told", 
     await typist.raw("put", "/profile", { phone: person(31).phone }).expect(200);
     await typist.raw("put", "/profile", { phone: "" }).expect(200);
     expect((await account("uid31")).phoneKey).toBeNull();
-    await u(0).add(person(31), "phone");
+    await u(0).addRaw(person(31), "phone").expect(422); // nobody has that number any more, so nothing is saved
     expect(await signalsOf("uid31")).toEqual([]);
   });
 
@@ -228,8 +228,9 @@ describe("who can find me: public, searchable (the default) or private", () => {
     expect((await u(1).check()).requests).toEqual([]);
     const listed = (await u(0).friends()).find((f) => f.id === entry.id)!;
     expect(listed.status).not.toBe("confirmed");
-    const byPhone = await u(0).add(person(1), "phone");
-    expect((await u(1).check()).requests.map((r) => r.id)).not.toContain(byPhone.id);
+    // by phone number the adder gets exactly what an unknown number gets: nothing is saved (an invitation needs an email)
+    await u(0).addRaw(person(1), "phone").expect(422);
+    expect((await u(1).check()).requests.map((r) => r.id)).not.toContain(entry.id);
   });
 
   it("private: an entry that was added before I switched it on does not reach me either", async () => {

@@ -14,10 +14,12 @@ import { ApiError } from '../core/api.service';
 import { isValidPhone } from '../core/countries';
 import { Friend } from '../models';
 import { PageBar } from '../page-bar/page-bar';
+import { InviteFriendState } from '../invite-friend/invite-friend';
 
 /**
  * A full page to add a friend. Two ways, both on the page from the start: find somebody who is on the app by an email or a phone number (the request is sent at
- * once; when nobody is found nothing is saved), or send a link to somebody who is not (nothing is saved until they sign up with it).
+ * once), or, when nobody is found, the invitation page (`invite-friend/`) opens AT ONCE: there the person decides to send the link, which also saves the invitation for an email
+ * (it waits, and shows as soon as that person signs up or logs on with the email); a phone number nobody has saves nothing (only the link goes out).
  */
 @Component({
   selector: 'app-add-friend',
@@ -51,8 +53,6 @@ export class AddFriend {
   protected readonly query = signal('');
   protected readonly sending = signal(false);
   protected readonly error = signal<string | null>(null);
-  /** nobody with what was typed is on the app: the invite link under it is what to use */
-  protected readonly notFound = signal(false);
   /**
    * What is known about what was typed, while it is typed (asked a moment after the last key, and only when it is a complete email or phone number):
    * 'checking', 'found' (somebody is on the app), 'none', 'note' (my own address, or somebody already on my list: `lookupText` says which), 'limit' (too many searches)
@@ -82,7 +82,10 @@ export class AddFriend {
         switchMap((value) => from(this.check(value))), // a look that is overtaken by the next key is dropped
         takeUntilDestroyed(),
       )
-      .subscribe((state) => this.lookup.set(state));
+      .subscribe((state) => {
+        this.lookup.set(state);
+        if (state === 'none') this.openInvitePage(); // nobody has it: the invitation page opens at once, and there the person decides to send the link (and so save the invitation)
+      });
   }
 
   /** Somebody on my list with this email or phone number (the same rule as on the server, which has the last word). */
@@ -110,7 +113,7 @@ export class AddFriend {
       this.lookupText.set(same.status === 'confirmed' ? tr('addFriend.isAlreadyYour', '{{ sameName }} is already your {{ one }}.', { sameName: same.name, one: this.w.one }) : tr('addFriend.youHaveAlreadyAdded', 'You have already added {{ sameName }}: the request waits for them.', { sameName: same.name }));
       return 'note';
     }
-    const key = email ? email.toLowerCase() : phone.replace(/\D/g, '').slice(-8);
+    const key = this.keyOf(email, phone);
     const known = this.looked.get(key);
     if (known) return known;
     this.lookup.set('checking');
@@ -122,6 +125,18 @@ export class AddFriend {
     } catch (err) {
       return err instanceof ApiError && err.status === 429 ? 'limit' : 'idle'; // any other failure: nothing is said (sending the request still tells)
     }
+  }
+
+  /** Opens the invitation page for what was typed (nobody on the app has it). */
+  private openInvitePage(): void {
+    const to = this.query().trim();
+    if (!to || this.mode() !== 'person') return;
+    void this.router.navigate(['/friends/add/invite'], { state: { to, back: this.backTo, params: this.backParams } satisfies InviteFriendState });
+  }
+
+  /** What a look is remembered by: the email, or the last 8 digits of the phone number. */
+  private keyOf(email: string, phone: string): string {
+    return email ? email.toLowerCase() : phone.replace(/\D/g, '').slice(-8);
   }
 
   protected shareLink(): void {
@@ -153,11 +168,16 @@ export class AddFriend {
     }
   }
 
-  /** Find somebody on the app by what was typed and send the request. Nobody found: nothing is saved. */
+  /** Leaves the page: the request or the invitation is with them. */
+  protected async done(): Promise<void> {
+    if (this.embedded()) this.closed.emit();
+    else await this.router.navigate([this.backTo], { queryParams: this.backParams });
+  }
+
+  /** Find somebody on the app by what was typed and send the request. Nobody found: an email can be saved as an invitation (a second tap, on "Send invitation"), a phone number saves nothing. */
   protected async send(): Promise<void> {
     const value = this.query().trim();
     if (this.sending()) return;
-    this.notFound.set(false);
 
     if (!value) {
       this.error.set(tr('addFriend.addAnEmailOr', 'Add an email or a phone number, so your {{ one }} can be found.', { one: this.w.one }));
@@ -182,11 +202,14 @@ export class AddFriend {
     this.error.set(null);
     try {
       await this.friends.add({ name: '', email: email || null, phone: phone || null, message: null, onlyIfOnApp: true });
-      if (this.embedded()) this.closed.emit(); // the request is with them
-      else await this.router.navigate([this.backTo], { queryParams: this.backParams });
+      await this.done(); // the request is with them
     } catch (err: any) {
-      if (err instanceof ApiError && err.status === 422) this.notFound.set(true);
-      else this.error.set(err.message ?? tr('addFriend.sendFailed', 'Could not send the request.'));
+      if (err instanceof ApiError && err.status === 422) {
+        // nobody has it (the person tapped before the look was done): the invitation page opens, as it does after the look
+        this.looked.set(this.keyOf(email, phone), 'none');
+        this.lookup.set('none');
+        this.openInvitePage();
+      } else this.error.set(err.message ?? tr('addFriend.sendFailed', 'Could not send the request.'));
     } finally {
       this.sending.set(false);
     }

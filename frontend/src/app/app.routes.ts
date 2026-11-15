@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard, guestGuard } from './core/auth.guard';
 import { AddFriend } from './add-friend/add-friend';
+import { InviteFriend } from './invite-friend/invite-friend';
 import { AddMedia } from './add-media/add-media';
 import { Chat } from './chat/chat';
 import { FriendPage } from './friend-page/friend-page';
@@ -42,6 +43,7 @@ export const routes: Routes = [
   { path: 'friends/sleeping', component: Sleeping, canActivate: [authGuard], title: 'Sleep list – Seven Friends' },
   { path: 'friends/join', component: FriendJoin, canActivate: [authGuard], title: 'Friend request – Seven Friends' },
   { path: 'friends/add', component: AddFriend, canActivate: [authGuard], title: 'Add a friend – Seven Friends' },
+  { path: 'friends/add/invite', component: InviteFriend, canActivate: [authGuard], title: 'Invite – Seven Friends' },
   { path: 'friends/:id/image', component: AddMedia, data: { kind: 'image' }, canActivate: [authGuard], title: 'Send an image – Seven Friends' },
   { path: 'friends/:id/audio', component: AddMedia, data: { kind: 'audio' }, canActivate: [authGuard], title: 'Send a voice message – Seven Friends' },
   { path: 'friends/:id/video', component: AddMedia, data: { kind: 'video' }, canActivate: [authGuard], title: 'Send a video – Seven Friends' },

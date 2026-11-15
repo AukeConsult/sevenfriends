@@ -73,15 +73,15 @@ export class KeysService {
 
   readonly diagnosis = signal<KeyDiagnosis | null>(null);
 
-  /** the key of this device is not in my signed list yet: another device of mine has to approve it (the server's `waiting`) */
-  private readonly waitingHere = signal(false);
   /** my signed device list is in place (published by this device, or already there), or this device needs none: set by `ensureList` and `refresh` */
   private readonly listOk = signal(false);
   /**
-   * The keys are properly set: the key of this device is made and published, my signed device list is in place and names it (it is approved). Until then nothing that
-   * needs the keys is done for the person, such as answering a friend link (see AutoInviteService). A browser that cannot keep a key never gets one: nothing to wait for.
+   * The keys are properly CREATED: the key of this device is made and published and my signed device list is in place (the first key of an account is approved by itself: it
+   * publishes the first list with itself in it). Until then nothing that needs a key is done for the person: sending, accepting or answering a friend request or a friend link,
+   * sharing an invitation (see AutoInviteService, FriendsService). Being APPROVED by another device is NOT needed for that: a device that is not approved yet can do all of it (it
+   * only cannot sign or read messages until it is approved). A browser that cannot keep a key never gets one: nothing to wait for.
    */
-  readonly inviteReady = computed(() => this.state() === 'unsupported' || (this.state() === 'ready' && !this.waitingHere() && this.listOk()));
+  readonly inviteReady = computed(() => this.state() === 'unsupported' || (this.state() === 'ready' && this.listOk()));
 
   /** true = no usable key is on THIS device, but keys of mine are published (made on another device, or the key of this browser was cleared): restoring it with the 24 words brings it back */
   readonly elsewhere = signal(false);
@@ -103,7 +103,6 @@ export class KeysService {
         this.thisKeyId.set(null);
         this.published.set([]);
         this.elsewhere.set(false);
-        this.waitingHere.set(false);
         this.listOk.set(false);
         this.accountId.set('');
         this.diagnosis.set(null);
@@ -172,7 +171,6 @@ export class KeysService {
       this.elsewhere.set(!ready && mine.keys.some((k) => !k.revoked));
       this.hasBackup.set(!!id && (mine.backups?.includes(id) || (!mine.backups?.length && mine.hasBackup))); // the words of THIS device (an account from before there was one per key: its one backup counts)
       this.state.set(ready ? 'ready' : 'none');
-      this.waitingHere.set(ready && !!found?.waiting);
       if (!ready) this.listOk.set(false);
       else if (local && !local.signKey) this.listOk.set(true); // an older key with no signing key has no list to wait for
       if (ready && mine.keys.some((k) => k.revoked)) void this.reencrypt.run(); // what a retired key could open is locked anew (quiet, at most every 10 minutes)

@@ -19,6 +19,7 @@ import { HomeTop } from '../home-top/home-top';
 import { Sleeping } from '../sleeping/sleeping';
 import { AddFriend } from '../add-friend/add-friend';
 import { AuthService } from '../core/auth.service';
+import { isNewUser } from '../core/new-user';
 import { FriendsService } from '../core/friends.service';
 import { MessagesService } from '../core/messages.service';
 import { NotificationsService } from '../core/notifications.service';
@@ -213,6 +214,9 @@ export class Notifications {
   protected hideChecks(): void {
     this.prefs.set('checksHiddenUntil', Date.now() + 24 * 60 * 60 * 1000);
   }
+
+  /** a new person (setup not finished, or an account of the last week) sees the setup notes OPEN and prominent, so what is left to do cannot be missed (see isNewUser) */
+  protected readonly prominentChecks = computed(() => isNewUser(this.auth.user()?.metadata?.creationTime, this.setupLeft()));
 
   /** the setup notes: sound and notifications not set up, the phone's notification switch, details not verified (folded into one line on Home); privacy lock off is one of them */
   protected readonly checkCount = computed(() => [this.setupLeft(), this.lockOff(), this.androidOff() !== null, this.pushOff() !== null, this.unverified().length > 0].filter(Boolean).length);

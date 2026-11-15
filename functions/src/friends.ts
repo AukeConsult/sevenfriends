@@ -295,7 +295,12 @@ friendsRouter.post(
       return;
     }
     if (onlyIfOnApp && !accounts.length) {
-      res.status(422).json({ error: "Nobody with that email or phone number is on the app yet.", notOnApp: true }); // nothing is saved for somebody who is not here: they are invited with a link
+      res.status(422).json({ error: "Nobody with that email or phone number is on the app yet.", notOnApp: true }); // nothing is saved for somebody who is not here: the page offers to save an invitation (an email only) or the link
+      return;
+    }
+    if (!accounts.length && !data.email) {
+      // an invitation for somebody who is not on the app yet (nobody has this phone number) needs an EMAIL: a phone number alone saves nothing (they are invited with the link)
+      res.status(422).json({ error: "An invitation needs an email address.", needsEmail: true });
       return;
     }
     const ref = col.doc();

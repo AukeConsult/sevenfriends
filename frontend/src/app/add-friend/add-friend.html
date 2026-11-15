@@ -14,20 +14,17 @@
         <input appClear type="text" class="form-control" [value]="groupName()" (input)="groupName.set($any($event.target).value)" autocomplete="off" maxlength="100" />
       </label>
     } @else {
-    <h2 class="sf-section m-0">{{ t('addFriend.alreadyOnApp', { app: w.app }) || 'Already on ' + w.app + '?' }}</h2>
+    <h2 class="sf-section m-0">{{ t('addFriend.alreadyOnApp') || 'Who do you want to add?' }}</h2>
+    <p class="small text-secondary m-0">{{ t('addFriend.whoHint', { app: w.app }) || 'Type their email or phone number. If they are on ' + w.app + ', they get your request. If not, you can invite them.' }}</p>
     <label class="sf-field"><span class="form-label small text-secondary m-0">{{ t('addFriend.emailOrPhone') || 'Email or phone' }}</span>
-      <input appClear type="text" class="form-control" [value]="query()" (input)="query.set($any($event.target).value); notFound.set(false)"
+      <input appClear type="text" class="form-control" [value]="query()" (input)="query.set($any($event.target).value)"
              inputmode="email" autocomplete="off" autocapitalize="off" spellcheck="false" />
     </label>
     @switch (lookup()) {
       @case ('checking') { <p class="small text-secondary m-0" role="status">{{ t('addFriend.lookupChecking') || 'Looking…' }}</p> }
-      @case ('found') { <div class="alert alert-success m-0" role="status">✓ {{ t('addFriend.lookupFound', { app: w.app }) || 'This person is on ' + w.app + '. You can send the request.' }}</div> }
-      @case ('none') { <div class="alert alert-info m-0" role="status">{{ t('addFriend.nobodyWithThatIs', { app: w.app }) || 'Nobody with that email or phone number is on ' + w.app + ' yet. Send them an invite link below.' }}</div> }
+      @case ('found') { <div class="alert alert-success m-0" role="status">✓ {{ t('addFriend.foundConfirm', { who: query().trim(), app: w.app }) || query().trim() + ' is on ' + w.app + '. Send them your invitation?' }}</div> }
       @case ('note') { <div class="alert alert-info m-0" role="status">{{ lookupText() }}</div> }
       @case ('limit') { <div class="alert alert-warning m-0" role="status">{{ t('addFriend.lookupLimit') || 'You searched many times in a short while. Wait a little and try again.' }}</div> }
-    }
-    @if (notFound() && lookup() !== 'none') {
-      <div class="alert alert-info m-0" role="status">{{ t('addFriend.nobodyWithThatIs', { app: w.app }) || 'Nobody with that email or phone number is on ' + w.app + ' yet. Send them an invite link below.' }}</div>
     }
     }
 
@@ -39,7 +36,7 @@
       @if (embedded()) { <button type="button" class="btn btn-light flex-fill" (click)="closed.emit()" [disabled]="sending()">{{ t('addFriend.cancel') || 'Cancel' }}</button> }
       @else { <a [routerLink]="backTo" [queryParams]="backParams" class="btn btn-light flex-fill" [class.disabled]="sending()">{{ t('addFriend.cancel') || 'Cancel' }}</a> }
       <button type="submit" class="btn btn-primary flex-fill" [disabled]="sending()">
-        {{ sending() ? (t('addFriend.sending') || 'Sending…') : (mode() === 'group' ? (t('addFriend.makeTheGroup') || 'Create the new group') : (t('addFriend.findAndSend') || 'Find and send request')) }}
+        {{ sending() ? (t('addFriend.sending') || 'Sending…') : (mode() === 'group' ? (t('addFriend.makeTheGroup') || 'Create the new group') : (lookup() === 'found' ? (t('addFriend.sendInvitation') || 'Send invitation') : (t('addFriend.findAndSend') || 'Find and send request'))) }}
       </button>
     </div>
 
@@ -47,8 +44,8 @@
       <!-- not on the app yet: the invitation link, in a frame under the buttons -->
       <div class="card mt-4">
         <div class="card-body vstack gap-2">
-          <h2 class="sf-section m-0">{{ t('addFriend.notOnAppYet', { app: w.app }) || 'Not on ' + w.app + ' yet?' }}</h2>
-          <p class="small text-secondary m-0">{{ t('addFriend.sendALinkIn') || 'Send a link in a text message, WhatsApp, social media or anywhere else. Nothing is saved until they sign up with it.' }}</p>
+          <h2 class="sf-section m-0">{{ t('addFriend.notOnAppYet') || 'Invite with a link' }}</h2>
+          <p class="small text-secondary m-0">{{ t('addFriend.sendALinkIn') || 'Send your invite link to anyone: in a text message, WhatsApp, social media or anywhere else. When they sign up with it, they send you a friend request. Nothing is saved before that.' }}</p>
           <div class="d-flex flex-wrap gap-2">
             <button type="button" class="btn btn-outline-primary btn-sm" (click)="shareLink()">{{ t('addFriend.shareInviteLink') || 'Share invite link' }}</button>
             @if (!invite.canShare) { <button type="button" class="btn btn-light btn-sm" (click)="copyLink()">{{ t('addFriend.copyLink') || 'Copy link' }}</button> }

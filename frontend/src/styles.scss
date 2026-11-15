@@ -1360,6 +1360,7 @@ button.sf-hs-sleep { padding: 0; border: 0; background: none; font: inherit; wid
 .sf-checks { margin-bottom: 1rem; padding: 0.5rem 0.75rem; border-radius: var(--sf-radius); background: var(--sf-warn-bg); color: var(--sf-warn-text);
   > summary { cursor: pointer; font-size: 0.875rem; font-weight: 600; list-style: none; &::-webkit-details-marker { display: none; } &::after { content: '▾'; float: right; } }
   &[open] > summary::after { content: '▴'; } }
+.sf-checks-new { padding: 0.75rem 1rem; border: 2px solid var(--sf-warn-border); > summary { font-size: var(--sf-fs-title); } } // a new person: the setup notes are open, bordered and in larger text
 .sf-checks-x { float: right; margin: -0.125rem 0 0 0.5rem; padding: 0 0.25rem; border: 0; background: none; color: inherit; font-size: 0.8125rem; line-height: 1.4; opacity: 0.7; cursor: pointer; &:hover { opacity: 1; } }
 .sf-home-cards { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.5rem;
   > li { padding: 0.625rem 0.75rem; border: 0; border-radius: 0.875rem; background: var(--sf-card); }
