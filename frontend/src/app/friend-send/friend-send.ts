@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { Component, ElementRef, HostListener, computed, effect, inject, input, signal, viewChild } from '@angular/core';
 import { AddMedia } from '../add-media/add-media';
 import { ChatService } from '../core/chat.service';
+import { ChatItem } from '../core/message-lock.service';
 import { NotApprovedError } from '../core/message-lock.service';
 import { EMOJI_GROUPS } from '../core/emojis';
 import { UiPreferencesService } from '../core/ui-preferences';
@@ -152,7 +153,9 @@ export class FriendSend {
     this.go();
   }
 
-  protected attached(): void {
+  /** the card sent an image, a video or a voice message: it is in my feed at once (the server has answered it), and the writing frame is empty again */
+  protected attached(item: ChatItem): void {
+    this.ctx.feed()?.addSent(item);
     this.attach.set(null);
     this.text.set('');
     this.notice.set('Sent.');

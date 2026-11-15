@@ -465,3 +465,46 @@ describe("the profile picture is an object in the cache", () => {
     expect(stored()).toEqual([]);
   });
 });
+
+describe("the sender's own feed is told", () => {
+  const entryOf = async (user: User, id: string) =>
+    (await getFirestore().collection("user-account").doc(user.p.uid).collection("friend-circle").doc("default").collection("friends").doc(id).get()).data();
+
+  it("a message with a file (and a plain one) marks MY friendship as changed, so my open feed (and my other devices) read the feed again", async () => {
+    const id = await connect(u(0), u(1));
+    expect((await entryOf(u(0), id))?.messagesChangedAt).toBeUndefined();
+
+    const first = await uploaded(u(0), "image", png(), "a.png");
+    await sendMedia(u(0), id, { objectId: first.objectId, width: 64, height: 64 }).expect(201);
+    const afterImage = (await entryOf(u(0), id))?.messagesChangedAt;
+    expect(afterImage).toBeTruthy();
+
+    await new Promise((r) => setTimeout(r, 10));
+    await u(0).raw("post", `/circles/default/friends/${id}/messages`, { text: "and a text" }).expect(201);
+    const afterText = (await entryOf(u(0), id))?.messagesChangedAt;
+    expect(afterText.toMillis()).toBeGreaterThan(afterImage.toMillis());
+
+    await new Promise((r) => setTimeout(r, 10));
+    const video = await uploaded(u(0), "video", webm(), "v.webm");
+    await sendMedia(u(0), id, { objectId: video.objectId, durationMs: 3000 }).expect(201);
+    const afterVideo = (await entryOf(u(0), id))?.messagesChangedAt;
+    expect(afterVideo.toMillis()).toBeGreaterThan(afterText.toMillis());
+
+    await new Promise((r) => setTimeout(r, 10));
+    const voice = await uploaded(u(0), "audio", mp3(), "v.mp3");
+    await sendMedia(u(0), id, { objectId: voice.objectId, durationMs: 2000 }).expect(201);
+    expect((await entryOf(u(0), id))?.messagesChangedAt.toMillis()).toBeGreaterThan(afterVideo.toMillis());
+  });
+
+  for (const [kind, bytes, name, extra] of [["image", png(), "me.png", { width: 64, height: 64 }], ["video", webm(), "me.webm", { durationMs: 3000 }], ["audio", mp3(), "me.mp3", { durationMs: 2000 }]] as const) {
+    it("a " + kind + " is in my own feed at once, with its file and its text, as the answer says", async () => {
+      const id = await connect(u(0), u(1));
+      const file = await uploaded(u(0), kind, bytes, name);
+      const sent = (await sendMedia(u(0), id, { objectId: file.objectId, ...extra }, "look").expect(201)).body;
+      expect(sent).toMatchObject({ mine: true, text: "look", media: { kind } });
+      const mine = await feedOf(u(0), id);
+      expect(mine.map((m) => m.id)).toContain(sent.id);
+      expect(mine.find((m) => m.id === sent.id)).toMatchObject({ mine: true, text: "look", media: { kind } });
+    });
+  }
+});

@@ -136,6 +136,9 @@ export class MessageLockService {
       return stripped ? { text: raw, signature: 'bad' } : { text: raw };
     }
     if (!person) return { text: envelope.x }; // the lists could not be fetched: not judged
+    // a person with NO list (an older lock, which can never make one) has nothing to check a signature against: not judged, like an unsigned text from such a person.
+    // A new device of such a person signs its texts, and that must not show as a warning ("Could not check who wrote this"); a list that is `broken` still does.
+    if (person.status === 'none') return { text: envelope.x };
     const device = person.devices.find((d) => d.keyId === envelope.k);
     let holds = false;
     if (person.status === 'ok' && device && envelope.a === author && envelope.c === friendId) {

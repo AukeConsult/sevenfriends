@@ -11,6 +11,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { NavigationStart, Router, RouterLink } from '@angular/router';
 import { filter } from 'rxjs';
 import { ApiError } from '../core/api.service';
+import { withSent } from '../core/feed-list';
 import { ChatItem } from '../core/message-lock.service';
 import { usesSideways } from '../core/swipe';
 import { SafeboxService } from '../core/safebox.service';
@@ -196,6 +197,7 @@ export class Chat {
       addPending: (text) => this.addPending(text),
       confirmPending: (id, item) => this.messages.update((list) => list.map((m) => (m.id === id ? item : m))),
       dropPending: (id) => this.messages.update((list) => list.filter((m) => m.id !== id)),
+      addSent: (item) => this.addSent(item),
     });
     // leaving the feed (any page): remember where it was scrolled to
     this.router.events.pipe(filter((e) => e instanceof NavigationStart), takeUntilDestroyed()).subscribe(() => {
@@ -233,6 +235,13 @@ export class Chat {
     this.messages.update((list) => [...list, { id, text, media: null, mine: true, read: false, time: new Date().toISOString(), edited: false, hidden: false, link: null }]);
     this.scrollDown();
     return id;
+  }
+
+  /** A message of mine that the server has answered (an image, a video, a voice message): in the feed at once, then the feed is read again so it matches the server. */
+  private addSent(item: ChatItem): void {
+    this.messages.update((list) => withSent(list, item));
+    this.scrollDown();
+    void this.refresh(false);
   }
 
   private async refresh(first: boolean): Promise<void> {

@@ -25,7 +25,7 @@
     @if (attach(); as kind) {
         <div class="sf-send-attach">
           @for (k of [kind]; track k + '') {
-            <app-add-media [kind]="k" [friendId]="ctx.friendId" [hosted]="true" [caption]="text()" (captionChange)="text.set($event)" (closed)="attach.set(null)" (sent)="attached()" />
+            <app-add-media [kind]="k" [friendId]="ctx.friendId" [hosted]="true" [caption]="text()" (captionChange)="text.set($event)" (closed)="attach.set(null)" (sent)="attached($event)" />
           }
         </div>
       }

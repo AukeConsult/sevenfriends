@@ -23,6 +23,8 @@ export interface FeedActions {
   confirmPending(id: string, item: ChatItem): void;
   /** it could not be sent: the temporary message goes */
   dropPending(id: string): void;
+  /** a message of mine that the server has already answered (an image, a video, a voice message) is in the feed at once, and the feed is read again */
+  addSent(item: ChatItem): void;
 }
 
 /** A tool of the page that is open (not the feed), shown first in the header menu: "Messages for X only" on Send a message, "Add files" in the safebox. */
