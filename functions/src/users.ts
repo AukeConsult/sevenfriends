@@ -8,7 +8,7 @@ import { randomUUID } from "node:crypto";
 import { eraseUser } from "./erase";
 import { stampKeys } from "./accounts";
 import { keyCol } from "./paths";
-import { verifiedIdentity } from "./validation";
+import { verifiedIdentity, firstText } from "./validation";
 
 export const usersRouter = Router();
 
@@ -34,7 +34,7 @@ usersRouter.post(
         ...(verified.phoneKey ? { phoneKey: verified.phoneKey } : {}),
         ...(verified.phone ? { phone: verified.phone } : {}), // a verified number is the contact number
         // the name from the login is only the starting point: a name the user chose on the profile page stays
-        displayName: (snap.data()?.displayName as string | null | undefined) ?? token.name ?? null,
+        displayName: firstText(snap.data()?.displayName, token.name), // a login without a name gives none: an account may have no name
         photoURL: token.picture ?? null,
         provider: token.firebase?.sign_in_provider ?? null,
         lastLoginAt: FieldValue.serverTimestamp(),

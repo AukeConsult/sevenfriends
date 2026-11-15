@@ -12,7 +12,7 @@ import { touchSync } from "./sync";
 import { deleteObjects } from "./sf-cache";
 import { deleteBox, deleteItemsOf } from "./safebox";
 import { GROUP_HEAD, groupHead } from "./group-members";
-import { text } from "./validation";
+import { text, firstText } from "./validation";
 
 /**
  * Groups (design: docs/design/groups.md). A group is the other end of a connection with several people: every member has a friend entry whose id is the
@@ -94,7 +94,7 @@ export async function leaveGroup(uid: string, entryRef: DocumentReference, group
     await deleteItemsOf(groupId, uid);
     await dropReminders(groupId, uid);
     // the others are told: what the person wrote and put in the safebox is gone with them
-    const who = ((await userFields(uid, "displayName"))?.displayName as string | undefined) || "Someone";
+    const who = firstText((await userFields(uid, "displayName"))?.displayName) ?? "Someone";
     await Promise.all(Object.entries(remaining).map(([memberUid, circleId]) =>
       sendPush(memberUid, { circleId, id: `group-${groupId}-${how}-${uid}`, title: `${who} ${how === "left" ? "left" : "was removed from"} ${groupName}`, body: "Their messages and safebox items in the group are gone.", url: `/friends/${groupId}`, kind: "removed" }),
     ));
@@ -188,7 +188,7 @@ export async function listGroupMembers(req: Request, res: Response, groupId: str
     const account = accounts[i];
     return {
       uid: memberUid,
-      name: memberUid === uid ? ((account?.displayName as string | undefined) ?? "You") : ((friend?.data().name as string | undefined) ?? (account?.displayName as string | undefined) ?? "Someone"),
+      name: memberUid === uid ? (firstText(account?.displayName) ?? "You") : (firstText(friend?.data().name, account?.displayName) ?? "Someone"),
       you: memberUid === uid,
       creator: data.createdBy === memberUid, // the owner
       friendId: friend?.id ?? null,

@@ -5,7 +5,7 @@ import { circleCol, friendRequestCol } from "./paths";
 import { circleProfileOf } from "./circle-profile";
 import { signalRefsOf } from "./signals";
 import { readFields, userFields } from "./paths";
-import { phoneKey } from "./validation";
+import { phoneKey, firstText } from "./validation";
 
 /**
  * Has someone added me as a friend? Looks through every pending friend entry
@@ -64,7 +64,7 @@ export async function syncIncomingInvites(token: DecodedIdToken): Promise<void> 
     const shownAs = circleProfileOf(circleRef.id, (await circleRef.get()).data(), owner).name; // the name the sender has in that circle
     await requestRef.set({
       fromUid: ownerRef.id,
-      fromName: shownAs ?? owner.displayName ?? owner.email ?? "Someone",
+      fromName: firstText(shownAs, owner.displayName, owner.email) ?? "Someone",
       fromEmail: owner.email ?? null,
       message: (data.message as string | null | undefined) ?? null, // what the sender wrote with the request
       circleId: circleRef.id,

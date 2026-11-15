@@ -1,4 +1,5 @@
 import { randomInt } from "node:crypto";
+import { firstText } from "./validation";
 import { Router } from "express";
 import { DecodedIdToken } from "firebase-admin/auth";
 import { getFirestore } from "firebase-admin/firestore";
@@ -79,7 +80,7 @@ inviteRouter.get(
     const asked = await friendRequestCol(uidOf(res)).where("status", "==", "pending").where("fromUid", "==", owner.id).limit(1).select().get();
     // the name the owner has in the circle I open the link in (their circle profile, else their account name)
     const circleId = activeCircleOf(req);
-    const name = circleProfileOf(circleId, await readFields(circleCol(owner.id).doc(circleId), "profile"), data).name ?? (data.displayName as string | null | undefined) ?? null;
+    const name = firstText(circleProfileOf(circleId, await readFields(circleCol(owner.id).doc(circleId), "profile"), data).name, data.displayName);
     res.json({
       self: false,
       requestId: asked.empty ? null : asked.docs[0].id,
@@ -119,7 +120,7 @@ invitePublicRouter.get(
     const owner = snap.docs[0];
     const data = owner.data();
     const circleId = activeCircleOf(req);
-    const name = circleProfileOf(circleId, await readFields(circleCol(owner.id).doc(circleId), "profile"), data).name ?? (data.displayName as string | null | undefined) ?? null;
+    const name = firstText(circleProfileOf(circleId, await readFields(circleCol(owner.id).doc(circleId), "profile"), data).name, data.displayName);
     const contact = (data.emailLower as string | null | undefined) ?? (data.verifiedPhone as string | null | undefined) ?? (data.phone as string | null | undefined) ?? null;
     res.json({ name, contact: maskContact(contact) });
   }),

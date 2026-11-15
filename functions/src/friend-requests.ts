@@ -11,7 +11,7 @@ import { assignMissingSeats, ensureSeat, sleepListOn } from "./seats";
 import { signalRefsOf } from "./signals";
 import { touchSync } from "./sync";
 import { nameOf, sendPush } from "./push";
-import { unverifiedDetails } from "./validation";
+import { unverifiedDetails, firstText } from "./validation";
 
 const uidOf = (res: { locals: Record<string, unknown> }) => (res.locals.token as DecodedIdToken).uid;
 
@@ -32,7 +32,7 @@ export async function listPendingRequests(uid: string, circleId: string): Promis
       const liveName = sender ? circleProfileOf(circleId, theirCircle, sender).name : null;
       return {
         id: d.id,
-        fromName: liveName ?? (data.fromName as string),
+        fromName: firstText(liveName, data.fromName) ?? "Someone",
         fromEmail: (data.fromEmail as string | null) ?? null,
         message: (data.message as string | null) ?? null,
         createdAt: data.createdAt instanceof Timestamp ? data.createdAt.toDate().toISOString() : null,

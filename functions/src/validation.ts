@@ -12,6 +12,18 @@ export function text(value: unknown, max: number): string | null {
   return trimmed ? trimmed.slice(0, max) : null;
 }
 
+/**
+ * The first of these that holds a real text (not empty, not only spaces), or null. A missing name is never a name: what is shown falls back to the next thing known
+ * (the name of the circle, the name of the account, the name of the login, the email, then "Someone"), so an account without a name can do everything.
+ */
+export function firstText(...values: unknown[]): string | null {
+  for (const value of values) {
+    const found = text(value, 200);
+    if (found) return found;
+  }
+  return null;
+}
+
 /** Phone number reduced to its last 8 digits, so "+47 926 55 195" and "92655195" match. */
 export function phoneKey(value: string | null | undefined): string | null {
   const digits = (value ?? "").replace(/\D/g, "");

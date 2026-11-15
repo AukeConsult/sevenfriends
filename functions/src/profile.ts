@@ -9,7 +9,7 @@ import { ProfileDetails, ProfilePicture, VISIBILITIES, profileColorKey, pronounK
 import { circleCol, userDoc } from "./paths";
 import { activeCircleOf, circleProfileOf, saveCircleProfile, touchFriends } from "./circle-profile";
 import { isLanguage } from "./models/shared/languages";
-import { PHONE_RE, isCountry, phoneKey, presenceOf, text } from "./validation";
+import { PHONE_RE, isCountry, phoneKey, presenceOf, text, firstText } from "./validation";
 
 const uidOf = (res: { locals: Record<string, unknown> }) => (res.locals.token as DecodedIdToken).uid;
 
@@ -19,7 +19,7 @@ profileRouter.use(requireAuth);
 /** My profile (name, phone number), stored on the user-account document. */
 function detailsOf(data: Record<string, unknown>): ProfileDetails {
   return {
-    name: (data.displayName as string | null | undefined) ?? null,
+    name: firstText(data.displayName),
     phone: (data.verifiedPhone as string | null | undefined) ?? (data.phone as string | null | undefined) ?? null,
     phoneVerified: Boolean(data.verifiedPhone),
     emailVerified: data.emailVerified === true,

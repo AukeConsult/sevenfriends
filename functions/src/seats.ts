@@ -1,4 +1,5 @@
 import { CollectionReference, DocumentData, FieldValue, QueryDocumentSnapshot, Timestamp, Transaction, getFirestore } from "firebase-admin/firestore";
+import { firstText } from "./validation";
 import { ensureCircle } from "./circles";
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAX_FRIENDS, circleIdOf } from "./constants";
 import { EnsureSeatArgs, settingsOf } from "./models";
@@ -25,7 +26,7 @@ export function entryFromRequester(requester: DocumentData, request: DocumentDat
   const email = (requester.emailLower ?? requester.email?.toLowerCase?.() ?? null) as string | null;
   return {
     // the name the sender has in that circle (the request carries it); the name of their account only when the request has none
-    name: (request.fromName ?? requester.displayName ?? email ?? "Friend") as string,
+    name: firstText(request.fromName, requester.displayName, email) ?? "Friend",
     nameGiven: false, // not typed by me: the list shows the name they have now (see `withUnverified`)
     email,
     phone: requester.phone ?? null,

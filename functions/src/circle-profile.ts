@@ -2,14 +2,14 @@ import { DocumentData, DocumentSnapshot, FieldValue } from "firebase-admin/fires
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAX_FRIENDS, MAX_MOOD_MESSAGE, MAX_NAME_LENGTH, MOOD_COUNT } from "./constants";
 import { CircleProfile, profileColorKey } from "./models";
 import { circleCol, readFields, userDoc, userFields } from "./paths";
-import { text } from "./validation";
+import { text, firstText } from "./validation";
 
 /**
  * How a person shows in one circle (name, colour, icon, mood, mood message). The `default` circle (friends) keeps them where they always were, on the account
  * document, so nothing had to move; every other circle keeps its own on the circle document (`profile`), copied from the account (name, colour) when it is made.
  */
 const profileOfAccount = (account: DocumentData): CircleProfile => ({
-  name: (account.displayName as string | null | undefined) ?? null,
+  name: firstText(account.displayName),
   color: profileColorKey(account.profileColor),
   icon: Number.isInteger(account.profileIcon) ? (account.profileIcon as number) : null,
   mood: Number.isInteger(account.mood) ? (account.mood as number) : null,
@@ -21,7 +21,7 @@ const profileOfCircle = (data: DocumentData | undefined, account: DocumentData):
   const p = (data?.profile ?? {}) as Record<string, unknown>;
   const basic = profileOfAccount(account);
   return {
-    name: typeof p.name === "string" ? p.name : "name" in p ? null : basic.name,
+    name: typeof p.name === "string" ? (p.name.trim() ? p.name : basic.name) : "name" in p ? null : basic.name,
     color: "color" in p ? profileColorKey(p.color) : basic.color,
     icon: "icon" in p ? (Number.isInteger(p.icon) ? (p.icon as number) : null) : basic.icon,
     mood: "mood" in p ? (Number.isInteger(p.mood) ? (p.mood as number) : null) : basic.mood,

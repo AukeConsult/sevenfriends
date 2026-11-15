@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+import { firstText } from "./validation";
 import { Router } from "express";
 import { DecodedIdToken } from "firebase-admin/auth";
 import { DocumentReference, FieldValue, getFirestore } from "firebase-admin/firestore";
@@ -92,7 +93,7 @@ const cut = (text: string, max: number) => (text.length > max ? `${text.slice(0,
 export async function nameOf(uid: string, token?: DecodedIdToken, circleId: string = DEFAULT_CIRCLE_ID): Promise<string> {
   const data = await userFields(uid, "displayName");
   const shown = circleId === DEFAULT_CIRCLE_ID ? null : circleProfileOf(circleId, await readFields(circleCol(uid).doc(circleId), "profile"), data ?? {}).name;
-  return shown ?? (data?.displayName as string | undefined) ?? token?.name ?? token?.email ?? "Someone";
+  return firstText(shown, data?.displayName, token?.name, token?.email) ?? "Someone";
 }
 
 /**

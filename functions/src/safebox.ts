@@ -1,4 +1,5 @@
 import express, { Request, Response, Router } from "express";
+import { firstText } from "./validation";
 import { DecodedIdToken } from "firebase-admin/auth";
 import { DocumentReference, FieldValue, Timestamp, getFirestore } from "firebase-admin/firestore";
 import { asyncHandler } from "./auth";
@@ -171,7 +172,7 @@ safeboxRouter.get(
       Promise.all(
         connection.peers.map(async (peer) => ({
           uid: peer.uid,
-          name: connection.group ? (((await userFields(peer.uid, "displayName"))?.displayName as string | undefined) ?? "Someone") : connection.name,
+          name: connection.group ? (firstText((await userFields(peer.uid, "displayName"))?.displayName) ?? "Someone") : connection.name,
           keys: await publishedKeysOf(peer.uid),
         })),
       ),
