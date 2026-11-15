@@ -9,6 +9,7 @@ import { DeviceListService } from './device-list.service';
 import { KeysService } from './keys.service';
 import { OwnRecoveryService } from './own-recovery.service';
 import { ReencryptService } from './reencrypt.service';
+import { REQUIRED_BROWSER, RequiredBrowser } from './in-app-browser';
 
 /**
  * The silent key of a person, from the first sign-in to a second account on the same browser: made, published, retried, published again, and wiped
@@ -94,7 +95,7 @@ describe('KeysService: the key of this device', () => {
   }
 
   /** The service for one person, with the fake server and a fake sign-in. `fresh` = the account was created by this very sign-in. */
-  const start = (uid: string, server: FakeServer, fresh: boolean) => {
+  const start = (uid: string, server: FakeServer, fresh: boolean, need: RequiredBrowser | null = null) => {
     let isFresh = fresh;
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
@@ -104,6 +105,7 @@ describe('KeysService: the key of this device', () => {
         { provide: DeviceListService, useValue: {} },
         { provide: OwnRecoveryService, useValue: { madeKey: () => undefined } },
         { provide: ReencryptService, useValue: { run: async () => undefined } },
+        { provide: REQUIRED_BROWSER, useValue: need },
       ],
     });
     return TestBed.inject(KeysService);
@@ -248,6 +250,35 @@ describe('KeysService: the key of this device', () => {
     const survivor = (await createDeviceKey(other)).key; // another account signs in later in the same browser
     await keys.refresh();
     expect((await getDeviceKey(other))?.id).toBe(survivor.id);
+  });
+
+  describe('the wrong browser (Messenger, WhatsApp, Chrome on an iPhone ...): no key is ever made', () => {
+    for (const need of ['safari', 'chrome', 'browser'] as RequiredBrowser[]) {
+      it('a new account: no key is made, nothing is saved or sent, and the keys are not ready (' + need + ')', async () => {
+        const uid = person();
+        const server = new FakeServer();
+        const keys = start(uid, server, true, need);
+        await keys.refresh();
+        await new Promise((resolve) => setTimeout(resolve, 150));
+        expect(keys.state()).toBe('none');
+        expect(keys.inviteReady()).toBe(false);
+        expect(server.posts).toBe(0);
+        expect(server.keys.length).toBe(0);
+        expect(await getDeviceKey(uid)).toBeNull();
+        expect(keys.createError()).toContain('not the right browser');
+      });
+    }
+
+    it('and it keeps no key of an earlier visit out of the way: an account that already has a key here still works', async () => {
+      const uid = person();
+      const server = new FakeServer();
+      const key = await generateIdentityKey();
+      await saveDeviceKey(uid, key);
+      const keys = start(uid, server, false, 'safari');
+      await keys.refresh();
+      expect(server.posts).toBeLessThanOrEqual(1); // it may publish the key it already has, never a new one
+      expect((await getDeviceKey(uid))?.id).toBe(key.id);
+    });
   });
 
   describe('the stamp of the account', () => {

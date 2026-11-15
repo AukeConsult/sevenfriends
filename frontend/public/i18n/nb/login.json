@@ -2,6 +2,7 @@
   "friendLink": "Logg inn eller opprett en konto for å sende en forespørsel om å bli {{ one }}.",
   "friendLinkTo": "Logg inn eller opprett en konto for å sende en forespørsel om å bli {{ one }} til {{ to }}.",
   "google": "Fortsett med Google",
+  "googleHint": "Har du en Gmail- eller Google-konto? Bruk Google-knappen under: du slipper å lage passord.",
   "emailLink": "Send meg en innloggingslenke",
   "orPassword": "eller bruk et passord",
   "createTitle": "Opprett kontoen din",

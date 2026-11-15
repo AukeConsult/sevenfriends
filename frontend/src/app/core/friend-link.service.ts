@@ -98,6 +98,17 @@ export class FriendLinkService {
     history.replaceState(history.state, '', location.pathname + (rest ? `?${rest}` : '') + (pin ? '' : location.hash));
   }
 
+  /**
+   * The waiting invitation as the query of an address (`invite=<code>&circle=<type>`, or `from=...`), '' = none. The email sign-in link carries it, so whichever browser opens
+   * that link (the mail app may open another one than the one the invitation was opened in) still has the invitation: `capture()` reads it back.
+   */
+  query(): string {
+    const pending = this.pending();
+    if (!pending) return '';
+    const who = pending.code ? `invite=${pending.code}` : `from=${encodeURIComponent(pending.email ?? pending.phone ?? '')}`;
+    return pending.circle ? `${who}&circle=${pending.circle}` : who;
+  }
+
   /** The link as text again (to copy it: the welcome page does, before an app is downloaded, so it can be pasted in the app). */
   linkText(pending: PendingFriend): string {
     const query = pending.code ? `invite=${pending.code}` : `from=${encodeURIComponent(pending.email ?? pending.phone ?? '')}`;

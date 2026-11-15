@@ -2,6 +2,7 @@
   "friendLink": "Connecte-toi ou crée un compte pour envoyer une demande de {{ one }}.",
   "friendLinkTo": "Connecte-toi ou crée un compte pour envoyer une demande de {{ one }} à {{ to }}.",
   "google": "Continuer avec Google",
+  "googleHint": "Vous avez un compte Gmail ou Google ? Utilisez le bouton Google ci-dessous : pas de mot de passe à créer.",
   "emailLink": "Recevoir un lien de connexion par e-mail",
   "orPassword": "ou utilise un mot de passe",
   "createTitle": "Crée ton compte",

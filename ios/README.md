@@ -1,7 +1,7 @@
 # Seven Friends for iPhone
 
 A thin iPhone app (Capacitor, Swift Package Manager) that loads the web app from `server.url` in `frontend/capacitor.config.json`
-(https://sevenfriends.web.app now). Same idea as `android/`: deploy the web app and the iPhone app shows the new version.
+(https://sevenfriends.io). Same idea as `android/`: deploy the web app and the iPhone app shows the new version.
 
 - Bundle id: `io.sevenfriends.app` · push plugin: `@capacitor/push-notifications`
 - Push is prepared: `App/App/App.entitlements` (aps-environment), background mode `remote-notification` in `Info.plist`, and the token

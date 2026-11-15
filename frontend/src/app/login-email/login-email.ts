@@ -5,6 +5,7 @@ import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { tr } from '../core/i18n';
 import { authMessage } from '../core/auth-errors';
 import { AuthService } from '../core/auth.service';
+import { FriendLinkService } from '../core/friend-link.service';
 import { PageBar } from '../page-bar/page-bar';
 
 /** Sign in without a password: we email a link, and opening it signs the person in. */
@@ -17,6 +18,7 @@ import { PageBar } from '../page-bar/page-bar';
 export class LoginEmail {
   protected readonly w = inject(ActiveCircleService).words;
   private readonly auth = inject(AuthService);
+  private readonly friendLinks = inject(FriendLinkService);
 
   protected readonly email = signal('');
   protected readonly busy = signal(false);
@@ -33,7 +35,7 @@ export class LoginEmail {
     this.busy.set(true);
     this.error.set(null);
     try {
-      await this.auth.sendSignInLink(email);
+      await this.auth.sendSignInLink(email, this.friendLinks.query()); // a waiting invitation goes inside the link
       this.sentTo.set(email);
     } catch (err) {
       this.error.set(authMessage(err, tr('loginEmail.sendFailed', 'Could not send the link. Please try again.')));

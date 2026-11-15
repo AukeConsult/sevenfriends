@@ -2,6 +2,7 @@
   "friendLink": "Zaloguj się lub załóż konto, żeby wysłać zaproszenie jako: {{ one }}.",
   "friendLinkTo": "Zaloguj się lub załóż konto, żeby wysłać zaproszenie (jako: {{ one }}) do: {{ to }}.",
   "google": "Kontynuuj z Google",
+  "googleHint": "Masz konto Gmail lub Google? Użyj przycisku Google poniżej: nie musisz tworzyć hasła.",
   "emailLink": "Wyślij mi link do logowania",
   "orPassword": "lub użyj hasła",
   "createTitle": "Załóż konto",

@@ -24,7 +24,7 @@ public partial class MainWindow : Window
     private const string RunName = "SevenFriends";
 
     /// <summary>Pages that may open INSIDE the app (the app itself and the pages of the sign-in popup). Every other link opens in the browser.</summary>
-    private static readonly string[] Inside = ["sevenfriends.web.app", "sevenfriends.io", "7friends.io", "accounts.google.com", "firebaseapp.com"];
+    private static readonly string[] Inside = ["sevenfriends.io", "7friends.io", "accounts.google.com", "firebaseapp.com"];
 
     private readonly System.Windows.Forms.NotifyIcon _tray = new();
     private readonly bool _startHidden;

@@ -2,6 +2,7 @@
   "friendLink": "Log in of maak een account aan om je {{ one }} een verzoek te sturen.",
   "friendLinkTo": "Log in of maak een account aan om {{ to }} als {{ one }} een verzoek te sturen.",
   "google": "Doorgaan met Google",
+  "googleHint": "Heb je een Gmail- of Google-account? Gebruik de Google-knop hieronder: je hoeft geen wachtwoord te maken.",
   "emailLink": "Stuur me een inloglink",
   "orPassword": "of gebruik een wachtwoord",
   "createTitle": "Maak je account aan",

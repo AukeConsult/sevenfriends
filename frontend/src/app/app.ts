@@ -1,9 +1,11 @@
-import { Component, effect, inject, untracked } from '@angular/core';
+import { Component, computed, effect, inject, untracked } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { UiPreferencesService } from './core/ui-preferences';
 import { BottomNav } from './bottom-nav/bottom-nav';
 import { CircleSwitch } from './circle-switch/circle-switch';
 import { OwnKeyPrompt } from './own-key-prompt/own-key-prompt';
+import { InAppNotice } from './in-app-notice/in-app-notice';
+import { REQUIRED_BROWSER } from './core/in-app-browser';
 import { AndroidChannelsService } from './core/android-channels.service';
 import { AppUpdateService } from './core/app-update.service';
 import { AccountWatchService } from './core/account-watch.service';
@@ -46,7 +48,7 @@ function mediaReturn(url: string | null): string | null {
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, BottomNav, CircleSwitch, OwnKeyPrompt],
+  imports: [RouterOutlet, BottomNav, CircleSwitch, OwnKeyPrompt, InAppNotice],
   templateUrl: './app.html'
 })
 export class App {
@@ -56,6 +58,9 @@ export class App {
   private readonly friendLink = inject(FriendLinkService);
   private readonly autoInvite = inject(AutoInviteService);
   private readonly keys = inject(KeysService);
+  private readonly requiredBrowser = inject(REQUIRED_BROWSER);
+  /** this is not the browser that is right for the device and nobody is signed in: the app shows only the page that says which browser to use (see InAppNotice) */
+  protected readonly wrongBrowser = computed(() => this.requiredBrowser !== null && !this.auth.user());
   protected readonly active = inject(ActiveCircleService);
 
   private readonly toJoinPage = () => void this.router.navigateByUrl('/friends/join', { replaceUrl: true });

@@ -2,6 +2,7 @@
   "friendLink": "Sign in or create an account to send a {{ one }} request.",
   "friendLinkTo": "Sign in or create an account to send a {{ one }} request to {{ to }}.",
   "google": "Continue with Google",
+  "googleHint": "Have a Gmail or Google account? Use the Google button below: no password to make.",
   "emailLink": "Email me a sign-in link",
   "orPassword": "or use a password",
   "createTitle": "Create your account",

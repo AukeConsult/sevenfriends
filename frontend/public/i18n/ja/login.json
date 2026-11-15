@@ -2,6 +2,7 @@
   "friendLink": "{{ one }}リクエストを送るには、ログインするかアカウントを作成してください。",
   "friendLinkTo": "{{ to }}さんに{{ one }}リクエストを送るには、ログインするかアカウントを作成してください。",
   "google": "Google で続ける",
+  "googleHint": "Gmail または Google アカウントをお持ちですか？下の Google ボタンを使えば、パスワードは不要です。",
   "emailLink": "ログインリンクをメールで送る",
   "orPassword": "またはパスワードを使う",
   "createTitle": "アカウントを作成",

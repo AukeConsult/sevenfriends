@@ -2,6 +2,7 @@
   "friendLink": "{{ one }} isteği göndermek için giriş yap veya hesap oluştur.",
   "friendLinkTo": "{{ one }} isteği göndermek için giriş yap veya hesap oluştur. Alıcı: {{ to }}.",
   "google": "Google ile devam et",
+  "googleHint": "Gmail veya Google hesabınız var mı? Aşağıdaki Google düğmesini kullanın: şifre oluşturmanız gerekmez.",
   "emailLink": "Bana giriş bağlantısı e-postala",
   "orPassword": "ya da şifre kullan",
   "createTitle": "Hesabını oluştur",

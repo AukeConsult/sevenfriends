@@ -186,7 +186,7 @@ public class MainActivity extends BridgeActivity {
     private static String pathOfWebsiteLink(Uri link) {
         if (link == null || !"https".equals(link.getScheme())) return null;
         String host = link.getHost();
-        if (!"sevenfriends.web.app".equals(host) && !"sevenfriends.io".equals(host)) return null;
+        if (!"sevenfriends.io".equals(host)) return null;
         String path = link.getEncodedPath() == null || link.getEncodedPath().isEmpty() ? "/" : link.getEncodedPath();
         return link.getEncodedQuery() == null ? path : path + "?" + link.getEncodedQuery();
     }

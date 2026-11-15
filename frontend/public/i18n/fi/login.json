@@ -2,6 +2,7 @@
   "friendLink": "Kirjaudu sisään tai luo tili lähettääksesi pyynnön ({{ one }}).",
   "friendLinkTo": "Kirjaudu sisään tai luo tili lähettääksesi pyynnön ({{ one }}) käyttäjälle {{ to }}.",
   "google": "Jatka Googlella",
+  "googleHint": "Onko sinulla Gmail- tai Google-tili? Käytä alla olevaa Google-painiketta: salasanaa ei tarvitse luoda.",
   "emailLink": "Lähetä minulle kirjautumislinkki sähköpostilla",
   "orPassword": "tai käytä salasanaa",
   "createTitle": "Luo tilisi",

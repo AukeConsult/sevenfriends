@@ -1,7 +1,7 @@
 # Seven Friends for Android
 
 A thin Android app (Capacitor) that loads the web app from `server.url` in `frontend/capacitor.config.json`
-(now https://sevenfriends.web.app; change it to https://sevenfriends.io when that domain works). The web app
+(https://sevenfriends.io). The web app
 stays the one code base: deploy it and the Android app shows the new version.
 
 - App id: `io.sevenfriends.app` · push plugin: `@capacitor/push-notifications`

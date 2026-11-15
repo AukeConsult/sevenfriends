@@ -2,6 +2,7 @@
   "friendLink": "Masuk atau buat akun untuk mengirim permintaan {{ one }}.",
   "friendLinkTo": "Masuk atau buat akun untuk mengirim permintaan {{ one }} ke {{ to }}.",
   "google": "Lanjutkan dengan Google",
+  "googleHint": "Punya akun Gmail atau Google? Pakai tombol Google di bawah: tidak perlu membuat kata sandi.",
   "emailLink": "Kirimi aku tautan masuk lewat email",
   "orPassword": "atau pakai kata sandi",
   "createTitle": "Buat akunmu",

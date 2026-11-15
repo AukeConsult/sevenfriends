@@ -1,0 +1,31 @@
+<ng-container *transloco="let t">
+<main class="sf-landing">
+  <div class="sf-form-width mx-auto w-100 vstack gap-3 text-center">
+    <div class="sf-logo sf-logo-lg mx-auto">7</div>
+    <h1 class="m-0">{{ invited() ? (t('inAppNotice.headline') || 'You\'re invited to Seven Friends') : (t('inAppNotice.welcome') || 'Welcome to Seven Friends') }}</h1>
+
+    <ol class="sf-steps text-start">
+      <li class="sf-step" [class.sf-step-done]="copied()">
+        <span class="sf-step-num" aria-hidden="true">{{ copied() ? '✓' : '1' }}</span>
+        <span>{{ t('inAppNotice.step1') || 'Copy the link' }}</span>
+      </li>
+      <li class="sf-step" [class.sf-step-next]="copied()">
+        <span class="sf-step-num" aria-hidden="true">2</span>
+        <span>{{ need === 'safari' ? (t('inAppNotice.step2Safari') || 'Open Safari') : need === 'chrome' ? (t('inAppNotice.step2Chrome') || 'Open Chrome') : (t('inAppNotice.step2Browser') || 'Open your browser') }}</span>
+      </li>
+      <li class="sf-step" [class.sf-step-next]="copied()">
+        <span class="sf-step-num" aria-hidden="true">3</span>
+        <span>{{ t('inAppNotice.step3') || 'Paste the link there' }}</span>
+      </li>
+    </ol>
+
+    @if (manual(); as link) {
+      <input class="form-control" type="text" readonly [value]="link" (focus)="$any($event.target).select()" [attr.aria-label]="t('inAppNotice.copy') || 'Copy link'" />
+    }
+    <button type="button" class="btn w-100" [class.btn-primary]="!copied()" [class.btn-success]="copied()" (click)="copy()">
+      {{ copied() ? (t('inAppNotice.copied') || 'Link copied') : (t('inAppNotice.copy') || 'Copy link') }}
+    </button>
+    <p class="sf-hint m-0" role="note">{{ t('inAppNotice.note') || 'It does not work inside Messenger or other apps.' }}</p>
+  </div>
+</main>
+</ng-container>

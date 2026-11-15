@@ -114,9 +114,9 @@ export class AuthService {
 
   // ---------------------------------------------------------------- email link (passwordless)
 
-  /** Step 1: email a sign-in link. Opening it brings the user to /login/link. */
-  async sendSignInLink(email: string): Promise<void> {
-    await sendSignInLinkToEmail(auth, email, { url: `${location.origin}/login/link`, handleCodeInApp: true });
+  /** Step 1: email a sign-in link. Opening it brings the user to /login/link. `query` = a waiting friend invitation (`FriendLinkService.query()`): it goes inside the link, so it reaches whichever browser opens it. */
+  async sendSignInLink(email: string, query = ''): Promise<void> {
+    await sendSignInLinkToEmail(auth, email, { url: `${location.origin}/login/link${query ? `?${query}` : ''}`, handleCodeInApp: true });
     try {
       localStorage.setItem(EMAIL_KEY, email); // so the page the link opens does not have to ask again
     } catch {

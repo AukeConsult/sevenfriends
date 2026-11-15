@@ -2,6 +2,7 @@
   "friendLink": "로그인하거나 계정을 만들어 {{ one }} 요청을 보내세요.",
   "friendLinkTo": "로그인하거나 계정을 만들어 {{ to }}님에게 {{ one }} 요청을 보내세요.",
   "google": "Google로 계속하기",
+  "googleHint": "Gmail 또는 Google 계정이 있나요? 아래 Google 버튼을 사용하면 비밀번호를 만들 필요가 없습니다.",
   "emailLink": "로그인 링크를 이메일로 받기",
   "orPassword": "또는 비밀번호 사용",
   "createTitle": "계정 만들기",

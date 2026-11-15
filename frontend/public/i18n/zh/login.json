@@ -2,6 +2,7 @@
   "friendLink": "登录或创建账号，来发送{{ one }}请求。",
   "friendLinkTo": "登录或创建账号，来向 {{ to }} 发送{{ one }}请求。",
   "google": "使用 Google 继续",
+  "googleHint": "有 Gmail 或 Google 账号吗？使用下方的 Google 按钮，无需设置密码。",
   "emailLink": "给我发一个登录链接",
   "orPassword": "或使用密码",
   "createTitle": "创建你的账号",

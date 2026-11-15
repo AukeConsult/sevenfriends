@@ -1620,3 +1620,11 @@ button.sf-back { padding: 0; border: 0; background: none; } // a back arrow that
 .sf-fr-end { display: flex; flex-direction: column; align-items: stretch; gap: 0.25rem; margin-top: 0.5rem; text-align: center; } // the button sits right under the text, high on the screen, so nobody has to scroll or look for it
 .sf-fr-lockrow { flex-direction: row; align-items: center; justify-content: center; gap: 0.5rem; }
 .sf-fr-simple .sf-fr-room { width: 100%; }
+
+// the numbered steps of the page that says which browser to use (in-app-notice): 1 copy the link, 2 open the browser, 3 paste it
+.sf-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.75rem; }
+.sf-step { display: flex; align-items: center; gap: 0.75rem; color: var(--bs-body-color); }
+.sf-step-num { flex: none; width: 1.75rem; height: 1.75rem; border-radius: 50%; background: var(--sf-primary); color: #fff; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; }
+.sf-step-done { color: var(--sf-muted); }
+.sf-step-done .sf-step-num { background: var(--bs-success); }
+.sf-step-next { font-weight: 600; }

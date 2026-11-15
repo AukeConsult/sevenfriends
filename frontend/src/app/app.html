@@ -1,9 +1,14 @@
 <!-- the pages are made again when the circle changes (the track value is the switch count, written as text so Angular does not warn about the intended re-creation), so no page keeps anything of the old circle -->
-@for (switched of [active.epoch()]; track switched + "") {
-  <router-outlet />
+@if (wrongBrowser()) {
+  <!-- not the browser that is right for the device (Safari / Chrome / a real browser): only this page, nothing to sign in with, no other page -->
+  <app-in-app-notice />
+} @else {
+  @for (switched of [active.epoch()]; track switched + "") {
+    <router-outlet />
+  }
+  @if (auth.user()) {
+    <app-bottom-nav />
+  }
+  <app-circle-switch />
+  <app-own-key-prompt />
 }
-@if (auth.user()) {
-  <app-bottom-nav />
-}
-<app-circle-switch />
-<app-own-key-prompt />

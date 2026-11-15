@@ -344,7 +344,7 @@ export class Chat {
   protected own(url: string): boolean {
     try {
       const { origin } = new URL(url);
-      return origin === location.origin || origin === APP_ORIGIN; // the app runs on sevenfriends.web.app in the Android and Windows apps, and links are written with the main address
+      return origin === location.origin || origin === APP_ORIGIN; // the Android and Windows apps run on the main address, and links are written with it too
     } catch {
       return false;
     }

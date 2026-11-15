@@ -13,6 +13,7 @@ import { myDeviceKey } from './my-key';
 import { DeviceListService } from './device-list.service';
 import { OwnRecoveryService } from './own-recovery.service';
 import { ReencryptService } from './reencrypt.service';
+import { REQUIRED_BROWSER } from './in-app-browser';
 
 /** How a restore from the recovery words ended. */
 export type RestoreResult = 'ok' | 'bad-words' | 'no-backup' | 'wrong-code' | 'no-key';
@@ -59,6 +60,8 @@ export class KeysService {
   private readonly deviceList = inject(DeviceListService);
   private readonly ownRecovery = inject(OwnRecoveryService);
   private readonly reencrypt = inject(ReencryptService);
+  /** not the browser that is right for the device (the browser of another app such as Messenger, Chrome on an iPhone ...): its storage is not the one of Safari / Chrome, so a key made there would be lost */
+  private readonly inOtherApp = inject(REQUIRED_BROWSER) !== null;
 
   readonly state = signal<EncryptionState>('checking');
   /** the fingerprint of this device's key (64 hex characters), once it is ready */
@@ -134,6 +137,11 @@ export class KeysService {
   async refresh(known?: MyKeys): Promise<void> {
     if (!deviceKeySupported()) {
       this.state.set('unsupported');
+      return;
+    }
+    if (this.inOtherApp && !(await getDeviceKey(this.auth.user()?.uid ?? '').catch(() => null))) {
+      this.state.set('none'); // no key is made (or looked for on the server) in the wrong browser
+      this.createError.set('This is not the right browser: open Seven Friends in Safari (iPhone), Chrome (Android) or a browser (Windows).');
       return;
     }
     try {

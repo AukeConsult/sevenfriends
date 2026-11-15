@@ -2,6 +2,7 @@
   "friendLink": "Melde dich an oder erstell ein Konto, um eine Anfrage als {{ one }} zu senden.",
   "friendLinkTo": "Melde dich an oder erstell ein Konto, um eine Anfrage als {{ one }} an {{ to }} zu senden.",
   "google": "Weiter mit Google",
+  "googleHint": "Hast du ein Gmail- oder Google-Konto? Nutze unten die Google-Taste: Du brauchst kein Passwort.",
   "emailLink": "Anmeldelink per E-Mail schicken",
   "orPassword": "oder mit Passwort",
   "createTitle": "Erstell dein Konto",
