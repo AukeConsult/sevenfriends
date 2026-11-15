@@ -995,8 +995,8 @@ app-voice { display: contents; }
 @media (max-width: 575.98px) {
   .sf-bar:has(.sf-bar-actions) .sf-bar-text { flex: 1 1 0; min-width: 0; } // one row: the name (with its status line) takes what the icons leave and is cut with ... when too long
   .sf-bar .sf-bar-actions { flex: none; margin-inline-start: 0; gap: 0; }
-  .sf-bar .sf-bar-actions .sf-tool-btn { min-width: 2.375rem; padding-inline: 0.0625rem; }
-  .sf-bar .sf-bar-actions .sf-tool-label { display: none; } // on a phone the icons stand alone (they keep their name for screen readers and as a tooltip)
+  .sf-bar .sf-bar-actions .sf-tool-btn { min-width: 3rem; padding-inline: 0.125rem; }
+  .sf-bar .sf-bar-actions .sf-tool-label { display: block; font-size: 0.5625rem; line-height: 1.1; } // on a phone too: the word under the icon (Messages, Safebox) in very small letters
   .sf-bar > .sf-more { margin-inline-end: 0; }
 }
 .sf-cleanup-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem 0.75rem; } // the count on the left, the button on the right, on one line
