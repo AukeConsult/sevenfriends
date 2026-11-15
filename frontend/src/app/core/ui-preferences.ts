@@ -74,6 +74,8 @@ export interface PendingFriend {
   phone: string | null;
   /** the kind of circle the link invites into (friends, buddies, work, family); null = an older link without one: the circle the app is in */
   circle?: string | null;
+  /** the person who made the link, when it carried a pin of their device list (list-pin.ts keeps the pin on this device): the link copied for another browser carries it again */
+  pinUid?: string | null;
 }
 
 /** The colour themes: `header` is the colour of the browser's address bar (the header colour of the theme in styles.scss); `dark` themes switch Bootstrap's dark mode on too. */
@@ -117,7 +119,7 @@ const text = (value: unknown): string | null => (typeof value === 'string' && va
 function pendingOf(value: unknown): PendingFriend | null {
   if (!value || typeof value !== 'object') return null;
   const v = value as Record<string, unknown>;
-  const pending = { code: text(v['code']), email: text(v['email']), phone: text(v['phone']), circle: text(v['circle']) };
+  const pending = { code: text(v['code']), email: text(v['email']), phone: text(v['phone']), circle: text(v['circle']), pinUid: text(v['pinUid']) };
   return pending.code || pending.email || pending.phone ? pending : null;
 }
 const STORAGE_KEY = 'sf-ui';

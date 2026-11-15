@@ -3,7 +3,7 @@ import { ActiveCircleService, CIRCLE_CHOICES } from './active-circle.service';
 import { PendingFriend, UiPreferencesService } from './ui-preferences';
 import { APP_ORIGIN } from './app-origin';
 import { environment } from '../../environments/environment';
-import { keepLinkPin, parsePinFragment } from './list-pin';
+import { keepLinkPin, linkPinOf, parsePinFragment, pinFragment } from './list-pin';
 
 /** A contact from a link: an email (has an @) or a phone number. null = not usable. */
 export function parseContact(value: string): { email: string | null; phone: string | null } | null {
@@ -87,8 +87,8 @@ export class FriendLinkService {
     const params = new URLSearchParams(location.search);
     if (!params.has('invite') && !params.has('from') && !params.has('friend')) return;
     const pending = pendingFromParams(params, location.pathname);
-    if (pending) this.prefs.set('pendingFriend', pending);
     const pin = parsePinFragment(location.hash); // the list of the person who made the link, as it was then: kept on this device only (never in the preferences, which may be synced)
+    if (pending) this.prefs.set('pendingFriend', pin ? { ...pending, pinUid: pin.uid } : pending); // only WHO it is from goes with the invitation, so the link can be copied whole
     if (pin) keepLinkPin(pin);
     params.delete('invite');
     params.delete('from');
@@ -109,10 +109,14 @@ export class FriendLinkService {
     return pending.circle ? `${who}&circle=${pending.circle}` : who;
   }
 
-  /** The link as text again (to copy it: the welcome page does, before an app is downloaded, so it can be pasted in the app). */
+  /**
+   * The link as text again, WHOLE (to copy it: the welcome page does, before an app is downloaded, and the page for the wrong browser does, so it can be pasted in the
+   * right one): the circle, the invitation code (or the email / phone number) and, when the link had one, the pin of the inviter's device list after the `#`.
+   */
   linkText(pending: PendingFriend): string {
     const query = pending.code ? `invite=${pending.code}` : `from=${encodeURIComponent(pending.email ?? pending.phone ?? '')}`;
-    return circleLink(pending.circle ?? 'friends', query);
+    const pin = pending.pinUid ? linkPinOf(pending.pinUid) : null;
+    return circleLink(pending.circle ?? 'friends', query) + (pin ? pinFragment(pin.uid, pin.version, pin.hash) : '');
   }
 
   /**
@@ -128,7 +132,10 @@ export class FriendLinkService {
         const url = new URL(/^https?:/i.test(value) ? value : `https://${value}`);
         pending = pendingFromParams(url.searchParams, url.pathname);
         const pin = pending ? parsePinFragment(url.hash) : null;
-        if (pin) keepLinkPin(pin);
+        if (pin) {
+          keepLinkPin(pin);
+          if (pending) pending = { ...pending, pinUid: pin.uid };
+        }
       } catch {
         /* not a link */
       }
