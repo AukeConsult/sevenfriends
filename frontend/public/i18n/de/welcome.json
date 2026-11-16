@@ -60,5 +60,11 @@
   "scene8b": "Deine Zeiterfassung ist überfällig",
   "scene8c": "AW: WG: WG: Q3-Bericht",
   "scene8m": "Lisa: Brauchst du Hilfe mit der Präsentation?",
-  "reserve": "Wir behalten uns vor, die Zahl der Nutzer dieser App zu begrenzen."
+  "reserve": "Wir behalten uns vor, die Zahl der Nutzer dieser App zu begrenzen.",
+  "circlesTitle": "Vier Kreise",
+  "circlesText": "Es gibt vier Kreise: Freunde, Arbeit, Kumpels und Familie. Jeder Kreis hat seine eigenen sieben Plätze, seine eigenen Chats und seinen eigenen Safe, sodass das, was du in einem teilst, nie in einem anderen auftaucht. Dieselbe Person kann in mehr als einem Kreis sein, und du wechselst zwischen deinen Kreisen, wann du willst.",
+  "circlesFriends": "Freunde: die Menschen, die dir am nächsten stehen.",
+  "circlesWork": "Arbeit: die Leute, mit denen du arbeitest.",
+  "circlesBuddies": "Kumpels: deine Kumpels und Leute, mit denen du ein Hobby teilst.",
+  "circlesFamily": "Familie: die Menschen zu Hause und deine Verwandten."
 }

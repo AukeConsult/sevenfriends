@@ -60,5 +60,11 @@
   "scene8b": "Il tuo timesheet è in ritardo",
   "scene8c": "R: I: I: Rapporto T3",
   "scene8m": "Lisa: Ti serve una mano con le slide?",
-  "reserve": "Ci riserviamo il diritto di limitare il numero di utenti di questa app."
+  "reserve": "Ci riserviamo il diritto di limitare il numero di utenti di questa app.",
+  "circlesTitle": "Quattro cerchie",
+  "circlesText": "Ci sono quattro cerchie: Amici, Lavoro, Compagni e Famiglia. Ogni cerchia ha i suoi sette posti, le sue chat e la sua cassaforte, quindi ciò che condividi in una non compare mai in un'altra. La stessa persona può stare in più di una cerchia, e passi da una cerchia all'altra quando vuoi.",
+  "circlesFriends": "Amici: le persone a te più vicine.",
+  "circlesWork": "Lavoro: le persone con cui lavori.",
+  "circlesBuddies": "Compagni: i tuoi compagni e chi condivide un hobby con te.",
+  "circlesFamily": "Famiglia: le persone di casa e i tuoi parenti."
 }

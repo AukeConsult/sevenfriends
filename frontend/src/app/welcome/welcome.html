@@ -52,6 +52,13 @@
       <section class="vstack gap-2">
         <h3 class="sf-section-title m-0 d-flex align-items-center gap-2"><span class="sf-chapter-icon" aria-hidden="true">{{ b.icon }}</span>{{ t('welcome.' + b.key + 'Title') || b.title }}</h3>
         <p class="m-0">{{ t('welcome.' + b.key + 'Text') || b.text }}</p>
+        @if (b.key === 'circles') {
+          <ul class="m-0 vstack gap-1">
+            @for (c of circleItems; track c.key) {
+              <li>{{ t('welcome.' + c.key) || c.text }}</li>
+            }
+          </ul>
+        }
       </section>
     }
     <section class="vstack gap-2">

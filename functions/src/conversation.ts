@@ -99,7 +99,7 @@ conversationRouter.get(
     const feed = messageCol(uid).where("connectionId", "==", connection.id);
     let docs: FirebaseFirestore.QueryDocumentSnapshot[];
     try {
-      docs = (await feed.orderBy("time", "desc").limit(FEED_LIMIT).select("text", "fromUid", "fromName", "read", "time", "editedAt", "hidden", "inBox", "media", "link", "enc", "likes", "reactions").get()).docs;
+      docs = (await feed.orderBy("time", "desc").limit(FEED_LIMIT).select("text", "fromUid", "fromName", "read", "time", "editedAt", "version", "hidden", "inBox", "media", "link", "enc", "likes", "reactions").get()).docs;
     } catch (err) {
       if (!missingIndex(err)) throw err;
       console.warn("The index messages(connectionId, time) is not there yet: reading the whole feed", err); // works, only slower, until the index is built
@@ -108,7 +108,7 @@ conversationRouter.get(
     const messages: ChatMessage[] = docs
       .map((d) => {
         const m = d.data();
-        return { id: d.id, text: m.text as string, mine: m.fromUid === uid, ...(connection.group ? { fromUid: m.fromUid as string, fromName: (m.fromName as string | undefined) ?? "" } : {}), read: Boolean(m.read), time: iso(m.time), edited: Boolean(m.editedAt), hidden: Boolean(m.hidden), inBox: Boolean(m.inBox) || (!m.text && !m.media && !m.link), media: (m.media as MediaRef | undefined) ?? null, link: (m.link as MessageLink | undefined) ?? null, ...reactionsOf(m, uid), ...(m.enc ? { enc: m.enc as MessageEnc } : {}) };
+        return { id: d.id, text: m.text as string, mine: m.fromUid === uid, ...(connection.group ? { fromUid: m.fromUid as string, fromName: (m.fromName as string | undefined) ?? "" } : {}), read: Boolean(m.read), time: iso(m.time), edited: Boolean(m.editedAt), version: Number(m.version ?? 1), hidden: Boolean(m.hidden), inBox: Boolean(m.inBox) || (!m.text && !m.media && !m.link), media: (m.media as MediaRef | undefined) ?? null, link: (m.link as MessageLink | undefined) ?? null, ...reactionsOf(m, uid), ...(m.enc ? { enc: m.enc as MessageEnc } : {}) };
       })
       .sort((a, b) => (a.time ?? "").localeCompare(b.time ?? ""))
       .slice(-FEED_LIMIT);
@@ -236,7 +236,14 @@ conversationRouter.post(
     const notice = req.body?.notice === true; // a notice ("📦 In the safebox: …") is for the other people only: the sender keeps no copy of it in their own feed
     const poke = req.body?.poke === true; // "poke anyway": the friend is told with a sound even when they have me on their sleep list
     const muted = peerEntries.map((entry) => entry?.data()?.asleep === true && !poke); // one for each of the other people
-    const mine = media ? messageCol(token.uid).doc(media.objectId) : messageCol(token.uid).doc(); // a message with a file has the id of the file: that is how the receiver is let in
+    // a message with a file has the id of the file: that is how the receiver is let in. Any other message has the id its sender made (the device signs it inside the locked text, so a text
+    // cannot be shown as another message); one without an id (an older app) gets one here.
+    const given = req.body?.id;
+    if (!media && given !== undefined && !validMessageId(given)) {
+      res.status(400).json({ error: "The message id is not valid" });
+      return;
+    }
+    const mine = media ? messageCol(token.uid).doc(media.objectId) : given ? messageCol(token.uid).doc(given as string) : messageCol(token.uid).doc();
     const sentAt = Timestamp.now(); // known here, so the answer needs no second read of the message
     const common = {
       connectionId: connection.id,
@@ -247,11 +254,12 @@ conversationRouter.post(
       ...(media ? { media } : {}),
       ...(link ? { link } : {}),
       time: sentAt,
+      version: 1, // the text changes: 2, 3 ... (the same in every copy)
     };
     const batch = getFirestore().batch();
     // each copy says which circle it belongs to FOR ITS OWNER: mine in my circle, the friend's in theirs
     // a locked message keeps in each copy only that person's copies of the message key
-    if (!notice) batch.set(mine, { ...common, ...(locked ? { enc: wrapsFor(locked.enc, token.uid) } : {}), circleId: connection.circleId, read: true }); // my own message needs no reading
+    if (!notice) (media ? batch.set.bind(batch) : batch.create.bind(batch))(mine, { ...common, ...(locked ? { enc: wrapsFor(locked.enc, token.uid) } : {}), circleId: connection.circleId, read: true }); // my own message needs no reading
     for (const peer of connection.peers) {
       // the same message id in every copy
       // `create`: a copy that is already there (a file id used again after its sender deleted their own copy) is never replaced by a new message
@@ -272,7 +280,7 @@ conversationRouter.post(
       throw error;
     }
 
-    const created: ChatMessage = { id: mine.id, text, media, mine: true, read: true, time: iso(sentAt), edited: false, hidden: false, link, ...(locked ? { enc: wrapsFor(locked.enc, token.uid) } : {}) };
+    const created: ChatMessage = { id: mine.id, text, media, mine: true, read: true, time: iso(sentAt), edited: false, version: 1, hidden: false, link, ...(locked ? { enc: wrapsFor(locked.enc, token.uid) } : {}) };
     // wake the other person's devices (before the answer: the function may stop right after it)
     await Promise.all(connection.peers.map(async (peer, i) => {
       if (!muted[i]) await sendPush(peer.uid, { circleId: peer.circleId, id: `message-${mine.id}`, title: connection.group ? `${fromName} · ${connection.name}` : fromName, body: locked ? "🔒 New message" : text || mediaLabel(media!.kind), url: `/friends/${connection.id}`, kind: "message" });
@@ -340,6 +348,24 @@ conversationRouter.post(
   }),
 );
 
+/** The id a device makes for a new message: letters, digits, `-` and `_` (the ids of the server are 20 letters and digits). */
+function validMessageId(id: unknown): boolean {
+  return typeof id === "string" && /^[A-Za-z0-9_-]{16,40}$/.test(id);
+}
+
+/**
+ * The version a change of a text makes: one more than the message has. An app that signs the text says which version it signed (`asked`): when that is not
+ * the next one (another device changed the text meanwhile) nothing changes and the app is told (409) to read the message again. An older app says nothing.
+ */
+function nextVersion(current: number, asked: unknown, res: Response): number | null {
+  const next = current + 1;
+  if (asked !== undefined && asked !== next) {
+    res.status(409).json({ error: "The message was changed meanwhile", version: current });
+    return null;
+  }
+  return next;
+}
+
 /**
  * My message of this connection (both copies), or null after answering 404 / 403. With `allowMoved`, the note of a picture or video
  * that was moved to the safebox (`inBox`) counts as mine even when my friend sent it: it holds nothing any more, and either friend may remove it.
@@ -359,7 +385,7 @@ async function ownMessage(req: Request, res: Response, allowMoved = false) {
     return null;
   }
   const myEntry = (res.locals.circleRef as DocumentReference).collection(FRIENDS_SUBCOLLECTION).doc(connection.id);
-  return { mine, peers: connection.peers, theirs: connection.peers.map((peer) => ({ peer, ref: messageCol(peer.uid).doc(mine.id) })), peerEntries: connection.peers.map((peer) => peerEntryRef(connection, peer)), myEntry, media: (data.media as MediaRef | undefined) ?? null, hidden: Boolean(data.hidden), enc: (data.enc as MessageEnc | undefined) ?? null, };
+  return { mine, peers: connection.peers, theirs: connection.peers.map((peer) => ({ peer, ref: messageCol(peer.uid).doc(mine.id) })), peerEntries: connection.peers.map((peer) => peerEntryRef(connection, peer)), myEntry, media: (data.media as MediaRef | undefined) ?? null, hidden: Boolean(data.hidden), version: Number(data.version ?? 1), enc: (data.enc as MessageEnc | undefined) ?? null };
 }
 
 /** The ending of a file name (".jpg"), lower case; "" when there is none. */
@@ -431,15 +457,17 @@ conversationRouter.put(
         res.status(again.status).json({ error: again.error });
         return;
       }
+      const next = nextVersion(own.version, req.body?.version, res);
+      if (!next) return;
       const theirCopies = await Promise.all(own.theirs.map(async (their) => ({ ref: their.ref, copy: await their.ref.get() })));
       const batch = getFirestore().batch();
-      batch.update(own.mine, { text: again.text, enc: { ...own.enc, iv: again.iv }, editedAt: FieldValue.serverTimestamp() });
-      for (const { ref, copy } of theirCopies) if (copy.exists) batch.update(ref, { text: again.text, enc: { ...(copy.data()!.enc as MessageEnc), iv: again.iv }, editedAt: FieldValue.serverTimestamp() });
+      batch.update(own.mine, { text: again.text, enc: { ...own.enc, iv: again.iv }, editedAt: FieldValue.serverTimestamp(), version: next });
+      for (const { ref, copy } of theirCopies) if (copy.exists) batch.update(ref, { text: again.text, enc: { ...(copy.data()!.enc as MessageEnc), iv: again.iv }, editedAt: FieldValue.serverTimestamp(), version: next });
       for (const entry of own.peerEntries) await touchFeedIfExists(batch, entry);
       touchFeed(batch, own.myEntry); // my other devices reload the feed
       await batch.commit();
       const saved = (await own.mine.get()).data()!;
-      const edited: ChatMessage = { id: own.mine.id, text: again.text, media: own.media, mine: true, read: true, time: iso(saved.time), edited: true, hidden: own.hidden, link: null, enc: { ...own.enc, iv: again.iv } };
+      const edited: ChatMessage = { id: own.mine.id, text: again.text, media: own.media, mine: true, read: true, time: iso(saved.time), edited: true, version: next, hidden: own.hidden, link: null, enc: { ...own.enc, iv: again.iv } };
       res.json(edited);
       return;
     }
@@ -458,8 +486,10 @@ conversationRouter.put(
       res.status(400).json({ error: `A message can be at most ${MAX_MESSAGE_LENGTH} characters` });
       return;
     }
+    const next = nextVersion(own.version, req.body?.version, res);
+    if (!next) return;
     const link = locked ? null : await linkOf(text, uid);
-    const change = { text, editedAt: FieldValue.serverTimestamp(), link: link ?? FieldValue.delete() }; // the link follows the new text
+    const change = { text, editedAt: FieldValue.serverTimestamp(), version: next, link: link ?? FieldValue.delete() }; // the link follows the new text
     const enc = (person: string) => (locked ? wrapsFor(locked.enc, person) : FieldValue.delete()); // each copy keeps only its owner's copies of the key
     const batch = getFirestore().batch();
     batch.update(own.mine, { ...change, enc: enc(uid) });
@@ -468,7 +498,7 @@ conversationRouter.put(
     touchFeed(batch, own.myEntry); // my other devices reload the feed
     await batch.commit();
     const saved = (await own.mine.get()).data()!;
-    const edited: ChatMessage = { id: own.mine.id, text, media: own.media, mine: true, read: true, time: iso(saved.time), edited: true, hidden: own.hidden, link, ...(locked ? { enc: wrapsFor(locked.enc, uid) } : {}) };
+    const edited: ChatMessage = { id: own.mine.id, text, media: own.media, mine: true, read: true, time: iso(saved.time), edited: true, version: next, hidden: own.hidden, link, ...(locked ? { enc: wrapsFor(locked.enc, uid) } : {}) };
     res.json(edited);
   }),
 );

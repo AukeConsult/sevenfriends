@@ -60,5 +60,11 @@
   "scene8b": "Your timesheet is overdue",
   "scene8c": "Re: Fwd: Fwd: Q3 report",
   "scene8m": "Lisa: Need a hand with the deck?",
-  "reserve": "We reserve the right to limit the number of users of this app."
+  "reserve": "We reserve the right to limit the number of users of this app.",
+  "circlesTitle": "Four circles",
+  "circlesText": "There are four circles: Friends, Work, Buddies and Family. Each circle has its own seven seats, its own chats and its own safebox, so what you share in one never shows up in another. The same person can be in more than one circle, and you switch between your circles whenever you like.",
+  "circlesFriends": "Friends: the people closest to you.",
+  "circlesWork": "Work: the people you work with.",
+  "circlesBuddies": "Buddies: your mates and the people you share a hobby with.",
+  "circlesFamily": "Family: the people at home and your relatives."
 }

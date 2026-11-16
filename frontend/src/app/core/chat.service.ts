@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { ChatMessage, Conversation, MessageDeleteCriteria, MessageDeleteResult, MessageEncMedia, MessageLink, NewMedia, ReactionId } from '../models';
 import { ApiError, ApiService } from './api.service';
 import { FriendsService } from './friends.service';
-import { ChatItem, MessageLockService, SealedText } from './message-lock.service';
+import { ChatItem, MessageLockService, SealedText, TextStamp, newMessageId } from './message-lock.service';
 import { MessagesService } from './messages.service';
 
 /** The message feed of one connection (the friend id is the connection id). */
@@ -30,9 +30,9 @@ export class ChatService {
    * Sends a text or a change of one: locked on this device when both of us have a key and locking is on (the server then never sees the text), plain otherwise.
    * If a key was added or retired while it was being locked the server says so (409) and it is locked again with the new list of keys, once.
    */
-  private async lockedRequest(friendId: string, text: string, force: boolean, send: (body: { text: string; enc?: SealedText['enc'] }) => Promise<ChatMessage>): Promise<ChatItem> {
+  private async lockedRequest(friendId: string, text: string, force: boolean, stamp: TextStamp, send: (body: { text: string; enc?: SealedText['enc'] }) => Promise<ChatMessage>): Promise<ChatItem> {
     for (let attempt = 0; ; attempt++) {
-      const sealed = await this.lock.seal(friendId, text, force, attempt > 0); // the second try (after a 409: the keys changed) reads them again
+      const sealed = await this.lock.seal(friendId, text, stamp, force, attempt > 0); // the second try (after a 409: the keys changed) reads them again
       try {
         return await this.lock.open(friendId, await send(sealed ?? { text }));
       } catch (err) {
@@ -43,7 +43,8 @@ export class ChatService {
 
   /** Sends a text message, locked on this device when both of us have a key and locking is on, plain otherwise. */
   send(friendId: string, text: string, poke = false, notice = false): Promise<ChatItem> {
-    return this.lockedRequest(friendId, text, false, (body) => this.api.request<ChatMessage>(this.base(friendId), { method: 'POST', body: JSON.stringify({ ...body, ...(poke ? { poke } : {}), ...(notice ? { notice } : {}) }) }));
+    const stamp = { id: newMessageId(), version: 1 }; // the same id for every try: a try that reached the server is not sent twice (409)
+    return this.lockedRequest(friendId, text, false, stamp, (body) => this.api.request<ChatMessage>(this.base(friendId), { method: 'POST', body: JSON.stringify({ ...body, id: stamp.id, ...(poke ? { poke } : {}), ...(notice ? { notice } : {}) }) }));
   }
 
   /**
@@ -53,8 +54,9 @@ export class ChatService {
   async sendMedia(friendId: string, text: string, media: NewMedia, locked?: { key: CryptoKey; media: MessageEncMedia }, poke = false): Promise<ChatItem> {
     const post = (body: object) => this.api.request<ChatMessage>(this.base(friendId), { method: 'POST', body: JSON.stringify({ ...body, media, ...(poke ? { poke } : {}) }) });
     if (!locked) return this.lock.open(friendId, await post({ text }));
+    const stamp = { id: media.objectId, version: 1 }; // a message with a file has the id of the file
     for (let attempt = 0; ; attempt++) {
-      const sealed = await this.lock.sealWith(friendId, locked.key, text, locked.media);
+      const sealed = await this.lock.sealWith(friendId, locked.key, text, locked.media, stamp);
       try {
         return await this.lock.open(friendId, await post(sealed));
       } catch (err) {
@@ -73,7 +75,8 @@ export class ChatService {
       const again = await this.lock.reseal(friendId, existing, text);
       return this.lock.open(friendId, await this.api.request<ChatMessage>(url, { method: 'PUT', body: JSON.stringify(again) }));
     }
-    return this.lockedRequest(friendId, text, false, (body) => this.api.request<ChatMessage>(url, { method: 'PUT', body: JSON.stringify(body) }));
+    const stamp = { id: messageId, version: (existing?.version ?? 1) + 1 };
+    return this.lockedRequest(friendId, text, false, stamp, (body) => this.api.request<ChatMessage>(url, { method: 'PUT', body: JSON.stringify({ ...body, version: stamp.version }) }));
   }
 
   /** Hides / shows a picture or video in my feed (kept on my copy of the message, so every device of mine shows it the same). */

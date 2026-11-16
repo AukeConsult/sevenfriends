@@ -60,5 +60,11 @@
   "scene8b": "Tuntikirjauksesi on myöhässä",
   "scene8c": "VS: VL: VL: Q3-raportti",
   "scene8m": "Lisa: Tarvitsetko apua esityksen kanssa?",
-  "reserve": "Pidätämme oikeuden rajoittaa tämän sovelluksen käyttäjien määrää."
+  "reserve": "Pidätämme oikeuden rajoittaa tämän sovelluksen käyttäjien määrää.",
+  "circlesTitle": "Neljä piiriä",
+  "circlesText": "Piirejä on neljä: Ystävät, Työ, Kaverit ja Perhe. Jokaisella piirillä on omat seitsemän paikkansa, omat keskustelunsa ja oma kassakaappinsa, joten mitä jaat yhdessä, ei koskaan näy toisessa. Sama ihminen voi olla useammassa piirissä, ja vaihdat piiristä toiseen milloin haluat.",
+  "circlesFriends": "Ystävät: sinua lähimpänä olevat ihmiset.",
+  "circlesWork": "Työ: ihmiset, joiden kanssa teet työtä.",
+  "circlesBuddies": "Kaverit: kaverisi ja ihmiset, joiden kanssa jaat harrastuksen.",
+  "circlesFamily": "Perhe: kotiväki ja sukulaisesi."
 }

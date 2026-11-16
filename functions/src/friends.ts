@@ -592,11 +592,15 @@ friendsRouter.delete(
 
     // The files of the conversation go FIRST, before the transaction: if the database delete fails they are wiped anyway.
     const before = (await ref.get()).data();
-    if (before) {
-      const people = before.linkedUid ? [uid, before.linkedUid as string] : [uid];
-      const feeds = await Promise.all(people.map((p) => messageCol(p).where("connectionId", "==", id).select("media").get()));
-      await deleteObjects(feeds.flatMap((feed) => feed.docs.flatMap((d) => (d.data().media as MediaRef | undefined) ?? [])));
+    if (!before) {
+      // I hold no entry for this id (a group I left or was removed from, or an id that was never mine): nothing here is mine to remove, and the safebox behind
+      // the id belongs to the people still in it. The same answer as for a deleted friend, so the route does not tell whether the id exists.
+      res.status(204).end();
+      return;
     }
+    const people = before.linkedUid ? [uid, before.linkedUid as string] : [uid];
+    const feeds = await Promise.all(people.map((p) => messageCol(p).where("connectionId", "==", id).select("media").get()));
+    await deleteObjects(feeds.flatMap((feed) => feed.docs.flatMap((d) => (d.data().media as MediaRef | undefined) ?? [])));
 
     let endedWith: string | null = null; // a confirmed friend, who is told
     let files: MediaRef[] = []; // files of messages that arrived while the transaction was being prepared (a second sweep)

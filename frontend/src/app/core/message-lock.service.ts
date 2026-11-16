@@ -35,6 +35,21 @@ type OwnKey = { uid: string; keyId: string; privateKey: CryptoKey; signKey?: Cry
 /** how long the keys of a conversation are kept before a send reads them again */
 const KEYS_FRESH_MS = 5 * 60_000;
 
+/** how far the time a device wrote into a signed text may be from the time the server stored the message (a clock that is wrong by hours still passes; days do not) */
+const SIGNED_TIME_GAP_MS = 24 * 3_600_000;
+
+/** A new id for a message: 20 letters and digits, made on the device (the server uses it as the id of every copy, and the signature covers it). */
+export function newMessageId(): string {
+  const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  return Array.from(crypto.getRandomValues(new Uint8Array(20)), (b) => letters[b % letters.length]).join('');
+}
+
+/** Which message a text is, and which version of it: what the signature of a text covers besides the words. */
+export interface TextStamp {
+  id: string;
+  version: number;
+}
+
 /** This device's key is not in my own device list yet: nothing can be sent from here until another device of mine has approved it (the page shows a way to the recovery page). */
 export class NotApprovedError extends Error {}
 
@@ -115,11 +130,22 @@ export class MessageLockService {
    * The text as it is locked: signed by this device (the envelope of `SIGNED_MARK`, see models/shared/signed.ts), or, on an older lock without a signing key, as it is
    * (a text that happens to start with the mark loses it, so it is not read as an envelope).
    */
-  private async signed(friendId: string, text: string, mine: { uid: string; keyId: string; signKey?: CryptoKey }): Promise<string> {
+  private async signed(friendId: string, text: string, mine: { uid: string; keyId: string; signKey?: CryptoKey }, stamp: TextStamp): Promise<string> {
     if (!mine.signKey) return text.startsWith(SIGNED_MARK) ? text.replace(/^\u0001+/, '') : text;
-    const body = { a: mine.uid, c: friendId, t: new Date().toISOString(), k: mine.keyId, x: text };
+    // the signature also covers the id of the message and its version: the text cannot be shown as another message, or an older text put back
+    const body = { v: 2 as const, a: mine.uid, c: friendId, i: stamp.id, n: stamp.version, t: new Date().toISOString(), k: mine.keyId, x: text };
     const signature = await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, mine.signKey, new TextEncoder().encode(signedTextBytes(body)));
-    return packSignedText({ v: 1, ...body, s: btoa(String.fromCharCode(...new Uint8Array(signature))) } satisfies SignedText);
+    return packSignedText({ ...body, s: btoa(String.fromCharCode(...new Uint8Array(signature))) } satisfies SignedText);
+  }
+
+  /** v2 text: it is THIS message (the id), the version the server holds, and written about when the server stored it. */
+  private stampHolds(message: ChatMessage, envelope: SignedText): boolean {
+    if (envelope.v !== 2) return true; // written before the id and the version were signed
+    if (envelope.i !== message.id || envelope.n !== (message.version ?? 1)) return false;
+    const wrote = Date.parse(envelope.t);
+    const stored = message.time ? Date.parse(message.time) : NaN;
+    if (Number.isFinite(wrote) && Number.isFinite(stored) && (envelope.n === 1 ? Math.abs(wrote - stored) > SIGNED_TIME_GAP_MS : wrote < stored - SIGNED_TIME_GAP_MS)) return false;
+    return true;
   }
 
   /** Reads what a locked text says: its real text and whether the signature holds ('ok'), fails ('bad'), or is not there / could not be checked (undefined). */
@@ -149,24 +175,24 @@ export class MessageLockService {
         holds = false;
       }
     }
-    return { text: envelope.x, signature: holds ? 'ok' : 'bad' };
+    return { text: envelope.x, signature: holds && this.stampHolds(message, envelope) ? 'ok' : 'bad' };
   }
 
   /**
    * The text locked for me and my friend, or null when it goes as plain text: the text is empty, locking is switched off, or one of us has no key
    * (mine counts only on this device). With `force` (changing a message that is locked) it is never null: it throws when the message cannot be locked.
    */
-  async seal(friendId: string, text: string, force = false, fresh = false): Promise<SealedText | null> {
+  async seal(friendId: string, text: string, stamp: TextStamp, force = false, fresh = false): Promise<SealedText | null> {
     if (!text || (!force && this.plain())) return null;
     const fromCache = !fresh && Date.now() - (this.keysAt.get(friendId)?.at ?? 0) < KEYS_FRESH_MS;
     const [raw, mine] = await Promise.all([this.keysOf(friendId, fresh), this.myKey()]);
     const keys = mine ? await this.trusted(friendId, mine, raw) : raw;
     if (!mine || !keys.mine.some((k) => k.id === mine.keyId) || !keys.friend.length) {
-      if (fromCache && !force) return this.seal(friendId, text, force, true); // what was known said "plain": read the keys again before sending it so (a key may have been made a moment ago)
+      if (fromCache && !force) return this.seal(friendId, text, stamp, force, true); // what was known said "plain": read the keys again before sending it so (a key may have been made a moment ago)
       if (force) throw new Error(tr('core.thisMessageIsLocked', 'This message is locked, so the new text must be locked too. You and your friend both need privacy lock turned on.'));
       return null;
     }
-    return sealText(friendId, await this.signed(friendId, text, mine), recipientsOf(mine.uid, keys));
+    return sealText(friendId, await this.signed(friendId, text, mine, stamp), recipientsOf(mine.uid, keys));
   }
 
   /**
@@ -181,18 +207,19 @@ export class MessageLockService {
   }
 
   /** The caption (may be empty) locked with the key the file was locked with, and the copies of the key for the keys in use now. Throws when a key is missing now. */
-  async sealWith(friendId: string, key: CryptoKey, text: string, media: MessageEncMedia): Promise<SealedText> {
+  async sealWith(friendId: string, key: CryptoKey, text: string, media: MessageEncMedia, stamp: TextStamp): Promise<SealedText> {
     const [raw, mine] = await Promise.all([this.safebox.keys(friendId), this.myKey()]);
     const keys = mine ? await this.trusted(friendId, mine, raw) : raw;
     if (!mine || !keys.mine.some((k) => k.id === mine.keyId) || !keys.friend.length) throw new Error(tr('core.thisMessageIsLocked2', 'This message is locked, so you and your friend both need privacy lock turned on. Try again in a moment.'));
-    return sealTextWith(friendId, key, await this.signed(friendId, text, mine), recipientsOf(mine.uid, keys), media);
+    return sealTextWith(friendId, key, await this.signed(friendId, text, mine, stamp), recipientsOf(mine.uid, keys), media);
   }
 
   /** A new text for a message that is locked: locked with the key the message already has, so the same keys (and nobody else) can read it. Throws when this device cannot open the message. */
-  async reseal(friendId: string, message: ChatItem, text: string): Promise<{ text: string; iv: string }> {
+  async reseal(friendId: string, message: ChatItem, text: string): Promise<{ text: string; iv: string; version: number }> {
     const mine = await this.myKey();
     if (!message.enc || !mine) throw new Error(tr('core.thisMessageIsLocked3', 'This message is locked, and this device cannot open it. Get your old messages back under Settings → Privacy lock.'));
-    return resealText(friendId, message.enc, await this.signed(friendId, text, mine), mine.keyId, mine.privateKey);
+    const version = (message.version ?? 1) + 1; // the next version of this message: signed, and the server must find it is the next one too
+    return { ...(await resealText(friendId, message.enc, await this.signed(friendId, text, mine, { id: message.id, version }), mine.keyId, mine.privateKey)), version };
   }
 
   /** A message of the feed with its real text (and the real type and size of its file) when it was locked and this device can open it. */

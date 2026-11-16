@@ -83,7 +83,7 @@ Other dimensions: `--sf-touch` 2.75rem (min tap target), `--sf-gap`, `--sf-radiu
 Add a new size or breakpoint override in `styles.scss` first, then use the variable.
 
 ## Words in the app (one word per idea)
-Use plain words and ONE word for each idea: **seat** (one of the 7 places), **sleep** (a friend who keeps the chat but gives up the seat; never "silent"), **friend**, **safebox**, **poke** (makes a friend's phone ring even when you sleep on their list). Do not show **circle** to users (it is an internal app type), nor "connection" or "contact" for a friend. A new word is explained once, in one line, where it first appears.
+Use plain words and ONE word for each idea: **seat** (one of the 7 places), **sleep** (a friend who keeps the chat but gives up the seat; never "silent"), **friend**, **safebox**, **poke** (makes a friend's phone ring even when you sleep on their list). Do not show **circle** to users (it is an internal app type), EXCEPT in the welcome page chapter "Four circles" (`welcome/`), which explains the four circles (Friends, Work, Buddies, Family) in the words the app uses for them, nor "connection" or "contact" for a friend. A new word is explained once, in one line, where it first appears.
 
 ## Conventions
 - **All interfaces and types live in a `models` folder**, never inside a service, component or router file. Import them from `./models` (backend) / `../models` (frontend).

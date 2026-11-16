@@ -60,5 +60,11 @@
   "scene8b": "Timelisten din er forsinket",
   "scene8c": "SV: VS: VS: Q3-rapport",
   "scene8m": "Lisa: Trenger du hjelp med presentasjonen?",
-  "reserve": "Vi forbeholder oss retten til å begrense antall brukere av denne appen."
+  "reserve": "Vi forbeholder oss retten til å begrense antall brukere av denne appen.",
+  "circlesTitle": "Fire kretser",
+  "circlesText": "Det finnes fire kretser: Venner, Jobb, Kompiser og Familie. Hver krets har sine egne syv plasser, sine egne samtaler og sin egen safe, så det du deler i én, dukker aldri opp i en annen. Den samme personen kan være i mer enn én krets, og du bytter mellom kretsene dine når du vil.",
+  "circlesFriends": "Venner: menneskene som står deg nærmest.",
+  "circlesWork": "Jobb: menneskene du jobber med.",
+  "circlesBuddies": "Kompiser: kompisene dine og de du deler en hobby med.",
+  "circlesFamily": "Familie: de hjemme og slektningene dine."
 }

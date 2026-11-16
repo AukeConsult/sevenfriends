@@ -60,5 +60,11 @@
   "scene8b": "Lembar waktumu terlambat",
   "scene8c": "Bls: Tr: Tr: Laporan Q3",
   "scene8m": "Lisa: Perlu bantuan dengan presentasinya?",
-  "reserve": "Kami berhak membatasi jumlah pengguna aplikasi ini."
+  "reserve": "Kami berhak membatasi jumlah pengguna aplikasi ini.",
+  "circlesTitle": "Empat lingkaran",
+  "circlesText": "Ada empat lingkaran: Teman, Kerja, Kawan, dan Keluarga. Setiap lingkaran punya tujuh tempat sendiri, obrolan sendiri, dan brankas sendiri, jadi apa yang kamu bagikan di satu lingkaran tidak pernah muncul di lingkaran lain. Orang yang sama bisa ada di lebih dari satu lingkaran, dan kamu berpindah antar lingkaran kapan saja.",
+  "circlesFriends": "Teman: orang-orang yang paling dekat denganmu.",
+  "circlesWork": "Kerja: orang-orang yang bekerja denganmu.",
+  "circlesBuddies": "Kawan: kawan-kawanmu dan orang yang punya hobi yang sama denganmu.",
+  "circlesFamily": "Keluarga: orang di rumah dan kerabatmu."
 }

@@ -60,5 +60,11 @@
   "scene8b": "Din timeseddel er forsinket",
   "scene8c": "SV: VS: VS: Q3-rapport",
   "scene8m": "Lisa: Brug for hjælp til præsentationen?",
-  "reserve": "Vi forbeholder os retten til at begrænse antallet af brugere af denne app."
+  "reserve": "Vi forbeholder os retten til at begrænse antallet af brugere af denne app.",
+  "circlesTitle": "Fire kredse",
+  "circlesText": "Der er fire kredse: Venner, Arbejde, Kammerater og Familie. Hver kreds har sine egne syv pladser, sine egne chats og sit eget pengeskab, så det, du deler i én, aldrig dukker op i en anden. Den samme person kan være i mere end én kreds, og du skifter mellem dine kredse, når du vil.",
+  "circlesFriends": "Venner: dem, der står dig nærmest.",
+  "circlesWork": "Arbejde: dem, du arbejder sammen med.",
+  "circlesBuddies": "Kammerater: dine kammerater og dem, du deler en hobby med.",
+  "circlesFamily": "Familie: dem derhjemme og dine slægtninge."
 }

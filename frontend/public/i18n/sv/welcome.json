@@ -60,5 +60,11 @@
   "scene8b": "Din tidrapport är försenad",
   "scene8c": "SV: VB: VB: Q3-rapport",
   "scene8m": "Lisa: Behöver du hjälp med presentationen?",
-  "reserve": "Vi förbehåller oss rätten att begränsa antalet användare av den här appen."
+  "reserve": "Vi förbehåller oss rätten att begränsa antalet användare av den här appen.",
+  "circlesTitle": "Fyra kretsar",
+  "circlesText": "Det finns fyra kretsar: Vänner, Jobb, Kompisar och Familj. Varje krets har sina egna sju platser, sina egna chattar och sitt eget kassaskåp, så det du delar i en dyker aldrig upp i en annan. Samma person kan finnas i mer än en krets, och du byter mellan dina kretsar när du vill.",
+  "circlesFriends": "Vänner: de som står dig närmast.",
+  "circlesWork": "Jobb: de du arbetar med.",
+  "circlesBuddies": "Kompisar: dina kompisar och de du delar ett intresse med.",
+  "circlesFamily": "Familj: de hemma och dina släktingar."
 }

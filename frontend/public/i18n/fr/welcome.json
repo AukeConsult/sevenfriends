@@ -60,5 +60,11 @@
   "scene8b": "Votre feuille d’heures est en retard",
   "scene8c": "RE : TR : TR : Rapport T3",
   "scene8m": "Lisa : Besoin d’un coup de main pour la présentation ?",
-  "reserve": "Nous nous réservons le droit de limiter le nombre d’utilisateurs de cette appli."
+  "reserve": "Nous nous réservons le droit de limiter le nombre d’utilisateurs de cette appli.",
+  "circlesTitle": "Quatre cercles",
+  "circlesText": "Il y a quatre cercles : Amis, Travail, Potes et Famille. Chaque cercle a ses propres sept places, ses propres discussions et son propre coffre, donc ce que vous partagez dans l'un n'apparaît jamais dans un autre. Une même personne peut être dans plus d'un cercle, et vous passez d'un cercle à l'autre quand vous voulez.",
+  "circlesFriends": "Amis : les personnes les plus proches de vous.",
+  "circlesWork": "Travail : les personnes avec qui vous travaillez.",
+  "circlesBuddies": "Potes : vos potes et ceux avec qui vous partagez un loisir.",
+  "circlesFamily": "Famille : les gens de la maison et vos proches."
 }

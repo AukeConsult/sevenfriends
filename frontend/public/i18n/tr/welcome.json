@@ -60,5 +60,11 @@
   "scene8b": "Zaman çizelgen gecikti",
   "scene8c": "Ynt: İlt: İlt: 3. Çeyrek raporu",
   "scene8m": "Lisa: Sunum için yardım lazım mı?",
-  "reserve": "Bu uygulamanın kullanıcı sayısını sınırlama hakkımızı saklı tutarız."
+  "reserve": "Bu uygulamanın kullanıcı sayısını sınırlama hakkımızı saklı tutarız.",
+  "circlesTitle": "Dört çevre",
+  "circlesText": "Dört çevre var: Arkadaşlar, İş, Dostlar ve Aile. Her çevrenin kendi yedi yeri, kendi sohbetleri ve kendi kasası vardır; bu yüzden birinde paylaştığın şey asla diğerinde görünmez. Aynı kişi birden fazla çevrede olabilir ve çevrelerin arasında istediğin zaman geçiş yaparsın.",
+  "circlesFriends": "Arkadaşlar: sana en yakın insanlar.",
+  "circlesWork": "İş: birlikte çalıştığın insanlar.",
+  "circlesBuddies": "Dostlar: dostların ve seninle bir hobiyi paylaşanlar.",
+  "circlesFamily": "Aile: evdekiler ve akrabaların."
 }

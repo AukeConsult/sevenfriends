@@ -105,6 +105,19 @@ describe("leaving a group (deleting it from my list)", () => {
     await assertConsistent();
   });
 
+  it("is not a way to wipe the safebox of a group I left, or was never in", async () => {
+    const f1 = await connect(u(0), u(1));
+    const made = (await makeGroup(u(0), "Keep").expect(201)).body;
+    await u(0).raw("post", `/circles/default/friends/${made.id}/group/members`, { friendId: f1 }).expect(200);
+    const items = getFirestore().collection("safebox").doc(made.id).collection("items");
+    await items.doc("keep-me").set({ name: "keep", bytes: 1 });
+    await u(1).remove(made.id).expect(204); // u(1) leaves: their entry is gone, they still know the id
+    await u(1).remove(made.id).expect(204); // ... and call the delete again
+    await u(2).remove(made.id).expect(204); // somebody who was never in the group
+    expect((await items.get()).size).toBe(1); // the safebox of the member who stays is untouched
+    expect(await entryOf(u(0), made.id)).toMatchObject({ id: made.id, group: true });
+  });
+
   it("frees the seat", async () => {
     await fillCircle(u(0), MAX_FRIENDS - 1);
     const made = (await makeGroup(u(0), "Seat")).body;

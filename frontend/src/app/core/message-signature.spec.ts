@@ -59,17 +59,18 @@ describe('the check of who wrote a message', () => {
   };
 
   /** A message of mine, locked for me and my friend, whose text carries a signed envelope made by `signer` (the envelope can be altered). */
-  const message = async (text: string, options: { signer?: Device; writer?: string; connection?: string; tamper?: boolean; plain?: boolean; time?: string } = {}): Promise<ChatMessage> => {
+  const message = async (text: string, options: { signer?: Device; writer?: string; connection?: string; tamper?: boolean; plain?: boolean; time?: string; stamp?: { id: string; n: number }; storedVersion?: number; wrote?: string; messageId?: string } = {}): Promise<ChatMessage> => {
     const connection = 'friend1';
     let inside = text;
     if (!options.plain) {
       const signer = options.signer ?? me;
-      const body = { a: options.writer ?? 'me', c: options.connection ?? connection, t: '2026-11-15T12:00:00.000Z', k: signer.published.id, x: text };
-      const signature = await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, signer.stored.signKey!.privateKey, new TextEncoder().encode(signedTextBytes(body)));
-      inside = packSignedText({ v: 1, ...body, x: options.tamper ? text + ' (changed)' : text, s: btoa(String.fromCharCode(...new Uint8Array(signature))) });
+      const body = { a: options.writer ?? 'me', c: options.connection ?? connection, t: options.wrote ?? '2026-11-15T12:00:00.000Z', k: signer.published.id, x: text };
+      const stamped = options.stamp ? { v: 2 as const, i: options.stamp.id, n: options.stamp.n, ...body } : { v: 1 as const, ...body };
+      const signature = await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, signer.stored.signKey!.privateKey, new TextEncoder().encode(signedTextBytes(stamped)));
+      inside = packSignedText({ ...stamped, x: options.tamper ? text + ' (changed)' : text, s: btoa(String.fromCharCode(...new Uint8Array(signature))) });
     }
     const sealed = await sealText(connection, inside, [{ uid: 'me', keys: [me.published] }, { uid: 'friend', keys: [friend.published] }]);
-    return { id: 'm1', text: sealed.text, enc: sealed.enc, media: null, mine: true, read: true, time: options.time ?? '2026-11-15T12:30:00.000Z', edited: false, hidden: false, link: null } as ChatMessage;
+    return { id: options.messageId ?? 'm1', text: sealed.text, enc: sealed.enc, media: null, mine: true, read: true, time: options.time ?? '2026-11-15T12:30:00.000Z', edited: false, hidden: false, link: null, ...(options.storedVersion ? { version: options.storedVersion } : {}) } as ChatMessage;
   };
   const signatureOf = async (m: ChatMessage) => {
     const service = start();
@@ -127,6 +128,41 @@ describe('the check of who wrote a message', () => {
       lists = list('ok', [me], { since: '2026-11-15T12:00:00.000Z' });
       expect(await signatureOf(await message('stripped', { plain: true, time: '2026-11-15T13:00:00.000Z' }))).toBe('bad');
       expect(await signatureOf(await message('from before', { plain: true, time: '2026-11-14T13:00:00.000Z' }))).toBeUndefined();
+    });
+  });
+
+  describe('the id and the version of a message are signed (v2)', () => {
+    const v2 = (n: number, extra: Parameters<typeof message>[1] = {}) => ({ stamp: { id: 'm1', n }, storedVersion: n, ...extra });
+
+    it('a text that carries its own id and version: ok', async () => {
+      lists = list('ok', [me]);
+      expect(await signatureOf(await message('hello', v2(1)))).toBe('ok');
+    });
+
+    it('the same signed text shown as another message: bad', async () => {
+      lists = list('ok', [me]);
+      expect(await signatureOf(await message('hello', v2(1, { messageId: 'another-message' })))).toBe('bad');
+    });
+
+    it('the server says another version than the one that was signed: bad', async () => {
+      lists = list('ok', [me]);
+      expect(await signatureOf(await message('hello', { stamp: { id: 'm1', n: 1 }, storedVersion: 2 }))).toBe('bad');
+    });
+
+    it('written days away from the time the server stored it: bad; hours away: fine', async () => {
+      lists = list('ok', [me]);
+      expect(await signatureOf(await message('late', v2(1, { wrote: '2026-11-10T12:00:00.000Z' })))).toBe('bad');
+      expect(await signatureOf(await message('clock', v2(1, { messageId: 'm1', wrote: '2026-11-15T08:00:00.000Z' })))).toBe('ok');
+    });
+
+    it('a changed text (version 2) may be written long after the message was sent', async () => {
+      lists = list('ok', [me]);
+      expect(await signatureOf(await message('edited', v2(2, { wrote: '2026-12-20T12:00:00.000Z' })))).toBe('ok');
+    });
+
+    it('a text from before the id was signed (v1) is judged as before', async () => {
+      lists = list('ok', [me]);
+      expect(await signatureOf(await message('old', { messageId: 'whatever' }))).toBe('ok');
     });
   });
 

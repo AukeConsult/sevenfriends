@@ -237,3 +237,47 @@ describe("react to a message", () => {
     await u(2).call("put", `${url(id, m)}/reaction`, { reaction: "love" }).expect(404);
   });
 });
+
+describe("the id and the version of a message", () => {
+  const post = (user: User, id: string, body: object) => user.call("post", `/circles/default/friends/${id}/messages`, body);
+  const copy = async (uid: string, messageId: string) => (await getFirestore().collection("user-account").doc(uid).collection("messages").doc(messageId).get()).data();
+
+  it("uses the id the sender made for every copy, and starts at version 1", async () => {
+    const id = await connect(u(0), u(1));
+    const made = "AbCdEfGhIjKlMnOpQrSt";
+    const sent = (await post(u(0), id, { text: "hello", id: made }).expect(201)).body;
+    expect(sent).toMatchObject({ id: made, version: 1 });
+    expect((await copy(u(0).p.uid, made))?.version).toBe(1);
+    expect((await copy(u(1).p.uid, made))?.version).toBe(1);
+    expect((await feedOf(u(1), id))[0]).toMatchObject({ id: made });
+  });
+
+  it("refuses an id that is not valid, and an id that is used already", async () => {
+    const id = await connect(u(0), u(1));
+    await post(u(0), id, { text: "x", id: "short" }).expect(400);
+    await post(u(0), id, { text: "x", id: "has spaces and more!!" }).expect(400);
+    const made = "ZyXwVuTsRqPoNmLkJiHg";
+    await post(u(0), id, { text: "one", id: made }).expect(201);
+    await post(u(0), id, { text: "two", id: made }).expect(409);
+    expect((await feedOf(u(0), id)).map((m) => m.text)).toEqual(["one"]);
+  });
+
+  it("a message sent without an id (an older app) still gets one", async () => {
+    const id = await connect(u(0), u(1));
+    const sent = (await post(u(0), id, { text: "old app" }).expect(201)).body;
+    expect(sent.id).toMatch(/^[A-Za-z0-9]+$/); // the database makes it (a short one in the fake)
+  });
+
+  it("an edit makes the next version in every copy; a version that is not the next one is refused", async () => {
+    const id = await connect(u(0), u(1));
+    const m = await sendOne(u(0), id, "v1");
+    expect((await u(0).call("put", url(id, m), { text: "v2", version: 2 }).expect(200)).body.version).toBe(2);
+    expect((await copy(u(1).p.uid, m))?.version).toBe(2);
+    const stale = await u(0).call("put", url(id, m), { text: "again v2", version: 2 });
+    expect(stale.status).toBe(409);
+    expect(stale.body.version).toBe(2);
+    expect((await feedOf(u(1), id))[0]).toMatchObject({ text: "v2" });
+    expect((await u(0).call("put", url(id, m), { text: "v3", version: 3 }).expect(200)).body.version).toBe(3);
+    expect((await u(0).call("put", url(id, m), { text: "no version said" }).expect(200)).body.version).toBe(4); // an older app
+  });
+});

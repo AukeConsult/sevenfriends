@@ -60,5 +60,11 @@
   "scene8b": "Twój arkusz czasu jest spóźniony",
   "scene8c": "RE: FW: FW: Raport Q3",
   "scene8m": "Lisa: Potrzebujesz pomocy z prezentacją?",
-  "reserve": "Zastrzegamy sobie prawo do ograniczenia liczby użytkowników tej aplikacji."
+  "reserve": "Zastrzegamy sobie prawo do ograniczenia liczby użytkowników tej aplikacji.",
+  "circlesTitle": "Cztery kręgi",
+  "circlesText": "Są cztery kręgi: Przyjaciele, Praca, Kumple i Rodzina. Każdy krąg ma własne siedem miejsc, własne czaty i własny sejf, więc to, co udostępniasz w jednym, nigdy nie pojawia się w innym. Ta sama osoba może być w więcej niż jednym kręgu, a między swoimi kręgami przełączasz się, kiedy chcesz.",
+  "circlesFriends": "Przyjaciele: osoby, które są ci najbliższe.",
+  "circlesWork": "Praca: osoby, z którymi pracujesz.",
+  "circlesBuddies": "Kumple: twoi kumple i ludzie, z którymi dzielisz hobby.",
+  "circlesFamily": "Rodzina: domownicy i krewni."
 }

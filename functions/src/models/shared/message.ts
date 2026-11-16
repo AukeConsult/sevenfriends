@@ -73,6 +73,8 @@ export interface ChatMessage {
   fromName?: string;
   /** true = the text was changed after it was sent */
   edited: boolean;
+  /** the version of the text: 1 when it was sent, one more with every change (the same in every copy; a message from before this has none = 1) */
+  version?: number;
   /** true = I hid the picture / video in my feed (my copy only: the friend's feed is not affected) */
   hidden: boolean;
   /** true = the picture or video of this message was moved to the safebox: the message stays and says so, the file is no longer here */

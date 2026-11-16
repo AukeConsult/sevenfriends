@@ -60,5 +60,11 @@
   "scene8b": "Tu parte de horas está atrasado",
   "scene8c": "RE: RV: RV: Informe del T3",
   "scene8m": "Lisa: ¿Te echo una mano con la presentación?",
-  "reserve": "Nos reservamos el derecho de limitar el número de usuarios de esta app."
+  "reserve": "Nos reservamos el derecho de limitar el número de usuarios de esta app.",
+  "circlesTitle": "Cuatro círculos",
+  "circlesText": "Hay cuatro círculos: Amigos, Trabajo, Colegas y Familia. Cada círculo tiene sus propias siete plazas, sus propios chats y su propia caja fuerte, así que lo que compartes en uno nunca aparece en otro. Una misma persona puede estar en más de un círculo, y cambias entre tus círculos cuando quieras.",
+  "circlesFriends": "Amigos: las personas más cercanas a ti.",
+  "circlesWork": "Trabajo: las personas con las que trabajas.",
+  "circlesBuddies": "Colegas: tus colegas y quienes comparten una afición contigo.",
+  "circlesFamily": "Familia: la gente de casa y tus parientes."
 }
