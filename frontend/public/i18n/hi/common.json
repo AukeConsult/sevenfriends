@@ -312,7 +312,8 @@
     "removeIt": "हटाएँ",
     "cancel": "रद्द करें",
     "notMe": "यह मैं नहीं हूँ",
-    "newKeyDecline": "अस्वीकार करें"
+    "newKeyDecline": "अस्वीकार करें",
+    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later."
   },
   "needsYourHelp": "{{ friendName }} को आपकी मदद चाहिए",
   "openToUnlockTheir": "उनके पुराने संदेश फिर से अनलॉक करने के लिए ऐप खोलें।",

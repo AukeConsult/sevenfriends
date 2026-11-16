@@ -1,7 +1,7 @@
 import { getAuth } from "firebase-admin/auth";
 import { forgetLogin } from "./auth";
 import { DocumentReference, Transaction, getFirestore } from "firebase-admin/firestore";
-import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAIL_COLLECTION, OWN_REQUEST_REMINDERS } from "./constants";
+import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAIL_COLLECTION, OWN_REQUEST_REMINDERS, RECOVERY_COLLECTION } from "./constants";
 import { circleCol, friendRequestCol, keyBackupCol, keyCol, keyListCol, messageCol, ownRequestCol, profilePictureDoc, pushDeviceCol, signalCol, userDoc } from "./paths";
 import { leaveGroup } from "./groups";
 import { MediaRef } from "./models";
@@ -157,6 +157,11 @@ async function eraseInTransaction(tx: Transaction, uid: string, files: Map<strin
   (await tx.get(keyListCol(uid))).docs.forEach((d) => drop(d.ref)); // every version of my signed device list
   (await tx.get(ownRequestCol(uid))).docs.forEach((d) => drop(d.ref)); // my requests (from my new devices) for my old messages
   (await tx.get(db.collection(OWN_REQUEST_REMINDERS).where("uid", "==", uid))).docs.forEach((d) => drop(d.ref));
+
+  // 7c. recovery requests where I am the asker or the helper (they hold a key id and a fingerprint)
+  for (const field of ["requesterUid", "helperUid"]) {
+    (await tx.get(db.collection(RECOVERY_COLLECTION).where(field, "==", uid))).docs.forEach((d) => drop(d.ref));
+  }
 
   // 8. a picture saved before the media cache existed (the new one is in the cache folder, deleted after the commit)
   drop(profilePictureDoc(uid));

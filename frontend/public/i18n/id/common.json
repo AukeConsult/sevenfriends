@@ -312,7 +312,8 @@
     "removeIt": "Hapus",
     "cancel": "Batal",
     "notMe": "Bukan saya",
-    "newKeyDecline": "Tolak"
+    "newKeyDecline": "Tolak",
+    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later."
   },
   "needsYourHelp": "{{ friendName }} butuh bantuanmu",
   "openToUnlockTheir": "Buka aplikasi untuk membuka kunci pesan lamanya lagi.",

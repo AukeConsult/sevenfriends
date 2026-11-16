@@ -312,7 +312,8 @@
     "removeIt": "Usuń",
     "cancel": "Anuluj",
     "notMe": "To nie ja",
-    "newKeyDecline": "Odrzuć"
+    "newKeyDecline": "Odrzuć",
+    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later."
   },
   "needsYourHelp": "{{ friendName }} potrzebuje Twojej pomocy",
   "openToUnlockTheir": "Otwórz aplikację, żeby znów odblokować jej stare wiadomości.",

@@ -312,7 +312,8 @@
     "removeIt": "Fjern den",
     "cancel": "Annuller",
     "notMe": "Ikke mig",
-    "newKeyDecline": "Afvis"
+    "newKeyDecline": "Afvis",
+    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later."
   },
   "needsYourHelp": "{{ friendName }} har brug for din hjælp",
   "openToUnlockTheir": "Åbn appen for at låse deres gamle beskeder op igen.",

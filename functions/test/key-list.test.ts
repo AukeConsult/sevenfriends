@@ -65,6 +65,17 @@ describe("the device list", () => {
     expect((await pool[0].raw("get", "/keys/list").expect(200)).body.lists).toEqual([]);
   });
 
+  it("refuses a list whose signature does not hold, so a bad entry can never block the chain", async () => {
+    await publish(pool[0], lock, lock2);
+    const v1 = await signed(1, "", [lock]);
+    await pool[0].raw("post", "/keys/list", { ...v1, signature: Buffer.alloc(64, 1).toString("base64") }).expect(409); // right form, wrong signature
+    expect((await pool[0].raw("get", "/keys/list")).body.lists).toEqual([]);
+    await pool[0].raw("post", "/keys/list", v1).expect(201);
+    const v2 = await signed(2, await deviceListHash(v1), [lock, lock2]);
+    await pool[0].raw("post", "/keys/list", { ...v2, devices: v2.devices.slice(0, 1) }).expect(409); // changed after it was signed
+    await pool[0].raw("post", "/keys/list", v2).expect(201); // the right one still goes in
+  });
+
   it("starts at version 1 and grows by one, each linked to the one before", async () => {
     await publish(pool[0], lock, lock2);
     const v1 = await signed(1, "", [lock]);

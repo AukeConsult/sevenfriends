@@ -312,7 +312,8 @@
     "removeIt": "הסר",
     "cancel": "ביטול",
     "notMe": "זה לא אני",
-    "newKeyDecline": "דחה"
+    "newKeyDecline": "דחה",
+    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later."
   },
   "needsYourHelp": "{{ friendName }} צריך/ה את העזרה שלך",
   "openToUnlockTheir": "פתח/י את האפליקציה כדי לשחרר שוב את ההודעות הישנות שלו/ה.",

@@ -47,6 +47,24 @@ function tooManySearches(uid: string, now = Date.now()): boolean {
   return recent.length > SEARCHES_PER_HOUR;
 }
 
+const ADDS_PER_HOUR = 100;
+const added = new Map<string, number[]>(); // user id -> times of the last friend requests (in this server instance)
+
+/** True when this person sent too many friend requests in the last hour (each one can tell whether an account exists and sends a push). */
+function tooManyAdds(uid: string, now = Date.now()): boolean {
+  const recent = (added.get(uid) ?? []).filter((t) => now - t < 3_600_000);
+  recent.push(now);
+  added.set(uid, recent);
+  if (added.size > 5000) for (const [id, times] of added) if (!times.some((t) => now - t < 3_600_000)) added.delete(id);
+  return recent.length > ADDS_PER_HOUR;
+}
+
+/** For the tests: forget who asked and added how often. */
+export function resetFriendLimits(): void {
+  searched.clear();
+  added.clear();
+}
+
 function parseFriend(body: Record<string, unknown>): { data?: NewFriend; nameGiven?: boolean; error?: string } {
   const givenName = text(body.name, 100);
   const email = text(body.email, 200)?.toLowerCase() ?? null;
@@ -275,6 +293,10 @@ friendsRouter.post(
     const onlyIfOnApp = req.body?.onlyIfOnApp === true;
     if (onlyIfOnApp && tooManySearches(token.uid)) {
       res.status(429).json({ error: "You searched many times in a short while. Wait a little and try again." });
+      return;
+    }
+    if (tooManyAdds(token.uid)) { // every add counts (not only the search): it also tells whether an account exists and sends a push
+      res.status(429).json({ error: "You sent many friend requests in a short while. Wait a little and try again." });
       return;
     }
     // Does the friend already have an account? Then their frontend gets a ping (a signal) to run its search.

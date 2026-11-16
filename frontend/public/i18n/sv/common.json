@@ -312,7 +312,8 @@
     "removeIt": "Ta bort den",
     "cancel": "Avbryt",
     "notMe": "Inte jag",
-    "newKeyDecline": "Avböj"
+    "newKeyDecline": "Avböj",
+    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later."
   },
   "needsYourHelp": "{{ friendName }} behöver din hjälp",
   "openToUnlockTheir": "Öppna appen för att låsa upp deras gamla meddelanden igen.",

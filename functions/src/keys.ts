@@ -1,8 +1,9 @@
+import { webcrypto } from "crypto";
 import { Router } from "express";
 import { DecodedIdToken } from "firebase-admin/auth";
 import { FieldValue, Timestamp, getFirestore } from "firebase-admin/firestore";
 import { asyncHandler, requireAuth } from "./auth";
-import { MyKeys, KeyBackup, MAX_KEYS_PER_PERSON, MAX_KEY_LABEL, PublicKeyJwk, PublishedKey, SignKeyJwk, DeviceList, canonicalPublicKey, canonicalSignKey, checkedDeviceList, deviceListHash, fingerprintOf, keyIdOf } from "./models";
+import { MyKeys, KeyBackup, MAX_KEYS_PER_PERSON, MAX_KEY_LABEL, PublicKeyJwk, PublishedKey, SignKeyJwk, DeviceList, canonicalPublicKey, canonicalSignKey, checkedDeviceList, deviceListHash, deviceListText, fingerprintOf, keyIdOf } from "./models";
 import { openRequest } from "./own-request";
 import { touchSync } from "./sync";
 import { KEY_BACKUP_DOC } from "./constants";
@@ -148,7 +149,7 @@ keysRouter.get(
 /**
  * Publish the next version of my device list. Append-only: the version must be one more than the newest (1 when there is none), `prev` must be the
  * hash of the newest, and a version that exists is never replaced. The server checks the STRUCTURE (well-formed keys, key IDs that fit, a
- * signer); it cannot and does not check the signature. Devices do that, so a list the server made up would be refused by them.
+ * signer) and that the signature holds (so a bad entry can never block the chain). The devices of friends check the chain again themselves.
  */
 keysRouter.post(
   "/list",
@@ -173,6 +174,7 @@ keysRouter.post(
     else if (head && list.prev !== (await deviceListHash(head))) refusal = "The link to the version before is wrong";
     else if (!list.restart && head && !head.devices.some((d) => d.keyId === list.signedBy)) refusal = "The signer is not a device of the version before"; // a new beginning is signed by its own device
     else if (!list.devices.every(known)) refusal = "A device in the list is not a published key of yours";
+    else if (!(await signatureHolds(list, !head || list.restart ? list.devices : head.devices))) refusal = "The signature does not hold"; // a made-up entry would block every later version
     else {
       try {
         await keyListCol(uid).doc(String(list.version)).create({ ...list, createdAt: FieldValue.serverTimestamp() }); // create: a version that exists is never replaced
@@ -188,6 +190,18 @@ keysRouter.post(
     res.status(201).json(list);
   }),
 );
+
+/** Is the list signed by `signedBy`, one of the `signers` (devices of the version before; its own devices for the first version and a new beginning)? */
+async function signatureHolds(list: DeviceList, signers: DeviceList["devices"]): Promise<boolean> {
+  const signer = signers.find((d) => d.keyId === list.signedBy);
+  if (!signer) return false;
+  try {
+    const key = await webcrypto.subtle.importKey("jwk", signer.signKey as JsonWebKey, { name: "ECDSA", namedCurve: "P-256" }, false, ["verify"]);
+    return await webcrypto.subtle.verify({ name: "ECDSA", hash: "SHA-256" }, key, Buffer.from(list.signature, "base64"), new TextEncoder().encode(deviceListText(list)));
+  } catch {
+    return false;
+  }
+}
 
 /**
  * After a new beginning of the signed list: every key of mine that is not in it is retired (its device is lost), with what it leaves behind, and the open

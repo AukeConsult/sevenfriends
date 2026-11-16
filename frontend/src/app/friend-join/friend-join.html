@@ -15,7 +15,7 @@
   } @else if (incoming(); as request) {
     <section class="vstack gap-3" [attr.aria-label]="t('friendJoin.aRequestIsWaiting') || 'A request is waiting for you'">
       <p class="alert alert-info small m-0" role="note"><span [innerHTML]="t('friendJoin.theLinkYouOpened') || 'The link you opened was an <strong>invitation</strong>, so this page opened to answer it. This person has already asked you, so you only need to confirm.'"></span></p>
-      <p class="m-0"><span [innerHTML]="t('friendJoin.strongFromnameStrongHas', { fromName: request.fromName }) || '<strong>{{ fromName }}</strong> has already sent you a friend request.'"></span></p>
+      <p class="m-0"><span [innerHTML]="t('friendJoin.strongFromnameStrongHas', { fromName: esc(request.fromName) }) || '<strong>{{ fromName }}</strong> has already sent you a friend request.'"></span></p>
       @if (request.message) {
         <p class="alert alert-light border m-0">{{ request.message }}</p>
       }
@@ -33,7 +33,7 @@
       <p class="alert alert-info small m-0" role="note">
         <span [innerHTML]="t('friendJoin.theLinkYouOpened2') || 'The link you opened was an <strong>invitation</strong>, so this page opened to let you answer it: you can send a friend request to the person who sent it. Nothing is sent until you tap <em>Send friend request</em>.'"></span>
       </p>
-      <p class="m-0"><span [innerHTML]="t('friendJoin.sendAFriendRequest2', { label: label() }) || 'Send a friend request to <strong>' + label() + '</strong>?'"></span></p>
+      <p class="m-0"><span [innerHTML]="t('friendJoin.sendAFriendRequest2', { label: esc(label()) }) || 'Send a friend request to <strong>' + esc(label()) + '</strong>?'"></span></p>
       <p class="small text-secondary m-0">{{ t('friendJoin.theyGetYourRequest') || 'They get your request when they open the app, and become your friend when they confirm.' }}</p>
 
       <label class="sf-field"><span class="form-label small text-secondary m-0">{{ t('friendJoin.nameOptional') || 'Name (optional)' }}</span>

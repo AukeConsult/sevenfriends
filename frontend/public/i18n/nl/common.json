@@ -312,7 +312,8 @@
     "removeIt": "Verwijderen",
     "cancel": "Annuleren",
     "notMe": "Niet ik",
-    "newKeyDecline": "Weigeren"
+    "newKeyDecline": "Weigeren",
+    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later."
   },
   "needsYourHelp": "{{ friendName }} heeft je hulp nodig",
   "openToUnlockTheir": "Open de app om hun oude berichten weer te ontgrendelen.",

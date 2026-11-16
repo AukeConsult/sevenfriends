@@ -312,7 +312,8 @@
     "removeIt": "削除する",
     "cancel": "キャンセル",
     "notMe": "私ではありません",
-    "newKeyDecline": "断る"
+    "newKeyDecline": "断る",
+    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later."
   },
   "needsYourHelp": "{{ friendName }}さんがあなたの助けを必要としています",
   "openToUnlockTheir": "アプリを開くと、相手の過去のメッセージのロックをもう一度解除できます。",

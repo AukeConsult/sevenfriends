@@ -312,7 +312,8 @@
     "removeIt": "제거",
     "cancel": "취소",
     "notMe": "내가 아니에요",
-    "newKeyDecline": "거절"
+    "newKeyDecline": "거절",
+    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later."
   },
   "needsYourHelp": "{{ friendName }}님이 도움을 필요로 해요",
   "openToUnlockTheir": "앱을 열어 상대의 이전 메시지를 다시 잠금 해제하세요.",

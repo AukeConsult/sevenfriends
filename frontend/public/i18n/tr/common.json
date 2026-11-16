@@ -312,7 +312,8 @@
     "removeIt": "Kaldır",
     "cancel": "İptal",
     "notMe": "Ben değilim",
-    "newKeyDecline": "Reddet"
+    "newKeyDecline": "Reddet",
+    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later."
   },
   "needsYourHelp": "{{ friendName }} yardımına ihtiyaç duyuyor",
   "openToUnlockTheir": "Eski mesajlarının kilidini yeniden açmak için uygulamayı aç.",

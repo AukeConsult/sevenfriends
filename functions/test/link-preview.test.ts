@@ -34,6 +34,10 @@ describe("isPrivateAddress", () => {
       expect(isPrivateAddress(a), a).toBe(true);
     }
   });
+  it("refuses internal addresses written the other way (IPv6 with hex, brackets, NAT64)", () => {
+    for (const a of ["::ffff:a9fe:a9fe", "::ffff:7f00:1", "0:0:0:0:0:ffff:7f00:1", "[::1]", "64:ff9b::7f00:1", "::7f00:1"]) expect(isPrivateAddress(a), a).toBe(true);
+    expect(isPrivateAddress("::ffff:808:808")).toBe(false); // 8.8.8.8
+  });
   it("allows public addresses", () => {
     for (const a of ["8.8.8.8", "93.184.216.34", "172.32.0.1", "2606:2800:220:1:248:1893:25c8:1946"]) expect(isPrivateAddress(a), a).toBe(false);
   });

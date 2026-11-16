@@ -46,11 +46,35 @@ export async function renderPdf(blob: Blob, host: HTMLElement): Promise<number> 
   return doc.numPages;
 }
 
+/**
+ * The links of a document come from the file, which comes from a friend: only web and mail addresses stay (a `javascript:` or `data:` address would run
+ * in the app when tapped). Every link opens in a new page without access to this one.
+ */
+export function safeLinks(host: HTMLElement): void {
+  host.querySelectorAll('a').forEach((a) => {
+    const href = a.getAttribute('href');
+    let ok = false;
+    if (href) {
+      try {
+        ok = ['http:', 'https:', 'mailto:'].includes(new URL(href, 'https://invalid.invalid/').protocol) && !/^\s*(javascript|data|vbscript):/i.test(href);
+      } catch {
+        ok = false;
+      }
+    }
+    if (!ok) a.removeAttribute('href');
+    else {
+      a.setAttribute('target', '_blank');
+      a.setAttribute('rel', 'noopener noreferrer');
+    }
+  });
+}
+
 /** A Word document (.docx) as pages in `host`. */
 export async function renderDocx(blob: Blob, host: HTMLElement): Promise<void> {
   const { renderAsync } = await import('docx-preview');
   host.replaceChildren();
   await renderAsync(blob, host, undefined, { className: 'sf-docx', inWrapper: true, ignoreLastRenderedPageBreak: true, useBase64URL: true });
+  safeLinks(host);
   // the pages keep the width of a sheet of paper: a narrower screen scrolls sideways (the host scrolls)
 }
 

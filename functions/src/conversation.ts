@@ -221,7 +221,7 @@ conversationRouter.post(
     // the other side of the connection must still be there and confirmed (the page of a link and my name are looked up at the same time: nothing waits for the others)
     const [peerEntries, link, fromName] = await Promise.all([
       Promise.all(connection.peers.map((peer) => findPeerEntry(token.uid, connection.circleId, connection.id, { linkedUid: peer.uid, peerCircleId: peer.circleId }))),
-      locked ? null : linkOf(text), // the page of the link may be shown in a frame (checked once, here); a locked text cannot be read, so it has none
+      locked ? null : linkOf(text, token.uid), // the page of the link may be shown in a frame (checked once, here); a locked text cannot be read, so it has none
       nameOf(token.uid, token, connection.circleId), // the name I have in this circle
     ]);
     connection.peers.forEach((peer, i) => {
@@ -254,14 +254,23 @@ conversationRouter.post(
     if (!notice) batch.set(mine, { ...common, ...(locked ? { enc: wrapsFor(locked.enc, token.uid) } : {}), circleId: connection.circleId, read: true }); // my own message needs no reading
     for (const peer of connection.peers) {
       // the same message id in every copy
-      batch.set(messageCol(peer.uid).doc(mine.id), { ...common, ...(locked ? { enc: wrapsFor(locked.enc, peer.uid) } : {}), ...(poke ? { poke: true } : {}), circleId: peer.circleId, read: false });
+      // `create`: a copy that is already there (a file id used again after its sender deleted their own copy) is never replaced by a new message
+      batch.create(messageCol(peer.uid).doc(mine.id), { ...common, ...(locked ? { enc: wrapsFor(locked.enc, peer.uid) } : {}), ...(poke ? { poke: true } : {}), circleId: peer.circleId, read: false });
     }
     // "last spoken to": both sides of the friendship remember when the last message was written
     const myEntry = (res.locals.circleRef as DocumentReference).collection(FRIENDS_SUBCOLLECTION).doc(connection.id);
     batch.update(myEntry, { lastMessageAt: FieldValue.serverTimestamp() });
     touchFeed(batch, myEntry); // my other devices reload this feed
     for (const peer of connection.peers) batch.update(peerEntryRef(connection, peer), { lastMessageAt: FieldValue.serverTimestamp() });
-    await batch.commit();
+    try {
+      await batch.commit();
+    } catch (error) {
+      if ((error as { code?: number }).code === 6) { // ALREADY_EXISTS: somebody already has a message with this id
+        res.status(409).json({ error: "That file has been sent already" });
+        return;
+      }
+      throw error;
+    }
 
     const created: ChatMessage = { id: mine.id, text, media, mine: true, read: true, time: iso(sentAt), edited: false, hidden: false, link, ...(locked ? { enc: wrapsFor(locked.enc, token.uid) } : {}) };
     // wake the other person's devices (before the answer: the function may stop right after it)
@@ -449,7 +458,7 @@ conversationRouter.put(
       res.status(400).json({ error: `A message can be at most ${MAX_MESSAGE_LENGTH} characters` });
       return;
     }
-    const link = locked ? null : await linkOf(text);
+    const link = locked ? null : await linkOf(text, uid);
     const change = { text, editedAt: FieldValue.serverTimestamp(), link: link ?? FieldValue.delete() }; // the link follows the new text
     const enc = (person: string) => (locked ? wrapsFor(locked.enc, person) : FieldValue.delete()); // each copy keeps only its owner's copies of the key
     const batch = getFirestore().batch();

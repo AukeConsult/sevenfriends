@@ -312,7 +312,8 @@
     "removeIt": "أزله",
     "cancel": "إلغاء",
     "notMe": "لست أنا",
-    "newKeyDecline": "رفض"
+    "newKeyDecline": "رفض",
+    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later."
   },
   "needsYourHelp": "{{ friendName }} يحتاج إلى مساعدتك",
   "openToUnlockTheir": "افتح التطبيق لفك قفل رسائله القديمة مرة أخرى.",

@@ -265,6 +265,30 @@ describe("getObject(userid/objectid): the proxy", () => {
   });
 });
 
+describe("a file id that the friend already has", () => {
+  it("is refused: a friend who deleted their own copy cannot replace my message by sending a file with its id", async () => {
+    const id = await connect(u(0), u(1));
+    const file = await uploaded(u(1), "image", png(), "mine.png");
+    await sendMedia(u(1), id, { objectId: file.objectId }, "my message").expect(201);
+    await u(0).raw("delete", `/circles/default/friends/${id}/messages/${file.objectId}/mine`).expect(204); // gone from THEIR feed only
+    await u(0).file("put", `/sf-cache/uploads/${file.objectId}/0`, png(3000)).expect(204); // the same id, for their own file
+    await u(0).raw("post", `/sf-cache/uploads/${file.objectId}/finish?kind=image&parts=1&name=other.png`).expect(201);
+    await sendMedia(u(0), id, { objectId: file.objectId }, "forged").expect(409);
+    const mine = (await feedOf(u(1), id)).find((m) => m.id === file.objectId);
+    expect(mine).toMatchObject({ text: "my message", mine: true });
+  });
+
+  it("a normal send, delete for me and a new send are not affected", async () => {
+    const id = await connect(u(0), u(1));
+    const first = await uploaded(u(0), "image", png(), "a.png");
+    await sendMedia(u(0), id, { objectId: first.objectId }).expect(201);
+    await u(0).raw("delete", `/circles/default/friends/${id}/messages/${first.objectId}/mine`).expect(204);
+    const second = await uploaded(u(0), "image", png(), "b.png");
+    await sendMedia(u(0), id, { objectId: second.objectId }).expect(201);
+    expect((await feedOf(u(1), id)).map((m) => m.id)).toContain(second.objectId);
+  });
+});
+
 describe("a big file in pieces (chunked upload)", () => {
   const open = async (user: User) => (await user.raw("post", "/sf-cache/uploads").expect(201)).body as { uploadId: string; chunkBytes: number; maxChunks: number };
   const piece = (user: User, uploadId: string, n: number, bytes: Buffer) => user.file("put", `/sf-cache/uploads/${uploadId}/${n}`, bytes);

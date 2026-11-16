@@ -36,6 +36,12 @@ describe('box crypto', () => {
   const seal = (thumb?: Blob) =>
     sealFile({ connectionId: 'box1', file: new Blob([secret]), name: 'party plan.txt', kind: 'document', mime: 'text/plain', thumb, recipients: [{ uid: 'me', keys: [me.published] }, { uid: 'friend', keys: [friend.published] }] });
 
+  it('refuses to lock for a key whose ID is not its own fingerprint (a key the server swapped in)', async () => {
+    const swapped: PublishedKey = { ...friend.published, publicKey: stranger.published.publicKey }; // a real ID, another key
+    await expectAsync(sealFile({ connectionId: 'box1', file: new Blob([secret]), name: 'x.txt', kind: 'document', mime: 'text/plain', recipients: [{ uid: 'friend', keys: [swapped] }] })).toBeRejected();
+    await expectAsync(sealFile({ connectionId: 'box1', file: new Blob([secret]), name: 'x.txt', kind: 'document', mime: 'text/plain', recipients: [{ uid: 'friend', keys: [friend.published] }] })).toBeResolved(); // the real one still works
+  });
+
   it('locks a file so that both friends can open it, with its real name', async () => {
     const { header, file } = await cut(await seal());
     expect(header.enc.wraps.map((w: { uid: string }) => w.uid)).toEqual(['me', 'friend']);

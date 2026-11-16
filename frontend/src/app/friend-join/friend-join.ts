@@ -65,6 +65,11 @@ export class FriendJoin {
     return t ? t.name || t.email || t.phone || 'this person' : '';
   });
 
+  /** A name from somebody else, made safe to sit inside the text that is shown with [innerHTML] (the translated texts have <strong>, the name must not). */
+  protected esc(value: string): string {
+    return value.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+  }
+
   constructor() {
     void this.start();
   }

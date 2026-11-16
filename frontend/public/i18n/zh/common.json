@@ -312,7 +312,8 @@
     "removeIt": "移除",
     "cancel": "取消",
     "notMe": "不是我",
-    "newKeyDecline": "拒绝"
+    "newKeyDecline": "拒绝",
+    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later."
   },
   "needsYourHelp": "{{ friendName }} 需要你的帮助",
   "openToUnlockTheir": "打开应用，重新解锁对方的旧消息。",

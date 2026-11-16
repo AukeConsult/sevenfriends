@@ -500,7 +500,9 @@ async function setReminder(connection: Connection, itemId: string, me: string, r
     await ref.delete();
     return;
   }
-  const targets = [{ uid: me, circleId: connection.circleId, friendUid: connection.peerUid }, ...(remind.both ? connection.peers.map((peer) => ({ uid: peer.uid, circleId: peer.circleId, friendUid: me })) : [])];
+  // a friend who has me on their sleep list gets no push from me (as with a message or an item); my own reminder is always mine
+  const awake = remind.both ? (await Promise.all(connection.peers.map(async (peer) => ((await peerSleeps(connection, peer)) ? null : peer)))).filter((peer): peer is Peer => peer !== null) : [];
+  const targets = [{ uid: me, circleId: connection.circleId, friendUid: connection.peerUid }, ...awake.map((peer) => ({ uid: peer.uid, circleId: peer.circleId, friendUid: me }))];
   await ref.set({ connectionId: connection.id, itemId, at: Timestamp.fromMillis(remind.at.getTime()), targets, setBy: me });
 }
 

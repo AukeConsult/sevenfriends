@@ -1,4 +1,4 @@
-import { EncryptedUploadHeader, MessageEnc, MessageEncMedia, NotePayload, ObjectPayload, SafeboxType, PublishedKey, SafeboxEnc, SafeboxKind, SafeboxWrap } from '../models';
+import { EncryptedUploadHeader, MessageEnc, MessageEncMedia, NotePayload, ObjectPayload, SafeboxType, PublishedKey, SafeboxEnc, SafeboxKind, SafeboxWrap, fingerprintOf, keyIdOf } from '../models';
 import { tr } from './i18n';
 
 /**
@@ -65,11 +65,23 @@ async function unlock(key: CryptoKey, connectionId: string, part: Part, iv: stri
 /** A new random AES-256-GCM key: for one file, or for one message. */
 const newKey = (): Promise<CryptoKey> => crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, true, FILE_KEY_USAGES);
 
+/**
+ * A key's ID is the start of its fingerprint, and the signed device lists name keys by that ID. A server that gives another key under a real ID would be
+ * read by whoever holds it, so a key whose ID is not its own fingerprint is never locked for.
+ */
+export async function assertKeyMatchesId(published: PublishedKey): Promise<void> {
+  const fingerprint = await fingerprintOf(published.publicKey);
+  if (!fingerprint || keyIdOf(fingerprint) !== published.id) {
+    throw new Error(tr('core.keyDoesNotMatch', 'Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later.'));
+  }
+}
+
 /** The key locked (RSA-OAEP) once for every key in use of the people: the copies the server keeps next to the locked data. */
 async function wrapKeyFor(key: CryptoKey, recipients: Recipient[]): Promise<SafeboxWrap[]> {
   const wraps: SafeboxWrap[] = [];
   for (const person of recipients) {
     for (const published of person.keys) {
+      await assertKeyMatchesId(published);
       const publicKey = await crypto.subtle.importKey('jwk', published.publicKey, RSA, false, ['wrapKey']);
       const wrapped = await crypto.subtle.wrapKey('raw', key, publicKey, { name: 'RSA-OAEP' });
       wraps.push({ uid: person.uid, keyId: published.id, wrappedKey: toBase64(wrapped) });
@@ -327,6 +339,7 @@ export async function openTextWith(connectionId: string, enc: MessageEnc, text: 
  * held for this one step (it has to be exportable to be locked again) and is not kept; nothing readable leaves the device.
  */
 export async function rewrapKey(enc: { wraps: SafeboxWrap[] }, myKeyId: string, privateKey: CryptoKey, target: { uid: string; key: PublishedKey }, noun: 'file' | 'message' = 'file'): Promise<SafeboxWrap> {
+  await assertKeyMatchesId(target.key);
   const mine = enc.wraps.find((w) => w.keyId === myKeyId);
   if (!mine) throw new Error(tr('core.thisWasLockedFor', 'This {{ noun }} was locked for another device.', { noun }));
   const key = await crypto.subtle.unwrapKey('raw', fromBase64(mine.wrappedKey), privateKey, { name: 'RSA-OAEP' }, { name: 'AES-GCM', length: 256 }, true, FILE_KEY_USAGES);

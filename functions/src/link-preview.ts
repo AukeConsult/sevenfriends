@@ -61,10 +61,34 @@ export function playerUrl(url: URL): string | null {
   return null;
 }
 
+/** The IPv4 address inside an IPv6 one (`::ffff:a9fe:a9fe`, `::ffff:169.254.169.254`, `64:ff9b::7f00:1`), or null. */
+function embeddedV4(address: string): string | null {
+  if (isIP(address) !== 6) return null;
+  let text = address.toLowerCase();
+  const tail = /(\d+\.\d+\.\d+\.\d+)$/.exec(text);
+  if (tail) {
+    const p = tail[1].split(".").map(Number);
+    text = text.slice(0, -tail[1].length) + ((p[0] << 8) | p[1]).toString(16) + ":" + ((p[2] << 8) | p[3]).toString(16);
+  }
+  const [head, rest] = text.split("::");
+  const left = head ? head.split(":") : [];
+  const right = rest === undefined ? [] : rest ? rest.split(":") : [];
+  const groups = rest === undefined ? left : [...left, ...Array(8 - left.length - right.length).fill("0"), ...right];
+  if (groups.length !== 8) return null;
+  const n = groups.map((g) => parseInt(g, 16));
+  const zeros = n.slice(0, 5).every((x) => x === 0);
+  const mapped = zeros && n[5] === 0xffff; // ::ffff:a.b.c.d
+  const compatible = zeros && n[5] === 0 && (n[6] !== 0 || n[7] > 1); // ::a.b.c.d
+  const nat64 = n[0] === 0x64 && n[1] === 0xff9b && n.slice(2, 6).every((x) => x === 0); // 64:ff9b::a.b.c.d
+  if (!mapped && !compatible && !nat64) return null;
+  return `${n[6] >> 8}.${n[6] & 255}.${n[7] >> 8}.${n[7] & 255}`;
+}
+
 /** True for addresses that are not on the public internet: this machine, the home / company network, link-local (cloud metadata) ... */
 export function isPrivateAddress(address: string): boolean {
-  const mapped = /^::ffff:(\d+\.\d+\.\d+\.\d+)$/i.exec(address);
-  if (mapped) return isPrivateAddress(mapped[1]);
+  if (address.startsWith("[") && address.endsWith("]")) address = address.slice(1, -1);
+  const embedded = embeddedV4(address);
+  if (embedded) return isPrivateAddress(embedded);
   if (isIP(address) === 4) {
     const [a, b] = address.split(".").map(Number);
     return (
@@ -97,6 +121,9 @@ function headersOf(url: URL): Promise<{ status: number; headers: Headers }> {
   return new Promise((resolve, reject) => {
     const port = url.port ? Number(url.port) : url.protocol === "https:" ? 443 : 80;
     if (port !== 80 && port !== 443) return reject(new Error("Port not allowed"));
+    // an address written as numbers (127.0.0.1, 2130706433, [::1]) is never looked up, so the lookup guard does not see it: check it here (also for every redirect)
+    const host = url.hostname.replace(/^\[|\]$/g, "");
+    if (isIP(host) && isPrivateAddress(host)) return reject(new Error("Address not allowed"));
     const send = url.protocol === "https:" ? httpsRequest : httpRequest;
     const req = send(url, { method: "GET", lookup: safeLookup, headers: { "user-agent": "SevenFriendsLinkCheck/1.0", accept: "text/html" }, timeout: TIMEOUT_MS }, (res) => {
       resolve({ status: res.statusCode ?? 0, headers: res.headers });
@@ -135,12 +162,13 @@ async function pageAllowsFrame(start: URL): Promise<string | null> {
 }
 
 /** The link of a message (its first web address) and, when its page can be shown in a frame, the address to frame. Never throws. */
-export async function linkOf(text: string): Promise<MessageLink | null> {
+export async function linkOf(text: string, uid?: string): Promise<MessageLink | null> {
   const href = firstUrl(text);
   if (!href) return null;
   const url = new URL(href);
   const player = playerUrl(url);
   if (player) return { url: href, embedUrl: player };
+  if (uid && tooManyToCheck(uid)) return { url: href, embedUrl: null }; // too many checks in a minute: the link stays a plain link
   try {
     return { url: href, embedUrl: await pageAllowsFrame(url) };
   } catch {
@@ -154,12 +182,18 @@ const ASKS_PER_MINUTE = 20;
 const asked = new Map<string, number[]>(); // user id -> times of the last asks (in this server instance)
 
 /** True when this person asked too often in the last minute (the fetch of a typed address must not be a free tool). */
-export function tooMany(uid: string, now = Date.now()): boolean {
+export function tooMany(uid: string, now = Date.now(), limit = ASKS_PER_MINUTE): boolean {
   const recent = (asked.get(uid) ?? []).filter((t) => now - t < 60_000);
   recent.push(now);
   asked.set(uid, recent);
   if (asked.size > 5000) for (const [id, times] of asked) if (!times.some((t) => now - t < 60_000)) asked.delete(id);
-  return recent.length > ASKS_PER_MINUTE;
+  return recent.length > limit;
+}
+
+const SENDS_PER_MINUTE = 60;
+/** At send time: too many messages with a link in a minute just means "no preview" for the extra ones (the message is still sent). */
+export function tooManyToCheck(uid: string, now = Date.now()): boolean {
+  return tooMany(`send:${uid}`, now, SENDS_PER_MINUTE);
 }
 
 /** What the message field shows while somebody is still writing: the link of the text and whether its page can be framed. Same check as at send time. */

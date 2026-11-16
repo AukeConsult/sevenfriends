@@ -312,7 +312,8 @@
     "removeIt": "Quitarla",
     "cancel": "Cancelar",
     "notMe": "No soy yo",
-    "newKeyDecline": "Rechazar"
+    "newKeyDecline": "Rechazar",
+    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later."
   },
   "needsYourHelp": "{{ friendName }} necesita tu ayuda",
   "openToUnlockTheir": "Abre la app para desbloquear de nuevo sus mensajes antiguos.",

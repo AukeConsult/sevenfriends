@@ -3,6 +3,7 @@ import request from "supertest";
 import { createServer, type Server } from "node:http";
 import { createApp } from "../src/app";
 import { MAX_FRIENDS } from "../src/constants";
+import { resetFriendLimits } from "../src/friends";
 import { resetFakeFirestore } from "./fake-firestore";
 import { resetFakeStorage } from "./fake-storage";
 import { PROJECT, USING_EMULATOR, authBreaks, deletedLogins } from "./setup";
@@ -165,6 +166,7 @@ export async function forEachUser<T>(list: User[], fn: (user: User, i: number) =
 export async function seedPool(size = POOL_SIZE): Promise<User[]> {
   deletedLogins.clear(); // a login deleted by an earlier test is a login again: every test starts with all of its people able to sign in
   authBreaks.on = false;
+  resetFriendLimits(); // the limits of the hour start empty in every test
   await clearDatabase();
   const all = users(makePool(size));
   for (let i = 0; i < all.length; i += 15) {
