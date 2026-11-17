@@ -62,10 +62,10 @@ export async function eraseUser(uid: string): Promise<void> {
   await pass(true);
 }
 
-/** Leave every group the person is in: their entry, their copies of the messages and their items in its box go, the others keep the group. */
+/** Leave every group the person is in: their entry, their copies of the messages and their items in its box go (the account is deleted: nothing of theirs stays), the others keep the group. */
 async function leaveGroups(uid: string): Promise<void> {
   for (const circle of (await circleCol(uid).get()).docs) {
-    for (const entry of (await circle.ref.collection(FRIENDS_SUBCOLLECTION).where("kind", "==", "group").get()).docs) await leaveGroup(uid, entry.ref, entry.id);
+    for (const entry of (await circle.ref.collection(FRIENDS_SUBCOLLECTION).where("kind", "==", "group").get()).docs) await leaveGroup(uid, entry.ref, entry.id, "left", true);
   }
 }
 
