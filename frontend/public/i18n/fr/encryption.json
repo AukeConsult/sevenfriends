@@ -6,7 +6,6 @@
   "useThisWhenThis": "Utilise ceci quand cet appareil peut lire tes anciens messages, mais qu'aucun bouton Autoriser ne s'affiche. Il donne alors accès à tes autres appareils.",
   "useThisDeviceTo": "Utiliser cet appareil pour donner accès aux autres",
   "thisDevice": "Cet appareil",
-  "removed": "Supprimée",
   "waitingForAccessTo": "En attente d'accès à tes anciens messages et fichiers.",
   "cancel": "Annuler",
   "removeIt": "La supprimer",
@@ -17,7 +16,6 @@
   "makeANewKey2": "Créer un nouveau verrou…",
   "whyIsMyKey": "Pourquoi ma clé est-elle (ou n'est-elle pas) trouvée ?",
   "accountSlice": "Compte : …{{ slice }}",
-  "keysPublishedForThis": "Clés publiées pour ce compte : {{ active }} en cours d'utilisation, {{ removed }} supprimées",
   "accountsWithAKey": "Comptes avec une clé dans ce navigateur : {{ accountsInBrowser }}",
   "theServerCouldNot": "Impossible d'interroger le serveur pour le moment. Recharge la page pour réessayer.",
   "iAlreadyHaveA": "Mes 24 mots de secours",
@@ -37,8 +35,7 @@
   "someThingsAreLocked": "Certains de tes anciens messages et fichiers sont verrouillés sur cet appareil.",
   "lockedCounts": "{{ messages }} messages et {{ files }} fichiers sont verrouillés sur cet appareil. Rouvre-les avec ton autre appareil, tes mots de secours ou un ami.",
   "thisDeviceHasNoWorking": "Cet appareil n'a pas de verrou qui fonctionne.",
-  "theKeyOnThisRemoved": "Le verrou de cet appareil a été supprimé, depuis un autre de tes appareils ou avec \"Pas moi\".",
-  "theKeyOnThisNever": "Le verrou de cet appareil n'a jamais été enregistré sur le serveur, il ne compte donc pas.",
+  "theKeyOnThisNever": "The lock on this device is not saved on the server (it was never saved, or it was removed from another of your devices), so it does not count.",
   "thisDeviceHasNoKey": "Ton compte a des verrous sur d'autres appareils, mais cet appareil n'en a pas.",
   "soYourOldMessages": "Tes anciens messages et fichiers restent verrouillés ici tant qu'il n'en a pas. Ouvre-les avec tes mots de secours, ou active le verrou et demande à tes autres appareils ou à un ami.",
   "myOtherDevices": "Un autre téléphone ou ordinateur à moi",
@@ -70,8 +67,6 @@
   "startOverText": "Cela recommence ton verrou avec cet appareil. Tous tes autres appareils sont supprimés. Chacun de tes amis est invité à confirmer que c'est bien toi, et peut ensuite t'aider à rouvrir tes anciens messages.",
   "startOverButton": "Recommencer avec cet appareil",
   "startOverFailed": "Impossible de recommencer. Vérifie la connexion et réessaie.",
-  "hideRemoved": "Masquer les retirés",
-  "showRemoved": "Afficher les retirés ({{ count }})",
   "rowRecover": "Ouvrir mes anciens messages",
   "rowReplace": "Mots de secours et nouveau verrou",
   "whyRecoverTitle": "Pourquoi dois-je faire ça ?",
@@ -79,5 +74,6 @@
   "noneOfThese": "Aucun de ceux-là",
   "recoverQuestion": "Qu'as-tu ?",
   "makeFailed": "Le verrou n'a pas pu être créé sur cet appareil : {{ error }}",
-  "tryAgain": "Réessayer"
+  "tryAgain": "Réessayer",
+  "keysInUseForThis": "Keys for this account: {{ active }}"
 }

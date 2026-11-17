@@ -34,7 +34,7 @@
   "wakeFname": "{{ fName }} 깨우기",
   "openTheConversation": "{{ name }}와의 대화 열기",
   "removeRules": "내가 추가한 사람은 내보낼 수 있습니다. 소유자는 누구든 내보낼 수 있습니다. 소유자는 아무도 내보낼 수 없습니다.",
-  "newMembersSeeNew": "추가한 사람은 지금부터의 메시지를 보며, 이전 메시지는 보지 못합니다.",
+  "newMembersSeeNew": "Someone you add sees the earlier messages and the safebox too, not only what is written from now on.",
   "leaveTheGroup": "그룹 나가기",
   "leaveQuestion": "{{ name }}에서 나갈까요? 그룹에 있는 내 메시지와 금고 항목이 모두에게서 삭제됩니다. 다른 사람들은 그룹을 유지합니다. 누군가 다시 추가해야만 돌아올 수 있습니다.",
   "leaveOwnerNote": "당신은 소유자입니다. 목록의 다음 사람이 소유자가 됩니다.",

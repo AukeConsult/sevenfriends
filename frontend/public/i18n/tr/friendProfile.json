@@ -34,7 +34,7 @@
   "wakeFname": "{{ fName }} kişisini uyandır",
   "openTheConversation": "{{ name }} ile sohbeti aç",
   "removeRules": "Eklediğin kişileri çıkarabilirsin. Sahip herkesi çıkarabilir. Kimse sahibi çıkaramaz.",
-  "newMembersSeeNew": "Eklediğin kişi mesajları şu andan itibaren görür, öncekileri görmez.",
+  "newMembersSeeNew": "Someone you add sees the earlier messages and the safebox too, not only what is written from now on.",
   "leaveTheGroup": "Gruptan ayrıl",
   "leaveQuestion": "{{ name }} grubundan ayrılacak mısın? Gruptaki mesajların ve oradaki kasa öğelerin herkes için silinir. Diğerleri grubu korur. Ancak biri seni yeniden eklerse dönebilirsin.",
   "leaveOwnerNote": "Sahipsin: listedeki sonraki kişi sahip olur.",

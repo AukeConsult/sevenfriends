@@ -166,6 +166,7 @@ export class FriendProfile {
     await this.run(
       async () => {
         const added = await this.friendsService.addGroupMember(f.id, friendId);
+        this.ctx.loadBoxKeys(true); // the new member gets the earlier messages and the safebox now, from this device (quiet)
         if (added.asleep) this.note.set(tr('friendProfile.addedToSleepList', '{{ name }} has no free seat, so the group is on their sleep list.', { name }));
       },
       () => this.loadMembers(f.id),

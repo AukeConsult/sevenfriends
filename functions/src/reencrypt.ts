@@ -11,7 +11,7 @@ import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION } from "./constants";
 import { isObjectId } from "./sf-cache";
 
 /**
- * Re-locking old items (design: docs/design/default-key.md, step 5b). After a key was retired, the items still locked for it are listed here; a device that can open
+ * Re-locking old items (design: docs/design/default-key.md, step 5b). After a key was removed, the items still locked for it are listed here; a device that can open
  * them locks each one anew (a fresh content key, the copies only for the keys in use) and sends it back. The server only checks shapes and who the copies are for.
  * This covers my copy of a text message (without a file) and the objects of the box; files come later.
  */
@@ -27,14 +27,14 @@ const timeOf = (cursor: string): Timestamp | null => {
   return m ? new Timestamp(Number(m[1]), Number(m[2])) : null;
 };
 
-/** The ids of my retired keys. */
-async function retiredKeys(uid: string): Promise<Set<string>> {
-  return new Set((await keyCol(uid).where("revoked", "==", true).get()).docs.map((d) => d.id));
+/** The ids of my keys (a removed key is deleted, so these are the keys in use). */
+async function keysInUse(uid: string): Promise<Set<string>> {
+  return new Set((await keyCol(uid).get()).docs.map((d) => d.id));
 }
 
-/** True when one of MY copies of the key is for a retired key. */
-export const staleFor = (enc: DocumentData | undefined, uid: string, retired: Set<string>): boolean =>
-  Array.isArray(enc?.wraps) && enc.wraps.some((w: { uid: string; keyId: string }) => w.uid === uid && retired.has(w.keyId));
+/** True when one of MY copies of the key is for a key that is gone (removed). */
+export const staleFor = (enc: DocumentData | undefined, uid: string, inUse: Set<string>): boolean =>
+  Array.isArray(enc?.wraps) && enc.wraps.some((w: { uid: string; keyId: string }) => w.uid === uid && !inUse.has(w.keyId));
 
 /** The confirmed friendships of mine, with the circle each one is in (its id is the id of the box). */
 async function myConnections(uid: string): Promise<Map<string, string>> {
@@ -55,10 +55,10 @@ reencryptRouter.get(
       return;
     }
     const after = typeof req.query.after === "string" ? req.query.after : "";
-    const retired = await retiredKeys(uid);
+    const inUse = await keysInUse(uid);
     const items: ReencryptItem[] = [];
     let next: string | null = null;
-    if (!retired.size) {
+    if (!inUse.size) {
       res.json({ part, items, next } satisfies ReencryptTodo);
       return;
     }
@@ -69,7 +69,7 @@ reencryptRouter.get(
       const docs = (await query.select("text", "enc", "time", "connectionId").limit(PAGE).get()).docs;
       for (const d of docs) {
         const data = d.data();
-        if (data.enc && !data.enc.media && staleFor(data.enc, uid, retired)) items.push({ id: d.id, connectionId: data.connectionId as string, circleId: (data.circleId as string | undefined) ?? DEFAULT_CIRCLE_ID, text: data.text as string, enc: data.enc });
+        if (data.enc && !data.enc.media && staleFor(data.enc, uid, inUse)) items.push({ id: d.id, connectionId: data.connectionId as string, circleId: (data.circleId as string | undefined) ?? DEFAULT_CIRCLE_ID, text: data.text as string, enc: data.enc });
       }
       next = docs.length === PAGE ? cursorOf(docs[docs.length - 1].data().time) : null;
       res.json({ part, items, next } satisfies ReencryptTodo);
@@ -80,7 +80,7 @@ reencryptRouter.get(
     for (const [connectionId, circleId] of await myConnections(uid)) {
       for (const d of (await safeboxItems(connectionId).select("type", "enc", "revision").get()).docs) {
         const data = d.data();
-        if (SAFEBOX_OBJECT_TYPES.includes(data.type) && staleFor(data.enc, uid, retired)) {
+        if (SAFEBOX_OBJECT_TYPES.includes(data.type) && staleFor(data.enc, uid, inUse)) {
           stale.push({ id: d.id, connectionId, circleId, revision: (data.revision as number | undefined) ?? 1, enc: { ...data.enc, wraps: data.enc.wraps.filter((w: { uid: string }) => w.uid === uid) } });
         }
       }

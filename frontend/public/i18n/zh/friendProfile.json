@@ -34,7 +34,7 @@
   "wakeFname": "唤醒 {{ fName }}",
   "openTheConversation": "打开与 {{ name }} 的对话",
   "removeRules": "你可以移除自己添加的人。群主可以移除任何人。没有人能移除群主。",
-  "newMembersSeeNew": "你添加的人只能看到从现在开始的消息，看不到之前的。",
+  "newMembersSeeNew": "Someone you add sees the earlier messages and the safebox too, not only what is written from now on.",
   "leaveTheGroup": "退出群组",
   "leaveQuestion": "退出 {{ name }}？你在群组里的消息和那里的保险箱项目会对所有人删除。其他人保留群组。只有别人再次添加你，你才能回来。",
   "leaveOwnerNote": "你是群主：列表中的下一个人将成为群主。",

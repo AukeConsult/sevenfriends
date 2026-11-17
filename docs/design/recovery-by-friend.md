@@ -1,8 +1,12 @@
 # Recovery by my friend (Way 2): the plan
 
+> **Fixed rules:** `docs/design/recovery-rules.md` decides how a re-open works. Read it first; do not change it unless the owner specifically orders it.
+
 Status: the four rules and steps 1 to 6 are built (backend `functions/src/recovery.ts`, Home `core/recovery-inbox.service.ts` + `notifications/`, the page `friend-recovery/`, tests in `functions/test/recovery.test.ts`). Not built yet: step 7 (the code check), step 8 (the question on the asker's other devices), step 9 (resume, ask all, early warning for the helper). Texts: the new ones are in `frontend/public/i18n/en/`, the other languages fall back to English. What exists is step 5 in `docs/design/message-encryption.md` ("Recovery: the two ways", "Way 2: ask my friend").
 
 Way 2 is for the person who has a new key and **neither** another device of their own **nor** their 24 words (Way 1). Then only the friend can open the shared history, because the friend's copy of every message key and file key is still locked for the friend's key.
+
+**The rule since the re-lock change:** a re-open is the friend locking the KEYS (never the content) of everything the two have in common again for every key in use of both people; copies for keys that are gone go; keys are read again on every pass so a device added meanwhile is covered; `finish` is refused while anything still lacks a copy, except what the friend's device could not open (`skipped`, told to the asker). Only the friend's app has to stay open. Weak points 5 and 6 below are partly answered by this (the asker's page need not stay open; `skipped` is counted and told).
 
 ## What is weak today
 

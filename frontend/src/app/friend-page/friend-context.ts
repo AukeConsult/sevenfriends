@@ -6,6 +6,7 @@ import { initials } from '../core/initials';
 import { FriendListsService } from '../core/friend-lists.service';
 import { KeysService } from '../core/keys.service';
 import { SafeboxService } from '../core/safebox.service';
+import { GroupHistoryService } from '../core/group-history.service';
 import { UiPreferencesService } from '../core/ui-preferences';
 import { ApiError } from '../core/api.service';
 import { BoxKeys, BoxPerson, SafeboxItem, profileColorHex, profileColorInk, readableFingerprint } from '../models';
@@ -45,6 +46,7 @@ export class FriendContext {
   private readonly lists = inject(FriendListsService);
   private readonly lock = inject(MessageLockService);
   private readonly safebox = inject(SafeboxService);
+  private readonly history = inject(GroupHistoryService);
   private readonly prefs = inject(UiPreferencesService);
   private readonly router = inject(Router);
 
@@ -147,7 +149,7 @@ export class FriendContext {
   /** the keys in the newest signed list of my friend, when that list's chain holds: a key approved by their own devices is accepted by this device without a question */
   private readonly approvedKeyIds = signal<string[]>([]);
   /** the fingerprints of my friend's keys that no device list vouches for (the question "did you change phone?" is asked when one is new on this device). A group has no such check yet. */
-  readonly friendFingerprints = computed(() => (this.isGroup() ? [] : this.friendKeys().filter((k) => !k.revoked && !this.approvedKeyIds().includes(k.id)).map((k) => k.fingerprint)));
+  readonly friendFingerprints = computed(() => (this.isGroup() ? [] : this.friendKeys().filter((k) => !this.approvedKeyIds().includes(k.id)).map((k) => k.fingerprint)));
   readonly readable = readableFingerprint;
   /** how many keys in use the server lists for me and for my friend (for the details line) */
   readonly serverKeys = computed(() => ({ mine: this.boxKeys()?.mine.length ?? 0, friend: this.friendKeys().length }));
@@ -186,12 +188,12 @@ export class FriendContext {
   }
 
   /** Asks the server for the keys in use of me and of my friend (again when the padlock is tapped while they are still not known). */
-  private loadBoxKeys(): void {
+  loadBoxKeys(force = false): void {
     void this.safebox
       .keys(this.friendId)
       .then((keys) => {
         this.boxKeys.set(keys);
-        if (!keys.friendUid) void this.shareBox(keys); // a group (a friendship has the id of the friend)
+        if (!keys.friendUid) void this.shareBox(keys, force); // a group (a friendship has the id of the friend)
         else void this.lists.devicesOf(this.friendId, keys.friendUid, true).then((d) => this.approvedKeyIds.set(d?.status === 'ok' ? (d.current ?? []).map((e) => e.keyId) : []));
       })
       .catch((err) => {
@@ -202,12 +204,13 @@ export class FriendContext {
 
   private sharing = false;
 
-  /** A group: a new member (or a new key) gets a copy of the key of everything already in the box, from this device if it can (quiet; see `SafeboxService.shareWithMembers`). */
-  private async shareBox(keys: BoxKeys): Promise<void> {
-    if (this.sharing || !keys.others.some((o) => o.keys.length)) return;
+  /** A group: a new member (or a new key) gets a copy of the key of everything already in the box, and the earlier messages, from this device if it can (quiet; see `SafeboxService.shareWithMembers`). */
+  private async shareBox(keys: BoxKeys, force = false): Promise<void> {
+    if (this.sharing || !keys.others.length) return;
     this.sharing = true;
     try {
-      await this.safebox.shareWithMembers(this.friendId, keys);
+      if (keys.others.some((o) => o.keys.length)) await this.safebox.shareWithMembers(this.friendId, keys);
+      await this.history.share(this.friendId, keys, force); // the earlier messages for a member who joined later (texts that are not locked need no key)
     } catch (err) {
       console.warn('The box of the group could not be shared with its members', err);
     } finally {

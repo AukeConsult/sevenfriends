@@ -34,7 +34,7 @@
   "wakeFname": "Acordar {{ fName }}",
   "openTheConversation": "Abrir a conversa com {{ name }}",
   "removeRules": "Você pode remover as pessoas que adicionou. O dono pode remover qualquer um. Ninguém pode remover o dono.",
-  "newMembersSeeNew": "Quem você adiciona vê as mensagens a partir de agora, não as anteriores.",
+  "newMembersSeeNew": "Someone you add sees the earlier messages and the safebox too, not only what is written from now on.",
   "leaveTheGroup": "Sair do grupo",
   "leaveQuestion": "Sair de {{ name }}? Suas mensagens no grupo e seus itens do cofre lá são apagados para todos. Os outros ficam com o grupo. Você só volta se alguém adicionar você de novo.",
   "leaveOwnerNote": "Você é o dono: a próxima pessoa da lista passa a ser o dono.",

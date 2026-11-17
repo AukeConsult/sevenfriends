@@ -6,7 +6,6 @@
   "useThisWhenThis": "Nutz das, wenn dieses Gerät deine alten Nachrichten lesen kann, aber kein Erlauben-Knopf erscheint. Danach bekommen deine anderen Geräte Zugriff.",
   "useThisDeviceTo": "Dieses Gerät nutzen, um den anderen Zugriff zu geben",
   "thisDevice": "Dieses Gerät",
-  "removed": "Entfernt",
   "waitingForAccessTo": "Wartet auf Zugriff auf deine alten Nachrichten und Dateien.",
   "cancel": "Abbrechen",
   "removeIt": "Entfernen",
@@ -17,7 +16,6 @@
   "makeANewKey2": "Neues Schloss erstellen …",
   "whyIsMyKey": "Warum wird mein Schlüssel (nicht) gefunden?",
   "accountSlice": "Konto: …{{ slice }}",
-  "keysPublishedForThis": "Für dieses Konto veröffentlichte Schlüssel: {{ active }} in Gebrauch, {{ removed }} entfernt",
   "accountsWithAKey": "Konten mit einem Schlüssel in diesem Browser: {{ accountsInBrowser }}",
   "theServerCouldNot": "Der Server konnte gerade nicht gefragt werden. Lade die Seite neu und versuch es noch einmal.",
   "iAlreadyHaveA": "Meine 24 Rettungswörter",
@@ -37,8 +35,7 @@
   "someThingsAreLocked": "Einige deiner alten Nachrichten und Dateien sind auf diesem Gerät gesperrt.",
   "lockedCounts": "{{ messages }} Nachrichten und {{ files }} Dateien sind auf diesem Gerät gesperrt. Öffne sie wieder mit deinem anderen Gerät, deinen Rettungswörtern oder einem Freund.",
   "thisDeviceHasNoWorking": "Dieses Gerät hat kein funktionierendes Schloss.",
-  "theKeyOnThisRemoved": "Das Schloss auf diesem Gerät wurde entfernt, von einem anderen deiner Geräte oder mit \"Nicht ich\".",
-  "theKeyOnThisNever": "Das Schloss auf diesem Gerät wurde nie auf dem Server gespeichert, deshalb zählt es nicht.",
+  "theKeyOnThisNever": "The lock on this device is not saved on the server (it was never saved, or it was removed from another of your devices), so it does not count.",
   "thisDeviceHasNoKey": "Dein Konto hat Schlösser auf anderen Geräten, aber dieses Gerät hat keins.",
   "soYourOldMessages": "Deine alten Nachrichten und Dateien bleiben hier gesperrt, bis es eins hat. Öffne sie mit deinen Rettungswörtern, oder schalte das Schloss ein und frag deine anderen Geräte oder einen Freund.",
   "myOtherDevices": "Ein anderes Handy oder ein anderer Computer von mir",
@@ -70,8 +67,6 @@
   "startOverText": "Damit beginnt dein Schloss mit diesem Gerät neu. Alle anderen Geräte von dir werden entfernt. Jeder deiner Freunde wird gebeten zu bestätigen, dass du es wirklich bist, und kann dir dann helfen, deine alten Nachrichten wieder zu öffnen.",
   "startOverButton": "Mit diesem Gerät neu beginnen",
   "startOverFailed": "Neubeginn nicht möglich. Prüf die Verbindung und versuch es noch einmal.",
-  "hideRemoved": "Entfernte ausblenden",
-  "showRemoved": "Entfernte anzeigen ({{ count }})",
   "rowRecover": "Meine alten Nachrichten öffnen",
   "rowReplace": "Rettungswörter und neues Schloss",
   "whyRecoverTitle": "Warum muss ich das tun?",
@@ -79,5 +74,6 @@
   "noneOfThese": "Keins davon",
   "recoverQuestion": "Was hast du?",
   "makeFailed": "Das Schloss konnte auf diesem Gerät nicht erstellt werden: {{ error }}",
-  "tryAgain": "Erneut versuchen"
+  "tryAgain": "Erneut versuchen",
+  "keysInUseForThis": "Keys for this account: {{ active }}"
 }

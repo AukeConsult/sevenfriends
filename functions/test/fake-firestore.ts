@@ -331,10 +331,14 @@ class Tx {
     return target.get();
   }
   /** One document with only some fields (`tx.getAll(ref, { fieldMask })`), as the real SDK does. */
-  async getAll(ref: DocRef, options?: { fieldMask?: string[] }): Promise<any[]> {
+  async getAll(...args: any[]): Promise<any[]> {
     if (this.writes.length) throw new Error("Firestore transactions require all reads to be executed before all writes");
-    this.readDocs.set(ref.path, versions.get(ref.path) ?? 0);
-    return [options?.fieldMask ? projected(snapOf(ref.path), options.fieldMask) : snapOf(ref.path)];
+    const last = args[args.length - 1];
+    const options: { fieldMask?: string[] } | undefined = last instanceof DocRef ? undefined : args.pop(); // several references, then optionally the read options
+    return (args as DocRef[]).map((ref) => {
+      this.readDocs.set(ref.path, versions.get(ref.path) ?? 0);
+      return options?.fieldMask ? projected(snapOf(ref.path), options.fieldMask) : snapOf(ref.path);
+    });
   }
   set(ref: DocRef, data: Data, opts?: { merge?: boolean }) {
     this.writes.push({ op: "set", ref, data, merge: opts?.merge });

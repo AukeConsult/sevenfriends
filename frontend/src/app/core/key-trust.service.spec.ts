@@ -5,7 +5,7 @@ import { KeyTrustService, NotApprovedError } from './key-trust.service';
 
 /** The ONE rule for who a new locked thing may be locked for: only the keys in the signed device lists. */
 describe('KeyTrustService', () => {
-  const key = (id: string): PublishedKey => ({ id, fingerprint: id, label: id, createdAt: null, revoked: false, publicKey: { kty: 'RSA', n: id, e: 'AQAB' } as PublishedKey['publicKey'] });
+  const key = (id: string): PublishedKey => ({ id, fingerprint: id, label: id, createdAt: null, publicKey: { kty: 'RSA', n: id, e: 'AQAB' } as PublishedKey['publicKey'] });
   const ok = (...ids: string[]): PersonDevices => ({ status: 'ok', devices: [], current: ids.map((keyId) => ({ keyId, lockKey: {}, signKey: {}, label: keyId }) as never) });
   const none: PersonDevices = { status: 'none', devices: [] };
   const broken: PersonDevices = { status: 'broken', devices: [] };

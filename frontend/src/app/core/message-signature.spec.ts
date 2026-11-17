@@ -31,7 +31,7 @@ describe('the check of who wrote a message', () => {
   const device = async (label: string): Promise<Device> => {
     const stored = await generateIdentityKey();
     const fingerprint = (await fingerprintOf(stored.publicKey))!;
-    return { stored, published: { id: keyIdOf(fingerprint), fingerprint, label, createdAt: null, revoked: false, publicKey: canonicalPublicKey(stored.publicKey)! } };
+    return { stored, published: { id: keyIdOf(fingerprint), fingerprint, label, createdAt: null, publicKey: canonicalPublicKey(stored.publicKey)! } };
   };
   const entryOf = (d: Device) => ({ keyId: d.published.id, lockKey: canonicalPublicKey(d.stored.publicKey)!, signKey: canonicalSignKey(d.stored.signKey!.publicKey)!, label: d.published.label });
 

@@ -8,7 +8,7 @@ import { asyncHandler, requireAuth } from "./auth";
 import { DEFAULT_CIRCLE_ID, PUSH_DEVICE_COLLECTION, circleIdForType, circleTypeOf } from "./constants";
 import { CIRCLE_TYPES, SOUNDS, androidKeyOf } from "./models";
 import { setting } from "./settings";
-import { circleCol, keyCol, pushDeviceCol, readFields, userFields } from "./paths";
+import { circleCol, pushDeviceCol, readFields, userFields } from "./paths";
 import { noticesOf } from "./preferences";
 import { deleteRefs } from "./signals";
 import { circleProfileOf, activeCircleOf } from "./circle-profile";
@@ -273,11 +273,6 @@ pushRouter.post(
       return;
     }
     const uid = (res.locals.token as DecodedIdToken).uid;
-    const keyId = keyOfBody(req.body);
-    if (keyId && (await keyCol(uid).doc(keyId).get()).data()?.revoked === true) {
-      res.status(403).json({ error: "This device was removed from your account." }); // a removed device does not come back by registering again
-      return;
-    }
     const mine = pushDeviceCol(uid).doc(deviceId(token));
 
     const others = (await getFirestore().collectionGroup(PUSH_DEVICE_COLLECTION).where("token", "==", token).select().get()).docs

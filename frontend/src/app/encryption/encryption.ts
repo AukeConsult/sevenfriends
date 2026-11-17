@@ -35,11 +35,8 @@ export class Encryption {
   protected readonly allowNote = signal<string | null>(null);
   /** the recovery words are on the screen: nothing else on the page is offered meanwhile */
   protected readonly showingWords = computed(() => this.keySetup()?.showingWords() ?? false);
-  /** the removed keys are hidden until "Show removed" is tapped */
-  protected readonly showRemoved = signal(false);
-  protected readonly removedCount = computed(() => this.keys.published().filter((k) => k.revoked).length);
-  /** the keys that are in use, then (only when asked for) the retired ones */
-  protected readonly devices = computed(() => [...this.keys.published()].filter((k) => !k.revoked || this.showRemoved()).sort((a, b) => Number(a.revoked) - Number(b.revoked)));
+  /** my keys (a removed key is deleted, so all of them are in use) */
+  protected readonly devices = computed(() => [...this.keys.published()]);
 
   /** the key that is asked "really remove?" */
   protected readonly removing = signal<string | null>(null);
@@ -72,9 +69,9 @@ export class Encryption {
   /** this device's own key is new and no other device has approved it yet: the 24 words can still bring back a key that is approved */
   protected readonly thisKeyWaiting = computed(() => !!this.keys.published().find((k) => k.id === this.keys.thisKeyId())?.waiting);
   /** the other devices of mine that have a working key: one of them has to do it */
-  protected readonly otherDevices = computed(() => this.keys.published().filter((k) => !k.revoked && k.id !== this.keys.thisKeyId()));
+  protected readonly otherDevices = computed(() => this.keys.published().filter((k) => k.id !== this.keys.thisKeyId()));
   /** other devices of mine that have a key (they can open my history) */
-  protected readonly otherKeys = computed(() => this.keys.published().filter((k) => !k.revoked && k.id !== this.keys.thisKeyId()).length);
+  protected readonly otherKeys = computed(() => this.keys.published().filter((k) => k.id !== this.keys.thisKeyId()).length);
   protected readonly percent = computed(() => {
     const request = this.mine();
     return request?.total ? Math.min(100, Math.round((request.added / request.total) * 100)) : 0;
@@ -87,10 +84,9 @@ export class Encryption {
   }
 
   /** why there is no working key on this device (null = nothing to warn about); the template turns it into words, so the text follows the language once it is loaded */
-  protected readonly noKeyReason = computed((): 'removed' | 'never' | 'elsewhere' | null => {
+  protected readonly noKeyReason = computed((): 'never' | 'elsewhere' | null => {
     if (this.keys.state() !== 'none') return null;
     const localPublished = this.keys.diagnosis()?.localPublished;
-    if (localPublished === 'removed') return 'removed';
     if (localPublished === 'no') return 'never';
     return this.keys.elsewhere() ? 'elsewhere' : null;
   });
@@ -145,7 +141,7 @@ export class Encryption {
     void this.keys.refresh();
   }
 
-  protected readonly severalKeys = computed(() => this.keys.published().filter((k) => !k.revoked).length > 1);
+  protected readonly severalKeys = computed(() => this.keys.published().length > 1);
 
   protected async trustThis(): Promise<void> {
     this.allowNote.set(null);
@@ -182,7 +178,7 @@ export class Encryption {
     this.busy.set(true);
     this.problem.set(null);
     try {
-      await this.keys.revoke(key.id, true, this.keys.thisKeyId() ?? undefined); // a device never removes itself: the server refuses it too
+      await this.keys.remove(key.id, true, this.keys.thisKeyId() ?? undefined); // a device never removes itself: the server refuses it too
       this.removing.set(null);
     } catch (err: any) {
       this.problem.set(err?.message || tr('encryption.theKeyCouldNot', 'The lock could not be removed.'));

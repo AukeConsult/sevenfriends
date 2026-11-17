@@ -34,7 +34,7 @@
   "wakeFname": "أيقظ {{ fName }}",
   "openTheConversation": "فتح المحادثة مع {{ name }}",
   "removeRules": "يمكنك إزالة الأشخاص الذين أضفتهم. ويمكن للمالك إزالة أي شخص. ولا يمكن لأحد إزالة المالك.",
-  "newMembersSeeNew": "من تضيفه يرى الرسائل من الآن فصاعدًا، لا الرسائل السابقة.",
+  "newMembersSeeNew": "Someone you add sees the earlier messages and the safebox too, not only what is written from now on.",
   "leaveTheGroup": "مغادرة المجموعة",
   "leaveQuestion": "مغادرة {{ name }}؟ تُحذف رسائلك في المجموعة وعناصرك في الخزنة هناك للجميع. يحتفظ الآخرون بالمجموعة. لن تعود إلا إذا أضافك أحد من جديد.",
   "leaveOwnerNote": "أنت المالك: الشخص التالي في القائمة يصبح المالك.",

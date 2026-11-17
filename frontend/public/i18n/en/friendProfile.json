@@ -34,7 +34,7 @@
   "wakeFname": "Wake {{ fName }} up",
   "openTheConversation": "Open the conversation with {{ name }}",
   "removeRules": "You can remove the people you added. The owner can remove anyone. Nobody can remove the owner.",
-  "newMembersSeeNew": "Someone you add sees the messages from now on, not the earlier ones.",
+  "newMembersSeeNew": "Someone you add sees the earlier messages and the safebox too, not only what is written from now on.",
   "leaveTheGroup": "Leave the group",
   "leaveQuestion": "Leave {{ name }}? Your messages in the group and your safebox items there are deleted for everybody. The others keep the group. You are back only if someone adds you again.",
   "leaveOwnerNote": "You are the owner: the next person in the list becomes the owner.",

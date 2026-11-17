@@ -11,7 +11,7 @@ function memoryStore(): KeyStore {
 async function person(uid: string): Promise<{ stored: StoredDeviceKey; published: PublishedKey }> {
   const { key } = await createDeviceKey(uid, { store: memoryStore() });
   const fingerprint = (await fingerprintOf(key.publicKey))!;
-  return { stored: key, published: { id: keyIdOf(fingerprint), fingerprint, label: uid, createdAt: null, revoked: false, publicKey: canonicalPublicKey(key.publicKey)! } };
+  return { stored: key, published: { id: keyIdOf(fingerprint), fingerprint, label: uid, createdAt: null, publicKey: canonicalPublicKey(key.publicKey)! } };
 }
 
 /** Cuts an upload body into its header, file and preview, as the server does. */

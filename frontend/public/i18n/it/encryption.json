@@ -6,7 +6,6 @@
   "useThisWhenThis": "Usalo quando questo dispositivo può leggere i tuoi vecchi messaggi, ma non compare nessun pulsante Consenti. Così dà accesso ai tuoi altri dispositivi.",
   "useThisDeviceTo": "Usa questo dispositivo per dare accesso agli altri",
   "thisDevice": "Questo dispositivo",
-  "removed": "Rimossa",
   "waitingForAccessTo": "In attesa di accesso ai tuoi vecchi messaggi e file.",
   "cancel": "Annulla",
   "removeIt": "Rimuovila",
@@ -17,7 +16,6 @@
   "makeANewKey2": "Crea un nuovo lucchetto…",
   "whyIsMyKey": "Perché la mia chiave (non) si trova?",
   "accountSlice": "Account: …{{ slice }}",
-  "keysPublishedForThis": "Chiavi pubblicate per questo account: {{ active }} in uso, {{ removed }} rimosse",
   "accountsWithAKey": "Account con una chiave in questo browser: {{ accountsInBrowser }}",
   "theServerCouldNot": "Non è stato possibile interrogare il server ora. Ricarica la pagina per riprovare.",
   "iAlreadyHaveA": "Le mie 24 parole di recupero",
@@ -37,8 +35,7 @@
   "someThingsAreLocked": "Alcuni dei tuoi vecchi messaggi e file sono bloccati su questo dispositivo.",
   "lockedCounts": "{{ messages }} messaggi e {{ files }} file sono bloccati su questo dispositivo. Aprili di nuovo con un altro tuo dispositivo, con le tue parole di recupero o con un amico.",
   "thisDeviceHasNoWorking": "Questo dispositivo non ha un lucchetto funzionante.",
-  "theKeyOnThisRemoved": "Il lucchetto di questo dispositivo è stato rimosso, da un altro tuo dispositivo o con \"Non sono io\".",
-  "theKeyOnThisNever": "Il lucchetto di questo dispositivo non è mai stato salvato sul server, quindi non conta.",
+  "theKeyOnThisNever": "The lock on this device is not saved on the server (it was never saved, or it was removed from another of your devices), so it does not count.",
   "thisDeviceHasNoKey": "Il tuo account ha lucchetti su altri dispositivi, ma questo non ne ha.",
   "soYourOldMessages": "I tuoi vecchi messaggi e file restano bloccati qui finché non ne ha uno. Aprili con le tue parole di recupero, oppure attiva il lucchetto e chiedi ai tuoi altri dispositivi o a un amico.",
   "myOtherDevices": "Un altro mio telefono o computer",
@@ -70,8 +67,6 @@
   "startOverText": "Questo riparte da capo con il lucchetto su questo dispositivo. Ogni altro tuo dispositivo viene rimosso. A ciascuno dei tuoi amici viene chiesto di confermare che sei proprio tu, e poi può aiutarti ad aprire di nuovo i tuoi vecchi messaggi.",
   "startOverButton": "Ricomincia con questo dispositivo",
   "startOverFailed": "Impossibile ricominciare. Controlla la connessione e riprova.",
-  "hideRemoved": "Nascondi rimossi",
-  "showRemoved": "Mostra rimossi ({{ count }})",
   "rowRecover": "Recupera i miei vecchi messaggi",
   "rowReplace": "Parole di recupero e nuovo lucchetto",
   "whyRecoverTitle": "Perché devo farlo?",
@@ -79,5 +74,6 @@
   "noneOfThese": "Nessuna di queste",
   "recoverQuestion": "Che cosa hai?",
   "makeFailed": "Non è stato possibile creare il lucchetto su questo dispositivo: {{ error }}",
-  "tryAgain": "Riprova"
+  "tryAgain": "Riprova",
+  "keysInUseForThis": "Keys for this account: {{ active }}"
 }

@@ -34,7 +34,7 @@
   "wakeFname": "Maak {{ fName }} wakker",
   "openTheConversation": "Open het gesprek met {{ name }}",
   "removeRules": "Je kunt de mensen verwijderen die je zelf hebt toegevoegd. De eigenaar kan iedereen verwijderen. Niemand kan de eigenaar verwijderen.",
-  "newMembersSeeNew": "Wie je toevoegt, ziet de berichten vanaf nu, niet de eerdere.",
+  "newMembersSeeNew": "Someone you add sees the earlier messages and the safebox too, not only what is written from now on.",
   "leaveTheGroup": "Groep verlaten",
   "leaveQuestion": "{{ name }} verlaten? Je berichten in de groep en je kluisitems daar worden voor iedereen verwijderd. De anderen houden de groep. Je bent alleen terug als iemand je opnieuw toevoegt.",
   "leaveOwnerNote": "Je bent de eigenaar: de volgende persoon in de lijst wordt eigenaar.",

@@ -25,16 +25,14 @@ export const publishedOf = (id: string, data: FirebaseFirestore.DocumentData): P
   fingerprint: data.fingerprint as string,
   label: (data.label as string | undefined) ?? "",
   createdAt: data.createdAt instanceof Timestamp ? data.createdAt.toDate().toISOString() : null,
-  revoked: data.revoked === true,
   publicKey: data.publicKey as PublicKeyJwk,
   ...(data.signKey ? { signKey: data.signKey as SignKeyJwk } : {}),
 });
 
-/** The keys of a person that are in use (not retired), oldest first. */
+/** The keys of a person (a removed key is deleted, so every key there is is in use), oldest first. */
 export async function publishedKeysOf(uid: string): Promise<PublishedKey[]> {
   const snap = await keyCol(uid).get();
   return snap.docs
-    .filter((d) => d.data().revoked !== true)
     .map((d) => publishedOf(d.id, d.data()))
     .sort((a, b) => (a.createdAt ?? "").localeCompare(b.createdAt ?? ""));
 }
@@ -61,8 +59,8 @@ export async function myKeysOf(uid: string): Promise<MyKeys> {
   await stampKeys(accountId, snap.docs); // an account and keys from before the stamp existed get it the first time they are read
   const listed = new Set(((newest.docs[0]?.data().devices ?? []) as { keyId: string }[]).map((d) => d.keyId));
   const keys = snap.docs.map((d) => ({ ...publishedOf(d.id, d.data()), flag: d.data().ownShared as boolean | undefined })).sort((a, b) => (a.createdAt ?? "").localeCompare(b.createdAt ?? ""));
-  const oldest = keys.find((k) => !k.revoked)?.id;
-  return { keys: keys.map(({ flag, ...k }) => (!k.revoked && !listed.has(k.id) && (listed.size > 0 || !isShared(flag, k.id === oldest)) ? { ...k, waiting: true } : k)), hasBackup: !backups.empty, backups: backups.docs.map((d) => d.id).filter((id) => id !== KEY_BACKUP_DOC), accountId };
+  const oldest = keys[0]?.id;
+  return { keys: keys.map(({ flag, ...k }) => (!listed.has(k.id) && (listed.size > 0 || !isShared(flag, k.id === oldest)) ? { ...k, waiting: true } : k)), hasBackup: !backups.empty, backups: backups.docs.map((d) => d.id).filter((id) => id !== KEY_BACKUP_DOC), accountId };
 }
 
 keysRouter.get(
@@ -112,7 +110,7 @@ keysRouter.post(
     }
     const existing = await keyCol(uid).get();
     const already = existing.docs.find((d) => d.id === id);
-    if (!already && existing.docs.filter((d) => d.data().revoked !== true).length >= MAX_KEYS_PER_PERSON) {
+    if (!already && existing.size >= MAX_KEYS_PER_PERSON) {
       res.status(409).json({ error: `At most ${MAX_KEYS_PER_PERSON} devices can have a key` });
       return;
     }
@@ -120,8 +118,8 @@ keysRouter.post(
     const ref = keyCol(uid).doc(id);
     const batch = getFirestore().batch();
     // `ownShared`: a key that is the first of the person has everything it needs; a key added next to another one waits until a device of the same person allows it (own-recovery.ts)
-    const first = !existing.docs.some((d) => d.data().revoked !== true);
-    batch.set(ref, already ? { label, ...(accountId ? { accountId } : {}) } : { ...(accountId ? { accountId } : {}), publicKey: key, ...(signKey ? { signKey } : {}), fingerprint, label, revoked: false, ownShared: first, createdAt: FieldValue.serverTimestamp() }, { merge: true });
+    const first = existing.empty;
+    batch.set(ref, already ? { label, ...(accountId ? { accountId } : {}) } : { ...(accountId ? { accountId } : {}), publicKey: key, ...(signKey ? { signKey } : {}), fingerprint, label, ownShared: first, createdAt: FieldValue.serverTimestamp() }, { merge: true });
     if (backup) {
       const saved = { ...backup, savedAt: FieldValue.serverTimestamp() };
       batch.set(keyBackupDoc(uid, id), saved); // the backup of THIS key: another device's words never replace it
@@ -165,7 +163,7 @@ keysRouter.post(
     const head = newest.docs[0]?.data() as DeviceList | undefined;
     let refusal: string | null = null;
     // every device of the list is a key of this person that is in use, with exactly these public keys (a list can not name a key that was never published)
-    const inUse = new Map(published.docs.filter((d) => d.data().revoked !== true).map((d) => [d.id, d.data()]));
+    const inUse = new Map(published.docs.map((d) => [d.id, d.data()]));
     const known = (d: DeviceList["devices"][number]) => {
       const k = inUse.get(d.keyId);
       return !!k && JSON.stringify(canonicalPublicKey(k.publicKey)) === JSON.stringify(d.lockKey) && JSON.stringify(canonicalSignKey(k.signKey)) === JSON.stringify(d.signKey);
@@ -186,7 +184,7 @@ keysRouter.post(
       res.status(409).json({ error: refusal });
       return;
     }
-    if (list.restart) await startOver(uid, list); // every device before it is lost: the keys outside the list are retired
+    if (list.restart) await startOver(uid, list); // every device before it is lost: the keys outside the list are removed
     res.status(201).json(list);
   }),
 );
@@ -204,16 +202,15 @@ async function signatureHolds(list: DeviceList, signers: DeviceList["devices"]):
 }
 
 /**
- * After a new beginning of the signed list: every key of mine that is not in it is retired (its device is lost), with what it leaves behind, and the open
+ * After a new beginning of the signed list: every key of mine that is not in it is removed (its device is lost), with what it leaves behind, and the open
  * request of the new key goes (it is the only key: nothing is left to approve it). The other devices of mine, if one is still alive, look again.
  */
 async function startOver(uid: string, list: DeviceList): Promise<void> {
   const kept = new Set(list.devices.map((d) => d.keyId));
   for (const doc of (await keyCol(uid).get()).docs) {
-    if (doc.data().revoked === true) continue;
     if (kept.has(doc.id)) await ownRequestCol(uid).doc(doc.id).delete();
     else {
-      await doc.ref.set({ revoked: true, revokedAt: FieldValue.serverTimestamp() }, { merge: true });
+      await doc.ref.delete();
       await removeTraces(uid, doc.id);
     }
   }
@@ -226,9 +223,9 @@ async function removeTraces(uid: string, keyId: string): Promise<void> {
   await Promise.all([ownRequestCol(uid).doc(keyId).delete(), keyBackupDoc(uid, keyId).delete(), ...pushes.docs.map((d) => d.ref.delete())]);
 }
 
-/** Retire a key of mine (a device that is lost or replaced): it is no longer used for new files. It cannot be turned back on. */
+/** Remove a key of mine (a device that is lost or replaced): the key is deleted, so it is not used for anything new, and the copies made for it go the next time the old items are locked again. */
 keysRouter.post(
-  "/:id/revoke",
+  "/:id/remove",
   asyncHandler(async (req, res) => {
     const ref = keyCol(uidOf(res)).doc(req.params.id);
     if ((req.body ?? {}).by === req.params.id) {
@@ -239,7 +236,7 @@ keysRouter.post(
       res.status(404).json({ error: "Key not found" });
       return;
     }
-    await ref.set({ revoked: true, revokedAt: FieldValue.serverTimestamp() }, { merge: true });
+    await ref.delete();
     await removeTraces(uidOf(res), req.params.id);
     res.json({ ok: true });
   }),

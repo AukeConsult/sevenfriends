@@ -34,7 +34,7 @@
   "wakeFname": "להעיר את {{ fName }}",
   "openTheConversation": "פתיחת השיחה עם {{ name }}",
   "removeRules": "אפשר להסיר את מי שהוספת. הבעלים יכול להסיר כל אחד. אף אחד לא יכול להסיר את הבעלים.",
-  "newMembersSeeNew": "מי שתוסיף יראה את ההודעות מעכשיו, לא את הקודמות.",
+  "newMembersSeeNew": "Someone you add sees the earlier messages and the safebox too, not only what is written from now on.",
   "leaveTheGroup": "עזיבת הקבוצה",
   "leaveQuestion": "לעזוב את {{ name }}? ההודעות שלך בקבוצה ופריטי הכספת שלך שם יימחקו לכולם. האחרים ישמרו את הקבוצה. תחזור רק אם מישהו יוסיף אותך שוב.",
   "leaveOwnerNote": "אתה הבעלים: האדם הבא ברשימה יהפוך לבעלים.",

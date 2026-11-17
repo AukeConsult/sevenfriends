@@ -34,7 +34,7 @@
   "wakeFname": "Obudź {{ fName }}",
   "openTheConversation": "Otwórz rozmowę z {{ name }}",
   "removeRules": "Możesz usunąć osoby, które dodałeś. Właściciel może usunąć każdego. Nikt nie może usunąć właściciela.",
-  "newMembersSeeNew": "Osoba, którą dodasz, widzi wiadomości od teraz, a nie wcześniejsze.",
+  "newMembersSeeNew": "Someone you add sees the earlier messages and the safebox too, not only what is written from now on.",
   "leaveTheGroup": "Opuść grupę",
   "leaveQuestion": "Opuścić {{ name }}? Twoje wiadomości w grupie i elementy sejfu tam zostaną usunięte dla wszystkich. Pozostali zatrzymują grupę. Wrócisz tylko, jeśli ktoś doda cię ponownie.",
   "leaveOwnerNote": "Jesteś właścicielem: następna osoba na liście zostanie właścicielem.",

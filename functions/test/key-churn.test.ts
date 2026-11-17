@@ -110,7 +110,7 @@ async function approve(p: Person, newcomer: Device, by: Device) {
 }
 async function remove(p: Person, gone: Device, by: Device) {
   await publishList(p, p.devices.filter((d) => isListed(p, d) && d !== gone), by);
-  await p.user.raw("post", `/keys/${gone.keyId}/revoke`).expect(200);
+  await p.user.raw("post", `/keys/${gone.keyId}/remove`).expect(200);
   p.revoked.add(gone.keyId);
   p.devices.splice(p.devices.indexOf(gone), 1);
   p.retired.push(gone);
@@ -120,7 +120,7 @@ async function rotate(p: Person, old: Device) {
   const fresh = await makeDevice(old.label);
   await publishKey(p, fresh);
   await publishList(p, p.devices.filter((d) => isListed(p, d)).map((d) => (d === old ? fresh : d)), old);
-  await p.user.raw("post", `/keys/${old.keyId}/revoke`).expect(200);
+  await p.user.raw("post", `/keys/${old.keyId}/remove`).expect(200);
   p.revoked.add(old.keyId);
   p.devices[p.devices.indexOf(old)] = fresh;
   p.retired.push(old);
@@ -301,7 +301,7 @@ describe("keys changing back and forth, 5 people with 3 devices each", () => {
 
     // every device is lost: the keys are removed from my account, and a new device makes its keys
     for (const d of me.devices) {
-      await me.user.raw("post", `/keys/${d.keyId}/revoke`).expect(200); // the person signs in on the new phone and removes the lost keys; the signed list stays as it was
+      await me.user.raw("post", `/keys/${d.keyId}/remove`).expect(200); // the person signs in on the new phone and removes the lost keys; the signed list stays as it was
       me.revoked.add(d.keyId);
     }
     const fresh = await makeDevice("New phone");
@@ -355,14 +355,14 @@ describe("keys changing back and forth, 5 people with 3 devices each", () => {
 
     expect((await user.raw("post", "/push/test")).body.devices, "the phone is registered").toBe(1);
 
-    await user.raw("post", `/keys/${phone.keyId}/revoke`, { by: phone.keyId }).expect(409); // a device never removes itself
+    await user.raw("post", `/keys/${phone.keyId}/remove`, { by: phone.keyId }).expect(409); // a device never removes itself
     expect(listed(p)).toEqual([laptop.keyId, phone.keyId]);
     await remove(p, phone, laptop);
 
     expect(listed(p)).toEqual([laptop.keyId]);
     expect((await user.raw("get", `/own-recovery/pending?me=${laptop.keyId}`)).body.requests, "no request from the removed device").toEqual([]);
     expect((await user.raw("post", "/push/test")).body.devices, "no push goes to it").toBe(0);
-    await user.raw("post", "/push/devices", { token, keyId: phone.keyId }).expect(403); // and it cannot register again
+    // a removed key is deleted: nothing remembers it. A device that still holds it registers (and publishes its key) again as a new key that waits for an Allow.
   }, 60000);
 
   it("shows which keys wait for approval, and says why nobody can help when the one approved device is gone", async () => {
@@ -374,7 +374,7 @@ describe("keys changing back and forth, 5 people with 3 devices each", () => {
     await publishKey(p, phone); // added next to the first: waits for approval
     const waiting = async () => ((await user.raw("get", "/keys")).body.keys as { id: string; waiting?: boolean }[]).filter((k) => k.waiting).map((k) => k.id);
     expect(await waiting()).toEqual([phone.keyId]);
-    await user.raw("post", `/keys/${laptop.keyId}/revoke`).expect(200); // the one approved device is removed
+    await user.raw("post", `/keys/${laptop.keyId}/remove`).expect(200); // the one approved device is removed
     const res = await user.raw("post", "/own-recovery/ask", { key: phone.keyId });
     expect(res.status).toBe(409);
     expect(res.body.error).toContain("No other device of yours is approved to help");
@@ -388,7 +388,7 @@ describe("keys changing back and forth, 5 people with 3 devices each", () => {
     await publishKey(p, laptop);
     await publishList(p, [laptop], laptop);
     await approve(p, phone, laptop); // the phone is in the signed list
-    await user.raw("post", `/keys/${laptop.keyId}/revoke`).expect(200); // the first device is removed
+    await user.raw("post", `/keys/${laptop.keyId}/remove`).expect(200); // the first device is removed
     await publishKey(p, fresh); // a new key on a device
     await user.raw("post", "/own-recovery/ask", { key: fresh.keyId }).expect(201); // the phone (in the list) is asked
     const pending = (await user.raw("get", `/own-recovery/pending?me=${phone.keyId}`)).body;
@@ -445,7 +445,7 @@ describe("keys changing back and forth, 5 people with 3 devices each", () => {
     await publishKey(p, laptop);
     await publishList(p, [laptop], laptop);
     await approve(p, phone, laptop); // the phone is listed, but never got copies
-    await user.raw("post", `/keys/${laptop.keyId}/revoke`).expect(200); // the one key with copies is gone
+    await user.raw("post", `/keys/${laptop.keyId}/remove`).expect(200); // the one key with copies is gone
     await publishKey(p, fresh);
     const pending = async () => ((await user.raw("get", `/own-recovery/pending?me=${phone.keyId}`)).body.keys as { id: string }[]).map((k) => k.id);
     expect(await pending(), "the phone is asked to approve the new key").toEqual([fresh.keyId]);

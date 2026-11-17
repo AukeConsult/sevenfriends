@@ -6,7 +6,6 @@
   "useThisWhenThis": "Bruk dette når denne enheten kan lese de gamle meldingene dine, men ingen Tillat-knapp vises. Da gir den de andre enhetene dine tilgang.",
   "useThisDeviceTo": "Bruk denne enheten til å gi de andre tilgang",
   "thisDevice": "Denne enheten",
-  "removed": "Fjernet",
   "waitingForAccessTo": "Venter på tilgang til de gamle meldingene og filene dine.",
   "cancel": "Avbryt",
   "removeIt": "Fjern den",
@@ -17,7 +16,6 @@
   "makeANewKey2": "Lag en ny lås…",
   "whyIsMyKey": "Hvorfor er nøkkelen min (ikke) funnet?",
   "accountSlice": "Konto: …{{ slice }}",
-  "keysPublishedForThis": "Nøkler publisert for denne kontoen: {{ active }} i bruk, {{ removed }} fjernet",
   "accountsWithAKey": "Kontoer med en nøkkel i denne nettleseren: {{ accountsInBrowser }}",
   "theServerCouldNot": "Serveren kunne ikke spørres akkurat nå. Last siden på nytt for å prøve igjen.",
   "iAlreadyHaveA": "Mine 24 gjenopprettingsord",
@@ -37,8 +35,7 @@
   "someThingsAreLocked": "Noen av de gamle meldingene og filene dine er låst på denne enheten.",
   "lockedCounts": "{{ messages }} meldinger og {{ files }} filer er låst på denne enheten. Åpne dem igjen med din andre enhet, gjenopprettingsordene dine eller en venn.",
   "thisDeviceHasNoWorking": "Denne enheten har ingen fungerende lås.",
-  "theKeyOnThisRemoved": "Låsen på denne enheten ble fjernet, fra en annen enhet av deg eller med \"Ikke meg\".",
-  "theKeyOnThisNever": "Låsen på denne enheten ble aldri lagret på serveren, så den teller ikke.",
+  "theKeyOnThisNever": "The lock on this device is not saved on the server (it was never saved, or it was removed from another of your devices), so it does not count.",
   "thisDeviceHasNoKey": "Kontoen din har låser på andre enheter, men denne enheten har ingen.",
   "soYourOldMessages": "De gamle meldingene og filene dine forblir låst her til enheten har en lås. Åpne dem med gjenopprettingsordene dine, eller slå på låsen og spør de andre enhetene dine eller en venn.",
   "myOtherDevices": "En annen telefon eller datamaskin av meg",
@@ -70,8 +67,6 @@
   "startOverText": "Dette starter låsen din på nytt med denne enheten. Alle de andre enhetene dine fjernes. Hver av vennene dine blir bedt om å bekrefte at det virkelig er deg, og kan så hjelpe deg å åpne de gamle meldingene dine igjen.",
   "startOverButton": "Start på nytt med denne enheten",
   "startOverFailed": "Kunne ikke starte på nytt. Sjekk tilkoblingen og prøv igjen.",
-  "hideRemoved": "Skjul fjernede",
-  "showRemoved": "Vis fjernede ({{ count }})",
   "rowRecover": "Få tilbake mine gamle meldinger",
   "rowReplace": "Gjenopprettingsord og ny lås",
   "whyRecoverTitle": "Hvorfor må jeg gjøre dette?",
@@ -79,5 +74,6 @@
   "noneOfThese": "Ingen av disse",
   "recoverQuestion": "Hva har du?",
   "makeFailed": "Låsen kunne ikke lages på denne enheten: {{ error }}",
-  "tryAgain": "Prøv igjen"
+  "tryAgain": "Prøv igjen",
+  "keysInUseForThis": "Keys for this account: {{ active }}"
 }

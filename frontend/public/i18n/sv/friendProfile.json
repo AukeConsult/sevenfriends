@@ -34,7 +34,7 @@
   "wakeFname": "Väck {{ fName }}",
   "openTheConversation": "Öppna samtalet med {{ name }}",
   "removeRules": "Du kan ta bort de du själv lade till. Ägaren kan ta bort alla. Ingen kan ta bort ägaren.",
-  "newMembersSeeNew": "Den du lägger till ser meddelanden från nu, inte de tidigare.",
+  "newMembersSeeNew": "Someone you add sees the earlier messages and the safebox too, not only what is written from now on.",
   "leaveTheGroup": "Lämna gruppen",
   "leaveQuestion": "Lämna {{ name }}? Dina meddelanden i gruppen och dina kassaskåpsobjekt där raderas för alla. De andra behåller gruppen. Du är bara tillbaka om någon lägger till dig igen.",
   "leaveOwnerNote": "Du är ägare: nästa person i listan blir ägare.",

@@ -74,7 +74,7 @@ export class SafeboxService {
    * on its own gets no copy. A person with no list (an older lock) is as the server says. Throws, so nothing is stored, when a list does not hold.
    * (Fetched when needed: `FriendListsService` itself needs this service.)
    */
-  private async lockKeys(friendId: string, keys: BoxKeys, known?: { uid: string; keyId: string } | null): Promise<BoxKeys> {
+  async lockKeys(friendId: string, keys: BoxKeys, known?: { uid: string; keyId: string } | null): Promise<BoxKeys> {
     const mine = known ?? (await myDeviceKey(this.auth.user()?.uid));
     if (!mine) return keys;
     return this.injector.get(KeyTrustService).limit(friendId, { uid: mine.uid, keyId: mine.keyId }, keys);

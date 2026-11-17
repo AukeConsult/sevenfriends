@@ -34,7 +34,7 @@
   "wakeFname": "{{ fName }} को जगाएँ",
   "openTheConversation": "{{ name }} के साथ बातचीत खोलें",
   "removeRules": "आप उन लोगों को हटा सकते हैं जिन्हें आपने जोड़ा। मालिक किसी को भी हटा सकता है। मालिक को कोई नहीं हटा सकता।",
-  "newMembersSeeNew": "आप जिसे जोड़ेंगे वह अब से के संदेश देखेगा, पहले के नहीं।",
+  "newMembersSeeNew": "Someone you add sees the earlier messages and the safebox too, not only what is written from now on.",
   "leaveTheGroup": "समूह छोड़ें",
   "leaveQuestion": "{{ name }} छोड़ें? समूह में आपके संदेश और वहाँ आपकी तिजोरी की चीज़ें सबके लिए हट जाएँगी। बाकी लोग समूह रखेंगे। आप तभी लौटेंगे जब कोई आपको फिर से जोड़े।",
   "leaveOwnerNote": "आप मालिक हैं: सूची में अगला व्यक्ति मालिक बन जाएगा।",

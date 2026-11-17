@@ -162,15 +162,15 @@ describe("a note in the safebox", () => {
     const { id, mine, theirs, wraps } = await twoWithKeys();
     const [u0, u1] = [pool[0].p.uid, pool[1].p.uid];
     const item = (await pool[0].raw("post", box(id, "/items"), note(wraps)).expect(201)).body;
-    await pool[0].raw("post", `/keys/${mine}/revoke`).expect(200);
+    await pool[0].raw("post", `/keys/${mine}/remove`).expect(200);
     const newKey = await publish(pool[0], keys[2]);
     await pool[0].raw("post", recovery(id)).expect(201);
     await pool[1].raw("post", recovery(id, "/approve")).expect(200);
     const todo = (await pool[1].raw("get", recovery(id, "/todo?part=box")).expect(200)).body;
-    expect(todo.items).toEqual([{ id: item.id, wraps: [expect.objectContaining({ uid: u1, keyId: theirs })], missing: [newKey] }]);
+    expect(todo.items).toEqual([{ id: item.id, wraps: [expect.objectContaining({ uid: u1, keyId: theirs })], missing: [newKey], missingOwn: [] }]);
     await pool[1].raw("post", recovery(id, "/wraps"), { part: "box", items: [{ id: item.id, wraps: [wrap(u0, newKey)] }] }).expect(200);
     const stored = (await getFirestore().collection("safebox").doc(id).collection("items").doc(item.id).get()).data()!;
-    expect(stored.enc.wraps.map((w: { keyId: string }) => w.keyId).sort()).toEqual([mine, newKey, theirs].sort());
+    expect(stored.enc.wraps.map((w: { keyId: string }) => w.keyId).sort()).toEqual([newKey, theirs].sort()); // the retired key's copy is dropped
     expect(stored.type).toBe("note"); // still a note, and the content was not touched
   });
 });

@@ -6,7 +6,6 @@
   "useThisWhenThis": "Use quando este dispositivo consegue ler suas mensagens antigas, mas nenhum botão Permitir aparece. Assim ele dá acesso aos seus outros dispositivos.",
   "useThisDeviceTo": "Usar este dispositivo para dar acesso aos outros",
   "thisDevice": "Este dispositivo",
-  "removed": "Removida",
   "waitingForAccessTo": "Aguardando acesso às suas mensagens e arquivos antigos.",
   "cancel": "Cancelar",
   "removeIt": "Remover",
@@ -17,7 +16,6 @@
   "makeANewKey2": "Criar um novo cadeado…",
   "whyIsMyKey": "Por que minha chave (não) é encontrada?",
   "accountSlice": "Conta: …{{ slice }}",
-  "keysPublishedForThis": "Chaves publicadas para esta conta: {{ active }} em uso, {{ removed }} removidas",
   "accountsWithAKey": "Contas com uma chave neste navegador: {{ accountsInBrowser }}",
   "theServerCouldNot": "Não foi possível consultar o servidor agora. Recarregue a página para tentar de novo.",
   "iAlreadyHaveA": "Minhas 24 palavras de resgate",
@@ -37,8 +35,7 @@
   "someThingsAreLocked": "Algumas das suas mensagens e arquivos antigos estão trancados neste dispositivo.",
   "lockedCounts": "{{ messages }} mensagens e {{ files }} arquivos estão trancados neste dispositivo. Abra-os de novo com seu outro dispositivo, suas palavras de resgate ou um amigo.",
   "thisDeviceHasNoWorking": "Este dispositivo não tem um cadeado que funcione.",
-  "theKeyOnThisRemoved": "O cadeado deste dispositivo foi removido, por outro dispositivo seu ou com \"Não sou eu\".",
-  "theKeyOnThisNever": "O cadeado deste dispositivo nunca foi salvo no servidor, então não conta.",
+  "theKeyOnThisNever": "The lock on this device is not saved on the server (it was never saved, or it was removed from another of your devices), so it does not count.",
   "thisDeviceHasNoKey": "Sua conta tem cadeados em outros dispositivos, mas este dispositivo não tem nenhum.",
   "soYourOldMessages": "Suas mensagens e arquivos antigos ficam trancados aqui até ele ter um. Abra-os com suas palavras de resgate, ou ative o cadeado e peça aos seus outros dispositivos ou a um amigo.",
   "myOtherDevices": "Outro celular ou computador meu",
@@ -70,8 +67,6 @@
   "startOverText": "Isto recomeça seu cadeado com este dispositivo. Todos os seus outros dispositivos são removidos. Cada um dos seus amigos é convidado a confirmar que é mesmo você, e depois pode ajudar você a abrir suas mensagens antigas de novo.",
   "startOverButton": "Recomeçar com este dispositivo",
   "startOverFailed": "Não foi possível recomeçar. Verifica a ligação e tenta de novo.",
-  "hideRemoved": "Ocultar removidos",
-  "showRemoved": "Mostrar removidos ({{ count }})",
   "rowRecover": "Abrir minhas mensagens antigas",
   "rowReplace": "Palavras de resgate e novo cadeado",
   "whyRecoverTitle": "Por que preciso fazer isto?",
@@ -79,5 +74,6 @@
   "noneOfThese": "Nenhuma dessas",
   "recoverQuestion": "O que você tem?",
   "makeFailed": "Não foi possível criar o cadeado neste dispositivo: {{ error }}",
-  "tryAgain": "Tentar de novo"
+  "tryAgain": "Tentar de novo",
+  "keysInUseForThis": "Keys for this account: {{ active }}"
 }

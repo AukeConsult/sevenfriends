@@ -148,6 +148,21 @@ export function wrapsCover(enc: { wraps: SafeboxWrap[] }, people: { uid: string;
   return expected.every((e) => given.includes(e));
 }
 
+/**
+ * The list of copies of one message or file after a recovery (the one place that decides it, docs/design/recovery-rules.md): the copies of the people in `people` are only for their
+ * keys in use (a copy for a key that is gone is dropped), and each new copy in `fresh` is added when that key has none yet and is for one of those people. Copies of anybody else stay.
+ * null = nothing changes.
+ */
+export function relockedWraps(existing: SafeboxWrap[], fresh: SafeboxWrap[], people: { uid: string; active: string[] }[]): SafeboxWrap[] | null {
+  const activeFor = (uid: string) => people.find((p) => p.uid === uid)?.active;
+  const kept = existing.filter((w) => !activeFor(w.uid) || activeFor(w.uid)?.includes(w.keyId));
+  const added = fresh
+    .filter((w) => activeFor(w.uid)?.includes(w.keyId)) // only for the owners of this copy
+    .filter((w, n, all) => all.findIndex((x) => x.keyId === w.keyId) === n && !kept.some((k) => k.keyId === w.keyId))
+    .map((w) => ({ uid: w.uid, keyId: w.keyId, wrappedKey: w.wrappedKey }));
+  return kept.length === existing.length && !added.length ? null : [...kept, ...added];
+}
+
 /** The copies of the file key that a person may see: their own (the others stay on the server). */
 export const wrapsFor = <T extends { wraps: SafeboxWrap[] }>(enc: T, uid: string): T => ({ ...enc, wraps: enc.wraps.filter((w) => w.uid === uid) });
 

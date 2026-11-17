@@ -34,7 +34,7 @@
   "wakeFname": "{{ fName }} aufwecken",
   "openTheConversation": "Unterhaltung mit {{ name }} öffnen",
   "removeRules": "Du kannst die Personen entfernen, die du hinzugefügt hast. Der Besitzer kann jeden entfernen. Niemand kann den Besitzer entfernen.",
-  "newMembersSeeNew": "Wen du hinzufügst, sieht die Nachrichten ab jetzt, nicht die früheren.",
+  "newMembersSeeNew": "Someone you add sees the earlier messages and the safebox too, not only what is written from now on.",
   "leaveTheGroup": "Gruppe verlassen",
   "leaveQuestion": "{{ name }} verlassen? Deine Nachrichten in der Gruppe und deine Tresor-Einträge dort werden für alle gelöscht. Die anderen behalten die Gruppe. Du bist nur wieder dabei, wenn dich jemand erneut hinzufügt.",
   "leaveOwnerNote": "Du bist der Besitzer: die nächste Person in der Liste wird Besitzer.",

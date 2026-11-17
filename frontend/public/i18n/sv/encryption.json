@@ -6,7 +6,6 @@
   "useThisWhenThis": "Använd det här när enheten kan läsa dina gamla meddelanden men ingen Tillåt-knapp visas. Då ger den dina andra enheter åtkomst.",
   "useThisDeviceTo": "Använd den här enheten för att ge de andra åtkomst",
   "thisDevice": "Den här enheten",
-  "removed": "Borttagen",
   "waitingForAccessTo": "Väntar på åtkomst till dina gamla meddelanden och filer.",
   "cancel": "Avbryt",
   "removeIt": "Ta bort den",
@@ -17,7 +16,6 @@
   "makeANewKey2": "Skapa ett nytt lås…",
   "whyIsMyKey": "Varför hittas min nyckel (inte)?",
   "accountSlice": "Konto: …{{ slice }}",
-  "keysPublishedForThis": "Nycklar publicerade för det här kontot: {{ active }} i bruk, {{ removed }} borttagna",
   "accountsWithAKey": "Konton med en nyckel i den här webbläsaren: {{ accountsInBrowser }}",
   "theServerCouldNot": "Servern gick inte att fråga just nu. Ladda om sidan och försök igen.",
   "iAlreadyHaveA": "Mina 24 räddningsord",
@@ -37,8 +35,7 @@
   "someThingsAreLocked": "Några av dina gamla meddelanden och filer är låsta på den här enheten.",
   "lockedCounts": "{{ messages }} meddelanden och {{ files }} filer är låsta på den här enheten. Öppna dem igen med din andra enhet, dina räddningsord eller en vän.",
   "thisDeviceHasNoWorking": "Den här enheten har inget fungerande lås.",
-  "theKeyOnThisRemoved": "Låset på den här enheten togs bort, från en annan av dina enheter eller med \"Inte jag\".",
-  "theKeyOnThisNever": "Låset på den här enheten sparades aldrig på servern, så det räknas inte.",
+  "theKeyOnThisNever": "The lock on this device is not saved on the server (it was never saved, or it was removed from another of your devices), so it does not count.",
   "thisDeviceHasNoKey": "Ditt konto har lås på andra enheter, men den här enheten har inget.",
   "soYourOldMessages": "Dina gamla meddelanden och filer förblir låsta här tills den har ett. Öppna dem med dina räddningsord, eller slå på låset och fråga dina andra enheter eller en vän.",
   "myOtherDevices": "En annan telefon eller dator som jag har",
@@ -70,8 +67,6 @@
   "startOverText": "Detta startar om ditt lås med den här enheten. Alla dina andra enheter tas bort. Var och en av dina vänner ombeds bekräfta att det verkligen är du, och kan sedan hjälpa dig att öppna dina gamla meddelanden igen.",
   "startOverButton": "Börja om med den här enheten",
   "startOverFailed": "Det gick inte att börja om. Kontrollera anslutningen och försök igen.",
-  "hideRemoved": "Dölj borttagna",
-  "showRemoved": "Visa borttagna ({{ count }})",
   "rowRecover": "Få tillbaka mina gamla meddelanden",
   "rowReplace": "Räddningsord och nytt lås",
   "whyRecoverTitle": "Varför måste jag göra det här?",
@@ -79,5 +74,6 @@
   "noneOfThese": "Inget av dessa",
   "recoverQuestion": "Vad har du?",
   "makeFailed": "Låset kunde inte skapas på den här enheten: {{ error }}",
-  "tryAgain": "Försök igen"
+  "tryAgain": "Försök igen",
+  "keysInUseForThis": "Keys for this account: {{ active }}"
 }

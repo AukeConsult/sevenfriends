@@ -4,6 +4,7 @@ export * from "./account";
 export * from "./circle";
 export * from "./circle-settings";
 export * from "./friend";
+export * from "./group-history";
 export * from "./keys";
 export * from "./signed";
 export * from "./languages";

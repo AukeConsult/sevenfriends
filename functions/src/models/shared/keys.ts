@@ -24,7 +24,6 @@ export interface PublishedKey {
   fingerprint: string;
   label: string;
   createdAt: string | null;
-  revoked: boolean;
   /** the public key itself (it is public): a new device that restores its key from the backup picks the one that fits */
   publicKey: PublicKeyJwk;
   /** the public signing key of the same device (ECDSA P-256); missing on an older lock (made before signing existed) */
@@ -146,16 +145,20 @@ export interface RecoveryState {
   /** how many messages and files needed a new copy when the friend approved, and how many have one now */
   total: number;
   added: number;
+  /** at the end: how many messages and files the helper's device could not open (they still lack a copy) */
+  skipped: number;
   /** the friend's name as in the list */
   friendName: string;
 }
 
-/** One message or file whose key the helper can open (the helper's own copies of its key); the helper locks it again for the new key. */
+/** One message or file that lacks a copy of its key for a key in use of either person; `wraps` = the helper's own copies of its key (empty when the helper has none: it cannot be opened). */
 export interface RecoveryTodoItem {
   id: string;
   wraps: { uid: string; keyId: string; wrappedKey: string }[];
   /** the keys in use of the one who asks that have no copy of this key yet: the helper locks it for each of them */
   missing: string[];
+  /** the keys in use of the helper itself that have no copy yet: the helper locks it for each of them too */
+  missingOwn?: string[];
 }
 
 /** GET .../recovery/todo?part=messages|box&after=<cursor>: the next items to do; `next` = continue after this cursor, null = this part is finished. */
@@ -180,6 +183,18 @@ export interface OwnRecoveryRequest {
   total: number;
   added: number;
   createdAt: string | null;
+}
+
+/**
+ * GET /own-recovery/todo: the next messages (`part=messages`) or safebox files (`part=box`) that lack a copy of their key for an allowed key. `wraps` are MY copies of the key
+ * (none: this device cannot open it), `missing` the allowed keys that have no copy yet, `keys` the public keys of all the allowed keys (the key being allowed, the keys
+ * allowed before and the keys in my signed device list). A key that still waits for its own Allow is not among them.
+ */
+export interface OwnRecoveryTodo {
+  part: "messages" | "box";
+  items: { id: string; connectionId?: string; wraps: { uid: string; keyId: string; wrappedKey: string }[]; missing: string[] }[];
+  next: string | null;
+  keys: PublishedKey[];
 }
 
 /** A group's safebox item that lacks a copy of its key for a key in use of a member (a member who joined, a new device): `wraps` are MY copies (I can open them), `missing` the keys still to be given one. */

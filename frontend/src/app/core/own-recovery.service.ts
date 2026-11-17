@@ -1,5 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { OwnRecoveryRequest, PublishedKey, RecoveryTodoItem, SafeboxWrap } from '../models';
+import { OwnRecoveryRequest, OwnRecoveryTodo, PublishedKey, SafeboxWrap } from '../models';
 import { ApiService } from './api.service';
 import { AuthService } from './auth.service';
 import { rewrapKey } from './box-crypto';
@@ -110,29 +110,45 @@ export class OwnRecoveryService {
     const listed = as ? true : await this.deviceList.publishNext({ add: target }); // the person allowed it: it joins the signed list, so friends accept what it writes and lock new messages for it (false: this device can not sign the list)
     await this.api.request<unknown>('/own-recovery/start', { method: 'POST', body: JSON.stringify({ key: target.id, me: mine.keyId }) }); // the asking device sees that the work has begun
     const result = { done: 0, skipped: 0, listed };
-    for (const part of ['messages', 'box'] as const) {
-      let after: string | null = null;
-      do {
-        const query = `key=${target.id}&part=${part}${after ? `&after=${encodeURIComponent(after)}` : ''}`;
-        const todo: { items: (RecoveryTodoItem & { connectionId?: string })[]; next: string | null } = await this.api.request(`/own-recovery/todo?${query}`);
-        const items: { id: string; connectionId?: string; wrap: SafeboxWrap }[] = [];
-        for (const item of todo.items) {
-          try {
-            items.push({ id: item.id, connectionId: item.connectionId, wrap: await rewrapKey({ wraps: item.wraps }, mine.keyId, mine.privateKey, { uid: mine.uid, key: target }, part === 'box' ? 'file' : 'message') });
-          } catch {
-            result.skipped++;
+    // A pass lists what still lacks a copy for an allowed key (the one being allowed, the keys allowed before, the keys in my signed list) and locks each key again for
+    // those keys; the content is never touched. A new pass looks again, so a key allowed meanwhile is covered; the last pass (it did nothing) tells what could not be opened.
+    for (let pass = 0; pass < 5; pass++) {
+      let passDone = 0;
+      let passSkipped = 0;
+      for (const part of ['messages', 'box'] as const) {
+        let after: string | null = null;
+        do {
+          const query = `key=${target.id}&part=${part}${after ? `&after=${encodeURIComponent(after)}` : ''}`;
+          const todo: OwnRecoveryTodo = await this.api.request(`/own-recovery/todo?${query}`);
+          const items: { id: string; connectionId?: string; wraps: SafeboxWrap[] }[] = [];
+          for (const item of todo.items) {
+            try {
+              const wraps: SafeboxWrap[] = [];
+              for (const key of todo.keys.filter((k) => item.missing.includes(k.id))) wraps.push(await rewrapKey({ wraps: item.wraps }, mine.keyId, mine.privateKey, { uid: mine.uid, key }, part === 'box' ? 'file' : 'message'));
+              if (wraps.length) items.push({ id: item.id, connectionId: item.connectionId, wraps });
+              else passSkipped++;
+            } catch {
+              passSkipped++;
+            }
           }
-        }
-        if (items.length) {
-          const sent = await this.api.request<{ added: number }>('/own-recovery/wraps', { method: 'POST', body: JSON.stringify({ key: target.id, part, items }) });
-          result.done += sent.added;
-          progress(result.done);
-        }
-        after = todo.next;
-      } while (after);
+          if (items.length) {
+            const sent = await this.api.request<{ added: number }>('/own-recovery/wraps', { method: 'POST', body: JSON.stringify({ key: target.id, part, items }) });
+            passDone += sent.added;
+            result.done += sent.added;
+            progress(result.done);
+          }
+          after = todo.next;
+        } while (after);
+      }
+      result.skipped = passSkipped;
+      if (!passDone) break;
     }
-    // marked allowed only when nothing was left out: a device that could not open some of it must not call the key complete
-    if (!result.skipped) await this.api.request<unknown>('/own-recovery/done', { method: 'POST', body: JSON.stringify({ key: target.id }) });
+    // the server marks the key allowed only when nothing lacks a copy for it; when something does (this device could not open it) it keeps the number for the asking device
+    try {
+      await this.api.request<unknown>('/own-recovery/done', { method: 'POST', body: JSON.stringify({ key: target.id }) });
+    } catch (err) {
+      if (!result.skipped) throw err;
+    }
     await this.check();
     return result;
   }

@@ -34,7 +34,7 @@
   "wakeFname": "Réveiller {{ fName }}",
   "openTheConversation": "Ouvrir la conversation avec {{ name }}",
   "removeRules": "Vous pouvez retirer les personnes que vous avez ajoutées. Le propriétaire peut retirer n'importe qui. Personne ne peut retirer le propriétaire.",
-  "newMembersSeeNew": "La personne que vous ajoutez voit les messages à partir de maintenant, pas les précédents.",
+  "newMembersSeeNew": "Someone you add sees the earlier messages and the safebox too, not only what is written from now on.",
   "leaveTheGroup": "Quitter le groupe",
   "leaveQuestion": "Quitter {{ name }} ? Vos messages dans le groupe et vos éléments du coffre sont supprimés pour tout le monde. Les autres gardent le groupe. Vous ne revenez que si quelqu'un vous ajoute à nouveau.",
   "leaveOwnerNote": "Vous êtes le propriétaire : la personne suivante de la liste le devient.",

@@ -91,7 +91,7 @@
         <p class="sf-hint m-0">{{ t('friendProfile.removeRules') || 'You can remove the people you added. The owner can remove anyone. Nobody can remove the owner.' }}</p>
         @if (note(); as n) { <p class="sf-hint m-0" role="status">{{ n }}</p> }
         @if (adding()) {
-          <p class="sf-hint m-0">{{ t('friendProfile.newMembersSeeNew') || 'Someone you add sees the messages from now on, not the earlier ones.' }}</p>
+          <p class="sf-hint m-0">{{ t('friendProfile.newMembersSeeNew') || 'Someone you add sees the earlier messages and the safebox too, not only what is written from now on.' }}</p>
           @for (c of addChoices(); track c.friend.id) {
             <div class="sf-add-choice">
               <button type="button" class="btn btn-light btn-sm" (click)="addMember(f, c.friend.id)" [disabled]="busy() || !!c.reason">{{ c.friend.name }}</button>

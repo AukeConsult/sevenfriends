@@ -120,7 +120,7 @@ describe("the device list", () => {
     await pool[0].raw("post", "/keys/list", v2ok).expect(201); // lock signs, lock2 joins
     // a key that was retired can not be named
     const keys = (await pool[0].raw("get", "/keys")).body.keys as { id: string; publicKey: JsonWebKey }[];
-    await pool[0].raw("post", `/keys/${keys.find((k) => k.publicKey.n === (lock2 as { n: string }).n)!.id}/revoke`).expect(200);
+    await pool[0].raw("post", `/keys/${keys.find((k) => k.publicKey.n === (lock2 as { n: string }).n)!.id}/remove`).expect(200);
     await pool[0].raw("post", "/keys/list", await signed(3, await deviceListHash(v2ok), [lock, lock2])).expect(409);
     await pool[0].raw("post", "/keys/list", await signed(3, await deviceListHash(v2ok), [lock])).expect(201); // taking it out is fine
   });
@@ -140,8 +140,8 @@ describe("the device list", () => {
     const lists = (await pool[0].raw("get", "/keys/list")).body.lists as DeviceList[];
     expect(lists.map((l) => [l.version, l.restart ?? false])).toEqual([[1, false], [2, true]]); // the history stays: old signatures still verify
     expect(lists[1].devices.map((d) => d.keyId)).toEqual([v2.devices[0].keyId]);
-    const keys = (await pool[0].raw("get", "/keys")).body.keys as { id: string; revoked: boolean }[];
-    expect(keys.filter((k) => !k.revoked).map((k) => k.id)).toEqual([v2.devices[0].keyId]); // the lost device's key is retired
+    const keys = (await pool[0].raw("get", "/keys")).body.keys as { id: string }[];
+    expect(keys.map((k) => k.id)).toEqual([v2.devices[0].keyId]); // the lost device's key is removed (deleted)
     await pool[0].raw("post", "/keys/list", await signed(3, await deviceListHash(v2), [lock2])).expect(201); // and the chain goes on as usual
   });
 

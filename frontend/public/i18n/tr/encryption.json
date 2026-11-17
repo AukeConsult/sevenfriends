@@ -6,7 +6,6 @@
   "useThisWhenThis": "Bu cihaz eski mesajlarını okuyabiliyor ama İzin ver düğmesi görünmüyorsa bunu kullan. Böylece diğer cihazların erişim kazanır.",
   "useThisDeviceTo": "Diğerlerine erişim vermek için bu cihazı kullan",
   "thisDevice": "Bu cihaz",
-  "removed": "Kaldırıldı",
   "waitingForAccessTo": "Eski mesajlarına ve dosyalarına erişim bekleniyor.",
   "cancel": "Vazgeç",
   "removeIt": "Kaldır",
@@ -17,7 +16,6 @@
   "makeANewKey2": "Yeni kilit oluştur…",
   "whyIsMyKey": "Anahtarım neden bulunuyor (bulunmuyor)?",
   "accountSlice": "Hesap: …{{ slice }}",
-  "keysPublishedForThis": "Bu hesap için yayımlanan anahtarlar: {{ active }} kullanımda, {{ removed }} kaldırıldı",
   "accountsWithAKey": "Bu tarayıcıda anahtarı olan hesaplar: {{ accountsInBrowser }}",
   "theServerCouldNot": "Sunucuya şu an sorulamadı. Tekrar denemek için sayfayı yenile.",
   "iAlreadyHaveA": "24 kurtarma kelimem",
@@ -37,8 +35,7 @@
   "someThingsAreLocked": "Eski mesajlarından ve dosyalarından bazıları bu cihazda kilitli.",
   "lockedCounts": "{{ messages }} mesaj ve {{ files }} dosya bu cihazda kilitli. Bunları diğer cihazınla, kurtarma kelimelerinle veya bir arkadaşınla yeniden aç.",
   "thisDeviceHasNoWorking": "Bu cihazda çalışan bir kilit yok.",
-  "theKeyOnThisRemoved": "Bu cihazdaki kilit, diğer cihazlarından biriyle veya \"Ben değilim\" ile kaldırıldı.",
-  "theKeyOnThisNever": "Bu cihazdaki kilit sunucuya hiç kaydedilmedi, bu yüzden sayılmaz.",
+  "theKeyOnThisNever": "The lock on this device is not saved on the server (it was never saved, or it was removed from another of your devices), so it does not count.",
   "thisDeviceHasNoKey": "Hesabında diğer cihazlarda kilitler var, ama bu cihazda hiç yok.",
   "soYourOldMessages": "Eski mesajların ve dosyaların, bu cihazda bir kilit olana kadar burada kilitli kalır. Kurtarma kelimelerinle aç ya da kilidi açıp diğer cihazlarından veya bir arkadaşından iste.",
   "myOtherDevices": "Başka bir telefonum veya bilgisayarım",
@@ -70,8 +67,6 @@
   "startOverText": "Bu, kilidini bu cihazla baştan başlatır. Diğer tüm cihazların kaldırılır. Arkadaşlarının her birinden bunun gerçekten sen olduğunu onaylaması istenir ve sonra eski mesajlarını yeniden açmana yardım edebilir.",
   "startOverButton": "Bu cihazla baştan başla",
   "startOverFailed": "Baştan başlanamadı. Bağlantıyı kontrol edip tekrar deneyin.",
-  "hideRemoved": "Kaldırılanları gizle",
-  "showRemoved": "Kaldırılanları göster ({{ count }})",
   "rowRecover": "Eski mesajlarımı geri al",
   "rowReplace": "Kurtarma kelimeleri ve yeni kilit",
   "whyRecoverTitle": "Bunu neden yapmam gerekiyor?",
@@ -79,5 +74,6 @@
   "noneOfThese": "Hiçbiri",
   "recoverQuestion": "Elinde ne var?",
   "makeFailed": "Bu cihazda kilit oluşturulamadı: {{ error }}",
-  "tryAgain": "Tekrar dene"
+  "tryAgain": "Tekrar dene",
+  "keysInUseForThis": "Keys for this account: {{ active }}"
 }

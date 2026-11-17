@@ -1,5 +1,7 @@
 # A lock by default, that the provider cannot open
 
+> **Note (fixed rule, `docs/design/recovery-rules.md`):** a removed key is **deleted**. There is no "retired" or "revoked" state, no `retiredAt` and no "Removed" list; wherever this document says a key is "retired", read "removed (deleted)". An item is stale when one of my copies is for a key that no longer exists. Do not bring the retired state back unless the owner specifically orders it.
+
 Status: **step 1 built** (see "Built so far" at the end); the rest is a proposal. Date: 2026-11-11. It replaces the first-use flow and the key checks of `safebox-encryption.md` and `message-encryption.md` (the rest of those documents stays: the item keys, the wraps, the two ways of recovery).
 
 ## The requirement

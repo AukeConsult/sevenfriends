@@ -764,8 +764,9 @@ safeboxRouter.get("/:itemId/thumb", asyncHandler((req, res) => sendFile(req, res
 safeboxRouter.get("/:itemId", asyncHandler((req, res) => sendFile(req, res, false)));
 
 /**
- * A person who leaves a group (or is removed) takes their items out of its box: everything they saved, with the files, the previews, the attachments of
- * their objects and the reminders. What others saved stays (also what the others attached to their own items). Never raises.
+ * A person whose ACCOUNT is deleted takes everything they saved out of the boxes of their groups: the items, with the files, the previews, the attachments of their objects and
+ * the reminders (deleting an account wipes everything about the person; docs/guide/connections.md). This is NOT what happens when a member leaves or is removed: then their items stay and only
+ * their keys are taken out (`removeMemberKeys`, fixed rule in docs/design/recovery-rules.md). What others saved stays (also what the others attached to their own items). Never raises.
  */
 export async function deleteItemsOf(connectionId: string, uid: string): Promise<void> {
   try {
@@ -792,6 +793,44 @@ export async function deleteItemsOf(connectionId: string, uid: string): Promise<
     }
   } catch (err) {
     console.error(`Could not remove the items of ${uid} from the safebox of ${connectionId}`, err);
+  }
+}
+
+/**
+ * A person who leaves a group (or is removed) loses access to its box, but what they saved STAYS: their keys (the copies of every item's key that are for them) are taken
+ * out of every item of the box, so nobody of theirs can open anything any more, and nothing else changes. An item that is left with no copy at all (nobody could open it)
+ * is deleted with its file, preview and reminders. Each list of copies is changed in one transaction. Never raises.
+ */
+export async function removeMemberKeys(connectionId: string, uid: string): Promise<void> {
+  try {
+    const owner = boxOwner(connectionId);
+    const items = safeboxItems(connectionId);
+    const theirs = (await items.select("enc").get()).docs.filter((d) => Array.isArray(d.data().enc?.wraps) && d.data().enc.wraps.some((w: { uid: string }) => w.uid === uid));
+    for (let i = 0; i < theirs.length; i += 100) {
+      const chunk = theirs.slice(i, i + 100);
+      const emptied: { id: string; ref: FirebaseFirestore.DocumentReference }[] = [];
+      await getFirestore().runTransaction(async (tx) => {
+        emptied.length = 0; // a retried transaction starts again
+        const snaps = await tx.getAll(...chunk.map((d) => d.ref), { fieldMask: ["enc"] });
+        for (const snap of snaps) {
+          const wraps = snap.data()?.enc?.wraps as { uid: string }[] | undefined;
+          if (!Array.isArray(wraps)) continue;
+          const rest = wraps.filter((w) => w.uid !== uid);
+          if (rest.length === wraps.length) continue;
+          if (rest.length) tx.update(snap.ref, { "enc.wraps": rest });
+          else emptied.push({ id: snap.id, ref: snap.ref });
+        }
+      });
+      // an item that nobody can open any more goes, with its file, its preview and its reminders
+      for (const { id, ref } of emptied) {
+        await deleteObject(owner, id);
+        await deleteObject(owner, `${id}.thumb`);
+        await ref.delete();
+        await reminderRef(connectionId, id).delete();
+      }
+    }
+  } catch (err) {
+    console.error(`Could not take the keys of ${uid} out of the safebox of ${connectionId}`, err);
   }
 }
 

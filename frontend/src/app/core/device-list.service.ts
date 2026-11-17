@@ -19,7 +19,7 @@ export class DeviceListService {
   /** The newest list (none for an older lock) and the IDs of my keys in use: a list may only name those (a device that was removed, or a key that was never published, is left out). */
   private async load(): Promise<{ head: DeviceList | undefined; inUse: Set<string>; keys: PublishedKey[] }> {
     const [{ lists }, { keys }] = await Promise.all([this.api.request<{ lists: DeviceList[] }>('/keys/list'), this.api.request<{ keys: PublishedKey[] }>('/keys')]);
-    return { head: [...lists].sort((a, b) => a.version - b.version).at(-1), inUse: new Set(keys.filter((k) => !k.revoked).map((k) => k.id)), keys };
+    return { head: [...lists].sort((a, b) => a.version - b.version).at(-1), inUse: new Set(keys.map((k) => k.id)), keys };
   }
 
   /**
@@ -72,17 +72,17 @@ export class DeviceListService {
 
   /**
    * Every device of mine is lost and this one starts the list over: the next version holds only this device, is marked as a new beginning and is signed by THIS
-   * device itself (nothing before it can sign any more). The server retires every other key. Friends do not take it over by themselves: each is asked to confirm
-   * that it is me (`FriendListsService`, reason 'pin'). A person with no list yet gets version 1 and the other keys are retired here. Throws when it can not be done.
+   * device itself (nothing before it can sign any more). The server removes every other key. Friends do not take it over by themselves: each is asked to confirm
+   * that it is me (`FriendListsService`, reason 'pin'). A person with no list yet gets version 1 and the other keys are removed here. Throws when it can not be done.
    */
   async restart(): Promise<void> {
     const { head, keys } = await this.load();
     const mine = await myDeviceKey(this.auth.user()?.uid);
-    const own = keys.find((k) => !k.revoked && k.id === mine?.keyId);
+    const own = keys.find((k) => k.id === mine?.keyId);
     const entry = own ? await entryOfPublished(own) : null;
     if (!mine?.signKey || !own || !entry) throw new Error('This device has no key that can sign');
     if (!head) {
-      for (const k of keys.filter((k) => !k.revoked && k.id !== own.id)) await this.api.request(`/keys/${k.id}/revoke`, { method: 'POST', body: JSON.stringify({ by: own.id }) });
+      for (const k of keys.filter((k) => k.id !== own.id)) await this.api.request(`/keys/${k.id}/remove`, { method: 'POST', body: JSON.stringify({ by: own.id }) });
       const first = await signList({ version: 1, devices: [entry], prev: '', signedBy: entry.keyId, since: new Date().toISOString() }, mine.signKey);
       await this.api.request('/keys/list', { method: 'POST', body: JSON.stringify(first) });
       return;

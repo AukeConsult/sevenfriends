@@ -26,7 +26,7 @@ describe("publishing a public key", () => {
   it("is stored under the key ID the server works out itself", async () => {
     const fingerprint = (await fingerprintOf(jwk))!;
     const res = await pool[0].raw("post", "/keys", { publicKey: jwk, label: "My laptop" }).expect(201);
-    expect(res.body).toMatchObject({ id: keyIdOf(fingerprint), fingerprint, label: "My laptop", revoked: false });
+    expect(res.body).toMatchObject({ id: keyIdOf(fingerprint), fingerprint, label: "My laptop" });
     const mine = (await pool[0].raw("get", "/keys").expect(200)).body;
     expect(mine.keys).toHaveLength(1);
     expect(mine.keys[0].id).toBe(keyIdOf(fingerprint));
@@ -71,15 +71,15 @@ describe("publishing a public key", () => {
   });
 });
 
-describe("retiring a key", () => {
-  it("marks it revoked, for its owner only, and publishing it again does not bring it back", async () => {
+describe("removing a key", () => {
+  it("deletes it, for its owner only; publishing it again makes a new key that waits", async () => {
     const id = (await pool[0].raw("post", "/keys", { publicKey: jwk }).expect(201)).body.id;
-    expect((await pool[1].raw("post", `/keys/${id}/revoke`)).status).toBe(404); // not their key
-    await pool[0].raw("post", `/keys/${id}/revoke`).expect(200);
-    expect((await pool[0].raw("get", "/keys")).body.keys[0]).toMatchObject({ id, revoked: true });
-    await pool[0].raw("post", "/keys", { publicKey: jwk }).expect(200);
-    expect((await pool[0].raw("get", "/keys")).body.keys[0].revoked).toBe(true);
-    expect((await pool[0].raw("post", "/keys/nothing/revoke")).status).toBe(404);
+    expect((await pool[1].raw("post", `/keys/${id}/remove`)).status).toBe(404); // not their key
+    await pool[0].raw("post", `/keys/${id}/remove`).expect(200);
+    expect((await pool[0].raw("get", "/keys")).body.keys).toEqual([]); // it is gone, nothing is kept of it
+    await pool[0].raw("post", "/keys", { publicKey: jwk }).expect(201); // the same key is a new key (the first one: nothing waits)
+    expect((await pool[0].raw("get", "/keys")).body.keys).toHaveLength(1);
+    expect((await pool[0].raw("post", "/keys/nothing/remove")).status).toBe(404);
   });
 
   it("lists the public key with each key", async () => {
@@ -107,7 +107,7 @@ describe("publishing a key together with its backup", () => {
 
   it("stores both in one step and answers with what is stored", async () => {
     const res = await pool[0].raw("post", "/keys", { publicKey: jwk, label: "Laptop", backup }).expect(201);
-    expect(res.body).toMatchObject({ label: "Laptop", revoked: false });
+    expect(res.body).toMatchObject({ label: "Laptop" });
     expect(res.body.createdAt).toBeTruthy();
     const mine = (await pool[0].raw("get", "/keys")).body;
     expect(mine.hasBackup).toBe(true);
@@ -125,7 +125,7 @@ describe("publishing a key together with its backup", () => {
     const all = (await pool[0].raw("get", "/keys/backups").expect(200)).body.backups as { iv: string; data: string }[];
     expect(all.map((b) => b.data)).toEqual(expect.arrayContaining([laptop.data, tablet.data])); // restoring can try both
     expect((await pool[1].raw("get", "/keys/backups")).status).toBe(404); // only mine
-    await pool[0].raw("post", `/keys/${first}/revoke`).expect(200); // a removed device keeps no backup
+    await pool[0].raw("post", `/keys/${first}/remove`).expect(200); // a removed device keeps no backup
     expect((await pool[0].raw("get", "/keys")).body.backups).toEqual([second]);
   });
 
@@ -155,7 +155,7 @@ describe("the keys of a safebox", () => {
     const b = (await keysOf(pool[1], id)).body; // the same box from the friend's side: the keys swap places
     expect(b.mine).toEqual([]);
     expect(b.friend.map((k: { id: string }) => k.id)).toEqual([mineId]);
-    await pool[0].raw("post", `/keys/${mineId}/revoke`).expect(200);
+    await pool[0].raw("post", `/keys/${mineId}/remove`).expect(200);
     expect((await keysOf(pool[1], id)).body.friend).toEqual([]);
   });
 

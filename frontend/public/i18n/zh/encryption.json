@@ -6,7 +6,6 @@
   "useThisWhenThis": "当这台设备能读取你以前的消息，但没有显示“允许”按钮时使用。这样你的其他设备就能获得访问权限。",
   "useThisDeviceTo": "用这台设备为其他设备授权",
   "thisDevice": "这台设备",
-  "removed": "已移除",
   "waitingForAccessTo": "正在等待获得你以前消息和文件的访问权限。",
   "cancel": "取消",
   "removeIt": "移除它",
@@ -17,7 +16,6 @@
   "makeANewKey2": "创建新锁…",
   "whyIsMyKey": "为什么找得到（或找不到）我的密钥？",
   "accountSlice": "账号：…{{ slice }}",
-  "keysPublishedForThis": "这个账号已发布的密钥：{{ active }} 把在用，{{ removed }} 把已移除",
   "accountsWithAKey": "这个浏览器中有密钥的账号：{{ accountsInBrowser }}",
   "theServerCouldNot": "刚才无法联系服务器。请刷新页面重试。",
   "iAlreadyHaveA": "我的 24 个救援词",
@@ -37,8 +35,7 @@
   "someThingsAreLocked": "你的部分旧消息和文件在这台设备上仍处于锁定状态。",
   "lockedCounts": "这台设备上有 {{ messages }} 条消息和 {{ files }} 个文件被锁住。请用你的其他设备、救援词或朋友重新打开。",
   "thisDeviceHasNoWorking": "这台设备没有可用的锁。",
-  "theKeyOnThisRemoved": "这台设备上的锁已被移除，来自你的另一台设备或通过“不是我”。",
-  "theKeyOnThisNever": "这台设备上的锁从未保存到服务器，所以不算数。",
+  "theKeyOnThisNever": "The lock on this device is not saved on the server (it was never saved, or it was removed from another of your devices), so it does not count.",
   "thisDeviceHasNoKey": "你的账号在其他设备上有锁，但这台设备没有。",
   "soYourOldMessages": "在这台设备有锁之前，你的旧消息和文件会一直被锁在这里。请用救援词打开，或开启锁并请你的其他设备或朋友帮忙。",
   "myOtherDevices": "我的另一部手机或电脑",
@@ -70,8 +67,6 @@
   "startOverText": "这会用这台设备重新开始你的锁。你的其他所有设备都会被移除。你的每位朋友会被请求确认这确实是你，之后可以帮你重新打开旧消息。",
   "startOverButton": "用此设备重新开始",
   "startOverFailed": "无法重新开始。请检查网络连接后重试。",
-  "hideRemoved": "隐藏已移除的",
-  "showRemoved": "显示已移除的（{{ count }}）",
   "rowRecover": "找回我的旧消息",
   "rowReplace": "救援词和新锁",
   "whyRecoverTitle": "为什么我需要这样做?",
@@ -79,5 +74,6 @@
   "noneOfThese": "都不是",
   "recoverQuestion": "你有什么？",
   "makeFailed": "无法在这台设备上创建锁:{{ error }}",
-  "tryAgain": "重试"
+  "tryAgain": "重试",
+  "keysInUseForThis": "Keys for this account: {{ active }}"
 }

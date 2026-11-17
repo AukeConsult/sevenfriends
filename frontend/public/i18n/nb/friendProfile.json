@@ -34,7 +34,7 @@
   "wakeFname": "Vekk {{ fName }}",
   "openTheConversation": "Åpne samtalen med {{ name }}",
   "removeRules": "Du kan fjerne de du selv la til. Eieren kan fjerne alle. Ingen kan fjerne eieren.",
-  "newMembersSeeNew": "Den du legger til, ser meldinger fra nå av, ikke de tidligere.",
+  "newMembersSeeNew": "Someone you add sees the earlier messages and the safebox too, not only what is written from now on.",
   "leaveTheGroup": "Forlat gruppen",
   "leaveQuestion": "Forlate {{ name }}? Meldingene dine i gruppen og boksgjenstandene dine der slettes for alle. De andre beholder gruppen. Du er bare tilbake hvis noen legger deg til igjen.",
   "leaveOwnerNote": "Du er eier: den neste i listen blir eier.",

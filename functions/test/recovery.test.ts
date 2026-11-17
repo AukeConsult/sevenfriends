@@ -34,12 +34,59 @@ async function story() {
   const locked = (wraps: ReturnType<typeof wrap>[]) => ({ text: b64(40), enc: { v: 1, iv: b64(12), wraps } });
   const first = (await pool[0].raw("post", messages(id), locked([wrap(u0, oldKey), wrap(u1, key1)])).expect(201)).body.id as string;
   const second = (await pool[1].raw("post", messages(id), locked([wrap(u0, oldKey), wrap(u1, key1)])).expect(201)).body.id as string;
-  await pool[0].raw("post", `/keys/${oldKey}/revoke`).expect(200);
+  await pool[0].raw("post", `/keys/${oldKey}/remove`).expect(200);
   const newKey = await publish(pool[0], keys[2]);
   return { id, u0, u1, oldKey, key1, newKey, first, second };
 }
 
+/** What the helper's app does: every item that lacks a copy gets one for each key in use that has none (the asker's and the helper's own). */
+async function work(s: { id: string; u0: string; u1: string }, helper: User = pool[1]) {
+  for (const part of ["messages", "box"]) {
+    const todo = (await helper.raw("get", recovery(s.id, `/todo?part=${part}`)).expect(200)).body;
+    const items = todo.items.map((i: { id: string; missing: string[]; missingOwn: string[] }) => ({ id: i.id, wraps: [...i.missing.map((k) => wrap(s.u0, k)), ...i.missingOwn.map((k) => wrap(s.u1, k))] }));
+    if (items.length) await helper.raw("post", recovery(s.id, "/wraps"), { part, items }).expect(200);
+  }
+}
+const keyIdsOf = (m: { enc: { wraps: { keyId: string }[] } }) => m.enc.wraps.map((w) => w.keyId).sort();
+
 describe("recovery of the old messages", () => {
+  it("locks again for the helper's own devices too (both copies) and for a device added while it runs, and finishes only when nothing is missing", async () => {
+    const s = await story();
+    const helper2 = await publish(pool[1], keys[3]); // the friend has a second device
+    await pool[0].raw("post", recovery(s.id)).expect(201);
+    expect((await pool[1].raw("post", recovery(s.id, "/approve")).expect(200)).body.total).toBe(2); // both messages lack a copy for the asker's new key and the helper's second key
+    const todo = (await pool[1].raw("get", recovery(s.id, "/todo?part=messages")).expect(200)).body;
+    for (const item of todo.items) expect(item).toMatchObject({ missing: [s.newKey], missingOwn: [helper2] });
+    await work(s);
+    expect((await pool[0].feed(s.id)).body.messages.map(keyIdsOf)).toEqual([[s.newKey], [s.newKey]]); // the retired key has no copy any more
+    expect((await pool[1].feed(s.id)).body.messages.map(keyIdsOf)).toEqual([[s.key1, helper2].sort(), [s.key1, helper2].sort()]);
+
+    const late = await publish(pool[0], keys[3]); // a device of the asker gets a key while the helper works
+    await pool[1].raw("post", recovery(s.id, "/finish"), {}).expect(409); // not everything has a copy for it
+    await work(s);
+    expect((await pool[0].feed(s.id)).body.messages.map(keyIdsOf)).toEqual([[late, s.newKey].sort(), [late, s.newKey].sort()]);
+    expect((await pool[1].raw("post", recovery(s.id, "/finish"), {}).expect(200)).body).toMatchObject({ status: "done", skipped: 0 });
+  });
+
+  it("what the helper's device could not open is told: finish accepts only that many, and the asker sees the number", async () => {
+    const s = await story();
+    await pool[0].raw("post", recovery(s.id)).expect(201);
+    await pool[1].raw("post", recovery(s.id, "/approve")).expect(200);
+    await pool[1].raw("post", recovery(s.id, "/finish"), { skipped: 1 }).expect(409); // two are still missing
+    await pool[1].raw("post", recovery(s.id, "/finish"), { skipped: 2 }).expect(200);
+    expect((await pool[0].raw("get", recovery(s.id)).expect(200)).body).toMatchObject({ status: "done", skipped: 2 });
+  });
+
+  it("does not lose a copy when two batches of the helper arrive together", async () => {
+    const s = await story();
+    await pool[0].raw("post", recovery(s.id)).expect(201);
+    await pool[1].raw("post", recovery(s.id, "/approve")).expect(200);
+    const items = [{ id: s.first, wraps: [wrap(s.u0, s.newKey)] }];
+    await Promise.all([1, 2, 3].map(() => pool[1].raw("post", recovery(s.id, "/wraps"), { part: "messages", items })));
+    const mine = (await pool[0].feed(s.id)).body.messages.find((m: { id: string }) => m.id === s.first);
+    expect(keyIdsOf(mine)).toEqual([s.newKey]);
+  });
+
   it("is asked for, approved, done by the friend's wraps, and the old messages then have a copy for the new key", async () => {
     const s = await story();
     expect((await pool[0].raw("get", recovery(s.id)).expect(200)).body).toMatchObject({ role: "none", status: "none" });
@@ -62,7 +109,7 @@ describe("recovery of the old messages", () => {
     expect((await pool[1].raw("post", recovery(s.id, "/wraps"), { part: "messages", items }).expect(200)).body.added).toBe(0); // again: nothing new
 
     for (const m of (await pool[0].feed(s.id)).body.messages) {
-      expect(m.enc.wraps.map((w: { keyId: string }) => w.keyId).sort()).toEqual([s.newKey, s.oldKey].sort());
+      expect(m.enc.wraps.map((w: { keyId: string }) => w.keyId)).toEqual([s.newKey]); // the retired key has no copy any more
     }
     expect((await pool[1].raw("get", recovery(s.id, "/todo?part=messages")).expect(200)).body.items).toEqual([]);
 
@@ -76,10 +123,10 @@ describe("recovery of the old messages", () => {
     await pool[0].raw("post", recovery(s.id)).expect(201);
     await pool[1].raw("post", recovery(s.id, "/approve")).expect(200);
     const todo = (await pool[1].raw("get", recovery(s.id, "/todo?part=box")).expect(200)).body;
-    expect(todo.items).toEqual([{ id: "file1", wraps: [expect.objectContaining({ uid: s.u1, keyId: s.key1 })], missing: [s.newKey] }]);
+    expect(todo.items).toEqual([{ id: "file1", wraps: [expect.objectContaining({ uid: s.u1, keyId: s.key1 })], missing: [s.newKey], missingOwn: [] }]);
     await pool[1].raw("post", recovery(s.id, "/wraps"), { part: "box", items: [{ id: "file1", wraps: [wrap(s.u0, s.newKey)] }] }).expect(200);
     const item = (await getFirestore().collection("safebox").doc(s.id).collection("items").doc("file1").get()).data();
-    expect(item?.enc.wraps).toHaveLength(3);
+    expect(item?.enc.wraps.map((w: { keyId: string }) => w.keyId).sort()).toEqual([s.key1, s.newKey].sort()); // the retired key's copy is dropped
   });
 
   it("refuses what is not meant: no key, a stranger, a copy for the wrong person or key, the asker as helper", async () => {
@@ -109,7 +156,7 @@ describe("recovery of the old messages", () => {
     const items = todo.items.map((i: { id: string }) => ({ id: i.id, wraps: [wrap(s.u0, s.newKey), wrap(s.u0, second)] }));
     expect((await pool[1].raw("post", recovery(s.id, "/wraps"), { part: "messages", items }).expect(200)).body.added).toBe(2);
     for (const m of (await pool[0].feed(s.id)).body.messages) {
-      expect(m.enc.wraps.map((w: { keyId: string }) => w.keyId).sort()).toEqual([s.newKey, s.oldKey, second].sort());
+      expect(m.enc.wraps.map((w: { keyId: string }) => w.keyId).sort()).toEqual([s.newKey, second].sort());
     }
     expect((await pool[1].raw("get", recovery(s.id, "/todo?part=messages")).expect(200)).body.items).toEqual([]);
   });
@@ -118,7 +165,7 @@ describe("recovery of the old messages", () => {
     const s = await story();
     await pool[0].raw("post", recovery(s.id)).expect(201);
     await pool[1].raw("post", recovery(s.id, "/approve")).expect(200);
-    await pool[0].raw("post", `/keys/${s.newKey}/revoke`).expect(200);
+    await pool[0].raw("post", `/keys/${s.newKey}/remove`).expect(200);
     await pool[1].raw("get", recovery(s.id, "/todo?part=messages")).expect(409);
     await pool[1].raw("delete", recovery(s.id)).expect(200); // a friend who calls the old way of stopping declines
     expect((await pool[0].raw("get", recovery(s.id)).expect(200)).body.status).toBe("declined");
@@ -172,6 +219,7 @@ describe("recovery: who sees and who is told", () => {
     await device(0);
     await pool[0].raw("post", recovery(s.id)).expect(201);
     await pool[1].raw("post", recovery(s.id, "/approve")).expect(200);
+    await work(s);
     sentPushes.length = 0;
     await pool[1].raw("post", recovery(s.id, "/finish")).expect(200);
     expect(sentPushes.at(-1)?.data).toMatchObject({ id: `recovery-done-${s.id}`, title: expect.stringContaining("opened your history") });
@@ -190,6 +238,7 @@ describe("recovery: who sees and who is told", () => {
     await pool[1].raw("post", recovery(s.id, "/decline")).expect(200);
     expect((await pool[0].raw("post", recovery(s.id)).expect(201)).body.status).toBe("asked");
     await pool[1].raw("post", recovery(s.id, "/approve")).expect(200);
+    await work(s);
     await pool[1].raw("post", recovery(s.id, "/finish")).expect(200);
     expect((await pool[0].raw("post", recovery(s.id)).expect(201)).body.status).toBe("asked");
   });

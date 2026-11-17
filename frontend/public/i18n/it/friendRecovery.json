@@ -45,5 +45,6 @@
   "groupTitle": "Riavere i vecchi messaggi riguarda due persone",
   "groupText": "Per riaprire i tuoi vecchi messaggi, l’app di un amico li sblocca di nuovo per il tuo nuovo blocco privacy. Un gruppo non ha un amico specifico che possa farlo per te, quindi non è possibile in un gruppo.",
   "groupOther": "Puoi comunque riaverli con un altro tuo dispositivo in grado di aprirli, oppure con le tue 24 parole segrete (Impostazioni → Blocco privacy).",
-  "nothingCouldBeOpened": "Non è stato possibile aprire nulla: questo dispositivo non ha la chiave di questi vecchi messaggi, quindi non può aiutare. Recupera prima la tua chiave (Impostazioni → Blocco privacy: un altro tuo dispositivo, o le tue 24 parole)."
+  "nothingCouldBeOpened": "Non è stato possibile aprire nulla: questo dispositivo non ha la chiave di questi vecchi messaggi, quindi non può aiutare. Recupera prima la tua chiave (Impostazioni → Blocco privacy: un altro tuo dispositivo, o le tue 24 parole).",
+  "skippedYours": "{{ skipped }} of your old messages and files could not be opened by your friend’s device."
 }

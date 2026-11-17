@@ -103,31 +103,53 @@ describe("the items of a member in the safebox of a group", () => {
   };
   const items = async (user: User, id: string) => (await user.raw("get", `${base(id)}/safebox`).expect(200)).body.items as { id: string; ownerId: string }[];
 
-  it("every item has the member who saved it as its owner, and goes with them when they are removed or leave", async () => {
+  const stored = async (id: string, itemId: string) => (await getFirestore().collection("safebox").doc(id).collection("items").doc(itemId).get()).data();
+  const wrapUids = async (id: string, itemId: string) => [...new Set(((await stored(id, itemId))?.enc.wraps as { uid: string }[]).map((w) => w.uid))].sort();
+
+  it("every item has the member who saved it as its owner; when they are removed or leave the items STAY and only their keys are taken out of them", async () => {
     const { id, wraps } = await groupOfThree();
     const mineNote = (await pool[0].raw("post", `${base(id)}/safebox/items`, note(wraps)).expect(201)).body.id as string;
-    await pool[1].raw("post", `${base(id)}/safebox/items`, note(wraps)).expect(201);
+    const second = (await pool[1].raw("post", `${base(id)}/safebox/items`, note(wraps)).expect(201)).body.id as string;
     await pool[1].raw("post", `${base(id)}/safebox/items`, note(wraps)).expect(201);
     const third = (await pool[2].raw("post", `${base(id)}/safebox/items`, note(wraps)).expect(201)).body.id as string;
     const before = await items(pool[0], id);
     expect(before.map((i) => i.ownerId).sort()).toEqual([pool[0].p.uid, pool[1].p.uid, pool[1].p.uid, pool[2].p.uid].sort());
+    const [u0, u1, u2] = pool.slice(0, 3).map((p) => p.p.uid);
+    expect(await wrapUids(id, second)).toEqual([u0, u1, u2].sort());
 
-    await pool[0].raw("delete", `${base(id)}/group/members/${pool[1].p.uid}`).expect(204); // removed
-    expect((await items(pool[0], id)).map((i) => i.id).sort()).toEqual([mineNote, third].sort());
+    await pool[0].raw("delete", `${base(id)}/group/members/${u1}`).expect(204); // removed
+    expect((await items(pool[0], id)).map((i) => i.id).sort()).toEqual(before.map((i) => i.id).sort()); // every item is still there, also the two they saved
+    expect(await wrapUids(id, second)).toEqual([u0, u2].sort()); // but nothing is locked for them any more
+    expect(await wrapUids(id, mineNote)).toEqual([u0, u2].sort());
 
-    await pool[2].raw("delete", `${base(id)}/group/members/${pool[2].p.uid}`).expect(204); // leaves
-    expect((await items(pool[0], id)).map((i) => i.id)).toEqual([mineNote]);
+    await pool[2].raw("delete", `${base(id)}/group/members/${u2}`).expect(204); // leaves
+    expect((await items(pool[0], id)).map((i) => i.id).sort()).toEqual(before.map((i) => i.id).sort());
+    expect(await wrapUids(id, third)).toEqual([u0]);
   });
 
-  it("the attachments of an item of the removed member go with it", async () => {
+  it("deleting an ACCOUNT is different from leaving: everything the person saved in the box goes, the others' items stay (without the person's keys)", async () => {
     const { id, wraps } = await groupOfThree();
-    const parent = (await pool[1].raw("post", `${base(id)}/safebox/items`, note(wraps)).expect(201)).body.id as string;
-    const child = (await pool[2].raw("post", `${base(id)}/safebox/items`, note(wraps)).expect(201)).body;
-    await getFirestore().collection("safebox").doc(id).collection("items").doc(child.id).update({ parentId: parent }); // an attachment is an item with a parent (made by the upload route, with a file)
-    await pool[0].raw("delete", `${base(id)}/group/members/${pool[1].p.uid}`).expect(204);
+    const [u0, u2] = [pool[0].p.uid, pool[2].p.uid];
+    const mineNote = (await pool[0].raw("post", `${base(id)}/safebox/items`, note(wraps)).expect(201)).body.id as string;
+    const theirNote = (await pool[1].raw("post", `${base(id)}/safebox/items`, note(wraps)).expect(201)).body.id as string;
+    await pool[1].raw("delete", "/users/me", { confirm: "DELETE" }).expect(204);
     const left = (await items(pool[0], id)).map((i) => i.id);
-    expect(left).not.toContain(parent);
-    expect(left).not.toContain(child.id); // an attachment of that item
+    expect(left).toEqual([mineNote]); // what the erased person saved is gone, what the others saved stays
+    expect(left).not.toContain(theirNote);
+    expect(await wrapUids(id, mineNote)).toEqual([u0, u2].sort()); // and their keys are out of it
+  });
+
+  it("an item that nobody can open any more (the leaver held the only copies) is deleted", async () => {
+    const { id, wraps } = await groupOfThree();
+    const [u0, u1, u2] = pool.slice(0, 3).map((p) => p.p.uid);
+    const onlyTheirs = (await pool[1].raw("post", `${base(id)}/safebox/items`, note(wraps)).expect(201)).body.id as string; // the server asks for a copy for every member
+    await getFirestore().collection("safebox").doc(id).collection("items").doc(onlyTheirs).update({ "enc.wraps": wraps.filter((w) => w.uid === u1) }); // later only the leaver holds the copies
+    const shared = (await pool[1].raw("post", `${base(id)}/safebox/items`, note(wraps)).expect(201)).body.id as string;
+    await pool[1].raw("delete", `${base(id)}/group/members/${u1}`).expect(204);
+    const left = (await items(pool[0], id)).map((i) => i.id);
+    expect(left).not.toContain(onlyTheirs); // nobody else had a copy: it is gone
+    expect(left).toContain(shared); // the others have a copy: it stays
+    expect(await wrapUids(id, shared)).toEqual([u0, u2].sort());
   });
 });
 

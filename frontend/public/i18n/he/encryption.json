@@ -6,7 +6,6 @@
   "useThisWhenThis": "מתאים כשהמכשיר הזה יכול לקרוא את ההודעות הישנות, אבל לא מוצג כפתור אישור. אז הוא נותן גישה למכשירים האחרים.",
   "useThisDeviceTo": "שימוש במכשיר הזה כדי לתת גישה לאחרים",
   "thisDevice": "המכשיר הזה",
-  "removed": "הוסר",
   "waitingForAccessTo": "ממתין לגישה להודעות ולקבצים הישנים.",
   "cancel": "ביטול",
   "removeIt": "להסיר",
@@ -17,7 +16,6 @@
   "makeANewKey2": "יצירת נעילה חדשה…",
   "whyIsMyKey": "למה המפתח שלי (לא) נמצא?",
   "accountSlice": "חשבון: …{{ slice }}",
-  "keysPublishedForThis": "מפתחות שפורסמו לחשבון הזה: {{ active }} בשימוש, {{ removed }} הוסרו",
   "accountsWithAKey": "חשבונות עם מפתח בדפדפן הזה: {{ accountsInBrowser }}",
   "theServerCouldNot": "לא ניתן היה לפנות לשרת כרגע. יש לטעון את הדף מחדש ולנסות שוב.",
   "iAlreadyHaveA": "24 מילות ההצלה שלי",
@@ -37,8 +35,7 @@
   "someThingsAreLocked": "חלק מההודעות והקבצים הישנים שלך נעולים במכשיר הזה.",
   "lockedCounts": "{{ messages }} הודעות ו-{{ files }} קבצים נעולים במכשיר הזה. אפשר לפתוח אותם שוב עם המכשיר האחר שלך, עם מילות ההצלה או עם חבר.",
   "thisDeviceHasNoWorking": "למכשיר הזה אין נעילה פעילה.",
-  "theKeyOnThisRemoved": "הנעילה במכשיר הזה הוסרה, ממכשיר אחר שלך או באמצעות \"לא אני\".",
-  "theKeyOnThisNever": "הנעילה במכשיר הזה לא נשמרה מעולם בשרת, ולכן היא לא נחשבת.",
+  "theKeyOnThisNever": "The lock on this device is not saved on the server (it was never saved, or it was removed from another of your devices), so it does not count.",
   "thisDeviceHasNoKey": "בחשבון שלך יש נעילות במכשירים אחרים, אבל במכשיר הזה אין.",
   "soYourOldMessages": "ההודעות והקבצים הישנים שלך יישארו נעולים כאן עד שתהיה לו נעילה. אפשר לפתוח אותם עם מילות ההצלה, או להפעיל את הנעילה ולבקש מהמכשירים האחרים שלך או מחבר.",
   "myOtherDevices": "טלפון או מחשב אחר שלי",
@@ -70,8 +67,6 @@
   "startOverText": "פעולה זו מתחילה את הנעילה שלך מחדש עם המכשיר הזה. כל המכשירים האחרים שלך יוסרו. כל אחד מהחברים שלך יתבקש לאשר שזה באמת אתה, ואז יוכל לעזור לך לפתוח שוב את ההודעות הישנות.",
   "startOverButton": "להתחיל מחדש עם המכשיר הזה",
   "startOverFailed": "לא ניתן היה להתחיל מחדש. בדוק את החיבור ונסה שוב.",
-  "hideRemoved": "הסתר שהוסרו",
-  "showRemoved": "הצג שהוסרו ({{ count }})",
   "rowRecover": "שחזור ההודעות הישנות שלי",
   "rowReplace": "מילות הצלה ונעילה חדשה",
   "whyRecoverTitle": "למה אני צריך לעשות את זה?",
@@ -79,5 +74,6 @@
   "noneOfThese": "אף אחד מאלה",
   "recoverQuestion": "מה יש לך?",
   "makeFailed": "לא ניתן היה ליצור את הנעילה במכשיר הזה: {{ error }}",
-  "tryAgain": "נסה שוב"
+  "tryAgain": "נסה שוב",
+  "keysInUseForThis": "Keys for this account: {{ active }}"
 }

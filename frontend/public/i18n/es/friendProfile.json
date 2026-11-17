@@ -34,7 +34,7 @@
   "wakeFname": "Despertar a {{ fName }}",
   "openTheConversation": "Abrir la conversación con {{ name }}",
   "removeRules": "Puedes quitar a las personas que añadiste. El propietario puede quitar a cualquiera. Nadie puede quitar al propietario.",
-  "newMembersSeeNew": "Quien añadas verá los mensajes desde ahora, no los anteriores.",
+  "newMembersSeeNew": "Someone you add sees the earlier messages and the safebox too, not only what is written from now on.",
   "leaveTheGroup": "Salir del grupo",
   "leaveQuestion": "¿Salir de {{ name }}? Tus mensajes del grupo y tus elementos de la caja fuerte se borran para todos. Los demás conservan el grupo. Solo vuelves si alguien te añade otra vez.",
   "leaveOwnerNote": "Eres el propietario: la siguiente persona de la lista será el propietario.",

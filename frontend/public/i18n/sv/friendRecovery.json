@@ -45,5 +45,6 @@
   "groupTitle": "Att få tillbaka gamla meddelanden sker mellan två personer",
   "groupText": "För att öppna dina gamla meddelanden igen låser en väns app upp dem igen för ditt nya sekretesslås. En grupp har ingen enskild vän som kan göra det åt dig, så det går inte i en grupp.",
   "groupOther": "Du kan fortfarande få tillbaka dem med en annan av dina enheter som kan öppna dem, eller med dina 24 hemliga ord (Inställningar → Sekretesslås).",
-  "nothingCouldBeOpened": "Inget kunde öppnas: den här enheten har ingen nyckel till de gamla meddelandena och kan därför inte hjälpa. Få först tillbaka din egen nyckel (Inställningar → Integritetslås: en annan enhet du har, eller dina 24 ord)."
+  "nothingCouldBeOpened": "Inget kunde öppnas: den här enheten har ingen nyckel till de gamla meddelandena och kan därför inte hjälpa. Få först tillbaka din egen nyckel (Inställningar → Integritetslås: en annan enhet du har, eller dina 24 ord).",
+  "skippedYours": "{{ skipped }} of your old messages and files could not be opened by your friend’s device."
 }

@@ -30,7 +30,7 @@ describe('KeysService: the key of this device', () => {
     localStorage.clear();
   });
 
-  /** A fake server for the keys of one person: GET /keys, POST /keys (idempotent), the signed list, revoke. `failPosts` = how many POST /keys fail first. */
+  /** A fake server for the keys of one person: GET /keys, POST /keys (idempotent), the signed list, remove (the key is deleted). `failPosts` = how many POST /keys fail first. */
   class FakeServer {
     keys: PublishedKey[] = [];
     /** the stamp of the account that the server tells ( "" = it does not know one) */
@@ -38,7 +38,7 @@ describe('KeysService: the key of this device', () => {
     lists: unknown[] = [];
     posts = 0;
     failPosts = 0;
-    revoked: string[] = [];
+    removed: string[] = [];
     /** the keys this device said "opens everything" for (POST /own-recovery/works); `worksStatus` = what the server answers (409 = it lacks copies) */
     works: string[] = [];
     worksStatus = 200;
@@ -63,7 +63,7 @@ describe('KeysService: the key of this device', () => {
           const fingerprint = (await fingerprintOf(publicKey))!;
           const id = keyIdOf(fingerprint);
           if (!this.keys.some((k) => k.id === id)) {
-            this.keys.push({ id, fingerprint, label: body.label ?? '', createdAt: new Date().toISOString(), revoked: false, publicKey, ...(body.signKey ? { signKey: body.signKey } : {}) });
+            this.keys.push({ id, fingerprint, label: body.label ?? '', createdAt: new Date().toISOString(), publicKey, ...(body.signKey ? { signKey: body.signKey } : {}) });
           }
           return { id };
         }
@@ -82,11 +82,10 @@ describe('KeysService: the key of this device', () => {
           if (this.worksStatus !== 200) throw new Error('409');
           return { ok: true };
         }
-        const revoke = /^\/keys\/([^/]+)\/revoke$/.exec(path);
-        if (revoke && method === 'POST') {
-          this.revoked.push(revoke[1]);
-          const key = this.keys.find((k) => k.id === revoke[1]);
-          if (key) key.revoked = true;
+        const remove = /^\/keys\/([^/]+)\/remove$/.exec(path);
+        if (remove && method === 'POST') {
+          this.removed.push(remove[1]);
+          this.keys = this.keys.filter((k) => k.id !== remove[1]);
           return {};
         }
         throw new Error(`unexpected request ${method} ${path}`);
@@ -171,7 +170,7 @@ describe('KeysService: the key of this device', () => {
     expect(keys.state()).toBe('none');
     expect(keys.createError()).toContain('connection was lost');
     expect(await getDeviceKey(uid)).toBeNull(); // put back as it was
-    expect(server.keys.filter((k) => !k.revoked).length).toBe(0);
+    expect(server.keys.length).toBe(0);
 
     await keys.refresh(); // too soon: not tried again within 30 seconds
     expect(keys.state()).toBe('none');
@@ -180,7 +179,7 @@ describe('KeysService: the key of this device', () => {
     await keys.retryIdentity(); // the button: now
     expect(keys.state()).toBe('ready');
     expect(keys.createError()).toBeNull();
-    expect(server.keys.filter((k) => !k.revoked).length).toBe(1);
+    expect(server.keys.length).toBe(1);
   });
 
   it('a key that was made on the device but never reached the server is published, not replaced', async () => {
@@ -196,19 +195,14 @@ describe('KeysService: the key of this device', () => {
     expect((await getDeviceKey(uid))?.id).toBe(stuck.id);
   });
 
-  it('a key that the server has retired is never published again, and no new key is forced on the device', async () => {
+  it('a key that was removed on the server (it is deleted there) is published again by the device that still holds it, as a new key that waits', async () => {
     const uid = person();
-    const retired = await generateIdentityKey();
-    await saveDeviceKey(uid, retired);
-    const server = new FakeServer();
-    const publicKey = canonicalPublicKey(retired.publicKey)!;
-    const fingerprint = (await fingerprintOf(publicKey))!;
-    server.keys.push({ id: keyIdOf(fingerprint), fingerprint, label: '', createdAt: null, revoked: true, publicKey });
+    await saveDeviceKey(uid, await generateIdentityKey());
+    const server = new FakeServer(); // the server has no such key any more
     const keys = start(uid, server, false);
     await keys.refresh();
-    expect(keys.state()).toBe('none');
-    expect(server.posts).toBe(0);
-    expect(keys.diagnosis()?.localPublished).toBe('removed');
+    expect(server.posts).toBe(1);
+    expect(server.keys).toHaveSize(1);
   });
 
   it('account deleted, then created again: the old key is wiped and the new account gets a new key', async () => {
@@ -347,7 +341,7 @@ describe('KeysService: the key of this device', () => {
       const now = await getDeviceKey(uid);
       expect(now?.id).not.toBe(dead.id);
       expect(now?.accountId).toBe('stamp-of-this-account');
-      expect(server.keys.filter((k) => !k.revoked)).toHaveSize(1);
+      expect(server.keys).toHaveSize(1);
       expect(rememberedAccounts()).toEqual([{ uid, accountId: 'stamp-of-this-account' }]);
     });
 
@@ -431,7 +425,7 @@ describe('KeysService: the key of this device', () => {
       await keys.refresh();
       await settle();
       expect(calls.ask).toBe(1); // not again at every look
-      expect(server.revoked).toEqual([]); // nobody was retired
+      expect(server.removed).toEqual([]); // nobody was removed
     });
 
     it('a device that already has a request does not make another', async () => {

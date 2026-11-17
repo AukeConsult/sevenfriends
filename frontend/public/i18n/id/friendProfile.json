@@ -34,7 +34,7 @@
   "wakeFname": "Bangunkan {{ fName }}",
   "openTheConversation": "Buka percakapan dengan {{ name }}",
   "removeRules": "Kamu bisa mengeluarkan orang yang kamu tambahkan. Pemilik bisa mengeluarkan siapa saja. Tidak ada yang bisa mengeluarkan pemilik.",
-  "newMembersSeeNew": "Orang yang kamu tambahkan melihat pesan mulai sekarang, bukan yang sebelumnya.",
+  "newMembersSeeNew": "Someone you add sees the earlier messages and the safebox too, not only what is written from now on.",
   "leaveTheGroup": "Keluar dari grup",
   "leaveQuestion": "Keluar dari {{ name }}? Pesanmu di grup dan item brankasmu di sana dihapus untuk semua orang. Yang lain tetap memiliki grup. Kamu kembali hanya jika ada yang menambahkanmu lagi.",
   "leaveOwnerNote": "Kamu pemilik: orang berikutnya dalam daftar menjadi pemilik.",

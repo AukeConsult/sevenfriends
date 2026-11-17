@@ -6,7 +6,6 @@
   "useThisWhenThis": "Brug det, når denne enhed kan læse dine gamle beskeder, men der ikke vises nogen Tillad-knap. Så giver den dine andre enheder adgang.",
   "useThisDeviceTo": "Brug denne enhed til at give de andre adgang",
   "thisDevice": "Denne enhed",
-  "removed": "Fjernet",
   "waitingForAccessTo": "Venter på adgang til dine gamle beskeder og filer.",
   "cancel": "Annullér",
   "removeIt": "Fjern den",
@@ -17,7 +16,6 @@
   "makeANewKey2": "Opret en ny lås…",
   "whyIsMyKey": "Hvorfor er min nøgle (ikke) fundet?",
   "accountSlice": "Konto: …{{ slice }}",
-  "keysPublishedForThis": "Nøgler udgivet for denne konto: {{ active }} i brug, {{ removed }} fjernet",
   "accountsWithAKey": "Konti med en nøgle i denne browser: {{ accountsInBrowser }}",
   "theServerCouldNot": "Serveren kunne ikke spørges lige nu. Genindlæs siden for at prøve igen.",
   "iAlreadyHaveA": "Mine 24 gendannelsesord",
@@ -37,8 +35,7 @@
   "someThingsAreLocked": "Nogle af dine gamle beskeder og filer er låst på denne enhed.",
   "lockedCounts": "{{ messages }} beskeder og {{ files }} filer er låst på denne enhed. Åbn dem igen med din anden enhed, dine gendannelsesord eller en ven.",
   "thisDeviceHasNoWorking": "Denne enhed har ingen fungerende lås.",
-  "theKeyOnThisRemoved": "Låsen på denne enhed blev fjernet, fra en anden af dine enheder eller med \"Ikke mig\".",
-  "theKeyOnThisNever": "Låsen på denne enhed blev aldrig gemt på serveren, så den tæller ikke.",
+  "theKeyOnThisNever": "The lock on this device is not saved on the server (it was never saved, or it was removed from another of your devices), so it does not count.",
   "thisDeviceHasNoKey": "Din konto har låse på andre enheder, men denne enhed har ingen.",
   "soYourOldMessages": "Dine gamle beskeder og filer forbliver låst her, indtil den har en. Åbn dem med dine gendannelsesord, eller slå låsen til og spørg dine andre enheder eller en ven.",
   "myOtherDevices": "En anden telefon eller computer af mine",
@@ -70,8 +67,6 @@
   "startOverText": "Det starter din lås forfra med denne enhed. Alle dine andre enheder fjernes. Hver af dine venner bliver bedt om at bekræfte, at det virkelig er dig, og kan derefter hjælpe dig med at åbne dine gamle beskeder igen.",
   "startOverButton": "Start forfra med denne enhed",
   "startOverFailed": "Kunne ikke starte forfra. Tjek forbindelsen og prøv igen.",
-  "hideRemoved": "Skjul fjernede",
-  "showRemoved": "Vis fjernede ({{ count }})",
   "rowRecover": "Åbn mine gamle beskeder",
   "rowReplace": "Gendannelsesord og ny lås",
   "whyRecoverTitle": "Hvorfor skal jeg gøre det her?",
@@ -79,5 +74,6 @@
   "noneOfThese": "Ingen af disse",
   "recoverQuestion": "Hvad har du?",
   "makeFailed": "Låsen kunne ikke laves på denne enhed: {{ error }}",
-  "tryAgain": "Prøv igen"
+  "tryAgain": "Prøv igen",
+  "keysInUseForThis": "Keys for this account: {{ active }}"
 }

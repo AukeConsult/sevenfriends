@@ -34,7 +34,7 @@ async function setup() {
   const iv = b64(12);
   const item = (await pool[0].raw("post", box(id, "/items"), { type: "note", enc: { v: 1, iv, metaIv: iv, meta: b64(200), thumbIv: null, wraps } }).expect(201)).body;
   const fresh = await publish(pool[0], keys[2]);
-  await pool[0].raw("post", `/keys/${mine}/revoke`).expect(200);
+  await pool[0].raw("post", `/keys/${mine}/remove`).expect(200);
   return { id, mine, theirs, fresh, message, item };
 }
 

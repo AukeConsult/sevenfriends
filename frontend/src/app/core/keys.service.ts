@@ -24,11 +24,10 @@ export interface KeyDiagnosis {
   account: string;
   /** the key ID of the key found in this browser for this account, or null */
   localKeyId: string | null;
-  /** is that key one of my published keys: 'yes', 'removed' (retired), 'no' (not published), or null when there is no local key */
-  localPublished: 'yes' | 'removed' | 'no' | null;
-  /** my published keys in use / retired */
+  /** is that key one of my published keys: 'yes', 'no' (not published, also a key that was removed), or null when there is no local key */
+  localPublished: 'yes' | 'no' | null;
+  /** my published keys (all in use) */
   active: number;
-  removed: number;
   /** how many accounts have a key in this browser, and whether this one is among them */
   accountsInBrowser: number;
   /** the server or the key store could not be asked */
@@ -66,7 +65,7 @@ export class KeysService {
   readonly state = signal<EncryptionState>('checking');
   /** the fingerprint of this device's key (64 hex characters), once it is ready */
   readonly fingerprint = signal<string | null>(null);
-  /** every key of mine that is published (my devices), as the server lists them; revoked ones too */
+  /** every key of mine that is published (my devices), as the server lists them. A removed key is deleted, so every key here is in use */
   readonly published = signal<PublishedKey[]>([]);
   /** the key ID of the key on THIS device, once it is ready */
   readonly thisKeyId = signal<string | null>(null);
@@ -74,7 +73,7 @@ export class KeysService {
   readonly diagnosis = signal<KeyDiagnosis | null>(null);
 
   /** the key of THIS device is published but not in my signed list yet: another device of mine has to approve it (shown on Home, the other device shows Approve) */
-  readonly thisWaiting = computed(() => this.published().find((k) => k.id === this.thisKeyId() && !k.revoked)?.waiting === true);
+  readonly thisWaiting = computed(() => this.published().find((k) => k.id === this.thisKeyId())?.waiting === true);
 
   /** my signed device list is in place (published by this device, or already there), or this device needs none: set by `ensureList` and `refresh` */
   private readonly listOk = signal(false);
@@ -162,21 +161,20 @@ export class KeysService {
       this.diagnosis.set({
         account: this.uid,
         localKeyId: id,
-        localPublished: !id ? null : !found ? 'no' : found.revoked ? 'removed' : 'yes',
-        active: mine.keys.filter((k) => !k.revoked).length,
-        removed: mine.keys.filter((k) => k.revoked).length,
+        localPublished: !id ? null : !found ? 'no' : 'yes',
+        active: mine.keys.length,
         accountsInBrowser: (await storedKeyOwners()).length,
         failed: false,
       });
-      const ready = !!id && mine.keys.some((k) => k.id === id && !k.revoked);
+      const ready = !!id && mine.keys.some((k) => k.id === id);
       this.fingerprint.set(ready ? fingerprint : null);
       this.thisKeyId.set(ready ? id : null);
-      this.elsewhere.set(!ready && mine.keys.some((k) => !k.revoked));
+      this.elsewhere.set(!ready && mine.keys.length > 0);
       this.hasBackup.set(!!id && (mine.backups?.includes(id) || (!mine.backups?.length && mine.hasBackup))); // the words of THIS device (an account from before there was one per key: its one backup counts)
       this.state.set(ready ? 'ready' : 'none');
       if (!ready) this.listOk.set(false);
       else if (local && !local.signKey) this.listOk.set(true); // an older key with no signing key has no list to wait for
-      if (ready && mine.keys.some((k) => k.revoked)) void this.reencrypt.run(); // what a retired key could open is locked anew (quiet, at most every 10 minutes)
+      if (ready) void this.reencrypt.run(); // what a removed key could open is locked anew (the server lists only items with a copy for a key that is gone) (quiet, at most every 10 minutes)
       if (ready) void keepDeviceKey(); // ask again on every visit: the browser may grant it later, and then it does not clear the key
       if (ready && local && found && found.label !== deviceLabel()) void this.relabel(local.publicKey, found.id);
       // a device with no key of its own makes one without being asked (docs/design/default-key.md), also when the person has keys on other devices and a rescue code:
@@ -185,7 +183,7 @@ export class KeysService {
         if (await this.makeIdentity()) return;
       } else if (!ready && local && !found) {
         // a key was made on this device but never reached the server (the page closed, or the connection was lost, in between): it is published now,
-        // so the person does not have to make another one. A key the server has retired (found, revoked) is never published again.
+        // so the person does not have to make another one. A device whose key was removed publishes it again as a new waiting key: nothing is opened without an Allow.
         if (await this.publishLocal(local)) return;
       } else if (ready && local?.signKey) void this.ensureList(local);
       if (ready && id) void this.joinOthers(id, !!found?.waiting);
@@ -193,7 +191,7 @@ export class KeysService {
       // the server (or the key store) could not be asked: a key that was known to be ready stays; otherwise the person can still try to set up
       if (this.state() !== 'ready') this.state.set('none');
       const before = this.diagnosis();
-      this.diagnosis.set({ account: this.auth.user()?.uid ?? '', localKeyId: before?.localKeyId ?? null, localPublished: before?.localPublished ?? null, active: before?.active ?? 0, removed: before?.removed ?? 0, accountsInBrowser: (await storedKeyOwners()).length, failed: true });
+      this.diagnosis.set({ account: this.auth.user()?.uid ?? '', localKeyId: before?.localKeyId ?? null, localPublished: before?.localPublished ?? null, active: before?.active ?? 0, accountsInBrowser: (await storedKeyOwners()).length, failed: true });
     }
   }
 
@@ -297,7 +295,7 @@ export class KeysService {
       // put this device back as it was: no key (the server may hold a public key that no device has; it is retired so it is not used)
       await deleteDeviceKey(uid).catch(() => undefined);
       const id = keyIdOf((await fingerprintOf(publicKey)) ?? '');
-      if (id) await this.api.request(`/keys/${id}/revoke`, { method: 'POST' }).catch(() => undefined);
+      if (id) await this.api.request(`/keys/${id}/remove`, { method: 'POST' }).catch(() => undefined);
       await this.refresh();
       return false;
     }
@@ -332,7 +330,7 @@ export class KeysService {
     this.listChecked.add(mark);
     try {
       const { lists } = await this.api.request<{ lists: DeviceList[] }>('/keys/list');
-      if (lists.length || this.published().filter((k) => !k.revoked).length !== 1) {
+      if (lists.length || this.published().length !== 1) {
         this.listOk.set(true); // a list exists (or none can be made here): whether this key is in it is the server's `waiting`
         this.listDone.add(mark);
         return;
@@ -423,7 +421,7 @@ export class KeysService {
     } catch (err) {
       if (before) await saveDeviceKey(uid, before);
       else await deleteDeviceKey(uid);
-      if (published && replacing) await this.api.request(`/keys/${newId}/revoke`, { method: 'POST' }).catch(() => undefined); // the new key was never the key of this device: it does not count
+      if (published && replacing) await this.api.request(`/keys/${newId}/remove`, { method: 'POST' }).catch(() => undefined); // the new key was never the key of this device: it does not count
       await this.refresh();
       throw err;
     }
@@ -431,7 +429,7 @@ export class KeysService {
     void keepDeviceKey(); // ask the browser not to clear the key when it is short of room
     // a key this one replaces is retired only now that the new one is safe
     if (pending.replaces && pending.replaces !== this.thisKeyId()) {
-      await this.revoke(pending.replaces, !replacing); // a rotation has already taken it out of the list
+      await this.remove(pending.replaces, !replacing); // a rotation has already taken it out of the list
       void this.reencrypt.run(true); // and what only it could open is locked anew
     }
   }
@@ -453,14 +451,14 @@ export class KeysService {
     }
   }
 
-  /** Retires a key of mine (a lost or replaced device): it is no longer used for new files. */
-  async revoke(id: string, listed = true, by?: string): Promise<void> {
+  /** Removes (deletes) a key of mine (a lost or replaced device): it is no longer used for new files. */
+  async remove(id: string, listed = true, by?: string): Promise<void> {
     if (listed) await this.deviceList.publishNext({ removeId: id }); // out of the signed list first, so friends stop locking for it (quiet when this device can not sign)
-    await this.api.request(`/keys/${id}/revoke`, { method: 'POST', body: JSON.stringify({ by }) });
+    await this.api.request(`/keys/${id}/remove`, { method: 'POST', body: JSON.stringify({ by }) });
     await this.refresh();
   }
 
-  /** Every other device of mine is lost: this device starts my signed list over (see `DeviceListService.restart`) and the server retires the other keys. */
+  /** Every other device of mine is lost: this device starts my signed list over (see `DeviceListService.restart`) and the server removes the other keys. */
   async startOver(): Promise<void> {
     await this.deviceList.restart();
     await this.refresh();
@@ -497,11 +495,11 @@ export class KeysService {
       }
       const { lock, sign } = parts;
       const mine = await this.api.request<MyKeys>('/keys');
-      for (const key of mine.keys.filter((k) => !k.revoked)) {
+      for (const key of mine.keys) {
         try {
           await restoreDeviceKey(this.uid, key.id, lock, key.publicKey, undefined, sign && key.signKey ? { pkcs8: sign, publicKey: key.signKey } : undefined);
           void keepDeviceKey();
-          if (strayId && strayId !== key.id) await this.revoke(strayId, false, key.id).catch(() => undefined); // not listed, so nothing to publish
+          if (strayId && strayId !== key.id) await this.remove(strayId, false, key.id).catch(() => undefined); // not listed, so nothing to publish
           else await this.refresh();
           return 'ok';
         } catch {

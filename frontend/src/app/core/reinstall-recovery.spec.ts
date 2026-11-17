@@ -15,7 +15,7 @@ interface Device {
 async function device(label: string): Promise<Device> {
   const stored = await generateIdentityKey(); // the silent key: the private parts cannot be read
   const fingerprint = (await fingerprintOf(stored.publicKey))!;
-  return { stored, published: { id: keyIdOf(fingerprint), fingerprint, label, createdAt: null, revoked: false, publicKey: canonicalPublicKey(stored.publicKey)! } };
+  return { stored, published: { id: keyIdOf(fingerprint), fingerprint, label, createdAt: null, publicKey: canonicalPublicKey(stored.publicKey)! } };
 }
 
 /** Cuts an upload body into its header, file and preview, as the server does. */

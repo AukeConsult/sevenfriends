@@ -6,7 +6,6 @@
   "useThisWhenThis": "Käytä tätä, kun tämä laite voi lukea vanhat viestisi, mutta Salli-painiketta ei näy. Se antaa silloin muille laitteillesi pääsyn.",
   "useThisDeviceTo": "Käytä tätä laitetta antaaksesi muille pääsyn",
   "thisDevice": "Tämä laite",
-  "removed": "Poistettu",
   "waitingForAccessTo": "Odotetaan pääsyä vanhoihin viesteihisi ja tiedostoihisi.",
   "cancel": "Peruuta",
   "removeIt": "Poista se",
@@ -17,7 +16,6 @@
   "makeANewKey2": "Tee uusi lukko…",
   "whyIsMyKey": "Miksi avaintani ei (tai kyllä) löydy?",
   "accountSlice": "Tili: …{{ slice }}",
-  "keysPublishedForThis": "Tilille julkaistut avaimet: {{ active }} käytössä, {{ removed }} poistettu",
   "accountsWithAKey": "Tilit, joilla on avain tässä selaimessa: {{ accountsInBrowser }}",
   "theServerCouldNot": "Palvelimelta ei voitu juuri nyt kysyä. Lataa sivu uudelleen yrittääksesi.",
   "iAlreadyHaveA": "Minun 24 pelastussanaani",
@@ -37,8 +35,7 @@
   "someThingsAreLocked": "Osa vanhoista viesteistäsi ja tiedostoistasi on lukittu tällä laitteella.",
   "lockedCounts": "{{ messages }} viestiä ja {{ files }} tiedostoa on lukittu tällä laitteella. Avaa ne uudelleen toisella laitteellasi, pelastussanoillasi tai ystävän avulla.",
   "thisDeviceHasNoWorking": "Tällä laitteella ei ole toimivaa lukkoa.",
-  "theKeyOnThisRemoved": "Tämän laitteen lukko poistettiin toiselta laitteeltasi tai valinnalla \"Ei minä\".",
-  "theKeyOnThisNever": "Tämän laitteen lukkoa ei koskaan tallennettu palvelimelle, joten se ei lasketa.",
+  "theKeyOnThisNever": "The lock on this device is not saved on the server (it was never saved, or it was removed from another of your devices), so it does not count.",
   "thisDeviceHasNoKey": "Tililläsi on lukkoja muilla laitteilla, mutta tällä laitteella ei ole yhtään.",
   "soYourOldMessages": "Vanhat viestisi ja tiedostosi pysyvät täällä lukittuina, kunnes laitteella on lukko. Avaa ne pelastussanoillasi tai ota lukko käyttöön ja pyydä apua muilta laitteiltasi tai ystävältä.",
   "myOtherDevices": "Toinen puhelimeni tai tietokoneeni",
@@ -70,8 +67,6 @@
   "startOverText": "Tämä aloittaa lukkosi alusta tällä laitteella. Kaikki muut laitteesi poistetaan. Jokaista ystävääsi pyydetään vahvistamaan, että se todella olet sinä, ja sen jälkeen hän voi auttaa sinua avaamaan vanhat viestisi uudelleen.",
   "startOverButton": "Aloita alusta tällä laitteella",
   "startOverFailed": "Alusta aloittaminen ei onnistunut. Tarkista yhteys ja yritä uudelleen.",
-  "hideRemoved": "Piilota poistetut",
-  "showRemoved": "Näytä poistetut ({{ count }})",
   "rowRecover": "Avaa vanhat viestini",
   "rowReplace": "Pelastussanat ja uusi lukko",
   "whyRecoverTitle": "Miksi minun pitää tehdä tämä?",
@@ -79,5 +74,6 @@
   "noneOfThese": "Ei mikään näistä",
   "recoverQuestion": "Mitä sinulla on?",
   "makeFailed": "Lukkoa ei voitu tehdä tällä laitteella: {{ error }}",
-  "tryAgain": "Yritä uudelleen"
+  "tryAgain": "Yritä uudelleen",
+  "keysInUseForThis": "Keys for this account: {{ active }}"
 }

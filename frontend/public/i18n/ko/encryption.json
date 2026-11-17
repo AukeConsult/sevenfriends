@@ -6,7 +6,6 @@
   "useThisWhenThis": "이 기기에서 이전 메시지를 읽을 수 있는데 허용 버튼이 보이지 않을 때 사용하세요. 그러면 다른 기기에 접근 권한을 줘요.",
   "useThisDeviceTo": "이 기기로 다른 기기에 접근 권한 주기",
   "thisDevice": "이 기기",
-  "removed": "삭제됨",
   "waitingForAccessTo": "이전 메시지와 파일에 대한 접근 권한을 기다리는 중이에요.",
   "cancel": "취소",
   "removeIt": "삭제하기",
@@ -17,7 +16,6 @@
   "makeANewKey2": "새 잠금 만들기…",
   "whyIsMyKey": "내 키가 왜 (안) 보이나요?",
   "accountSlice": "계정: …{{ slice }}",
-  "keysPublishedForThis": "이 계정에 등록된 키: 사용 중 {{ active }}개, 삭제됨 {{ removed }}개",
   "accountsWithAKey": "이 브라우저에 키가 있는 계정: {{ accountsInBrowser }}",
   "theServerCouldNot": "지금은 서버에 확인할 수 없어요. 페이지를 새로고침하고 다시 해 주세요.",
   "iAlreadyHaveA": "내 복구 단어 24개",
@@ -37,8 +35,7 @@
   "someThingsAreLocked": "이전 메시지와 파일 중 일부가 이 기기에서 잠겨 있어요.",
   "lockedCounts": "메시지 {{ messages }}개와 파일 {{ files }}개가 이 기기에서 잠겨 있어요. 내 다른 기기, 복구 단어 또는 친구로 다시 열 수 있어요.",
   "thisDeviceHasNoWorking": "이 기기에는 작동하는 잠금이 없어요.",
-  "theKeyOnThisRemoved": "이 기기의 잠금이 내 다른 기기에서 또는 \"내가 아니에요\"로 삭제됐어요.",
-  "theKeyOnThisNever": "이 기기의 잠금은 서버에 저장된 적이 없어서 계산되지 않아요.",
+  "theKeyOnThisNever": "The lock on this device is not saved on the server (it was never saved, or it was removed from another of your devices), so it does not count.",
   "thisDeviceHasNoKey": "내 계정에는 다른 기기의 잠금이 있지만, 이 기기에는 없어요.",
   "soYourOldMessages": "잠금이 생길 때까지 이전 메시지와 파일은 여기서 잠긴 채로 있어요. 복구 단어로 열거나, 잠금을 켜고 내 다른 기기나 친구에게 요청하세요.",
   "myOtherDevices": "내 다른 휴대폰이나 컴퓨터",
@@ -70,8 +67,6 @@
   "startOverText": "이 기기에서 잠금을 처음부터 다시 시작해요. 내 다른 기기는 모두 삭제돼요. 친구 한 명 한 명에게 정말 나인지 확인해 달라고 요청하고, 그런 다음 친구들이 이전 메시지를 다시 열도록 도와줄 수 있어요.",
   "startOverButton": "이 기기로 다시 시작",
   "startOverFailed": "다시 시작할 수 없습니다. 연결을 확인하고 다시 시도하세요.",
-  "hideRemoved": "제거된 항목 숨기기",
-  "showRemoved": "제거된 항목 보기 ({{ count }})",
   "rowRecover": "이전 메시지 되찾기",
   "rowReplace": "복구 단어와 새 잠금",
   "whyRecoverTitle": "왜 이걸 해야 하나요?",
@@ -79,5 +74,6 @@
   "noneOfThese": "둘 다 아니에요",
   "recoverQuestion": "무엇이 있나요?",
   "makeFailed": "이 기기에서 잠금을 만들 수 없었어요: {{ error }}",
-  "tryAgain": "다시 시도"
+  "tryAgain": "다시 시도",
+  "keysInUseForThis": "Keys for this account: {{ active }}"
 }

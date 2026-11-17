@@ -45,5 +45,6 @@
   "groupTitle": "Odzyskiwanie starych wiadomości odbywa się między dwiema osobami",
   "groupText": "Aby ponownie otworzyć Twoje stare wiadomości, aplikacja znajomego odblokowuje je ponownie dla Twojej nowej blokady prywatności. W grupie nie ma jednego znajomego, który mógłby to zrobić za Ciebie, więc w grupie nie jest to możliwe.",
   "groupOther": "Nadal możesz je odzyskać innym swoim urządzeniem, które potrafi je otworzyć, albo za pomocą 24 tajnych słów (Ustawienia → Blokada prywatności).",
-  "nothingCouldBeOpened": "Nic nie dało się otworzyć: to urządzenie nie ma klucza do tych starych wiadomości, więc nie może pomóc. Najpierw odzyskaj własny klucz (Ustawienia → Blokada prywatności: inne Twoje urządzenie lub Twoje 24 słowa)."
+  "nothingCouldBeOpened": "Nic nie dało się otworzyć: to urządzenie nie ma klucza do tych starych wiadomości, więc nie może pomóc. Najpierw odzyskaj własny klucz (Ustawienia → Blokada prywatności: inne Twoje urządzenie lub Twoje 24 słowa).",
+  "skippedYours": "{{ skipped }} of your old messages and files could not be opened by your friend’s device."
 }

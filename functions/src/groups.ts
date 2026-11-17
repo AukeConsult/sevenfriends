@@ -10,7 +10,7 @@ import { parsePicture } from "./avatar";
 import { GroupMember, MediaRef } from "./models";
 import { touchSync } from "./sync";
 import { deleteObjects } from "./sf-cache";
-import { deleteBox, deleteItemsOf } from "./safebox";
+import { deleteBox, deleteItemsOf, removeMemberKeys } from "./safebox";
 import { GROUP_HEAD, groupHead } from "./group-members";
 import { text, firstText } from "./validation";
 
@@ -65,10 +65,10 @@ export async function createGroup(req: Request, res: Response): Promise<void> {
 }
 
 /**
- * Leave a group (deleting it from my list): my entry and my copies of its messages go; the others keep the group, its messages and its safebox.
+ * Leave a group (deleting it from my list): my entry and my copies of its messages go, and my keys are taken out of every item of the safebox (the items stay: `removeMemberKeys`; `wipe`, for a deleted account, deletes them instead); the others keep the group, its messages and its safebox.
  * The last member to leave deletes the group: its safebox and the files of the messages go with it.
  */
-export async function leaveGroup(uid: string, entryRef: DocumentReference, groupId: string, how: "left" | "removed" = "left"): Promise<void> {
+export async function leaveGroup(uid: string, entryRef: DocumentReference, groupId: string, how: "left" | "removed" = "left", wipe = false): Promise<void> {
   const mine = await messageCol(uid).where("connectionId", "==", groupId).select("media").get();
   const group = groupDoc(groupId);
   let last = false;
@@ -91,12 +91,13 @@ export async function leaveGroup(uid: string, entryRef: DocumentReference, group
   });
   if (!last) {
     await syncMemberCount(groupId);
-    await deleteItemsOf(groupId, uid);
+    if (wipe) await deleteItemsOf(groupId, uid); // the account is deleted: everything the person saved goes, nothing of theirs is kept
+    await removeMemberKeys(groupId, uid);
     await dropReminders(groupId, uid);
-    // the others are told: what the person wrote and put in the safebox is gone with them
+    // the others are told: when the account is deleted what the person saved is gone; otherwise it stays, but is no longer theirs to open
     const who = firstText((await userFields(uid, "displayName"))?.displayName) ?? "Someone";
     await Promise.all(Object.entries(remaining).map(([memberUid, circleId]) =>
-      sendPush(memberUid, { circleId, id: `group-${groupId}-${how}-${uid}`, title: `${who} ${how === "left" ? "left" : "was removed from"} ${groupName}`, body: "Their messages and safebox items in the group are gone.", url: `/friends/${groupId}`, kind: "removed" }),
+      sendPush(memberUid, { circleId, id: `group-${groupId}-${how}-${uid}`, title: `${who} ${how === "left" ? "left" : "was removed from"} ${groupName}`, body: wipe ? "Their messages and safebox items in the group are gone." : "What they saved in the safebox stays. They can no longer open it.", url: `/friends/${groupId}`, kind: "removed" }),
     ));
   }
   if (last) {

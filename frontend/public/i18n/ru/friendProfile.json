@@ -34,7 +34,7 @@
   "wakeFname": "Разбудить: {{ fName }}",
   "openTheConversation": "Открыть переписку с {{ name }}",
   "removeRules": "Вы можете удалить тех, кого добавили сами. Владелец может удалить любого. Владельца удалить нельзя.",
-  "newMembersSeeNew": "Тот, кого вы добавите, видит сообщения с этого момента, а не прежние.",
+  "newMembersSeeNew": "Someone you add sees the earlier messages and the safebox too, not only what is written from now on.",
   "leaveTheGroup": "Выйти из группы",
   "leaveQuestion": "Выйти из «{{ name }}»? Ваши сообщения в группе и ваши элементы сейфа там будут удалены для всех. Остальные сохранят группу. Вернуться можно, только если вас снова добавят.",
   "leaveOwnerNote": "Вы владелец: следующий в списке станет владельцем.",

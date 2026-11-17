@@ -6,7 +6,6 @@
   "useThisWhenThis": "استخدم هذا عندما يستطيع هذا الجهاز قراءة رسائلك القديمة ولا يظهر زر سماح. عندها يمنح أجهزتك الأخرى حق الوصول.",
   "useThisDeviceTo": "استخدم هذا الجهاز لمنح الأجهزة الأخرى حق الوصول",
   "thisDevice": "هذا الجهاز",
-  "removed": "تمت إزالته",
   "waitingForAccessTo": "في انتظار الوصول إلى رسائلك وملفاتك القديمة.",
   "cancel": "إلغاء",
   "removeIt": "أزِله",
@@ -17,7 +16,6 @@
   "makeANewKey2": "إنشاء قفل جديد…",
   "whyIsMyKey": "لماذا مفتاحي (غير) موجود؟",
   "accountSlice": "الحساب: …{{ slice }}",
-  "keysPublishedForThis": "المفاتيح المنشورة لهذا الحساب: {{ active }} قيد الاستخدام، {{ removed }} مُزالة",
   "accountsWithAKey": "الحسابات التي لها مفتاح في هذا المتصفح: {{ accountsInBrowser }}",
   "theServerCouldNot": "تعذّر سؤال الخادم الآن. أعد تحميل الصفحة وحاول مرة أخرى.",
   "iAlreadyHaveA": "كلمات الإنقاذ الـ 24 الخاصة بي",
@@ -37,8 +35,7 @@
   "someThingsAreLocked": "بعض رسائلك وملفاتك القديمة مقفلة على هذا الجهاز.",
   "lockedCounts": "{{ messages }} رسالة و{{ files }} ملفًا مقفلة على هذا الجهاز. افتحها مرة أخرى بجهازك الآخر أو بكلمات الإنقاذ أو بمساعدة صديق.",
   "thisDeviceHasNoWorking": "ليس لدى هذا الجهاز قفل يعمل.",
-  "theKeyOnThisRemoved": "أُزيل القفل الموجود على هذا الجهاز، من جهاز آخر لك أو بزر \"لست أنا\".",
-  "theKeyOnThisNever": "لم يُحفظ قفل هذا الجهاز على الخادم قط، لذلك لا يُحتسب.",
+  "theKeyOnThisNever": "The lock on this device is not saved on the server (it was never saved, or it was removed from another of your devices), so it does not count.",
   "thisDeviceHasNoKey": "لدى حسابك أقفال على أجهزة أخرى، لكن هذا الجهاز ليس لديه قفل.",
   "soYourOldMessages": "تبقى رسائلك وملفاتك القديمة مقفلة هنا إلى أن يصبح لديه قفل. افتحها بكلمات الإنقاذ، أو فعّل القفل واطلب من أجهزتك الأخرى أو من صديق.",
   "myOtherDevices": "هاتف أو حاسوب آخر لي",
@@ -70,8 +67,6 @@
   "startOverText": "هذا يبدأ قفلك من جديد بهذا الجهاز. تُزال كل أجهزتك الأخرى. يُطلب من كل صديق لك التأكيد أنك أنت حقًا، ثم يمكنه مساعدتك في فتح رسائلك القديمة مرة أخرى.",
   "startOverButton": "ابدأ من جديد بهذا الجهاز",
   "startOverFailed": "تعذّرت البداية من جديد. تحقق من الاتصال وحاول مرة أخرى.",
-  "hideRemoved": "إخفاء المحذوفة",
-  "showRemoved": "إظهار المحذوفة ({{ count }})",
   "rowRecover": "استعادة رسائلي القديمة",
   "rowReplace": "كلمات الإنقاذ وقفل جديد",
   "whyRecoverTitle": "لماذا يجب أن أفعل هذا؟",
@@ -79,5 +74,6 @@
   "noneOfThese": "لا شيء من هذا",
   "recoverQuestion": "ماذا لديك؟",
   "makeFailed": "تعذّر إنشاء القفل على هذا الجهاز: {{ error }}",
-  "tryAgain": "حاول مرة أخرى"
+  "tryAgain": "حاول مرة أخرى",
+  "keysInUseForThis": "Keys for this account: {{ active }}"
 }

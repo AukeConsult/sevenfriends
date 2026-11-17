@@ -6,7 +6,6 @@
   "useThisWhenThis": "Gebruik dit als dit apparaat je oude berichten kan lezen, maar er geen knop Toestaan verschijnt. Je andere apparaten krijgen dan toegang.",
   "useThisDeviceTo": "Gebruik dit apparaat om de andere toegang te geven",
   "thisDevice": "Dit apparaat",
-  "removed": "Verwijderd",
   "waitingForAccessTo": "Wachten op toegang tot je oude berichten en bestanden.",
   "cancel": "Annuleren",
   "removeIt": "Verwijderen",
@@ -17,7 +16,6 @@
   "makeANewKey2": "Een nieuw slot maken…",
   "whyIsMyKey": "Waarom wordt mijn sleutel (niet) gevonden?",
   "accountSlice": "Account: …{{ slice }}",
-  "keysPublishedForThis": "Gepubliceerde sleutels voor dit account: {{ active }} in gebruik, {{ removed }} verwijderd",
   "accountsWithAKey": "Accounts met een sleutel in deze browser: {{ accountsInBrowser }}",
   "theServerCouldNot": "De server kon nu niet worden bevraagd. Laad de pagina opnieuw om het nog eens te proberen.",
   "iAlreadyHaveA": "Mijn 24 herstelwoorden",
@@ -37,8 +35,7 @@
   "someThingsAreLocked": "Sommige van je oude berichten en bestanden zijn vergrendeld op dit apparaat.",
   "lockedCounts": "{{ messages }} berichten en {{ files }} bestanden zijn vergrendeld op dit apparaat. Open ze opnieuw met je andere apparaat, je herstelwoorden of een vriend.",
   "thisDeviceHasNoWorking": "Dit apparaat heeft geen werkend slot.",
-  "theKeyOnThisRemoved": "Het slot op dit apparaat is verwijderd, vanaf een ander apparaat van je of met \"Niet ik\".",
-  "theKeyOnThisNever": "Het slot op dit apparaat is nooit op de server opgeslagen, dus het telt niet mee.",
+  "theKeyOnThisNever": "The lock on this device is not saved on the server (it was never saved, or it was removed from another of your devices), so it does not count.",
   "thisDeviceHasNoKey": "Je account heeft sloten op andere apparaten, maar dit apparaat heeft er geen.",
   "soYourOldMessages": "Je oude berichten en bestanden blijven hier vergrendeld totdat dit apparaat een slot heeft. Open ze met je herstelwoorden, of zet het slot aan en vraag je andere apparaten of een vriend.",
   "myOtherDevices": "Een andere telefoon of computer van mij",
@@ -70,8 +67,6 @@
   "startOverText": "Hiermee begint je slot opnieuw met dit apparaat. Al je andere apparaten worden verwijderd. Elk van je vrienden wordt gevraagd te bevestigen dat jij het echt bent, en kan je daarna helpen je oude berichten weer te openen.",
   "startOverButton": "Opnieuw beginnen met dit apparaat",
   "startOverFailed": "Opnieuw beginnen is niet gelukt. Controleer de verbinding en probeer het nog eens.",
-  "hideRemoved": "Verwijderde verbergen",
-  "showRemoved": "Verwijderde tonen ({{ count }})",
   "rowRecover": "Mijn oude berichten terugkrijgen",
   "rowReplace": "Herstelwoorden en nieuw slot",
   "whyRecoverTitle": "Waarom moet ik dit doen?",
@@ -79,5 +74,6 @@
   "noneOfThese": "Geen van deze",
   "recoverQuestion": "Wat heb je?",
   "makeFailed": "Het slot kon niet worden gemaakt op dit apparaat: {{ error }}",
-  "tryAgain": "Opnieuw proberen"
+  "tryAgain": "Opnieuw proberen",
+  "keysInUseForThis": "Keys for this account: {{ active }}"
 }

@@ -45,5 +45,6 @@
   "groupTitle": "Vanhojen viestien palautus tapahtuu kahden ihmisen välillä",
   "groupText": "Jotta voit avata vanhat viestisi uudelleen, ystävän sovellus avaa ne uudelleen uudelle yksityisyyslukollesi. Ryhmässä ei ole yhtä ystävää, joka voisi tehdä sen puolestasi, joten tämä ei ole ryhmässä mahdollista.",
   "groupOther": "Voit silti saada ne takaisin toisella laitteellasi, joka pystyy avaamaan ne, tai 24 salaisella sanallasi (Asetukset → Yksityisyyslukko).",
-  "nothingCouldBeOpened": "Mitään ei voitu avata: tällä laitteella ei ole avainta näihin vanhoihin viesteihin, joten se ei voi auttaa. Palauta ensin oma avaimesi (Asetukset → Yksityisyyslukko: toinen laitteesi tai 24 sanaasi)."
+  "nothingCouldBeOpened": "Mitään ei voitu avata: tällä laitteella ei ole avainta näihin vanhoihin viesteihin, joten se ei voi auttaa. Palauta ensin oma avaimesi (Asetukset → Yksityisyyslukko: toinen laitteesi tai 24 sanaasi).",
+  "skippedYours": "{{ skipped }} of your old messages and files could not be opened by your friend’s device."
 }

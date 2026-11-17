@@ -6,7 +6,6 @@
   "useThisWhenThis": "Pakai ini kalau perangkat ini bisa membaca pesan lamamu, tapi tombol Izinkan tidak muncul. Perangkatmu yang lain akan diberi akses.",
   "useThisDeviceTo": "Pakai perangkat ini untuk memberi akses ke yang lain",
   "thisDevice": "Perangkat ini",
-  "removed": "Dihapus",
   "waitingForAccessTo": "Menunggu akses ke pesan dan file lamamu.",
   "cancel": "Batal",
   "removeIt": "Hapus",
@@ -17,7 +16,6 @@
   "makeANewKey2": "Buat gembok baru…",
   "whyIsMyKey": "Kenapa kuncinya (tidak) ditemukan?",
   "accountSlice": "Akun: …{{ slice }}",
-  "keysPublishedForThis": "Kunci yang dipublikasikan untuk akun ini: {{ active }} dipakai, {{ removed }} dihapus",
   "accountsWithAKey": "Akun dengan kunci di browser ini: {{ accountsInBrowser }}",
   "theServerCouldNot": "Server tidak bisa ditanya saat ini. Muat ulang halaman untuk mencoba lagi.",
   "iAlreadyHaveA": "24 kata pemulihanku",
@@ -37,8 +35,7 @@
   "someThingsAreLocked": "Beberapa pesan dan file lamamu terkunci di perangkat ini.",
   "lockedCounts": "{{ messages }} pesan dan {{ files }} file terkunci di perangkat ini. Buka lagi dengan perangkatmu yang lain, kata pemulihanmu, atau seorang teman.",
   "thisDeviceHasNoWorking": "Perangkat ini tidak punya gembok yang berfungsi.",
-  "theKeyOnThisRemoved": "Gembok di perangkat ini dihapus, dari perangkatmu yang lain atau dengan \"Bukan aku\".",
-  "theKeyOnThisNever": "Gembok di perangkat ini tidak pernah disimpan di server, jadi tidak dihitung.",
+  "theKeyOnThisNever": "The lock on this device is not saved on the server (it was never saved, or it was removed from another of your devices), so it does not count.",
   "thisDeviceHasNoKey": "Akunmu punya gembok di perangkat lain, tetapi perangkat ini tidak punya.",
   "soYourOldMessages": "Pesan dan file lamamu tetap terkunci di sini sampai perangkat ini punya gembok. Buka dengan kata pemulihanmu, atau aktifkan gembok lalu minta perangkatmu yang lain atau seorang teman.",
   "myOtherDevices": "Ponsel atau komputerku yang lain",
@@ -70,8 +67,6 @@
   "startOverText": "Ini memulai ulang gemboknya dari perangkat ini. Semua perangkatmu yang lain dihapus. Setiap temanmu diminta memastikan bahwa ini benar-benar kamu, lalu mereka bisa membantu membuka pesan lamamu lagi.",
   "startOverButton": "Mulai dari awal dengan perangkat ini",
   "startOverFailed": "Tidak dapat memulai dari awal. Periksa koneksi dan coba lagi.",
-  "hideRemoved": "Sembunyikan yang dihapus",
-  "showRemoved": "Tampilkan yang dihapus ({{ count }})",
   "rowRecover": "Pulihkan pesan lama saya",
   "rowReplace": "Kata pemulihan dan gembok baru",
   "whyRecoverTitle": "Kenapa aku harus melakukan ini?",
@@ -79,5 +74,6 @@
   "noneOfThese": "Tidak ada",
   "recoverQuestion": "Apa yang kamu punya?",
   "makeFailed": "Kunci tidak bisa dibuat di perangkat ini: {{ error }}",
-  "tryAgain": "Coba lagi"
+  "tryAgain": "Coba lagi",
+  "keysInUseForThis": "Keys for this account: {{ active }}"
 }

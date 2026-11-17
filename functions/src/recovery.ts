@@ -2,7 +2,7 @@ import { Router } from "express";
 import { DecodedIdToken } from "firebase-admin/auth";
 import { DocumentData, DocumentReference, FieldValue, Timestamp, getFirestore } from "firebase-admin/firestore";
 import { asyncHandler, requireAuth } from "./auth";
-import { MAX_WRAPS, wrapValid } from "./box-encryption";
+import { MAX_WRAPS, relockedWraps, wrapValid } from "./box-encryption";
 import { shownNameOf } from "./circle-profile";
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, RECOVERY_COLLECTION } from "./constants";
 import { connectionOf } from "./conversation";
@@ -81,7 +81,7 @@ async function touchBoth(a: string, b: string): Promise<void> {
 }
 
 function stateOf(data: DocumentData | undefined, me: string, friendName: string): RecoveryState {
-  if (!data) return { role: "none", status: "none", keyId: null, fingerprint: null, total: 0, added: 0, friendName };
+  if (!data) return { role: "none", status: "none", keyId: null, fingerprint: null, total: 0, added: 0, skipped: 0, friendName };
   return {
     role: data.requesterUid === me ? "requester" : "helper",
     status: data.status,
@@ -89,6 +89,7 @@ function stateOf(data: DocumentData | undefined, me: string, friendName: string)
     fingerprint: data.fingerprint,
     total: data.total ?? 0,
     added: data.added ?? 0,
+    skipped: data.skipped ?? 0,
     friendName,
   };
 }
@@ -221,11 +222,63 @@ recoveryRouter.post(
   }),
 );
 
-/** The messages (of the requester's copy) and the safebox files that still need a copy of the key for the new key. */
-async function countMissing(connectionId: string, requester: string, inUse: string[]): Promise<number> {
-  const messages = await messageCol(requester).where("connectionId", "==", connectionId).select("enc").get();
-  const box = await safeboxItems(connectionId).select("enc").get();
-  return [...messages.docs, ...box.docs].filter((d) => missingKeys(d.data().enc, inUse).length).length;
+/** The keys in use of the two people of a friendship: every item must have a copy of its key for each of them. */
+interface ActiveKeys {
+  requester: string[];
+  helper: string[];
+}
+const activeOf = async (requester: string, helper: string): Promise<ActiveKeys> => {
+  const [r, h] = await Promise.all([publishedKeysOf(requester), publishedKeysOf(helper)]);
+  return { requester: r.map((k) => k.id), helper: h.map((k) => k.id) };
+};
+
+/** What one message or file lacks: the keys of the requester and the keys of the helper that have no copy of its key, and the helper's own copies (what the helper can open). */
+interface Need {
+  id: string;
+  /** the helper's own copies of the key */
+  wraps: SafeboxWrap[];
+  missing: string[];
+  missingOwn: string[];
+}
+
+/** The messages of one page (the requester's copy is `docs`) with what each copy of it lacks; the helper's own copy is read with it. Only those that lack something. */
+async function messageNeeds(docs: { id: string; data(): DocumentData }[], me: string, active: ActiveKeys): Promise<Need[]> {
+  const own = docs.length ? await getFirestore().getAll(...docs.map((d) => messageCol(me).doc(d.id)), { fieldMask: ["enc"] }) : [];
+  const needs: Need[] = [];
+  docs.forEach((d, n) => {
+    const mine = own[n].data()?.enc;
+    const missing = missingKeys(d.data().enc, active.requester);
+    const missingOwn = mine ? missingKeys(mine, active.helper) : []; // a message the helper no longer has is not theirs to lock
+    if (missing.length || missingOwn.length) needs.push({ id: d.id, wraps: Array.isArray(mine?.wraps) ? mine.wraps : [], missing, missingOwn });
+  });
+  return needs;
+}
+
+/** The safebox items (shared by both people: one list of copies) that lack a copy for a key in use of either person. */
+async function boxNeeds(connectionId: string, me: string, active: ActiveKeys): Promise<Need[]> {
+  const needs: Need[] = [];
+  for (const d of (await safeboxItems(connectionId).select("enc").get()).docs) {
+    const enc = d.data().enc;
+    if (!Array.isArray(enc?.wraps)) continue;
+    const missing = missingKeys(enc, active.requester);
+    const missingOwn = missingKeys(enc, active.helper);
+    if (missing.length || missingOwn.length) needs.push({ id: d.id, wraps: enc.wraps.filter((w: SafeboxWrap) => w.uid === me), missing, missingOwn });
+  }
+  return needs;
+}
+
+/** How many messages and files still lack a copy for a key in use of either person. */
+async function countMissing(connectionId: string, requester: string, me: string, active: ActiveKeys): Promise<number> {
+  let count = (await boxNeeds(connectionId, me, active)).length;
+  let after: Timestamp | null = null;
+  for (;;) {
+    let query = messageCol(requester).where("connectionId", "==", connectionId).orderBy("time", "desc");
+    if (after) query = query.startAfter(after);
+    const page = (await query.select("enc", "time").limit(PAGE).get()).docs;
+    count += (await messageNeeds(page, me, active)).length;
+    if (page.length < PAGE) return count;
+    after = page[page.length - 1].data().time as Timestamp;
+  }
 }
 
 /** The friend says yes: from now on the friend's app may send the new copies. Only the friend who was asked. */
@@ -246,23 +299,23 @@ recoveryRouter.post(
       return;
     }
     if (data.status === "asked") {
-      const total = await countMissing(connection.id, data.requesterUid, (await publishedKeysOf(data.requesterUid)).map((k) => k.id));
-      await ref.update({ status: "approved", total, added: 0, approvedAt: FieldValue.serverTimestamp() });
+      const total = await countMissing(connection.id, data.requesterUid, me, await activeOf(data.requesterUid, me));
+      await ref.update({ status: "approved", total, added: 0, skipped: 0, approvedAt: FieldValue.serverTimestamp() });
       await touchBoth(connection.peerUid, me); // the asker's page shows that it has started
     }
     res.json(stateOf((await ref.get()).data(), me, connection.name));
   }),
 );
 
-/** What the approved request is for: the requester must still have a key in use (`inUse`: all of them), and I must be the helper. */
-async function approvedRequest(connectionId: string, me: string): Promise<{ ref: DocumentReference; data: DocumentData; inUse: string[] } | { error: string; status: number }> {
+/** What the approved request is for: the requester must still have a key in use, and I must be the helper. `active` = the keys in use of both, read now (a device added meanwhile counts). */
+async function approvedRequest(connectionId: string, me: string): Promise<{ ref: DocumentReference; data: DocumentData; active: ActiveKeys } | { error: string; status: number }> {
   const ref = recoveryDoc(connectionId);
   const data = await liveRequest(connectionId);
   if (!data || data.helperUid !== me) return { status: 404, error: "There is no request from your friend" };
   if (data.status !== "approved") return { status: 409, error: "Approve the request first" };
-  const inUse = (await publishedKeysOf(data.requesterUid)).map((k) => k.id);
-  if (!inUse.length) return { status: 409, error: "Your friend has no key in use any more. Ask them to ask again." };
-  return { ref, data, inUse };
+  const active = await activeOf(data.requesterUid, me);
+  if (!active.requester.length) return { status: 409, error: "Your friend has no key in use any more. Ask them to ask again." };
+  return { ref, data, active };
 }
 
 /**
@@ -281,8 +334,7 @@ recoveryRouter.get(
       return;
     }
     const { requesterUid } = request.data;
-    const { inUse } = request;
-    const items: RecoveryTodoItem[] = [];
+    let items: RecoveryTodoItem[] = [];
     let next: string | null = null;
     const part = req.query.part === "box" ? "box" : "messages";
 
@@ -291,22 +343,10 @@ recoveryRouter.get(
       const after = typeof req.query.after === "string" ? timeOf(req.query.after) : null;
       if (after) query = query.startAfter(after);
       const page = (await query.select("enc", "time").limit(PAGE).get()).docs;
-      const needing = page.filter((d) => missingKeys(d.data().enc, inUse).length);
-      const missingOf = new Map(needing.map((d) => [d.id, missingKeys(d.data().enc, inUse)]));
-      const mine = needing.length ? await getFirestore().getAll(...needing.map((d) => messageCol(me).doc(d.id)), { fieldMask: ["enc"] }) : [];
-      for (const copy of mine) {
-        const wraps = (copy.data()?.enc?.wraps ?? []) as SafeboxWrap[];
-        if (wraps.length) items.push({ id: copy.id, wraps, missing: missingOf.get(copy.id) ?? [] });
-      }
+      items = await messageNeeds(page, me, request.active);
       next = page.length === PAGE ? cursorOf(page[page.length - 1].data().time) : null;
     } else {
-      for (const d of (await safeboxItems(connection.id).select("enc").get()).docs) {
-        const enc = d.data().enc;
-        const missing = missingKeys(enc, inUse);
-        if (!missing.length) continue;
-        const wraps = (enc.wraps as SafeboxWrap[]).filter((w) => w.uid === me);
-        if (wraps.length) items.push({ id: d.id, wraps, missing });
-      }
+      items = await boxNeeds(connection.id, me, request.active);
     }
     res.json({ part, items, next } satisfies RecoveryTodo);
   }),
@@ -327,6 +367,8 @@ recoveryRouter.post(
       return;
     }
     const { requesterUid } = request.data;
+    const me = uidOf(res);
+    const { active } = request;
     const part = req.body?.part === "box" ? "box" : "messages";
     const given: unknown[] = Array.isArray(req.body?.items) ? req.body.items : [];
     if (!given.length || given.length > MAX_WRAPS_IN) {
@@ -334,30 +376,38 @@ recoveryRouter.post(
       return;
     }
     const items = given as { id?: unknown; wraps?: unknown }[];
+    // a copy is for the one who asked and one of their keys in use, or for me (the helper) and one of my keys in use: nobody else
+    const meant = (w: SafeboxWrap) => (w.uid === requesterUid && active.requester.includes(w.keyId)) || (w.uid === me && active.helper.includes(w.keyId));
     for (const i of items) {
       const wraps = Array.isArray(i?.wraps) ? (i.wraps as unknown[]) : [];
-      if (typeof i?.id !== "string" || !i.id || !wraps.length || wraps.length > MAX_WRAPS || !wraps.every((w) => wrapValid(w) && w.uid === requesterUid && request.inUse.includes(w.keyId))) {
-        res.status(400).json({ error: "That is not a copy of a key for one of your friend's keys" });
+      if (typeof i?.id !== "string" || !i.id || !wraps.length || wraps.length > MAX_WRAPS || !wraps.every((w) => wrapValid(w) && meant(w))) {
+        res.status(400).json({ error: "That is not a copy of a key for a key in use of you or your friend" });
         return;
       }
     }
-    const refs = items.map((i) => (part === "box" ? safeboxItems(connection.id).doc(i.id as string) : messageCol(requesterUid).doc(i.id as string)));
-    const snaps = await getFirestore().getAll(...refs, { fieldMask: ["enc", "connectionId"] });
-    const batch = getFirestore().batch();
-    let added = 0;
-    snaps.forEach((snap, n) => {
-      const data = snap.data();
-      if (!data?.enc || !Array.isArray(data.enc.wraps)) return;
-      if (part === "messages" && data.connectionId !== connection.id) return;
-      const fresh = (items[n].wraps as SafeboxWrap[]).filter((w) => !hasCopyFor(data.enc, w.keyId)).map((w) => ({ uid: w.uid, keyId: w.keyId, wrappedKey: w.wrappedKey }));
-      if (!fresh.length) return;
-      batch.update(snap.ref, { "enc.wraps": [...data.enc.wraps, ...fresh] });
-      added++;
+    // a message has one copy for each person (each with the copies of its owner only); a safebox item is one list of copies for both
+    const refsOf = (id: string) => (part === "box" ? [safeboxItems(connection.id).doc(id)] : [messageCol(requesterUid).doc(id), messageCol(me).doc(id)]);
+    const added = await getFirestore().runTransaction(async (tx) => {
+      const snaps = await tx.getAll(...items.flatMap((i) => refsOf(i.id as string)), { fieldMask: ["enc", "connectionId"] });
+      const owners = [{ uid: requesterUid, active: active.requester }, { uid: me, active: active.helper }];
+      const per = part === "box" ? 1 : 2;
+      let count = 0;
+      items.forEach((item, n) => {
+        const fresh = item.wraps as SafeboxWrap[];
+        const changes: { ref: DocumentReference; wraps: unknown[] }[] = [];
+        snaps.slice(n * per, n * per + per).forEach((snap, copy) => {
+          const data = snap.data();
+          if (!data?.enc || !Array.isArray(data.enc.wraps)) return;
+          if (part === "messages" && data.connectionId !== connection.id) return;
+          const wraps = relockedWraps(data.enc.wraps, fresh, part === "box" ? owners : [owners[copy]]); // a message copy holds the copies of its owner only
+          if (wraps && wraps.length > 0 && wraps.length <= MAX_WRAPS) changes.push({ ref: snap.ref, wraps });
+        });
+        for (const c of changes) tx.update(c.ref, { "enc.wraps": c.wraps });
+        if (changes.length) count++;
+      });
+      if (count) tx.update(request.ref, { added: FieldValue.increment(count) });
+      return count;
     });
-    if (added) {
-      batch.update(request.ref, { added: (request.data.added ?? 0) + added });
-      await batch.commit();
-    }
     res.json({ added });
   }),
 );
@@ -374,7 +424,14 @@ recoveryRouter.post(
       res.status(request.status).json({ error: request.error });
       return;
     }
-    await request.ref.update({ status: "done", finishedAt: FieldValue.serverTimestamp() });
+    // done only when nothing lacks a copy for a key in use now (a device added meanwhile counts); what the helper's device could not open is told and counted
+    const remaining = await countMissing(connection.id, request.data.requesterUid, me, request.active);
+    const skipped = Math.max(0, Math.floor(Number(req.body?.skipped) || 0));
+    if (remaining > skipped) {
+      res.status(409).json({ error: "Some messages and files still need a copy for a key in use. Run it again." });
+      return;
+    }
+    await request.ref.update({ status: "done", skipped: remaining, finishedAt: FieldValue.serverTimestamp() });
     await tellRequester(request.data, connection, res, "done");
     await touchBoth(connection.peerUid, me);
     res.json(stateOf((await request.ref.get()).data(), me, connection.name));

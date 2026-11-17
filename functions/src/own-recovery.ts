@@ -2,10 +2,10 @@ import { Router } from "express";
 import { DecodedIdToken } from "firebase-admin/auth";
 import { DocumentData, FieldValue, Timestamp, getFirestore } from "firebase-admin/firestore";
 import { asyncHandler, requireAuth } from "./auth";
-import { MAX_WRAPS, wrapValid } from "./box-encryption";
+import { MAX_WRAPS, relockedWraps, wrapValid } from "./box-encryption";
 import { FRIENDS_SUBCOLLECTION } from "./constants";
 import { isShared, publishedOf } from "./keys";
-import { OwnRecoveryRequest, PublishedKey, RecoveryTodoItem, SafeboxWrap } from "./models";
+import { OwnRecoveryRequest, OwnRecoveryTodo, PublishedKey, SafeboxWrap } from "./models";
 import { liveRequest, liveRequests, openRequest, requestOf, tellDone } from "./own-request";
 import { circleCol, keyCol, keyListCol, messageCol, ownRequestCol, safeboxItems } from "./paths";
 import { touchSync } from "./sync";
@@ -26,6 +26,8 @@ const PAGE = 100;
 const MAX_ITEMS_IN = 100;
 
 const hasCopyFor = (enc: DocumentData | undefined, keyId: string): boolean => Array.isArray(enc?.wraps) && enc.wraps.some((w: SafeboxWrap) => w.keyId === keyId);
+/** Which of these keys have no copy of this message's or file's key yet. */
+const lackingKeys = (enc: DocumentData | undefined, ids: string[]): string[] => (enc ? ids.filter((id) => !hasCopyFor(enc, id)) : []);
 const cursorOf = (t: unknown): string | null => (t instanceof Timestamp ? `${t.seconds}.${t.nanoseconds}` : null);
 const timeOf = (cursor: string): Timestamp | null => {
   const m = /^(\d{1,12})\.(\d{1,9})$/.exec(cursor);
@@ -48,7 +50,6 @@ async function myKeys(uid: string, withList = true): Promise<MyKey[]> {
   const [snap, newest] = await Promise.all([keyCol(uid).get(), withList ? keyListCol(uid).orderBy("version", "desc").limit(1).get() : undefined]);
   const listed = new Set<string>(((newest?.docs[0]?.data().devices ?? []) as { keyId: string }[]).map((d) => d.keyId));
   const keys = snap.docs
-    .filter((d) => d.data().revoked !== true)
     .map((d) => ({ key: publishedOf(d.id, d.data()), flag: d.data().ownShared as boolean | undefined }))
     .sort((a, b) => (a.key.createdAt ?? "").localeCompare(b.key.createdAt ?? ""));
   return keys.map((k, i) => {
@@ -56,6 +57,12 @@ async function myKeys(uid: string, withList = true): Promise<MyKey[]> {
     return { key: k.key, shared, listed: listed.has(k.key.id), helps: shared || listed.has(k.key.id) };
   });
 }
+
+/**
+ * The keys that get copies when I allow `target` on a device that works: the key being allowed, the keys that were allowed before (shared) and the keys in my signed
+ * device list. A key that still waits for its own Allow gets nothing, so a key added by somebody who stole my login gets no history just because I allowed my own new device.
+ */
+const allowedOf = (keys: MyKey[], target: string): MyKey[] => keys.filter((k) => k.shared || k.listed || k.key.id === target);
 
 /** The confirmed friendships of mine (their ids are the ids of the safeboxes). */
 async function myConnections(uid: string): Promise<string[]> {
@@ -120,7 +127,7 @@ ownRecoveryRouter.post(
       res.status(409).json({ error: "No other device of yours is approved to help. Use your 24 recovery words, or ask a friend." });
       return;
     }
-    await openRequest(uid, target.key, await countLacking(uid, target.key.id));
+    await openRequest(uid, target.key, await countLacking(uid, allowedOf(keys, target.key.id).map((k) => k.key.id)));
     res.status(201).json({ request: requestOf(target.key.id, (await ownRequestCol(uid).doc(target.key.id).get()).data() ?? {}) });
   }),
 );
@@ -142,7 +149,7 @@ ownRecoveryRouter.post(
       res.status(409).json({ error: "That key is not waiting for access" });
       return;
     }
-    const counts = await countLacking(uid, target.id);
+    const counts = await countLacking(uid, allowedOf(await myKeys(uid), target.id).map((k) => k.key.id));
     const ref = ownRequestCol(uid).doc(target.id);
     if ((await ref.get()).exists) await ref.update({ status: "working", total: counts.messages + counts.files, added: 0 });
     else await openRequest(uid, target, counts);
@@ -161,7 +168,7 @@ ownRecoveryRouter.post(
       res.status(409).json({ error: "That key is not waiting for access" });
       return;
     }
-    await keyCol(uid).doc(target.id).set({ revoked: true, revokedAt: FieldValue.serverTimestamp() }, { merge: true });
+    await keyCol(uid).doc(target.id).delete(); // the key that was not me is removed (nothing else is kept of it)
     const ref = ownRequestCol(uid).doc(target.id);
     if ((await ref.get()).exists) await ref.update({ status: "declined" });
     await touchSync(uid, "keysAt");
@@ -207,35 +214,33 @@ ownRecoveryRouter.get(
       return;
     }
     const part = req.query.part === "box" ? "box" : "messages";
-    const items: (RecoveryTodoItem & { connectionId?: string })[] = [];
+    const allowed = allowedOf(await myKeys(me), target.id); // the keys that get copies (read again on every call: a device allowed meanwhile counts)
+    const ids = allowed.map((k) => k.key.id);
+    const items: OwnRecoveryTodo["items"] = [];
     let next: string | null = null;
+    const add = (id: string, enc: DocumentData | undefined, connectionId?: string) => {
+      const missing = lackingKeys(enc, ids);
+      if (!missing.length) return;
+      const wraps = (Array.isArray(enc?.wraps) ? enc.wraps : []).filter((w: SafeboxWrap) => w.uid === me); // none: this device cannot open it, and says so
+      items.push({ id, ...(connectionId ? { connectionId } : {}), wraps, missing });
+    };
     if (part === "messages") {
       let query = messageCol(me).orderBy("time", "desc");
       const after = typeof req.query.after === "string" ? timeOf(req.query.after) : null;
       if (after) query = query.startAfter(after);
       const page = (await query.select("enc", "time").limit(PAGE).get()).docs;
-      for (const d of page) {
-        const enc = d.data().enc;
-        if (!enc || hasCopyFor(enc, target.id)) continue;
-        const wraps = (enc.wraps as SafeboxWrap[]).filter((w) => w.uid === me);
-        if (wraps.length) items.push({ id: d.id, wraps, missing: [target.id] });
-      }
+      for (const d of page) add(d.id, d.data().enc);
       next = page.length === PAGE ? cursorOf(page[page.length - 1].data().time) : null;
     } else {
       for (const connectionId of await myConnections(me)) {
-        for (const d of (await safeboxItems(connectionId).select("enc").get()).docs) {
-          const enc = d.data().enc;
-          if (!enc || hasCopyFor(enc, target.id)) continue;
-          const wraps = (enc.wraps as SafeboxWrap[]).filter((w) => w.uid === me);
-          if (wraps.length) items.push({ id: d.id, connectionId, wraps, missing: [target.id] });
-        }
+        for (const d of (await safeboxItems(connectionId).select("enc").get()).docs) add(d.id, d.data().enc, connectionId);
       }
     }
-    res.json({ part, items, next });
+    res.json({ part, items, next, keys: allowed.map((k) => k.key) } satisfies OwnRecoveryTodo);
   }),
 );
 
-/** `{ key, part, items: [{ id, connectionId?, wrap }] }`: the copies for the waiting key. Only for me, only for that key, only on my own messages and on the files of my friendships. */
+/** `{ key, part, items: [{ id, connectionId?, wraps: [wrap] }] }`: the copies for the allowed keys (the one being allowed and the ones allowed before). Only for me, only on my own messages and on the files of my friendships. */
 ownRecoveryRouter.post(
   "/wraps",
   asyncHandler(async (req, res) => {
@@ -251,42 +256,49 @@ ownRecoveryRouter.post(
       res.status(400).json({ error: `Send between 1 and ${MAX_ITEMS_IN} items` });
       return;
     }
-    const items = given as { id?: unknown; connectionId?: unknown; wrap?: unknown }[];
+    const items = given as { id?: unknown; connectionId?: unknown; wraps?: unknown }[];
+    const keys = await myKeys(me);
+    const allowed = allowedOf(keys, target.id).map((k) => k.key.id);
+    const inUse = keys.map((k) => k.key.id);
     const mine = part === "box" ? new Set(await myConnections(me)) : null;
+    const wrapsOf = (i: { wraps?: unknown }): unknown[] => (Array.isArray(i?.wraps) ? i.wraps : []);
     for (const i of items) {
       const placeOk = part === "messages" || (typeof i?.connectionId === "string" && mine!.has(i.connectionId));
-      if (typeof i?.id !== "string" || !i.id || !placeOk || !wrapValid(i.wrap) || i.wrap.uid !== me || i.wrap.keyId !== target.id) {
+      const wraps = wrapsOf(i);
+      // a copy is for me and for a key that is allowed (the one being allowed, an allowed one, one in my signed list): never for a key that still waits
+      if (typeof i?.id !== "string" || !i.id || !placeOk || !wraps.length || wraps.length > MAX_WRAPS || !wraps.every((w) => wrapValid(w) && w.uid === me && allowed.includes(w.keyId))) {
         res.status(400).json({ error: "That is not a copy of a key for your other device" });
         return;
       }
     }
     const refs = items.map((i) => (part === "box" ? safeboxItems(i.connectionId as string).doc(i.id as string) : messageCol(me).doc(i.id as string)));
-    const snaps = await getFirestore().getAll(...refs, { fieldMask: ["enc"] });
-    const batch = getFirestore().batch();
-    let added = 0;
-    snaps.forEach((snap, n) => {
-      const enc = snap.data()?.enc;
-      // only what is mine: the message is in my records, and a file has a copy for me
-      if (!enc || !Array.isArray(enc.wraps) || hasCopyFor(enc, target.id) || !enc.wraps.some((w: SafeboxWrap) => w.uid === me)) return;
-      const { uid, keyId, wrappedKey } = items[n].wrap as SafeboxWrap;
-      if (enc.wraps.length >= MAX_WRAPS) return;
-      batch.update(snap.ref, { "enc.wraps": [...enc.wraps, { uid, keyId, wrappedKey }] });
-      added++;
+    const requestRef = ownRequestCol(me).doc(target.id);
+    // one transaction: the list of copies of an item is read and written together, so two batches at once lose no copy
+    const added = await getFirestore().runTransaction(async (tx) => {
+      const snaps = await tx.getAll(...refs, { fieldMask: ["enc"] });
+      const request = (await tx.get(requestRef)).data();
+      let count = 0;
+      snaps.forEach((snap, n) => {
+        const enc = snap.data()?.enc;
+        // only what is mine: the message is in my records, and a file has a copy for me
+        if (!enc || !Array.isArray(enc.wraps) || !enc.wraps.some((w: SafeboxWrap) => w.uid === me)) return;
+        const wraps = relockedWraps(enc.wraps, wrapsOf(items[n]) as SafeboxWrap[], [{ uid: me, active: inUse }]);
+        if (!wraps || !wraps.length || wraps.length > MAX_WRAPS) return;
+        tx.update(snap.ref, { "enc.wraps": wraps });
+        count++;
+      });
+      if (count && request) tx.update(requestRef, { added: FieldValue.increment(count) });
+      return count;
     });
-    if (added) {
-      await batch.commit();
-      const ref = ownRequestCol(me).doc(target.id);
-      const request = (await ref.get()).data();
-      if (request) await ref.update({ added: (request.added ?? 0) + added });
-      await touchSync(me, "keysAt"); // the asking device shows the progress
-    }
+    if (added) await touchSync(me, "keysAt"); // the asking device shows the progress
     res.json({ added });
   }),
 );
 
-/** How many of my messages and files have no copy for a key. */
-async function countLacking(uid: string, keyId: string): Promise<{ messages: number; files: number }> {
-  const lacking = (docs: FirebaseFirestore.QueryDocumentSnapshot[]) => docs.filter((d) => d.data().enc && !hasCopyFor(d.data().enc, keyId)).length;
+/** How many of my messages and files have no copy for one of these keys. */
+async function countLacking(uid: string, keyIds: string | string[]): Promise<{ messages: number; files: number }> {
+  const ids = Array.isArray(keyIds) ? keyIds : [keyIds];
+  const lacking = (docs: FirebaseFirestore.QueryDocumentSnapshot[]) => docs.filter((d) => lackingKeys(d.data().enc, ids).length).length;
   const messages = lacking((await messageCol(uid).select("enc").get()).docs);
   let files = 0;
   for (const connectionId of await myConnections(uid)) files += lacking((await safeboxItems(connectionId).select("enc").get()).docs);

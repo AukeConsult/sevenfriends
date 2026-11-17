@@ -47,8 +47,7 @@
       <div class="alert alert-warning m-0" role="status">
         <strong>{{ t('encryption.thisDeviceHasNoWorking') || 'This device has no working lock.' }}</strong><br />
         @switch (reason) {
-          @case ('removed') { {{ t('encryption.theKeyOnThisRemoved') || 'The lock on this device was removed, from another of your devices or with "Not me".' }} }
-          @case ('never') { {{ t('encryption.theKeyOnThisNever') || 'The lock on this device was never saved on the server, so it does not count.' }} }
+          @case ('never') { {{ t('encryption.theKeyOnThisNever') || 'The lock on this device is not saved on the server (it was never saved, or it was removed from another of your devices), so it does not count.' }} }
           @default { {{ t('encryption.thisDeviceHasNoKey') || 'Your account has locks on other devices, but this device has none.' }} }
         }
         {{ t('encryption.soYourOldMessages') || 'Your old messages and files stay locked here until it has one. Open them with your rescue words, or turn on the lock and ask your other devices or a friend.' }}
@@ -101,7 +100,6 @@
               <span class="sf-list-text">
                 <span class="sf-fs-text">{{ key.label || 'A device' }}
                   @if (key.id === keys.thisKeyId()) { <span class="badge rounded-pill text-bg-success">{{ t('encryption.thisDevice') || 'This device' }}</span> }
-                  @if (key.revoked) { <span class="badge rounded-pill text-bg-secondary">{{ t('encryption.removed') || 'Removed' }}</span> }
                   @if (key.waiting) { <span class="badge rounded-pill text-bg-warning">{{ t('encryption.notApprovedYet') || 'Not approved yet' }}</span> }
                 </span>
                 <small>{{ key.createdAt | appDate: 'd MMM yyyy HH:mm:ss' }} · {{ short(key) }}</small>
@@ -110,10 +108,10 @@
                 <span class="small text-secondary w-100">{{ t('encryption.waitingForAccessTo') || 'Waiting for access to your old messages and files.' }}</span>
                 <button type="button" class="btn btn-primary btn-sm" (click)="allow(key)" [disabled]="allowing() !== null">{{ allowing() === key.id ? (t('encryption.givingAccessAllowed', { allowed: allowed() }) || 'Giving access… ' + allowed()) : 'Allow' }}</button>
               }
-              @if (!key.revoked && key.id === keys.thisKeyId() && otherKeys() > 0) {
+              @if (key.id === keys.thisKeyId() && otherKeys() > 0) {
                 <span class="small text-secondary w-100">{{ t('encryption.removeFromAnother') || 'To remove this device, open Seven Friends on another device of yours.' }}</span>
               }
-              @if (!key.revoked && key.id !== keys.thisKeyId()) {
+              @if (key.id !== keys.thisKeyId()) {
                 @if (removing() === key.id) {
                   <div class="sf-msg-actions w-100 justify-content-end">
                     <button type="button" class="btn btn-light btn-sm" (click)="removing.set(null)" [disabled]="busy()">{{ t('encryption.cancel') || 'Cancel' }}</button>
@@ -126,12 +124,7 @@
             </li>
           }
         </ul>
-        @if (removedCount() > 0) {
-          <div class="d-flex justify-content-center">
-            <button type="button" class="btn btn-light btn-sm" [attr.aria-expanded]="showRemoved()" (click)="showRemoved.set(!showRemoved())">{{ showRemoved() ? (t('encryption.hideRemoved') || 'Hide removed') : (t('encryption.showRemoved', { count: removedCount() }) || 'Show removed (' + removedCount() + ')') }}</button>
-          </div>
-        }
-        @if (removing()) { <p class="small text-secondary m-0">{{ t('encryption.aRemovedKeyIs') || 'A removed key is not used for new files. Files already locked for it can then no longer be opened on that device. The device also gets no more notifications from your account.' }}</p> }
+        @if (removing()) { <p class="small text-secondary m-0">{{ t('encryption.aRemovedKeyIs') || 'A removed key is deleted. Nothing new is locked for it, and old items lose their copy for it the next time they are locked again. The device also gets no more notifications from your account.' }}</p> }
 
   }
   }
@@ -185,10 +178,10 @@
         <li>{{ t('encryption.accountSlice', { slice: d.account.slice(-6) }) || 'Account: …' + d.account.slice(-6) }}</li>
         <li>{{ t('encryption.keyInThisBrowser', { no: d.localKeyId ? (t('encryption.yesSlice', { slice: d.localKeyId.slice(0, 8) }) || 'yes (' + d.localKeyId.slice(0, 8) + ')') : 'no' }) || 'Key in this browser for this account: ' + (d.localKeyId ? (t('encryption.yesSlice', { slice: d.localKeyId.slice(0, 8) }) || 'yes (' + d.localKeyId.slice(0, 8) + ')') : 'no') }}</li>
         @if (d.localKeyId) {
-          @let pubState = d.localPublished === 'yes' ? 'yes' : d.localPublished === 'removed' ? 'no, it was removed' : 'no, it was never published';
+          @let pubState = d.localPublished === 'yes' ? 'yes' : 'no, it was never published or was removed';
           <li>{{ t('encryption.thatKeyIsPublished', { state: pubState }) || 'That key is published: ' + pubState }}</li>
         }
-        <li>{{ t('encryption.keysPublishedForThis', { active: d.active, removed: d.removed }) || 'Keys published for this account: ' + d.active + ' in use, ' + d.removed + ' removed' }}</li>
+        <li>{{ t('encryption.keysInUseForThis', { active: d.active }) || 'Keys for this account: ' + d.active }}</li>
         @if (listState(); as list) {
           <li>{{ list.inList ? (t('encryption.inSignedList', { count: list.count }) || 'This device is in your signed list (' + list.count + ' devices).') : (t('encryption.notInSignedList', { count: list.count }) || 'This device is NOT in your signed list (' + list.count + ' devices), so it cannot send.') }}</li>
         }

@@ -5,6 +5,7 @@ import { asyncHandler } from "./auth";
 import { conversationRouter } from "./conversation";
 import { recoveryRouter } from "./recovery";
 import { deleteBox, safeboxRouter } from "./safebox";
+import { groupHistoryRouter } from "./group-history";
 import {
   DEFAULT_CIRCLE_ID,
   FRIENDS_SUBCOLLECTION,
@@ -190,6 +191,7 @@ export const friendsRouter = Router({ mergeParams: true });
 // The message feed of a connection: /circles/:circleId/friends/:friendId/messages
 friendsRouter.use("/:friendId/messages", conversationRouter);
 friendsRouter.use("/:friendId/safebox", safeboxRouter);
+friendsRouter.use("/:friendId/history", groupHistoryRouter); // the earlier messages of a group for the members who joined later
 // recovery by a friend is between two people: not for a group
 friendsRouter.use(
   "/:friendId/recovery",
