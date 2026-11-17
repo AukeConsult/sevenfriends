@@ -73,15 +73,12 @@ export class Welcome {
 
   /** the explanation under the button: key, English title and text (the words come from welcome.json, these are the fallback) */
   protected readonly explain = [
-    { key: "what", icon: "👋", title: "What is Seven Friends?", text: "It is an app for talking to the few people you care about most. Think of a small table with seven chairs. You choose who sits there. Nobody else gets in." },
-    { key: "seats", icon: "🪑", title: "Seven seats", text: "Each friend takes one seat. When all seven are taken, you free a seat before you add someone new. This keeps your circle small and close. Work, buddies and family can each have their own circle with their own seven seats." },
-    { key: "circles", icon: "⭕", title: "Four circles", text: "There are four circles: Friends, Work, Buddies and Family. Each circle has its own seven seats, its own chats and its own safebox, so what you share in one never shows up in another. The same person can be in more than one circle, and you switch between your circles whenever you like." },
-    { key: "send", icon: "💬", title: "Share anything with your friends", text: "Send text, pictures, videos and voice messages. Open a friend and write in the box at the bottom, like a normal chat." },
-    { key: "safebox", icon: "📦", title: "A shared safebox for each friend and group", text: "Each friend and each small group has a safebox that only the people in it share. Everyone in it can add, open and take out things: pictures, videos, files, notes, secrets, dates, tickets, places, contacts and checklists. A new item shows up in your chat. Everything is locked on your device, so not even we can read it." },
-    { key: "lock", icon: "🔒", title: "Fully locked and secured", text: "Everything you send is locked on your own phone or computer before it leaves it. Think of a letter in a box with a padlock. Only you and your friend have the key. Our server only sees scrambled nonsense and has no key, so it cannot open your messages. Nobody who broke into it could either." },
-    { key: "lockWhat", icon: "🔑", title: "What is locked?", text: "The text you write, and also every picture, video and voice message. Safebox items are locked the same way. Each friend, and each small group, has its own locked room." },
-    { key: "calm", icon: "🌙", title: "Calm, but you can still reach people", text: "No big feed, no strangers and no advertisements. If something cannot wait, send a ping. If you need a break from someone, put them on your sleep list: you stay friends, but you stop hearing from them until you wake them up again." },
-    { key: "free", icon: "🎁", title: "Is it free?", text: "Yes. There is nothing to pay, there are no advertisements, and your information is not sold." },
+    { key: "seats", icon: "🪑", title: "Seven seats", text: "One seat for each of your closest friends. When all seven are taken, you free one before you add someone new, so the people who matter never get buried." },
+    { key: "circles", icon: "⭕", title: "Four separate circles", text: "There are four circles: Friends, Work, Buddies and Family. Each circle has its own seven seats, its own chats and its own safebox, so what you share in one never shows up in another. The same person can be in more than one circle, and you switch between your circles whenever you like." },
+    { key: "calm", icon: "🌙", title: "No noise", text: "No feed, no ads and no strangers. Nobody reaches you unless you let them in." },
+    { key: "sleep", icon: "😴", title: "You decide who reaches you", text: "Need a break from someone? Put them on your sleep list: you stay friends, but you stop hearing from them. If something cannot wait, a ping still gets through." },
+    { key: "safebox", icon: "📦", title: "A room for every friend", text: "Each friend and each small group has a room of its own, with a safebox for pictures, files, notes, tickets, places and more. Only the people in it share it." },
+    { key: "lock", icon: "🔒", title: "Built to be private", text: "Your messages are locked on your own phone before they leave it, so the app is built to keep them unreadable even for us." },
   ];
   /** the four circles, under the chapter that explains them (words: welcome.json `circles<Name>`; the names of the circles come from the same file, in the language of the page) */
   protected readonly circleItems = [
@@ -94,6 +91,6 @@ export class Welcome {
     { key: "start1", text: "Make your account. It takes a minute." },
     { key: "start2", text: "Write your name, so your friends know who you are." },
     { key: "start3", text: "Press an empty seat to add a friend. Send a friend request, or share a link with them." },
-    { key: "start4", text: "When your friend says yes, you are friends in the app. Now you can write to each other." },
+    { key: "start4", text: "Your friend says yes, and a private room opens, just for the two of you. Say hi." },
   ];
 }

@@ -1,10 +1,11 @@
 import { ActiveCircleService } from './active-circle.service';
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, Injector, inject, signal } from '@angular/core';
 import { BoxKeys, GroupShareItem, NotePayload, ObjectPayload, PersonKeyLists, ReminderRequest, SafeboxType, Safebox, SafeboxItem, fingerprintOf, keyIdOf, recipientsOf } from '../models';
 import { ApiService } from './api.service';
 import { AuthService } from './auth.service';
 import { dueRange, isObjectType, summaryOf, whenOf } from './safebox-objects';
 import { BoxHead, classify, needsBody, openFileKey, openHead, openMeta, openNote, openObject, openPart, resealNote, resealObject, rewrapKey, sealFile, sealMeta, sealNote, sealObject } from './box-crypto';
+import { KeyTrustService } from './key-trust.service';
 import { myDeviceKey } from './my-key';
 import { getDeviceKey } from './device-key';
 import { FriendsService } from './friends.service';
@@ -22,6 +23,7 @@ export interface BoxFile {
 @Injectable({ providedIn: 'root' })
 export class SafeboxService {
   private readonly active = inject(ActiveCircleService);
+  private readonly injector = inject(Injector);
   private readonly api = inject(ApiService);
   private readonly friends = inject(FriendsService);
   private readonly auth = inject(AuthService);
@@ -68,6 +70,17 @@ export class SafeboxService {
   }
 
   /**
+   * The keys a new item may be locked for: only the keys in the signed device lists (`KeyTrustService`, the same rule as for messages), so a key that the server adds
+   * on its own gets no copy. A person with no list (an older lock) is as the server says. Throws, so nothing is stored, when a list does not hold.
+   * (Fetched when needed: `FriendListsService` itself needs this service.)
+   */
+  private async lockKeys(friendId: string, keys: BoxKeys, known?: { uid: string; keyId: string } | null): Promise<BoxKeys> {
+    const mine = known ?? (await myDeviceKey(this.auth.user()?.uid));
+    if (!mine) return keys;
+    return this.injector.get(KeyTrustService).limit(friendId, { uid: mine.uid, keyId: mine.keyId }, keys);
+  }
+
+  /**
    * A group: what is already in the box is locked for the keys that were there when it was saved. When somebody joined (or made a new key) their keys have no copy yet:
    * this device opens each item's key with its own key and locks it again for every key that lacks one, and the server files the copies. Quiet and safe to repeat (nothing
    * is done when nothing is missing); one member's device is enough. Returns how many items got a copy (0 when this device has no key or nothing was missing).
@@ -75,7 +88,7 @@ export class SafeboxService {
   async shareWithMembers(friendId: string, keys: BoxKeys): Promise<number> {
     const mine = await myDeviceKey(this.auth.user()?.uid);
     if (!mine) return 0;
-    const publicKeys = new Map(recipientsOf(mine.uid, keys).flatMap((p) => p.keys.map((k) => [`${p.uid}/${k.id}`, { uid: p.uid, key: k }] as const)));
+    const publicKeys = new Map(recipientsOf(mine.uid, await this.lockKeys(friendId, keys, mine)).flatMap((p) => p.keys.map((k) => [`${p.uid}/${k.id}`, { uid: p.uid, key: k }] as const)));
     let total = 0;
     for (let round = 0; round < 20; round++) {
       const todo = await this.api.request<{ items: GroupShareItem[] }>(`${this.base(friendId)}/share-todo`);
@@ -252,7 +265,7 @@ export class SafeboxService {
   async addNote(friendId: string, title: string, text: string, keys: BoxKeys): Promise<SafeboxItem> {
     const me = this.auth.user()?.uid;
     if (!me) throw new Error(tr('core.notSignedIn', 'Not signed in'));
-    const body = await sealNote(friendId, { v: 1, title, text }, this.noteHead(title, text), recipientsOf(me, keys));
+    const body = await sealNote(friendId, { v: 1, title, text }, this.noteHead(title, text), recipientsOf(me, await this.lockKeys(friendId, keys)));
     return this.reveal(friendId, await this.api.request<SafeboxItem>(`${this.base(friendId)}/items`, { method: 'POST', body: JSON.stringify(body) }));
   }
 
@@ -276,7 +289,7 @@ export class SafeboxService {
   async addObject(friendId: string, type: SafeboxType, payload: ObjectPayload, keys: BoxKeys, remind: ReminderRequest | null = null): Promise<SafeboxItem> {
     const me = this.auth.user()?.uid;
     if (!me) throw new Error(tr('core.notSignedIn', 'Not signed in'));
-    const body = { ...(await sealObject(friendId, type, payload, type === 'relation' ? null : this.objectHead(type, payload), recipientsOf(me, keys))), remind };
+    const body = { ...(await sealObject(friendId, type, payload, type === 'relation' ? null : this.objectHead(type, payload), recipientsOf(me, await this.lockKeys(friendId, keys)))), remind };
     return this.reveal(friendId, await this.api.request<SafeboxItem>(`${this.base(friendId)}/items`, { method: 'POST', body: JSON.stringify(body) }));
   }
 
@@ -351,7 +364,7 @@ export class SafeboxService {
       kind,
       mime,
       thumb: kind === 'image' ? thumb : null,
-      recipients: recipientsOf(me, keys),
+      recipients: recipientsOf(me, await this.lockKeys(friendId, keys)),
     });
     const item = await this.api.request<SafeboxItem>(`${this.base(friendId)}/encrypted${parentId ? `?parent=${encodeURIComponent(parentId)}` : ''}`, { method: 'POST', body, headers: { 'Content-Type': 'application/octet-stream' } });
     return this.reveal(friendId, item);
@@ -368,7 +381,7 @@ export class SafeboxService {
     const file = (await this.api.file(`${this.base(friendId)}/${item.id}`)).blob;
     const thumb = item.hasThumb ? (await this.api.file(`${this.base(friendId)}/${item.id}/thumb`)).blob : null;
     const { kind, mime } = await classify(file, item.name);
-    const body = await sealFile({ connectionId: friendId, file, name: item.name, kind, mime, thumb, recipients: recipientsOf(me, keys) });
+    const body = await sealFile({ connectionId: friendId, file, name: item.name, kind, mime, thumb, recipients: recipientsOf(me, await this.lockKeys(friendId, keys)) });
     const locked = await this.api.request<SafeboxItem>(`${this.base(friendId)}/encrypted?replaces=${encodeURIComponent(item.id)}`, { method: 'POST', body, headers: { 'Content-Type': 'application/octet-stream' } });
     this.forget(friendId, item.id);
     return this.reveal(friendId, locked);

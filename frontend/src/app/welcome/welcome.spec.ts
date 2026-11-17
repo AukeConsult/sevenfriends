@@ -38,7 +38,7 @@ describe('Welcome page: the chapters', () => {
 
   it('has a chapter that explains there are four circles: Friends, Work, Buddies and Family', () => {
     const page = build();
-    const chapter = Array.from(page.querySelectorAll('section')).find((s) => (s.textContent ?? '').includes('Four circles'))!;
+    const chapter = Array.from(page.querySelectorAll('section')).find((s) => (s.textContent ?? '').includes('Four separate circles'))!;
     expect(chapter).toBeDefined();
     const words = (chapter.textContent ?? '').replace(/\s+/g, ' ');
     expect(words).toContain('There are four circles: Friends, Work, Buddies and Family.');
@@ -54,11 +54,11 @@ describe('Welcome page: the chapters', () => {
     expect(items).toContain('Family: the people at home and your relatives.');
   });
 
-  it('sits right after "Seven seats" and before "Share anything with your friends"', () => {
+  it('sits right after "Seven seats" and before "No noise"', () => {
     const titles = Array.from(build().querySelectorAll('section h3')).map((h) => (h.textContent ?? '').replace(/\s+/g, ' ').trim());
     const seats = titles.findIndex((t) => t.includes('Seven seats'));
-    const circles = titles.findIndex((t) => t.includes('Four circles'));
-    const share = titles.findIndex((t) => t.includes('Share anything with your friends'));
+    const circles = titles.findIndex((t) => t.includes('Four separate circles'));
+    const share = titles.findIndex((t) => t.includes('No noise'));
     expect(seats).toBeGreaterThanOrEqual(0);
     expect(circles).toBe(seats + 1);
     expect(share).toBe(circles + 1);
@@ -66,7 +66,7 @@ describe('Welcome page: the chapters', () => {
 
   it('the other chapters are still all there', () => {
     const page = text(build());
-    for (const title of ['What is Seven Friends?', 'Seven seats', 'A shared safebox for each friend and group', 'Fully locked and secured', 'What is locked?', 'Calm, but you can still reach people', 'Is it free?', 'How to start']) {
+    for (const title of ['Seven seats', 'No noise', 'You decide who reaches you', 'A room for every friend', 'Built to be private', 'How to start']) {
       expect(page).withContext(title).toContain(title);
     }
   });

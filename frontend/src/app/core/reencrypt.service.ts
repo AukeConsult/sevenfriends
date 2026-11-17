@@ -1,8 +1,9 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, Injector, inject, signal } from '@angular/core';
 import { BoxKeys, ReencryptItem, ReencryptTodo, recipientsOf } from '../models';
 import { ApiService } from './api.service';
 import { AuthService } from './auth.service';
 import { relockObject, relockText } from './box-crypto';
+import { KeyTrustService } from './key-trust.service';
 import { myDeviceKey } from './my-key';
 
 /**
@@ -14,6 +15,7 @@ import { myDeviceKey } from './my-key';
 export class ReencryptService {
   private readonly api = inject(ApiService);
   private readonly auth = inject(AuthService);
+  private readonly injector = inject(Injector);
 
   /** true while the work runs */
   readonly running = signal(false);
@@ -72,7 +74,8 @@ export class ReencryptService {
   private async relock(part: 'messages' | 'box', item: ReencryptItem, mine: { uid: string; keyId: string; privateKey: CryptoKey }): Promise<void> {
     if (!item.connectionId || !item.circleId) throw new Error('No friendship');
     const place = `/circles/${item.circleId}/friends/${item.connectionId}`;
-    const keys = await this.api.request<BoxKeys>(`${place}/safebox/keys`);
+    // locked again only for the keys in the signed device lists, like everything else that is locked (`KeyTrustService`; fetched when needed)
+    const keys = await this.injector.get(KeyTrustService).limit(item.connectionId, { uid: mine.uid, keyId: mine.keyId }, await this.api.request<BoxKeys>(`${place}/safebox/keys`));
     if (part === 'messages') {
       const enc = item.enc as unknown as Parameters<typeof relockText>[1];
       const sealed = await relockText(item.connectionId, enc, item.text ?? '', mine.keyId, mine.privateKey, [{ uid: mine.uid, keys: keys.mine }]);

@@ -2,6 +2,7 @@ import { ActiveCircleService } from './active-circle.service';
 import { Injectable, inject } from '@angular/core';
 import { BoxKeys, ChatMessage, MediaRef, PublishedKey, MessageEnc, MessageEncMedia, SIGNED_MARK, SignedText, packSignedText, recipientsOf, signedTextBytes, unpackSignedText } from '../models';
 import { FriendListsService } from './friend-lists.service';
+import { KeyTrustService } from './key-trust.service';
 import { AuthService } from './auth.service';
 import { newMessageKey, openMessageKey, openMessageMeta, openTextWith, resealText, sealText, sealTextWith } from './box-crypto';
 import { LocalLink, localLink } from './link-embed';
@@ -50,8 +51,7 @@ export interface TextStamp {
   version: number;
 }
 
-/** This device's key is not in my own device list yet: nothing can be sent from here until another device of mine has approved it (the page shows a way to the recovery page). */
-export class NotApprovedError extends Error {}
+export { NotApprovedError } from './key-trust.service';
 
 @Injectable({ providedIn: 'root' })
 export class MessageLockService {
@@ -60,6 +60,7 @@ export class MessageLockService {
   private readonly prefs = inject(UiPreferencesService);
   private readonly mediaFiles = inject(MediaService);
   private readonly lists = inject(FriendListsService);
+  private readonly trust = inject(KeyTrustService);
   /** the same choice as for new files in the safebox: ticked = do not lock what I send (remembered on this device) */
   private readonly plain = this.prefs.value('boxPlain');
   /** the texts that were opened, by friend, message and iv (a new edit has a new iv): the feed is read again after every new message, a key is not used again for what is known */
@@ -100,30 +101,9 @@ export class MessageLockService {
     return myDeviceKey(this.auth.user()?.uid);
   }
 
-  /**
-   * The keys a text may be locked for. Where a person has a signed device list, only the keys in its newest version count (a key the server lists that is not in the
-   * list is not locked for); a person without a list (an older lock) is as the server says. Throws, so nothing is sent, when a list does not hold (`broken`), when THIS
-   * device has not been approved into my own list yet, or when the list leaves a person with no key at all (a text must not fall back to plain because of that).
-   */
-  private async trusted(friendId: string, mine: { uid: string; keyId: string }, keys: BoxKeys): Promise<BoxKeys> {
-    const refuse = (text: string): never => {
-      throw new Error(text);
-    };
-    const limit = async (uid: string, list: PublishedKey[]): Promise<PublishedKey[]> => {
-      const person = await this.lists.devicesOf(friendId, uid);
-      if (person?.status === 'broken') return refuse(tr('core.theLockOfThis', 'The lock of this conversation does not check out, so nothing can be sent. Look at the warning under the name.'));
-      if (person?.status !== 'ok' || !person.current) return list;
-      const allowed = new Set(person.current.map((d) => d.keyId));
-      const kept = list.filter((k) => allowed.has(k.id));
-      if (list.length && !kept.length) return refuse(tr('core.noKeyInList', 'Not sent: your friend has a new key that is not approved on their account yet, so nothing can be locked for them. Ask them to open the app on a device they used before and tap Approve.'));
-      return kept;
-    };
-    const me = await this.lists.devicesOf(friendId, mine.uid);
-    if (me?.status === 'ok' && me.current && !me.current.some((d) => d.keyId === mine.keyId)) {
-      throw new NotApprovedError(tr('core.thisDeviceNotApproved', 'Not sent: this device is not approved on your account yet. Open the app on another device of yours and tap Approve on the banner about the new key, then try again. With no other device, bring your key back with your 24 secret words (Settings → Privacy lock).'));
-    }
-    const others = await Promise.all((keys.others ?? []).map(async (o) => ({ ...o, keys: await limit(o.uid, o.keys) })));
-    return { ...keys, mine: await limit(mine.uid, keys.mine), others, friend: keys.friendUid ? (others[0]?.keys ?? []) : [] };
+  /** The keys a text may be locked for: only the keys in the signed device lists (see `KeyTrustService`, the same rule for the safebox). */
+  private trusted(friendId: string, mine: { uid: string; keyId: string }, keys: BoxKeys): Promise<BoxKeys> {
+    return this.trust.limit(friendId, mine, keys);
   }
 
   /**
