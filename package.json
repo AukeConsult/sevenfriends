@@ -35,6 +35,7 @@
     "android:open": "node scripts/sync-android-sounds.mjs && npm --prefix frontend run cap -- open android",
     "windows:run": "dotnet run --project client-wrappers/windows/SevenFriends.csproj",
     "windows:release": "node scripts/windows-release.mjs",
+    "windows:msix": "node scripts/windows-msix.mjs",
     "sync:models": "node scripts/sync-models.mjs",
     "sync:sounds": "node scripts/sounds-manifest.mjs",
     "sync:android-sounds": "node scripts/sync-android-sounds.mjs",

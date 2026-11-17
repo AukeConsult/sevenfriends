@@ -1,0 +1,11 @@
+{
+  "title": "Share with a friend",
+  "shared": "Shared with Seven Friends",
+  "choose": "Choose who it goes to. You can change the text before you send it.",
+  "loading": "Loading…",
+  "nobody": "There is no friend to send it to yet.",
+  "nothing": "Nothing was shared.",
+  "pick": "Choose",
+  "loadFailed": "The list of friends could not be loaded.",
+  "cancel": "Cancel"
+}

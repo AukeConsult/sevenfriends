@@ -40,6 +40,7 @@ export const routes: Routes = [
   { path: '', component: Notifications, canActivate: [authGuard], title: 'Notifications – Seven Friends' },
   { path: 'friends', pathMatch: 'full', component: CircleEntry, data: { circle: 'friends' }, title: 'Seven Friends' }, // into the Friends circle (Home when signed in); the old list address, so old links and notifications land on Home
   { path: 'share', component: Share, canActivate: [authGuard], title: 'Share – Seven Friends' },
+  { path: 'share-in', loadComponent: () => import('./share-in/share-in').then((m) => m.ShareIn), canActivate: [authGuard], title: 'Share with a friend – Seven Friends' }, // something shared from another app (Android, iPhone, Windows share dialog) lands here
   { path: 'friends/sleeping', component: Sleeping, canActivate: [authGuard], title: 'Sleep list – Seven Friends' },
   { path: 'friends/join', component: FriendJoin, canActivate: [authGuard], title: 'Friend request – Seven Friends' },
   { path: 'friends/add', component: AddFriend, canActivate: [authGuard], title: 'Add a friend – Seven Friends' },

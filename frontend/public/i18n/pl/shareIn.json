@@ -1,0 +1,11 @@
+{
+  "title": "Udostępnij znajomemu",
+  "shared": "Udostępniono w Seven Friends",
+  "choose": "Wybierz, do kogo ma trafić. Możesz zmienić tekst przed wysłaniem.",
+  "loading": "Ładowanie…",
+  "nobody": "Nie masz jeszcze znajomego, do którego można to wysłać.",
+  "nothing": "Nic nie zostało udostępnione.",
+  "pick": "Wybierz",
+  "loadFailed": "Nie udało się wczytać listy znajomych.",
+  "cancel": "Anuluj"
+}

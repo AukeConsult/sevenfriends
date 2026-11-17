@@ -1,0 +1,11 @@
+{
+  "title": "分享给朋友",
+  "shared": "已分享到 Seven Friends",
+  "choose": "选择发给谁。发送前可以修改文字。",
+  "loading": "加载中…",
+  "nobody": "你还没有可以发送的朋友。",
+  "nothing": "没有分享任何内容。",
+  "pick": "选择",
+  "loadFailed": "无法加载朋友列表。",
+  "cancel": "取消"
+}

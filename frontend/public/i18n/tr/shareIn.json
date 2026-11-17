@@ -1,0 +1,11 @@
+{
+  "title": "Bir arkadaşla paylaş",
+  "shared": "Seven Friends ile paylaşıldı",
+  "choose": "Kime gideceğini seç. Göndermeden önce metni değiştirebilirsin.",
+  "loading": "Yükleniyor…",
+  "nobody": "Henüz göndereceğin bir arkadaşın yok.",
+  "nothing": "Hiçbir şey paylaşılmadı.",
+  "pick": "Seç",
+  "loadFailed": "Arkadaş listesi yüklenemedi.",
+  "cancel": "İptal"
+}

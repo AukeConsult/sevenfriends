@@ -1,21 +1,25 @@
 // One command for the Windows app: build it, pack the installer, put the installer where the website serves it, and publish the website (hosting).
 //   npm run windows:release                    builds, packs, copies and deploys the hosting
 //   npm run windows:release -- --no-deploy     the same without the last step (deploy later with: npm run deploy:hosting)
+//   npm run windows:release -- --no-msix       the same without the MSIX package (see scripts/windows-msix.mjs)
 // 1. dotnet publish   -> client-wrappers/windows/publish/SevenFriends.exe (self-contained, no .NET needed to run it)
 // 2. Inno Setup (ISCC) -> client-wrappers/windows/installer/output/SevenFriendsSetup.exe
 // 3. copy             -> frontend/public/downloads/SevenFriendsSetup.exe
+// 3b. MSIX package    -> client-wrappers/windows/msix/output/SevenFriends.msix (not put on the website; a problem here only warns)
 // 4. npm run deploy:hosting -> the website, with the new installer on the Install page (the installer is git-ignored: this has to run on THIS computer)
 // Needs on this computer: the .NET SDK 8 or newer, and Inno Setup 6 (https://jrsoftware.org/isdl.php; found in its usual folders, not only on the PATH).
 import { spawnSync } from "node:child_process";
 import { copyFileSync, existsSync, mkdirSync, statSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { buildMsix } from "./windows-msix.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const publishFolder = join(root, "client-wrappers", "windows", "publish");
 const installer = join(root, "client-wrappers", "windows", "installer", "output", "SevenFriendsSetup.exe");
 const target = join(root, "frontend", "public", "downloads", "SevenFriendsSetup.exe");
 const deploy = !process.argv.includes("--no-deploy");
+const msix = !process.argv.includes("--no-msix");
 
 /** Runs a program and stops the whole script when it fails. */
 function run(title, program, args, options = {}) {
@@ -44,6 +48,17 @@ console.log("\n== 3/4 Copy to the website downloads");
 mkdirSync(dirname(target), { recursive: true });
 copyFileSync(installer, target);
 console.log(`${(statSync(target).size / 1024 / 1024).toFixed(1)} MB in frontend/public/downloads/SevenFriendsSetup.exe`);
+
+if (msix) {
+  // the installer is the download of the website: a problem with the MSIX package must not stop the release
+  try {
+    buildMsix({ publish: false });
+  } catch (error) {
+    console.warn(`\nMSIX package skipped: ${error.message}`);
+  }
+} else {
+  console.log("\n== 3b MSIX package: not made (--no-msix)");
+}
 
 if (deploy) {
   // `shell: true`: npm is a .cmd file on Windows, which Node only starts through the shell

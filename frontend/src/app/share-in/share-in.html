@@ -1,0 +1,34 @@
+<ng-container *transloco="let t">
+  <app-page-bar [title]="t('shareIn.title') || 'Share with a friend'" [backTo]="'/'" />
+  <main class="sf-narrow vstack gap-3">
+    @if (draft(); as text) {
+      <section class="card card-body">
+        <span class="sf-hint">{{ t('shareIn.shared') || 'Shared with Seven Friends' }}</span>
+        @for (line of lines(); track $index) { <p class="m-0 text-break">{{ line }}</p> }
+      </section>
+      <p class="m-0 text-secondary">{{ t('shareIn.choose') || 'Choose who it goes to. You can change the text before you send it.' }}</p>
+      @if (loading()) {
+        <p class="m-0 text-secondary" role="status">{{ t('shareIn.loading') || 'Loading…' }}</p>
+      } @else if (error(); as message) {
+        <div class="alert alert-danger m-0" role="alert">{{ message }}</div>
+      } @else if (targets().length === 0) {
+        <p class="m-0 text-secondary">{{ t('shareIn.nobody') || 'There is no friend to send it to yet.' }}</p>
+      } @else {
+        <ul class="sf-list m-0">
+          @for (friend of targets(); track friend.id) {
+            <li class="sf-list-item">
+              <app-friend-avatar [friend]="friend" />
+              <span class="sf-list-text"><strong>{{ friend.name }}</strong></span>
+              <button type="button" class="btn btn-primary btn-sm" (click)="choose(friend.id)">{{ t('shareIn.pick') || 'Choose' }}</button>
+            </li>
+          }
+        </ul>
+      }
+    } @else {
+      <p class="m-0 text-secondary">{{ t('shareIn.nothing') || 'Nothing was shared.' }}</p>
+    }
+    <div class="sf-actions">
+      <button type="button" class="btn btn-light" (click)="cancel()">{{ t('shareIn.cancel') || 'Cancel' }}</button>
+    </div>
+  </main>
+</ng-container>

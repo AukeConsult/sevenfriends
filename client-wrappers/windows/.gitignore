@@ -2,3 +2,5 @@ bin/
 obj/
 publish/
 installer/output/
+msix/layout/
+msix/output/

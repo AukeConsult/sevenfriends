@@ -1,0 +1,11 @@
+{
+  "title": "Dela med en vän",
+  "shared": "Delat med Seven Friends",
+  "choose": "Välj vem den ska till. Du kan ändra texten innan du skickar.",
+  "loading": "Läser in …",
+  "nobody": "Du har ingen vän att skicka den till ännu.",
+  "nothing": "Inget delades.",
+  "pick": "Välj",
+  "loadFailed": "Vänlistan kunde inte läsas in.",
+  "cancel": "Avbryt"
+}

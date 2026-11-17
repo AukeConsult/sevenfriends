@@ -1,0 +1,11 @@
+{
+  "title": "Del med en venn",
+  "shared": "Delt med Seven Friends",
+  "choose": "Velg hvem den skal til. Du kan endre teksten før du sender.",
+  "loading": "Laster …",
+  "nobody": "Du har ingen venn å sende den til ennå.",
+  "nothing": "Ingenting ble delt.",
+  "pick": "Velg",
+  "loadFailed": "Vennelisten kunne ikke lastes.",
+  "cancel": "Avbryt"
+}

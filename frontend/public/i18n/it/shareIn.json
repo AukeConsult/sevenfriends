@@ -1,0 +1,11 @@
+{
+  "title": "Condividi con un amico",
+  "shared": "Condiviso con Seven Friends",
+  "choose": "Scegli a chi mandarlo. Puoi modificare il testo prima di inviarlo.",
+  "loading": "Caricamento…",
+  "nobody": "Non hai ancora un amico a cui inviarlo.",
+  "nothing": "Non è stato condiviso nulla.",
+  "pick": "Scegli",
+  "loadFailed": "Non è stato possibile caricare l'elenco degli amici.",
+  "cancel": "Annulla"
+}

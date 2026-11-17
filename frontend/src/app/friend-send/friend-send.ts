@@ -1,6 +1,6 @@
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { tr } from '../core/i18n';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Component, ElementRef, HostListener, computed, effect, inject, input, signal, viewChild } from '@angular/core';
 import { AddMedia } from '../add-media/add-media';
 import { ChatService } from '../core/chat.service';
@@ -29,10 +29,19 @@ export class FriendSend {
   private readonly chat = inject(ChatService);
   private readonly prefs = inject(UiPreferencesService);
 
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+
   protected readonly friendName = this.ctx.friendName;
   protected readonly enterSends = this.prefs.value('enterSends');
 
   constructor() {
+    // something shared from another app (`/share-in`) arrives as the text to start from: it is only put in the field, nothing is sent
+    const draft = this.route.snapshot.queryParamMap.get('draft');
+    if (draft) {
+      if (!this.ctx.sendDraft()) this.ctx.sendDraft.set(draft.slice(0, 2000));
+      void this.router.navigate([], { relativeTo: this.route, queryParams: { draft: null }, queryParamsHandling: 'merge', replaceUrl: true });
+    }
     // the writing field is two lines and grows with the text (the style caps it): measured after the new text is in the field
     effect(() => {
       this.text();

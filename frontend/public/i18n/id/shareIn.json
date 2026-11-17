@@ -1,0 +1,11 @@
+{
+  "title": "Bagikan ke teman",
+  "shared": "Dibagikan ke Seven Friends",
+  "choose": "Pilih siapa yang menerimanya. Anda bisa mengubah teksnya sebelum mengirim.",
+  "loading": "Memuat…",
+  "nobody": "Anda belum punya teman untuk dikirimi.",
+  "nothing": "Tidak ada yang dibagikan.",
+  "pick": "Pilih",
+  "loadFailed": "Daftar teman tidak dapat dimuat.",
+  "cancel": "Batal"
+}

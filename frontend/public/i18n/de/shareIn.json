@@ -1,0 +1,11 @@
+{
+  "title": "Mit einem Freund teilen",
+  "shared": "Mit Seven Friends geteilt",
+  "choose": "Wähle, an wen es geht. Du kannst den Text ändern, bevor du ihn sendest.",
+  "loading": "Wird geladen …",
+  "nobody": "Du hast noch keinen Freund, an den du es senden kannst.",
+  "nothing": "Es wurde nichts geteilt.",
+  "pick": "Wählen",
+  "loadFailed": "Die Freundesliste konnte nicht geladen werden.",
+  "cancel": "Abbrechen"
+}

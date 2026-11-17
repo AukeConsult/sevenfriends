@@ -32,9 +32,13 @@ public partial class MainWindow : Window
     /// <summary>The notification last shown from the web app: a click on its toast tells the page, which opens the right conversation.</summary>
     private CoreWebView2Notification? _lastNotification;
 
-    public MainWindow(bool startHidden)
+    /// <summary>Something shared with the app (the Windows share dialog) that the web view must open on, as soon as it is ready.</summary>
+    private SharedContent? _shared;
+
+    public MainWindow(bool startHidden, SharedContent? shared = null)
     {
         _startHidden = startHidden;
+        _shared = shared;
         InitializeComponent();
         Title = WindowTitle;
         if (startHidden)
@@ -205,6 +209,16 @@ public partial class MainWindow : Window
             _tray.ShowBalloonTip(8000, e.Notification.Title, e.Notification.Body, System.Windows.Forms.ToolTipIcon.None);
         };
 
-        web.Navigate(AppUrl);
+        var first = _shared;
+        _shared = null;
+        web.Navigate(AppUrl + (first?.Path ?? ""));
+    }
+
+    /// <summary>Something was shared with the app while it runs: the window comes forward on the page where the person chooses the friend.</summary>
+    public void OpenShared(SharedContent content)
+    {
+        ShowApp();
+        if (Web.CoreWebView2 is null) _shared = content; // the web view is not ready yet: it opens on this as soon as it is
+        else Web.CoreWebView2.Navigate(AppUrl + content.Path);
     }
 }

@@ -1,0 +1,11 @@
+{
+  "title": "Jaa ystävälle",
+  "shared": "Jaettu Seven Friendsille",
+  "choose": "Valitse, kenelle se lähtee. Voit muokata tekstiä ennen lähettämistä.",
+  "loading": "Ladataan …",
+  "nobody": "Sinulla ei ole vielä ystävää, jolle sen voisi lähettää.",
+  "nothing": "Mitään ei jaettu.",
+  "pick": "Valitse",
+  "loadFailed": "Ystävälistaa ei voitu ladata.",
+  "cancel": "Peruuta"
+}
