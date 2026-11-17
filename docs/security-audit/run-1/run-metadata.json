@@ -1,0 +1,33 @@
+{
+  "run_id": "run-1",
+  "repo": "sevenfriends",
+  "target": "C:/projects/sevenfriends",
+  "source_ref": {
+    "commit": "9ae2c27a45e7f6ef24c8eee8e0824f94f60d53af",
+    "dirty": true
+  },
+  "profile": "quick",
+  "scope_paths": [
+    "functions/",
+    "frontend/",
+    "firebase.json",
+    "scripts/",
+    "android/"
+  ],
+  "budget": 30,
+  "execution_policy": "sandboxed-source-and-local-only",
+  "selected_companion_files": [
+    "DATA-ISOLATION-AND-LIFECYCLE.md",
+    "WEB-PROTOCOL-AND-AUTH.md",
+    "CLIENT-SIDE.md",
+    "DESKTOP-MOBILE-AND-LOCAL-IPC.md",
+    "CLOUD-AND-DEPLOYMENT.md"
+  ],
+  "prior_run_paths": [],
+  "shared_file_owners": {
+    "all": "parent"
+  },
+  "run_status": "incomplete",
+  "incomplete_reason": "quick_profile_partial_pass; validators_could_not_run_on_windows; no_sandbox_so_no_confirmed_findings; critic_gaps_deferred",
+  "budget_spent": 23
+}

@@ -1,0 +1,705 @@
+[
+  {
+    "coverage_id": "android%2Fapp%2Fsrc%2Fmain%2FAndroidManifest.xml%23MainActivity::android%2Fapp%2Fsrc%2Fmain%2Fjava%2FMainActivity.java%23openPageFromIntent::profile%2Fquick%2Fall-in-scope-subsystems::ATTACK-CLASSES.md%23Feature%20abuse%20and%20data%20leakage",
+    "canonical_refs": {
+      "surface": "android/app/src/main/AndroidManifest.xml#MainActivity",
+      "boundary": "android/app/src/main/java/MainActivity.java#openPageFromIntent",
+      "subsystem": "profile/quick/all-in-scope-subsystems",
+      "attack_class": "ATTACK-CLASSES.md#Feature abuse and data leakage"
+    },
+    "surface": "android/app/src/main/AndroidManifest.xml#MainActivity",
+    "boundary": "android/app/src/main/java/MainActivity.java#openPageFromIntent",
+    "subsystem": "All in-scope subsystems (quick)",
+    "attack_class": "Feature abuse and data leakage",
+    "starting_paths": [
+      "android/app/src/main",
+      "windows/MainWindow.xaml.cs",
+      "ios/App"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Feature abuse and data leakage",
+    "selected_companion_blocks": [
+      "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Webview and native-bridge attack classes",
+      "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Core discipline",
+      "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Universal moves",
+      "DESKTOP-MOBILE-AND-LOCAL-IPC.md#Validation rules"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "MEMORY-SAFETY-AND-BINARY.md#Core discipline",
+        "reason": "no native parsers in scope"
+      },
+      {
+        "block": "AI-AND-LLM.md#Core discipline",
+        "reason": "no LLM in product"
+      },
+      {
+        "block": "PROTOCOLS-RPC-AND-MESSAGING.md#Core discipline",
+        "reason": "no broker/RPC server"
+      },
+      {
+        "block": "SUPPLY-CHAIN-AND-RELEASE.md#Core discipline",
+        "reason": "only stock deno.yml workflow"
+      },
+      {
+        "block": "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Core discipline",
+        "reason": "live availability testing prohibited"
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "candidate",
+    "agent_id": "h0-native",
+    "reviewed_paths": [
+      "android/app/src/main",
+      "windows/MainWindow.xaml.cs",
+      "ios/App"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "h0-native",
+        "reviewed_paths": [
+          "android/app/src/main",
+          "windows/MainWindow.xaml.cs",
+          "ios/App"
+        ],
+        "invariant": "unit invariants per hunter prompt",
+        "method": "source",
+        "result": "see REPORT.md",
+        "artifact": null
+      }
+    ],
+    "result_fingerprints": [
+      "android-webview-js-bridge-exposed-to-third-party-chat-embed-frames",
+      "windows-webview-inside-allowlist-wildcard-firebaseapp-com"
+    ],
+    "unresolved": []
+  },
+  {
+    "coverage_id": "frontend%2Fsrc%2Fapp%2Fchat%2Fchat.html%23iframe%20and%20innerHTML%20sinks::frontend%2Fsrc%2Fapp%2Fchat%2Fchat.ts%23frameUrl::profile%2Fquick%2Fall-in-scope-subsystems::ATTACK-CLASSES.md%23Injection",
+    "canonical_refs": {
+      "surface": "frontend/src/app/chat/chat.html#iframe and innerHTML sinks",
+      "boundary": "frontend/src/app/chat/chat.ts#frameUrl",
+      "subsystem": "profile/quick/all-in-scope-subsystems",
+      "attack_class": "ATTACK-CLASSES.md#Injection"
+    },
+    "surface": "frontend/src/app/chat/chat.html#iframe and innerHTML sinks",
+    "boundary": "frontend/src/app/chat/chat.ts#frameUrl",
+    "subsystem": "All in-scope subsystems (quick)",
+    "attack_class": "Injection",
+    "starting_paths": [
+      "frontend/src/app/chat",
+      "frontend/src/app/notifications",
+      "frontend/src/app/pending",
+      "frontend/src/app/friend-recovery",
+      "frontend/src/app/core/link-embed.ts",
+      "frontend/src/app/core/i18n.ts",
+      "frontend/public/firebase-messaging-sw.js",
+      "frontend/src/app/core/desktop-notice.service.ts",
+      "firebase.json"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Injection",
+    "selected_companion_blocks": [
+      "CLIENT-SIDE.md#DOM and object-state attack classes",
+      "CLIENT-SIDE.md#Core discipline",
+      "CLIENT-SIDE.md#Universal moves",
+      "CLIENT-SIDE.md#Validation rules"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "MEMORY-SAFETY-AND-BINARY.md#Core discipline",
+        "reason": "no native parsers in scope"
+      },
+      {
+        "block": "AI-AND-LLM.md#Core discipline",
+        "reason": "no LLM in product"
+      },
+      {
+        "block": "PROTOCOLS-RPC-AND-MESSAGING.md#Core discipline",
+        "reason": "no broker/RPC server"
+      },
+      {
+        "block": "SUPPLY-CHAIN-AND-RELEASE.md#Core discipline",
+        "reason": "only stock deno.yml workflow"
+      },
+      {
+        "block": "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Core discipline",
+        "reason": "live availability testing prohibited"
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "candidate",
+    "agent_id": "h1-frontend",
+    "reviewed_paths": [
+      "frontend/src/app/chat",
+      "frontend/src/app/notifications",
+      "frontend/src/app/pending",
+      "frontend/src/app/friend-recovery",
+      "frontend/src/app/core/link-embed.ts",
+      "frontend/src/app/core/i18n.ts",
+      "frontend/public/firebase-messaging-sw.js",
+      "frontend/src/app/core/desktop-notice.service.ts",
+      "firebase.json"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "h1-frontend",
+        "reviewed_paths": [
+          "frontend/src/app/chat",
+          "frontend/src/app/notifications",
+          "frontend/src/app/pending",
+          "frontend/src/app/friend-recovery",
+          "frontend/src/app/core/link-embed.ts",
+          "frontend/src/app/core/i18n.ts",
+          "frontend/public/firebase-messaging-sw.js",
+          "frontend/src/app/core/desktop-notice.service.ts",
+          "firebase.json"
+        ],
+        "invariant": "unit invariants per hunter prompt",
+        "method": "source",
+        "result": "see REPORT.md",
+        "artifact": null
+      }
+    ],
+    "result_fingerprints": [
+      "frontend:request-fromname-innerhtml-markup-injection",
+      "frontend:chat-embedurl-own-origin-frame-via-redirect"
+    ],
+    "unresolved": []
+  },
+  {
+    "coverage_id": "functions%2Fsrc%2Fapp.ts%23%2Fapi%20routers::functions%2Fsrc%2Fauth.ts%23requireAuth::profile%2Fquick%2Fall-in-scope-subsystems::ATTACK-CLASSES.md%23Access%20control",
+    "canonical_refs": {
+      "surface": "functions/src/app.ts#/api routers",
+      "boundary": "functions/src/auth.ts#requireAuth",
+      "subsystem": "profile/quick/all-in-scope-subsystems",
+      "attack_class": "ATTACK-CLASSES.md#Access control"
+    },
+    "surface": "functions/src/app.ts#/api routers",
+    "boundary": "functions/src/auth.ts#requireAuth",
+    "subsystem": "All in-scope subsystems (quick)",
+    "attack_class": "Access control",
+    "starting_paths": [
+      "functions/src/auth.ts",
+      "functions/src/app.ts",
+      "functions/src/circles.ts",
+      "functions/src/friends.ts",
+      "functions/src/conversation.ts",
+      "functions/src/messages.ts",
+      "functions/src/groups.ts",
+      "functions/src/group-members.ts",
+      "functions/src/group-history.ts",
+      "functions/src/friend-requests.ts",
+      "functions/src/home.ts",
+      "functions/src/profile.ts",
+      "functions/src/users.ts",
+      "functions/src/seats.ts"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Access control",
+    "selected_companion_blocks": [
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Tenant and object-isolation attack classes",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Core discipline",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Universal moves",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Validation rules"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "MEMORY-SAFETY-AND-BINARY.md#Core discipline",
+        "reason": "no native parsers in scope"
+      },
+      {
+        "block": "AI-AND-LLM.md#Core discipline",
+        "reason": "no LLM in product"
+      },
+      {
+        "block": "PROTOCOLS-RPC-AND-MESSAGING.md#Core discipline",
+        "reason": "no broker/RPC server"
+      },
+      {
+        "block": "SUPPLY-CHAIN-AND-RELEASE.md#Core discipline",
+        "reason": "only stock deno.yml workflow"
+      },
+      {
+        "block": "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Core discipline",
+        "reason": "live availability testing prohibited"
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "candidate",
+    "agent_id": "h2-access",
+    "reviewed_paths": [
+      "functions/src/auth.ts",
+      "functions/src/app.ts",
+      "functions/src/circles.ts",
+      "functions/src/friends.ts",
+      "functions/src/conversation.ts",
+      "functions/src/messages.ts",
+      "functions/src/groups.ts",
+      "functions/src/group-members.ts",
+      "functions/src/group-history.ts",
+      "functions/src/friend-requests.ts",
+      "functions/src/home.ts",
+      "functions/src/profile.ts",
+      "functions/src/users.ts",
+      "functions/src/seats.ts"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "h2-access",
+        "reviewed_paths": [
+          "functions/src/auth.ts",
+          "functions/src/app.ts",
+          "functions/src/circles.ts",
+          "functions/src/friends.ts",
+          "functions/src/conversation.ts",
+          "functions/src/messages.ts",
+          "functions/src/groups.ts",
+          "functions/src/group-members.ts",
+          "functions/src/group-history.ts",
+          "functions/src/friend-requests.ts",
+          "functions/src/home.ts",
+          "functions/src/profile.ts",
+          "functions/src/users.ts",
+          "functions/src/seats.ts"
+        ],
+        "invariant": "unit invariants per hunter prompt",
+        "method": "source",
+        "result": "see REPORT.md",
+        "artifact": null
+      }
+    ],
+    "result_fingerprints": [
+      "invites-unverified-identity-claims-pending-invites"
+    ],
+    "unresolved": []
+  },
+  {
+    "coverage_id": "functions%2Fsrc%2Ferase.ts%23DELETE%20%2Fusers%2Fme::firestore.rules%23default%20deny::profile%2Fquick%2Fall-in-scope-subsystems::ATTACK-CLASSES.md%23Obvious%20things",
+    "canonical_refs": {
+      "surface": "functions/src/erase.ts#DELETE /users/me",
+      "boundary": "firestore.rules#default deny",
+      "subsystem": "profile/quick/all-in-scope-subsystems",
+      "attack_class": "ATTACK-CLASSES.md#Obvious things"
+    },
+    "surface": "functions/src/erase.ts#DELETE /users/me",
+    "boundary": "firestore.rules#default deny",
+    "subsystem": "All in-scope subsystems (quick)",
+    "attack_class": "Obvious things",
+    "starting_paths": [
+      "functions/src/erase.ts",
+      "functions/src/safebox-reminders.ts",
+      "functions/src/settings.ts",
+      "functions/src/index.ts",
+      "firestore.rules",
+      "storage.rules",
+      "firebase.json",
+      ".gitignore",
+      "scripts"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Obvious things",
+    "selected_companion_blocks": [
+      "CLOUD-AND-DEPLOYMENT.md#Configuration and secret lifecycle attack classes",
+      "CLOUD-AND-DEPLOYMENT.md#Core discipline",
+      "CLOUD-AND-DEPLOYMENT.md#Universal moves",
+      "CLOUD-AND-DEPLOYMENT.md#Validation rules"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "MEMORY-SAFETY-AND-BINARY.md#Core discipline",
+        "reason": "no native parsers in scope"
+      },
+      {
+        "block": "AI-AND-LLM.md#Core discipline",
+        "reason": "no LLM in product"
+      },
+      {
+        "block": "PROTOCOLS-RPC-AND-MESSAGING.md#Core discipline",
+        "reason": "no broker/RPC server"
+      },
+      {
+        "block": "SUPPLY-CHAIN-AND-RELEASE.md#Core discipline",
+        "reason": "only stock deno.yml workflow"
+      },
+      {
+        "block": "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Core discipline",
+        "reason": "live availability testing prohibited"
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "candidate",
+    "agent_id": "h3-lifecycle",
+    "reviewed_paths": [
+      "functions/src/erase.ts",
+      "functions/src/safebox-reminders.ts",
+      "functions/src/settings.ts",
+      "functions/src/index.ts",
+      "firestore.rules",
+      "storage.rules",
+      "firebase.json",
+      ".gitignore",
+      "scripts"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "h3-lifecycle",
+        "reviewed_paths": [
+          "functions/src/erase.ts",
+          "functions/src/safebox-reminders.ts",
+          "functions/src/settings.ts",
+          "functions/src/index.ts",
+          "firestore.rules",
+          "storage.rules",
+          "firebase.json",
+          ".gitignore",
+          "scripts"
+        ],
+        "invariant": "unit invariants per hunter prompt",
+        "method": "source",
+        "result": "see REPORT.md",
+        "artifact": null
+      }
+    ],
+    "result_fingerprints": [
+      "erase-unverified-identity-deletes-third-party-pending-entries"
+    ],
+    "unresolved": []
+  },
+  {
+    "coverage_id": "functions%2Fsrc%2Finvite.ts%23GET%20%2Finvite%2Flookup%2F%3Acode::functions%2Fsrc%2Faccounts.ts%23rate%20limit::profile%2Fquick%2Fall-in-scope-subsystems::ATTACK-CLASSES.md%23Business%20logic",
+    "canonical_refs": {
+      "surface": "functions/src/invite.ts#GET /invite/lookup/:code",
+      "boundary": "functions/src/accounts.ts#rate limit",
+      "subsystem": "profile/quick/all-in-scope-subsystems",
+      "attack_class": "ATTACK-CLASSES.md#Business logic"
+    },
+    "surface": "functions/src/invite.ts#GET /invite/lookup/:code",
+    "boundary": "functions/src/accounts.ts#rate limit",
+    "subsystem": "All in-scope subsystems (quick)",
+    "attack_class": "Business logic",
+    "starting_paths": [
+      "functions/src/invite.ts",
+      "functions/src/invites.ts",
+      "functions/src/accounts.ts",
+      "functions/src/friends.ts",
+      "functions/src/outbox.ts",
+      "functions/src/mail.ts",
+      "functions/src/limits.ts",
+      "functions/src/push.ts"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Business logic",
+    "selected_companion_blocks": [
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Derived-data and disclosure attack classes",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Core discipline",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Universal moves",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Validation rules"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "MEMORY-SAFETY-AND-BINARY.md#Core discipline",
+        "reason": "no native parsers in scope"
+      },
+      {
+        "block": "AI-AND-LLM.md#Core discipline",
+        "reason": "no LLM in product"
+      },
+      {
+        "block": "PROTOCOLS-RPC-AND-MESSAGING.md#Core discipline",
+        "reason": "no broker/RPC server"
+      },
+      {
+        "block": "SUPPLY-CHAIN-AND-RELEASE.md#Core discipline",
+        "reason": "only stock deno.yml workflow"
+      },
+      {
+        "block": "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Core discipline",
+        "reason": "live availability testing prohibited"
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "candidate",
+    "agent_id": "h4-invites",
+    "reviewed_paths": [
+      "functions/src/invite.ts",
+      "functions/src/invites.ts",
+      "functions/src/accounts.ts",
+      "functions/src/friends.ts",
+      "functions/src/outbox.ts",
+      "functions/src/mail.ts",
+      "functions/src/limits.ts",
+      "functions/src/push.ts"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "h4-invites",
+        "reviewed_paths": [
+          "functions/src/invite.ts",
+          "functions/src/invites.ts",
+          "functions/src/accounts.ts",
+          "functions/src/friends.ts",
+          "functions/src/outbox.ts",
+          "functions/src/mail.ts",
+          "functions/src/limits.ts",
+          "functions/src/push.ts"
+        ],
+        "invariant": "unit invariants per hunter prompt",
+        "method": "source",
+        "result": "see REPORT.md",
+        "artifact": null
+      }
+    ],
+    "result_fingerprints": [
+      "invites-unverified-identity-claims-pending-invites",
+      "friends-lookup-enumeration-weak-limit"
+    ],
+    "unresolved": []
+  },
+  {
+    "coverage_id": "functions%2Fsrc%2Fkeys.ts%23POST%20%2Fkeys%2Flist::functions%2Fsrc%2Fkeys.ts%23signatureHolds::profile%2Fquick%2Fall-in-scope-subsystems::ATTACK-CLASSES.md%23Cryptography%20and%20secrets",
+    "canonical_refs": {
+      "surface": "functions/src/keys.ts#POST /keys/list",
+      "boundary": "functions/src/keys.ts#signatureHolds",
+      "subsystem": "profile/quick/all-in-scope-subsystems",
+      "attack_class": "ATTACK-CLASSES.md#Cryptography and secrets"
+    },
+    "surface": "functions/src/keys.ts#POST /keys/list",
+    "boundary": "functions/src/keys.ts#signatureHolds",
+    "subsystem": "All in-scope subsystems (quick)",
+    "attack_class": "Cryptography and secrets",
+    "starting_paths": [
+      "functions/src/keys.ts",
+      "functions/src/own-recovery.ts",
+      "functions/src/own-request.ts",
+      "functions/src/recovery.ts",
+      "functions/src/reencrypt.ts",
+      "functions/src/box-encryption.ts",
+      "frontend/src/app/core/device-list.ts",
+      "frontend/src/app/core/key-trust.service.ts",
+      "frontend/src/app/core/device-key.ts"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Cryptography and secrets",
+    "selected_companion_blocks": [
+      "WEB-PROTOCOL-AND-AUTH.md#MFA, passkey, and account-transition attack classes",
+      "WEB-PROTOCOL-AND-AUTH.md#Core discipline",
+      "WEB-PROTOCOL-AND-AUTH.md#Universal moves",
+      "WEB-PROTOCOL-AND-AUTH.md#Validation rules"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "MEMORY-SAFETY-AND-BINARY.md#Core discipline",
+        "reason": "no native parsers in scope"
+      },
+      {
+        "block": "AI-AND-LLM.md#Core discipline",
+        "reason": "no LLM in product"
+      },
+      {
+        "block": "PROTOCOLS-RPC-AND-MESSAGING.md#Core discipline",
+        "reason": "no broker/RPC server"
+      },
+      {
+        "block": "SUPPLY-CHAIN-AND-RELEASE.md#Core discipline",
+        "reason": "only stock deno.yml workflow"
+      },
+      {
+        "block": "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Core discipline",
+        "reason": "live availability testing prohibited"
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "candidate",
+    "agent_id": "h5-keys",
+    "reviewed_paths": [
+      "functions/src/keys.ts",
+      "functions/src/own-recovery.ts",
+      "functions/src/own-request.ts",
+      "functions/src/recovery.ts",
+      "functions/src/reencrypt.ts",
+      "functions/src/box-encryption.ts",
+      "frontend/src/app/core/device-list.ts",
+      "frontend/src/app/core/key-trust.service.ts",
+      "frontend/src/app/core/device-key.ts"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "h5-keys",
+        "reviewed_paths": [
+          "functions/src/keys.ts",
+          "functions/src/own-recovery.ts",
+          "functions/src/own-request.ts",
+          "functions/src/recovery.ts",
+          "functions/src/reencrypt.ts",
+          "functions/src/box-encryption.ts",
+          "frontend/src/app/core/device-list.ts",
+          "frontend/src/app/core/key-trust.service.ts",
+          "frontend/src/app/core/device-key.ts"
+        ],
+        "invariant": "unit invariants per hunter prompt",
+        "method": "source",
+        "result": "see REPORT.md",
+        "artifact": null
+      }
+    ],
+    "result_fingerprints": [
+      "sevenfriends/keys/login-only-restart-takeover-and-key-wipe",
+      "sevenfriends/recovery/helper-wraps-unlisted-server-keys",
+      "sevenfriends/keys/legacy-no-list-account-trusts-any-published-key"
+    ],
+    "unresolved": []
+  },
+  {
+    "coverage_id": "functions%2Fsrc%2Flink-preview.ts%23POST%20%2Flink-preview::functions%2Fsrc%2Flink-preview.ts%23safeLookup::profile%2Fquick%2Fall-in-scope-subsystems::ATTACK-CLASSES.md%23Injection",
+    "canonical_refs": {
+      "surface": "functions/src/link-preview.ts#POST /link-preview",
+      "boundary": "functions/src/link-preview.ts#safeLookup",
+      "subsystem": "profile/quick/all-in-scope-subsystems",
+      "attack_class": "ATTACK-CLASSES.md#Injection"
+    },
+    "surface": "functions/src/link-preview.ts#POST /link-preview",
+    "boundary": "functions/src/link-preview.ts#safeLookup",
+    "subsystem": "All in-scope subsystems (quick)",
+    "attack_class": "Injection",
+    "starting_paths": [
+      "functions/src/link-preview.ts",
+      "functions/src/conversation.ts"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Injection",
+    "selected_companion_blocks": [
+      "CLOUD-AND-DEPLOYMENT.md#Ingress, network, and control-plane attack classes",
+      "CLOUD-AND-DEPLOYMENT.md#Core discipline",
+      "CLOUD-AND-DEPLOYMENT.md#Universal moves",
+      "CLOUD-AND-DEPLOYMENT.md#Validation rules"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "MEMORY-SAFETY-AND-BINARY.md#Core discipline",
+        "reason": "no native parsers in scope"
+      },
+      {
+        "block": "AI-AND-LLM.md#Core discipline",
+        "reason": "no LLM in product"
+      },
+      {
+        "block": "PROTOCOLS-RPC-AND-MESSAGING.md#Core discipline",
+        "reason": "no broker/RPC server"
+      },
+      {
+        "block": "SUPPLY-CHAIN-AND-RELEASE.md#Core discipline",
+        "reason": "only stock deno.yml workflow"
+      },
+      {
+        "block": "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Core discipline",
+        "reason": "live availability testing prohibited"
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "covered",
+    "agent_id": "h6-linkpreview",
+    "reviewed_paths": [
+      "functions/src/link-preview.ts",
+      "functions/src/conversation.ts"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "h6-linkpreview",
+        "reviewed_paths": [
+          "functions/src/link-preview.ts",
+          "functions/src/conversation.ts"
+        ],
+        "invariant": "unit invariants per hunter prompt",
+        "method": "source",
+        "result": "see REPORT.md",
+        "artifact": null
+      }
+    ],
+    "result_fingerprints": [],
+    "unresolved": []
+  },
+  {
+    "coverage_id": "functions%2Fsrc%2Fmedia.ts%23%2Fsf-cache::functions%2Fsrc%2Fmedia.ts%23mayRead::profile%2Fquick%2Fall-in-scope-subsystems::ATTACK-CLASSES.md%23Resource%20and%20file%20handling",
+    "canonical_refs": {
+      "surface": "functions/src/media.ts#/sf-cache",
+      "boundary": "functions/src/media.ts#mayRead",
+      "subsystem": "profile/quick/all-in-scope-subsystems",
+      "attack_class": "ATTACK-CLASSES.md#Resource and file handling"
+    },
+    "surface": "functions/src/media.ts#/sf-cache",
+    "boundary": "functions/src/media.ts#mayRead",
+    "subsystem": "All in-scope subsystems (quick)",
+    "attack_class": "Resource and file handling",
+    "starting_paths": [
+      "functions/src/media.ts",
+      "functions/src/sf-cache.ts",
+      "functions/src/safebox.ts",
+      "functions/src/avatar.ts"
+    ],
+    "ordinary_attack_class_block": "ATTACK-CLASSES.md#Resource and file handling",
+    "selected_companion_blocks": [
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Derived-data and disclosure attack classes",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Core discipline",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Universal moves",
+      "DATA-ISOLATION-AND-LIFECYCLE.md#Validation rules"
+    ],
+    "excluded_blocks": [
+      {
+        "block": "MEMORY-SAFETY-AND-BINARY.md#Core discipline",
+        "reason": "no native parsers in scope"
+      },
+      {
+        "block": "AI-AND-LLM.md#Core discipline",
+        "reason": "no LLM in product"
+      },
+      {
+        "block": "PROTOCOLS-RPC-AND-MESSAGING.md#Core discipline",
+        "reason": "no broker/RPC server"
+      },
+      {
+        "block": "SUPPLY-CHAIN-AND-RELEASE.md#Core discipline",
+        "reason": "only stock deno.yml workflow"
+      },
+      {
+        "block": "RESOURCE-EXHAUSTION-AND-AVAILABILITY.md#Core discipline",
+        "reason": "live availability testing prohibited"
+      }
+    ],
+    "prior_status": "none",
+    "attempts": [],
+    "wave": 1,
+    "status": "covered",
+    "agent_id": "h7-media",
+    "reviewed_paths": [
+      "functions/src/media.ts",
+      "functions/src/sf-cache.ts",
+      "functions/src/safebox.ts",
+      "functions/src/avatar.ts"
+    ],
+    "local_checks": [
+      {
+        "agent_id": "h7-media",
+        "reviewed_paths": [
+          "functions/src/media.ts",
+          "functions/src/sf-cache.ts",
+          "functions/src/safebox.ts",
+          "functions/src/avatar.ts"
+        ],
+        "invariant": "unit invariants per hunter prompt",
+        "method": "source",
+        "result": "see REPORT.md",
+        "artifact": null
+      }
+    ],
+    "result_fingerprints": [],
+    "unresolved": []
+  }
+]

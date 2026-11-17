@@ -420,7 +420,7 @@ describe("keys changing back and forth, 5 people with 3 devices each", () => {
     expect(pending.keys.map((k: { id: string }) => k.id)).toEqual([phone.keyId]);
     const todo = (await me.user.raw("get", `/own-recovery/todo?key=${phone.keyId}&part=messages`)).body;
     expect(todo.items.map((m: { id: string }) => m.id)).toEqual([old]);
-    await me.user.raw("post", "/own-recovery/wraps", { key: phone.keyId, part: "messages", items: todo.items.map((m: { id: string }) => ({ id: m.id, wrap: wrap(me.user.p.uid, phone.keyId) })) }).expect(200);
+    await me.user.raw("post", "/own-recovery/wraps", { key: phone.keyId, part: "messages", items: todo.items.map((m: { id: string }) => ({ id: m.id, wraps: [wrap(me.user.p.uid, phone.keyId)] })) }).expect(200);
     await me.user.raw("post", "/own-recovery/done", { key: phone.keyId }).expect(200);
     await publishList(me, [laptop, phone], laptop);
 

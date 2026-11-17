@@ -1,0 +1,173 @@
+[
+  {
+    "fingerprint": "android-webview-js-bridge-exposed-to-third-party-chat-embed-frames",
+    "verdict": "source_verified",
+    "title": "Android JS bridges (SevenFriendsAndroid, SfInsets) reachable from third-party iframes in chat link previews",
+    "description": "MainActivity registers NativeNotices and Insets_ with addJavascriptInterface; Android injects them into every frame. The chat page frames any framable https page (server stores final URL as embedUrl) with sandbox allow-scripts allow-same-origin after the recipient taps 'Show preview'. No bridge method checks the calling origin.",
+    "root_cause": "addJavascriptInterface bridges have no per-origin guard while chat frames arbitrary third-party pages.",
+    "intended_behavior": "Only the first-party origin (sevenfriends.io) may call the native bridge.",
+    "trace": [
+      {"path": "android/app/src/main/java/io/sevenfriends/app/MainActivity.java", "line": 68, "role": "entrypoint", "description": "addJavascriptInterface(NativeNotices, 'SevenFriendsAndroid'), no origin restriction (line 71: SfInsets)."},
+      {"path": "functions/src/link-preview.ts", "line": 139, "role": "propagation", "description": "framingAllowed/pageAllowsFrame accept any public framable https page; linkOf stores final URL as embedUrl."},
+      {"path": "frontend/src/app/chat/chat.html", "line": 166, "role": "propagation", "description": "iframe [src]=frameUrl(embedUrl) with sandbox allow-scripts allow-same-origin after 'Show preview'."},
+      {"path": "android/app/src/main/java/io/sevenfriends/app/NativeNotices.java", "line": 119, "role": "sink", "description": "deviceName(), deviceModel(), status(), share(), openNotificationSettings(), sync() act without origin check."}
+    ],
+    "evidence": [{"path": "frontend/capacitor.config.json", "line": 1, "description": "server.url is https://sevenfriends.io so the iframe is a distinct third-party origin."}],
+    "conditions": ["Android app build", "Recipient taps Show preview", "Attacker page is public https text/html 2xx without X-Frame-Options / restrictive frame-ancestors", "Subframe injection of JavascriptInterface objects is standard WebView behaviour but was not executed here"],
+    "execution": "NOT EXECUTED (no OS sandbox). Planned: emulator with dummy accounts; host page logging typeof window.SevenFriendsAndroid and deviceName(); send URL in chat; tap Show preview.",
+    "observed_result": "none (source review only)",
+    "severity": "low",
+    "likelihood": "moderate",
+    "impact": "Disclosure of device name/model and notification state to a third-party site; phishing-style share chooser and nuisance UI; cosmetic notification-channel changes. No credentials, tokens or files; sound URIs cannot be attacker-controlled.",
+    "confidence": "medium-high (source complete; runtime behaviour documented but not executed)",
+    "remediation": "Replace addJavascriptInterface with WebViewCompat.addWebMessageListener / addDocumentStartJavaScript using allowedOriginRules ['https://sevenfriends.io']; and/or restrict embedUrl to allowlisted player hosts and enforce frame-src.",
+    "regression_test": "Instrumented Android test: in a cross-origin iframe, window.SevenFriendsAndroid and window.SfInsets are undefined; on https://sevenfriends.io they are defined."
+  },
+  {
+    "fingerprint": "erase-unverified-identity-deletes-third-party-pending-entries",
+    "verdict": "source_verified",
+    "title": "Account erase deletes other users' pending invitations that match the eraser's unverified typed phone or email",
+    "description": "eraseUser probes all users' friends entries (collection group) by the eraser's emailLower/email/phoneKey/phone/verifiedPhone with no verification check and deletes unlinked matches plus the inviter-side request, signal and safebox for that connection.",
+    "root_cause": "Unverified identifiers (token.email regardless of email_verified; typed profile phone, last 8 digits) are treated as proof of ownership in erase.",
+    "intended_behavior": "Erase removes entries other people wrote for this person, sound only for identifiers the eraser has proven.",
+    "trace": [
+      {"path": "functions/src/profile.ts", "line": 151, "role": "entrypoint", "description": "Typed phone stored as phone/phoneKey with no proof (users.ts:30 likewise stores emailLower from an unverified token email)."},
+      {"path": "functions/src/users.ts", "line": 64, "role": "propagation", "description": "DELETE /users/me with confirm DELETE calls eraseUser."},
+      {"path": "functions/src/erase.ts", "line": 113, "role": "propagation", "description": "Probes built without verified check; global collectionGroup('friends') query; only entries linked to another uid are skipped (line 123)."},
+      {"path": "functions/src/erase.ts", "line": 130, "role": "sink", "description": "Matched pending entries, requests, signals and safebox for the connection are deleted."}
+    ],
+    "evidence": [{"path": "functions/src/validation.ts", "line": 40, "description": "verifiedIdentity documents the intended gate but erase does not use it."}],
+    "conditions": ["Attacker's profile phone (or unverified token email) equals the victim's identifier", "An inviter has a pending unlinked entry for the victim", "Email variant needs Firebase Auth to allow unverified email sign-up (console fact, not visible)"],
+    "execution": "NOT EXECUTED. Planned: emulator test with two dummy users (see regression_test).",
+    "observed_result": "none (source review only)",
+    "severity": "low",
+    "likelihood": "medium for phone path; email path depends on Auth console",
+    "impact": "Pending invitations (and attached request/signal/safebox of unconfirmed connections) of other users are deleted; recoverable by re-adding. Confirmed or other-linked connections untouched; attacker's account is destroyed (one-shot).",
+    "confidence": "high for source path",
+    "remediation": "Probe by emailLower only when account.emailVerified === true and by phone only when verifiedPhone is set; drop typed account.phone/email probes; keep linkedUid==uid probe.",
+    "regression_test": "A has unverified typed phone equal to V's; B has pending unlinked entry for V; after eraseUser(A) B's entry remains. Case with verifiedPhone still deletes. Same pair for email."
+  },
+  {
+    "fingerprint": "frontend:request-fromname-innerhtml-markup-injection",
+    "verdict": "source_verified",
+    "title": "Friend-request sender's display name rendered through [innerHTML] without escaping",
+    "description": "Translation strings '<strong>{{ fromName }}</strong>' are bound with [innerHTML] in notifications.html and pending.html; the i18n layer does not escape params and the backend only trims/slices names to 100 chars.",
+    "root_cause": "Untrusted name interpolated into an HTML string that is bound as innerHTML (friend-join.html uses esc(); these sites were missed).",
+    "intended_behavior": "The name displays as plain text inside bold markup.",
+    "trace": [
+      {"path": "functions/src/validation.ts", "line": 9, "role": "entrypoint", "description": "text(value,max) only trims and slices; used for profile and circle-profile names."},
+      {"path": "functions/src/friend-requests.ts", "line": 35, "role": "propagation", "description": "listPendingRequests returns fromName raw."},
+      {"path": "frontend/src/app/notifications/notifications.html", "line": 152, "role": "sink", "description": "[innerHTML]=t('notifications.strongFromnameStrong', {fromName})."},
+      {"path": "frontend/src/app/pending/pending.html", "line": 25, "role": "sink", "description": "Same pattern."}
+    ],
+    "evidence": [{"path": "frontend/src/app/friend-join/friend-join.html", "line": 18, "description": "Sibling sink escapes with esc()."}, {"path": "firebase.json", "line": 16, "description": "CSP is Report-Only so remote img/links are not blocked."}],
+    "conditions": ["Attacker can set a display name and send a friend request", "Recipient views Notifications or Pending", "Angular sanitizer keeps a/img with https URLs (known behaviour; not executed here)"],
+    "execution": "NOT EXECUTED. Planned: render Pending with fromName containing an anchor and img; inspect DOM.",
+    "observed_result": "none (source review only)",
+    "severity": "low",
+    "likelihood": "easy for any user",
+    "impact": "Link/phishing text and a remote tracking image inside a trusted card. No script execution (sanitizer strips script, on* handlers, javascript: URLs). Same class at friend-recovery.html:35 (confirmed friends only).",
+    "confidence": "medium-high",
+    "remediation": "Render the name with text interpolation in a template <strong> element, or HTML-escape fromName (existing esc()) before t(); apply to friend-recovery.html:35 too; enforce CSP.",
+    "regression_test": "Component tests for notifications/pending with fromName '<img src=https://evil.test/x.png><a href=https://evil.test>x</a>' assert no img/a rendered and literal text shown."
+  },
+  {
+    "fingerprint": "invites-unverified-identity-claims-pending-invites",
+    "verdict": "source_verified",
+    "title": "Pending invitations can be claimed via an unverified email or a typed phone number; the unverified warning can be suppressed",
+    "description": "syncIncomingInvites matches other users' pending entries by token.email (no email_verified check) and by the user-typed profile phoneKey. First claimant is linked and the real invitee is skipped afterwards. unverifiedDetails returns [] whenever the claimant has any verified detail, so a typed phone claimed on an account with a verified email shows no warning.",
+    "root_cause": "Invite matching uses unverified/typed identifiers instead of verifiedIdentity(); mitigation (warning) fails for the typed-phone case.",
+    "intended_behavior": "Reachability without verification is a documented, warned trade-off (invites.ts header, docs/guide/connections.md); validation.ts says only verified identities should be used to find people.",
+    "trace": [
+      {"path": "functions/src/profile.ts", "line": 151, "role": "entrypoint", "description": "Typed phone stored as phoneKey without proof."},
+      {"path": "functions/src/invites.ts", "line": 25, "role": "propagation", "description": "Probes: token.email (unverified) and account.phoneKey."},
+      {"path": "functions/src/invites.ts", "line": 48, "role": "propagation", "description": "First claimer wins; entries linked to another uid are skipped."},
+      {"path": "functions/src/invites.ts", "line": 65, "role": "sink", "description": "Creates request for claimant; line 75 sets linkedUid=claimant."},
+      {"path": "functions/src/validation.ts", "line": 59, "role": "propagation", "description": "unverifiedDetails returns [] if any detail is verified."}
+    ],
+    "evidence": [{"path": "functions/src/validation.ts", "line": 34, "description": "verifiedIdentity intent not applied by invites.ts."}],
+    "conditions": ["Inviter added a pending entry by email/phone for someone not yet linked", "Attacker signed in, visibility not private, runs the check before the real invitee", "Inviter manually accepts; inviter sees the attacker's own account name"],
+    "execution": "NOT EXECUTED. Planned: emulator test (see regression_test).",
+    "observed_result": "none (source review only)",
+    "severity": "low",
+    "likelihood": "medium (phone variant), low (email variant, warned)",
+    "impact": "Attacker can become a confirmed friend in the invitee's place (one seat) and block the invitation; limited by manual accept and a visible differing name.",
+    "confidence": "high for source path",
+    "remediation": "Probe by email only when token.email_verified===true and by phone only from SMS-verified token.phone_number (verifiedIdentity()); drop account.phoneKey from probes; or make unverifiedDetails flag a typed phone.",
+    "regression_test": "verification.test.ts: B (verified email, typed A's phone) runs /notifications/check; assert no request for B and no linkedUid set; unverified-email token does not claim an email invite."
+  },
+  {
+    "fingerprint": "windows-webview-inside-allowlist-wildcard-firebaseapp-com",
+    "verdict": "source_verified",
+    "title": "Windows wrapper treats every *.firebaseapp.com host as in-app",
+    "description": "IsInside matches host == h or EndsWith('.'+h) for the bare multi-tenant domain firebaseapp.com, so chat links to attacker-registered Firebase Hosting sites open inside the app (NewWindowRequested/NavigationStarting return without handing off to the system browser).",
+    "root_cause": "Suffix wildcard allow-list entry for a shared hosting domain; only sevenfriends.firebaseapp.com (auth handler) is needed.",
+    "intended_behavior": "Only the app's own pages and sign-in popup stay inside; all other links open in the system browser.",
+    "trace": [
+      {"path": "frontend/src/app/chat/chat.html", "line": 140, "role": "entrypoint", "description": "Non-own chat URL renders as <a target=_blank>, raising NewWindowRequested."},
+      {"path": "windows/MainWindow.xaml.cs", "line": 27, "role": "propagation", "description": "Inside list contains 'firebaseapp.com'."},
+      {"path": "windows/MainWindow.xaml.cs", "line": 143, "role": "propagation", "description": "IsInside uses EndsWith('.'+h)."},
+      {"path": "windows/MainWindow.xaml.cs", "line": 178, "role": "sink", "description": "Returns early (no hand-off) when IsInside; NavigationStarting line 185 likewise."}
+    ],
+    "evidence": [{"path": "windows/MainWindow.xaml.cs", "line": 194, "description": "Permissions gated by exact host on first three Inside entries; no host-object/WebMessage bridge exists."}],
+    "conditions": ["Windows app", "Victim clicks an https://*.firebaseapp.com link in chat", "Popup chrome (address bar absence) not verified from source"],
+    "execution": "NOT EXECUTED. Planned: run Windows app with dummy account and a self-owned test firebaseapp.com page.",
+    "observed_result": "none (source review only)",
+    "severity": "low",
+    "likelihood": "medium-low",
+    "impact": "In-app phishing/spoofing window; no mic/camera/clipboard permission, no native bridge, no access to app storage (different origin).",
+    "confidence": "medium-high",
+    "remediation": "Replace 'firebaseapp.com' with the exact auth host 'sevenfriends.firebaseapp.com'; exact-match the auth host.",
+    "regression_test": "IsInside: sevenfriends.io, sevenfriends.firebaseapp.com, accounts.google.com true; attacker.firebaseapp.com, evilfirebaseapp.com, http://sevenfriends.io false."
+  },
+  {
+    "fingerprint": "friends-lookup-enumeration-weak-limit",
+    "verdict": "needs_validation",
+    "title": "Account-existence lookup limited only by per-instance, per-uid in-memory counters",
+    "description": "POST /friends/lookup and POST /friends (onlyIfOnApp) return found/none for an email or phone (private accounts excluded; unverified emailLower/phoneKey match). tooManySearches (30/h) and tooManyAdds (100/h) are module-level Maps keyed by uid, per instance (maxInstances 10).",
+    "claimed_root_cause": "Rate limit keyed on a free-to-mint principal and held per instance.",
+    "trace": [
+      {"path": "functions/src/friends.ts", "line": 247, "role": "entrypoint", "description": "POST /lookup applies tooManySearches(uid)."},
+      {"path": "functions/src/friends.ts", "line": 43, "role": "propagation", "description": "In-memory Map, 30 per hour per instance."},
+      {"path": "functions/src/signals.ts", "line": 10, "role": "sink", "description": "findAccounts returns existence by emailLower/phoneKey."}
+    ],
+    "evidence": [{"path": "functions/src/index.ts", "line": 13, "description": "invoker public, maxInstances 10."}],
+    "blockers": ["Whether Firebase Auth sign-up is open/throttled and whether App Check or other abuse controls are enforced (console facts, not in source)", "Existence is the documented purpose of the lookup; only the strength of the limit is in question"],
+    "validation_plan": {
+      "local": ["Call lookup 31 times with one uid, expect 429; repeat with a fresh uid."],
+      "deployment": ["Owner checks Auth sign-up throttling and App Check enforcement in the Firebase console."]
+    }
+  },
+  {
+    "fingerprint": "frontend:chat-embedurl-own-origin-frame-via-redirect",
+    "verdict": "rejected",
+    "claimed_root_cause": "own() guard tests link.url, not the redirect-resolved embedUrl, so a redirect to sevenfriends.io frames the app itself with allow-scripts allow-same-origin.",
+    "trace": [{"path": "frontend/src/app/chat/chat.html", "line": 157, "role": "sink", "description": "own(message.link.url) checked, embedUrl framed at line 166."}],
+    "evidence": [{"path": "functions/src/link-preview.ts", "line": 151, "description": "Redirects followed without rejecting the app origin."}],
+    "reason": "Mechanics are real but no security effect: attacker runs no script in the app origin and cannot reach window.parent; frame shows the victim their own app and only the route/query is attacker-chosen. Kept as hardening (test own(embedUrl); reject app-origin final URLs; enforce frame-ancestors/X-Frame-Options)."
+  },
+  {
+    "fingerprint": "sevenfriends/keys/login-only-restart-takeover-and-key-wipe",
+    "verdict": "rejected",
+    "claimed_root_cause": "POST /keys/list restart:true is authorised only by a signature from a key the same login just published; startOver then deletes other keys and rescue backups.",
+    "trace": [{"path": "functions/src/keys.ts", "line": 173, "role": "entrypoint", "description": "restart skips the previous-signer check."}, {"path": "functions/src/keys.ts", "line": 208, "role": "sink", "description": "startOver/removeTraces delete keys, backups, push devices."}],
+    "evidence": [{"path": "docs/design/default-key.md", "line": 171, "description": "Documents that the server cannot tell which device calls and a stolen login can retire any key; device-signed requests are named future work."}],
+    "reason": "Behaviour is the documented lost-all-devices path and an accepted 'not done on purpose' gap; key deletion is fixed rule 10; history stays closed (rules 6, 12); friends with a pin are blocked by a warning. Rejected as a new defect. Residual note for the owner: restart sends no push to old devices and has no cooling-off; the documented fix is a request signed by an existing device key."
+  },
+  {
+    "fingerprint": "sevenfriends/recovery/helper-wraps-unlisted-server-keys",
+    "verdict": "rejected",
+    "claimed_root_cause": "Friend recovery (Way 2) wraps for every server-listed key of the requester instead of only the signed-list keys.",
+    "trace": [{"path": "functions/src/recovery.ts", "line": 230, "role": "entrypoint", "description": "activeOf uses publishedKeysOf."}],
+    "evidence": [{"path": "docs/design/recovery-rules.md", "line": 1, "description": "Fixed rule 5 requires every key in use for Way 2; rule 9: friend approval is the human check; recovery-by-friend.md already names this scenario."}],
+    "reason": "Exactly what the fixed owner rules require; rules not challenged. Any stronger check (e.g. one-time code step 7 in recovery-by-friend.md) is an owner design decision, not a code violation."
+  },
+  {
+    "fingerprint": "sevenfriends/keys/legacy-no-list-account-trusts-any-published-key",
+    "verdict": "rejected",
+    "claimed_root_cause": "Accounts with keys but no signed list trust every published key for new messages.",
+    "trace": [{"path": "functions/src/keys.ts", "line": 44, "role": "entrypoint", "description": "recipientKeysOf returns all keys with no list head."}],
+    "evidence": [{"path": "docs/design/default-key.md", "line": 110, "description": "'Existing users': legacy accounts keep an older lock with no list/migration until they rotate."}],
+    "reason": "Documented accepted legacy behaviour; the added key is a waiting key that gets no history and prompts the owner (rule 6). Optional hardening: exclude waiting keys from recipientKeysOf/limit for accounts without a list."
+  }
+]
