@@ -24,7 +24,7 @@ import { tr } from '../core/i18n';
 })
 export class Encryption {
   /** which page of Privacy lock this is (the route says): the status with the list, my devices, getting old messages back, restoring or replacing the key, or why a key is (not) found */
-  protected readonly view = inject(ActivatedRoute).snapshot.data['view'] as 'home' | 'devices' | 'recover' | 'replace' | 'why';
+  protected readonly view = inject(ActivatedRoute).snapshot.data['view'] as 'home' | 'devices' | 'recover' | 'replace';
   protected readonly keys = inject(KeysService);
   protected readonly reencrypt = inject(ReencryptService);
   private readonly keySetup = viewChild(KeySetup);
@@ -37,6 +37,8 @@ export class Encryption {
   protected readonly showingWords = computed(() => this.keySetup()?.showingWords() ?? false);
   /** my keys (a removed key is deleted, so all of them are in use) */
   protected readonly devices = computed(() => [...this.keys.published()]);
+  /** some device is "Not approved yet": the page then explains how a device is approved */
+  protected readonly anyWaiting = computed(() => this.devices().some((device) => device.waiting));
 
   /** the key that is asked "really remove?" */
   protected readonly removing = signal<string | null>(null);
@@ -52,6 +54,10 @@ export class Encryption {
   protected readonly lockedCounts = inject(LockedItemsService).counts;
   private readonly lockedService = inject(LockedItemsService);
   protected readonly lockedTotal = this.lockedService.total;
+  /** the server has been asked since this page opened (an older answer of the shared service is not trusted) */
+  private readonly lockedAsked = signal(false);
+  /** asked, and nothing is locked for this device: the page says so instead of offering ways to get messages back */
+  protected readonly noneLocked = computed(() => this.lockedAsked() && this.keys.state() === 'ready' && this.lockedCounts() !== null && this.lockedTotal() === 0);
   private readonly friendsService = inject(FriendsService);
   private readonly router = inject(Router);
   /** where to go when my other devices have done it: only an address inside the app (the band under the header of a friend's page sends `?from=`) */
@@ -68,9 +74,9 @@ export class Encryption {
   protected readonly friendList = computed(() => this.friendsService.friends().filter((f) => f.status === 'confirmed'));
   /** this device's own key is new and no other device has approved it yet: the 24 words can still bring back a key that is approved */
   protected readonly thisKeyWaiting = computed(() => !!this.keys.published().find((k) => k.id === this.keys.thisKeyId())?.waiting);
-  /** the other devices of mine that have a working key: one of them has to do it */
-  protected readonly otherDevices = computed(() => this.keys.published().filter((k) => k.id !== this.keys.thisKeyId()));
   /** other devices of mine that have a key (they can open my history) */
+  /** this device is not approved yet while another device is: only that one may remove devices (the server refuses too). With none approved, anyone may clean up. */
+  protected readonly mayRemove = computed(() => !this.keys.thisWaiting() || !this.keys.published().some((k) => !k.waiting));
   protected readonly otherKeys = computed(() => this.keys.published().filter((k) => k.id !== this.keys.thisKeyId()).length);
   protected readonly percent = computed(() => {
     const request = this.mine();
@@ -103,7 +109,7 @@ export class Encryption {
     });
     void this.own.check();
     void this.own.refreshMine();
-    void this.lockedService.check(true);
+    void this.lockedService.check(true).then(() => this.lockedAsked.set(true));
     if (!this.friendsService.circle()) void this.friendsService.load().catch(() => undefined);
     // the stamp of the server makes the page live; this is the safety net
     const timer = setInterval(() => void this.own.refreshMine(), 2500);
@@ -141,16 +147,6 @@ export class Encryption {
     void this.keys.refresh();
   }
 
-  protected readonly severalKeys = computed(() => this.keys.published().length > 1);
-
-  protected async trustThis(): Promise<void> {
-    this.allowNote.set(null);
-    try {
-      await this.own.trustThisDevice();
-    } catch (err: any) {
-      this.allowNote.set(err?.message || tr('encryption.thatDidNotWork', 'That did not work. Try again.'));
-    }
-  }
 
   protected isWaiting(key: PublishedKey): boolean {
     return this.own.waiting().some((k) => k.id === key.id);

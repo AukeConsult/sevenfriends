@@ -380,6 +380,25 @@ describe("keys changing back and forth, 5 people with 3 devices each", () => {
     expect(res.body.error).toContain("No other device of yours is approved to help");
   }, 60000);
 
+  it("a device that is not approved yet cannot remove the others while one device is approved; with none approved it can", async () => {
+    lockPool.push(...(await Promise.all([1, 2, 3].map(generateLock))));
+    const [user] = (await seedPool()).slice(0, 1);
+    const p: Person = { user, devices: [await makeDevice("Laptop"), await makeDevice("Phone"), await makeDevice("Tablet")], revoked: new Set(), retired: [], published: new Set(), lists: [] };
+    const [laptop, phone, tablet] = p.devices;
+    await publishKey(p, laptop);
+    await publishList(p, [laptop], laptop);
+    await publishKey(p, phone); // not in the signed list: waits for approval
+    await publishKey(p, tablet); // the same
+    const refused = await user.raw("post", `/keys/${laptop.keyId}/remove`, { by: phone.keyId });
+    expect(refused.status, "the laptop is approved, so the waiting phone may not remove it").toBe(403);
+    expect((await user.raw("post", `/keys/${tablet.keyId}/remove`, { by: phone.keyId })).status, "nor the tablet").toBe(403);
+    await user.raw("post", `/keys/${tablet.keyId}/remove`, { by: laptop.keyId }).expect(200); // an approved device may
+    await user.raw("post", `/keys/${laptop.keyId}/remove`).expect(200); // the approved device is gone: nothing is approved now
+    p.published.delete(tablet.keyId); // the helper remembers it was published once; it was removed, so it is published again
+    await publishKey(p, tablet); // a device that comes back as a new waiting key
+    await user.raw("post", `/keys/${tablet.keyId}/remove`, { by: phone.keyId }).expect(200); // nobody is approved, so the phone may clean up
+  }, 60000);
+
   it("a new key can ask the other devices when one of them is in my signed list, even if it never got copies of the old messages", async () => {
     lockPool.push(...(await Promise.all([1, 2, 3].map(generateLock))));
     const [user] = (await seedPool()).slice(0, 1);

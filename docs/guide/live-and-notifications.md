@@ -18,6 +18,7 @@ Part of the project guide (moved out of `CLAUDE.md`; text unchanged). Read this 
 - **A new message** (new unread document in `messages`):
   - if the feed of the person who wrote is **open**, the Chat page shows the message at once and marks it read (it does not turn up on Home);
   - otherwise the search runs, so the message shows in the incoming events on Home.
+- **Back in the app** (tab visible again, or `sf-resume` from the Android app): `RealtimeService.catchUp` makes the listeners again (new queries; `follow(uid, true)`, which keeps what was seen). The first snapshot of a new listener is "what was already there", so it is **silent** (no sound, no desktop notice) and runs the ordinary search: what waited meanwhile is on Home and in the title count. It never overlaps (the old listeners are stopped first, an overtaken start gives up, and a second return within 5 seconds is ignored). If a conversation is open, a message that came for that feed meanwhile is handed to it (`latestMessage`).
 - Only **new** documents count; documents going away (the backend deleting a handled ping, a message being marked read) never start a search. What is already there when the listener starts is shown once.
 
 ### All circles at once (one app, up to four circles)

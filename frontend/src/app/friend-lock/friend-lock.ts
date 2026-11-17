@@ -2,7 +2,6 @@ import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { SafeboxService } from '../core/safebox.service';
-import { UiPreferencesService } from '../core/ui-preferences';
 import { FriendContext } from '../friend-page/friend-context';
 import { SafeboxItem } from '../models';
 import { PageBar } from '../page-bar/page-bar';
@@ -21,14 +20,11 @@ import { PageBar } from '../page-bar/page-bar';
 export class FriendLock {
   protected readonly ctx = inject(FriendContext);
   private readonly service = inject(SafeboxService);
-  protected readonly prefs = inject(UiPreferencesService);
   protected readonly keys = this.ctx.keysService;
 
   protected readonly friendName = this.ctx.friendName;
   /** the codes and the details are behind the Advanced button (the address can ask for them open: ?advanced) */
   protected readonly advanced = signal(inject(ActivatedRoute).snapshot.queryParamMap.has('advanced'));
-  /** ticked (and remembered on this device): what I send is not locked even though both of us have a key */
-  protected readonly plain = this.prefs.value('boxPlain');
   protected readonly canEncrypt = computed(() => this.ctx.keyStatus() === 'both');
 
   /** the files of the safebox that are not locked (null until the box is read) */

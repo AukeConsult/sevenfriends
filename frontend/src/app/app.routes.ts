@@ -94,7 +94,6 @@ export const routes: Routes = [
       { path: 'encryption/devices', component: Encryption, data: { view: 'devices' }, title: 'Privacy lock – Seven Friends' },
       { path: 'encryption/recover', component: Encryption, data: { view: 'recover' }, title: 'Privacy lock – Seven Friends' },
       { path: 'encryption/replace', component: Encryption, data: { view: 'replace' }, title: 'Privacy lock – Seven Friends' },
-      { path: 'encryption/why', component: Encryption, data: { view: 'why' }, title: 'Privacy lock – Seven Friends' },
       { path: 'locking', component: Locking, title: 'Locking – Seven Friends' },
       { path: 'install', component: InstallApp, title: 'Install the app – Seven Friends' },
       // the same three pages without the tabs, for someone who is not signed in (the sign-in page links to them)

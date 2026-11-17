@@ -1,5 +1,6 @@
 {
   "strongSaveTheseWords": "<strong>Skriv ner de här 24 räddningsorden på papper och förvara dem säkert.</strong> Om du förlorar den här telefonen eller datorn ger de tillbaka dina gamla meddelanden och filer. De visas bara en gång, och ingen kan hitta dem åt dig, inte ens vi.",
+  "strongThisMakesANew": "<strong>Detta skapar en ny nyckel.</strong> De 24 orden nedan är dess säkerhetskopia. Inget ändras förrän du har sparat orden.",
   "yourRecoveryWords": "Dina 24 räddningsord",
   "copied": "Kopierat",
   "copyTheWords": "Kopiera orden",

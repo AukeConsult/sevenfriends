@@ -27,6 +27,8 @@ const circleOf = (data: DocumentData): string => String(data['circleId'] ?? 'def
 
 /** How long to wait before a broken live listener is started again. */
 const RETRY_MS = 5000;
+/** coming back to the app more often than this does not make the listeners again */
+const RESTART_MS = 5000;
 
 /**
  * The ONE place that listens for live changes (Firestore realtime listeners, `onSnapshot`) under the
@@ -84,6 +86,8 @@ export class RealtimeService {
       const uid = this.auth.user()?.uid ?? null;
       untracked(() => void this.follow(uid));
     });
+    document.addEventListener('visibilitychange', () => document.visibilityState === 'visible' && this.catchUp());
+    window.addEventListener('sf-resume', () => this.catchUp()); // the Android WebView may not send visibilitychange
     // another circle: the listeners go on (they hear every circle), what belongs to the old circle's open page is let go, and the new circle is looked at at once
     this.active.onSwitch(() => {
       this.openFeed.set(null);
@@ -92,11 +96,28 @@ export class RealtimeService {
     });
   }
 
-  private async follow(uid: string | null): Promise<void> {
+  /**
+   * Back in the app after being away (the tab shown again, or the Android app in front): the listeners are made again (new queries), because a listener that
+   * slept in the background may be stale or half-dead. The first snapshot of a new listener is "what was already there": it is shown silently (no sound, no
+   * desktop notice) and the ordinary search runs, so what waited meanwhile is on Home and in the title count. It never overlaps: `follow` stops the old
+   * listeners first and a start that is overtaken gives up (`run`), and a second call within `RESTART_MS` is ignored.
+   */
+  private restartedAt = 0;
+  private catchUp(): void {
+    const uid = this.auth.user()?.uid;
+    if (!uid || Date.now() - this.restartedAt < RESTART_MS) return;
+    this.restartedAt = Date.now();
+    void this.follow(uid, true);
+  }
+
+  /** `keepState`: a restart for the same person; what was seen is kept, so the new listeners tell only what is new compared with it. */
+  private async follow(uid: string | null, keepState = false): Promise<void> {
     this.stopAll();
     const run = ++this.run;
-    this.seen.clear();
-    this.messagesChangedAt.clear();
+    if (!keepState) {
+      this.seen.clear();
+      this.messagesChangedAt.clear();
+    }
     if (!uid) {
       this.activity.clearAll();
       this.recovery.clear();
@@ -355,6 +376,13 @@ export class RealtimeService {
       !first,
     );
     const added = all.filter((m) => circleOf(m.data) === this.active.id);
+    if (first && this.openFeed()) {
+      // a restart of the listeners while a conversation is open: what came meanwhile for that feed is shown there (silently)
+      for (const m of added) {
+        const connectionId = m.data['connectionId'] as string | undefined;
+        if (connectionId && connectionId === this.openFeed()) this.latestMessage.set({ connectionId, messageId: m.id, seq: ++this.seq });
+      }
+    }
     if (!first) {
       // tell the open feed (the Chat page checks that the message is for its connection)
       for (const m of added) {

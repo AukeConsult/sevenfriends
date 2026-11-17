@@ -1,5 +1,6 @@
 {
   "strongSaveTheseWords": "<strong>请把这 24 个救援词写在纸上并妥善保管。</strong>如果你丢了这部手机或电脑，它们能找回你的旧消息和文件。它们只显示一次，没有人能替你找回，我们也不能。",
+  "strongThisMakesANew": "<strong>这会生成一个新密钥。</strong>下面的24个词是它的备份。在你保存这些词之前，什么都不会改变。",
   "yourRecoveryWords": "你的 24 个救援词",
   "copied": "已复制",
   "copyTheWords": "复制这些单词",

@@ -236,6 +236,15 @@ keysRouter.post(
       res.status(404).json({ error: "Key not found" });
       return;
     }
+    // a device that is not approved yet may not remove the others, as long as one device IS approved (that one can). With none approved, nobody else could clean up, so it is allowed.
+    const by = (req.body ?? {}).by;
+    if (typeof by === "string") {
+      const { keys } = await myKeysOf(uidOf(res));
+      if (keys.find((k) => k.id === by)?.waiting && keys.some((k) => !k.waiting)) {
+        res.status(403).json({ error: "This device is not approved yet. Remove devices from one that is approved." });
+        return;
+      }
+    }
     await ref.delete();
     await removeTraces(uidOf(res), req.params.id);
     res.json({ ok: true });

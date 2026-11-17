@@ -1,5 +1,6 @@
 {
   "strongSaveTheseWords": "<strong>Kirjoita nämä 24 pelastussanaa paperille ja säilytä ne turvassa.</strong> Jos menetät tämän puhelimen tai tietokoneen, ne tuovat vanhat viestisi ja tiedostosi takaisin. Ne näytetään vain kerran, eikä kukaan voi löytää niitä puolestasi, emme edes me.",
+  "strongThisMakesANew": "<strong>Tämä luo uuden avaimen.</strong> Alla olevat 24 sanaa ovat sen varmuuskopio. Mikään ei muutu, ennen kuin olet tallentanut sanat.",
   "yourRecoveryWords": "24 pelastussanaasi",
   "copied": "Kopioitu",
   "copyTheWords": "Kopioi sanat",
