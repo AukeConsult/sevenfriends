@@ -4,6 +4,7 @@
   "google": "使用 Google 继续",
   "googleHint": "有 Gmail 或 Google 账号吗？使用下方的 Google 按钮，无需设置密码。",
   "emailLink": "给我发一个登录链接",
+  "phone": "使用手机号继续",
   "orPassword": "或使用密码",
   "createTitle": "创建你的账号",
   "namePlaceholder": "你的姓名（选填）",

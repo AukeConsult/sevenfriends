@@ -1,6 +1,5 @@
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { tr } from '../core/i18n';
-import { ActiveCircleService } from '../core/active-circle.service';
 import { Component, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { authMessage } from '../core/auth-errors';
@@ -8,7 +7,7 @@ import { AuthService } from '../core/auth.service';
 import { PhoneStep } from '../models/view';
 import { PageBar } from '../page-bar/page-bar';
 
-/** Phone number + SMS code. Used to sign in ('login') and to verify the phone of a signed-in account ('link'). */
+/** Phone number + SMS code, to sign in. (Verifying the phone of a signed-in account is done on the Profile page.) A code that was sent and not entered yet comes back after a reload. */
 @Component({
   selector: 'app-phone-auth',
   imports: [PageBar, TranslocoDirective],
@@ -16,18 +15,16 @@ import { PageBar } from '../page-bar/page-bar';
   providers: [provideTranslocoScope('phoneAuth')],
 })
 export class PhoneAuth {
-  protected readonly w = inject(ActiveCircleService).words;
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute).snapshot;
-  protected readonly linking = this.route.data['mode'] === 'link';
-  protected readonly backLink = this.linking ? '/settings/profile' : '/login';
 
   private readonly recaptcha = viewChild.required<ElementRef<HTMLElement>>('recaptcha');
 
-  protected readonly step = signal<PhoneStep>('number');
-  /** the number typed on the Profile page comes along as ?phone= */
-  protected readonly phone = signal(this.route.queryParamMap.get('phone') ?? '');
+  private readonly pending = this.auth.pendingPhone();
+  private readonly resume = this.pending && !this.pending.linking ? this.pending : null;
+  protected readonly step = signal<PhoneStep>(this.resume ? 'code' : 'number');
+  protected readonly phone = signal(this.resume?.phone ?? this.route.queryParamMap.get('phone') ?? '');
   protected readonly code = signal('');
   protected readonly busy = signal(false);
   protected readonly error = signal<string | null>(null);
@@ -48,7 +45,7 @@ export class PhoneAuth {
     this.busy.set(true);
     this.error.set(null);
     try {
-      await this.auth.sendPhoneCode(phone, this.recaptcha().nativeElement, this.linking);
+      await this.auth.sendPhoneCode(phone, this.recaptcha().nativeElement);
       this.phone.set(phone);
       this.step.set('code');
     } catch (err) {
@@ -67,8 +64,8 @@ export class PhoneAuth {
     this.busy.set(true);
     this.error.set(null);
     try {
-      await this.auth.confirmPhoneCode(code, this.linking);
-      await this.router.navigateByUrl(this.linking ? '/settings/profile' : this.auth.landingPath());
+      await this.auth.confirmPhoneCode(code);
+      await this.router.navigateByUrl(this.auth.landingPath());
     } catch (err) {
       this.error.set(authMessage(err, tr('phoneAuth.thatCodeDidNot', 'That code did not work. Please try again.')));
     } finally {
@@ -77,6 +74,7 @@ export class PhoneAuth {
   }
 
   protected changeNumber(): void {
+    this.auth.cancelPhoneCode();
     this.step.set('number');
     this.code.set('');
     this.error.set(null);

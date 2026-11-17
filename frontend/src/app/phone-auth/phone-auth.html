@@ -1,10 +1,10 @@
 <ng-container *transloco="let t">
-<app-page-bar [title]="linking ? (t('phoneAuth.verifyYourPhone') || 'Verify your phone') : (t('phoneAuth.signInWithPhone') || 'Sign in with phone')" [backTo]="backLink" />
+<app-page-bar [title]="t('phoneAuth.signInWithPhone') || 'Sign in with phone'" backTo="/login" />
 
 <main class="sf-narrow">
   @if (step() === 'number') {
     <p class="text-secondary m-0">
-      {{ linking ? (t('phoneAuth.weSendACodeLinking', { many: w.many }) || 'We send a code by text message. Once verified, ' + w.many + ' who add your number can find you.') : (t('phoneAuth.weSendACodeNoPassword') || 'We send a code by text message. No password needed.') }}
+      {{ t('phoneAuth.weSendACodeNoPassword') || 'We send a code by text message. No password needed.' }}
       {{ t('phoneAuth.standardMessageRatesFrom') || 'Standard message rates from your phone company may apply.' }}
     </p>
     <form class="vstack gap-2" (submit)="$event.preventDefault(); sendCode()">

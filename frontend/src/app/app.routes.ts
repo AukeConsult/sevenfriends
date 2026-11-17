@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { features } from '../environments/features';
 import { authGuard, guestGuard } from './core/auth.guard';
 import { AddFriend } from './add-friend/add-friend';
 import { InviteFriend } from './invite-friend/invite-friend';
@@ -142,10 +143,9 @@ export const routes: Routes = [
   { path: 'welcome', component: Welcome, title: 'Welcome – Seven Friends' },
   { path: 'login', component: Login, canActivate: [guestGuard], title: 'Sign in – Seven Friends' },
   { path: 'login/email', component: LoginEmail, canActivate: [guestGuard], title: 'Email link – Seven Friends' },
-  { path: 'login/phone', component: PhoneAuth, canActivate: [guestGuard], data: { mode: 'login' }, title: 'Phone sign-in – Seven Friends' },
+  ...(features.phoneAuth ? [{ path: 'login/phone', component: PhoneAuth, canActivate: [guestGuard], data: { mode: 'login' }, title: 'Phone sign-in – Seven Friends' }] : []), // PHONE_AUTH in .env
   { path: 'auth/action', component: AuthAction, title: 'Confirming your email – Seven Friends' },
   { path: 'login/link', component: LoginLink, title: 'Signing in – Seven Friends' },
-  { path: 'verify-phone', component: PhoneAuth, canActivate: [authGuard], data: { mode: 'link' }, title: 'Verify phone – Seven Friends' },
   { path: 'delete-account', component: DeleteAccount, canActivate: [authGuard], title: 'Delete my account – Seven Friends' },
   { path: '**', redirectTo: '' },
 ];

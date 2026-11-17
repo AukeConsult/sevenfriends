@@ -1461,6 +1461,8 @@ html[dir='rtl'] {
 }
 // A group that is always written left-to-right (the country code, then the number) inside a right-to-left page.
 html[dir='rtl'] .sf-ltr-group { direction: ltr; > input { text-align: start; } }
+// the labels next to the phone number (+47, Verified, Not verified) sit exactly in the middle of the field's height
+.sf-ltr-group > .input-group-text { display: flex; align-items: center; justify-content: center; line-height: 1; padding-block: 0; }
 
 // Pressing and holding a picture (a friend on the Home page, a card on the Friends page) must move it, not open the browser's own menu
 // ("Open image in new tab", "Download image", ...) which also cancels the move on Android: the pictures there take no touch of their own,

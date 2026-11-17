@@ -116,10 +116,10 @@ profileRouter.put(
       return;
     }
 
-    // he or she (what friends read in a sentence about me); left out = unchanged, null = not chosen
+    // he, she or they (what friends read in a sentence about me); left out = unchanged, null = not chosen
     const pronounGiven = "pronoun" in body;
     if (pronounGiven && body.pronoun !== null && !pronounKey(body.pronoun)) {
-      res.status(400).json({ error: "The pronoun must be he or she" });
+      res.status(400).json({ error: "The pronoun must be he, she or they" });
       return;
     }
 

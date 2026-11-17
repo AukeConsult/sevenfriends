@@ -2,15 +2,18 @@ import { rememberAccount } from './account-registry';
 import { Injectable, Injector, inject, signal } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import {
-  ConfirmationResult,
+  AuthCredential,
+  PhoneAuthProvider,
   applyActionCode,
+  linkWithCredential,
+  linkWithPopup,
+  verifyBeforeUpdateEmail,
   checkActionCode,
   GoogleAuthProvider,
   RecaptchaVerifier,
   User,
   createUserWithEmailAndPassword,
   isSignInWithEmailLink,
-  linkWithPhoneNumber,
   onAuthStateChanged,
   sendEmailVerification,
   sendPasswordResetEmail,
@@ -18,7 +21,6 @@ import {
   signInWithEmailAndPassword,
   signInWithCredential,
   signInWithEmailLink,
-  signInWithPhoneNumber,
   signInWithPopup,
   signOut,
   updateProfile,
@@ -31,6 +33,9 @@ import { tr } from './i18n';
 
 /** Where the email is kept between asking for a sign-in link and opening it (same device). */
 const EMAIL_KEY = 'sf-email-for-sign-in';
+/** the SMS code that was sent from this tab and not entered yet (see AuthService.pendingPhone), and how long it is kept */
+const PENDING_PHONE_KEY = 'sf-pending-phone';
+const PENDING_PHONE_MS = 10 * 60 * 1000;
 /** who signed in last on this browser (an id, nothing else) */
 export const LAST_UID_KEY = 'sf-last-uid';
 /** the small things kept in this browser about the person using it (see clearLocalSession) */
@@ -47,7 +52,6 @@ export class AuthService {
    */
   readonly accountVersion = signal(0);
 
-  private confirmation: ConfirmationResult | null = null;
   private verifier: RecaptchaVerifier | null = null;
 
   /** Why the person was signed out against their will (shown on the login page); null when they were not. */
@@ -79,12 +83,44 @@ export class AuthService {
    * Google token it returns signs the web session in (capacitor.config.json: skipNativeAuth, so only the web SDK holds the login).
    */
   private async signInWithGoogleNative(): Promise<void> {
+    const { user } = await signInWithCredential(auth, await this.nativeGoogleCredential());
+    await this.finishLogin(user);
+  }
+
+  private async nativeGoogleCredential(): Promise<AuthCredential> {
     const { FirebaseAuthentication } = await import('@capacitor-firebase/authentication');
     const result = await FirebaseAuthentication.signInWithGoogle();
     const idToken = result.credential?.idToken;
     if (!idToken) throw new Error(tr('core.googleDidNotGive', 'Google did not give a sign-in token.'));
-    const { user } = await signInWithCredential(auth, GoogleAuthProvider.credential(idToken, result.credential?.accessToken));
-    await this.finishLogin(user);
+    return GoogleAuthProvider.credential(idToken, result.credential?.accessToken);
+  }
+
+  /**
+   * Adds Google to the account that is signed in now (for example one made with a phone number), so both logins reach the same account.
+   * Throws `auth/credential-already-in-use` when that Google account already has an account of its own: two accounts are never merged.
+   */
+  async linkGoogle(): Promise<void> {
+    const user = auth.currentUser;
+    if (!user) throw new Error(tr('core.notSignedIn', 'You are not signed in.'));
+    if (Capacitor.isNativePlatform()) await linkWithCredential(user, await this.nativeGoogleCredential());
+    else {
+      const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: 'select_account' });
+      await linkWithPopup(user, provider);
+    }
+    await this.refreshAccount();
+    this.user.set(null); // a new object, so the pages that show the email update
+    this.user.set(auth.currentUser);
+  }
+
+  /**
+   * Adds an email address to an account that has none (made with a phone number): Firebase emails a link to the address, and the address
+   * becomes the account's email, verified, when the link is opened (`/auth/action`).
+   */
+  async addEmail(email: string): Promise<void> {
+    const user = auth.currentUser;
+    if (!user) throw new Error(tr('core.notSignedIn', 'You are not signed in.'));
+    await verifyBeforeUpdateEmail(user, email, { url: `${location.origin}/settings/profile`, handleCodeInApp: false });
   }
 
   async signInWithEmail(email: string, password: string): Promise<void> {
@@ -152,29 +188,72 @@ export class AuthService {
   /**
    * Step 1: send an SMS code. `container` is the element the invisible reCAPTCHA check lives in.
    * `linking` = the user is already signed in and only wants to verify a phone number.
+   * The id of the code that was sent is kept in this tab (sessionStorage), so a page that reloads while the person waits for the text message
+   * can show the code field again (see pendingPhone).
    */
   async sendPhoneCode(phone: string, container: HTMLElement, linking = false): Promise<void> {
     this.clearVerifier();
     this.verifier = new RecaptchaVerifier(auth, container, { size: 'invisible' });
     try {
-      this.confirmation =
-        linking && auth.currentUser
-          ? await linkWithPhoneNumber(auth.currentUser, phone, this.verifier)
-          : await signInWithPhoneNumber(auth, phone, this.verifier);
+      const id = await new PhoneAuthProvider(auth).verifyPhoneNumber(phone, this.verifier);
+      try {
+        sessionStorage.setItem(PENDING_PHONE_KEY, JSON.stringify({ id, phone, linking, at: Date.now() }));
+      } catch {
+        /* no storage: the code still works until the page is reloaded */
+      }
+      this.pendingId = id;
     } catch (err) {
       this.clearVerifier();
       throw err;
     }
   }
 
+  private pendingId: string | null = null;
+
+  /** The code that was sent to this tab and not entered yet (also after a reload): the number and what it is for; null when there is none or it is too old. */
+  pendingPhone(): { phone: string; linking: boolean } | null {
+    try {
+      const raw = sessionStorage.getItem(PENDING_PHONE_KEY);
+      if (!raw) return null;
+      const p = JSON.parse(raw) as { id?: string; phone?: string; linking?: boolean; at?: number };
+      if (!p.id || !p.phone || typeof p.at !== 'number' || Date.now() - p.at > PENDING_PHONE_MS) {
+        this.cancelPhoneCode();
+        return null;
+      }
+      this.pendingId = p.id;
+      return { phone: p.phone, linking: p.linking === true };
+    } catch {
+      return null;
+    }
+  }
+
+  /** Forgets the code that waits to be entered (change the number, or give up). */
+  cancelPhoneCode(): void {
+    this.pendingId = null;
+    this.clearVerifier();
+    try {
+      sessionStorage.removeItem(PENDING_PHONE_KEY);
+    } catch {
+      /* no storage */
+    }
+  }
+
   /** Step 2: the code from the SMS. Signs in, or (linking) adds the verified number to this account. */
   async confirmPhoneCode(code: string, linking = false): Promise<void> {
-    if (!this.confirmation) throw new Error(tr('core.askForANew', 'Ask for a new code first.'));
-    const { user } = await this.confirmation.confirm(code);
-    this.confirmation = null;
-    this.clearVerifier();
-    if (linking) await this.refreshAccount();
-    else await this.finishLogin(user);
+    if (!this.pendingId) this.pendingPhone(); // after a reload the id is in the session storage
+    if (!this.pendingId) throw new Error(tr('core.askForANew', 'Ask for a new code first.'));
+    const credential = PhoneAuthProvider.credential(this.pendingId, code);
+    if (linking) {
+      const user = auth.currentUser;
+      if (!user) throw new Error(tr('core.notSignedIn', 'You are not signed in.'));
+      await linkWithCredential(user, credential);
+      this.cancelPhoneCode();
+      await this.refreshAccount();
+    } else {
+      const { user } = await signInWithCredential(auth, credential);
+      this.cancelPhoneCode();
+      await this.finishLogin(user);
+    }
   }
 
   private clearVerifier(): void {

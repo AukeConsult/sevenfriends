@@ -27,9 +27,9 @@
         </svg>
         <span>{{ t('login.google') || 'Continue with Google' }}</span>
       </button>
-      <!-- TODO: bring back when SMS verification is ready
-      <a routerLink="/login/phone" class="btn btn-outline-secondary w-100">Continue with phone</a>
-      -->
+      @if (phoneAuth) {
+        <a routerLink="/login/phone" class="btn btn-outline-secondary w-100">{{ t('login.phone') || 'Continue with phone' }}</a>
+      }
       <a routerLink="/login/email" class="btn btn-outline-secondary w-100">{{ t('login.emailLink') || 'Email me a sign-in link' }}</a>
     </div>
 

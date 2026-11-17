@@ -1,12 +1,13 @@
+import { features } from '../../environments/features';
 import { ActiveCircleService } from '../core/active-circle.service';
-import { Component, DestroyRef, computed, effect, inject, signal } from '@angular/core';
+import { Component, DestroyRef, ElementRef, computed, effect, inject, signal, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { tr } from '../core/i18n';
 import { LanguageService } from '../core/language.service';
 import { ApiService } from '../core/api.service';
-import { authMessage } from '../core/auth-errors';
+import { authMessage, wasCancelled } from '../core/auth-errors';
 import { AuthService } from '../core/auth.service';
 import { LiveChanges } from '../core/live-changes';
 import { PresenceService } from '../core/presence.service';
@@ -23,7 +24,7 @@ const RETRY_MS = 5000;
 @Component({
   selector: 'app-profile',
   imports: [RouterLink, TranslocoDirective],
-  providers: [provideTranslocoScope('profile')],
+  providers: [provideTranslocoScope('profile'), provideTranslocoScope('phoneAuth')],
   templateUrl: './profile.html',
 })
 export class Profile {
@@ -37,6 +38,14 @@ export class Profile {
   private readonly live = inject(LiveChanges);
 
   protected readonly user = this.auth.user;
+  /** PHONE_AUTH in .env: the Verify button for the phone number is only shown when SMS is on */
+  protected readonly phoneAuth = features.phoneAuth;
+  /** the SMS code: the number it was sent to while the code field is open (null = closed), what is typed, and what went wrong. It stays open after a reload (AuthService.pendingPhone). */
+  protected readonly smsTo = signal<string | null>(this.auth.pendingPhone()?.linking ? this.auth.pendingPhone()!.phone : null);
+  protected readonly smsCode = signal('');
+  protected readonly smsBusy = signal(false);
+  protected readonly smsError = signal<string | null>(null);
+  private readonly recaptcha = viewChild<ElementRef<HTMLElement>>('recaptcha');
 
 
   protected readonly form = signal<ProfileDraft>({ name: '', phone: '', country: '', language: '', pronoun: '', visibility: 'searchable' });
@@ -80,6 +89,11 @@ export class Profile {
   /** from the server (the login token), so it always agrees with what friends can find */
   protected readonly emailVerified = signal(false);
   protected readonly verificationSent = signal(false);
+  /** an account without an email (made with a phone number) can add one: the address typed, whether the link was sent, and what went wrong */
+  protected readonly newEmail = signal('');
+  protected readonly newEmailSent = signal(false);
+  protected readonly newEmailBusy = signal(false);
+  protected readonly newEmailError = signal<string | null>(null);
   /** true while I ask Firebase whether the email is verified now, and after an answer of 'not yet' */
   protected readonly checking = signal(false);
   protected readonly notYet = signal(false);
@@ -200,10 +214,85 @@ export class Profile {
     if (!languagesFor(country).some((l) => l.code === this.form().language)) this.setField('language', '');
   }
 
+  /** Sends the code by text message and opens the code field right here, under the number. */
   protected async verifyPhone(): Promise<void> {
     await this.flush();
     if (this.state() === 'error') return; // the number was refused: the message is shown here
-    await this.router.navigate(['/verify-phone'], { queryParams: { phone: this.fullPhone() } });
+    const phone = this.fullPhone().replace(/[\s\-().]/g, '');
+    const box = this.recaptcha();
+    if (!box) return;
+    this.smsBusy.set(true);
+    this.smsError.set(null);
+    try {
+      await this.auth.sendPhoneCode(phone, box.nativeElement, true);
+      this.smsCode.set('');
+      this.smsTo.set(phone);
+    } catch (err) {
+      this.smsError.set(authMessage(err, tr('phoneAuth.couldNotSendThe', 'Could not send the code. Please try again.')));
+    } finally {
+      this.smsBusy.set(false);
+    }
+  }
+
+  protected async confirmPhone(): Promise<void> {
+    const code = this.smsCode().trim();
+    if (!code) {
+      this.smsError.set(tr('phoneAuth.writeTheCodeFrom', 'Write the code from the text message.'));
+      return;
+    }
+    this.smsBusy.set(true);
+    this.smsError.set(null);
+    try {
+      await this.auth.confirmPhoneCode(code, true); // the account version changes: the page loads again and shows the number as verified
+      this.smsTo.set(null);
+    } catch (err) {
+      this.smsError.set(authMessage(err, tr('phoneAuth.thatCodeDidNot', 'That code did not work. Please try again.')));
+    } finally {
+      this.smsBusy.set(false);
+    }
+  }
+
+  protected cancelPhoneCode(): void {
+    this.auth.cancelPhoneCode();
+    this.smsTo.set(null);
+    this.smsCode.set('');
+    this.smsError.set(null);
+  }
+
+  protected async addEmail(): Promise<void> {
+    const email = this.newEmail().trim();
+    if (!email) {
+      this.newEmailError.set(tr('profile.addEmailEmpty', 'Write the email address first.'));
+      return;
+    }
+    this.newEmailBusy.set(true);
+    this.newEmailError.set(null);
+    try {
+      await this.auth.addEmail(email);
+      this.newEmailSent.set(true);
+    } catch (err) {
+      this.newEmailError.set(authMessage(err, tr('profile.addEmailFailed', 'Could not send the email. Please try again.')));
+    } finally {
+      this.newEmailBusy.set(false);
+    }
+  }
+
+  protected async linkGoogle(): Promise<void> {
+    this.newEmailBusy.set(true);
+    this.newEmailError.set(null);
+    try {
+      await this.auth.linkGoogle();
+    } catch (err) {
+      if (wasCancelled(err)) return;
+      const inUse = (err as { code?: string } | null)?.code === 'auth/credential-already-in-use';
+      this.newEmailError.set(
+        inUse
+          ? tr('profile.googleInUse', 'That Google account already has its own account here. Sign in with it to use it, or choose another Google account.')
+          : authMessage(err, tr('profile.googleFailed', 'Could not add Google. Please try again.')),
+      );
+    } finally {
+      this.newEmailBusy.set(false);
+    }
   }
 
   protected async sendVerificationEmail(): Promise<void> {

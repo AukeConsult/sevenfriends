@@ -32,3 +32,6 @@ client-wrappers/ios/App/App/GoogleService-Info.plist
 *.p8
 *.p12
 *.mobileprovision
+
+# generated from PHONE_AUTH in .env (scripts/sync-features.mjs)
+frontend/src/environments/features.ts

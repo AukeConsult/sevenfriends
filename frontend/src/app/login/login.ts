@@ -1,3 +1,4 @@
+import { features } from '../../environments/features';
 import { ActiveCircleService } from '../core/active-circle.service';
 import { Clearable } from '../core/clearable';
 import { Hero } from '../hero/hero';
@@ -19,6 +20,8 @@ import { BrowserRuleService } from '../core/browser-rule.service';
   templateUrl: './login.html',
 })
 export class Login {
+  /** PHONE_AUTH in .env: the "Continue with phone" button is only shown when SMS sign-in is on */
+  protected readonly phoneAuth = features.phoneAuth;
   protected readonly w = inject(ActiveCircleService).words;
   /** a friend link was opened: what it is about (shown above the sign-in buttons) */
   private readonly friendLinks = inject(FriendLinkService);

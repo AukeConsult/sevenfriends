@@ -2,9 +2,9 @@ import type { ProfileColorKey } from "./profile-color";
 
 /**
  * How friends refer to a person in a sentence about them ("Has you on his sleep list"): chosen on the profile, shown to confirmed friends.
- * Not chosen (null) is the neutral "their".
+ * "they" is the neutral choice; not chosen (null) is left out of the sentence ("Has you on sleep list").
  */
-export const PRONOUNS = ["he", "she"] as const;
+export const PRONOUNS = ["he", "she", "they"] as const;
 export type Pronoun = (typeof PRONOUNS)[number];
 
 /** The stored value when it is one of PRONOUNS, otherwise null (not chosen). */

@@ -29,7 +29,7 @@ export class AuthAction {
   constructor() {
     const mode = this.query.get('mode');
     const code = this.query.get('oobCode');
-    if (mode !== 'verifyEmail') {
+    if (mode !== 'verifyEmail' && mode !== 'verifyAndChangeEmail') {
       this.state.set('other');
       return;
     }
