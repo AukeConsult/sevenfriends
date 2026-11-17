@@ -9,9 +9,9 @@ Status words: **built** = in the code today, **planned** = agreed but not built,
 | Environment | What runs | Where it keeps its data |
 |---|---|---|
 | Browser tab (any device) | the website | the browser's storage for the site |
-| Android app (`android/`, Capacitor) | the website in a WebView, plus native push | its own storage, **not** the browser's |
+| Android app (`client-wrappers/android/`, Capacitor) | the website in a WebView, plus native push | its own storage, **not** the browser's |
 | iPhone / iPad home-screen app | the website as a web app | its own storage (separate from Safari) |
-| Windows app (`windows/`, WPF + WebView2) | the website in WebView2 | `%LOCALAPPDATA%\SevenFriends` |
+| Windows app (`client-wrappers/windows/`, WPF + WebView2) | the website in WebView2 | `%LOCALAPPDATA%\SevenFriends` |
 | Installed web app on a computer (Chrome/Edge) | the website in its own window | the browser profile |
 
 All of them show the **same web app** from https://sevenfriends.io. A new deploy of the
@@ -41,8 +41,8 @@ the mail opens the browser, so the person ends up signed in in the browser, not 
 | Mac / Linux / other | the browser's own "install" (icon in the address bar), optional | built (steps) |
 
 How the files get to the website: `frontend/public/downloads/` (git-ignored) is published by `npm run deploy:hosting`. Windows: `npm run windows:release` copies the
-installer. Android: the Gradle tasks `publishApk` / `deployApp` in `android/app/publish.gradle`. The Install page (`/install-app`, public) and the sign-in page
-link show a download button **only when the file is there** (a HEAD request that is not answered with html). Details: `windows/README.md`, `android/README.md`.
+installer. Android: the Gradle tasks `publishApk` / `deployApp` in `client-wrappers/android/app/publish.gradle`. The Install page (`/install-app`, public) and the sign-in page
+link show a download button **only when the file is there** (a HEAD request that is not answered with html). Details: `client-wrappers/windows/README.md`, `client-wrappers/android/README.md`.
 Without code signing: Windows SmartScreen warns on the first start; the Android file is debug-signed (fine by hand, not for Google Play).
 
 ## 4. Invitations today (built)
@@ -92,6 +92,6 @@ The welcome pages (`/welcome` and the 12 circle pages `friends1-3`, `buddy1-3`, 
 - Google sign-in in the Android and Windows apps: not solved (a native Google sign-in for Android is the proper fix; for now password, phone or email link).
 - The email link opens the browser, not the app: for app users an SMS code or a password is the smoother way. Deep-link support (strategy C) would let the email link open the Android app too.
 - The invitation is a device note until confirmed (section 4). If it should survive without the person signing in first, it would have to be stored on the server by a code (strategy D), which is a bigger change.
-- Push when an app is not running: Android works (FCM + channels); Windows needs WNS (see `windows/README.md`); iPhone needs the home-screen app (iOS 16.4+).
+- Push when an app is not running: Android works (FCM + channels); Windows needs WNS (see `client-wrappers/windows/README.md`); iPhone needs the home-screen app (iOS 16.4+).
 - **Todo: a QR code and "send by SMS" on the invite page.** A link sent as an SMS or iMessage, or scanned from a QR code with the camera, opens in the real browser (Safari / Chrome), never in the built-in browser of a chat app. That fixes the problem where the invitation starts. The page that stops the wrong browser (`in-app-notice/`, `requiredBrowser` in `core/in-app-browser.ts`) stays as the safety net.
 - **Todo: Android, try Chrome by itself.** The page for the wrong browser could first try Chrome's own address form (`intent://<host>/<path>#Intent;scheme=https;package=com.android.chrome;end`) when it opens, before it shows the copy steps. It works from many built-in browsers on Android, not all, so the copy steps stay. (There is no such address that works for Safari on an iPhone: only a real iPhone app, with universal links, would open from Messenger without the copy step.)

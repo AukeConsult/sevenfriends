@@ -122,8 +122,8 @@ The full list of routes and the design rules for the pages are in [`CLAUDE.md`](
 | `frontend/` | Angular 20 (standalone components, signals), Bootstrap 5 + SCSS, Capacitor 8 for Android and iPhone |
 | `functions/` | Node.js 22 + TypeScript, Express, deployed as the Firebase Cloud Function `api` (`/api/**`, region `europe-west1`) |
 | Firebase | Authentication, Firestore, Storage, Hosting, Cloud Messaging |
-| `android/`, `ios/` | Capacitor wrappers around the live web app |
-| `windows/` | .NET 8 WPF app with a WebView2 window, plus an Inno Setup installer |
+| `client-wrappers/android/`, `client-wrappers/ios/` | Capacitor wrappers around the live web app |
+| `client-wrappers/windows/` | .NET 8 WPF app with a WebView2 window, plus an Inno Setup installer |
 | `scripts/` | Build helpers (shared models, sounds list, Android and iPhone config, release publishing) |
 | `docs/` | The project guide and design notes |
 
@@ -176,7 +176,7 @@ The backend settings (email texts, `APP_URL`, limits) are listed in `functions/.
 - **iPhone**: `npm run ios:config`, `npm run ios:sync`, `npm run ios:open` (macOS and Xcode only).
 - **Windows**: `npm run windows:run` to try it, `npm run windows:release` to build, pack the installer, copy it to the website downloads and deploy the hosting in one go (`-- --no-deploy` skips the deploy; .NET 8 SDK and Inno Setup 6).
 
-More in [`docs/guide/apps-and-login.md`](docs/guide/apps-and-login.md), `ios/README.md` and `windows/README.md`.
+More in [`docs/guide/apps-and-login.md`](docs/guide/apps-and-login.md), `client-wrappers/ios/README.md` and `client-wrappers/windows/README.md`.
 
 ## Documentation map
 
@@ -228,7 +228,7 @@ Ideas, bug reports and pull requests are welcome. Read [`CONTRIBUTING.md`](CONTR
 The names **Seven Friends**, **Seven Buddies**, **Seven Work** and **Seven Family**, the domain names, the logos (including the "7" mark), the look of the apps and welcome pages, and the profiles and identity of the circles are trademarks and brand assets of Blueboot R&D AS. They are **not** covered by the software license, and they may **not** be used freely for other installations, forks or services.
 
 - The software license (below) gives you the right to use, study, change and share the **source code** for non-commercial purposes. It gives no right to the names, logos or brand, and no right to present your installation as the official one or as a service of Blueboot R&D AS.
-- If you run your own installation or publish a fork, give it **your own name, logo and look**, and remove ours (see `frontend/public/`, the welcome pages, the app names in `android/`, `ios/` and `windows/`, and the texts in `frontend/public/i18n/`).
+- If you run your own installation or publish a fork, give it **your own name, logo and look**, and remove ours (see `frontend/public/`, the welcome pages, the app names in `client-wrappers/android/`, `client-wrappers/ios/` and `client-wrappers/windows/`, and the texts in `frontend/public/i18n/`).
 - The idea of the product, a small, calm app built around seven seats and its circles, is the work of Blueboot R&D AS and is not offered for free reuse under the Seven names.
 - For commercial use of the software, for permission to use the name, or to run an official or branded installation, write to [hey@blueboot.ai](mailto:hey@blueboot.ai).
 

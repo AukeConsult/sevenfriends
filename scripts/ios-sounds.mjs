@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Makes the jingles of the iPhone app: ios/App/App/<key>.caf from android/app/src/main/res/raw/<key>.mp3 (the same key as the Android channel).
+ * Makes the jingles of the iPhone app: client-wrappers/ios/App/App/<key>.caf from client-wrappers/android/app/src/main/res/raw/<key>.mp3 (the same key as the Android channel).
  * iPhone plays a push sound only from a file in the app (aiff, wav or caf, at most 30 seconds), so this needs macOS (`afconvert`).
  * Run it once after a jingle is added or changed, commit the .caf files, and add a new one to the App target in Xcode.
  *
@@ -12,8 +12,8 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-const raw = join(root, 'android', 'app', 'src', 'main', 'res', 'raw');
-const out = join(root, 'ios', 'App', 'App');
+const raw = join(root, 'client-wrappers', 'android', 'app', 'src', 'main', 'res', 'raw');
+const out = join(root, 'client-wrappers', 'ios', 'App', 'App');
 if (process.platform !== 'darwin') throw new Error('afconvert only exists on macOS: run this on the Mac');
 
 for (const file of readdirSync(raw).filter((f) => f.endsWith('.mp3'))) {

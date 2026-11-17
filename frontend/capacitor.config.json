@@ -3,7 +3,7 @@
   "appName": "Seven Friends",
   "webDir": "dist/frontend/browser",
   "android": {
-    "path": "../android"
+    "path": "../client-wrappers/android"
   },
   "server": {
     "url": "https://sevenfriends.io",
@@ -16,6 +16,6 @@
     }
   },
   "ios": {
-    "path": "../ios"
+    "path": "../client-wrappers/ios"
   }
 }

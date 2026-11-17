@@ -24,11 +24,11 @@ frontend/public/downloads/*.apk
 service-account*.json
 *-firebase-adminsdk-*.json
 # the Android build's Firebase file is made from the service account by scripts/android-config.mjs
-android/app/google-services.json
+client-wrappers/android/app/google-services.json
 *.keystore
 *.jks
 # the iPhone build's Firebase file (made by scripts/ios-config.mjs), Apple keys and profiles
-ios/App/App/GoogleService-Info.plist
+client-wrappers/ios/App/App/GoogleService-Info.plist
 *.p8
 *.p12
 *.mobileprovision

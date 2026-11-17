@@ -1,8 +1,8 @@
 // One command for the Windows app: build it, pack the installer, put the installer where the website serves it, and publish the website (hosting).
 //   npm run windows:release                    builds, packs, copies and deploys the hosting
 //   npm run windows:release -- --no-deploy     the same without the last step (deploy later with: npm run deploy:hosting)
-// 1. dotnet publish   -> windows/publish/SevenFriends.exe (self-contained, no .NET needed to run it)
-// 2. Inno Setup (ISCC) -> windows/installer/output/SevenFriendsSetup.exe
+// 1. dotnet publish   -> client-wrappers/windows/publish/SevenFriends.exe (self-contained, no .NET needed to run it)
+// 2. Inno Setup (ISCC) -> client-wrappers/windows/installer/output/SevenFriendsSetup.exe
 // 3. copy             -> frontend/public/downloads/SevenFriendsSetup.exe
 // 4. npm run deploy:hosting -> the website, with the new installer on the Install page (the installer is git-ignored: this has to run on THIS computer)
 // Needs on this computer: the .NET SDK 8 or newer, and Inno Setup 6 (https://jrsoftware.org/isdl.php; found in its usual folders, not only on the PATH).
@@ -12,8 +12,8 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const publishFolder = join(root, "windows", "publish");
-const installer = join(root, "windows", "installer", "output", "SevenFriendsSetup.exe");
+const publishFolder = join(root, "client-wrappers", "windows", "publish");
+const installer = join(root, "client-wrappers", "windows", "installer", "output", "SevenFriendsSetup.exe");
 const target = join(root, "frontend", "public", "downloads", "SevenFriendsSetup.exe");
 const deploy = !process.argv.includes("--no-deploy");
 
@@ -28,7 +28,7 @@ function run(title, program, args, options = {}) {
 }
 
 run("1/4 Build the app", "dotnet", [
-  "publish", join("windows", "SevenFriends.csproj"), "-c", "Release", "-r", "win-x64", "--self-contained", "true",
+  "publish", join("client-wrappers", "windows", "SevenFriends.csproj"), "-c", "Release", "-r", "win-x64", "--self-contained", "true",
   "-p:PublishSingleFile=true", "-p:IncludeNativeLibrariesForSelfExtract=true", "-o", publishFolder,
 ]);
 
@@ -38,7 +38,7 @@ if (!iscc) {
   console.error("\nInno Setup 6 was not found. Install it from https://jrsoftware.org/isdl.php and run this again.");
   process.exit(1);
 }
-run("2/4 Pack the installer", iscc, [join(root, "windows", "installer", "SevenFriends.iss")]);
+run("2/4 Pack the installer", iscc, [join(root, "client-wrappers", "windows", "installer", "SevenFriends.iss")]);
 
 console.log("\n== 3/4 Copy to the website downloads");
 mkdirSync(dirname(target), { recursive: true });

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Makes android/app/google-services.json (the file the Android build needs for push) from the service account key in .env.
+ * Makes client-wrappers/android/app/google-services.json (the file the Android build needs for push) from the service account key in .env.
  *
  *   npm run android:config
  *
@@ -14,7 +14,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-const OUTPUT = join(root, 'android', 'app', 'google-services.json');
+const OUTPUT = join(root, 'client-wrappers', 'android', 'app', 'google-services.json');
 const API = 'https://firebase.googleapis.com';
 
 /** KEY=value lines; a value may be in single or double quotes. */

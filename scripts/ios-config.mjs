@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Makes ios/App/App/GoogleService-Info.plist (the file the iPhone build needs for push) from the service account key in .env.
+ * Makes client-wrappers/ios/App/App/GoogleService-Info.plist (the file the iPhone build needs for push) from the service account key in .env.
  *
  *   npm run ios:config
  *
@@ -13,7 +13,7 @@ import { fileURLToPath } from 'node:url';
 import { accessToken, call, parseEnv } from './android-config.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-const OUTPUT = join(root, 'ios', 'App', 'App', 'GoogleService-Info.plist');
+const OUTPUT = join(root, 'client-wrappers', 'ios', 'App', 'App', 'GoogleService-Info.plist');
 
 export async function run(env, write = writeFileSync) {
   const projectId = env.FIREBASE_PROJECT_ID;

@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
  * Makes the sounds of the Android app match the one list of sounds (functions/src/models/shared/sounds.ts):
- * writes android/app/src/main/java/io/sevenfriends/app/SoundIds.java (generated, do not edit) and checks that every jingle
- * has its file android/app/src/main/res/raw/<androidKey>.mp3 (the channel plays it by that name).
+ * writes client-wrappers/android/app/src/main/java/io/sevenfriends/app/SoundIds.java (generated, do not edit) and checks that every jingle
+ * has its file client-wrappers/android/app/src/main/res/raw/<androidKey>.mp3 (the channel plays it by that name).
  *
  *   npm run sync:android-sounds        (also `npm run check:android-sounds`: fails when the Java file is out of date)
  */
@@ -12,8 +12,8 @@ import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const source = fs.readFileSync(path.join(root, "functions/src/models/shared/sounds.ts"), "utf8");
-const target = path.join(root, "android/app/src/main/java/io/sevenfriends/app/SoundIds.java");
-const raw = path.join(root, "android/app/src/main/res/raw");
+const target = path.join(root, "client-wrappers/android/app/src/main/java/io/sevenfriends/app/SoundIds.java");
+const raw = path.join(root, "client-wrappers/android/app/src/main/res/raw");
 
 const sounds = [...source.matchAll(/\{ id: "([^"]+)", kind: "(\w+)", androidKey: "(\w+)", label: "([^"]+)" \}/g)].map((m) => ({ id: m[1], kind: m[2], key: m[3], label: m[4] }));
 if (!sounds.length) throw new Error("no sounds found in sounds.ts");

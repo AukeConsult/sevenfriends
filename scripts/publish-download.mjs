@@ -13,7 +13,7 @@ if (!from || !name) {
 }
 const source = resolve(root, from);
 if (!existsSync(source)) {
-  console.error(`Not found: ${source}\nBuild it first (see windows/README.md or android/README.md).`);
+  console.error(`Not found: ${source}\nBuild it first (see client-wrappers/windows/README.md or client-wrappers/android/README.md).`);
   process.exit(1);
 }
 const target = resolve(root, "frontend/public/downloads", name);

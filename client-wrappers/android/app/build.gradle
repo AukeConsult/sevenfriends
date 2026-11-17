@@ -1,6 +1,6 @@
 apply plugin: 'com.android.application'
 
-// Release signing: the keystore and its passwords are NEVER in git. They come from android/local.properties (git-ignored) or from
+// Release signing: the keystore and its passwords are NEVER in git. They come from client-wrappers/android/local.properties (git-ignored) or from
 // environment variables of the same name, or from the project's .env, e.g. in local.properties:
 //   SF_KEYSTORE=C:/keys/sevenfriends.jks
 //   SF_KEYSTORE_PASSWORD=...
@@ -10,7 +10,7 @@ apply plugin: 'com.android.application'
 def signingProps = new Properties()
 rootProject.file('local.properties').withInputStream { signingProps.load(it) }
 // the project's .env (git-ignored) is read too, but only for the SF_ keys
-def envFile = rootProject.file('../.env')
+def envFile = rootProject.file('../../.env')
 if (envFile.exists()) {
     envFile.eachLine { line ->
         def m = line =~ /^\s*(SF_[A-Z_]+)\s*=\s*(.*?)\s*$/
