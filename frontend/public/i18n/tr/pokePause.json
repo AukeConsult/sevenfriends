@@ -1,0 +1,16 @@
+{
+  "pokesPaused": "Dürtmeler duraklatıldı",
+  "until": "{{ time }} saatine kadar",
+  "allCircles": "her yerde",
+  "pokesAreOn": "Dürtmeler açık",
+  "friendsCanRingYou": "Arkadaşların seni çaldırabilir",
+  "resume": "Devam et",
+  "pause": "Duraklat",
+  "pauseFor": "Dürtmeleri şu süre duraklat",
+  "oneHour": "1 saat",
+  "fourHours": "4 saat",
+  "untilMorning": "Sabaha kadar",
+  "twentyFourHours": "24 saat",
+  "explain": "Uygulamanın her yerinde geçerlidir. Mesajlar normal gelmeye devam eder ve arkadaşların Sessiz görür.",
+  "cancel": "İptal"
+}

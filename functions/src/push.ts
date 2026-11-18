@@ -119,8 +119,8 @@ const iosSoundOf = (channelId: string): string => {
   return SOUNDS.some((s) => s.kind === "jingle" && s.androidKey === key) ? `${key}.caf` : "default";
 };
 
-/** How long a poke waits for a phone that is off or offline: an alarm that rings an hour late is worse than none. */
-const POKE_TTL_SECONDS = 10 * 60;
+/** How many minutes a poke waits for a phone that is off or offline: the setting POKE_TTL_MINUTES (1 to 1440, default 180 = 3 hours). */
+export const pokeTtlMinutes = (): number => Math.min(1440, Math.max(1, Math.floor(Number(setting("POKE_TTL_MINUTES")) || 180)));
 
 /**
  * One FCM send to some devices; the devices FCM says are gone are removed. Returns how many were reached.
@@ -128,7 +128,7 @@ const POKE_TTL_SECONDS = 10 * 60;
  * (`PokeMessagingService`) and rings the alarm; the web and the iPhone get the normal push with the poke's text.
  */
 async function deliver(devices: Device[], message: { data: Record<string, string>; alarm?: boolean; android: { priority: "high"; notification: { channelId: string; title: string; body: string } } }): Promise<number> {
-  const ttl = message.alarm ? POKE_TTL_SECONDS : pushTtlSeconds();
+  const ttl = message.alarm ? pokeTtlMinutes() * 60 : pushTtlSeconds();
   const result = await getMessaging().sendEachForMulticast({
     tokens: devices.map((d) => d.token),
     // data only for the web: the app's service worker shows it (so it can use the event id and open the right page)

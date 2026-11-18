@@ -70,5 +70,10 @@
   "notificationsAreBlockedFor2": "Notifikasi diblokir untuk situs ini. Izinkan di pengaturan browser (ikon gembok atau penggeser di sebelah kiri alamat), lalu coba lagi.",
   "thisBrowserCannotShow": "Browser ini tidak bisa menampilkan notifikasi desktop.",
   "thisIsHowA": "Beginilah tampilan notifikasi.",
-  "orUseTheBrowser": "Atau gunakan browser: 3 langkah"
+  "orUseTheBrowser": "Atau gunakan browser: 3 langkah",
+  "pokeAlarm": "Pengaturan colekan",
+  "pokeAlarmText": "Colekan dari teman berdering seperti alarm, juga saat aplikasi ditutup. Kamu bisa menjeda colekan untuk waktu terbatas dan memilih berapa lama berdering.",
+  "pokeRingsFor": "Berdering selama",
+  "pokeSecondsShort": "{{ n }} dtk",
+  "pokeMinutesShort": "{{ n }} mnt"
 }

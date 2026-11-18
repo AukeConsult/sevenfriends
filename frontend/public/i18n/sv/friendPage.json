@@ -32,5 +32,7 @@
   "pokeSend": "Skicka knuff",
   "pokeCancel": "Avbryt",
   "pokeSent": "{{ name }} blev knuffad.",
-  "pokeNote": "Just nu ringer det som ett larm på Android-telefoner och i Windows-appen. På andra enheter kommer det som en vanlig avisering."
+  "pokeNote": "Just nu ringer det som ett larm på Android-telefoner och i Windows-appen. På andra enheter kommer det som en vanlig avisering.",
+  "pokeWaits": "Om telefonen är avstängd eller saknar uppkoppling väntar knuffen i upp till 3 timmar. När den kommer fram ringer den i 30 sekunder.",
+  "pokePaused": "{{ name }} har pausat knuffar. En knuff kommer som ett vanligt meddelande."
 }

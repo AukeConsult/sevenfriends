@@ -49,4 +49,9 @@
     <string name="poke_stop">Stop</string>
     <string name="poke_open">Open</string>
     <string name="poke_channel">Pokes</string>
+    <string name="poke_setting_title">Poke settings</string>
+    <string name="poke_rings_for">Rings for</string>
+    <string name="poke_duration_s">%1$d seconds</string>
+    <string name="poke_duration_min">%1$d min</string>
+    <string name="poke_setting_note">A poke from a friend rings like an alarm. It cannot be switched off; here you choose how long it rings.</string>
 </resources>

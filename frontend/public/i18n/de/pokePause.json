@@ -1,0 +1,16 @@
+{
+  "pokesPaused": "Anstupser pausiert",
+  "until": "Bis {{ time }}",
+  "allCircles": "überall",
+  "pokesAreOn": "Anstupser sind an",
+  "friendsCanRingYou": "Freunde können dich anklingeln",
+  "resume": "Fortsetzen",
+  "pause": "Pausieren",
+  "pauseFor": "Anstupser pausieren für",
+  "oneHour": "1 Stunde",
+  "fourHours": "4 Stunden",
+  "untilMorning": "Bis morgen früh",
+  "twentyFourHours": "24 Stunden",
+  "explain": "Gilt überall in der App. Nachrichten kommen weiterhin normal an, und deine Freunde sehen Stumm.",
+  "cancel": "Abbrechen"
+}

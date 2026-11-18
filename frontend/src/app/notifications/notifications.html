@@ -17,6 +17,9 @@
     <!-- my mood, small, right under the greeting (from the same call) -->
     <app-mood-editor class="d-block mb-3" [profile]="notifications.profile()" />
 
+    <!-- pause pokes for a while (all circles): friends then see "Silent" -->
+    <app-poke-pause class="d-block mb-3" />
+
     <!-- the seven seats: pictures in a row, the empty seats too; arrange them and the silent bucket -->
     <app-home-seats (silent)="silentOpen.set(true)" (add)="addOpen.set(true)" />
   }

@@ -70,5 +70,10 @@
   "notificationsAreBlockedFor2": "이 사이트의 알림이 차단되어 있어요. 브라우저 설정(주소 왼쪽의 자물쇠 또는 슬라이더 아이콘)에서 허용한 다음 다시 해 주세요.",
   "thisBrowserCannotShow": "이 브라우저는 데스크톱 알림을 표시할 수 없어요.",
   "thisIsHowA": "알림은 이렇게 보여요.",
-  "orUseTheBrowser": "또는 브라우저 사용: 3단계"
+  "orUseTheBrowser": "또는 브라우저 사용: 3단계",
+  "pokeAlarm": "콕 찌르기 설정",
+  "pokeAlarmText": "친구의 콕 찌르기는 앱이 닫혀 있어도 알람처럼 울립니다. 콕 찌르기를 제한된 시간 동안 일시중지하고 울리는 시간을 선택할 수 있습니다.",
+  "pokeRingsFor": "울리는 시간",
+  "pokeSecondsShort": "{{ n }}초",
+  "pokeMinutesShort": "{{ n }}분"
 }

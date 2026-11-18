@@ -1,11 +1,12 @@
 import { Router } from "express";
 import { DecodedIdToken } from "firebase-admin/auth";
-import { FieldValue, getFirestore } from "firebase-admin/firestore";
+import { FieldValue, Timestamp, getFirestore } from "firebase-admin/firestore";
 import { asyncHandler, requireAuth } from "./auth";
 import { touchSync } from "./sync";
 import { avatarOf, parsePicture, readAvatar, removeAvatar, saveAvatar } from "./avatar";
 import { DEFAULT_CIRCLE_ID, MAX_FRIENDS, MAX_MOOD_MESSAGE, MAX_NAME_LENGTH, MOOD_COUNT } from "./constants";
-import { ProfileDetails, ProfilePicture, VISIBILITIES, profileColorKey, pronounKey, visibilityKey } from "./models";
+import { POKE_PAUSE_MAX_MINUTES, PokePause, ProfileDetails, ProfilePicture, VISIBILITIES, profileColorKey, pronounKey, visibilityKey } from "./models";
+import { pokePausedUntil } from "./poke-pause";
 import { circleCol, userDoc } from "./paths";
 import { activeCircleOf, circleProfileOf, saveCircleProfile, touchFriends } from "./circle-profile";
 import { isLanguage } from "./models/shared/languages";
@@ -218,6 +219,38 @@ profileRouter.put(
     }
     await touchSync(uidOf(res), "profileAt");
     res.json(await detailsIn(uidOf(res), circleId, (await ref.get()).data() ?? {}));
+  }),
+);
+
+/** When my pause on pokes ends (`until`), or null when pokes are on. */
+profileRouter.get(
+  "/poke-pause",
+  asyncHandler(async (_req, res) => {
+    const until = pokePausedUntil((await userDoc(uidOf(res)).get()).data());
+    const answer: PokePause = { until: until === null ? null : new Date(until).toISOString() };
+    res.json(answer);
+  }),
+);
+
+/**
+ * Pause my pokes for a limited time, or end the pause: { minutes: 1 to 1440 } or { minutes: null }. While it lasts a poke to me arrives as an ordinary message
+ * (no alarm) and my friends see the mood "Silent" in every circle (see friends.ts). The server compares the time, so it ends by itself.
+ */
+profileRouter.put(
+  "/poke-pause",
+  asyncHandler(async (req, res) => {
+    const minutes = (req.body ?? {}).minutes;
+    if (minutes !== null && !(Number.isInteger(minutes) && minutes >= 1 && minutes <= POKE_PAUSE_MAX_MINUTES)) {
+      res.status(400).json({ error: `The pause is from 1 to ${POKE_PAUSE_MAX_MINUTES} minutes, or null to end it` });
+      return;
+    }
+    const uid = uidOf(res);
+    const until = minutes === null ? null : Date.now() + (minutes as number) * 60_000;
+    await userDoc(uid).set({ pokePausedUntil: until === null ? FieldValue.delete() : Timestamp.fromMillis(until) }, { merge: true });
+    await touchFriends(uid); // my friends' apps show "Silent" (or my mood again)
+    await touchSync(uid, "profileAt"); // my other devices
+    const answer: PokePause = { until: until === null ? null : new Date(until).toISOString() };
+    res.json(answer);
   }),
 );
 

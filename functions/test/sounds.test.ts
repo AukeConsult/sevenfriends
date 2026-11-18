@@ -14,9 +14,9 @@ describe("the one list of sounds", () => {
 
   it("every jingle has its Android file res/raw/<key>.mp3 and the generated SoundIds.java is current", () => {
     for (const sound of SOUNDS.filter((s) => s.kind === "jingle")) {
-      expect(fs.existsSync(path.join(root, `android/app/src/main/res/raw/${sound.androidKey}.mp3`))).toBe(true);
+      expect(fs.existsSync(path.join(root, `client-wrappers/android/app/src/main/res/raw/${sound.androidKey}.mp3`))).toBe(true);
     }
-    const java = fs.readFileSync(path.join(root, "android/app/src/main/java/io/sevenfriends/app/SoundIds.java"), "utf8");
+    const java = fs.readFileSync(path.join(root, "client-wrappers/android/app/src/main/java/io/sevenfriends/app/SoundIds.java"), "utf8");
     for (const sound of SOUNDS.filter((s) => s.kind === "jingle")) expect(java).toContain(`"${sound.id}"`);
   });
 

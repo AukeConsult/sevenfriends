@@ -32,5 +32,7 @@
   "pokeSend": "Enviar toque",
   "pokeCancel": "Cancelar",
   "pokeSent": "Se envió un toque a {{ name }}.",
-  "pokeNote": "Por ahora suena como una alarma en teléfonos Android y en la aplicación de Windows. En otros dispositivos llega como una notificación normal."
+  "pokeNote": "Por ahora suena como una alarma en teléfonos Android y en la aplicación de Windows. En otros dispositivos llega como una notificación normal.",
+  "pokeWaits": "Si el teléfono está apagado o sin conexión, el toque espera hasta 3 horas. Cuando llega, suena durante 30 segundos.",
+  "pokePaused": "{{ name }} ha pausado los toques. Un toque llega como un mensaje normal."
 }

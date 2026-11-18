@@ -70,5 +70,10 @@
   "notificationsAreBlockedFor2": "Notiser är blockerade för den här webbplatsen. Tillåt dem i webbläsarens inställningar (lås- eller reglageikonen till vänster om adressen) och försök igen.",
   "thisBrowserCannotShow": "Den här webbläsaren kan inte visa skrivbordsnotiser.",
   "thisIsHowA": "Så här ser en notis ut.",
-  "orUseTheBrowser": "Eller använd webbläsaren: 3 steg"
+  "orUseTheBrowser": "Eller använd webbläsaren: 3 steg",
+  "pokeAlarm": "Knuff-inställningar",
+  "pokeAlarmText": "En knuff från en vän ringer som ett larm, även när appen är stängd. Du kan pausa knuffar en begränsad tid och välja hur länge en knuff ringer.",
+  "pokeRingsFor": "Ringer i",
+  "pokeSecondsShort": "{{ n }} s",
+  "pokeMinutesShort": "{{ n }} min"
 }

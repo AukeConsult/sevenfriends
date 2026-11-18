@@ -32,5 +32,7 @@
   "pokeSend": "Envoyer le poke",
   "pokeCancel": "Annuler",
   "pokeSent": "{{ name }} a reçu un poke.",
-  "pokeNote": "Pour l'instant, cela sonne comme une alarme sur les téléphones Android et dans l'application Windows. Sur les autres appareils, c'est une notification normale."
+  "pokeNote": "Pour l'instant, cela sonne comme une alarme sur les téléphones Android et dans l'application Windows. Sur les autres appareils, c'est une notification normale.",
+  "pokeWaits": "Si le téléphone est éteint ou sans connexion, le poke attend jusqu'à 3 heures. Quand il arrive, il sonne pendant 30 secondes.",
+  "pokePaused": "{{ name }} a mis les pokes en pause. Un poke arrive comme un message normal."
 }

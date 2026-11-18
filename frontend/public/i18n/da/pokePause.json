@@ -1,0 +1,16 @@
+{
+  "pokesPaused": "Prik sat på pause",
+  "until": "Til {{ time }}",
+  "allCircles": "overalt",
+  "pokesAreOn": "Prik er slået til",
+  "friendsCanRingYou": "Venner kan ringe til dig",
+  "resume": "Genoptag",
+  "pause": "Pause",
+  "pauseFor": "Sæt prik på pause i",
+  "oneHour": "1 time",
+  "fourHours": "4 timer",
+  "untilMorning": "Til i morgen tidlig",
+  "twentyFourHours": "24 timer",
+  "explain": "Gælder overalt i appen. Beskeder kommer stadig som normalt, og dine venner ser Stille.",
+  "cancel": "Annuller"
+}

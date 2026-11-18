@@ -1,0 +1,16 @@
+{
+  "pokesPaused": "ポークを一時停止中",
+  "until": "{{ time }} まで",
+  "allCircles": "すべての場所で",
+  "pokesAreOn": "ポークはオン",
+  "friendsCanRingYou": "友だちがあなたの電話を鳴らせます",
+  "resume": "再開",
+  "pause": "一時停止",
+  "pauseFor": "ポークを一時停止する時間",
+  "oneHour": "1時間",
+  "fourHours": "4時間",
+  "untilMorning": "朝まで",
+  "twentyFourHours": "24時間",
+  "explain": "アプリ全体に適用されます。メッセージはこれまでどおり届き、友だちには「サイレント」と表示されます。",
+  "cancel": "キャンセル"
+}

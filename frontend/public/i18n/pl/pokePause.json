@@ -1,0 +1,16 @@
+{
+  "pokesPaused": "Szturchnięcia wstrzymane",
+  "until": "Do {{ time }}",
+  "allCircles": "wszędzie",
+  "pokesAreOn": "Szturchnięcia włączone",
+  "friendsCanRingYou": "Znajomi mogą do ciebie zadzwonić",
+  "resume": "Wznów",
+  "pause": "Wstrzymaj",
+  "pauseFor": "Wstrzymaj szturchnięcia na",
+  "oneHour": "1 godzinę",
+  "fourHours": "4 godziny",
+  "untilMorning": "Do rana",
+  "twentyFourHours": "24 godziny",
+  "explain": "Obowiązuje w całej aplikacji. Wiadomości nadal przychodzą normalnie, a znajomi widzą Cicho.",
+  "cancel": "Anuluj"
+}

@@ -1,0 +1,16 @@
+{
+  "pokesPaused": "Colekan dijeda",
+  "until": "Sampai {{ time }}",
+  "allCircles": "di mana saja",
+  "pokesAreOn": "Colekan aktif",
+  "friendsCanRingYou": "Teman bisa membuat ponselmu berdering",
+  "resume": "Lanjutkan",
+  "pause": "Jeda",
+  "pauseFor": "Jeda colekan selama",
+  "oneHour": "1 jam",
+  "fourHours": "4 jam",
+  "untilMorning": "Sampai pagi",
+  "twentyFourHours": "24 jam",
+  "explain": "Berlaku di seluruh aplikasi. Pesan tetap masuk seperti biasa, dan temanmu melihat Senyap.",
+  "cancel": "Batal"
+}

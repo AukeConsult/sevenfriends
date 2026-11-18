@@ -15,6 +15,8 @@ export const DEFAULTS = {
   RECOVERY_ASKS_PER_DAY: "0",
   /** how many days the push services keep a push for a device that is off or offline (1 to 28: FCM allows 4 weeks at most; 0 = send no TTL, FCM then uses its own 4 weeks) */
   PUSH_TTL_DAYS: "28",
+  /** how many minutes a poke waits for a phone that is off or offline before it is dropped (1 to 1440, default 180 = 3 hours) */
+  POKE_TTL_MINUTES: "180",
   /** on = the purchase can be bought; off (or not set) = it cannot */
   PAYMENT: "off",
   /** the amount that is suggested first, in the smallest unit of the currency (500 = 5.00) */

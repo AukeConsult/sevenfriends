@@ -32,5 +32,7 @@
   "pokeSend": "Por versturen",
   "pokeCancel": "Annuleren",
   "pokeSent": "{{ name }} is gepord.",
-  "pokeNote": "Voorlopig rinkelt het als een alarm op Android-telefoons en in de Windows-app. Op andere apparaten komt het als gewone melding binnen."
+  "pokeNote": "Voorlopig rinkelt het als een alarm op Android-telefoons en in de Windows-app. Op andere apparaten komt het als gewone melding binnen.",
+  "pokeWaits": "Als de telefoon uit staat of geen verbinding heeft, wacht de por maximaal 3 uur. Zodra hij aankomt, rinkelt hij 30 seconden.",
+  "pokePaused": "{{ name }} heeft porren gepauzeerd. Een por komt aan als gewoon bericht."
 }

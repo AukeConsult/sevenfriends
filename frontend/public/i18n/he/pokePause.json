@@ -1,0 +1,16 @@
+{
+  "pokesPaused": "דחיפות מושהות",
+  "until": "עד {{ time }}",
+  "allCircles": "בכל מקום",
+  "pokesAreOn": "דחיפות פעילות",
+  "friendsCanRingYou": "חברים יכולים לצלצל אליך",
+  "resume": "המשך",
+  "pause": "השהיה",
+  "pauseFor": "השהה דחיפות למשך",
+  "oneHour": "שעה אחת",
+  "fourHours": "4 שעות",
+  "untilMorning": "עד הבוקר",
+  "twentyFourHours": "24 שעות",
+  "explain": "חל בכל האפליקציה. הודעות ממשיכות להגיע כרגיל, והחברים שלך רואים שקט.",
+  "cancel": "ביטול"
+}

@@ -35,6 +35,12 @@ export class PushService {
    */
   private readonly native = Capacitor.isNativePlatform();
 
+  /**
+   * true inside the Windows app: its WebView2 window has no browser push service (registering gives "push service error"), so there is NO push token. Notifications still
+   * work while the app runs (also hidden in the tray): the page listens live and the app shows them (client-wrappers/windows). Pokes ring the same way (PokeWindow).
+   */
+  private readonly windowsApp = /SevenFriendsWindows/i.test(navigator.userAgent);
+
   /** push is set up in this build (a key exists and this is not the local demo project; the Android app needs no key) */
   readonly configured = this.native || (Boolean(environment.vapidKey) && !environment.useEmulators);
 
@@ -75,6 +81,11 @@ export class PushService {
         const permission = await PushNotifications.checkPermissions();
         this.supported.set(true);
         this.enabled.set(this.read(ENABLED_KEY) === 'on' && permission.receive === 'granted');
+        return;
+      }
+      if (this.windowsApp) {
+        this.supported.set(typeof Notification !== 'undefined');
+        this.enabled.set(this.supported() && this.read(ENABLED_KEY) === 'on' && Notification.permission === 'granted');
         return;
       }
       const { isSupported } = await import('firebase/messaging');
@@ -136,6 +147,7 @@ export class PushService {
 
   /** Gets the device's push token (it can change) and registers it for the signed-in person. */
   private async refresh(): Promise<void> {
+    if (this.windowsApp) return; // no push token in the Windows app (see windowsApp)
     const token = await this.currentToken();
     if (!token) throw new Error(tr('core.thisBrowserDidNot', 'This browser did not give a push token.'));
     await this.api.request<void>('/push/devices', { method: 'POST', body: JSON.stringify({ token, app: APP_KIND, circle: this.active.id, keyId: (await myDeviceKey(this.auth.user()?.uid))?.keyId }) });

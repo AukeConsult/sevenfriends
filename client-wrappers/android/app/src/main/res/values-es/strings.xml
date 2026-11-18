@@ -42,4 +42,9 @@
     <string name="poke_stop">Parar</string>
     <string name="poke_open">Abrir</string>
     <string name="poke_channel">Toques</string>
+    <string name="poke_setting_title">Ajustes de toques</string>
+    <string name="poke_rings_for">Suena durante</string>
+    <string name="poke_duration_s">%1$d segundos</string>
+    <string name="poke_duration_min">%1$d min</string>
+    <string name="poke_setting_note">Un toque de un amigo suena como una alarma. No se puede desactivar; aquí eliges cuánto suena.</string>
 </resources>

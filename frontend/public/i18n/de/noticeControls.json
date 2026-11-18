@@ -70,5 +70,10 @@
   "notificationsAreBlockedFor2": "Benachrichtigungen sind für diese Seite blockiert. Erlaub sie in den Browsereinstellungen (das Schloss- oder Regler-Symbol links neben der Adresse) und versuch es dann noch einmal.",
   "thisBrowserCannotShow": "Dieser Browser kann keine Desktop-Benachrichtigungen anzeigen.",
   "thisIsHowA": "So sieht eine Benachrichtigung aus.",
-  "orUseTheBrowser": "Oder nutze den Browser: 3 Schritte"
+  "orUseTheBrowser": "Oder nutze den Browser: 3 Schritte",
+  "pokeAlarm": "Anstupser-Einstellungen",
+  "pokeAlarmText": "Ein Anstupser eines Freundes klingelt wie ein Wecker, auch wenn die App geschlossen ist. Du kannst Anstupser für begrenzte Zeit pausieren und wählen, wie lange einer klingelt.",
+  "pokeRingsFor": "Klingelt",
+  "pokeSecondsShort": "{{ n }} s",
+  "pokeMinutesShort": "{{ n }} Min."
 }

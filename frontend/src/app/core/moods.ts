@@ -1,6 +1,7 @@
 import { tr } from './i18n';
+import { MOOD_SILENT } from '../models';
 /**
- * The four moods a person can stick to their profile (icons `public/icons/moods/mood1.svg` ... `mood4.svg`).
+ * The four moods a person can stick to their profile (a fifth, "Silent", `MOOD_SILENT` with `mood5.svg`, is not a choice: friends see it while a person has paused their pokes) (icons `public/icons/moods/mood1.svg` ... `mood4.svg`).
  * Friends see them on the Friends page and in the message feed. The ids are what the backend stores (1-4).
  */
 export interface Mood {
@@ -19,4 +20,4 @@ export const MOODS: readonly Mood[] = [
 export const moodIcon = (id: number): string => `icons/moods/mood${id}.svg`;
 
 /** The name of a mood ('' when unknown). */
-export const moodLabel = (id: number | null): string => MOODS.find((m) => m.id === id)?.label ?? '';
+export const moodLabel = (id: number | null): string => (id === MOOD_SILENT ? tr('core.silent', 'Silent') : (MOODS.find((m) => m.id === id)?.label ?? ''));

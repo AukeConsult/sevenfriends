@@ -5,6 +5,8 @@ import { RouterLink } from '@angular/router';
 import { DesktopNoticeService } from '../core/desktop-notice.service';
 import { NoticePreferences } from '../models';
 import { NoticesService } from '../core/notices.service';
+import { POKE_RING_CHOICES, PokeSettingsService } from '../core/poke-settings.service';
+import { PokePause } from '../poke-pause/poke-pause';
 import { PushService } from '../core/push.service';
 import { SOUND_CHOICES, SOUND_EVENTS, SoundEvent, SoundService } from '../core/sound.service';
 import { tr } from '../core/i18n';
@@ -17,7 +19,7 @@ import { tr } from '../core/i18n';
  */
 @Component({
   selector: 'app-notice-controls',
-  imports: [RouterLink, TranslocoDirective],
+  imports: [RouterLink, TranslocoDirective, PokePause],
   templateUrl: './notice-controls.html',
   providers: [provideTranslocoScope('noticeControls')],
   host: { class: 'd-flex flex-column', style: 'gap: 0.75rem' }, // the cards and headings have room between them, as on the page around it
@@ -31,6 +33,9 @@ export class NoticeControls {
   protected readonly sounds = inject(SoundService);
   protected readonly desktop = inject(DesktopNoticeService);
   protected readonly push = inject(PushService);
+  /** how long a poke rings on this device (only the Android app and the Windows app have an alarm) */
+  protected readonly pokeRing = inject(PokeSettingsService);
+  protected readonly pokeChoices = POKE_RING_CHOICES;
   protected readonly noticeProblem = signal<string | null>(null);
 
   /** Which pushes I get and what they show: saved on the account, so it holds for every device. null = still loading. */

@@ -70,5 +70,10 @@
   "notificationsAreBlockedFor2": "Notifications are blocked for this site. Allow them in the browser settings (the lock or sliders icon at the left of the address), then try again.",
   "thisBrowserCannotShow": "This browser cannot show desktop notifications.",
   "thisIsHowA": "This is how a notification looks.",
-  "orUseTheBrowser": "Or use the browser: 3 steps"
+  "orUseTheBrowser": "Or use the browser: 3 steps",
+  "pokeAlarm": "Poke settings",
+  "pokeAlarmText": "A poke from a friend rings like an alarm, also when the app is closed. You can pause pokes for a limited time, and choose how long a poke rings.",
+  "pokeRingsFor": "Rings for",
+  "pokeSecondsShort": "{{ n }} s",
+  "pokeMinutesShort": "{{ n }} min"
 }

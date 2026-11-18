@@ -1,0 +1,16 @@
+{
+  "pokesPaused": "Poke in pausa",
+  "until": "Fino alle {{ time }}",
+  "allCircles": "ovunque",
+  "pokesAreOn": "I poke sono attivi",
+  "friendsCanRingYou": "Gli amici possono farti squillare",
+  "resume": "Riprendi",
+  "pause": "Pausa",
+  "pauseFor": "Metti in pausa i poke per",
+  "oneHour": "1 ora",
+  "fourHours": "4 ore",
+  "untilMorning": "Fino a domattina",
+  "twentyFourHours": "24 ore",
+  "explain": "Vale ovunque nell'app. I messaggi arrivano normalmente e i tuoi amici vedono Silenzioso.",
+  "cancel": "Annulla"
+}

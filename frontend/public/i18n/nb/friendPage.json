@@ -32,5 +32,7 @@
   "pokeSend": "Send dytt",
   "pokeCancel": "Avbryt",
   "pokeSent": "{{ name }} ble dyttet.",
-  "pokeNote": "Foreløpig ringer det som en alarm på Android-telefoner og i Windows-appen. På andre enheter kommer det som et vanlig varsel."
+  "pokeNote": "Foreløpig ringer det som en alarm på Android-telefoner og i Windows-appen. På andre enheter kommer det som et vanlig varsel.",
+  "pokeWaits": "Hvis telefonen er av eller uten nett, venter dyttet i opptil 3 timer. Når det kommer fram, ringer det i 30 sekunder.",
+  "pokePaused": "{{ name }} har satt dytt på pause. Et dytt kommer som en vanlig melding."
 }

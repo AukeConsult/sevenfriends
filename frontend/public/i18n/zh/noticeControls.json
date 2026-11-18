@@ -70,5 +70,10 @@
   "notificationsAreBlockedFor2": "这个网站的通知被屏蔽了。请在浏览器设置中允许（地址栏左侧的锁形或滑块图标），然后再试一次。",
   "thisBrowserCannotShow": "这个浏览器无法显示桌面通知。",
   "thisIsHowA": "通知就是这个样子。",
-  "orUseTheBrowser": "或使用浏览器：3 个步骤"
+  "orUseTheBrowser": "或使用浏览器：3 个步骤",
+  "pokeAlarm": "戳一下设置",
+  "pokeAlarmText": "朋友的戳一下会像闹钟一样响起，即使应用已关闭。你可以在限定时间内暂停戳一下，并选择响铃时长。",
+  "pokeRingsFor": "响铃时长",
+  "pokeSecondsShort": "{{ n }} 秒",
+  "pokeMinutesShort": "{{ n }} 分钟"
 }

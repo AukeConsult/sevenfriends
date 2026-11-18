@@ -42,4 +42,9 @@
     <string name="poke_stop">Stopp</string>
     <string name="poke_open">Åpne</string>
     <string name="poke_channel">Dytt</string>
+    <string name="poke_setting_title">Dytt-innstillinger</string>
+    <string name="poke_rings_for">Ringer i</string>
+    <string name="poke_duration_s">%1$d sekunder</string>
+    <string name="poke_duration_min">%1$d min</string>
+    <string name="poke_setting_note">Et dytt fra en venn ringer som en alarm. Den kan ikke slås av; her velger du hvor lenge den ringer.</string>
 </resources>

@@ -1,0 +1,16 @@
+{
+  "pokesPaused": "戳一下已暂停",
+  "until": "直到 {{ time }}",
+  "allCircles": "所有地方",
+  "pokesAreOn": "戳一下已开启",
+  "friendsCanRingYou": "朋友可以让你的手机响铃",
+  "resume": "恢复",
+  "pause": "暂停",
+  "pauseFor": "暂停戳一下的时长",
+  "oneHour": "1 小时",
+  "fourHours": "4 小时",
+  "untilMorning": "直到早晨",
+  "twentyFourHours": "24 小时",
+  "explain": "适用于整个应用。消息仍会正常到达，朋友会看到“静音”。",
+  "cancel": "取消"
+}

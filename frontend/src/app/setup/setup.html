@@ -97,7 +97,7 @@
     }
     @case ('done') {
       <div class="text-center vstack gap-3 align-items-center">
-        <div class="sf-logo sf-logo-lg mx-auto" aria-hidden="true">✓</div>
+        <div class="sf-logo sf-logo-lg sf-logo-plain mx-auto" aria-hidden="true">✓</div>
         <h2 class="sf-section-title m-0">{{ t('setup.allSet') || 'You are all set' }}</h2>
         <p class="m-0">{{ t('setup.doneText') || 'Everything is set up in this browser.' }}</p>
         <button type="button" class="btn btn-primary" (click)="finish('/')">{{ t('common.finish') || 'Finish' }}</button>

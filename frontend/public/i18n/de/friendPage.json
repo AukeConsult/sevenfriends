@@ -32,5 +32,7 @@
   "pokeSend": "Anstupsen senden",
   "pokeCancel": "Abbrechen",
   "pokeSent": "{{ name }} wurde angestupst.",
-  "pokeNote": "Vorerst klingelt es auf Android-Handys und in der Windows-App wie ein Wecker. Auf anderen Geräten kommt es als normale Benachrichtigung an."
+  "pokeNote": "Vorerst klingelt es auf Android-Handys und in der Windows-App wie ein Wecker. Auf anderen Geräten kommt es als normale Benachrichtigung an.",
+  "pokeWaits": "Ist das Handy aus oder ohne Verbindung, wartet der Anstupser bis zu 3 Stunden. Sobald er ankommt, klingelt er 30 Sekunden lang.",
+  "pokePaused": "{{ name }} hat Anstupser pausiert. Ein Anstupser kommt als normale Nachricht an."
 }

@@ -9,16 +9,49 @@ namespace SevenFriends;
 
 /// <summary>
 /// The alarm of a poke (docs/design/poke-alarm.md). A window over everything else, also over a full-screen program, that says WHO is poking and the text, with a sound that
-/// repeats until the person presses Stop or Open (or after two minutes). It works while the main window is hidden in the tray: the web page, which keeps running there,
+/// repeats until the person presses Stop or Open (or after the time chosen in Settings, 30 seconds unless changed). It works while the main window is hidden in the tray: the web page, which keeps running there,
 /// tells the app about the poke (<see cref="MainWindow"/> reads the message). It is made in code, no XAML.
 /// </summary>
 public sealed class PokeWindow : Window
 {
-    private const int MaxSeconds = 120;
+    /// <summary>How long the alarm rings, in seconds: set on the Settings page of the app (Notifications, "Poke settings"), which tells this app; kept in a file.</summary>
+    public static int RingSeconds { get; private set; } = LoadSeconds();
+    private static readonly int[] Choices = [10, 30, 60, 120, 300];
+    private static string SecondsFile => System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SevenFriends", "poke-seconds.txt");
+
+    private static int LoadSeconds()
+    {
+        try
+        {
+            if (int.TryParse(System.IO.File.ReadAllText(SecondsFile).Trim(), out var seconds) && Array.IndexOf(Choices, seconds) >= 0) return seconds;
+        }
+        catch (Exception)
+        {
+            // no file yet: the default
+        }
+        return 30;
+    }
+
+    /// <summary>The Settings page chose a ring time: only one of the choices is kept.</summary>
+    public static void SetRingSeconds(int seconds)
+    {
+        if (Array.IndexOf(Choices, seconds) < 0) return;
+        RingSeconds = seconds;
+        try
+        {
+            System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(SecondsFile)!);
+            System.IO.File.WriteAllText(SecondsFile, seconds.ToString());
+        }
+        catch (Exception)
+        {
+            // not kept: the choice holds until the app is closed
+        }
+    }
+
     private readonly TextBlock _name = new();
     private readonly TextBlock _text = new();
     private readonly DispatcherTimer _sound = new() { Interval = TimeSpan.FromMilliseconds(1400) };
-    private readonly DispatcherTimer _giveUp = new() { Interval = TimeSpan.FromSeconds(MaxSeconds) };
+    private readonly DispatcherTimer _giveUp = new();
     private string _url = "/";
 
     /// <summary>"Open": the person wants that friend's page; the main window is brought forward on it.</summary>
@@ -91,6 +124,7 @@ public sealed class PokeWindow : Window
         _sound.Stop();
         _sound.Start();
         _giveUp.Stop();
+        _giveUp.Interval = TimeSpan.FromSeconds(RingSeconds);
         _giveUp.Start();
     }
 }

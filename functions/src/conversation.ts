@@ -5,7 +5,8 @@ import { asyncHandler } from "./auth";
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION } from "./constants";
 import { ChatMessage, Conversation, MediaRef, REACTIONS, ReactionId, MessageDeleteCriteria, MessageEnc, MessageEncMedia, MessageLink, MessageDeleteResult, NewMedia } from "./models";
 import { circleCol, messageCol, missingIndex, userFields } from "./paths";
-import { nameOf, sendPush } from "./push";
+import { nameOf, pokeTtlMinutes, sendPush } from "./push";
+import { isPokePaused } from "./poke-pause";
 import { findPeerEntry, shownNameOf } from "./circle-profile";
 import { linkOf } from "./link-preview";
 import { otherMembers } from "./group-members";
@@ -236,7 +237,9 @@ conversationRouter.post(
     const notice = req.body?.notice === true; // a notice ("📦 In the safebox: …") is for the other people only: the sender keeps no copy of it in their own feed
     const muted = peerEntries.map((entry) => entry?.data()?.asleep === true); // one for each of the other people: I am on their sleep list, so what I write arrives quietly
     // a poke rings the friend's phone (on Android as an alarm); it is only for a friend who has a seat for me: one who has me on their sleep list gets a poke as a quiet message
-    const poked = req.body?.poke === true ? muted.map((m) => !m) : muted.map(() => false); // one for each of the other people
+    // ... and not one who has paused their pokes (Home → Pause pokes): that poke arrives as an ordinary message too
+    const paused = req.body?.poke === true ? await Promise.all(connection.peers.map(async (peer) => isPokePaused(await userFields(peer.uid, "pokePausedUntil")))) : connection.peers.map(() => false);
+    const poked = muted.map((m, i) => req.body?.poke === true && !m && !paused[i]); // one for each of the other people
     // a message with a file has the id of the file: that is how the receiver is let in. Any other message has the id its sender made (the device signs it inside the locked text, so a text
     // cannot be shown as another message); one without an id (an older app) gets one here.
     const given = req.body?.id;
@@ -264,7 +267,7 @@ conversationRouter.post(
     for (const peer of connection.peers) {
       // the same message id in every copy
       // `create`: a copy that is already there (a file id used again after its sender deleted their own copy) is never replaced by a new message
-      batch.create(messageCol(peer.uid).doc(mine.id), { ...common, ...(locked ? { enc: wrapsFor(locked.enc, peer.uid) } : {}), ...(poked[connection.peers.indexOf(peer)] ? { poke: true } : {}), circleId: peer.circleId, read: false });
+      batch.create(messageCol(peer.uid).doc(mine.id), { ...common, ...(locked ? { enc: wrapsFor(locked.enc, peer.uid) } : {}), ...(poked[connection.peers.indexOf(peer)] ? { poke: true, pokeMinutes: pokeTtlMinutes() } : {}), circleId: peer.circleId, read: false });
     }
     // "last spoken to": both sides of the friendship remember when the last message was written
     const myEntry = (res.locals.circleRef as DocumentReference).collection(FRIENDS_SUBCOLLECTION).doc(connection.id);

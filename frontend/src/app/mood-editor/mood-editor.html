@@ -3,15 +3,15 @@
   <!-- closed: my mood icon and message. Tap it to open the frame and change them -->
   <button type="button" class="sf-summary" [attr.aria-expanded]="open()" aria-controls="mood-panel" [disabled]="!loaded()"
           (click)="open.set(!open())">
-    @if (mood(); as current) {
+    @if (shownMood(); as current) {
       <img [src]="moodIcon(current)" [alt]="moodLabel(current)" width="28" height="28" />
     } @else {
       <span class="sf-summary-none" aria-hidden="true">+</span>
     }
     <span class="sf-summary-text">
       <span class="sf-wrap">
-        @if (mood() || message()) {
-          {{ moodLabel(mood()) }}{{ mood() && message() ? ' · ' : '' }}{{ message() }}
+        @if (shownMood() || message()) {
+          {{ moodLabel(shownMood()) }}{{ shownMood() && message() ? ' · ' : '' }}{{ message() }}
         } @else {
           {{ t('moodEditor.tapToSayHow') || 'Tap to say how you are' }}
         }

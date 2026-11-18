@@ -70,5 +70,10 @@
   "notificationsAreBlockedFor2": "このサイトの通知がブロックされています。ブラウザの設定（アドレスの左にあるロックまたはスライダーのアイコン）で許可してから、もう一度お試しください。",
   "thisBrowserCannotShow": "このブラウザではデスクトップ通知を表示できません。",
   "thisIsHowA": "通知はこのように表示されます。",
-  "orUseTheBrowser": "またはブラウザを使う：3ステップ"
+  "orUseTheBrowser": "またはブラウザを使う：3ステップ",
+  "pokeAlarm": "ポークの設定",
+  "pokeAlarmText": "友だちからのポークは、アプリを閉じていてもアラームのように鳴ります。ポークは時間を限って一時停止でき、鳴る長さも選べます。",
+  "pokeRingsFor": "鳴る時間",
+  "pokeSecondsShort": "{{ n }}秒",
+  "pokeMinutesShort": "{{ n }}分"
 }

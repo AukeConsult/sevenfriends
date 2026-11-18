@@ -17,7 +17,8 @@ import {
 } from "./constants";
 import { inviteCodeOf } from "./invite";
 import { invitesSentToday, queueInvite } from "./outbox";
-import { Friend, FriendInvite, MediaRef, FriendStatus, NewFriend, ProfilePicture, profileColorKey, pronounKey } from "./models";
+import { Friend, FriendInvite, MediaRef, FriendStatus, MOOD_SILENT, NewFriend, ProfilePicture, profileColorKey, pronounKey } from "./models";
+import { isPokePaused } from "./poke-pause";
 import { circleProfileOf, friendNameOf } from "./circle-profile";
 import { circleCol, friendRequestCol, messageCol, missingIndex, userFields } from "./paths";
 import { avatarOf, readAvatar } from "./avatar";
@@ -144,7 +145,7 @@ async function withUnverified(friend: Friend, entry: FirebaseFirestore.DocumentD
   const other = (entry.linkedUid as string | null | undefined) ?? (entry.signaledUids as string[] | undefined)?.[0];
   if (!other) return friend;
   // only what is shown here: the verification, the mood, the presence and the picture of the other person
-  const account = await userFields(other, "emailLower", "emailVerified", "phoneKey", "verifiedPhone", "country", "mood", "moodMessage", "pronoun", "presence", "lastSeenAt", "profileIcon", "profileColor", "profilePictureAt", "avatarObjectId", "displayName");
+  const account = await userFields(other, "emailLower", "emailVerified", "phoneKey", "verifiedPhone", "country", "mood", "moodMessage", "pronoun", "presence", "lastSeenAt", "profileIcon", "profileColor", "profilePictureAt", "avatarObjectId", "displayName", "pokePausedUntil");
   const unverified = account && entry.trusted !== true ? unverifiedDetails(account) : []; // "this is really them" (trusted) hides the warning
   // how the other person shows in the circle I am in (their name, colour and mood there): the circle their side of the friendship lives in
   const peerCircle = (entry.peerCircleId as string | undefined) ?? DEFAULT_CIRCLE_ID;
@@ -155,7 +156,7 @@ async function withUnverified(friend: Friend, entry: FirebaseFirestore.DocumentD
     friend.status === "confirmed" && account
       ? {
           country: (account.country as string | null | undefined) ?? null,
-          mood: profile.mood,
+          mood: isPokePaused(account) ? MOOD_SILENT : profile.mood, // "Silent" while the person has paused their pokes, in every circle
           moodMessage: profile.moodMessage,
           pronoun: pronounKey(account.pronoun),
           presence: presenceOf(account),

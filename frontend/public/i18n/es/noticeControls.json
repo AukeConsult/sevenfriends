@@ -70,5 +70,10 @@
   "notificationsAreBlockedFor2": "Las notificaciones están bloqueadas para este sitio. Permítelas en los ajustes del navegador (el icono de candado o controles a la izquierda de la dirección) y vuelve a intentarlo.",
   "thisBrowserCannotShow": "Este navegador no puede mostrar notificaciones de escritorio.",
   "thisIsHowA": "Así se ve una notificación.",
-  "orUseTheBrowser": "O usa el navegador: 3 pasos"
+  "orUseTheBrowser": "O usa el navegador: 3 pasos",
+  "pokeAlarm": "Ajustes de toques",
+  "pokeAlarmText": "Un toque de un amigo suena como una alarma, incluso con la app cerrada. Puedes pausar los toques por un tiempo limitado y elegir cuánto suena.",
+  "pokeRingsFor": "Suena durante",
+  "pokeSecondsShort": "{{ n }} s",
+  "pokeMinutesShort": "{{ n }} min"
 }

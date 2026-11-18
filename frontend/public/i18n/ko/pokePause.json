@@ -1,0 +1,16 @@
+{
+  "pokesPaused": "콕 찌르기 일시중지됨",
+  "until": "{{ time }}까지",
+  "allCircles": "모든 곳",
+  "pokesAreOn": "콕 찌르기 켜짐",
+  "friendsCanRingYou": "친구가 내 휴대폰을 울릴 수 있어요",
+  "resume": "다시 시작",
+  "pause": "일시중지",
+  "pauseFor": "콕 찌르기 일시중지 시간",
+  "oneHour": "1시간",
+  "fourHours": "4시간",
+  "untilMorning": "아침까지",
+  "twentyFourHours": "24시간",
+  "explain": "앱 전체에 적용됩니다. 메시지는 평소처럼 도착하고 친구에게는 무음으로 표시됩니다.",
+  "cancel": "취소"
+}

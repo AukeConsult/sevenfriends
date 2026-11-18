@@ -28,6 +28,7 @@ notifications on this computer.
 **Poke (alarm):** a poke from a friend opens `PokeWindow.cs` (a window over everything, looping sound, Stop / Open), also while the window is hidden in the tray; the web page tells the app (`WebMessageReceived`). Only while the app runs; see `docs/design/poke-alarm.md`.
 
 Not done yet:
+- **"Registration failed - push service error"** when switching notifications on in the app was the web push registration, which WebView2 cannot do. The page (`push.service.ts`, `windowsApp`) now skips it in the Windows app: the switch only needs the notification permission, and notifications come from the live page while the app runs.
 - **Push when the app is NOT running** (quit from the tray, or the computer is off). The browser's web push is not part of WebView2.
   The next step is a native push service (Windows Push Notifications, WNS): it needs an app registration in Microsoft's partner centre,
   a Windows device kind in `functions/src/push.ts`, and the app packaged as MSIX.

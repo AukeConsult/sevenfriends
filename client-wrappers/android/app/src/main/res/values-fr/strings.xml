@@ -42,4 +42,9 @@
     <string name="poke_stop">Arrêter</string>
     <string name="poke_open">Ouvrir</string>
     <string name="poke_channel">Pokes</string>
+    <string name="poke_setting_title">Réglages du poke</string>
+    <string name="poke_rings_for">Sonne pendant</string>
+    <string name="poke_duration_s">%1$d secondes</string>
+    <string name="poke_duration_min">%1$d min</string>
+    <string name="poke_setting_note">Un poke d\'un ami sonne comme une alarme. On ne peut pas la désactiver; ici vous choisissez combien de temps elle sonne.</string>
 </resources>

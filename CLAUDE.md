@@ -7,7 +7,7 @@ The long parts of this guide live in `docs/guide/`. Read only the file for the a
 - `docs/guide/connections.md`: friend requests, seats, waiting list, deleting a friend / account, the rules the pool tests check. **Only a change to a connection rule needs the "change code + this guide + a test" routine.**
 - `docs/guide/live-and-notifications.md`: pings, live updates, sound, push, email, several devices, system settings.
 - `docs/notifications.md`: **the push rules** (delivery, TTL, one sound for all circles, Android channels, browser limits) and the Android notification screen. Read it before changing a push or a sound.
-- `docs/design/poke-alarm.md`: **the poke** (a message that rings a friend's phone like an alarm; only a friend who has a seat for me can poke, no switch to turn it off, it always says who). The rules, what is built on Android (data-only push, `PokeService`, `PokeActivity`) and the plan for iPhone (Critical Alerts). Read it before changing a poke or adding it to iOS.
+- `docs/design/poke-alarm.md`: **the poke** (a message that rings a friend's phone like an alarm; only a friend who has a seat for me can poke, no switch to turn it off, it always says who). The rules (including **Pause pokes**, up to 24 hours, all circles, friends see "Silent"), what is built on Android (data-only push, `PokeService`, `PokeActivity`), Windows and the plan for iPhone (Critical Alerts). Read it before changing a poke or adding it to iOS.
 - `docs/guide/messages-and-profile.md`: the message feed, profile, links in messages, friend links, sleep list, UI preferences.
 - `docs/guide/media-and-safebox.md`: the media cache, the safebox, pictures and memory.
 - `docs/design/safebox-objects.md`: notes, secrets, links, checklists, places, contacts and dates in the safebox next to files: locked payload, revision, routes, pages. All are built.
@@ -87,7 +87,7 @@ Other dimensions: `--sf-touch` 2.75rem (min tap target), `--sf-gap`, `--sf-radiu
 Add a new size or breakpoint override in `styles.scss` first, then use the variable.
 
 ## Words in the app (one word per idea)
-Use plain words and ONE word for each idea: **seat** (one of the 7 places), **sleep** (a friend who keeps the chat but gives up the seat; never "silent"), **friend**, **safebox**, **poke** (makes a friend's phone ring even when you sleep on their list). Do not show **circle** to users (it is an internal app type), EXCEPT in the welcome page chapter "Four circles" (`welcome/`), which explains the four circles (Friends, Work, Buddies, Family) in the words the app uses for them, nor "connection" or "contact" for a friend. A new word is explained once, in one line, where it first appears.
+Use plain words and ONE word for each idea: **seat** (one of the 7 places), **sleep** (a friend who keeps the chat but gives up the seat; never "silent"), **friend**, **safebox**, **poke** (makes a friend's phone ring like an alarm; a person can pause pokes for a while, and friends then see their mood "Silent"). Do not show **circle** to users (it is an internal app type), EXCEPT in the welcome page chapter "Four circles" (`welcome/`), which explains the four circles (Friends, Work, Buddies, Family) in the words the app uses for them, nor "connection" or "contact" for a friend. A new word is explained once, in one line, where it first appears.
 
 ## Conventions
 - **All interfaces and types live in a `models` folder**, never inside a service, component or router file. Import them from `./models` (backend) / `../models` (frontend).

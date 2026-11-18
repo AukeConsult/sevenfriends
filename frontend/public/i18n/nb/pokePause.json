@@ -1,0 +1,16 @@
+{
+  "pokesPaused": "Dytt er satt på pause",
+  "until": "Til {{ time }}",
+  "allCircles": "overalt",
+  "pokesAreOn": "Dytt er på",
+  "friendsCanRingYou": "Venner kan ringe deg",
+  "resume": "Fortsett",
+  "pause": "Pause",
+  "pauseFor": "Sett dytt på pause i",
+  "oneHour": "1 time",
+  "fourHours": "4 timer",
+  "untilMorning": "Til i morgen tidlig",
+  "twentyFourHours": "24 timer",
+  "explain": "Gjelder overalt i appen. Meldinger kommer fortsatt som vanlig, og vennene dine ser Stille.",
+  "cancel": "Avbryt"
+}

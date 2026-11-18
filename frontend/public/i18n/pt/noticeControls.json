@@ -70,5 +70,10 @@
   "notificationsAreBlockedFor2": "As notificações estão bloqueadas para este site. Permita-as nos ajustes do navegador (o ícone de cadeado ou de controles à esquerda do endereço) e tente de novo.",
   "thisBrowserCannotShow": "Este navegador não consegue mostrar notificações na área de trabalho.",
   "thisIsHowA": "Assim é uma notificação.",
-  "orUseTheBrowser": "Ou use o navegador: 3 passos"
+  "orUseTheBrowser": "Ou use o navegador: 3 passos",
+  "pokeAlarm": "Configurações de cutucada",
+  "pokeAlarmText": "Uma cutucada de um amigo toca como um alarme, mesmo com o app fechado. Você pode pausar as cutucadas por um tempo limitado e escolher por quanto tempo tocam.",
+  "pokeRingsFor": "Toca por",
+  "pokeSecondsShort": "{{ n }} s",
+  "pokeMinutesShort": "{{ n }} min"
 }

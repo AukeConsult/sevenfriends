@@ -1,10 +1,12 @@
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { tr } from '../core/i18n';
 import { Clearable } from '../core/clearable';
-import { Component, DestroyRef, ElementRef, OnInit, inject, input, signal } from '@angular/core';
+import { Component, DestroyRef, ElementRef, OnInit, computed, inject, input, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ApiService } from '../core/api.service';
 import { MOODS, moodIcon, moodLabel } from '../core/moods';
+import { PokePauseService } from '../core/poke-pause.service';
+import { MOOD_SILENT } from '../models';
 import { LiveChanges } from '../core/live-changes';
 import { ProfileDetails } from '../models';
 
@@ -32,6 +34,9 @@ export class MoodEditor implements OnInit {
   /** the frame is closed (just my mood icon and message) until it is tapped; open it to change them */
   protected readonly open = signal(false);
   protected readonly mood = signal<number | null>(null);
+  private readonly pokePause = inject(PokePauseService);
+  /** what the closed frame shows: "Silent" while my pokes are paused (my own mood is kept under it and comes back), else my mood */
+  protected readonly shownMood = computed(() => (this.pokePause.paused() ? MOOD_SILENT : this.mood()));
   protected readonly message = signal('');
   protected readonly loaded = signal(false);
   protected readonly error = signal<string | null>(null);

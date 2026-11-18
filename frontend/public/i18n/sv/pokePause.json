@@ -1,0 +1,16 @@
+{
+  "pokesPaused": "Knuffar pausade",
+  "until": "Till {{ time }}",
+  "allCircles": "överallt",
+  "pokesAreOn": "Knuffar är på",
+  "friendsCanRingYou": "Vänner kan ringa dig",
+  "resume": "Återuppta",
+  "pause": "Pausa",
+  "pauseFor": "Pausa knuffar i",
+  "oneHour": "1 timme",
+  "fourHours": "4 timmar",
+  "untilMorning": "Till i morgon bitti",
+  "twentyFourHours": "24 timmar",
+  "explain": "Gäller överallt i appen. Meddelanden kommer som vanligt och dina vänner ser Tyst.",
+  "cancel": "Avbryt"
+}

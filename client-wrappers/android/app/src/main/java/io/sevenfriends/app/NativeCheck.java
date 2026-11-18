@@ -129,6 +129,37 @@ final class NativeCheck {
         row(activity, phone, activity.getString(R.string.check_last_told), when == 0 ? activity.getString(R.string.check_never) : DateFormat.format("HH:mm:ss", new Date(when)).toString(), when == 0 ? RED : 0);
         form.addView(phone);
 
+        // the poke alarm: how long it rings (there is no way to switch it off; this phone keeps the choice, because the alarm runs when the app is closed)
+        LinearLayout poke = card(activity, activity.getString(R.string.poke_setting_title));
+        LinearLayout pokeRow = new LinearLayout(activity);
+        pokeRow.setOrientation(LinearLayout.HORIZONTAL);
+        pokeRow.setGravity(Gravity.CENTER_VERTICAL);
+        TextView pokeLabel = new TextView(activity);
+        pokeLabel.setText(R.string.poke_rings_for);
+        pokeLabel.setTextSize(13);
+        pokeLabel.setTextColor(GRAY);
+        pokeRow.addView(pokeLabel, new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
+        String[] names = new String[PokeService.RING_CHOICES.length];
+        int chosen = 0;
+        for (int i = 0; i < names.length; i++) {
+            int s = PokeService.RING_CHOICES[i];
+            names[i] = s < 60 ? activity.getString(R.string.poke_duration_s, s) : activity.getString(R.string.poke_duration_min, s / 60);
+            if (s == PokeService.ringSeconds(activity)) chosen = i;
+        }
+        android.widget.Spinner pokeSpinner = new android.widget.Spinner(activity);
+        pokeSpinner.setAdapter(new android.widget.ArrayAdapter<>(activity, android.R.layout.simple_spinner_dropdown_item, names));
+        pokeSpinner.setSelection(chosen);
+        pokeSpinner.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+            @Override public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
+                PokeService.setRingSeconds(activity, PokeService.RING_CHOICES[position]);
+            }
+            @Override public void onNothingSelected(android.widget.AdapterView<?> parent) { }
+        });
+        pokeRow.addView(pokeSpinner);
+        poke.addView(pokeRow);
+        poke.addView(note(activity, activity.getString(R.string.poke_setting_note)));
+        form.addView(poke);
+
         // a real test notification through the server
         LinearLayout test = card(activity, activity.getString(R.string.check_test));
         Button testButton = new Button(activity);

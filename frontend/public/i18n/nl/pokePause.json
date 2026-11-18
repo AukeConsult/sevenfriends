@@ -1,0 +1,16 @@
+{
+  "pokesPaused": "Porren gepauzeerd",
+  "until": "Tot {{ time }}",
+  "allCircles": "overal",
+  "pokesAreOn": "Porren staan aan",
+  "friendsCanRingYou": "Vrienden kunnen je laten rinkelen",
+  "resume": "Hervatten",
+  "pause": "Pauzeren",
+  "pauseFor": "Porren pauzeren voor",
+  "oneHour": "1 uur",
+  "fourHours": "4 uur",
+  "untilMorning": "Tot morgenochtend",
+  "twentyFourHours": "24 uur",
+  "explain": "Geldt overal in de app. Berichten komen gewoon aan en je vrienden zien Stil.",
+  "cancel": "Annuleren"
+}

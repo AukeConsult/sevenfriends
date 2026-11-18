@@ -70,5 +70,10 @@
   "notificationsAreBlockedFor2": "Ilmoitukset on estetty tälle sivustolle. Salli ne selaimen asetuksissa (lukko- tai liukusäädinkuvake osoitteen vasemmalla puolella) ja yritä uudelleen.",
   "thisBrowserCannotShow": "Tämä selain ei voi näyttää työpöytäilmoituksia.",
   "thisIsHowA": "Näin ilmoitus näyttää.",
-  "orUseTheBrowser": "Tai käytä selainta: 3 vaihetta"
+  "orUseTheBrowser": "Tai käytä selainta: 3 vaihetta",
+  "pokeAlarm": "Töm-asetukset",
+  "pokeAlarmText": "Ystävän töm soi hälytyksenä, vaikka sovellus olisi suljettu. Voit tauottaa tömäykset rajatuksi ajaksi ja valita, kuinka kauan töm soi.",
+  "pokeRingsFor": "Soi",
+  "pokeSecondsShort": "{{ n }} s",
+  "pokeMinutesShort": "{{ n }} min"
 }

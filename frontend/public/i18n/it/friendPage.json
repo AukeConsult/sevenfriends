@@ -32,5 +32,7 @@
   "pokeSend": "Invia poke",
   "pokeCancel": "Annulla",
   "pokeSent": "{{ name }} è stato contattato con un poke.",
-  "pokeNote": "Per ora suona come una sveglia sui telefoni Android e nell'app per Windows. Sugli altri dispositivi arriva come una normale notifica."
+  "pokeNote": "Per ora suona come una sveglia sui telefoni Android e nell'app per Windows. Sugli altri dispositivi arriva come una normale notifica.",
+  "pokeWaits": "Se il telefono è spento o senza connessione, il poke aspetta fino a 3 ore. Quando arriva, suona per 30 secondi.",
+  "pokePaused": "{{ name }} ha messo in pausa i poke. Un poke arriva come un messaggio normale."
 }

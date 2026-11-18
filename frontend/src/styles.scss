@@ -460,6 +460,20 @@ router-outlet + * { display: block; min-height: 100dvh; }
   font-size: 1.5rem;
   font-weight: 700;
   line-height: 1;
+  position: relative;
+  padding-right: 0.36em; // the 7 sits left of the middle, as in the app icon (scripts/make-icons.mjs), to make room for the bell badge
+  // the alarm-bell badge of the app icon: a white circle with a purple bell, lower right (the poke)
+  &::after {
+    content: '';
+    position: absolute;
+    left: 57.8%;
+    top: 53.5%;
+    width: 36%;
+    height: 36%;
+    border-radius: 50%;
+    background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237c3aed' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 8a6 6 0 0112 0c0 7 3 9 3 9H3s3-2 3-9'/%3E%3Cpath d='M10.3 21a1.94 1.94 0 003.4 0'/%3E%3C/svg%3E") center / 62% no-repeat;
+  }
+  &.sf-logo-plain { padding-right: 0; &::after { display: none; } } // no bell: the check mark of the setup page
 }
 .sf-logo-sm { width: 2rem; height: 2rem; margin: 0; border-radius: 0.5rem; font-size: 1.125rem; } // in the header bar
 .sf-logo-lg { width: 5.5rem; height: 5.5rem; border-radius: 1.75rem; font-size: 2.75rem; }

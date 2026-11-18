@@ -70,5 +70,10 @@
   "notificationsAreBlockedFor2": "Powiadomienia są zablokowane dla tej strony. Zezwól na nie w ustawieniach przeglądarki (ikona kłódki lub suwaków po lewej stronie adresu), potem spróbuj ponownie.",
   "thisBrowserCannotShow": "Ta przeglądarka nie potrafi pokazywać powiadomień na komputerze.",
   "thisIsHowA": "Tak wygląda powiadomienie.",
-  "orUseTheBrowser": "Albo użyj przeglądarki: 3 kroki"
+  "orUseTheBrowser": "Albo użyj przeglądarki: 3 kroki",
+  "pokeAlarm": "Ustawienia szturchnięć",
+  "pokeAlarmText": "Szturchnięcie od znajomego dzwoni jak budzik, także gdy aplikacja jest zamknięta. Możesz wstrzymać szturchnięcia na ograniczony czas i wybrać, jak długo dzwonią.",
+  "pokeRingsFor": "Dzwoni przez",
+  "pokeSecondsShort": "{{ n }} s",
+  "pokeMinutesShort": "{{ n }} min"
 }

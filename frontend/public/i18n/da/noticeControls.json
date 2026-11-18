@@ -70,5 +70,10 @@
   "notificationsAreBlockedFor2": "Notifikationer er blokeret for dette websted. Tillad dem i browserens indstillinger (lås- eller skyderikonet til venstre for adressen), og prøv igen.",
   "thisBrowserCannotShow": "Denne browser kan ikke vise skrivebordsnotifikationer.",
   "thisIsHowA": "Sådan ser en notifikation ud.",
-  "orUseTheBrowser": "Eller brug browseren: 3 trin"
+  "orUseTheBrowser": "Eller brug browseren: 3 trin",
+  "pokeAlarm": "Prik-indstillinger",
+  "pokeAlarmText": "Et prik fra en ven ringer som en alarm, også når appen er lukket. Du kan sætte prik på pause i en begrænset tid og vælge, hvor længe et prik ringer.",
+  "pokeRingsFor": "Ringer i",
+  "pokeSecondsShort": "{{ n }} s",
+  "pokeMinutesShort": "{{ n }} min"
 }

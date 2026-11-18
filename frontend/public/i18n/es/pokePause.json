@@ -1,0 +1,16 @@
+{
+  "pokesPaused": "Toques en pausa",
+  "until": "Hasta {{ time }}",
+  "allCircles": "en todas partes",
+  "pokesAreOn": "Los toques están activados",
+  "friendsCanRingYou": "Tus amigos pueden hacerte sonar",
+  "resume": "Reanudar",
+  "pause": "Pausar",
+  "pauseFor": "Pausar toques durante",
+  "oneHour": "1 hora",
+  "fourHours": "4 horas",
+  "untilMorning": "Hasta la mañana",
+  "twentyFourHours": "24 horas",
+  "explain": "Se aplica en toda la app. Los mensajes siguen llegando con normalidad y tus amigos ven Silencio.",
+  "cancel": "Cancelar"
+}

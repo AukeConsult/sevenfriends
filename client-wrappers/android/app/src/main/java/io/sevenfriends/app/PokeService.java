@@ -25,7 +25,7 @@ import androidx.core.app.NotificationCompat;
 /**
  * The alarm of a poke: a foreground service that plays the phone's alarm sound in a loop on the ALARM volume (so the ringer's silent mode does not stop it,
  * and the alarm volume is raised for the time it rings), vibrates, and shows a full-screen notification (PokeActivity) with who poked. It stops when the
- * person presses Stop or Open, or after MAX_MS.
+ * person presses Stop or Open, or after the time the person chose (30 seconds unless changed: `ringSeconds`).
  */
 public class PokeService extends Service {
 
@@ -38,7 +38,21 @@ public class PokeService extends Service {
 
     private static final String CHANNEL = "poke_alarm";
     private static final int NOTIFICATION_ID = 7007;
-    private static final long MAX_MS = 2 * 60 * 1000;
+    /** How long the alarm rings, in seconds: the choices of the person (the Android notification screen, NativeCheck), kept on this phone because this service runs when the app is closed. */
+    static final int[] RING_CHOICES = {10, 30, 60, 120, 300};
+    static final int RING_DEFAULT = 30;
+    private static final String PREFS = "poke";
+    private static final String KEY_SECONDS = "seconds";
+
+    static int ringSeconds(Context context) {
+        int seconds = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getInt(KEY_SECONDS, RING_DEFAULT);
+        for (int choice : RING_CHOICES) if (choice == seconds) return seconds;
+        return RING_DEFAULT;
+    }
+
+    static void setRingSeconds(Context context, int seconds) {
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putInt(KEY_SECONDS, seconds).apply();
+    }
 
     private MediaPlayer player;
     private Vibrator vibrator;
@@ -84,7 +98,7 @@ public class PokeService extends Service {
 
         if (player == null) ring();
         handler.removeCallbacks(giveUp);
-        handler.postDelayed(giveUp, MAX_MS);
+        handler.postDelayed(giveUp, ringSeconds(this) * 1000L);
         return START_NOT_STICKY;
     }
 

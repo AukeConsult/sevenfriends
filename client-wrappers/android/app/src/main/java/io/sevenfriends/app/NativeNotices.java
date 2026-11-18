@@ -126,6 +126,23 @@ final class NativeNotices {
     }
 
     /** Android's notification settings of this app (only the person can switch notifications on again: an app cannot). */
+    /** How long a poke alarm rings, in seconds (the Settings page of the app shows and sets it; the same value as the "Poke alarm" card of NativeCheck). */
+    @JavascriptInterface
+    public int pokeSeconds() {
+        return PokeService.ringSeconds(activity);
+    }
+
+    /** The Settings page chose how long a poke rings: only one of the choices of PokeService is kept. */
+    @JavascriptInterface
+    public void setPokeSeconds(int seconds) {
+        for (int choice : PokeService.RING_CHOICES) {
+            if (choice == seconds) {
+                PokeService.setRingSeconds(activity, seconds);
+                return;
+            }
+        }
+    }
+
     @JavascriptInterface
     public void openNotificationSettings() {
         activity.runOnUiThread(() -> {

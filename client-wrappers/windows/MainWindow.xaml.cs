@@ -227,7 +227,13 @@ public partial class MainWindow : Window
                 if (!Uri.TryCreate(e.Source, UriKind.Absolute, out var from) || !Inside.Take(3).Contains(from.Host)) return; // only the app's own pages
                 using var message = System.Text.Json.JsonDocument.Parse(e.WebMessageAsJson);
                 var root = message.RootElement;
-                if (root.GetProperty("type").GetString() != "poke") return;
+                var type = root.GetProperty("type").GetString();
+                if (type == "pokeSeconds") // the Settings page: how long a poke rings
+                {
+                    PokeWindow.SetRingSeconds(root.GetProperty("seconds").GetInt32());
+                    return;
+                }
+                if (type != "poke") return;
                 var url = root.TryGetProperty("url", out var u) ? u.GetString() ?? "/" : "/";
                 if (!url.StartsWith('/') || url.StartsWith("//")) url = "/"; // only a page of the app
                 _poke ??= new PokeWindow(OpenPage);

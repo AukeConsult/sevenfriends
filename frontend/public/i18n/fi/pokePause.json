@@ -1,0 +1,16 @@
+{
+  "pokesPaused": "Tömäykset tauolla",
+  "until": "Asti {{ time }}",
+  "allCircles": "kaikkialla",
+  "pokesAreOn": "Tömäykset ovat päällä",
+  "friendsCanRingYou": "Ystävät voivat soittaa sinulle",
+  "resume": "Jatka",
+  "pause": "Tauko",
+  "pauseFor": "Tauota tömäykset ajaksi",
+  "oneHour": "1 tunti",
+  "fourHours": "4 tuntia",
+  "untilMorning": "Aamuun asti",
+  "twentyFourHours": "24 tuntia",
+  "explain": "Koskee kaikkialla sovelluksessa. Viestit tulevat silti normaalisti, ja ystäväsi näkevät Hiljainen.",
+  "cancel": "Peruuta"
+}

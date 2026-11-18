@@ -32,5 +32,7 @@
   "pokeSend": "Lähetä töm",
   "pokeCancel": "Peruuta",
   "pokeSent": "{{ name }} töminttiin.",
-  "pokeNote": "Toistaiseksi se soi hälytyksenä Android-puhelimissa ja Windows-sovelluksessa. Muilla laitteilla se tulee tavallisena ilmoituksena."
+  "pokeNote": "Toistaiseksi se soi hälytyksenä Android-puhelimissa ja Windows-sovelluksessa. Muilla laitteilla se tulee tavallisena ilmoituksena.",
+  "pokeWaits": "Jos puhelin on pois päältä tai ilman yhteyttä, töm odottaa enintään 3 tuntia. Kun se saapuu, se soi 30 sekuntia.",
+  "pokePaused": "{{ name }} on tauottanut tömäykset. Töm tulee tavallisena viestinä."
 }

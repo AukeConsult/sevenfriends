@@ -38,10 +38,14 @@
     "windows:release": "node scripts/windows-release.mjs",
     "windows:msix": "node scripts/windows-msix.mjs",
     "sync:models": "node scripts/sync-models.mjs",
+    "icons": "node scripts/make-icons.mjs",
     "sync:sounds": "node scripts/sounds-manifest.mjs",
     "sync:android-sounds": "node scripts/sync-android-sounds.mjs",
     "check:android-sounds": "node scripts/sync-android-sounds.mjs --check",
     "check:models": "node scripts/sync-models.mjs --check",
     "check:i18n": "node scripts/check-i18n.mjs"
+  },
+  "dependencies": {
+    "sharp": "^0.35.5"
   }
 }

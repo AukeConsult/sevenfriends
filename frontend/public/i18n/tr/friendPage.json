@@ -32,5 +32,7 @@
   "pokeSend": "Dürtme gönder",
   "pokeCancel": "İptal",
   "pokeSent": "{{ name }} dürtüldü.",
-  "pokeNote": "Şimdilik Android telefonlarda ve Windows uygulamasında alarm gibi çalar. Diğer cihazlarda normal bildirim olarak gelir."
+  "pokeNote": "Şimdilik Android telefonlarda ve Windows uygulamasında alarm gibi çalar. Diğer cihazlarda normal bildirim olarak gelir.",
+  "pokeWaits": "Telefon kapalıysa veya bağlantısı yoksa dürtme 3 saate kadar bekler. Ulaştığında 30 saniye çalar.",
+  "pokePaused": "{{ name }} dürtmeleri duraklattı. Dürtme normal bir mesaj olarak gelir."
 }

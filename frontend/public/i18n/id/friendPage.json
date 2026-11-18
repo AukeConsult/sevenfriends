@@ -32,5 +32,7 @@
   "pokeSend": "Kirim colekan",
   "pokeCancel": "Batal",
   "pokeSent": "{{ name }} telah dicolek.",
-  "pokeNote": "Untuk saat ini berdering seperti alarm di ponsel Android dan aplikasi Windows. Di perangkat lain datang sebagai notifikasi biasa."
+  "pokeNote": "Untuk saat ini berdering seperti alarm di ponsel Android dan aplikasi Windows. Di perangkat lain datang sebagai notifikasi biasa.",
+  "pokeWaits": "Jika ponsel mati atau tidak terhubung, colekan menunggu hingga 3 jam. Saat sampai, ponsel berdering selama 30 detik.",
+  "pokePaused": "{{ name }} menjeda colekan. Colekan masuk sebagai pesan biasa."
 }

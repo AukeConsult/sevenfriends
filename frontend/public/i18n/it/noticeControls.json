@@ -70,5 +70,10 @@
   "notificationsAreBlockedFor2": "Le notifiche sono bloccate per questo sito. Consentile nelle impostazioni del browser (l'icona del lucchetto o dei cursori a sinistra dell'indirizzo), poi riprova.",
   "thisBrowserCannotShow": "Questo browser non può mostrare le notifiche sul desktop.",
   "thisIsHowA": "Ecco come appare una notifica.",
-  "orUseTheBrowser": "Oppure usa il browser: 3 passaggi"
+  "orUseTheBrowser": "Oppure usa il browser: 3 passaggi",
+  "pokeAlarm": "Impostazioni poke",
+  "pokeAlarmText": "Un poke di un amico suona come una sveglia, anche con l'app chiusa. Puoi mettere in pausa i poke per un tempo limitato e scegliere per quanto suonano.",
+  "pokeRingsFor": "Suona per",
+  "pokeSecondsShort": "{{ n }} s",
+  "pokeMinutesShort": "{{ n }} min"
 }

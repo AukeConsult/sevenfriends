@@ -70,5 +70,10 @@
   "notificationsAreBlockedFor2": "Bu site için bildirimler engelli. Tarayıcı ayarlarından izin ver (adresin solundaki kilit veya kaydırıcı simgesi), sonra tekrar dene.",
   "thisBrowserCannotShow": "Bu tarayıcı masaüstü bildirimleri gösteremiyor.",
   "thisIsHowA": "Bir bildirim böyle görünür.",
-  "orUseTheBrowser": "Ya da tarayıcıyı kullan: 3 adım"
+  "orUseTheBrowser": "Ya da tarayıcıyı kullan: 3 adım",
+  "pokeAlarm": "Dürtme ayarları",
+  "pokeAlarmText": "Bir arkadaştan gelen dürtme, uygulama kapalıyken bile alarm gibi çalar. Dürtmeleri sınırlı bir süre duraklatabilir ve ne kadar çalacağını seçebilirsin.",
+  "pokeRingsFor": "Çalma süresi",
+  "pokeSecondsShort": "{{ n }} sn",
+  "pokeMinutesShort": "{{ n }} dk"
 }

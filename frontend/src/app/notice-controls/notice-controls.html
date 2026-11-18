@@ -9,6 +9,24 @@
     </div>
   }
 
+  <h2 class="sf-section-title m-0 mt-2">{{ t('noticeControls.pokeAlarm') || 'Poke settings' }}</h2>
+  <p class="small text-secondary m-0">{{ t('noticeControls.pokeAlarmText') || 'A poke from a friend rings like an alarm, also when the app is closed. You can pause pokes for a limited time; here you also choose how long a poke rings.' }}</p>
+  <app-poke-pause />
+  @if (pokeRing.available) {
+    <div class="card">
+      <div class="card-body vstack gap-2">
+        <span id="poke-rings-for">{{ t('noticeControls.pokeRingsFor') || 'Rings for' }}</span>
+        <div class="d-flex flex-wrap gap-2" role="radiogroup" aria-labelledby="poke-rings-for">
+          @for (s of pokeChoices; track s) {
+            <button type="button" role="radio" class="btn btn-sm flex-fill" [class.btn-primary]="pokeRing.seconds() === s" [class.btn-outline-secondary]="pokeRing.seconds() !== s" [attr.aria-checked]="pokeRing.seconds() === s" (click)="pokeRing.set(s)">
+              {{ s < 60 ? (t('noticeControls.pokeSecondsShort', { n: s }) || s + ' s') : (t('noticeControls.pokeMinutesShort', { n: s / 60 }) || (s / 60) + ' min') }}
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+  }
+
   @if (!native) {
   <h2 class="sf-section-title m-0 mt-2">{{ t('noticeControls.whileTheAppIs') || 'While the app is open' }}</h2>
   <p class="small text-secondary m-0">{{ t('noticeControls.aPopUpShows') || 'A pop-up shows when a message or request arrives and you are not looking at the app. Click it to come back.' }}</p>

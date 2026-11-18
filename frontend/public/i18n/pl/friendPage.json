@@ -32,5 +32,7 @@
   "pokeSend": "Wyślij szturchnięcie",
   "pokeCancel": "Anuluj",
   "pokeSent": "Szturchnięto: {{ name }}.",
-  "pokeNote": "Na razie dzwoni jak budzik na telefonach z Androidem i w aplikacji dla Windows. Na innych urządzeniach przychodzi jako zwykłe powiadomienie."
+  "pokeNote": "Na razie dzwoni jak budzik na telefonach z Androidem i w aplikacji dla Windows. Na innych urządzeniach przychodzi jako zwykłe powiadomienie.",
+  "pokeWaits": "Jeśli telefon jest wyłączony lub bez połączenia, szturchnięcie czeka do 3 godzin. Gdy dotrze, dzwoni przez 30 sekund.",
+  "pokePaused": "{{ name }} wstrzymał(a) szturchnięcia. Szturchnięcie przyjdzie jako zwykła wiadomość."
 }

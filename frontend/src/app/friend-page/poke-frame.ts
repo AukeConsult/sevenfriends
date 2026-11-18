@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { ChatService } from '../core/chat.service';
 import { tr } from '../core/i18n';
+import { MOOD_SILENT } from '../models';
 import { FriendContext } from './friend-context';
 
 /** What a poke says in the feed: it is a normal message, so it is locked like any other. */
@@ -24,10 +25,13 @@ const POKE_TEXT = '🔔';
           <div class="sf-card m-2 p-3 d-flex flex-column gap-2" role="group" [attr.aria-label]="t('friendPage.poke') || 'Poke'">
             @if (message(); as m) {
               <p class="m-0" [class.text-danger]="failed()">{{ m }}</p>
+            } @else if (ctx.friend()?.mood === silent) {
+              <p class="m-0">🔕 {{ t('friendPage.pokePaused', { name: ctx.friendName() }) || 'This friend has paused pokes. A poke arrives as a normal message.' }}</p>
             } @else {
               <p class="m-0">🔔 {{ t('friendPage.pokeAsk', { name: ctx.friendName() }) || 'This rings their phone like an alarm, even when it is silent.' }}</p>
             }
             @if (!message()) { <p class="sf-hint m-0">{{ t('friendPage.pokeNote') || 'It rings like an alarm on Android phones and in the Windows app for now. On other devices it arrives as a normal notification.' }}</p> }
+            @if (!message()) { <p class="sf-hint m-0">{{ t('friendPage.pokeWaits') || 'If the phone is off or has no connection, the poke waits for up to 3 hours. When it arrives, it rings for 30 seconds.' }}</p> }
             <div class="d-flex gap-2">
               <button type="button" class="btn btn-light btn-sm flex-fill" (click)="close()" [disabled]="busy()">{{ t('friendPage.pokeCancel') || 'Cancel' }}</button>
               @if (!message() || failed()) {
@@ -44,6 +48,7 @@ export class PokeFrame {
   protected readonly ctx = inject(FriendContext);
   private readonly chat = inject(ChatService);
   protected readonly busy = signal(false);
+  protected readonly silent = MOOD_SILENT;
   protected readonly message = signal<string | null>(null);
   protected readonly failed = signal(false);
 

@@ -70,5 +70,10 @@
   "notificationsAreBlockedFor2": "Meldingen zijn voor deze site geblokkeerd. Sta ze toe in de browserinstellingen (het slot- of schuifjespictogram links van het adres) en probeer het opnieuw.",
   "thisBrowserCannotShow": "Deze browser kan geen bureaubladmeldingen tonen.",
   "thisIsHowA": "Zo ziet een melding eruit.",
-  "orUseTheBrowser": "Of gebruik de browser: 3 stappen"
+  "orUseTheBrowser": "Of gebruik de browser: 3 stappen",
+  "pokeAlarm": "Por-instellingen",
+  "pokeAlarmText": "Een por van een vriend rinkelt als een alarm, ook als de app gesloten is. Je kunt porren een beperkte tijd pauzeren en kiezen hoe lang een por rinkelt.",
+  "pokeRingsFor": "Rinkelt",
+  "pokeSecondsShort": "{{ n }} s",
+  "pokeMinutesShort": "{{ n }} min"
 }

@@ -32,5 +32,7 @@
   "pokeSend": "发送戳一下",
   "pokeCancel": "取消",
   "pokeSent": "已戳了 {{ name }}。",
-  "pokeNote": "目前 Android 手机和 Windows 应用会像闹钟一样响起。其他设备会收到普通通知。"
+  "pokeNote": "目前 Android 手机和 Windows 应用会像闹钟一样响起。其他设备会收到普通通知。",
+  "pokeWaits": "如果手机关机或没有网络，戳一下最多等待 3 小时。送达后会响铃 30 秒。",
+  "pokePaused": "{{ name }} 已暂停戳一下。戳一下会作为普通消息送达。"
 }

@@ -1,0 +1,16 @@
+{
+  "pokesPaused": "Cutucadas em pausa",
+  "until": "Até {{ time }}",
+  "allCircles": "em todo lugar",
+  "pokesAreOn": "Cutucadas ativadas",
+  "friendsCanRingYou": "Amigos podem fazer seu telefone tocar",
+  "resume": "Retomar",
+  "pause": "Pausar",
+  "pauseFor": "Pausar cutucadas por",
+  "oneHour": "1 hora",
+  "fourHours": "4 horas",
+  "untilMorning": "Até de manhã",
+  "twentyFourHours": "24 horas",
+  "explain": "Vale em todo o app. As mensagens continuam chegando normalmente e seus amigos veem Silencioso.",
+  "cancel": "Cancelar"
+}

@@ -70,5 +70,10 @@
   "notificationsAreBlockedFor2": "Varsler er blokkert for dette nettstedet. Tillat dem i nettleserinnstillingene (lås- eller glidebryter-ikonet til venstre for adressen), og prøv igjen.",
   "thisBrowserCannotShow": "Denne nettleseren kan ikke vise skrivebordsvarsler.",
   "thisIsHowA": "Slik ser et varsel ut.",
-  "orUseTheBrowser": "Eller bruk nettleseren: 3 steg"
+  "orUseTheBrowser": "Eller bruk nettleseren: 3 steg",
+  "pokeAlarm": "Dytt-innstillinger",
+  "pokeAlarmText": "Et dytt fra en venn ringer som en alarm, også når appen er lukket. Du kan sette dytt på pause en begrenset tid, og velge hvor lenge et dytt ringer.",
+  "pokeRingsFor": "Ringer i",
+  "pokeSecondsShort": "{{ n }} s",
+  "pokeMinutesShort": "{{ n }} min"
 }

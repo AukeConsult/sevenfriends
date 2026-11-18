@@ -11,6 +11,7 @@ import { Router, RouterLink } from '@angular/router';
 import { ChatService } from '../core/chat.service';
 import { RecoveryInboxService } from '../core/recovery-inbox.service';
 import { MoodEditor } from '../mood-editor/mood-editor';
+import { PokePause } from '../poke-pause/poke-pause';
 import { CircleActivity } from '../circle-activity/circle-activity';
 import { CircleActivityService } from '../core/circle-activity.service';
 import { FriendAvatar } from '../friend-avatar/friend-avatar';
@@ -52,7 +53,7 @@ interface MessageGroup {
  */
 @Component({
   selector: 'app-notifications',
-  imports: [AppDatePipe, CircleActivity, FriendAvatar, HomeSeats, HomeTop, RouterLink, MoodEditor, Sleeping, AddFriend, TranslocoDirective],
+  imports: [AppDatePipe, CircleActivity, FriendAvatar, HomeSeats, HomeTop, RouterLink, MoodEditor, PokePause, Sleeping, AddFriend, TranslocoDirective],
   templateUrl: './notifications.html',
   providers: [provideTranslocoScope('notifications')],
   host: { '(click)': 'emptySpaceClicked($event)' },

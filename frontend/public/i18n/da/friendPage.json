@@ -32,5 +32,7 @@
   "pokeSend": "Send prik",
   "pokeCancel": "Annuller",
   "pokeSent": "{{ name }} blev prikket.",
-  "pokeNote": "Indtil videre ringer det som en alarm på Android-telefoner og i Windows-appen. På andre enheder kommer det som en almindelig notifikation."
+  "pokeNote": "Indtil videre ringer det som en alarm på Android-telefoner og i Windows-appen. På andre enheder kommer det som en almindelig notifikation.",
+  "pokeWaits": "Hvis telefonen er slukket eller uden forbindelse, venter prikket i op til 3 timer. Når det når frem, ringer det i 30 sekunder.",
+  "pokePaused": "{{ name }} har sat prik på pause. Et prik kommer som en almindelig besked."
 }
