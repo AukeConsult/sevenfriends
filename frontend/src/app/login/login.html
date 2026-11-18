@@ -28,7 +28,12 @@
         <span>{{ t('login.google') || 'Continue with Google' }}</span>
       </button>
       @if (phoneAuth) {
-        <a routerLink="/login/phone" class="btn btn-outline-secondary w-100">{{ t('login.phone') || 'Continue with phone' }}</a>
+        @if (phoneOpen()) {
+          <!-- the phone number and the SMS code, here on this page: no page of its own -->
+          <app-phone-auth (closed)="phoneOpen.set(false)" />
+        } @else {
+          <button type="button" class="btn btn-outline-secondary w-100" (click)="phoneOpen.set(true)">{{ t('login.phone') || 'Continue with phone' }}</button>
+        }
       }
       <a routerLink="/login/email" class="btn btn-outline-secondary w-100">{{ t('login.emailLink') || 'Email me a sign-in link' }}</a>
     </div>

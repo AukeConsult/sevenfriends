@@ -10,6 +10,7 @@
   "weSentACode": "שלחנו קוד אל <strong>{{ phone }}</strong>.",
   "code": "קוד",
   "changeNumber": "שינוי מספר",
+  "cancel": "ביטול",
   "checking": "בודקים…",
   "confirm": "אישור",
   "writeTheNumberWith": "יש לכתוב את המספר עם קידומת המדינה, למשל ‎+47 900 00 000.",

@@ -10,6 +10,7 @@
   "weSentACode": "Enviamos un código a <strong>{{ phone }}</strong>.",
   "code": "Código",
   "changeNumber": "Cambiar número",
+  "cancel": "Cancelar",
   "checking": "Comprobando…",
   "confirm": "Confirmar",
   "writeTheNumberWith": "Escribe el número con el prefijo del país, por ejemplo +47 900 00 000.",

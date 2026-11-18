@@ -10,6 +10,7 @@
   "weSentACode": "أرسلنا رمزًا إلى <strong>{{ phone }}</strong>.",
   "code": "الرمز",
   "changeNumber": "تغيير الرقم",
+  "cancel": "إلغاء",
   "checking": "جارٍ الفحص…",
   "confirm": "تأكيد",
   "writeTheNumberWith": "اكتب الرقم مع رمز الدولة، مثلًا +47 900 00 000.",

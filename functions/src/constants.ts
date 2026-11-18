@@ -105,3 +105,6 @@ export const MAX_UPLOAD_BYTES = 30 * 1024 * 1024;
 /** The biggest piece of a chunked upload, and the most pieces (Google Storage joins at most 32 files in one go). */
 export const CHUNK_BYTES = 8 * 1024 * 1024;
 export const MAX_CHUNKS = 32;
+
+/** payment/{paymentIntentId}: one Stripe payment (who paid, for what, and how it ended) */
+export const PAYMENT_COLLECTION = "payment";

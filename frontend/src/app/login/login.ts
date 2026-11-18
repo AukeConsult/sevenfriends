@@ -11,17 +11,20 @@ import { AuthService } from '../core/auth.service';
 import { FriendLinkService } from '../core/friend-link.service';
 import { AuthMode } from '../models';
 import { Inviter } from '../inviter/inviter';
+import { PhoneAuth } from '../phone-auth/phone-auth';
 import { BrowserRuleService } from '../core/browser-rule.service';
 
 @Component({
   selector: 'app-login',
-  imports: [Inviter, RouterLink, Clearable, Hero, TranslocoDirective],
+  imports: [Inviter, RouterLink, Clearable, Hero, PhoneAuth, TranslocoDirective],
   providers: [provideTranslocoScope('login')],
   templateUrl: './login.html',
 })
 export class Login {
   /** PHONE_AUTH in .env: the "Continue with phone" button is only shown when SMS sign-in is on */
   protected readonly phoneAuth = features.phoneAuth;
+  /** the phone number and code form is open inside this page (also after a reload, while a code that was sent waits to be entered) */
+  protected readonly phoneOpen = signal(false);
   protected readonly w = inject(ActiveCircleService).words;
   /** a friend link was opened: what it is about (shown above the sign-in buttons) */
   private readonly friendLinks = inject(FriendLinkService);
@@ -64,6 +67,11 @@ export class Login {
   protected readonly info = signal<string | null>(null);
   /** a sign-in with email and password was turned down: the person may not have an account yet, so creating one is offered clearly */
   protected readonly rejected = signal(false);
+
+  constructor() {
+    const pending = features.phoneAuth ? this.auth.pendingPhone() : null;
+    if (pending && !pending.linking) this.phoneOpen.set(true);
+  }
 
   protected toggleMode(): void {
     this.mode.update((m) => (m === 'signin' ? 'signup' : 'signin'));

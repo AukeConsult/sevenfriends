@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { features } from '../environments/features';
 import { authGuard, guestGuard } from './core/auth.guard';
 import { AddFriend } from './add-friend/add-friend';
 import { InviteFriend } from './invite-friend/invite-friend';
@@ -16,6 +15,7 @@ import { Locking } from './locking/locking';
 import { Share } from './share/share';
 import { Terms } from './terms/terms';
 import { About } from './about/about';
+import { Support } from './support/support';
 import { Login } from './login/login';
 import { Welcome } from './welcome/welcome';
 import { FriendsWelcome } from './friends-welcome/friends-welcome';
@@ -25,7 +25,6 @@ import { LoginEmail } from './login-email/login-email';
 import { LoginLink } from './login-link/login-link';
 import { AuthAction } from './auth-action/auth-action';
 import { MediaViewer } from './media-viewer/media-viewer';
-import { PhoneAuth } from './phone-auth/phone-auth';
 import { Notifications } from './notifications/notifications';
 import { Pending } from './pending/pending';
 import { Profile } from './profile/profile';
@@ -110,6 +109,7 @@ export const routes: Routes = [
   { path: 'terms', component: Terms, title: 'Terms of use – Seven Friends' },
   { path: 'about', component: About, title: 'About – Seven Friends' },
   { path: 'locking', component: Locking, title: 'Locking – Seven Friends' },
+  { path: 'support', component: Support, canActivate: [authGuard], title: 'Support – Seven Friends' },
   // one install page for each kind of device (public: the welcome page links here)
   { path: 'install/android', component: InstallDevice, data: { device: 'android' }, title: 'Get the Android app – Seven Friends' },
   { path: 'install/iphone', component: InstallDevice, data: { device: 'iphone' }, title: 'Add to your home screen – Seven Friends' },
@@ -143,7 +143,6 @@ export const routes: Routes = [
   { path: 'welcome', component: Welcome, title: 'Welcome – Seven Friends' },
   { path: 'login', component: Login, canActivate: [guestGuard], title: 'Sign in – Seven Friends' },
   { path: 'login/email', component: LoginEmail, canActivate: [guestGuard], title: 'Email link – Seven Friends' },
-  ...(features.phoneAuth ? [{ path: 'login/phone', component: PhoneAuth, canActivate: [guestGuard], data: { mode: 'login' }, title: 'Phone sign-in – Seven Friends' }] : []), // PHONE_AUTH in .env
   { path: 'auth/action', component: AuthAction, title: 'Confirming your email – Seven Friends' },
   { path: 'login/link', component: LoginLink, title: 'Signing in – Seven Friends' },
   { path: 'delete-account', component: DeleteAccount, canActivate: [authGuard], title: 'Delete my account – Seven Friends' },

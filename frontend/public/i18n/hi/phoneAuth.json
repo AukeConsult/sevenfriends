@@ -10,6 +10,7 @@
   "weSentACode": "हमने <strong>{{ phone }}</strong> पर एक कोड भेजा है।",
   "code": "कोड",
   "changeNumber": "नंबर बदलें",
+  "cancel": "रद्द करें",
   "checking": "जाँच हो रही है…",
   "confirm": "पुष्टि करें",
   "writeTheNumberWith": "नंबर देश कोड के साथ लिखें, जैसे +47 900 00 000।",

@@ -10,6 +10,7 @@
   "weSentACode": "我们已向 <strong>{{ phone }}</strong> 发送了验证码。",
   "code": "验证码",
   "changeNumber": "更换号码",
+  "cancel": "取消",
   "checking": "检查中…",
   "confirm": "确认",
   "writeTheNumberWith": "请写上带国家区号的号码，例如 +47 900 00 000。",

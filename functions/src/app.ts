@@ -17,6 +17,7 @@ import { profileRouter } from "./profile";
 import { pushRouter } from "./push";
 import { usersRouter } from "./users";
 import { accountsRouter } from "./accounts";
+import { paymentsRouter, paymentsWebhookRouter } from "./payments";
 
 /** The addresses of the app that may call the API from a browser. */
 const ALLOWED_ORIGINS = [
@@ -36,6 +37,8 @@ export function createApp(): express.Express {
   // The app calls /api on its own address (Hosting rewrites /api/** to this function), so CORS only matters for the local dev servers.
   // Requests without an Origin header (the same address, tools) always pass.
   app.use(cors({ origin: ALLOWED_ORIGINS }));
+  // The Stripe webhook needs the raw body to check the signature: it comes BEFORE the JSON parser.
+  app.use("/api/payments/webhook", paymentsWebhookRouter);
   app.use(express.json({ limit: "200kb" })); // the biggest body is a profile picture (at most 70 KB, about 95 KB as text)
 
   // Hosting forwards the full path (including /api) to the function.
@@ -61,6 +64,7 @@ export function createApp(): express.Express {
   router.use("/recovery", recoveryListRouter);
   router.use("/preferences", preferencesRouter);
   router.use("/push", pushRouter);
+  router.use("/payments", paymentsRouter);
   app.use("/api", router);
   return app;
 }

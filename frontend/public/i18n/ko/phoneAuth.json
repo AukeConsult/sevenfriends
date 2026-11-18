@@ -10,6 +10,7 @@
   "weSentACode": "<strong>{{ phone }}</strong>(으)로 코드를 보냈어요.",
   "code": "코드",
   "changeNumber": "번호 바꾸기",
+  "cancel": "취소",
   "checking": "확인하는 중…",
   "confirm": "확인",
   "writeTheNumberWith": "국가 번호를 포함해 입력하세요. 예: +47 900 00 000.",

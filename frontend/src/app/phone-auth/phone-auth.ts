@@ -1,30 +1,33 @@
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
 import { tr } from '../core/i18n';
-import { Component, ElementRef, inject, signal, viewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, ElementRef, effect, inject, output, signal, viewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { authMessage } from '../core/auth-errors';
 import { AuthService } from '../core/auth.service';
 import { PhoneStep } from '../models/view';
-import { PageBar } from '../page-bar/page-bar';
 
-/** Phone number + SMS code, to sign in. (Verifying the phone of a signed-in account is done on the Profile page.) A code that was sent and not entered yet comes back after a reload. */
+/**
+ * Phone number + SMS code, to sign in: it sits inside the Login page (no page of its own), opened by "Continue with phone". (Verifying the phone of a signed-in
+ * account is done on the Profile page.) A code that was sent and not entered yet comes back after a reload.
+ */
 @Component({
   selector: 'app-phone-auth',
-  imports: [PageBar, TranslocoDirective],
+  imports: [TranslocoDirective],
   templateUrl: './phone-auth.html',
   providers: [provideTranslocoScope('phoneAuth')],
 })
 export class PhoneAuth {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
-  private readonly route = inject(ActivatedRoute).snapshot;
+  /** the person gave up: the Login page closes this */
+  readonly closed = output<void>();
 
   private readonly recaptcha = viewChild.required<ElementRef<HTMLElement>>('recaptcha');
 
   private readonly pending = this.auth.pendingPhone();
   private readonly resume = this.pending && !this.pending.linking ? this.pending : null;
   protected readonly step = signal<PhoneStep>(this.resume ? 'code' : 'number');
-  protected readonly phone = signal(this.resume?.phone ?? this.route.queryParamMap.get('phone') ?? '');
+  protected readonly phone = signal(this.resume?.phone ?? '');
   protected readonly code = signal('');
   protected readonly busy = signal(false);
   protected readonly error = signal<string | null>(null);
@@ -34,6 +37,20 @@ export class PhoneAuth {
     let value = raw.trim().replace(/[\s\-().]/g, '');
     if (value.startsWith('00')) value = '+' + value.slice(2);
     return /^\+[1-9]\d{6,14}$/.test(value) ? value : null;
+  }
+
+  constructor() {
+    // a code that was not entered within 5 minutes is forgotten: back to the number, with a note
+    let first = true;
+    effect(() => {
+      this.auth.phoneCodeExpired();
+      if (first) first = false;
+      else if (this.step() === 'code') {
+        this.step.set('number');
+        this.code.set('');
+        this.error.set(authMessage({ code: 'auth/code-expired' }, ''));
+      }
+    });
   }
 
   protected async sendCode(): Promise<void> {
@@ -71,6 +88,11 @@ export class PhoneAuth {
     } finally {
       this.busy.set(false);
     }
+  }
+
+  protected cancel(): void {
+    this.auth.cancelPhoneCode();
+    this.closed.emit();
   }
 
   protected changeNumber(): void {

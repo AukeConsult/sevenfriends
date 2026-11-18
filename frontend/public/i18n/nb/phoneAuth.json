@@ -10,6 +10,7 @@
   "weSentACode": "Vi sendte en kode til <strong>{{ phone }}</strong>.",
   "code": "Kode",
   "changeNumber": "Bytt nummer",
+  "cancel": "Avbryt",
   "checking": "Sjekker…",
   "confirm": "Bekreft",
   "writeTheNumberWith": "Skriv nummeret med landskode, for eksempel +47 900 00 000.",

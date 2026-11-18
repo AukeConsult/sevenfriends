@@ -35,7 +35,7 @@ import { tr } from './i18n';
 const EMAIL_KEY = 'sf-email-for-sign-in';
 /** the SMS code that was sent from this tab and not entered yet (see AuthService.pendingPhone), and how long it is kept */
 const PENDING_PHONE_KEY = 'sf-pending-phone';
-const PENDING_PHONE_MS = 10 * 60 * 1000;
+const PENDING_PHONE_MS = 5 * 60 * 1000;
 /** who signed in last on this browser (an id, nothing else) */
 export const LAST_UID_KEY = 'sf-last-uid';
 /** the small things kept in this browser about the person using it (see clearLocalSession) */
@@ -202,6 +202,7 @@ export class AuthService {
         /* no storage: the code still works until the page is reloaded */
       }
       this.pendingId = id;
+      this.armPhoneExpiry(PENDING_PHONE_MS);
     } catch (err) {
       this.clearVerifier();
       throw err;
@@ -209,6 +210,17 @@ export class AuthService {
   }
 
   private pendingId: string | null = null;
+  private expiryTimer: ReturnType<typeof setTimeout> | undefined;
+  /** counts up when a code that was sent was not entered in time and is forgotten (the page closes its code field and says so) */
+  readonly phoneCodeExpired = signal(0);
+
+  private armPhoneExpiry(ms: number): void {
+    clearTimeout(this.expiryTimer);
+    this.expiryTimer = setTimeout(() => {
+      this.cancelPhoneCode();
+      this.phoneCodeExpired.update((v) => v + 1);
+    }, ms);
+  }
 
   /** The code that was sent to this tab and not entered yet (also after a reload): the number and what it is for; null when there is none or it is too old. */
   pendingPhone(): { phone: string; linking: boolean } | null {
@@ -221,6 +233,7 @@ export class AuthService {
         return null;
       }
       this.pendingId = p.id;
+      if (!this.expiryTimer) this.armPhoneExpiry(PENDING_PHONE_MS - (Date.now() - p.at)); // after a reload: the time that is left
       return { phone: p.phone, linking: p.linking === true };
     } catch {
       return null;
@@ -229,6 +242,8 @@ export class AuthService {
 
   /** Forgets the code that waits to be entered (change the number, or give up). */
   cancelPhoneCode(): void {
+    clearTimeout(this.expiryTimer);
+    this.expiryTimer = undefined;
     this.pendingId = null;
     this.clearVerifier();
     try {

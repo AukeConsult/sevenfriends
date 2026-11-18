@@ -121,6 +121,17 @@ export class Profile {
   private loadFailed = false;
 
   constructor() {
+    // a code that was not entered within 5 minutes is forgotten: the code field closes and says so
+    let firstExpiry = true;
+    effect(() => {
+      this.auth.phoneCodeExpired();
+      if (firstExpiry) firstExpiry = false;
+      else if (this.smsTo()) {
+        this.smsTo.set(null);
+        this.smsCode.set('');
+        this.smsError.set(authMessage({ code: 'auth/code-expired' }, ''));
+      }
+    });
     // verifying the phone or email changes what the server knows about this person: load again
     let first = true;
     effect(() => {

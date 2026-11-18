@@ -10,6 +10,7 @@
   "weSentACode": "Kami mengirim kode ke <strong>{{ phone }}</strong>.",
   "code": "Kode",
   "changeNumber": "Ganti nomor",
+  "cancel": "Batal",
   "checking": "Memeriksa…",
   "confirm": "Konfirmasi",
   "writeTheNumberWith": "Tulis nomor dengan kode negara, misalnya +47 900 00 000.",

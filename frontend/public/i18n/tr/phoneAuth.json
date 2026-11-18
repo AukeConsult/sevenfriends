@@ -10,6 +10,7 @@
   "weSentACode": "<strong>{{ phone }}</strong> numarasına bir kod gönderdik.",
   "code": "Kod",
   "changeNumber": "Numarayı değiştir",
+  "cancel": "Vazgeç",
   "checking": "Kontrol ediliyor…",
   "confirm": "Onayla",
   "writeTheNumberWith": "Numarayı ülke koduyla yaz, örneğin +47 900 00 000.",

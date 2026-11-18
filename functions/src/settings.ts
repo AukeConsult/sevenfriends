@@ -15,6 +15,10 @@ export const DEFAULTS = {
   RECOVERY_ASKS_PER_DAY: "0",
   /** how many days the push services keep a push for a device that is off or offline (1 to 28: FCM allows 4 weeks at most; 0 = send no TTL, FCM then uses its own 4 weeks) */
   PUSH_TTL_DAYS: "28",
+  /** the price of the one-time purchase, in the smallest unit of the currency (500 = 5.00) */
+  PAYMENT_AMOUNT: "500",
+  /** the currency of the purchase (a Stripe code, lower case) */
+  PAYMENT_CURRENCY: "eur",
   /** the subject of the invitation email */
   INVITE_EMAIL_SUBJECT: "{fromName} invited you to {appName}",
   /** the text of the invitation email */

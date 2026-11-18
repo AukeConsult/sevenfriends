@@ -10,6 +10,7 @@
   "weSentACode": "Lähetimme koodin numeroon <strong>{{ phone }}</strong>.",
   "code": "Koodi",
   "changeNumber": "Vaihda numero",
+  "cancel": "Peruuta",
   "checking": "Tarkistetaan…",
   "confirm": "Vahvista",
   "writeTheNumberWith": "Kirjoita numero maatunnuksella, esimerkiksi +47 900 00 000.",

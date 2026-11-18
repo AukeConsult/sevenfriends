@@ -24,7 +24,7 @@ Four ways, all on `/login` (`login/`, `core/auth.service.ts`); each ends in the 
 | Way | How | Works in |
 |---|---|---|
 | Email + password | the form; "create account" mode has a repeat password and show/hide | everywhere |
-| Phone | an SMS code (`/login/phone`) | everywhere (needs reCAPTCHA in the page) |
+| Phone | an SMS code (a form inside the Login page) | everywhere (needs reCAPTCHA in the page) |
 | Email link | a link by email opens `/login/link` (`signInWithEmailLink`) | everywhere; the link opens in the **browser**, not in an app |
 | Google | `signInWithPopup` | browsers; **not** in a WebView (Google refuses embedded browsers): the Android app cannot use it yet; the Windows app may be refused too |
 
