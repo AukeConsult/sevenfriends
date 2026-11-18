@@ -41,45 +41,28 @@ The Windows app (`client-wrappers/windows`) has no push service (WNS is not done
 A browser tab or an installed web app is a device of the person too. When a poke arrives through the live connection in a browser page, `PokeAlarmService` / `poke-alarm/` show a **band at the top of the page** ("Poke from <name>", the text, Stop, Open) and repeat an alarm tone until Stop, Open or 30 seconds; the web push notification of a poke stays on the screen until it is clicked (`requireInteraction` in `firebase-messaging-sw.js`) and vibrates. A browser may keep the tone silent until the person has touched the page once.
 **One PC with both the Windows app and a browser:** the server cannot tell which browser device is on the same PC as the Windows app (a browser registers only a push token and its own name, the Windows app registers no token), so a browser device is NOT removed when the Windows app is installed. Both ring: the Windows window (`PokeWindow`) and the browser band. To ring in one place only, close the browser tab or switch off notifications in that browser (Settings → Notifications).
 
-## iPhone (not built): the plan
-**The hard fact:** an iPhone app cannot ring over the silent switch or a Focus by itself. There is no foreground service and a push cannot run code that plays a sound (a notification service extension can change a push but not make it loop or override the mute switch). The only ways are the ones Apple provides.
+## iPhone (prepared in code, not built or tried: needs a Mac and Apple)
+**The hard fact:** an iPhone app cannot ring over the silent switch or a Focus by itself, and a push cannot run code that plays a looping sound. The only way for a REMOTE poke is a **Critical Alert**. Everything that can be done without a Mac and without Apple's approval is written; the rest is a short list for the owner.
 
-### The way to use: Critical Alerts
-A push with `interruption-level: critical` and a sound plays **at a volume of the app's choice, even with the silent switch on and in any Focus / Do Not Disturb**, and shows on the lock screen. This is the way for a remote push. It needs:
-1. **Apple's entitlement** `com.apple.developer.usernotifications.critical-alerts`. It is NOT in the normal developer portal list: the account holder applies on Apple's form ("Critical Alerts" request) and explains why. Apple usually approves health, home safety and security apps; a "friend can wake you" app has to argue its case (see "Store review"). Until it is approved, the app cannot be built with the entitlement for the store, so the iPhone poke waits for it. Do this first: it can take weeks.
-2. **The person's permission**: ask with `UNAuthorizationOptions.criticalAlert` together with alert, sound and badge; iOS shows a separate "Critical alerts" switch in the app's notification settings.
-3. **A sound file** in the app bundle (a `.caf` of at most 30 seconds; a longer one is cut). Make a loud, clear "poke" sound and put it with the jingles (`npm run ios:sounds` makes `.caf` files from the Android mp3 files; see `client-wrappers/ios/README.md`). A critical push plays the sound once (30 seconds at most): it does not loop.
-4. **The push (backend):** the same `deliver()` in `push.ts`, with `apns.payload.aps`:
-   ```
-   alert: { title: <sender>, body: <text> }
-   sound: { critical: 1, name: "poke.caf", volume: 1.0 }
-   "interruption-level": "critical"
-   "thread-id": <circle>
-   ```
-   plus `apns-priority: 10`, `apns-push-type: alert`, and `apns-expiration` of `POKE_TTL_MINUTES` (already set from the same `ttl`). Android needs a data-only message and iPhone needs the alert, so `sendEachForMulticast` cannot serve both with one message once the iPhone part differs: either keep one multicast (the `apns` part is ignored by Android, the `android` part by iPhone: this already works today) or add a `platform` field to the registered device. Prefer the first.
-5. **Repeating:** to make it hard to miss, the backend may send the same poke **again after 20 and 40 seconds** (same `apns-collapse-id` = the poke's message id, so the phone shows one notification) until the message is read or the 2 minutes are over. Decide after a test on a phone; it must stop when the person opens the chat on any device.
+**What is in the code now**
+- `functions/src/push.ts` (`deliver`): a poke (`alarm`) is sent to the iPhone as `sound: { critical: true, name: "poke.caf", volume: 1 }` and `interruption-level: critical`. A paused person gets an ordinary push (no `alarm`). Until Apple has approved the entitlement and the person has said yes, iOS plays it as an ordinary notification: nothing breaks. Test: `poke-pause.test.ts`.
+- `client-wrappers/ios/App/App/poke.caf`: the sound, 25 s of an alarm-clock pattern (a critical alert plays a file ONCE, at most 30 s, so the pattern repeats inside the file). Made by `npm run poke:sound` (`scripts/make-poke-sound.mjs`, runs on any computer); already in the Xcode project.
+- `client-wrappers/ios/App/App/PokeAlerts.swift`: a small Capacitor plugin `PokeAlerts.requestCritical()` and `MainViewController` (used by `SceneDelegate`), listed in the Xcode project. The web app calls it just before it turns push on (`core/push.service.ts`): **the first permission question must include critical alerts** (the option cannot be added by a later question, and the Capacitor push plugin asks without it), so this plugin asks first; the push plugin then finds the answer given.
+- `core/realtime.service.ts`: when the iPhone app is OPEN, a poke also shows the band at the top of the page (`PokeAlarmService`), because iOS shows a push in the foreground only if the app lets it.
 
-### What the app does
-- On `registerForRemoteNotifications` the app already registers the token (`docs/guide/live-and-notifications.md`). Add the `criticalAlert` option to the permission request and an explanation text before it (one line: "Pokes from your friends ring even when your phone is silent").
-- A tap on the poke opens the friend's page (`url`), like any push.
-- `App.entitlements`: add the critical-alerts key (after Apple approves); `Info.plist` already has the `remote-notification` background mode.
-- **Foreground:** when the app is open, iOS does not show the push by default. In `userNotificationCenter(_:willPresent:)` return `[.banner, .sound]` for a poke so it still rings, and show the same "Poke from <name>" screen the web page can draw (a full-screen page, no pop-up).
+**What the owner must do (in this order)**
+1. **Apply for the Critical Alerts entitlement** on Apple's form (https://developer.apple.com/contact/request/notifications-critical-alerts-entitlement/), as the account holder, for the bundle id `io.sevenfriends.app`. Say what it is for: a friend (one of 7 the person chose) can ring a person's phone for something urgent, the person can pause it for up to 24 hours or put a friend on the sleep list, and it rings for 30 seconds at most. This can take days to weeks; nothing below works without it.
+2. When approved: in the Apple developer site, add the capability to the App ID and make a new provisioning profile; in Xcode (Signing & Capabilities) add the entitlement `com.apple.developer.usernotifications.critical-alerts` = `true` to `App.entitlements`. **Do not add that line before Apple has approved it: the app will not sign.**
+3. On a Mac: finish the steps in `client-wrappers/ios/README.md` (FirebaseMessaging package, `GoogleService-Info.plist`, the APNs key, the Team) and run the app on a real iPhone (a simulator cannot test push).
+4. Test on the iPhone with the silent switch on and a Focus on, screen locked: poke it from a friend who has a seat for it. In Settings → Seven Friends → Notifications, **Critical Alerts** must be on.
+5. Decide on repeating (below) after step 4.
 
-### Fall-backs (if Apple says no)
-- **Time Sensitive notification** (`interruption-level: time-sensitive`, entitlement "Time Sensitive Notifications", granted without review): breaks through Focus / scheduled summary, but **not** the silent switch. The poke then rings with sound only when the phone is not on silent.
-- **AlarmKit (iOS 26)**: a real alarm that rings through Silent and Focus, but it is scheduled **on the device** by the app, so a friend's push cannot start it. Not a fit for a remote poke.
-- **CallKit / PushKit** (the poke shown as an incoming call): Apple requires a real call and rejects apps that use it for something else. Do not.
+**Not decided / later:** a poke rings once, up to 25 s. To make it harder to miss the backend may send the same poke **again after 30 and 60 seconds** (same `apns-collapse-id` = the poke's message id, so the phone shows one notification) until the message is read, but it must stop when the person opens the chat on any device. The iPhone has no setting for the ring time (the file is fixed).
 
-### Store review
-Both stores treat "another person can force my phone to ring" as a risk. Be ready to explain: pokes only come from a confirmed friend (one of 7), the receiver can put a friend on the sleep list to stop it, there is a hard limit of 2 minutes, and the person is told about it when the app asks for the permission. Keep rule 2 (sleep list stops a poke); that is the receiver's control, even though there is no setting to turn pokes off for everyone.
+**Fall-backs if Apple says no:** a **Time Sensitive** notification (`interruption-level: time-sensitive`, entitlement granted without review) breaks through Focus but NOT the silent switch. AlarmKit (iOS 26) rings through Silent and Focus but is scheduled on the device, so a friend's push cannot start it. CallKit/PushKit (the poke as a phone call) is refused by Apple for anything that is not a call.
 
-## What to build for iPhone, in order
-1. Apply for the Critical Alerts entitlement (Apple's form, from the developer account).
-2. Make `poke.caf` (loud, at most 30 s) and add it to the iPhone app.
-3. `push.ts`: for a poke, the `apns` part with `sound: { critical: 1, name: "poke.caf", volume: 1 }` and `interruption-level: critical`; a test in `functions/test` that the message built for a poke has it (the sending itself is mocked).
-4. The app: the `criticalAlert` permission option, the explanation, `willPresent` for the foreground.
-5. A test on a real iPhone with the silent switch on and a Focus on, screen locked.
-6. Decide on repeating (see above) after step 5.
+## Store review
+Both stores treat "another person can force my phone to ring" as a risk. Be ready to explain: pokes only come from a confirmed friend (one of 7), the receiver can pause pokes (up to 24 hours) or put a friend on the sleep list, there is a hard limit on how long it rings, and the person is told about it when the app asks for the permission.
 
 ## Not done
-The iPhone poke (everything under "iPhone"). A test of the Android alarm on a phone. Windows and the browser show the ordinary push for a poke.
+The iPhone poke: Apple's Critical Alerts approval and a test on a real iPhone (the code is prepared, see "iPhone"). A test of the Android alarm on a phone and of the Windows alarm on a PC. Pokes while the Windows app is quit (needs WNS).

@@ -66,5 +66,10 @@
   "confirmationSent": "送信しました。メールのリンクを開いてから、ここに戻ってください。",
   "confirmationFailed": "メールを送れませんでした。もう一度お試しください。",
   "iosInstallNow": "今すぐ Seven Friends をホーム画面に追加してください。「共有」をタップして「ホーム画面に追加」を選びます。そのあとアイコンからアプリを開いてログインし、ここに戻って「承認」をタップします。1 週間開かないと、Safari がここに保存された内容を消すことがあります。",
-  "waitingApproval": "このデバイスは承認待ちです。お持ちの別のデバイス（iPhone では Safari）で Seven Friends を開き、「承認」をタップしてください。"
+  "waitingApproval": "このデバイスは承認待ちです。お持ちの別のデバイス（iPhone では Safari）で Seven Friends を開き、「承認」をタップしてください。",
+  "earlyAdopter": "アーリーアダプター",
+  "medalGold": "ゴールド",
+  "medalPremium": "プレミアム",
+  "inviter": "招待者",
+  "inviterHint": "招待してプレミアム招待者になろう"
 }

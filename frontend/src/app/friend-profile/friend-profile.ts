@@ -11,6 +11,7 @@ import { squareJpeg } from '../core/resize-image';
 import { countries } from '../core/countries';
 import { moodIcon, moodLabel } from '../core/moods';
 import { presenceLabel } from '../core/presence';
+import { timeAgo } from '../core/time-ago';
 import { possessive } from '../core/pronoun';
 import { MyAvatarService } from '../core/my-avatar.service';
 import { MemberPictureService } from '../core/member-picture.service';
@@ -18,6 +19,7 @@ import { FriendAvatar } from '../friend-avatar/friend-avatar';
 import { FriendContext } from '../friend-page/friend-context';
 import { tr } from '../core/i18n';
 import { PageBar } from '../page-bar/page-bar';
+import { Badges } from '../badges/badges';
 
 /**
  * The profile of one friend (`/friends/:id/profile`, opened with the friend's picture): who they are and how to reach them, under the header of the friend page.
@@ -25,13 +27,14 @@ import { PageBar } from '../page-bar/page-bar';
  */
 @Component({
   selector: 'app-friend-profile',
-  imports: [PageBar, AppDatePipe, FriendAvatar, TranslocoDirective, RouterLink, NgTemplateOutlet],
+  imports: [Badges, PageBar, AppDatePipe, FriendAvatar, TranslocoDirective, RouterLink, NgTemplateOutlet],
   templateUrl: './friend-profile.html',
   providers: [provideTranslocoScope('friendProfile')],
 })
 export class FriendProfile {
   protected readonly ctx = inject(FriendContext);
   protected readonly presenceLabel = presenceLabel;
+  protected readonly timeAgo = timeAgo;
   protected readonly moodIcon = moodIcon;
   protected readonly possessive = possessive;
   protected readonly moodLabel = moodLabel;

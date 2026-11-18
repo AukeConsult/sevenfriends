@@ -40,6 +40,11 @@ export class InviteLinkService {
     }
   }
 
+  /** tell the server one more share happened (it counts them: ten make a premium inviter); a failure is not shown */
+  private counted(): void {
+    void this.api.request('/invite/shared', { method: 'POST' }).catch(() => undefined);
+  }
+
   private say(text: string): void {
     this.note.set(text);
     setTimeout(() => this.note.set(null), 2500);
@@ -62,14 +67,17 @@ export class InviteLinkService {
       const app = (window as unknown as { SevenFriendsAndroid?: { share?(title: string, text: string): void } }).SevenFriendsAndroid;
       if (app?.share) {
         app.share(this.active.words.app, general ? tr('core.tryApp', 'Try {{ app }}: {{ url }}', { app: this.active.words.app, url }) : tr('core.beMyOn', 'Be my {{ one }} on {{ app }}: {{ url }}', { one: this.active.words.one, app: this.active.words.app, url }));
+        this.counted();
         return true; // the Android sheet gives no answer when it is closed: it counts as sent
       }
       if (navigator.share) {
         await navigator.share({ title: this.active.words.app, text: general ? tr('core.tryApp2', 'Try {{ app }}:', { app: this.active.words.app }) : tr('core.beMyOn2', 'Be my {{ one }} on {{ app }}:', { one: this.active.words.one, app: this.active.words.app }), url });
+        this.counted();
         return true;
       }
       await navigator.clipboard.writeText(url);
       this.say(tr('core.linkCopied', 'Link copied'));
+      this.counted();
       return true;
     } catch (err) {
       if ((err as Error)?.name !== 'AbortError') this.say(tr('core.couldNotCopySelect', 'Could not copy: select the link and copy it'));
@@ -83,6 +91,7 @@ export class InviteLinkService {
     try {
       await navigator.clipboard.writeText(url);
       this.say(tr('core.linkCopied', 'Link copied'));
+      this.counted();
       return true;
     } catch {
       this.say(tr('core.couldNotCopySelect', 'Could not copy: select the link and copy it'));

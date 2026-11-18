@@ -77,12 +77,12 @@
 
   @if (donations().length) {
     <section class="vstack gap-2">
-      <h2 class="sf-section-title m-0 text-center">{{ t('support.listTitle') || 'Your donations' }}</h2>
+      <h2 class="sf-section-title m-0">{{ t('support.listTitle') || 'Your donations' }}</h2>
       <ul class="sf-list list-unstyled m-0">
         @for (d of donations(); track d.id) {
-          <li class="sf-list-item justify-content-center text-center">
+          <li class="sf-list-item">
             <svg [class]="d.status === 'refunded' ? 'text-secondary flex-shrink-0' : 'text-danger flex-shrink-0'" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 00-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 000-7.8z" /></svg>
-            <span class="sf-list-text flex-grow-0">
+            <span class="sf-list-text flex-grow-1">
               <span class="fw-semibold">{{ money(d.amount, d.currency) }}</span>
               <span class="sf-hint d-block">{{ d.paidAt | date: 'medium' }}</span>
             </span>

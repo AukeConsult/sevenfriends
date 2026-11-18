@@ -8,6 +8,7 @@ import { deleteBox, safeboxRouter } from "./safebox";
 import { groupHistoryRouter } from "./group-history";
 import {
   DEFAULT_CIRCLE_ID,
+  EARLY_ADOPTER_OPEN,
   FRIENDS_SUBCOLLECTION,
   MAX_FRIENDS,
   MAX_INVITES_PER_DAY,
@@ -17,7 +18,7 @@ import {
 } from "./constants";
 import { inviteCodeOf } from "./invite";
 import { invitesSentToday, queueInvite } from "./outbox";
-import { Friend, FriendInvite, MediaRef, FriendStatus, MOOD_SILENT, NewFriend, ProfilePicture, profileColorKey, pronounKey } from "./models";
+import { Friend, FriendInvite, MediaRef, FriendStatus, MOOD_SILENT, NewFriend, PREMIUM_INVITER_SHARES, ProfilePicture, profileColorKey, pronounKey } from "./models";
 import { isPokePaused } from "./poke-pause";
 import { circleProfileOf, friendNameOf } from "./circle-profile";
 import { circleCol, friendRequestCol, messageCol, missingIndex, userFields } from "./paths";
@@ -113,10 +114,13 @@ function toJson(doc: FirebaseFirestore.DocumentSnapshot): Friend {
     moodMessage: null,
     pronoun: null,
     presence: "offline", // filled in by withUnverified (confirmed friends only)
+    lastSeenAt: null,
     icon: null, // filled in by withUnverified (confirmed friends only)
     color: null,
     pictureAt: null,
     pictureId: null,
+    earlyAdopter: false, // filled in by withUnverified (confirmed friends only)
+    premiumInviter: false,
     unverified: [], // filled in by withUnverified (needs a look at the other accounts)
     ...(data.kind === "group" ? { group: true, members: (data.members as number | undefined) ?? 1, description: (data.description as string | undefined) ?? "", pictureAt: (data.groupPictureAt as string | undefined) ?? null } : {}),
   };
@@ -145,7 +149,7 @@ async function withUnverified(friend: Friend, entry: FirebaseFirestore.DocumentD
   const other = (entry.linkedUid as string | null | undefined) ?? (entry.signaledUids as string[] | undefined)?.[0];
   if (!other) return friend;
   // only what is shown here: the verification, the mood, the presence and the picture of the other person
-  const account = await userFields(other, "emailLower", "emailVerified", "phoneKey", "verifiedPhone", "country", "mood", "moodMessage", "pronoun", "presence", "lastSeenAt", "profileIcon", "profileColor", "profilePictureAt", "avatarObjectId", "displayName", "pokePausedUntil");
+  const account = await userFields(other, "emailLower", "emailVerified", "phoneKey", "verifiedPhone", "country", "mood", "moodMessage", "pronoun", "presence", "lastSeenAt", "profileIcon", "profileColor", "profilePictureAt", "avatarObjectId", "displayName", "pokePausedUntil", "earlyAdopter", "inviteShares");
   const unverified = account && entry.trusted !== true ? unverifiedDetails(account) : []; // "this is really them" (trusted) hides the warning
   // how the other person shows in the circle I am in (their name, colour and mood there): the circle their side of the friendship lives in
   const peerCircle = (entry.peerCircleId as string | undefined) ?? DEFAULT_CIRCLE_ID;
@@ -160,12 +164,15 @@ async function withUnverified(friend: Friend, entry: FirebaseFirestore.DocumentD
           moodMessage: profile.moodMessage,
           pronoun: pronounKey(account.pronoun),
           presence: presenceOf(account),
+          lastSeenAt: iso(account.lastSeenAt),
           icon: profile.icon,
           color: profile.color,
           pictureAt: picture.id ? (iso(picture.at) ?? picture.id) : null, // the version of the picture: the time it was saved, else its own id (a picture without a time, e.g. one moved from an older version, was never fetched by the apps)
           pictureId: picture.id,
+          earlyAdopter: account.earlyAdopter === true || EARLY_ADOPTER_OPEN,
+          premiumInviter: Number.isInteger(account.inviteShares) && (account.inviteShares as number) >= PREMIUM_INVITER_SHARES,
         }
-      : { country: null, mood: null, moodMessage: null, pronoun: null, presence: "offline" as const, icon: null, color: null, pictureAt: null, pictureId: null };
+      : { country: null, mood: null, moodMessage: null, pronoun: null, presence: "offline" as const, lastSeenAt: null, icon: null, color: null, pictureAt: null, pictureId: null, earlyAdopter: false, premiumInviter: false };
   // I did not give a name: a confirmed friend is shown by the name of their account
   // the real name of the other person, always once they are connected (see `friendNameOf`)
   const name = friendNameOf(entry, friend.status, profile.name, account?.displayName as string | undefined, friend.name);

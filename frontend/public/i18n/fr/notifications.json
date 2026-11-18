@@ -66,5 +66,10 @@
   "confirmationSent": "Envoyé. Ouvre le lien dans l’e-mail, puis reviens ici.",
   "confirmationFailed": "Impossible d’envoyer l’e-mail. Réessaie.",
   "iosInstallNow": "Mettez Seven Friends sur votre écran d'accueil maintenant : touchez Partager puis Sur l'écran d'accueil. Ouvrez ensuite l'app depuis son icône, connectez-vous et revenez ici toucher Approuver. Safari peut effacer ce qui est stocké ici si vous ne l'ouvrez pas pendant une semaine.",
-  "waitingApproval": "Cet appareil attend l'approbation. Ouvrez Seven Friends sur un autre de vos appareils (sur iPhone, dans Safari) et touchez Approuver."
+  "waitingApproval": "Cet appareil attend l'approbation. Ouvrez Seven Friends sur un autre de vos appareils (sur iPhone, dans Safari) et touchez Approuver.",
+  "earlyAdopter": "Pionnier",
+  "medalGold": "Or",
+  "medalPremium": "Premium",
+  "inviter": "Parrain",
+  "inviterHint": "Invite et deviens parrain premium"
 }

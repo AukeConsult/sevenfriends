@@ -126,12 +126,14 @@
       <div>
         <h2 class="m-0">{{ f.name }}</h2>
         <p class="sf-hint m-0">{{ presenceLabel(f.presence) }}</p>
+        @if (f.presence === 'offline' && f.lastSeenAt; as seen) { <p class="sf-hint m-0">{{ t('friendProfile.lastSeen', { when: timeAgo(seen) }) || 'Last seen ' + timeAgo(seen) }}</p> }
         @if (f.sleepsMe) { <p class="sf-hint m-0">{{ t('friendProfile.hasYouOnPronoun', { pronoun: possessive(f.pronoun) }) || '😴 Has you on ' + possessive(f.pronoun) + ' sleep list' }}</p> }
       </div>
     </section>
     }
 
     <section>
+      <app-badges [earlyAdopter]="f.earlyAdopter" [premiumInviter]="f.premiumInviter" />
       @if (countryName(f.country); as country) { <p class="sf-hint m-0">{{ country }}</p> }
       @if (f.mood; as mood) {
         <p class="sf-profile-mood">

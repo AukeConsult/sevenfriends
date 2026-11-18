@@ -43,5 +43,6 @@
   "alreadyInGroup": "כבר בקבוצה",
   "notConfirmedYet": "עדיין לא אישר את החברות",
   "groupIsFull": "בקבוצה 7 אנשים, המקסימום",
-  "resendInvitation": "שלח שוב את קישור ההזמנה"
+  "resendInvitation": "שלח שוב את קישור ההזמנה",
+  "lastSeen": "נראה לאחרונה {{ when }}"
 }

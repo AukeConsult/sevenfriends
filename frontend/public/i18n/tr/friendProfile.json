@@ -43,5 +43,6 @@
   "alreadyInGroup": "Zaten grupta",
   "notConfirmedYet": "Arkadaşlığı henüz onaylamadı",
   "groupIsFull": "Grupta 7 kişi var, bu en fazla",
-  "resendInvitation": "Davet bağlantısını yeniden gönder"
+  "resendInvitation": "Davet bağlantısını yeniden gönder",
+  "lastSeen": "Son görülme {{ when }}"
 }

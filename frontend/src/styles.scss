@@ -1385,6 +1385,14 @@ button.sf-hs-sleep { padding: 0; border: 0; background: none; font: inherit; wid
 // ---- Home: the slim top, the greeting, the folded setup line, the cards (no side bars) ----
 .sf-home-top { display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding-bottom: 0.5rem; margin-bottom: 0.75rem; border-bottom: 1px solid var(--sf-border); }
 .sf-home-top .sf-logo { margin: 0; }
+/* the Early adopter medal, left of the greeting on Home: the medal with its words under it, the greeting takes the rest */
+.sf-home-greet { position: relative; display: flex; align-items: center; min-height: 5rem; margin-bottom: 0.25rem; > div { flex: 1; min-width: 0; padding-inline: 5.25rem; text-align: center; } .sf-home-sub { margin-bottom: 0; } } // the greeting stays centred on the page; the medal is laid over its left edge
+.sf-medal-box { position: absolute; left: 0; top: 0; display: flex; flex-direction: column; align-items: center; width: 5rem; text-align: center; &.sf-right { left: auto; right: 0; } }
+.sf-medal { width: 2.25rem; height: auto; }
+.sf-medal-cap { font-size: var(--sf-fs-description); line-height: 1.15; color: var(--sf-muted); b { display: block; color: #8a6410; } }
+.sf-medal-cap b.sf-premium { color: #5b21b6; }
+.sf-badges { display: flex; justify-content: center; gap: 1.25rem; margin-block: 0.5rem; &:not(:has(.sf-medal-box)) { display: none; } .sf-medal-box { position: static; } } // the medals in a row on a profile page
+.sf-medal-hint { position: absolute; right: 0; top: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.0625rem; width: max-content; max-width: 5rem; padding: 0.1875rem 0.3125rem; border: 1px dashed var(--sf-border); border-radius: 0.75rem; background: var(--sf-card); color: var(--sf-muted); font-size: calc(var(--sf-fs-description) * 0.7); line-height: 1.1; text-align: center; text-decoration: none; overflow-wrap: anywhere; hyphens: auto; b { color: #5b21b6; } } // while the premium inviter medal is not earned: a small frame that fits its text, same spot as the medal but on the right
 .sf-home-name { font-weight: 600; }
 .sf-home-hi { margin: 0; font-size: 1.5rem; font-weight: 600; text-align: center; }
 .sf-home-sub { margin: 0 0 0.75rem; font-size: 0.875rem; color: var(--sf-muted); text-align: center; }

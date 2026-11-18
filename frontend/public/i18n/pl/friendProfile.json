@@ -43,5 +43,6 @@
   "alreadyInGroup": "Już w grupie",
   "notConfirmedYet": "Nie potwierdził jeszcze znajomości",
   "groupIsFull": "W grupie jest 7 osób, więcej się nie da",
-  "resendInvitation": "Wyślij link z zaproszeniem ponownie"
+  "resendInvitation": "Wyślij link z zaproszeniem ponownie",
+  "lastSeen": "Ostatnio widziany {{ when }}"
 }

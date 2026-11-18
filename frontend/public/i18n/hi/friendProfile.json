@@ -43,5 +43,6 @@
   "alreadyInGroup": "पहले से समूह में है",
   "notConfirmedYet": "दोस्ती की पुष्टि अभी नहीं की",
   "groupIsFull": "समूह में 7 लोग हैं, इससे ज़्यादा नहीं हो सकते",
-  "resendInvitation": "निमंत्रण लिंक दोबारा भेजें"
+  "resendInvitation": "निमंत्रण लिंक दोबारा भेजें",
+  "lastSeen": "आखिरी बार देखा गया {{ when }}"
 }

@@ -18,6 +18,8 @@
 		9582B6832FE993A70072D4E8 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9582B6822FE993A50072D4E8 /* SceneDelegate.swift */; };
 		A1B2C3D4E5F6071800000011 /* drill.caf in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6071800000001 /* drill.caf */; };
 		A1B2C3D4E5F6071800000012 /* hyper.caf in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6071800000002 /* hyper.caf */; };
+		A1B2C3D4E5F6071800000013 /* poke.caf in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6071800000003 /* poke.caf */; };
+		A1B2C3D4E5F6071800000022 /* PokeAlerts.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6071800000021 /* PokeAlerts.swift */; };
 		A1B2C3D4E5F6071800000013 /* acidbreaks.caf in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6071800000003 /* acidbreaks.caf */; };
 /* End PBXBuildFile section */
 
@@ -35,6 +37,8 @@
 		958DCC722DB07C7200EA8C5F /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = ../debug.xcconfig; sourceTree = SOURCE_ROOT; };
 		A1B2C3D4E5F6071800000001 /* drill.caf */ = {isa = PBXFileReference; lastKnownFileType = audio.caf; path = drill.caf; sourceTree = "<group>"; };
 		A1B2C3D4E5F6071800000002 /* hyper.caf */ = {isa = PBXFileReference; lastKnownFileType = audio.caf; path = hyper.caf; sourceTree = "<group>"; };
+		A1B2C3D4E5F6071800000003 /* poke.caf */ = {isa = PBXFileReference; lastKnownFileType = audio.caf; path = poke.caf; sourceTree = "<group>"; };
+		A1B2C3D4E5F6071800000021 /* PokeAlerts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PokeAlerts.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F6071800000003 /* acidbreaks.caf */ = {isa = PBXFileReference; lastKnownFileType = audio.caf; path = acidbreaks.caf; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -73,6 +77,7 @@
 				9582B6822FE993A50072D4E8 /* SceneDelegate.swift */,
 				50379B222058CBB4000EE86E /* capacitor.config.json */,
 				504EC3071FED79650016851F /* AppDelegate.swift */,
+				A1B2C3D4E5F6071800000021 /* PokeAlerts.swift */,
 				504EC30B1FED79650016851F /* Main.storyboard */,
 				504EC30E1FED79650016851F /* Assets.xcassets */,
 				504EC3101FED79650016851F /* LaunchScreen.storyboard */,
@@ -81,6 +86,7 @@
 				50B271D01FEDC1A000F3C39B /* public */,
 				A1B2C3D4E5F6071800000001 /* drill.caf */,
 				A1B2C3D4E5F6071800000002 /* hyper.caf */,
+				A1B2C3D4E5F6071800000003 /* poke.caf */,
 				A1B2C3D4E5F6071800000003 /* acidbreaks.caf */,
 			);
 			path = App;
@@ -159,6 +165,7 @@
 				2FAD9763203C412B000D30F8 /* config.xml in Resources */,
 				A1B2C3D4E5F6071800000011 /* drill.caf in Resources */,
 				A1B2C3D4E5F6071800000012 /* hyper.caf in Resources */,
+				A1B2C3D4E5F6071800000013 /* poke.caf in Resources */,
 				A1B2C3D4E5F6071800000013 /* acidbreaks.caf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -172,6 +179,7 @@
 			files = (
 				504EC3081FED79650016851F /* AppDelegate.swift in Sources */,
 				9582B6832FE993A70072D4E8 /* SceneDelegate.swift in Sources */,
+				A1B2C3D4E5F6071800000022 /* PokeAlerts.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

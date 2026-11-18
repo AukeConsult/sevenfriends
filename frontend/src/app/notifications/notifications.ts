@@ -17,6 +17,8 @@ import { CircleActivityService } from '../core/circle-activity.service';
 import { FriendAvatar } from '../friend-avatar/friend-avatar';
 import { HomeSeats } from '../home-seats/home-seats';
 import { HomeTop } from '../home-top/home-top';
+import { Medal } from '../medal/medal';
+import { PREMIUM_INVITER_SHARES } from '../models';
 import { Sleeping } from '../sleeping/sleeping';
 import { AddFriend } from '../add-friend/add-friend';
 import { AuthService } from '../core/auth.service';
@@ -53,7 +55,7 @@ interface MessageGroup {
  */
 @Component({
   selector: 'app-notifications',
-  imports: [AppDatePipe, CircleActivity, FriendAvatar, HomeSeats, HomeTop, RouterLink, MoodEditor, PokePause, Sleeping, AddFriend, TranslocoDirective],
+  imports: [AppDatePipe, CircleActivity, FriendAvatar, HomeSeats, HomeTop, Medal, RouterLink, MoodEditor, PokePause, Sleeping, AddFriend, TranslocoDirective],
   templateUrl: './notifications.html',
   providers: [provideTranslocoScope('notifications')],
   host: { '(click)': 'emptySpaceClicked($event)' },
@@ -254,7 +256,12 @@ export class Notifications {
 
   /** everything Home shows is here (the one call and this device's key); until then the page shows only its slim top */
   /** resolves when this browser's first look at notifications (can it do them, are they on) is done */
-  private readonly pushChecked = firstValueFrom(toObservable(this.push.checked).pipe(filter(Boolean)));
+  // `defaultValue`: when the page is left before the look is done, the stream ends without a value; that is not an error (no EmptyError)
+  private readonly pushChecked = firstValueFrom(toObservable(this.push.checked).pipe(filter(Boolean)), { defaultValue: false });
+  /** shares of my invite link so far, and how many make a premium inviter (the second medal) */
+  protected readonly premiumShares = PREMIUM_INVITER_SHARES;
+  protected readonly shares = computed(() => this.notifications.profile()?.inviteShares ?? 0);
+  protected readonly premiumInviter = computed(() => this.shares() >= PREMIUM_INVITER_SHARES);
   protected readonly loaded = this.notifications.homeReady;
   protected readonly error = this.notifications.error;
 

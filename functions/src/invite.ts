@@ -2,7 +2,7 @@ import { randomInt } from "node:crypto";
 import { firstText } from "./validation";
 import { Router } from "express";
 import { DecodedIdToken } from "firebase-admin/auth";
-import { getFirestore } from "firebase-admin/firestore";
+import { FieldValue, getFirestore } from "firebase-admin/firestore";
 import { asyncHandler, requireAuth } from "./auth";
 import { USER_ACCOUNT_COLLECTION } from "./constants";
 import { circleProfileOf, activeCircleOf } from "./circle-profile";
@@ -50,6 +50,19 @@ inviteRouter.post(
     const code = newCode();
     await userDoc(uidOf(res)).set({ inviteCode: code }, { merge: true });
     res.json({ code });
+  }),
+);
+
+/**
+ * Count one share of my invite link (the app calls it when I shared or copied the link): the number is on the account and, from
+ * PREMIUM_INVITER_SHARES, Home shows the "Premium inviter" medal. The app tells the server, so it is a count of what people do, not a proof.
+ */
+inviteRouter.post(
+  "/shared",
+  asyncHandler(async (_req, res) => {
+    const ref = userDoc(uidOf(res));
+    await ref.set({ inviteShares: FieldValue.increment(1) }, { merge: true });
+    res.json({ shares: ((await ref.get()).data()?.inviteShares as number | undefined) ?? 1 });
   }),
 );
 

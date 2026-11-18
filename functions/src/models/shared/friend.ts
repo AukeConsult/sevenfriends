@@ -48,8 +48,14 @@ export interface Friend {
   pictureAt: string | null;
   /** the object id of that picture in the media cache (`/api/sf-cache/<friend's user id>/<pictureId>`), null = no picture. Confirmed friends only. */
   pictureId: string | null;
+  /** true = the friend has the early-adopter medal. Confirmed friends only. */
+  earlyAdopter: boolean;
+  /** true = the friend shared their invite link 10 times (the premium inviter medal); the number itself is never sent. Confirmed friends only. */
+  premiumInviter: boolean;
   /** whether the friend is using the app right now (set by the system, confirmed friends only; 'offline' otherwise) */
   presence: Presence;
+  /** when the friend's app last reported (ISO time), shown for confirmed friends only; null = never / not a confirmed friend */
+  lastSeenAt: string | null;
   /** the message I wrote with the request (the friend sees it with the request) */
   message: string | null;
   /**

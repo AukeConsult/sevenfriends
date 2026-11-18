@@ -182,7 +182,9 @@ public partial class MainWindow : Window
         {
             // the sign-in and the settings of the app are kept here, so the person stays signed in
             var data = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SevenFriends", "WebView2");
-            await Web.EnsureCoreWebView2Async(await CoreWebView2Environment.CreateAsync(null, data));
+            // thin round scrollbars that float over the page and show when the mouse moves (the Windows 11 look), not the old grey bar with arrow buttons
+            var options = new CoreWebView2EnvironmentOptions { ScrollBarStyle = CoreWebView2ScrollbarStyle.FluentOverlay };
+            await Web.EnsureCoreWebView2Async(await CoreWebView2Environment.CreateAsync(null, data, options));
         }
         catch (WebView2RuntimeNotFoundException)
         {

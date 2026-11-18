@@ -17,7 +17,7 @@ vi.mock("firebase-admin/firestore", async (importOriginal) => {
 
 // No real login in tests: the bearer token IS the decoded token, e.g. {"uid":"uid01","email":"..."}.
 /** pushes the backend sent (firebase-admin/messaging is replaced by a recorder); tokens in `deadPushTokens` answer "not registered" */
-export type SentPush = { tokens: string[]; data: Record<string, string>; webpush?: unknown; android?: unknown };
+export type SentPush = { tokens: string[]; data: Record<string, string>; webpush?: unknown; android?: unknown; apns?: any };
 export const sentPushes: SentPush[] = ((globalThis as any).__sentPushes ??= []);
 export const deadPushTokens: Set<string> = ((globalThis as any).__deadPushTokens ??= new Set<string>());
 export const pushBreaks: { on: boolean } = ((globalThis as any).__pushBreaks ??= { on: false });

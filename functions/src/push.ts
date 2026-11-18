@@ -142,7 +142,11 @@ async function deliver(devices: Device[], message: { data: Record<string, string
       payload: {
         aps: {
           alert: { title: message.android.notification.title, body: message.android.notification.body },
-          ...(message.data.silent === "1" ? {} : { sound: iosSoundOf(message.android.notification.channelId) }),
+          // a poke (`alarm`) is a Critical Alert: it rings with the silent switch on and in any Focus, with the file poke.caf of the app at full volume. It works when Apple has given the app
+          // the Critical Alerts entitlement and the person said yes to it; until then iOS plays it as an ordinary notification. "Pause pokes" makes it an ordinary push (`alarm` is false).
+          ...(message.alarm
+            ? { sound: { critical: true, name: "poke.caf", volume: 1.0 }, "interruption-level": "critical" }
+            : message.data.silent === "1" ? {} : { sound: iosSoundOf(message.android.notification.channelId) }),
           "thread-id": message.data.circle,
         },
       },

@@ -4,7 +4,7 @@ import { FieldValue, Timestamp, getFirestore } from "firebase-admin/firestore";
 import { asyncHandler, requireAuth } from "./auth";
 import { touchSync } from "./sync";
 import { avatarOf, parsePicture, readAvatar, removeAvatar, saveAvatar } from "./avatar";
-import { DEFAULT_CIRCLE_ID, MAX_FRIENDS, MAX_MOOD_MESSAGE, MAX_NAME_LENGTH, MOOD_COUNT } from "./constants";
+import { DEFAULT_CIRCLE_ID, EARLY_ADOPTER_OPEN, MAX_FRIENDS, MAX_MOOD_MESSAGE, MAX_NAME_LENGTH, MOOD_COUNT } from "./constants";
 import { POKE_PAUSE_MAX_MINUTES, PokePause, ProfileDetails, ProfilePicture, VISIBILITIES, profileColorKey, pronounKey, visibilityKey } from "./models";
 import { pokePausedUntil } from "./poke-pause";
 import { circleCol, userDoc } from "./paths";
@@ -33,6 +33,8 @@ function detailsOf(data: Record<string, unknown>): ProfileDetails {
     moodMessage: (data.moodMessage as string | null | undefined) ?? null,
     pronoun: pronounKey(data.pronoun),
     visibility: visibilityKey(data.visibility),
+    earlyAdopter: data.earlyAdopter === true || EARLY_ADOPTER_OPEN,
+    inviteShares: Number.isInteger(data.inviteShares) ? (data.inviteShares as number) : 0,
   };
 }
 

@@ -66,5 +66,10 @@
   "confirmationSent": "Lähetetty. Avaa viestin linkki ja palaa tänne.",
   "confirmationFailed": "Sähköpostin lähetys epäonnistui. Yritä uudelleen.",
   "iosInstallNow": "Lisää Seven Friends Koti-valikkoon nyt: napauta Jaa ja sitten Lisää Koti-valikkoon. Avaa sitten sovellus kuvakkeesta, kirjaudu sisään ja tule takaisin tänne napauttamaan Hyväksy. Safari voi poistaa tänne tallennetun, jos et avaa sitä viikkoon.",
-  "waitingApproval": "Tämä laite odottaa hyväksyntää. Avaa Seven Friends toisella laitteellasi (iPhonessa Safarissa) ja napauta Hyväksy."
+  "waitingApproval": "Tämä laite odottaa hyväksyntää. Avaa Seven Friends toisella laitteellasi (iPhonessa Safarissa) ja napauta Hyväksy.",
+  "earlyAdopter": "Varhainen käyttäjä",
+  "medalGold": "Kulta",
+  "medalPremium": "Premium",
+  "inviter": "Kutsuja",
+  "inviterHint": "Kutsu ja ole premium-kutsuja"
 }

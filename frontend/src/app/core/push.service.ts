@@ -1,5 +1,5 @@
 import { Injectable, effect, inject, signal, untracked } from '@angular/core';
-import { Capacitor } from '@capacitor/core';
+import { Capacitor, registerPlugin } from '@capacitor/core';
 import { environment } from '../../environments/environment';
 import { ActiveCircleService } from './active-circle.service';
 import { ApiService } from './api.service';
@@ -165,6 +165,15 @@ export class PushService {
   /** Android app: asks for the notification permission (Android 13 and newer show a prompt). */
   private async allowNative(): Promise<boolean> {
     const { PushNotifications } = await import('@capacitor/push-notifications');
+    // iPhone: the FIRST permission question must include critical alerts (the poke rings through the silent switch); the iPhone app's own PokeAlerts plugin asks it. Without the plugin
+    // (an older app) or without Apple's entitlement the question is the ordinary one.
+    if (Capacitor.getPlatform() === 'ios') {
+      try {
+        await registerPlugin<{ requestCritical(): Promise<{ granted: boolean }> }>('PokeAlerts').requestCritical();
+      } catch {
+        /* the ordinary question below */
+      }
+    }
     let permission = await PushNotifications.checkPermissions();
     if (permission.receive === 'prompt' || permission.receive === 'prompt-with-rationale') {
       permission = await PushNotifications.requestPermissions();

@@ -43,5 +43,6 @@
   "alreadyInGroup": "すでにグループにいます",
   "notConfirmedYet": "友達関係をまだ承認していません",
   "groupIsFull": "グループは7人で、これ以上は増やせません",
-  "resendInvitation": "招待リンクを再送する"
+  "resendInvitation": "招待リンクを再送する",
+  "lastSeen": "最終確認 {{ when }}"
 }

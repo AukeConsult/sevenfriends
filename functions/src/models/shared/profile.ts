@@ -51,9 +51,16 @@ export type ProfileDetails = {
   pronoun: Pronoun | null;
   /** who can find me: public, searchable (the default) or private (see VISIBILITIES) */
   visibility: Visibility;
+  /** true = this account got the early-adopter mark (the medal on Home); set by the server, never by the person */
+  earlyAdopter: boolean;
+  /** how many times this person shared or copied their invite link (counted by the server); `PREMIUM_INVITER_SHARES` of them make a premium inviter */
+  inviteShares: number;
 };
 
 /** What GET /profile/picture returns: the uploaded picture as a data URL (a small JPEG / PNG / WebP), or null. */
 export interface ProfilePicture {
   image: string | null;
 }
+
+/** The number of shares that makes a "Premium inviter" (the second medal on Home). */
+export const PREMIUM_INVITER_SHARES = 10;

@@ -43,5 +43,6 @@
   "alreadyInGroup": "Já está no grupo",
   "notConfirmedYet": "Ainda não confirmou a amizade",
   "groupIsFull": "O grupo tem 7 pessoas, o máximo",
-  "resendInvitation": "Reenviar a ligação de convite"
+  "resendInvitation": "Reenviar a ligação de convite",
+  "lastSeen": "Visto por último {{ when }}"
 }

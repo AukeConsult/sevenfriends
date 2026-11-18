@@ -43,5 +43,6 @@
   "alreadyInGroup": "موجود في المجموعة بالفعل",
   "notConfirmedYet": "لم يؤكد الصداقة بعد",
   "groupIsFull": "في المجموعة 7 أشخاص، وهذا أقصى عدد",
-  "resendInvitation": "إعادة إرسال رابط الدعوة"
+  "resendInvitation": "إعادة إرسال رابط الدعوة",
+  "lastSeen": "آخر ظهور {{ when }}"
 }

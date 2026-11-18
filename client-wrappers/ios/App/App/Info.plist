@@ -4,6 +4,10 @@
 <dict>
   <key>CAPACITOR_DEBUG</key>
 	<string>$(CAPACITOR_DEBUG)</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Seven Friends uses the camera when you take a photo or record a video to send to a friend.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Seven Friends uses the microphone when you record a voice message or a video to send to a friend.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Seven Friends uses your location only when you tap "Use my location" on a place in the safebox.</string>
 	<key>CFBundleDevelopmentRegion</key>

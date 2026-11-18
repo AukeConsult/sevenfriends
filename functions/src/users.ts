@@ -3,7 +3,7 @@ import { DecodedIdToken } from "firebase-admin/auth";
 import { FieldValue, getFirestore } from "firebase-admin/firestore";
 import { asyncHandler, requireAuth } from "./auth";
 import { ensureDefaultCircle } from "./circles";
-import { USER_ACCOUNT_COLLECTION } from "./constants";
+import { EARLY_ADOPTER_OPEN, USER_ACCOUNT_COLLECTION } from "./constants";
 import { randomUUID } from "node:crypto";
 import { eraseUser } from "./erase";
 import { stampKeys } from "./accounts";
@@ -41,6 +41,8 @@ usersRouter.post(
         loginCount: FieldValue.increment(1),
         // the stamp of the account: made with the account, in the same step, and never changed (an old account that has none gets it now)
         accountId: (snap.data()?.accountId as string | undefined) || randomUUID(),
+        // the early-adopter medal: once marked, always marked; while the window is open (EARLY_ADOPTER_OPEN) every account is marked, new or old
+        earlyAdopter: snap.data()?.earlyAdopter === true || EARLY_ADOPTER_OPEN,
       };
       if (snap.exists) {
         tx.update(ref, profile);

@@ -43,5 +43,6 @@
   "alreadyInGroup": "Already in the group",
   "notConfirmedYet": "Has not confirmed the friendship yet",
   "groupIsFull": "The group has 7 people, the most there can be",
-  "resendInvitation": "Resend invitation link"
+  "resendInvitation": "Resend invitation link",
+  "lastSeen": "Last seen {{ when }}"
 }

@@ -372,7 +372,7 @@ export class RealtimeService {
    * through the WebView2 bridge. Only a poke that is new (not older than the time a poke lives, `pokeMinutes` on the message, see docs/design/poke-alarm.md). Android rings through the push instead.
    */
   private tellWindowsAppAboutPokes(all: Added[], first: boolean): void {
-    if (first || Capacitor.isNativePlatform()) return; // the Android app rings natively (PokeService)
+    if (first || Capacitor.getPlatform() === 'android') return; // the Android app rings natively (PokeService); the iPhone app rings through its push (a Critical Alert) and, when it is open, here
     const windowsApp = /SevenFriendsWindows/i.test(navigator.userAgent);
     const bridge = (window as unknown as { chrome?: { webview?: { postMessage(message: unknown): void } } }).chrome?.webview;
     if (windowsApp && !bridge) return;

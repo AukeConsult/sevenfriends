@@ -1,7 +1,7 @@
 import { ActiveCircleService } from '../core/active-circle.service';
 import { Component, inject } from '@angular/core';
 
-/** The slim top of Home and Share: the small logo and the name of the app. */
+/** The slim top of Home and Share: the small logo and the name of the app (a medal can be put in it: it sits in the upper right corner). */
 @Component({
   selector: 'app-home-top',
   host: { style: 'display: block' },
@@ -9,6 +9,7 @@ import { Component, inject } from '@angular/core';
     <header class="sf-home-top">
       <span class="sf-logo sf-logo-sm" aria-hidden="true">7</span>
       <span class="sf-home-name">{{ w.app }}</span>
+      <ng-content />
     </header>
   `,
 })

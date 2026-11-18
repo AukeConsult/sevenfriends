@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { MOOD_SILENT } from "../src/models";
 import { endFinishedPokePauses } from "../src/poke-pause";
 import { User, connect, seedPool } from "./helpers";
+import { sentPushes } from "./setup";
 
 /** Pause pokes: a limited time in which my pokes do not ring (docs/design/poke-alarm.md). */
 let pool: User[];
@@ -74,5 +75,23 @@ describe("pause pokes", () => {
     expect((await friendEntry()).moodChangedAt).not.toEqual(before.moodChangedAt); // the friend's app reloads its list
     expect((await getFirestore().collection("user-account").doc(pool[1].p.uid).get()).data()!.pokePausedUntil).toBeUndefined();
     expect(await endFinishedPokePauses()).toBe(0); // told once
+  });
+
+  it("a poke is pushed as an alarm (Android: data only; iPhone: a Critical Alert); a paused person gets an ordinary push", async () => {
+    const id = await connect(pool[0], pool[1]);
+    await pool[1].raw("post", "/push/devices", { token: "token-01-alarm".padEnd(30, "x") }).expect(204);
+    sentPushes.length = 0;
+    await pool[0].raw("post", `/circles/default/friends/${id}/messages`, { text: "hey", poke: true }).expect(201);
+    const poke = sentPushes[sentPushes.length - 1];
+    expect(poke.data.poke).toBe("1");
+    expect((poke.android as any).notification).toBeUndefined(); // data only: the Android app rings itself
+    expect(poke.apns.payload.aps).toMatchObject({ sound: { critical: true, name: "poke.caf", volume: 1 }, "interruption-level": "critical" });
+
+    await pause(pool[1], 60).expect(200);
+    await pool[0].raw("post", `/circles/default/friends/${id}/messages`, { text: "again", poke: true }).expect(201);
+    const ordinary = sentPushes[sentPushes.length - 1];
+    expect(ordinary.data.poke).toBeUndefined();
+    expect((ordinary.android as any).notification).toBeDefined();
+    expect(ordinary.apns.payload.aps["interruption-level"]).toBeUndefined();
   });
 });

@@ -43,5 +43,6 @@
   "alreadyInGroup": "Уже в групі",
   "notConfirmedYet": "Ще не підтвердив дружбу",
   "groupIsFull": "У групі 7 людей, більше не можна",
-  "resendInvitation": "Надіслати посилання-запрошення ще раз"
+  "resendInvitation": "Надіслати посилання-запрошення ще раз",
+  "lastSeen": "Був(ла) у мережі {{ when }}"
 }

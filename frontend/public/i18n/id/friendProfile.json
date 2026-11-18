@@ -43,5 +43,6 @@
   "alreadyInGroup": "Sudah ada di grup",
   "notConfirmedYet": "Belum mengonfirmasi pertemanan",
   "groupIsFull": "Grup berisi 7 orang, jumlah terbanyak",
-  "resendInvitation": "Kirim ulang tautan undangan"
+  "resendInvitation": "Kirim ulang tautan undangan",
+  "lastSeen": "Terakhir dilihat {{ when }}"
 }

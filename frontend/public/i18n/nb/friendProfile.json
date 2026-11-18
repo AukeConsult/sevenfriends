@@ -43,5 +43,6 @@
   "alreadyInGroup": "Allerede i gruppen",
   "notConfirmedYet": "Har ikke bekreftet vennskapet ennå",
   "groupIsFull": "Gruppen har 7 personer, det høyeste antallet",
-  "resendInvitation": "Send invitasjonslenken på nytt"
+  "resendInvitation": "Send invitasjonslenken på nytt",
+  "lastSeen": "Sist sett {{ when }}"
 }

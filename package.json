@@ -39,6 +39,7 @@
     "windows:msix": "node scripts/windows-msix.mjs",
     "sync:models": "node scripts/sync-models.mjs",
     "icons": "node scripts/make-icons.mjs",
+    "poke:sound": "node scripts/make-poke-sound.mjs",
     "sync:sounds": "node scripts/sounds-manifest.mjs",
     "sync:android-sounds": "node scripts/sync-android-sounds.mjs",
     "check:android-sounds": "node scripts/sync-android-sounds.mjs --check",

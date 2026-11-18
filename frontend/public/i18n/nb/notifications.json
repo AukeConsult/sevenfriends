@@ -66,5 +66,10 @@
   "confirmationSent": "Sendt. Åpne lenken i e-posten og kom tilbake hit.",
   "confirmationFailed": "Kunne ikke sende e-posten. Prøv igjen.",
   "iosInstallNow": "Legg Seven Friends på Hjem-skjermen nå: trykk på Del og deretter Legg til på Hjem-skjermen. Åpne så appen fra ikonet, logg inn og kom tilbake hit for å trykke Godkjenn. Safari kan slette det som er lagret her hvis du ikke åpner den på en uke.",
-  "waitingApproval": "Denne enheten venter på godkjenning. Åpne Seven Friends på en annen av enhetene dine (på iPhone i Safari) og trykk Godkjenn."
+  "waitingApproval": "Denne enheten venter på godkjenning. Åpne Seven Friends på en annen av enhetene dine (på iPhone i Safari) og trykk Godkjenn.",
+  "earlyAdopter": "Tidlig bruker",
+  "medalGold": "Gull",
+  "medalPremium": "Premium",
+  "inviter": "Inviterer",
+  "inviterHint": "Inviter og bli premium-inviterer"
 }

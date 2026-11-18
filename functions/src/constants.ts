@@ -1,6 +1,13 @@
 import { CIRCLE_TYPES, CircleType } from "./models";
 
 export const USER_ACCOUNT_COLLECTION = "user-account";
+
+/**
+ * The early-adopter window. While it is true, EVERY account counts as an early adopter: one that has no mark yet is shown with the medal at once (a friend who has
+ * not signed in since the change too), and is marked for good at its next sync. Before this is set to false, mark the accounts that do not have it yet (the mark
+ * is written at sync only), or they lose the medal at the moment the window closes: after that no account is marked.
+ */
+export const EARLY_ADOPTER_OPEN = true;
 /** user-account/{uid}/friend-circle/{circleId}  – one document per circle */
 export const FRIEND_CIRCLE_COLLECTION = "friend-circle";
 /** user-account/{uid}/friend-circle/{circleId}/friends/{friendId} */

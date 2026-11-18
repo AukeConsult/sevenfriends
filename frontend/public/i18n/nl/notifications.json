@@ -66,5 +66,10 @@
   "confirmationSent": "Verstuurd. Open de link in de mail en kom dan terug.",
   "confirmationFailed": "De mail kon niet worden verstuurd. Probeer het opnieuw.",
   "iosInstallNow": "Zet Seven Friends nu op je beginscherm: tik op Deel en dan op Zet op beginscherm. Open daarna de app via het icoon, log in en kom hier terug om op Goedkeuren te tikken. Safari kan wissen wat hier is opgeslagen als je het een week niet opent.",
-  "waitingApproval": "Dit apparaat wacht op goedkeuring. Open Seven Friends op een ander apparaat van je (op iPhone in Safari) en tik op Goedkeuren."
+  "waitingApproval": "Dit apparaat wacht op goedkeuring. Open Seven Friends op een ander apparaat van je (op iPhone in Safari) en tik op Goedkeuren.",
+  "earlyAdopter": "Vroege gebruiker",
+  "medalGold": "Goud",
+  "medalPremium": "Premium",
+  "inviter": "Uitnodiger",
+  "inviterHint": "Nodig uit en word premium-uitnodiger"
 }
