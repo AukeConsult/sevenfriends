@@ -13,5 +13,6 @@
   "readThe": "Прочитай",
   "termsOfUse": "Умови використання",
   "andHowYourData": "і про те, як обробляються твої дані, у розділі",
-  "dataAndPrivacy": "Дані та приватність"
+  "dataAndPrivacy": "Дані та приватність",
+  "version": "Версія {{ number }}"
 }

@@ -13,5 +13,6 @@
   "readThe": "Les",
   "termsOfUse": "Brukervilkår",
   "andHowYourData": "og hvordan dataene dine behandles under",
-  "dataAndPrivacy": "Data og personvern"
+  "dataAndPrivacy": "Data og personvern",
+  "version": "Versjon {{ number }}"
 }

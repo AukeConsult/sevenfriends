@@ -35,3 +35,5 @@ client-wrappers/ios/App/App/GoogleService-Info.plist
 
 # generated from PHONE_AUTH in .env (scripts/sync-features.mjs)
 frontend/src/environments/features.ts
+# generated from frontend/build-number.json (scripts/sync-version.mjs); the counter file itself is committed
+frontend/src/environments/version.ts

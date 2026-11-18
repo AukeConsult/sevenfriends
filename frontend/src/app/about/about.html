@@ -33,5 +33,7 @@
   <p class="small text-secondary m-0">
     {{ t('about.readThe') || 'Read the' }} <a routerLink="/terms">{{ t('about.termsOfUse') || 'Terms of use' }}</a> {{ t('about.andHowYourData') || 'and how your data is handled under' }} <a routerLink="/privacy">{{ t('about.dataAndPrivacy') || 'Data and privacy' }}</a>.
   </p>
+  <!-- which build this app runs: the counter goes up by one for every build (every deploy) -->
+  <p class="sf-hint text-center m-0">{{ t('about.version', { number: version.name }) || 'Version ' + version.name }}{{ version.dev ? ' (dev)' : '' }} · {{ builtAt }}</p>
 </main>
 </ng-container>

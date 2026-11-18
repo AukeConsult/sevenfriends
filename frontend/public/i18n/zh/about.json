@@ -13,5 +13,6 @@
   "readThe": "请阅读",
   "termsOfUse": "使用条款",
   "andHowYourData": "，并在下面了解你的数据如何处理：",
-  "dataAndPrivacy": "数据与隐私"
+  "dataAndPrivacy": "数据与隐私",
+  "version": "版本 {{ number }}"
 }

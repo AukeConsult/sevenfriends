@@ -13,5 +13,6 @@
   "readThe": "Baca",
   "termsOfUse": "Ketentuan penggunaan",
   "andHowYourData": "dan cara datamu ditangani di",
-  "dataAndPrivacy": "Data dan privasi"
+  "dataAndPrivacy": "Data dan privasi",
+  "version": "Versi {{ number }}"
 }

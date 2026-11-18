@@ -13,5 +13,6 @@
   "readThe": "اقرأ",
   "termsOfUse": "شروط الاستخدام",
   "andHowYourData": "وكيف نتعامل مع بياناتك في",
-  "dataAndPrivacy": "البيانات والخصوصية"
+  "dataAndPrivacy": "البيانات والخصوصية",
+  "version": "الإصدار {{ number }}"
 }

@@ -13,5 +13,6 @@
   "readThe": "אפשר לקרוא את",
   "termsOfUse": "תנאי השימוש",
   "andHowYourData": "ואיך הנתונים שלך מטופלים תחת",
-  "dataAndPrivacy": "נתונים ופרטיות"
+  "dataAndPrivacy": "נתונים ופרטיות",
+  "version": "גרסה {{ number }}"
 }

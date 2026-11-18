@@ -15,6 +15,7 @@ import { ActiveCircleService } from './core/active-circle.service';
 import { AuthService } from './core/auth.service';
 import { FriendLinkService } from './core/friend-link.service';
 import { AutoInviteService } from './core/auto-invite.service';
+import { AppVersionService } from './core/app-version.service';
 import { InstallService } from './core/install.service';
 import { LanguageService } from './core/language.service';
 import { LookSyncService } from './core/look-sync.service';
@@ -71,6 +72,7 @@ export class App {
     inject(LanguageService); // the texts follow the language of the account (or the country, or the browser)
     inject(RealtimeService); // starts listening for live updates (friend requests, messages) once somebody is signed in
     inject(LookSyncService); // the theme and the text size are kept on the account, so every device shows them
+    inject(AppVersionService); // an app that stays open (tray, background) loads the new version after a deploy
     inject(InstallService); // catches the browser's install offer early (it can arrive soon after the page opens)
     // (KeysService looks at the key of this device when somebody signs in, and keeps its name (kind and device) up to date)
     inject(PresenceService); // tells the system when the person is active, away or offline (the dot on their friends)

@@ -9,13 +9,14 @@
     "test": "ng test",
     "sync:models": "node ../scripts/sync-models.mjs",
     "sync:features": "node ../scripts/sync-features.mjs",
+    "sync:version": "node ../scripts/sync-version.mjs",
     "sync:sounds": "node ../scripts/sounds-manifest.mjs",
     "sync:android-sounds": "node ../scripts/sync-android-sounds.mjs",
     "cap": "cap",
-    "prestart": "npm run sync:models && npm run sync:features && npm run sync:sounds && npm run sync:android-sounds",
-    "prebuild": "npm run sync:models && npm run sync:features && npm run sync:sounds && npm run sync:android-sounds",
-    "prewatch": "npm run sync:models && npm run sync:features && npm run sync:sounds && npm run sync:android-sounds",
-    "pretest": "npm run sync:models && npm run sync:features"
+    "prestart": "npm run sync:models && npm run sync:features && npm run sync:version && npm run sync:sounds && npm run sync:android-sounds",
+    "prebuild": "npm run sync:models && npm run sync:features && node ../scripts/sync-version.mjs --bump && npm run sync:sounds && npm run sync:android-sounds",
+    "prewatch": "npm run sync:models && npm run sync:features && npm run sync:version && npm run sync:sounds && npm run sync:android-sounds",
+    "pretest": "npm run sync:models && npm run sync:features && npm run sync:version"
   },
   "prettier": {
     "printWidth": 100,

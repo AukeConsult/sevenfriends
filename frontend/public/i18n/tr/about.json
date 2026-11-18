@@ -13,5 +13,6 @@
   "readThe": "Şunları oku:",
   "termsOfUse": "Kullanım koşulları",
   "andHowYourData": "ve verilerinin nasıl işlendiğini şurada gör:",
-  "dataAndPrivacy": "Veriler ve gizlilik"
+  "dataAndPrivacy": "Veriler ve gizlilik",
+  "version": "Sürüm {{ number }}"
 }

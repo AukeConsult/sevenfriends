@@ -13,5 +13,6 @@
   "readThe": "詳しくは",
   "termsOfUse": "利用規約",
   "andHowYourData": "、データの取り扱いについては",
-  "dataAndPrivacy": "データとプライバシー"
+  "dataAndPrivacy": "データとプライバシー",
+  "version": "バージョン {{ number }}"
 }

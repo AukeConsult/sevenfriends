@@ -13,5 +13,6 @@
   "readThe": "Lies die",
   "termsOfUse": "Nutzungsbedingungen",
   "andHowYourData": "und wie mit deinen Daten umgegangen wird, unter",
-  "dataAndPrivacy": "Daten und Datenschutz"
+  "dataAndPrivacy": "Daten und Datenschutz",
+  "version": "Version {{ number }}"
 }

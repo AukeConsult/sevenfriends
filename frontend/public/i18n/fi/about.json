@@ -13,5 +13,6 @@
   "readThe": "Lue",
   "termsOfUse": "Käyttöehdot",
   "andHowYourData": "ja se, miten tietojasi käsitellään, kohdassa",
-  "dataAndPrivacy": "Tiedot ja yksityisyys"
+  "dataAndPrivacy": "Tiedot ja yksityisyys",
+  "version": "Versio {{ number }}"
 }

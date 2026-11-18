@@ -13,5 +13,6 @@
   "readThe": "Lees de",
   "termsOfUse": "Gebruiksvoorwaarden",
   "andHowYourData": "en hoe er met je gegevens wordt omgegaan onder",
-  "dataAndPrivacy": "Gegevens en privacy"
+  "dataAndPrivacy": "Gegevens en privacy",
+  "version": "Versie {{ number }}"
 }
