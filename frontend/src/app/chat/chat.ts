@@ -200,6 +200,7 @@ export class Chat {
       confirmPending: (id, item) => this.messages.update((list) => list.map((m) => (m.id === id ? item : m))),
       dropPending: (id) => this.messages.update((list) => list.filter((m) => m.id !== id)),
       addSent: (item) => this.addSent(item),
+      scrollToNewest: () => this.scrollDown(),
     });
     // leaving the feed (any page): remember where it was scrolled to
     this.router.events.pipe(filter((e) => e instanceof NavigationStart), takeUntilDestroyed()).subscribe(() => {

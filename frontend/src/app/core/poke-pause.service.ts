@@ -1,5 +1,6 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { ApiService } from './api.service';
+import { LiveChanges } from './live-changes';
 import { PokePause } from '../models';
 
 /**
@@ -9,6 +10,7 @@ import { PokePause } from '../models';
 @Injectable({ providedIn: 'root' })
 export class PokePauseService {
   private readonly api = inject(ApiService);
+  private readonly live = inject(LiveChanges);
   /** when the pause ends (ms), null = pokes are on */
   readonly until = signal<number | null>(null);
   private readonly now = signal(Date.now());
@@ -23,6 +25,14 @@ export class PokePauseService {
 
   constructor() {
     setInterval(() => this.now.set(Date.now()), 30_000); // the pause ends on the screen too
+    // the pause was set, ended or finished on another device of mine (the server touches `profile` for each): show it here at once
+    this.live.on('profile').subscribe(() => {
+      if (this.loaded()) void this.load();
+    });
+    // the app came back to the front: it may have changed meanwhile
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && this.loaded()) void this.load();
+    });
   }
 
   async load(): Promise<void> {

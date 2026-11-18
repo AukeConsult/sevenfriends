@@ -56,6 +56,7 @@ export class PokeFrame {
     this.ctx.pokeOpen.set(false);
     this.message.set(null);
     this.failed.set(false);
+    this.ctx.feed()?.scrollToNewest(); // the feed is at its newest end again (the frame was at the top)
   }
 
   protected async send(): Promise<void> {

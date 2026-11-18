@@ -93,6 +93,14 @@ export class FriendPage {
       });
     });
 
+    // another page of the friend (the safebox, the profile ...) opens at its top: the window keeps the place it had in the feed, which would leave the page scrolled down
+    effect(() => {
+      const onFeed = this.onFeed();
+      untracked(() => {
+        if (!onFeed) window.scrollTo({ top: 0 });
+      });
+    });
+
     // moving to another page of the friend closes the help (the Send form is independent of the pages: it stays as it is)
     effect(() => {
       this.url();

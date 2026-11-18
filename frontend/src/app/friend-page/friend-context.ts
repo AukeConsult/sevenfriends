@@ -26,6 +26,8 @@ export interface FeedActions {
   dropPending(id: string): void;
   /** a message of mine that the server has already answered (an image, a video, a voice message) is in the feed at once, and the feed is read again */
   addSent(item: ChatItem): void;
+  /** moves the window to the newest message: the top when the feed is newest first, the bottom when it is oldest first */
+  scrollToNewest(): void;
 }
 
 /** A tool of the page that is open (not the feed), shown first in the header menu: "Messages for X only" on Send a message, "Add files" in the safebox. */
@@ -290,6 +292,21 @@ export class FriendContext {
   /** Opens the profile page of the friend (under the same header). */
   showProfile(): void {
     void this.router.navigate(['/friends', this.friendId, 'profile']);
+  }
+
+  /** The Messages icon of the header: the feed opens at its newest end (not where it was left). */
+  showNewest(): void {
+    const places = { ...this.prefs.get('feedPlace') };
+    delete places[this.friendId];
+    this.prefs.set('feedPlace', places);
+  }
+
+  /** The bell of the header: opens or closes the poke frame; the frame is at the top of the page, so the window goes there, and back to the newest message when it closes. */
+  togglePoke(): void {
+    const open = !this.pokeOpen();
+    this.pokeOpen.set(open);
+    if (open) window.scrollTo({ top: 0, behavior: 'smooth' });
+    else this.feed()?.scrollToNewest();
   }
 
   toggleHelp(): void {

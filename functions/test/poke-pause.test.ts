@@ -1,6 +1,7 @@
 import { getFirestore } from "firebase-admin/firestore";
 import { beforeEach, describe, expect, it } from "vitest";
 import { MOOD_SILENT } from "../src/models";
+import { endFinishedPokePauses } from "../src/poke-pause";
 import { User, connect, seedPool } from "./helpers";
 
 /** Pause pokes: a limited time in which my pokes do not ring (docs/design/poke-alarm.md). */
@@ -60,5 +61,18 @@ describe("pause pokes", () => {
     await getFirestore().collection("user-account").doc(pool[1].p.uid).set({ pokePausedUntil: new Date(Date.now() - 1000) }, { merge: true });
     expect((await pool[1].raw("get", "/profile/poke-pause").expect(200)).body).toEqual({ until: null });
     expect((await friendOf(pool[0], id)).mood).not.toBe(MOOD_SILENT);
+  });
+
+  it("a pause that ended by time is told to the friends and removed, once", async () => {
+    const id = await connect(pool[0], pool[1]);
+    const friendEntry = async () => (await getFirestore().collection("user-account").doc(pool[0].p.uid).collection("friend-circle").doc("default").collection("friends").doc(id).get()).data()!;
+    await pause(pool[1], 60).expect(200);
+    expect(await endFinishedPokePauses()).toBe(0); // still going
+    await getFirestore().collection("user-account").doc(pool[1].p.uid).set({ pokePausedUntil: new Date(Date.now() - 1000) }, { merge: true });
+    const before = await friendEntry();
+    expect(await endFinishedPokePauses()).toBe(1);
+    expect((await friendEntry()).moodChangedAt).not.toEqual(before.moodChangedAt); // the friend's app reloads its list
+    expect((await getFirestore().collection("user-account").doc(pool[1].p.uid).get()).data()!.pokePausedUntil).toBeUndefined();
+    expect(await endFinishedPokePauses()).toBe(0); // told once
   });
 });

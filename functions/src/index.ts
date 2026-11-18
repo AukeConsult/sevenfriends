@@ -4,6 +4,7 @@ import { initializeApp } from "firebase-admin/app";
 import { createApp } from "./app";
 import { sendDueReminders } from "./safebox-reminders";
 import { sendDueOwnRequestReminders } from "./own-request";
+import { endFinishedPokePauses } from "./poke-pause";
 
 initializeApp();
 
@@ -21,10 +22,11 @@ export const api = onRequest(
   createApp(),
 );
 
-/** Every 5 minutes: push the safebox reminders (dates, tickets) that are due, and the one more push for a device that has waited a day for approval. Needs Cloud Scheduler (the Blaze plan); the emulator does not run it. */
+/** Every 5 minutes: push the safebox reminders (dates, tickets) that are due, and the one more push for a device that has waited a day for approval, and tell everybody about a poke pause that has ended. Needs Cloud Scheduler (the Blaze plan); the emulator does not run it. */
 export const safeboxReminders = onSchedule({ region: "europe-west1", schedule: "every 5 minutes", timeoutSeconds: 120, memory: "256MiB", maxInstances: 1 }, async () => {
   await sendDueReminders();
   await sendDueOwnRequestReminders();
+  await endFinishedPokePauses(); // a poke pause that ended by time: friends' apps and the person's other devices show it
 });
 
 // Not deployed for now: nobody sends invitation emails (friends are invited with a link). To send mail again, export it:

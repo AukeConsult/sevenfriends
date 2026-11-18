@@ -25,14 +25,14 @@
     <div class="sf-bar-actions">
       <!-- the poke: only for a friend who has a seat for me (not one who has me on their sleep list) -->
       @if (ctx.canPoke()) {
-      <button type="button" class="sf-tool-btn" (click)="ctx.pokeOpen.set(!ctx.pokeOpen())" [attr.aria-expanded]="ctx.pokeOpen()" [attr.aria-label]="t('friendPage.poke') || 'Poke'" [attr.title]="t('friendPage.poke') || 'Poke'">
+      <button type="button" class="sf-tool-btn" (click)="ctx.togglePoke()" [attr.aria-expanded]="ctx.pokeOpen()" [attr.aria-label]="t('friendPage.poke') || 'Poke'" [attr.title]="t('friendPage.poke') || 'Poke'">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0112 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 003.4 0" /></svg>
         <span class="sf-tool-label" aria-hidden="true">{{ t('friendPage.poke') || 'Poke' }}</span>
       </button>
       }
       <!-- the icons that switch what is under the header: the messages and the safebox -->
       @if (!onFeed()) {
-      <a [routerLink]="['/friends', ctx.friendId]" routerLinkActive="sf-current" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page" class="sf-tool-btn" [attr.aria-label]="t('friendPage.messages') || 'Messages'" [attr.title]="t('friendPage.messages') || 'Messages'">
+      <a [routerLink]="['/friends', ctx.friendId]" (click)="ctx.showNewest()" routerLinkActive="sf-current" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page" class="sf-tool-btn" [attr.aria-label]="t('friendPage.messages') || 'Messages'" [attr.title]="t('friendPage.messages') || 'Messages'">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 8V6a2 2 0 012-2h8a2 2 0 012 2v5a2 2 0 01-2 2h-1" /><path d="M4 10a2 2 0 012-2h7a2 2 0 012 2v5a2 2 0 01-2 2H9l-3 3v-3a2 2 0 01-2-2z" /></svg>
         @if (ctx.messageDot()) { <span class="sf-tool-dot" role="img" [attr.aria-label]="t('friendPage.newMessage') || 'New message'"></span> }
         <span class="sf-tool-label" aria-hidden="true">{{ t('friendPage.messages') || 'Messages' }}</span>
