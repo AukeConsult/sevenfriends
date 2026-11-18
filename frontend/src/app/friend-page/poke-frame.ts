@@ -27,6 +27,7 @@ const POKE_TEXT = '🔔';
             } @else {
               <p class="m-0">🔔 {{ t('friendPage.pokeAsk', { name: ctx.friendName() }) || 'This rings their phone like an alarm, even when it is silent.' }}</p>
             }
+            @if (!message()) { <p class="sf-hint m-0">{{ t('friendPage.pokeNote') || 'It rings like an alarm on Android phones and in the Windows app for now. On other devices it arrives as a normal notification.' }}</p> }
             <div class="d-flex gap-2">
               <button type="button" class="btn btn-light btn-sm flex-fill" (click)="close()" [disabled]="busy()">{{ t('friendPage.pokeCancel') || 'Cancel' }}</button>
               @if (!message() || failed()) {

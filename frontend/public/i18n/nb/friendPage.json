@@ -31,5 +31,6 @@
   "pokeAsk": "Dette får telefonen til {{ name }} til å ringe som en alarm, selv når den er på lydløs.",
   "pokeSend": "Send dytt",
   "pokeCancel": "Avbryt",
-  "pokeSent": "{{ name }} ble dyttet."
+  "pokeSent": "{{ name }} ble dyttet.",
+  "pokeNote": "Foreløpig ringer det som en alarm på Android-telefoner og i Windows-appen. På andre enheter kommer det som et vanlig varsel."
 }

@@ -31,5 +31,6 @@
   "pokeAsk": "这会让 {{ name }} 的手机像闹钟一样响起，即使处于静音。",
   "pokeSend": "发送戳一下",
   "pokeCancel": "取消",
-  "pokeSent": "已戳了 {{ name }}。"
+  "pokeSent": "已戳了 {{ name }}。",
+  "pokeNote": "目前 Android 手机和 Windows 应用会像闹钟一样响起。其他设备会收到普通通知。"
 }

@@ -31,5 +31,6 @@
   "pokeAsk": "Bu, {{ name }} kişisinin telefonunu sessizdeyken bile alarm gibi çaldırır.",
   "pokeSend": "Dürtme gönder",
   "pokeCancel": "İptal",
-  "pokeSent": "{{ name }} dürtüldü."
+  "pokeSent": "{{ name }} dürtüldü.",
+  "pokeNote": "Şimdilik Android telefonlarda ve Windows uygulamasında alarm gibi çalar. Diğer cihazlarda normal bildirim olarak gelir."
 }

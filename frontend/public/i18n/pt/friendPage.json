@@ -31,5 +31,6 @@
   "pokeAsk": "Isto faz o telefone de {{ name }} tocar como um alarme, mesmo no silencioso.",
   "pokeSend": "Enviar cutucada",
   "pokeCancel": "Cancelar",
-  "pokeSent": "{{ name }} foi cutucado."
+  "pokeSent": "{{ name }} foi cutucado.",
+  "pokeNote": "Por enquanto toca como um alarme em telefones Android e no aplicativo do Windows. Em outros dispositivos chega como uma notificação normal."
 }

@@ -31,5 +31,6 @@
   "pokeAsk": "Tämä soittaa henkilön {{ name }} puhelimen kuin herätyksen, vaikka se olisi mykistetty.",
   "pokeSend": "Lähetä töm",
   "pokeCancel": "Peruuta",
-  "pokeSent": "{{ name }} töminttiin."
+  "pokeSent": "{{ name }} töminttiin.",
+  "pokeNote": "Toistaiseksi se soi hälytyksenä Android-puhelimissa ja Windows-sovelluksessa. Muilla laitteilla se tulee tavallisena ilmoituksena."
 }

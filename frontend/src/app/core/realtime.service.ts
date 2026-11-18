@@ -365,7 +365,25 @@ export class RealtimeService {
     });
   }
 
+  /**
+   * A poke rings in the Windows app by itself (PokeWindow.cs: a window over everything with a looping sound, also when the app is hidden in the tray): the page tells the app
+   * through the WebView2 bridge. Only a poke that is new (not older than the 10 minutes a poke lives, see docs/design/poke-alarm.md). Android rings through the push instead.
+   */
+  private tellWindowsAppAboutPokes(all: Added[], first: boolean): void {
+    const bridge = (window as unknown as { chrome?: { webview?: { postMessage(message: unknown): void } } }).chrome?.webview;
+    if (first || !bridge || !/SevenFriendsWindows/i.test(navigator.userAgent)) return;
+    for (const m of all) {
+      if (m.data['poke'] !== true) continue;
+      const time = m.data['time'] as { toMillis?: () => number } | undefined;
+      if (time?.toMillis && Date.now() - time.toMillis() > 10 * 60 * 1000) continue;
+      const connectionId = m.data['connectionId'] as string | undefined;
+      const text = m.data['enc'] ? '' : String(m.data['text'] ?? '');
+      bridge.postMessage({ type: 'poke', id: m.id, name: String(m.data['fromName'] ?? ''), text: text.length > 120 ? `${text.slice(0, 120)}…` : text, url: connectionId ? `/friends/${connectionId}` : '/' });
+    }
+  }
+
   private onMessages(all: Added[], first: boolean): void {
+    this.tellWindowsAppAboutPokes(all, first);
     // a message of another circle: a note only (no sound of its own kind, no notice of what it says, no open feed). A friend on that circle's sleep list is silent, as in the circle in use.
     const elsewhere = all.filter((m) => circleOf(m.data) !== this.active.id);
     for (const m of elsewhere) this.activity.mark(circleOf(m.data));

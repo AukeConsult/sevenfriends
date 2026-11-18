@@ -31,5 +31,6 @@
   "pokeAsk": "Det får {{ name }}s telefon att ringa som ett larm, även när den är tyst.",
   "pokeSend": "Skicka knuff",
   "pokeCancel": "Avbryt",
-  "pokeSent": "{{ name }} blev knuffad."
+  "pokeSent": "{{ name }} blev knuffad.",
+  "pokeNote": "Just nu ringer det som ett larm på Android-telefoner och i Windows-appen. På andra enheter kommer det som en vanlig avisering."
 }

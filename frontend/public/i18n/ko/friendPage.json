@@ -31,5 +31,6 @@
   "pokeAsk": "{{ name }}님의 전화가 무음이어도 알람처럼 울립니다.",
   "pokeSend": "콕 찌르기 보내기",
   "pokeCancel": "취소",
-  "pokeSent": "{{ name }}님을 콕 찔렀습니다."
+  "pokeSent": "{{ name }}님을 콕 찔렀습니다.",
+  "pokeNote": "지금은 Android 휴대폰과 Windows 앱에서 알람처럼 울립니다. 다른 기기에서는 일반 알림으로 도착합니다."
 }

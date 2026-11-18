@@ -31,5 +31,6 @@
   "pokeAsk": "Esto hace sonar el teléfono de {{ name }} como una alarma, incluso en silencio.",
   "pokeSend": "Enviar toque",
   "pokeCancel": "Cancelar",
-  "pokeSent": "Se envió un toque a {{ name }}."
+  "pokeSent": "Se envió un toque a {{ name }}.",
+  "pokeNote": "Por ahora suena como una alarma en teléfonos Android y en la aplicación de Windows. En otros dispositivos llega como una notificación normal."
 }

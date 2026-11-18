@@ -32,6 +32,16 @@ public partial class MainWindow : Window
     /// <summary>The notification last shown from the web app: a click on its toast tells the page, which opens the right conversation.</summary>
     private CoreWebView2Notification? _lastNotification;
 
+    /// <summary>The alarm window of a poke (made when the first poke comes, then used again).</summary>
+    private PokeWindow? _poke;
+
+    /// <summary>"Open" on a poke: the window comes forward on that friend's page.</summary>
+    private void OpenPage(string path)
+    {
+        ShowApp();
+        Web.CoreWebView2?.Navigate(AppUrl + path);
+    }
+
     /// <summary>Something shared with the app (the Windows share dialog) that the web view must open on, as soon as it is ready.</summary>
     private SharedContent? _shared;
 
@@ -207,6 +217,26 @@ public partial class MainWindow : Window
             e.Notification.ReportShown();
             _lastNotification = e.Notification;
             _tray.ShowBalloonTip(8000, e.Notification.Title, e.Notification.Body, System.Windows.Forms.ToolTipIcon.None);
+        };
+
+        // the web page tells the app about a poke (realtime.service.ts); the page keeps running while the window is hidden in the tray, so the alarm rings then too
+        web.WebMessageReceived += (_, e) =>
+        {
+            try
+            {
+                if (!Uri.TryCreate(e.Source, UriKind.Absolute, out var from) || !Inside.Take(3).Contains(from.Host)) return; // only the app's own pages
+                using var message = System.Text.Json.JsonDocument.Parse(e.WebMessageAsJson);
+                var root = message.RootElement;
+                if (root.GetProperty("type").GetString() != "poke") return;
+                var url = root.TryGetProperty("url", out var u) ? u.GetString() ?? "/" : "/";
+                if (!url.StartsWith('/') || url.StartsWith("//")) url = "/"; // only a page of the app
+                _poke ??= new PokeWindow(OpenPage);
+                _poke.Ring(root.TryGetProperty("name", out var n) ? n.GetString() ?? "" : "", root.TryGetProperty("text", out var t) ? t.GetString() ?? "" : "", url);
+            }
+            catch (Exception)
+            {
+                // a message that cannot be read is ignored
+            }
         };
 
         var first = _shared;

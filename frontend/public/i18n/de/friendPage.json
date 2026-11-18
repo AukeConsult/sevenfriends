@@ -31,5 +31,6 @@
   "pokeAsk": "Das lässt das Handy von {{ name }} wie einen Wecker klingeln, auch wenn es stumm ist.",
   "pokeSend": "Anstupsen senden",
   "pokeCancel": "Abbrechen",
-  "pokeSent": "{{ name }} wurde angestupst."
+  "pokeSent": "{{ name }} wurde angestupst.",
+  "pokeNote": "Vorerst klingelt es auf Android-Handys und in der Windows-App wie ein Wecker. Auf anderen Geräten kommt es als normale Benachrichtigung an."
 }

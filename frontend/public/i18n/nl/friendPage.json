@@ -31,5 +31,6 @@
   "pokeAsk": "Dit laat de telefoon van {{ name }} rinkelen als een alarm, ook als hij op stil staat.",
   "pokeSend": "Por versturen",
   "pokeCancel": "Annuleren",
-  "pokeSent": "{{ name }} is gepord."
+  "pokeSent": "{{ name }} is gepord.",
+  "pokeNote": "Voorlopig rinkelt het als een alarm op Android-telefoons en in de Windows-app. Op andere apparaten komt het als gewone melding binnen."
 }

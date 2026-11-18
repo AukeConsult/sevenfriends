@@ -15,6 +15,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
+
 /**
  * The screen of a poke alarm: shown over the lock screen, turns the screen on. It says WHO is poking (their name, and the group for a group) and the text,
  * with two buttons: Stop (silences it) and Open (silences it and opens that friend's page). It closes by itself when the alarm is over.
@@ -38,8 +40,8 @@ public class PokeActivity extends Activity {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         }
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        if (Build.VERSION.SDK_INT >= 33) registerReceiver(done, new IntentFilter(PokeService.ACTION_DONE), Context.RECEIVER_NOT_EXPORTED);
-        else registerReceiver(done, new IntentFilter(PokeService.ACTION_DONE));
+        // only this app sends it (PokeService); ContextCompat adds the flag on every Android version
+        ContextCompat.registerReceiver(this, done, new IntentFilter(PokeService.ACTION_DONE), ContextCompat.RECEIVER_NOT_EXPORTED);
         show(getIntent());
     }
 

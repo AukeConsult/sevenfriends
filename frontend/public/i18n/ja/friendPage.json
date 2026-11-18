@@ -31,5 +31,6 @@
   "pokeAsk": "{{ name }} さんの電話が、サイレントでもアラームのように鳴ります。",
   "pokeSend": "ポークを送る",
   "pokeCancel": "キャンセル",
-  "pokeSent": "{{ name }} さんにポークしました。"
+  "pokeSent": "{{ name }} さんにポークしました。",
+  "pokeNote": "今のところ、アラームのように鳴るのは Android の電話と Windows アプリです。ほかの端末では通常の通知として届きます。"
 }

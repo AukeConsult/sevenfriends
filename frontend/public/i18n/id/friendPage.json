@@ -31,5 +31,6 @@
   "pokeAsk": "Ini membuat ponsel {{ name }} berdering seperti alarm, bahkan saat senyap.",
   "pokeSend": "Kirim colekan",
   "pokeCancel": "Batal",
-  "pokeSent": "{{ name }} telah dicolek."
+  "pokeSent": "{{ name }} telah dicolek.",
+  "pokeNote": "Untuk saat ini berdering seperti alarm di ponsel Android dan aplikasi Windows. Di perangkat lain datang sebagai notifikasi biasa."
 }

@@ -31,5 +31,6 @@
   "pokeAsk": "Det får {{ name }}s telefon til at ringe som en alarm, også når den er på lydløs.",
   "pokeSend": "Send prik",
   "pokeCancel": "Annuller",
-  "pokeSent": "{{ name }} blev prikket."
+  "pokeSent": "{{ name }} blev prikket.",
+  "pokeNote": "Indtil videre ringer det som en alarm på Android-telefoner og i Windows-appen. På andre enheder kommer det som en almindelig notifikation."
 }

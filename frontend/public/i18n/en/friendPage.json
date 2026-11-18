@@ -31,5 +31,6 @@
   "pokeAsk": "This rings {{ name }}'s phone like an alarm, even when it is silent.",
   "pokeSend": "Send poke",
   "pokeCancel": "Cancel",
-  "pokeSent": "{{ name }} was poked."
+  "pokeSent": "{{ name }} was poked.",
+  "pokeNote": "It rings like an alarm on Android phones and in the Windows app for now. On other devices it arrives as a normal notification."
 }
