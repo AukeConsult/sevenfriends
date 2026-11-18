@@ -10,6 +10,13 @@
         </a>
       }
     }
+    @if (showSupport()) {
+      <a class="sf-setrow" routerLink="/settings/support">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 00-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 000-7.8z" /></svg>
+        <span class="sf-setrow-text">{{ t('settingsShell.support') || 'Donations' }}</span>
+        <span class="sf-setrow-go" aria-hidden="true">›</span>
+      </a>
+    }
     <a class="sf-setrow" routerLink="/setup">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 4V2M15 16v-2M8 9h2M20 9h2M17.8 11.8L19 13M17.8 6.2L19 5M3 21l9-9M12.2 6.2L11 5" /></svg>
       <span class="sf-setrow-text">{{ t('settings.openTheSetupWizard') || 'Open the setup wizard' }}</span>

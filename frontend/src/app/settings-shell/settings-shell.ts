@@ -71,6 +71,7 @@ export class SettingsShell {
     { path: 'notifications', key: 'notifications', fallback: 'Notifications' },
     { path: 'encryption', key: 'keys', fallback: 'Privacy lock' },
     { path: 'install', key: 'install', fallback: 'Install' },
+    { path: 'support', key: 'support', fallback: 'Donations' },
     { path: 'about', key: 'info', fallback: 'About and rules', also: ['terms', 'privacy', 'locking'] },
   ];
 }

@@ -13,7 +13,7 @@
     "headers": [
       {
         "source": "**",
-        "headers": [{ "key": "Content-Security-Policy-Report-Only", "value": "default-src 'self'; script-src 'self' 'sha256-CinsAdp+IqDXGnHB83xcMErxvHYUc1rHFWdlW4jqyX0=' 'sha256-8jliVRYnaYlNr7m6p5zCADoqj93mYzDGDw/uQksQrds=' 'sha256-BvQ3aS6B84QULuXNv4XHN9ek+6ZqxR1WTvKm4nBuar4=' 'sha256-36o9uX/319qLO8zykPu0NDS3uMfSxwl69O+JqHsdPyM=' 'sha256-sUhEzt24BAe0faCIRQ6/l9VvD0KJn/qqbRj9FKiAe2Q=' https://apis.google.com https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://tile.openstreetmap.org https://*.tile.openstreetmap.org; media-src 'self' blob:; font-src 'self' data:; worker-src 'self' blob:; connect-src 'self' blob: data: https://*.googleapis.com https://nominatim.openstreetmap.org https://*.firebaseio.com wss://*.firebaseio.com; frame-src https://accounts.google.com https://sevenfriends.firebaseapp.com https://www.google.com/recaptcha/ https://recaptcha.google.com https://www.youtube-nocookie.com https://player.vimeo.com https://open.spotify.com; frame-ancestors 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" }]
+        "headers": [{ "key": "Content-Security-Policy-Report-Only", "value": "default-src 'self'; script-src 'self' 'sha256-CinsAdp+IqDXGnHB83xcMErxvHYUc1rHFWdlW4jqyX0=' 'sha256-8jliVRYnaYlNr7m6p5zCADoqj93mYzDGDw/uQksQrds=' 'sha256-BvQ3aS6B84QULuXNv4XHN9ek+6ZqxR1WTvKm4nBuar4=' 'sha256-36o9uX/319qLO8zykPu0NDS3uMfSxwl69O+JqHsdPyM=' 'sha256-sUhEzt24BAe0faCIRQ6/l9VvD0KJn/qqbRj9FKiAe2Q=' https://apis.google.com https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://js.stripe.com https://*.js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://tile.openstreetmap.org https://*.tile.openstreetmap.org https://*.stripe.com; media-src 'self' blob:; font-src 'self' data:; worker-src 'self' blob:; connect-src 'self' blob: data: https://*.googleapis.com https://nominatim.openstreetmap.org https://*.firebaseio.com wss://*.firebaseio.com https://api.stripe.com; frame-src https://accounts.google.com https://sevenfriends.firebaseapp.com https://www.google.com/recaptcha/ https://recaptcha.google.com https://www.youtube-nocookie.com https://player.vimeo.com https://open.spotify.com https://js.stripe.com https://*.js.stripe.com https://hooks.stripe.com; frame-ancestors 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" }]
       },
       {
         "source": "/index.html",
@@ -63,6 +63,7 @@
       "source": "functions",
       "codebase": "default",
       "predeploy": [
+        "node scripts/sync-stripe.mjs",
         "npm --prefix \"$RESOURCE_DIR\" run build"
       ]
     }

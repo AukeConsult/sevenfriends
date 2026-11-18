@@ -2,7 +2,7 @@ import { getAuth } from "firebase-admin/auth";
 import { forgetLogin } from "./auth";
 import { DocumentReference, Transaction, getFirestore } from "firebase-admin/firestore";
 import { DEFAULT_CIRCLE_ID, FRIENDS_SUBCOLLECTION, MAIL_COLLECTION, OWN_REQUEST_REMINDERS, RECOVERY_COLLECTION } from "./constants";
-import { circleCol, friendRequestCol, keyBackupCol, keyCol, keyListCol, messageCol, ownRequestCol, profilePictureDoc, pushDeviceCol, signalCol, userDoc } from "./paths";
+import { circleCol, donationCol, friendRequestCol, keyBackupCol, keyCol, keyListCol, messageCol, ownRequestCol, profilePictureDoc, pushDeviceCol, signalCol, userDoc } from "./paths";
 import { leaveGroup } from "./groups";
 import { MediaRef } from "./models";
 import { deleteBox } from "./safebox";
@@ -168,6 +168,9 @@ async function eraseInTransaction(tx: Transaction, uid: string, files: Map<strin
 
   // 8b. the "something changed" stamp for my other devices
   drop(userDoc(uid).collection("sync").doc("state"));
+
+  // 8c. my donations (the Stripe records stay with Stripe)
+  (await tx.get(donationCol(uid))).docs.forEach((d) => drop(d.ref));
 
   // 9. the account itself
   drop(userDoc(uid));

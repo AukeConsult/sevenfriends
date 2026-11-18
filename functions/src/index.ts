@@ -1,6 +1,5 @@
 import { onRequest } from "firebase-functions/v2/https";
 import { onSchedule } from "firebase-functions/v2/scheduler";
-import { defineSecret } from "firebase-functions/params";
 import { initializeApp } from "firebase-admin/app";
 import { createApp } from "./app";
 import { sendDueReminders } from "./safebox-reminders";
@@ -8,8 +7,6 @@ import { sendDueOwnRequestReminders } from "./own-request";
 
 initializeApp();
 
-/** Stripe secrets: set with `firebase functions:secrets:set STRIPE_SECRET_KEY` (and STRIPE_WEBHOOK_SECRET); they reach the function as environment variables. */
-const STRIPE_SECRETS = [defineSecret("STRIPE_SECRET_KEY"), defineSecret("STRIPE_WEBHOOK_SECRET")];
 
 export const api = onRequest(
   {
@@ -20,7 +17,6 @@ export const api = onRequest(
     maxInstances: 10, // upper limit: protects against runaway cost
     concurrency: 80, // requests one instance handles at the same time
     cpu: 1,
-    secrets: STRIPE_SECRETS,
   },
   createApp(),
 );

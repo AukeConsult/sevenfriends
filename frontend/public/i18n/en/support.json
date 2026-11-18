@@ -1,0 +1,18 @@
+{
+  "loading": "Getting ready…",
+  "unavailable": "Donations are not available right now. Please try again later.",
+  "chooseIntro": "Choose how much you want to give. One payment, no subscription.",
+  "amount": "Amount",
+  "least": "At least {{ min }}",
+  "amountRange": "Choose an amount from {{ min }} to {{ max }}.",
+  "next": "Next",
+  "change": "Change amount",
+  "intro": "A donation of {{ price }}.",
+  "pay": "Donate",
+  "paying": "Paying…",
+  "failed": "The payment did not go through.",
+  "received": "Donation received. Thank you!",
+  "another": "Make another donation",
+  "listTitle": "Your donations",
+  "refunded": "Refunded"
+}

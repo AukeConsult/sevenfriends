@@ -19,6 +19,7 @@ The long parts of this guide live in `docs/guide/`. Read only the file for the a
 - `docs/design/groups.md`: groups (a friend with several people): data, the functions (make, change, add and remove members), what is not done yet. Built and tested on the backend.
 - `docs/guide/apps-and-login.md`: Android / iPhone / Windows apps (their code is in `client-wrappers/android`, `client-wrappers/ios`, `client-wrappers/windows`), login methods, first-time setup.
 - `docs/guide/testing.md`: the backend tests (`npm test`, the 60-person pool, the emulator). A UI-only change needs no backend test run.
+- `docs/guide/payments.md`: donations with Stripe (the amount is chosen, 5.00 or more; Payment Element on `/settings/support`, a row in the Settings list, each donation a document under the user account, the webhook that alone marks one paid, settings, what is not done).
 
 ## Structure
 - `frontend/` – Angular app (standalone components, signals, Bootstrap 5 + SCSS), hosted on Firebase Hosting.

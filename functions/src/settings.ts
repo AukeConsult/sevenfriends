@@ -15,8 +15,13 @@ export const DEFAULTS = {
   RECOVERY_ASKS_PER_DAY: "0",
   /** how many days the push services keep a push for a device that is off or offline (1 to 28: FCM allows 4 weeks at most; 0 = send no TTL, FCM then uses its own 4 weeks) */
   PUSH_TTL_DAYS: "28",
-  /** the price of the one-time purchase, in the smallest unit of the currency (500 = 5.00) */
+  /** on = the purchase can be bought; off (or not set) = it cannot */
+  PAYMENT: "off",
+  /** the amount that is suggested first, in the smallest unit of the currency (500 = 5.00) */
   PAYMENT_AMOUNT: "500",
+  /** the least and the most a person can donate in one payment (smallest currency unit) */
+  PAYMENT_MIN_AMOUNT: "500",
+  PAYMENT_MAX_AMOUNT: "100000",
   /** the currency of the purchase (a Stripe code, lower case) */
   PAYMENT_CURRENCY: "eur",
   /** the subject of the invitation email */

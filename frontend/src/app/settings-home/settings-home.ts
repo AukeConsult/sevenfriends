@@ -1,6 +1,7 @@
 import { TranslocoDirective, provideTranslocoScope } from '@jsverse/transloco';
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { ApiService } from '../core/api.service';
 import { InstallService } from '../core/install.service';
 
 /** The front page of Settings: one row for each part; a row opens that part as a page of its own (the routes are the children of `settings`). */
@@ -13,6 +14,17 @@ import { InstallService } from '../core/install.service';
 export class SettingsHome {
   /** `install.native`: the Android app has no "Install the app" page */
   protected readonly install = inject(InstallService);
+  private readonly api = inject(ApiService);
+
+  /** the Donations row is shown while donating is on (or the person has donated) */
+  protected readonly showSupport = signal(false);
+
+  constructor() {
+    this.api
+      .request<{ enabled: boolean; donations: unknown[] }>('/payments/status')
+      .then((s) => this.showSupport.set(s.enabled || s.donations.length > 0))
+      .catch(() => undefined);
+  }
 
   protected readonly rows = [
     { path: '/settings/profile', key: 'profile', fallback: 'Profile', icon: 'M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z', browserOnly: false },

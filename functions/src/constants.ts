@@ -106,5 +106,5 @@ export const MAX_UPLOAD_BYTES = 30 * 1024 * 1024;
 export const CHUNK_BYTES = 8 * 1024 * 1024;
 export const MAX_CHUNKS = 32;
 
-/** payment/{paymentIntentId}: one Stripe payment (who paid, for what, and how it ended) */
-export const PAYMENT_COLLECTION = "payment";
+/** user-account/{uid}/donation/{paymentIntentId}: one donation (Stripe payment) of this person: amount, currency, status, when */
+export const DONATION_COLLECTION = "donation";

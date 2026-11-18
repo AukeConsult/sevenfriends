@@ -15,6 +15,7 @@ import {
   SAFEBOX_COLLECTION,
   SAFEBOX_ITEMS,
   USER_ACCOUNT_COLLECTION,
+  DONATION_COLLECTION,
 } from "./constants";
 
 /** safebox/{connectionId}/items: the files two friends share */
@@ -24,6 +25,8 @@ export const safeboxItems = (connectionId: string) => getFirestore().collection(
 export const groupDoc = (groupId: string) => getFirestore().collection(GROUP_COLLECTION).doc(groupId);
 export const recoveryDoc = (connectionId: string) => getFirestore().collection(RECOVERY_COLLECTION).doc(connectionId);
 export const userDoc = (uid: string) => getFirestore().collection(USER_ACCOUNT_COLLECTION).doc(uid);
+/** the donations of a person (the document id is the Stripe PaymentIntent id) */
+export const donationCol = (uid: string) => userDoc(uid).collection(DONATION_COLLECTION);
 export const circleCol = (uid: string) => userDoc(uid).collection(FRIEND_CIRCLE_COLLECTION);
 export const friendRequestCol = (uid: string) => userDoc(uid).collection(FRIEND_REQUEST_COLLECTION);
 export const messageCol = (uid: string) => userDoc(uid).collection(MESSAGE_COLLECTION);

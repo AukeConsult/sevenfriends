@@ -1,0 +1,98 @@
+<ng-container *transloco="let t">
+<main class="sf-narrow vstack gap-3">
+  @switch (state()) {
+    @case ('loading') {
+      <p class="m-0 text-secondary">{{ t('support.loading') || 'Getting ready…' }}</p>
+    }
+    @case ('unavailable') {
+      <p class="m-0">{{ t('support.unavailable') || 'Donations are not available right now. Please try again later.' }}</p>
+    }
+    @case ('done') {
+      <div class="vstack align-items-center gap-2 text-center py-3">
+        <svg class="text-success" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5" /><path d="M8 12.5l3 3 5-6" /></svg>
+        <div class="sf-section-title m-0" role="status">{{ t('support.received') || 'Donation received. Thank you!' }}</div>
+      </div>
+      <div class="sf-actions">
+        <button type="button" class="btn btn-outline-primary btn-sm d-inline-flex align-items-center justify-content-center gap-2" (click)="chooseAmount()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 00-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 000-7.8z" /></svg>
+          {{ t('support.another') || 'Make another donation' }}
+        </button>
+      </div>
+    }
+    @case ('amount') {
+      <div class="vstack align-items-center gap-2 text-center pt-2">
+        <svg class="text-danger" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 00-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 000-7.8z" /></svg>
+        <p class="m-0">{{ t('support.chooseIntro') || 'Choose how much you want to give. One payment, no subscription.' }}</p>
+      </div>
+      <div class="d-flex flex-wrap justify-content-center gap-2">
+        @for (a of choices(); track a) {
+          <button type="button" class="btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-1" (click)="pick(a)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 00-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 000-7.8z" /></svg>
+            {{ money(a, limits()!.currency) }}
+          </button>
+        }
+      </div>
+      <div class="sf-field">
+        <label class="form-label d-flex align-items-center gap-2" for="amount">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6" width="19" height="12" rx="2" /><circle cx="12" cy="12" r="2.5" /><path d="M6 12h.01M18 12h.01" /></svg>
+          {{ t('support.amount') || 'Amount' }} ({{ limits()!.currency.toUpperCase() }})
+        </label>
+        <input id="amount" class="form-control" type="text" inputmode="decimal" autocomplete="off" [value]="amountText()" (input)="amountText.set($any($event.target).value)" (keyup.enter)="next()" />
+        <div class="sf-hint">{{ t('support.least', { min: money(limits()!.min, limits()!.currency) }) || 'At least ' + money(limits()!.min, limits()!.currency) }}</div>
+      </div>
+      @if (error()) {
+        <div class="alert alert-danger m-0" role="alert">{{ error() }}</div>
+      }
+      <div class="sf-actions">
+        <button type="button" class="btn btn-primary d-inline-flex align-items-center justify-content-center gap-2" (click)="next()">
+          {{ t('support.next') || 'Next' }}
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+        </button>
+      </div>
+    }
+    @case ('preparing') {
+      <p class="m-0 text-secondary">{{ t('support.loading') || 'Getting ready…' }}</p>
+    }
+    @default {
+      <div class="d-flex align-items-center gap-2">
+        <svg class="text-danger flex-shrink-0" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 00-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 000-7.8z" /></svg>
+        <p class="m-0">{{ t('support.intro', { price: price() }) || 'A donation of ' + price() + '.' }}</p>
+      </div>
+      <div #element></div>
+      @if (error()) {
+        <div class="alert alert-danger m-0" role="alert">{{ error() }}</div>
+      }
+      <div class="sf-actions">
+        <button type="button" class="btn btn-outline-primary btn-sm d-inline-flex align-items-center justify-content-center gap-2" [disabled]="state() === 'paying'" (click)="chooseAmount()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6" /></svg>
+          {{ t('support.change') || 'Change amount' }}
+        </button>
+        <button type="button" class="btn btn-primary d-inline-flex align-items-center justify-content-center gap-2" [disabled]="state() === 'paying'" (click)="pay()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="10" rx="2" /><path d="M7 11V7a5 5 0 0110 0v4" /></svg>
+          {{ state() === 'paying' ? (t('support.paying') || 'Paying…') : (t('support.pay') || 'Donate') }}
+        </button>
+      </div>
+    }
+  }
+
+  @if (donations().length) {
+    <section class="vstack gap-2">
+      <h2 class="sf-section-title m-0">{{ t('support.listTitle') || 'Your donations' }}</h2>
+      <ul class="sf-list list-unstyled m-0">
+        @for (d of donations(); track d.id) {
+          <li class="sf-list-item">
+            <svg [class]="d.status === 'refunded' ? 'text-secondary flex-shrink-0' : 'text-danger flex-shrink-0'" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 00-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 000-7.8z" /></svg>
+            <span class="sf-list-text">
+              <span class="fw-semibold">{{ money(d.amount, d.currency) }}</span>
+              <span class="sf-hint d-block">{{ d.paidAt | date: 'medium' }}</span>
+            </span>
+            @if (d.status === 'refunded') {
+              <span class="badge text-bg-secondary">{{ t('support.refunded') || 'Refunded' }}</span>
+            }
+          </li>
+        }
+      </ul>
+    </section>
+  }
+</main>
+</ng-container>

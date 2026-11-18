@@ -96,6 +96,7 @@ export const routes: Routes = [
       { path: 'encryption/replace', component: Encryption, data: { view: 'replace' }, title: 'Privacy lock – Seven Friends' },
       { path: 'locking', component: Locking, title: 'Locking – Seven Friends' },
       { path: 'install', component: InstallApp, title: 'Install the app – Seven Friends' },
+      { path: 'support', component: Support, title: 'Support – Seven Friends' },
       // the same three pages without the tabs, for someone who is not signed in (the sign-in page links to them)
   { path: 'privacy', component: Privacy, title: 'Your data and privacy – Seven Friends' },
       { path: 'terms', component: Terms, title: 'Terms of use – Seven Friends' },
@@ -109,7 +110,6 @@ export const routes: Routes = [
   { path: 'terms', component: Terms, title: 'Terms of use – Seven Friends' },
   { path: 'about', component: About, title: 'About – Seven Friends' },
   { path: 'locking', component: Locking, title: 'Locking – Seven Friends' },
-  { path: 'support', component: Support, canActivate: [authGuard], title: 'Support – Seven Friends' },
   // one install page for each kind of device (public: the welcome page links here)
   { path: 'install/android', component: InstallDevice, data: { device: 'android' }, title: 'Get the Android app – Seven Friends' },
   { path: 'install/iphone', component: InstallDevice, data: { device: 'iphone' }, title: 'Add to your home screen – Seven Friends' },
