@@ -32,7 +32,7 @@ public partial class MainWindow : Window
     /// <summary>The notification last shown from the web app: a click on its toast tells the page, which opens the right conversation.</summary>
     private CoreWebView2Notification? _lastNotification;
 
-    /// <summary>The alarm window of a poke (made when the first poke comes, then used again).</summary>
+    /// <summary>The alarm window of a poke while one rings (a second poke while it rings updates it; after it is closed the next poke makes a new one).</summary>
     private PokeWindow? _poke;
 
     /// <summary>"Open" on a poke: the window comes forward on that friend's page.</summary>
@@ -255,12 +255,28 @@ public partial class MainWindow : Window
                 var url = root.TryGetProperty("url", out var u) ? u.GetString() ?? "/" : "/";
                 if (!url.StartsWith('/') || url.StartsWith("//")) url = "/"; // only a page of the app
                 BringToFront();
-                _poke ??= new PokeWindow(OpenPage);
+                if (_poke is null)
+                {
+                    // a window that was closed (Stop, Open, or the time ran out) cannot be shown again: a new one is made for the next poke
+                    var window = new PokeWindow(OpenPage);
+                    window.Closed += (_, _) => { if (ReferenceEquals(_poke, window)) _poke = null; };
+                    _poke = window;
+                }
                 _poke.Ring(root.TryGetProperty("name", out var n) ? n.GetString() ?? "" : "", root.TryGetProperty("text", out var t) ? t.GetString() ?? "" : "", url);
             }
-            catch (Exception)
+            catch (Exception error)
             {
-                // a message that cannot be read is ignored
+                // a message that cannot be read, or an alarm that could not be shown, is not shown to the person; it is written to a file to look at
+                try
+                {
+                    var folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SevenFriends");
+                    Directory.CreateDirectory(folder);
+                    File.AppendAllText(Path.Combine(folder, "app.log"), $"{DateTime.Now:s} bridge message: {error}{Environment.NewLine}");
+                }
+                catch (Exception)
+                {
+                    // no log: nothing more to do
+                }
             }
         };
 

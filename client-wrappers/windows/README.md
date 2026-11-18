@@ -25,6 +25,8 @@ notifications on this computer.
 
 **Share target (MSIX package only):** "Seven Friends" appears in the Windows share dialog for a link or text (the manifest has `windows.shareTarget`, the code is `SharedContent.cs`). A share starts the app (or, when it runs, a second start hands it to the first copy through a pipe only this person can reach); the window opens on the web app's `/share-in` page with the title, text and link as parameters, where the person chooses the friend or group; the text then lands in the writing field of that conversation (`/friends/:id/send?draft=`) and **nothing is sent until the person presses Send**. What is shared is cut to 4000 characters and cleaned of control characters. Not tried on a computer yet (the package has to be installed with the test certificate trusted, then share a link from Edge): packing and the build are checked, the share dialog is not.
 
+**Log:** an error in a message from the page to the app (for example a poke alarm that could not be shown) is written to `%LOCALAPPDATA%\SevenFriendspp.log`.
+
 **Poke (alarm):** a poke from a friend opens `PokeWindow.cs` (a window over everything, looping sound, Stop / Open), also while the window is hidden in the tray; the web page tells the app (`WebMessageReceived`). Only while the app runs; see `docs/design/poke-alarm.md`.
 
 Not done yet:
