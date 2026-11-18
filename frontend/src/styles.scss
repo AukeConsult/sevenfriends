@@ -478,6 +478,24 @@ router-outlet + * { display: block; min-height: 100dvh; }
 .sf-logo-sm { width: 2rem; height: 2rem; margin: 0; border-radius: 0.5rem; font-size: 1.125rem; } // in the header bar
 .sf-logo-lg { width: 5.5rem; height: 5.5rem; border-radius: 1.75rem; font-size: 2.75rem; }
 
+// ---- The poke alarm of a browser page (poke-alarm/): a band at the top while a poke rings ----
+.sf-poke-alarm {
+  position: sticky;
+  top: 0;
+  z-index: 1090;
+  max-width: var(--sf-max-width);
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  padding: 0.75rem var(--sf-gutter, 1rem);
+  background: var(--sf-primary);
+  color: #fff;
+}
+.sf-poke-alarm-text { display: flex; flex-direction: column; min-width: 0; overflow-wrap: anywhere; }
+
 // ---- Lists (rows with a text column and buttons) ----
 .sf-list { list-style: none; margin: 0; padding: 0; }
 .sf-list-item {

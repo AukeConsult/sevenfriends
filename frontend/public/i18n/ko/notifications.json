@@ -26,8 +26,6 @@
   "yourAndIsNot": "인증이 필요해요: {{ and }}. (설정에서) 확인해야 {{ one }} 요청을 받을 수 있어요.",
   "hasNotVerifiedPhone": "인증하지 않았어요 ({{ phone }}). 본인이 맞는지 확신할 수 없어요.",
   "replyToGroupname": "{{ groupName }}에게 답장",
-  "youHaveAFree": "빈자리가 있어요: {{ one }} 초대하기",
-  "youHaveFreeseatsFree": "빈자리가 {{ freeSeats }}개 있어요: {{ many }} 초대하기",
   "notificationsAreSwitchedOff": "Android에서 {{ app }}의 알림이 꺼져 있어서 새 메시지와 {{ one }} 요청을 알 수 없어요.",
   "notificationsAreBlockedFor": "브라우저에서 이 사이트의 알림이 차단되어 있어서 이 페이지를 닫으면 새 메시지를 알 수 없어요. 브라우저 설정(주소 옆의 자물쇠 아이콘)에서 허용해 주세요.",
   "notificationsAreOffOn": "이 기기의 알림이 꺼져 있어서 이 페이지를 닫으면 새 메시지를 알 수 없어요.",

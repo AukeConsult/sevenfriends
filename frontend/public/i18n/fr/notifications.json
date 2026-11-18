@@ -26,8 +26,6 @@
   "yourAndIsNot": "Ton {{ and }} n'est pas encore vérifié : confirme-le (dans Réglages) pour que les demandes de {{ one }} puissent te joindre.",
   "hasNotVerifiedPhone": "N'a pas vérifié {{ phone }} : on ne peut pas être sûr que ce soit bien cette personne.",
   "replyToGroupname": "Répondre à {{ groupName }}",
-  "youHaveAFree": "Tu as une place libre : invite un {{ one }}",
-  "youHaveFreeseatsFree": "Tu as {{ freeSeats }} places libres : invite des {{ many }}",
   "notificationsAreSwitchedOff": "Les notifications sont désactivées pour {{ app }} dans Android, donc tu ne seras pas prévenu des nouveaux messages ni des demandes de {{ one }}.",
   "notificationsAreBlockedFor": "Les notifications sont bloquées pour ce site dans ton navigateur, donc tu ne seras pas prévenu des nouveaux messages quand cette page est fermée. Autorise-les dans les réglages du navigateur (l'icône de cadenas près de l'adresse).",
   "notificationsAreOffOn": "Les notifications sont désactivées sur cet appareil, donc tu ne seras pas prévenu des nouveaux messages quand cette page est fermée.",

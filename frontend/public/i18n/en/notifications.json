@@ -26,8 +26,6 @@
   "yourAndIsNot": "Your {{ and }} is not verified yet: confirm it (in Settings) so {{ one }} requests can reach you.",
   "hasNotVerifiedPhone": "Has not verified {{ phone }}: we cannot be sure it is really them.",
   "replyToGroupname": "Reply to {{ groupName }}",
-  "youHaveAFree": "You have a free seat: invite a {{ one }}",
-  "youHaveFreeseatsFree": "You have {{ freeSeats }} free seats: invite {{ many }}",
   "notificationsAreSwitchedOff": "Notifications are switched off for {{ app }} in Android, so you will not hear about new messages or {{ one }} requests.",
   "notificationsAreBlockedFor": "Notifications are blocked for this site in your browser, so you will not hear about new messages when this page is closed. Allow them in the browser settings (the lock icon by the address).",
   "notificationsAreOffOn": "Notifications are off on this device, so you will not hear about new messages when this page is closed.",

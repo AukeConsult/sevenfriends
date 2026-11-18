@@ -26,8 +26,6 @@
   "yourAndIsNot": "Verificação pendente: {{ and }}. Confirme em Ajustes para que os pedidos de {{ one }} cheguem até você.",
   "hasNotVerifiedPhone": "Não verificou {{ phone }}: não temos certeza de que é mesmo a pessoa.",
   "replyToGroupname": "Responder a {{ groupName }}",
-  "youHaveAFree": "Você tem um lugar livre: convide um {{ one }}",
-  "youHaveFreeseatsFree": "Você tem {{ freeSeats }} lugares livres: convide {{ many }}",
   "notificationsAreSwitchedOff": "As notificações do {{ app }} estão desativadas no Android, então você não saberá de novas mensagens nem de pedidos de {{ one }}.",
   "notificationsAreBlockedFor": "As notificações estão bloqueadas para este site no seu navegador, então você não saberá de novas mensagens com esta página fechada. Permita-as nos ajustes do navegador (o ícone de cadeado ao lado do endereço).",
   "notificationsAreOffOn": "As notificações estão desativadas neste dispositivo, então você não saberá de novas mensagens com esta página fechada.",

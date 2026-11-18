@@ -5,6 +5,7 @@ import { BottomNav } from './bottom-nav/bottom-nav';
 import { CircleSwitch } from './circle-switch/circle-switch';
 import { OwnKeyPrompt } from './own-key-prompt/own-key-prompt';
 import { InAppNotice } from './in-app-notice/in-app-notice';
+import { PokeAlarmBand } from './poke-alarm/poke-alarm';
 import { BrowserRuleService } from './core/browser-rule.service';
 import { AndroidChannelsService } from './core/android-channels.service';
 import { AppUpdateService } from './core/app-update.service';
@@ -48,7 +49,7 @@ function mediaReturn(url: string | null): string | null {
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, BottomNav, CircleSwitch, OwnKeyPrompt, InAppNotice],
+  imports: [RouterOutlet, BottomNav, CircleSwitch, OwnKeyPrompt, InAppNotice, PokeAlarmBand],
   templateUrl: './app.html'
 })
 export class App {

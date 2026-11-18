@@ -26,8 +26,6 @@
   "yourAndIsNot": "Ej verifierat: {{ and }}. Bekräfta det (under Inställningar) så att förfrågningar ({{ one }}) kan nå dig.",
   "hasNotVerifiedPhone": "Har inte verifierat {{ phone }}: vi kan inte vara säkra på att det verkligen är hen.",
   "replyToGroupname": "Svara {{ groupName }}",
-  "youHaveAFree": "Du har en ledig plats: bjud in: {{ one }}",
-  "youHaveFreeseatsFree": "Du har {{ freeSeats }} lediga platser: bjud in {{ many }}",
   "notificationsAreSwitchedOff": "Notiser är avstängda för {{ app }} i Android, så du får inget besked om nya meddelanden eller förfrågningar ({{ one }}).",
   "notificationsAreBlockedFor": "Notiser är blockerade för den här webbplatsen i din webbläsare, så du får inget besked om nya meddelanden när sidan är stängd. Tillåt dem i webbläsarens inställningar (låsikonen vid adressen).",
   "notificationsAreOffOn": "Notiser är av på den här enheten, så du får inget besked om nya meddelanden när sidan är stängd.",

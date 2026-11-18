@@ -34,6 +34,8 @@ self.addEventListener('push', (event) => {
         body: data.body || '',
         tag: data.id, // the event's unique id: the same event is shown once (also when the open page shows it too)
         silent: data.silent === '1', // the person chose "No sound" for this kind of event
+        requireInteraction: data.poke === '1', // a poke stays on the screen until it is clicked
+        ...(data.poke === '1' ? { vibrate: [300, 150, 300, 150, 300] } : {}),
         data: { url: data.url || '/' },
         icon: '/icons/icon-192.png',
       });

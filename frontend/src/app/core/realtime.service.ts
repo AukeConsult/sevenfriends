@@ -1,4 +1,5 @@
 import { Injectable, effect, inject, signal, untracked } from '@angular/core';
+import { PokeAlarmService } from './poke-alarm.service';
 import { Capacitor } from '@capacitor/core';
 import type { DocumentData, Query, QuerySnapshot } from 'firebase/firestore'; // types only: the SDK itself is loaded on demand below
 import { Friend, LiveMessage, RecoveryItem } from '../models';
@@ -61,6 +62,7 @@ export class RealtimeService {
   private readonly sound = inject(SoundService);
   private readonly desktop = inject(DesktopNoticeService);
   private readonly push = inject(PushService);
+  private readonly pokeAlarm = inject(PokeAlarmService);
   private readonly live = inject(LiveChanges);
 
   /** The message feed that is open right now (set by the Chat page): its messages are shown there, not on Home. */
@@ -370,8 +372,10 @@ export class RealtimeService {
    * through the WebView2 bridge. Only a poke that is new (not older than the time a poke lives, `pokeMinutes` on the message, see docs/design/poke-alarm.md). Android rings through the push instead.
    */
   private tellWindowsAppAboutPokes(all: Added[], first: boolean): void {
+    if (first || Capacitor.isNativePlatform()) return; // the Android app rings natively (PokeService)
+    const windowsApp = /SevenFriendsWindows/i.test(navigator.userAgent);
     const bridge = (window as unknown as { chrome?: { webview?: { postMessage(message: unknown): void } } }).chrome?.webview;
-    if (first || !bridge || !/SevenFriendsWindows/i.test(navigator.userAgent)) return;
+    if (windowsApp && !bridge) return;
     for (const m of all) {
       if (m.data['poke'] !== true) continue;
       const time = m.data['time'] as { toMillis?: () => number } | undefined;
@@ -379,8 +383,16 @@ export class RealtimeService {
       if (time?.toMillis && Date.now() - time.toMillis() > minutes * 60 * 1000) continue;
       const connectionId = m.data['connectionId'] as string | undefined;
       const text = m.data['enc'] ? '' : String(m.data['text'] ?? '');
-      bridge.postMessage({ type: 'poke', id: m.id, name: String(m.data['fromName'] ?? ''), text: text.length > 120 ? `${text.slice(0, 120)}…` : text, url: connectionId ? `/friends/${connectionId}` : '/' });
+      const poke = { id: m.id, name: String(m.data['fromName'] ?? ''), text: text.length > 120 ? `${text.slice(0, 120)}…` : text, url: connectionId ? `/friends/${connectionId}` : '/' };
+      if (bridge) bridge.postMessage({ type: 'poke', ...poke });
+      else this.pokeAlarm.ring(poke); // a browser rings in the page too: a computer that has both the Windows app and a browser open rings in both
     }
+  }
+
+  /** A new message that makes a sound (not one of a friend on my sleep list): the Windows app comes to the front, also when its window is behind others or hidden in the tray. */
+  private bringWindowsAppToFront(): void {
+    if (!/SevenFriendsWindows/i.test(navigator.userAgent)) return;
+    (window as unknown as { chrome?: { webview?: { postMessage(message: unknown): void } } }).chrome?.webview?.postMessage({ type: 'front' });
   }
 
   private onMessages(all: Added[], first: boolean): void {
@@ -413,6 +425,7 @@ export class RealtimeService {
       const asleep = new Set(this.friends.sleeping().map((f) => f.id));
       const unseen = added.filter((m) => m.data['connectionId'] !== this.openFeed() && (m.data['poke'] === true || !asleep.has(m.data['connectionId'] as string)));
       if (unseen.length) this.ring('message');
+      if (unseen.length) this.bringWindowsAppToFront();
       for (const m of unseen) {
         const connectionId = m.data['connectionId'] as string | undefined;
         const text = m.data['enc'] ? '🔒 New message' : String(m.data['text'] ?? ''); // a locked text is unreadable here: only the sender is named

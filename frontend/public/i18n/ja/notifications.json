@@ -26,8 +26,6 @@
   "yourAndIsNot": "{{ and }}がまだ確認されていません。設定で確認すると、{{ one }}リクエストが届くようになります。",
   "hasNotVerifiedPhone": "{{ phone }}が確認されていません。本人かどうか確実ではありません。",
   "replyToGroupname": "{{ groupName }}に返信",
-  "youHaveAFree": "空いている席があります。{{ one }}を招待しましょう",
-  "youHaveFreeseatsFree": "空いている席が {{ freeSeats }} つあります。{{ many }}を招待しましょう",
   "notificationsAreSwitchedOff": "Androidで{{ app }}の通知がオフになっているため、新しいメッセージや{{ one }}リクエストをお知らせできません。",
   "notificationsAreBlockedFor": "ブラウザでこのサイトの通知がブロックされているため、このページを閉じていると新しいメッセージをお知らせできません。ブラウザの設定（アドレス横のロックアイコン）で許可してください。",
   "notificationsAreOffOn": "このデバイスでは通知がオフになっているため、このページを閉じていると新しいメッセージをお知らせできません。",

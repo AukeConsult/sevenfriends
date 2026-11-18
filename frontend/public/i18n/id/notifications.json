@@ -26,8 +26,6 @@
   "yourAndIsNot": "{{ and }} kamu belum diverifikasi: konfirmasi (di Pengaturan) supaya permintaan {{ one }} bisa menjangkaumu.",
   "hasNotVerifiedPhone": "Belum memverifikasi {{ phone }}: kami tidak bisa memastikan itu benar-benar dia.",
   "replyToGroupname": "Balas ke {{ groupName }}",
-  "youHaveAFree": "Kamu punya kursi kosong: undang {{ one }}",
-  "youHaveFreeseatsFree": "Kamu punya {{ freeSeats }} kursi kosong: undang {{ many }}",
   "notificationsAreSwitchedOff": "Notifikasi dimatikan untuk {{ app }} di Android, jadi kamu tidak akan tahu ada pesan baru atau permintaan {{ one }}.",
   "notificationsAreBlockedFor": "Notifikasi diblokir untuk situs ini di browsermu, jadi kamu tidak akan tahu ada pesan baru saat halaman ini tertutup. Izinkan di pengaturan browser (ikon gembok di samping alamat).",
   "notificationsAreOffOn": "Notifikasi mati di perangkat ini, jadi kamu tidak akan tahu ada pesan baru saat halaman ini tertutup.",

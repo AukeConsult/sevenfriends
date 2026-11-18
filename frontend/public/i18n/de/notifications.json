@@ -26,8 +26,6 @@
   "yourAndIsNot": "Bestätige deine {{ and }} (in den Einstellungen), damit {{ one }}-Anfragen dich erreichen können.",
   "hasNotVerifiedPhone": "Hat {{ phone }} nicht bestätigt: Wir können nicht sicher sein, dass es wirklich die Person ist.",
   "replyToGroupname": "{{ groupName }} antworten",
-  "youHaveAFree": "Du hast einen freien Platz: {{ one }} einladen",
-  "youHaveFreeseatsFree": "Du hast {{ freeSeats }} freie Plätze: {{ many }} einladen",
   "notificationsAreSwitchedOff": "Benachrichtigungen sind für {{ app }} in Android ausgeschaltet, deshalb hörst du nichts von neuen Nachrichten oder {{ one }}-Anfragen.",
   "notificationsAreBlockedFor": "Benachrichtigungen sind für diese Seite in deinem Browser blockiert, deshalb hörst du nichts von neuen Nachrichten, wenn diese Seite geschlossen ist. Erlaub sie in den Browsereinstellungen (das Schloss-Symbol neben der Adresse).",
   "notificationsAreOffOn": "Benachrichtigungen sind auf diesem Gerät aus, deshalb hörst du nichts von neuen Nachrichten, wenn diese Seite geschlossen ist.",

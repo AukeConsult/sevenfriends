@@ -26,8 +26,6 @@
   "yourAndIsNot": "Bekræft {{ and }} (i Indstillinger), så anmodninger om at blive {{ one }} kan nå dig.",
   "hasNotVerifiedPhone": "Har ikke bekræftet {{ phone }}: vi kan ikke være sikre på, at det virkelig er dem.",
   "replyToGroupname": "Svar til {{ groupName }}",
-  "youHaveAFree": "Du har en ledig plads: inviter {{ one }}",
-  "youHaveFreeseatsFree": "Du har {{ freeSeats }} ledige pladser: inviter {{ many }}",
   "notificationsAreSwitchedOff": "Notifikationer er slået fra for {{ app }} i Android, så du hører ikke om nye beskeder eller anmodninger om at blive {{ one }}.",
   "notificationsAreBlockedFor": "Notifikationer er blokeret for dette websted i din browser, så du hører ikke om nye beskeder, når denne side er lukket. Tillad dem i browserens indstillinger (låseikonet ved adressen).",
   "notificationsAreOffOn": "Notifikationer er slået fra på denne enhed, så du hører ikke om nye beskeder, når denne side er lukket.",

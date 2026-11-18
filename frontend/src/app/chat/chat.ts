@@ -635,11 +635,15 @@ export class Chat {
   }
 
   private scrollDown(): void {
-    // oldest first: the newest is at the bottom; newest first: it is at the top
+    // oldest first: the newest is at the bottom; newest first: it is at the top. NOT `scrollIntoView` of the end of the feed: that puts the last message at the bottom edge of the
+    // screen, where the Send form (sticky above the bottom menu) covers it; the bottom of the page leaves the Send form under the last message.
     // a moment later: the feed and the message field have been drawn in their new places by then. Again after a while: a picture or a
     // video preview takes its height only when it has been loaded, which would leave the new message below the screen.
     for (const wait of [50, 400, 1200]) {
-      setTimeout(() => (this.sortDesc() ? window.scrollTo({ top: 0 }) : this.end()?.nativeElement.scrollIntoView({ block: 'end' })), wait);
+      setTimeout(() => {
+        if (this.sortDesc()) window.scrollTo({ top: 0 });
+        else if (this.end()) window.scrollTo({ top: document.documentElement.scrollHeight }); // the very bottom of the page: the Send form is in its own place under the last message
+      }, wait);
     }
   }
 }

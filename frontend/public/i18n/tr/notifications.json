@@ -26,8 +26,6 @@
   "yourAndIsNot": "Henüz doğrulanmadı: {{ and }}. Ayarlar'dan doğrula ki {{ one }} istekleri sana ulaşabilsin.",
   "hasNotVerifiedPhone": "Doğrulanmamış: {{ phone }}. Gerçekten o olduğundan emin olamayız.",
   "replyToGroupname": "Yanıtla: {{ groupName }}",
-  "youHaveAFree": "Boş bir yerin var: {{ one }} davet et",
-  "youHaveFreeseatsFree": "{{ freeSeats }} boş yerin var: {{ many }} davet et",
   "notificationsAreSwitchedOff": "Android'de {{ app }} için bildirimler kapalı, bu yüzden yeni mesajları ya da {{ one }} isteklerini duymazsın.",
   "notificationsAreBlockedFor": "Bildirimler tarayıcında bu site için engelli, bu yüzden bu sayfa kapalıyken yeni mesajları duymazsın. Tarayıcı ayarlarından izin ver (adresin yanındaki kilit simgesi).",
   "notificationsAreOffOn": "Bu cihazda bildirimler kapalı, bu yüzden bu sayfa kapalıyken yeni mesajları duymazsın.",

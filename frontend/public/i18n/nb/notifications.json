@@ -26,8 +26,6 @@
   "yourAndIsNot": "Din {{ and }} er ikke bekreftet ennå: bekreft den (i Innstillinger) slik at forespørsler om å bli {{ one }} kan nå deg.",
   "hasNotVerifiedPhone": "Har ikke bekreftet {{ phone }}: vi kan ikke være sikre på at det virkelig er dem.",
   "replyToGroupname": "Svar til {{ groupName }}",
-  "youHaveAFree": "Du har en ledig plass: inviter {{ one }}",
-  "youHaveFreeseatsFree": "Du har {{ freeSeats }} ledige plasser: inviter {{ many }}",
   "notificationsAreSwitchedOff": "Varsler er slått av for {{ app }} i Android, så du får ikke beskjed om nye meldinger eller forespørsler om å bli {{ one }}.",
   "notificationsAreBlockedFor": "Varsler er blokkert for dette nettstedet i nettleseren din, så du får ikke beskjed om nye meldinger når denne siden er lukket. Tillat dem i nettleserinnstillingene (låsikonet ved adressen).",
   "notificationsAreOffOn": "Varsler er av på denne enheten, så du får ikke beskjed om nye meldinger når denne siden er lukket.",

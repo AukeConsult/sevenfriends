@@ -26,8 +26,6 @@
   "yourAndIsNot": "Niezweryfikowane: {{ and }}. Potwierdź w Ustawieniach, żeby zaproszenia (kategoria: {{ one }}) mogły do Ciebie dotrzeć.",
   "hasNotVerifiedPhone": "Nie zweryfikowano: {{ phone }}. Nie mamy pewności, że to naprawdę ta osoba.",
   "replyToGroupname": "Odpowiedz: {{ groupName }}",
-  "youHaveAFree": "Masz wolne miejsce: zaproś kogoś jako {{ one }}",
-  "youHaveFreeseatsFree": "Wolne miejsca: {{ freeSeats }}. Zaproś: {{ many }}",
   "notificationsAreSwitchedOff": "Powiadomienia dla {{ app }} są wyłączone w Androidzie, więc nie dowiesz się o nowych wiadomościach ani zaproszeniach (kategoria: {{ one }}).",
   "notificationsAreBlockedFor": "Powiadomienia są zablokowane dla tej strony w Twojej przeglądarce, więc nie dowiesz się o nowych wiadomościach, gdy ta strona jest zamknięta. Zezwól na nie w ustawieniach przeglądarki (ikona kłódki przy adresie).",
   "notificationsAreOffOn": "Powiadomienia są wyłączone na tym urządzeniu, więc nie dowiesz się o nowych wiadomościach, gdy ta strona jest zamknięta.",

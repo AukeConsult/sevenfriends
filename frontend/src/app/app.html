@@ -3,6 +3,7 @@
   <!-- not the browser that is right for the device (Safari / Chrome / a real browser): only this page, nothing to sign in with, no other page -->
   <app-in-app-notice />
 } @else {
+  <app-poke-alarm />
   @for (switched of [active.epoch()]; track switched + "") {
     <router-outlet />
   }

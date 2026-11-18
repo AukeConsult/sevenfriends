@@ -26,8 +26,6 @@
   "yourAndIsNot": "Vahvistamatta: {{ and }}. Vahvista se (Asetuksissa), jotta pyynnöt ({{ one }}) tavoittavat sinut.",
   "hasNotVerifiedPhone": "Ei ole vahvistanut: {{ phone }}. Emme voi olla varmoja, että kyseessä on oikeasti hän.",
   "replyToGroupname": "Vastaa: {{ groupName }}",
-  "youHaveAFree": "Sinulla on vapaa paikka: kutsu {{ one }}",
-  "youHaveFreeseatsFree": "Sinulla on {{ freeSeats }} vapaata paikkaa: kutsu {{ many }}",
   "notificationsAreSwitchedOff": "Androidissa ilmoitukset on kytketty pois sovellukselta {{ app }}, joten et kuule uusista viesteistä etkä pyynnöistä ({{ one }}).",
   "notificationsAreBlockedFor": "Ilmoitukset on estetty tälle sivustolle selaimessasi, joten et kuule uusista viesteistä, kun tämä sivu on suljettu. Salli ne selaimen asetuksissa (lukkokuvake osoitteen vieressä).",
   "notificationsAreOffOn": "Ilmoitukset ovat pois päältä tällä laitteella, joten et kuule uusista viesteistä, kun tämä sivu on suljettu.",

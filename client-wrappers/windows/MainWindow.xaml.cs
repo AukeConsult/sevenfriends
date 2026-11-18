@@ -127,6 +127,18 @@ public partial class MainWindow : Window
         Activate();
     }
 
+    /// <summary>
+    /// Brings the window in front of the others, from the tray or from behind them: a new message or a poke arrived. Windows does not let a program take the front from the
+    /// window that is in use unless it asks to be on top for a moment, so the window is made topmost and then normal again; it keeps its place in front.
+    /// </summary>
+    public void BringToFront()
+    {
+        ShowApp();
+        Topmost = true;
+        Topmost = false;
+        Activate();
+    }
+
     private void Quit()
     {
         _quit = true;
@@ -216,6 +228,7 @@ public partial class MainWindow : Window
             e.Handled = true;
             e.Notification.ReportShown();
             _lastNotification = e.Notification;
+            if (e.Notification.Tag?.StartsWith("message-", StringComparison.Ordinal) == true) BringToFront(); // a new message (or a poke): the app comes to the front
             _tray.ShowBalloonTip(8000, e.Notification.Title, e.Notification.Body, System.Windows.Forms.ToolTipIcon.None);
         };
 
@@ -233,9 +246,15 @@ public partial class MainWindow : Window
                     PokeWindow.SetRingSeconds(root.GetProperty("seconds").GetInt32());
                     return;
                 }
+                if (type == "front") // a new message: the window comes to the front
+                {
+                    BringToFront();
+                    return;
+                }
                 if (type != "poke") return;
                 var url = root.TryGetProperty("url", out var u) ? u.GetString() ?? "/" : "/";
                 if (!url.StartsWith('/') || url.StartsWith("//")) url = "/"; // only a page of the app
+                BringToFront();
                 _poke ??= new PokeWindow(OpenPage);
                 _poke.Ring(root.TryGetProperty("name", out var n) ? n.GetString() ?? "" : "", root.TryGetProperty("text", out var t) ? t.GetString() ?? "" : "", url);
             }

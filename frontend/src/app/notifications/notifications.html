@@ -203,14 +203,6 @@
         </ul>
       }
     </section>
-  } @else if (loaded() && !error() && !sayHiTo()) {
-    <!-- quiet: no line of text, only something useful to do instead of an empty page -->
-    @if (freeSeats() > 0) {
-      <a routerLink="/share" class="sf-link-row">
-        {{ freeSeats() === 1 ? (t('notifications.youHaveAFree', { one: w.one }) || 'You have a free seat: invite a ' + w.one) : (t('notifications.youHaveFreeseatsFree', { freeSeats: freeSeats(), many: w.many }) || 'You have ' + freeSeats() + ' free seats: invite ' + w.many) }}
-        <span aria-hidden="true">›</span>
-      </a>
-    }
   }
 
   <!-- 2. say hi: ONE friend, the one I have had no word with (and not looked in on) for the longest time, after 14 days -->

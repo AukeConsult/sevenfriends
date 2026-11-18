@@ -396,7 +396,6 @@ export class Notifications {
   }
 
   /** seats still free */
-  protected readonly freeSeats = computed(() => 7 - this.friendsService.awake().length);
 
   protected setReply(key: string, text: string): void {
     this.replies.update((all) => ({ ...all, [key]: text }));
