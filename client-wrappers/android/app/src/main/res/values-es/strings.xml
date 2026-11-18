@@ -36,4 +36,10 @@
     <string name="push_ok">OK. %1$s</string>
     <string name="push_failed">No guardado. %1$s</string>
     <string name="err_no_answer">Sin respuesta de la página de la app.</string>
+    <string name="poke_from_label">Toque de</string>
+    <string name="poke_from">Toque de %1$s</string>
+    <string name="poke_wants_you">Quiere hablar contigo</string>
+    <string name="poke_stop">Parar</string>
+    <string name="poke_open">Abrir</string>
+    <string name="poke_channel">Toques</string>
 </resources>

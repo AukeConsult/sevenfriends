@@ -7,6 +7,7 @@ The long parts of this guide live in `docs/guide/`. Read only the file for the a
 - `docs/guide/connections.md`: friend requests, seats, waiting list, deleting a friend / account, the rules the pool tests check. **Only a change to a connection rule needs the "change code + this guide + a test" routine.**
 - `docs/guide/live-and-notifications.md`: pings, live updates, sound, push, email, several devices, system settings.
 - `docs/notifications.md`: **the push rules** (delivery, TTL, one sound for all circles, Android channels, browser limits) and the Android notification screen. Read it before changing a push or a sound.
+- `docs/design/poke-alarm.md`: **the poke** (a message that rings a friend's phone like an alarm; only a friend who has a seat for me can poke, no switch to turn it off, it always says who). The rules, what is built on Android (data-only push, `PokeService`, `PokeActivity`) and the plan for iPhone (Critical Alerts). Read it before changing a poke or adding it to iOS.
 - `docs/guide/messages-and-profile.md`: the message feed, profile, links in messages, friend links, sleep list, UI preferences.
 - `docs/guide/media-and-safebox.md`: the media cache, the safebox, pictures and memory.
 - `docs/design/safebox-objects.md`: notes, secrets, links, checklists, places, contacts and dates in the safebox next to files: locked payload, revision, routes, pages. All are built.

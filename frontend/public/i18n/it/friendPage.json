@@ -26,5 +26,10 @@
   "asleepNoSeat": "😴 Dorme · nella tua lista del sonno",
   "noLongerHere": "Non fai più parte di questo gruppo o di questa amicizia.",
   "help": "Aiuto",
-  "hideHelp": "Nascondi l’aiuto"
+  "hideHelp": "Nascondi l’aiuto",
+  "poke": "Poke",
+  "pokeAsk": "Questo fa suonare il telefono di {{ name }} come una sveglia, anche in silenzioso.",
+  "pokeSend": "Invia poke",
+  "pokeCancel": "Annulla",
+  "pokeSent": "{{ name }} è stato contattato con un poke."
 }

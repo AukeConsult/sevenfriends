@@ -37,8 +37,16 @@ Settings -> "Send me a test notification" calls `POST /push/test` and shows how 
 ## Badge
 `AttentionService` sets the app icon count (`navigator.setAppBadge`) from unread messages + waiting requests in the circle in use, plus one for each other circle with activity (the total across circles). The Android launcher shows its own dot for the notifications it has: `MainActivity.onResume` cancels all delivered notifications of the app, so opening the app clears the dot.
 
+## Poke = an alarm on Android
+A message sent with `poke: true` (the 🔔 Poke button in the header of a friend, only for a friend who has a seat for me; see `docs/design/poke-alarm.md`) is pushed as a **poke**: `sendPush(..., { poke: true })` in `functions/src/conversation.ts`.
+- **No switch.** A poke is sent whatever the receiver's notification switches and "No sound" say, and it is never silent. **Only a friend who has a seat for me can poke:** if I have the sender on my sleep list, their poke arrives quietly like their other messages (no push, no alarm, not stored as a poke).
+- **Android: data only, no `notification` block** (`poke: "1"` in the data, priority high, TTL 10 minutes: an alarm an hour late is worse than none). Android then runs the app's own code even when the app is closed: `PokeMessagingService` starts `PokeService`, a foreground service that loops the phone's alarm sound on the ALARM volume (silent mode does not stop it; the alarm volume is raised while it rings and put back), vibrates, and shows a full-screen notification that opens `PokeActivity` over the lock screen. It stops with Stop or Open, or after 2 minutes. `PokeMessagingService` replaces the Capacitor push plugin's service in the manifest (`tools:node="remove"`) and hands every other push to it.
+- **It always says who:** the title is the sender's name (`name · group` for a group), the text is the message. A poke about another circle than the one the app is in still names the sender (an ordinary "Activity in ..." push does not).
+- **Web and iPhone** get the normal push for a poke (a visible alert with sound). The iPhone alarm (Critical Alerts, needs Apple's entitlement) is not built.
+- Android 14+ may refuse the full-screen screen for an app that is not an alarm or calling app (the person can allow it in the app's settings); the alarm sound and the notification still work. `setBypassDnd` on the channel only works when the person has given Do Not Disturb access.
+
 ## Not done
-Sleep / quiet hours handling (postponed); Windows WNS.
+Sleep / quiet hours handling (postponed); Windows WNS; the poke alarm on the iPhone.
 
 ## The Android screen
 Inside the Android app, Settings has "Open the notification screen" and "Android's own settings".

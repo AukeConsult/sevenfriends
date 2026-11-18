@@ -26,5 +26,10 @@
   "asleepNoSeat": "😴 Slaapt · op je slaaplijst",
   "noLongerHere": "Je zit niet meer in deze groep of vriendschap.",
   "help": "Help",
-  "hideHelp": "Help verbergen"
+  "hideHelp": "Help verbergen",
+  "poke": "Por",
+  "pokeAsk": "Dit laat de telefoon van {{ name }} rinkelen als een alarm, ook als hij op stil staat.",
+  "pokeSend": "Por versturen",
+  "pokeCancel": "Annuleren",
+  "pokeSent": "{{ name }} is gepord."
 }

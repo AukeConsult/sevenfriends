@@ -26,5 +26,10 @@
   "asleepNoSeat": "😴 睡眠中 · あなたの睡眠リストにいます",
   "noLongerHere": "あなたはもうこのグループ（または友達関係）にいません。",
   "help": "ヘルプ",
-  "hideHelp": "ヘルプを隠す"
+  "hideHelp": "ヘルプを隠す",
+  "poke": "ポーク",
+  "pokeAsk": "{{ name }} さんの電話が、サイレントでもアラームのように鳴ります。",
+  "pokeSend": "ポークを送る",
+  "pokeCancel": "キャンセル",
+  "pokeSent": "{{ name }} さんにポークしました。"
 }

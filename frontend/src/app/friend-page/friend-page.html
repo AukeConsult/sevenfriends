@@ -23,6 +23,13 @@
   </div>
   @if (!ctx.blocked()) {
     <div class="sf-bar-actions">
+      <!-- the poke: only for a friend who has a seat for me (not one who has me on their sleep list) -->
+      @if (ctx.canPoke()) {
+      <button type="button" class="sf-tool-btn" (click)="ctx.pokeOpen.set(!ctx.pokeOpen())" [attr.aria-expanded]="ctx.pokeOpen()" [attr.aria-label]="t('friendPage.poke') || 'Poke'" [attr.title]="t('friendPage.poke') || 'Poke'">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0112 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.94 1.94 0 003.4 0" /></svg>
+        <span class="sf-tool-label" aria-hidden="true">{{ t('friendPage.poke') || 'Poke' }}</span>
+      </button>
+      }
       <!-- the icons that switch what is under the header: the messages and the safebox -->
       @if (!onFeed()) {
       <a [routerLink]="['/friends', ctx.friendId]" routerLinkActive="sf-current" [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page" class="sf-tool-btn" [attr.aria-label]="t('friendPage.messages') || 'Messages'" [attr.title]="t('friendPage.messages') || 'Messages'">
@@ -110,7 +117,7 @@
   <!-- the feed is newest first: the Send form is under the header, on the messages page only (not on the safebox) -->
   <app-friend-send [embedded]="true" />
 }
-@if (onFeed()) { <app-poke-toggle /> } <!-- on the messages page: my friend has me on their sleep list, a tick to poke anyway -->
+<app-poke-frame /> <!-- the bell in the header: asks once before a poke (rings the friend's phone) -->
 <app-lock-chain-band [friendId]="ctx.friendId" [name]="ctx.friendName()" />
 <app-key-changed-band [friendId]="ctx.friendId" [name]="ctx.friendName()" [fingerprints]="ctx.friendFingerprints()" />
 @if (ctx.lockedMessages() + ctx.lockedFiles() > 0) { <app-locked-band [friendId]="ctx.friendId" [name]="ctx.friendName()" [messages]="ctx.lockedMessages()" [files]="ctx.lockedFiles()" /> }

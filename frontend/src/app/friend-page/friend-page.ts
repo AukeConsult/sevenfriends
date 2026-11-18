@@ -16,7 +16,7 @@ import { possessive } from '../core/pronoun';
 import { RealtimeService } from '../core/realtime.service';
 import { FriendAvatar } from '../friend-avatar/friend-avatar';
 import { FriendSend } from '../friend-send/friend-send';
-import { PokeToggle } from './poke-toggle';
+import { PokeFrame } from './poke-frame';
 import { FeedHelp } from '../friend-help/friend-help';
 import { FriendContext } from './friend-context';
 
@@ -26,7 +26,7 @@ import { FriendContext } from './friend-context';
  */
 @Component({
   selector: 'app-friend-page',
-  imports: [FeedHelp, FriendSend, PokeToggle, KeyChangedBand, LockChainBand, LockedBand, FriendAvatar, RouterLink, RouterLinkActive, RouterOutlet, TranslocoDirective],
+  imports: [FeedHelp, FriendSend, PokeFrame, KeyChangedBand, LockChainBand, LockedBand, FriendAvatar, RouterLink, RouterLinkActive, RouterOutlet, TranslocoDirective],
   providers: [provideTranslocoScope('friendPage'), FriendContext],
   templateUrl: './friend-page.html',
   // every page under the header has the look of the conversation: a light tint of the friend's colour, and my own colour for what is mine

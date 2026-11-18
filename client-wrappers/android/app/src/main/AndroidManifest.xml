@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
 
     <application
         android:allowBackup="false"
@@ -46,6 +46,24 @@
                 android:resource="@xml/file_paths"></meta-data>
         </provider>
 
+        <!-- A POKE: the backend sends it with no notification part, PokeMessagingService starts the alarm (PokeService) and its screen (PokeActivity) over the lock
+             screen. PokeMessagingService takes over from the Capacitor push plugin's own service and hands every other push to it. -->
+        <service android:name="com.capacitorjs.plugins.pushnotifications.MessagingService" tools:node="remove" />
+        <service android:name=".PokeMessagingService" android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <service android:name=".PokeService" android:exported="false" android:foregroundServiceType="mediaPlayback" />
+        <activity
+            android:name=".PokeActivity"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:taskAffinity=""
+            android:excludeFromRecents="true"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true" />
+
         <!-- the backend sends Android pushes with a "notification" part: Android shows them itself, with this icon. Every push names its kind's channel. -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
@@ -56,6 +74,11 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- a poke rings like an alarm: a foreground service plays the sound, a full-screen notification shows over the lock screen, the phone vibrates -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <uses-permission android:name="android.permission.VIBRATE" />
     <!-- voice messages (the microphone) and photos / videos (the camera): a WebView can only ask the person for what is declared here -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />

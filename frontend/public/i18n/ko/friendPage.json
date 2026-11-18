@@ -26,5 +26,10 @@
   "asleepNoSeat": "😴 잠든 상태 · 내 수면 목록에 있음",
   "noLongerHere": "더 이상 이 그룹 또는 친구 관계에 속해 있지 않습니다.",
   "help": "도움말",
-  "hideHelp": "도움말 숨기기"
+  "hideHelp": "도움말 숨기기",
+  "poke": "콕 찌르기",
+  "pokeAsk": "{{ name }}님의 전화가 무음이어도 알람처럼 울립니다.",
+  "pokeSend": "콕 찌르기 보내기",
+  "pokeCancel": "취소",
+  "pokeSent": "{{ name }}님을 콕 찔렀습니다."
 }

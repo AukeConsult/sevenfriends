@@ -42,4 +42,11 @@
     <string name="push_ok">OK. %1$s</string>
     <string name="push_failed">Not stored. %1$s</string>
     <string name="err_no_answer">No answer from the app page.</string>
+    <!-- the poke alarm (PokeService, PokeActivity) -->
+    <string name="poke_from_label">Poke from</string>
+    <string name="poke_from">Poke from %1$s</string>
+    <string name="poke_wants_you">Wants you</string>
+    <string name="poke_stop">Stop</string>
+    <string name="poke_open">Open</string>
+    <string name="poke_channel">Pokes</string>
 </resources>

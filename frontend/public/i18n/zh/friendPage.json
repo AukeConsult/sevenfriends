@@ -26,5 +26,10 @@
   "asleepNoSeat": "😴 休眠中 · 在你的休眠列表里",
   "noLongerHere": "你已不在这个群组或好友关系中。",
   "help": "帮助",
-  "hideHelp": "隐藏帮助"
+  "hideHelp": "隐藏帮助",
+  "poke": "戳一下",
+  "pokeAsk": "这会让 {{ name }} 的手机像闹钟一样响起，即使处于静音。",
+  "pokeSend": "发送戳一下",
+  "pokeCancel": "取消",
+  "pokeSent": "已戳了 {{ name }}。"
 }

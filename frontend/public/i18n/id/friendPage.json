@@ -26,5 +26,10 @@
   "asleepNoSeat": "😴 Tidur · di daftar tidurmu",
   "noLongerHere": "Kamu tidak lagi berada di grup atau pertemanan ini.",
   "help": "Bantuan",
-  "hideHelp": "Sembunyikan bantuan"
+  "hideHelp": "Sembunyikan bantuan",
+  "poke": "Colek",
+  "pokeAsk": "Ini membuat ponsel {{ name }} berdering seperti alarm, bahkan saat senyap.",
+  "pokeSend": "Kirim colekan",
+  "pokeCancel": "Batal",
+  "pokeSent": "{{ name }} telah dicolek."
 }

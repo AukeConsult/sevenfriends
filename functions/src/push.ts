@@ -40,6 +40,11 @@ export interface PushMessage {
   circleId?: string;
   /** a test from the person's own Settings page: sent whatever the switches say, and with the text shown */
   force?: boolean;
+  /**
+   * a poke (a message sent with `poke: true`): there is NO switch for it, it is sent whatever the person's notification switches say, and on Android it is
+   * an ALARM, not a notification (see `deliver`): the app rings on the alarm volume, over the lock screen, until the person stops it
+   */
+  poke?: boolean;
 }
 
 /** What `sendPush` did: how many devices the person has registered, and how many of them the push reached. */
@@ -114,16 +119,23 @@ const iosSoundOf = (channelId: string): string => {
   return SOUNDS.some((s) => s.kind === "jingle" && s.androidKey === key) ? `${key}.caf` : "default";
 };
 
-/** One FCM send to some devices; the devices FCM says are gone are removed. Returns how many were reached. */
-async function deliver(devices: Device[], message: { data: Record<string, string>; android: { priority: "high"; notification: { channelId: string; title: string; body: string } } }): Promise<number> {
-  const ttl = pushTtlSeconds();
+/** How long a poke waits for a phone that is off or offline: an alarm that rings an hour late is worse than none. */
+const POKE_TTL_SECONDS = 10 * 60;
+
+/**
+ * One FCM send to some devices; the devices FCM says are gone are removed. Returns how many were reached.
+ * `alarm` (a poke): the Android part has NO `notification` block, only the data, so the Android app's own code runs even when the app is closed
+ * (`PokeMessagingService`) and rings the alarm; the web and the iPhone get the normal push with the poke's text.
+ */
+async function deliver(devices: Device[], message: { data: Record<string, string>; alarm?: boolean; android: { priority: "high"; notification: { channelId: string; title: string; body: string } } }): Promise<number> {
+  const ttl = message.alarm ? POKE_TTL_SECONDS : pushTtlSeconds();
   const result = await getMessaging().sendEachForMulticast({
     tokens: devices.map((d) => d.token),
     // data only for the web: the app's service worker shows it (so it can use the event id and open the right page)
     data: message.data,
     webpush: { headers: { Urgency: "high", ...(ttl === null ? {} : { TTL: String(ttl) }) } },
     // the notification block is what lets Android show it in the chosen channel (with its jingle) while the app is closed
-    android: { ...message.android, ...(ttl === null ? {} : { ttl: ttl * 1000 }) },
+    android: { priority: "high", ...(message.alarm ? {} : { notification: message.android.notification }), ...(ttl === null ? {} : { ttl: ttl * 1000 }) },
     // the iPhone app (APNs through FCM): a visible alert, a jingle file or the phone's own sound, nothing for "No sound", the same expiry as the others
     apns: {
       headers: { "apns-priority": "10", ...(ttl === null ? {} : { "apns-expiration": String(Math.floor(Date.now() / 1000) + ttl) }) },
@@ -156,7 +168,7 @@ export async function sendPush(uid: string, push: PushMessage): Promise<PushResu
     // the switches and the devices are read at the same time (one wait, not two)
     const [account, devices] = await Promise.all([userFields(uid, "noticePreferences", "soundPreferences"), devicesFor(uid, circleTypeOf(circleId))]);
     const notices = noticesOf(account);
-    if (!push.force && !notices[push.kind]) return { devices: 0, delivered: 0, off: true };
+    if (!push.force && !push.poke && !notices[push.kind]) return { devices: 0, delivered: 0, off: true };
     if (!devices.length) return { devices: 0, delivered: 0 };
 
     const choice = soundChoice(account, push.kind);
@@ -164,6 +176,7 @@ export async function sendPush(uid: string, push: PushMessage): Promise<PushResu
     const title = cut(push.title, MAX_TITLE);
     // "hide the text": the sender stays, the text of a message (or of a request) does not go to the lock screen
     const body = notices.hideText && !push.force ? (push.kind === "message" ? "New message" : "") : cut(push.body, MAX_BODY);
+    const poke = push.poke === true;
     const away = push.force ? [] : devices.filter((d) => d.circleId && d.circleId !== circleId);
     const here = devices.filter((d) => !away.includes(d));
     const awayChoice = soundChoice(account, "message");
@@ -173,14 +186,19 @@ export async function sendPush(uid: string, push: PushMessage): Promise<PushResu
       here.length
         ? deliver(here, {
             // "silent" = no sound
-            data: { id: push.id, title, body, url: withCircle(push.url, circleType), circle: circleType, ...(choice === "none" ? { silent: "1" } : {}) },
+            data: { id: push.id, title, body, url: withCircle(push.url, circleType), circle: circleType, ...(poke ? { poke: "1" } : choice === "none" ? { silent: "1" } : {}) },
+            alarm: poke,
             android: { priority: "high", notification: { channelId: channelFor(push.kind, choice), title, body } },
           })
         : 0,
       away.length
         ? deliver(away, {
             // the sound is the person's ONE sound for a message, whatever circle the app was last in (only "No sound" silences it)
-            data: { id: push.id, title: awayTitle, body: "", url: withOpen(push.url, circleType), circle: circleType, ...(awayChoice === "none" ? { silent: "1" } : {}) },
+            // a poke still rings, and still says who: it is the person's own wish to be woken by this friend
+            data: poke
+              ? { id: push.id, title, body, url: withCircle(push.url, circleType), circle: circleType, poke: "1" }
+              : { id: push.id, title: awayTitle, body: "", url: withOpen(push.url, circleType), circle: circleType, ...(awayChoice === "none" ? { silent: "1" } : {}) },
+            alarm: poke,
             android: { priority: "high", notification: { channelId: channelFor("message", awayChoice), title: awayTitle, body: "" } },
           })
         : 0,

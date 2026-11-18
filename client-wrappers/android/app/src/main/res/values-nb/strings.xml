@@ -36,4 +36,10 @@
     <string name="push_ok">OK. %1$s</string>
     <string name="push_failed">Ikke lagret. %1$s</string>
     <string name="err_no_answer">Ingen svar fra appsiden.</string>
+    <string name="poke_from_label">Dytt fra</string>
+    <string name="poke_from">Dytt fra %1$s</string>
+    <string name="poke_wants_you">Vil ha kontakt med deg</string>
+    <string name="poke_stop">Stopp</string>
+    <string name="poke_open">Åpne</string>
+    <string name="poke_channel">Dytt</string>
 </resources>

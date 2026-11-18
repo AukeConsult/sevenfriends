@@ -26,5 +26,10 @@
   "asleepNoSeat": "😴 Nukkuu · unilistallasi",
   "noLongerHere": "Et ole enää tässä ryhmässä tai ystävyydessä.",
   "help": "Ohje",
-  "hideHelp": "Piilota ohje"
+  "hideHelp": "Piilota ohje",
+  "poke": "Töm",
+  "pokeAsk": "Tämä soittaa henkilön {{ name }} puhelimen kuin herätyksen, vaikka se olisi mykistetty.",
+  "pokeSend": "Lähetä töm",
+  "pokeCancel": "Peruuta",
+  "pokeSent": "{{ name }} töminttiin."
 }

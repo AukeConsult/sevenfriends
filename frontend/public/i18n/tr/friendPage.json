@@ -26,5 +26,10 @@
   "asleepNoSeat": "😴 Uyuyor · uyku listende",
   "noLongerHere": "Artık bu grupta veya arkadaşlıkta değilsin.",
   "help": "Yardım",
-  "hideHelp": "Yardımı gizle"
+  "hideHelp": "Yardımı gizle",
+  "poke": "Dürt",
+  "pokeAsk": "Bu, {{ name }} kişisinin telefonunu sessizdeyken bile alarm gibi çaldırır.",
+  "pokeSend": "Dürtme gönder",
+  "pokeCancel": "İptal",
+  "pokeSent": "{{ name }} dürtüldü."
 }

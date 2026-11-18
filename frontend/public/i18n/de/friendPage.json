@@ -26,5 +26,10 @@
   "asleepNoSeat": "😴 Schläft · auf deiner Schlafliste",
   "noLongerHere": "Du bist nicht mehr in dieser Gruppe oder Freundschaft.",
   "help": "Hilfe",
-  "hideHelp": "Hilfe ausblenden"
+  "hideHelp": "Hilfe ausblenden",
+  "poke": "Anstupsen",
+  "pokeAsk": "Das lässt das Handy von {{ name }} wie einen Wecker klingeln, auch wenn es stumm ist.",
+  "pokeSend": "Anstupsen senden",
+  "pokeCancel": "Abbrechen",
+  "pokeSent": "{{ name }} wurde angestupst."
 }

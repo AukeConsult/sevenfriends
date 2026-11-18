@@ -181,7 +181,7 @@ async function lockedText(body: unknown, myUid: string, peerUids: string[], res:
 
 /**
  * True when one of the other people of the connection (my friend; every member of a group) has ME on their sleep list (`asleep` on THEIR entry of the connection): what I write to them then arrives silently
- * (no push, no sound, no desktop notice; it is still unread) unless it is a poke. Best effort: when their entry cannot be read the answer is false (they are told).
+ * (no push, no sound, no desktop notice; it is still unread); a poke does not change that, it is only for a friend who has a seat for me. Best effort: when their entry cannot be read the answer is false (they are told).
  */
 export async function peerSleeps(connection: { id: string }, peer: Peer): Promise<boolean> {
   try {
@@ -234,8 +234,9 @@ conversationRouter.post(
     }
 
     const notice = req.body?.notice === true; // a notice ("📦 In the safebox: …") is for the other people only: the sender keeps no copy of it in their own feed
-    const poke = req.body?.poke === true; // "poke anyway": the friend is told with a sound even when they have me on their sleep list
-    const muted = peerEntries.map((entry) => entry?.data()?.asleep === true && !poke); // one for each of the other people
+    const muted = peerEntries.map((entry) => entry?.data()?.asleep === true); // one for each of the other people: I am on their sleep list, so what I write arrives quietly
+    // a poke rings the friend's phone (on Android as an alarm); it is only for a friend who has a seat for me: one who has me on their sleep list gets a poke as a quiet message
+    const poked = req.body?.poke === true ? muted.map((m) => !m) : muted.map(() => false); // one for each of the other people
     // a message with a file has the id of the file: that is how the receiver is let in. Any other message has the id its sender made (the device signs it inside the locked text, so a text
     // cannot be shown as another message); one without an id (an older app) gets one here.
     const given = req.body?.id;
@@ -263,7 +264,7 @@ conversationRouter.post(
     for (const peer of connection.peers) {
       // the same message id in every copy
       // `create`: a copy that is already there (a file id used again after its sender deleted their own copy) is never replaced by a new message
-      batch.create(messageCol(peer.uid).doc(mine.id), { ...common, ...(locked ? { enc: wrapsFor(locked.enc, peer.uid) } : {}), ...(poke ? { poke: true } : {}), circleId: peer.circleId, read: false });
+      batch.create(messageCol(peer.uid).doc(mine.id), { ...common, ...(locked ? { enc: wrapsFor(locked.enc, peer.uid) } : {}), ...(poked[connection.peers.indexOf(peer)] ? { poke: true } : {}), circleId: peer.circleId, read: false });
     }
     // "last spoken to": both sides of the friendship remember when the last message was written
     const myEntry = (res.locals.circleRef as DocumentReference).collection(FRIENDS_SUBCOLLECTION).doc(connection.id);
@@ -283,7 +284,7 @@ conversationRouter.post(
     const created: ChatMessage = { id: mine.id, text, media, mine: true, read: true, time: iso(sentAt), edited: false, version: 1, hidden: false, link, ...(locked ? { enc: wrapsFor(locked.enc, token.uid) } : {}) };
     // wake the other person's devices (before the answer: the function may stop right after it)
     await Promise.all(connection.peers.map(async (peer, i) => {
-      if (!muted[i]) await sendPush(peer.uid, { circleId: peer.circleId, id: `message-${mine.id}`, title: connection.group ? `${fromName} · ${connection.name}` : fromName, body: locked ? "🔒 New message" : text || mediaLabel(media!.kind), url: `/friends/${connection.id}`, kind: "message" });
+      if (!muted[i]) await sendPush(peer.uid, { circleId: peer.circleId, id: `message-${mine.id}`, title: connection.group ? `${fromName} · ${connection.name}` : fromName, body: locked ? "🔒 New message" : text || mediaLabel(media!.kind), url: `/friends/${connection.id}`, kind: "message", ...(poked[i] ? { poke: true } : {}) });
     }));
     res.status(201).json(created);
   }),

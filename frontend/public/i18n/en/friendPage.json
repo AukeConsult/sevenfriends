@@ -26,5 +26,10 @@
   "asleepNoSeat": "😴 Asleep · on your sleep list",
   "noLongerHere": "You are not in this group or friendship any more.",
   "help": "Help",
-  "hideHelp": "Hide help"
+  "hideHelp": "Hide help",
+  "poke": "Poke",
+  "pokeAsk": "This rings {{ name }}'s phone like an alarm, even when it is silent.",
+  "pokeSend": "Send poke",
+  "pokeCancel": "Cancel",
+  "pokeSent": "{{ name }} was poked."
 }

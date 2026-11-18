@@ -26,5 +26,10 @@
   "asleepNoSeat": "😴 Śpi · na twojej liście uśpionych",
   "noLongerHere": "Nie jesteś już w tej grupie ani znajomości.",
   "help": "Pomoc",
-  "hideHelp": "Ukryj pomoc"
+  "hideHelp": "Ukryj pomoc",
+  "poke": "Szturchnięcie",
+  "pokeAsk": "To sprawi, że telefon {{ name }} zadzwoni jak budzik, nawet w trybie cichym.",
+  "pokeSend": "Wyślij szturchnięcie",
+  "pokeCancel": "Anuluj",
+  "pokeSent": "Szturchnięto: {{ name }}."
 }

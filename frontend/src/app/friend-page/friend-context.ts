@@ -53,10 +53,10 @@ export class FriendContext {
   readonly friendId = inject(ActivatedRoute).snapshot.paramMap.get('id') ?? '';
   /** this friend, from the list */
   /** the friend's name for a sentence */
-  /** "Poke anyway" is on for the next message (only offered when the friend has me on their sleep list); it goes off again after a send. */
-  readonly poke = signal(false);
-  /** The next message is a poke: it makes a sound for a friend who has me on their sleep list. */
-  readonly pokes = computed(() => this.poke() && this.friend()?.sleepsMe === true);
+  /** The frame under the header that asks before a poke is sent (opened by the bell in the header). */
+  readonly pokeOpen = signal(false);
+  /** A poke can be sent only to a confirmed friend who has a seat for me: not one who has me on their sleep list. */
+  readonly canPoke = computed(() => this.friend()?.status === 'confirmed' && this.friend()?.sleepsMe !== true);
   readonly friendName = computed(() => this.friend()?.name ?? 'your friend');
 
   readonly friend = computed(() => this.friends.friends().find((f) => f.id === this.friendId) ?? null);

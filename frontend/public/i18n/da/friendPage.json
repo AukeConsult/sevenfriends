@@ -26,5 +26,10 @@
   "asleepNoSeat": "😴 Sover · på din sovende-liste",
   "noLongerHere": "Du er ikke længere med i denne gruppe eller dette venskab.",
   "help": "Hjælp",
-  "hideHelp": "Skjul hjælp"
+  "hideHelp": "Skjul hjælp",
+  "poke": "Prik",
+  "pokeAsk": "Det får {{ name }}s telefon til at ringe som en alarm, også når den er på lydløs.",
+  "pokeSend": "Send prik",
+  "pokeCancel": "Annuller",
+  "pokeSent": "{{ name }} blev prikket."
 }

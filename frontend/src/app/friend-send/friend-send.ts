@@ -134,12 +134,10 @@ export class FriendSend {
     this.error.set(null);
     this.needsApproval.set(false);
     this.notice.set(`Sending: ${text.length > 40 ? text.slice(0, 40) + '…' : text}`);
-    const poke = this.ctx.pokes();
     const pending = this.ctx.feed()?.addPending(text) ?? null; // in the feed at once; the server is asked after
     try {
-      const item = await this.chat.send(this.ctx.friendId, text, poke);
+      const item = await this.chat.send(this.ctx.friendId, text);
       if (pending) this.ctx.feed()?.confirmPending(pending, item);
-      this.ctx.poke.set(false);
       this.notice.set(`Sent: ${text.length > 40 ? text.slice(0, 40) + '…' : text}`);
     } catch (err: any) {
       if (pending) this.ctx.feed()?.dropPending(pending);

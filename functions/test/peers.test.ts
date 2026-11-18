@@ -48,11 +48,21 @@ describe("a friendship goes over a list of one other person", () => {
     expect(await messages(pool[1].p.uid)).toHaveLength(0);
   });
 
-  it("is silent on the sleep list, and a poke rings anyway (the sleep check is made for each other person)", async () => {
+  it("is silent on the sleep list, and a poke does not change that (a poke is only for a friend with a seat)", async () => {
     const id = await connect(pool[0], pool[1]);
     await getFirestore().collection("user-account").doc(pool[1].p.uid).collection("friend-circle").doc("default").collection("friends").doc(id).update({ asleep: true });
     expect((await pool[0].send(id, "shh")).status).toBe(201);
     expect((await pool[0].raw("post", `/circles/default/friends/${id}/messages`, { text: "wake up", poke: true })).status).toBe(201);
-    expect((await messages(pool[1].p.uid)).filter((m) => m.connectionId === id)).toHaveLength(2);
+    const stored = (await messages(pool[1].p.uid)).filter((m) => m.connectionId === id);
+    expect(stored).toHaveLength(2);
+    expect(stored.some((m) => m.poke === true)).toBe(false);
+  });
+
+  it("a poke to a friend who has a seat for me is stored as a poke", async () => {
+    const id = await connect(pool[0], pool[1]);
+    expect((await pool[0].raw("post", `/circles/default/friends/${id}/messages`, { text: "hey", poke: true })).status).toBe(201);
+    expect((await pool[0].send(id, "plain")).status).toBe(201);
+    const stored = (await messages(pool[1].p.uid)).filter((m) => m.connectionId === id);
+    expect(stored.filter((m) => m.poke === true)).toHaveLength(1);
   });
 });
