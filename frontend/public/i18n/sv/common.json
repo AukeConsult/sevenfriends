@@ -311,7 +311,11 @@
     "cancel": "Avbryt",
     "notMe": "Inte jag",
     "newKeyDecline": "Avböj",
-    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later."
+    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later.",
+    "slogan_default": "De du vill nå kommer alltid fram.",
+    "slogan_buddies": "Dina polare kommer fram. Ingen annan.",
+    "slogan_work": "De kontakter du behöver kommer fram.",
+    "slogan_family": "Din familj kommer alltid fram."
   },
   "needsYourHelp": "{{ friendName }} behöver din hjälp",
   "openToUnlockTheir": "Öppna appen för att låsa upp deras gamla meddelanden igen.",

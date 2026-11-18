@@ -23,5 +23,8 @@
   "sitePhotos": "Työmaakuvat",
   "files": "12 tiedostoa",
   "bSharedFilesB": "<b>Jaetut tiedostot.</b> Vain sinä ja kontaktisi voitte avata ne.",
-  "privateNoAdsNo": "Yksityinen. Ei mainoksia. Ei syötettä."
+  "privateNoAdsNo": "Yksityinen. Ei mainoksia. Ei syötettä.",
+  "headlineP": "Tarvitsemasi yhteyshenkilöt pääsevät läpi",
+  "cardP": "Lisa töytäisee sinua",
+  "lineP": "Yksi töytäisy soittaa hänen puhelintaan, kun työ ei voi odottaa."
 }

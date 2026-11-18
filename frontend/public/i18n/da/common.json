@@ -311,7 +311,11 @@
     "cancel": "Annuller",
     "notMe": "Ikke mig",
     "newKeyDecline": "Afvis",
-    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later."
+    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later.",
+    "slogan_default": "De, du vil have fat i dig, kommer igennem.",
+    "slogan_buddies": "Dine buddies kommer igennem. Ingen andre.",
+    "slogan_work": "De kontakter, du har brug for, kommer igennem.",
+    "slogan_family": "Din familie kommer altid igennem."
   },
   "needsYourHelp": "{{ friendName }} har brug for din hjælp",
   "openToUnlockTheir": "Åbn appen for at låse deres gamle beskeder op igen.",

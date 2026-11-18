@@ -311,7 +311,11 @@
     "cancel": "रद्द करें",
     "notMe": "यह मैं नहीं हूँ",
     "newKeyDecline": "अस्वीकार करें",
-    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later."
+    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later.",
+    "slogan_default": "जिन्हें आप चाहते हैं, वे हमेशा आप तक पहुँचेंगे।",
+    "slogan_buddies": "आपके बडी आप तक पहुँचते हैं। और कोई नहीं।",
+    "slogan_work": "जिन संपर्कों की आपको ज़रूरत है, वे आप तक पहुँचते हैं।",
+    "slogan_family": "आपका परिवार हमेशा आप तक पहुँचता है।"
   },
   "needsYourHelp": "{{ friendName }} को आपकी मदद चाहिए",
   "openToUnlockTheir": "उनके पुराने संदेश फिर से अनलॉक करने के लिए ऐप खोलें।",

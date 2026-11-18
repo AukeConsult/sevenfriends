@@ -17,7 +17,7 @@
   "start1": "Skapa ditt konto. Det tar en minut.",
   "start2": "Skriv ditt namn, så att dina vänner vet vem du är.",
   "start3": "Tryck på en ledig plats för att lägga till en vän. Skicka en vänförfrågan eller dela en länk.",
-  "start4": "Din vän säger ja, och ett privat rum öppnas, bara för er två. Säg hej.",
+  "start4": "Din vän säger ja, och ett privat rum öppnas, bara för er två. Säg hej, eller ge en knuff.",
   "disclaimer": "Den här appen är skapad och drivs av BlueBoot R&D AS. Den körs i molnet och är säkrad. Användardata är krypterad och utom räckhåll för oss, molnleverantören eller någon annan. BlueBoot R&D AS har inga avtal med tredje part om användning eller drift av appen, förutom Google och användningen av Google Cloud. Den förblir liten och oberoende.",
   "contact": "Frågor? Skriv till",
   "scene1a": "47 nya inlägg",
@@ -60,5 +60,10 @@
   "circlesBuddies": "Kompisar: dina kompisar och de du delar ett intresse med.",
   "circlesFamily": "Familj: de hemma och dina släktingar.",
   "sleepTitle": "Du bestämmer vem som når dig",
-  "sleepText": "Behöver du en paus från någon? Lägg dem på din sovlista: ni är fortfarande vänner, men du hör inget från dem. Kan något inte vänta kommer en ping ändå fram."
+  "sleepText": "Behöver du en paus från någon? Lägg dem på din sovlista: ni är fortfarande vänner, men du hör inget från dem. Om något inte kan vänta kommer en knuff ändå fram.",
+  "pokeHeadline": "De du vill nå kommer alltid fram",
+  "pokeLine": "En knuff, och din väns telefon ringer som ett larm. Även på ljudlöst. Även på natten. Bara vänner du gett en plats kan göra det.",
+  "pokeScene": "{{ name }} knuffar dig",
+  "pokeTitle": "Knuffen",
+  "pokeText": "När det inte kan vänta, tryck på klockan hos en vän. Deras telefon ringer som ett larm, även på ljudlöst, och visar vem som knuffar. Bara en vän som har en plats för dig kan göra det. Behöver du lugn? Pausa knuffar i upp till 24 timmar; dina vänner ser Tyst."
 }

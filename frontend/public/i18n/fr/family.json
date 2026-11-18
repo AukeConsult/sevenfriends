@@ -22,5 +22,8 @@
   "emSayHiEm": "<em>Dis bonjour</em>",
   "voiceVideoAndPhotos": "Voix, vidéo et photos, rien que pour vous.",
   "quietAtNightA": "Silence la nuit. Un ping si c'est urgent.",
-  "privateNoAdsNo": "Privé. Sans pub. Sans fil."
+  "privateNoAdsNo": "Privé. Sans pub. Sans fil.",
+  "headlineP": "Votre famille vous joint<br>toujours",
+  "cardP": "Maman vous envoie un poke",
+  "lineP": "Calme la nuit. Un poke fait sonner le téléphone si c’est urgent."
 }

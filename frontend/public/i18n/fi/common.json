@@ -311,7 +311,11 @@
     "cancel": "Peruuta",
     "notMe": "Ei minä",
     "newKeyDecline": "Hylkää",
-    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later."
+    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later.",
+    "slogan_default": "Ne, jotka haluat, pääsevät läpi.",
+    "slogan_buddies": "Kaverisi pääsevät läpi. Eivät muut.",
+    "slogan_work": "Tarvitsemasi yhteyshenkilöt pääsevät läpi.",
+    "slogan_family": "Perheesi pääsee aina läpi."
   },
   "needsYourHelp": "{{ friendName }} tarvitsee apuasi",
   "openToUnlockTheir": "Avaa sovellus avataksesi hänen vanhat viestinsä uudelleen.",

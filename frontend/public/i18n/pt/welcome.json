@@ -17,7 +17,7 @@
   "start1": "Cria a tua conta. Demora um minuto.",
   "start2": "Escreve o teu nome, para os teus amigos saberem quem és.",
   "start3": "Toca num lugar vazio para adicionar um amigo. Envia um pedido de amizade ou partilha uma ligação.",
-  "start4": "Seu amigo diz sim e uma sala privada se abre, só para vocês dois. Diga oi.",
+  "start4": "Seu amigo diz sim, e uma sala privada se abre, só para vocês dois. Diga oi, ou dê uma cutucada.",
   "disclaimer": "Esta app é criada e operada pela BlueBoot R&D AS. Funciona na cloud e está protegida. Os dados dos utilizadores estão cifrados e fora do alcance de nós, do fornecedor de cloud ou de qualquer outra pessoa. A BlueBoot R&D AS não tem acordos com terceiros sobre o uso ou a operação desta app, exceto com a Google e o uso do Google Cloud. Vai continuar pequena e independente.",
   "contact": "Dúvidas? Escreve para",
   "scene1a": "47 novas publicações",
@@ -60,5 +60,10 @@
   "circlesBuddies": "Parceiros: os teus parceiros e quem partilha um passatempo contigo.",
   "circlesFamily": "Família: as pessoas de casa e os teus parentes.",
   "sleepTitle": "Você decide quem chega até você",
-  "sleepText": "Precisa de uma pausa de alguém? Coloque-o na sua lista de descanso: vocês continuam amigos, mas você deixa de ouvir falar dele. Se algo não pode esperar, um ping chega mesmo assim."
+  "sleepText": "Precisa de uma pausa de alguém? Coloque a pessoa na sua lista de sono: vocês continuam amigos, mas você deixa de ouvir falar dela. Se algo não puder esperar, uma cutucada ainda chega.",
+  "pokeHeadline": "Quem você quer sempre chega até você",
+  "pokeLine": "Uma cutucada, e o telefone do seu amigo toca como um alarme. Mesmo no silencioso. Mesmo à noite. Só os amigos a quem você deu um lugar podem fazer isso.",
+  "pokeScene": "{{ name }} está te cutucando",
+  "pokeTitle": "A cutucada",
+  "pokeText": "Quando não pode esperar, toque no sino de um amigo. O telefone dele toca como um alarme, mesmo no silencioso, e mostra quem está cutucando. Só um amigo que tem um lugar para você pode fazer isso. Precisa de sossego? Pause as cutucadas por até 24 horas; seus amigos veem Silencioso."
 }

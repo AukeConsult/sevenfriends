@@ -311,7 +311,11 @@
     "cancel": "Cancel",
     "notMe": "Not me",
     "newKeyDecline": "Decline",
-    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later."
+    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later.",
+    "slogan_default": "The ones you want shall get through.",
+    "slogan_buddies": "Your buddies get through. Nobody else.",
+    "slogan_work": "The contacts you need get through.",
+    "slogan_family": "Your family always gets through."
   },
   "needsYourHelp": "{{ friendName }} needs your help",
   "openToUnlockTheir": "Open the app to unlock their old messages again.",

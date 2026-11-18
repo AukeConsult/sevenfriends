@@ -311,7 +311,11 @@
     "cancel": "Annuler",
     "notMe": "Pas moi",
     "newKeyDecline": "Refuser",
-    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later."
+    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later.",
+    "slogan_default": "Ceux que vous voulez vous joignent toujours.",
+    "slogan_buddies": "Vos potes vous joignent. Personne d’autre.",
+    "slogan_work": "Les contacts dont vous avez besoin vous joignent.",
+    "slogan_family": "Votre famille vous joint toujours."
   },
   "needsYourHelp": "{{ friendName }} a besoin de ton aide",
   "openToUnlockTheir": "Ouvre l'app pour déverrouiller de nouveau ses anciens messages.",

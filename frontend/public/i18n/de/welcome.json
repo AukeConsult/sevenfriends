@@ -17,7 +17,7 @@
   "start1": "Erstelle dein Konto. Das dauert eine Minute.",
   "start2": "Schreibe deinen Namen, damit deine Freunde wissen, wer du bist.",
   "start3": "Tippe auf einen freien Platz, um einen Freund hinzuzufügen. Sende eine Freundschaftsanfrage oder teile einen Link.",
-  "start4": "Dein Freund sagt ja, und ein privater Raum öffnet sich, nur für euch zwei. Sag hallo.",
+  "start4": "Dein Freund sagt Ja, und ein privater Raum öffnet sich, nur für euch beide. Sag Hallo, oder gib einen Stups.",
   "disclaimer": "Diese App wird von BlueBoot R&D AS entwickelt und betrieben. Sie läuft in der Cloud und ist abgesichert. Nutzerdaten sind verschlüsselt und für uns, den Cloud-Anbieter oder jeden anderen unzugänglich. BlueBoot R&D AS hat keine Vereinbarungen mit Dritten über Nutzung oder Betrieb dieser App, außer mit Google und der Nutzung von Google Cloud. Sie bleibt klein und unabhängig.",
   "contact": "Fragen? Schreibe an",
   "scene1a": "47 neue Beiträge",
@@ -60,5 +60,10 @@
   "circlesBuddies": "Kumpels: deine Kumpels und Leute, mit denen du ein Hobby teilst.",
   "circlesFamily": "Familie: die Menschen zu Hause und deine Verwandten.",
   "sleepTitle": "Du entscheidest, wer dich erreicht",
-  "sleepText": "Brauchst du eine Pause von jemandem? Setze ihn auf deine Schlummerliste: Ihr bleibt Freunde, aber du hörst nichts mehr von ihm. Wenn etwas nicht warten kann, kommt ein Ping trotzdem durch."
+  "sleepText": "Brauchst du eine Pause von jemandem? Setz ihn auf deine Schlafliste: Ihr bleibt Freunde, aber du hörst nichts mehr von ihm. Wenn etwas nicht warten kann, kommt ein Stups trotzdem durch.",
+  "pokeHeadline": "Die, die du willst, kommen durch",
+  "pokeLine": "Ein Stups, und das Handy deiner Freundin oder deines Freundes klingelt wie ein Wecker. Auch lautlos. Auch nachts. Nur Freunde, denen du einen Platz gegeben hast, können das.",
+  "pokeScene": "{{ name }} stupst dich an",
+  "pokeTitle": "Der Stups",
+  "pokeText": "Wenn es nicht warten kann, drück bei einem Freund auf die Glocke. Sein Handy klingelt wie ein Wecker, auch lautlos, und es zeigt, wer anstupst. Nur ein Freund, der einen Platz für dich hat, kann das. Ruhe nötig? Pausiere Stupser bis zu 24 Stunden; deine Freunde sehen „Still“."
 }

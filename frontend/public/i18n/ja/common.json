@@ -311,7 +311,11 @@
     "cancel": "キャンセル",
     "notMe": "私ではありません",
     "newKeyDecline": "断る",
-    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later."
+    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later.",
+    "slogan_default": "会いたい人は、必ずあなたに届く。",
+    "slogan_buddies": "仲間は届く。それ以外は届かない。",
+    "slogan_work": "必要な連絡先は、必ず届く。",
+    "slogan_family": "家族はいつでも届く。"
   },
   "needsYourHelp": "{{ friendName }}さんがあなたの助けを必要としています",
   "openToUnlockTheir": "アプリを開くと、相手の過去のメッセージのロックをもう一度解除できます。",

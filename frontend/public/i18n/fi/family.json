@@ -22,5 +22,8 @@
   "emSayHiEm": "<em>Sano hei</em>",
   "voiceVideoAndPhotos": "Ääntä, videota ja kuvia, vain sinulle.",
   "quietAtNightA": "Hiljaista yöllä. Töytäisy, jos asia on kiireellinen.",
-  "privateNoAdsNo": "Yksityinen. Ei mainoksia. Ei syötettä."
+  "privateNoAdsNo": "Yksityinen. Ei mainoksia. Ei syötettä.",
+  "headlineP": "Perheesi pääsee aina<br>läpi",
+  "cardP": "Äiti töytäisee sinua",
+  "lineP": "Yöllä on hiljaista. Töytäisy soittaa puhelinta, jos asia on kiireellinen."
 }

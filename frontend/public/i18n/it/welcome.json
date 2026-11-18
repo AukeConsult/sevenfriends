@@ -17,7 +17,7 @@
   "start1": "Crea il tuo account. Ci vuole un minuto.",
   "start2": "Scrivi il tuo nome, così i tuoi amici sanno chi sei.",
   "start3": "Tocca un posto libero per aggiungere un amico. Invia una richiesta di amicizia o condividi un link.",
-  "start4": "Il tuo amico dice sì e si apre una stanza privata, solo per voi due. Dì ciao.",
+  "start4": "Il tuo amico dice sì, e si apre una stanza privata, solo per voi due. Saluta, oppure manda un poke.",
   "disclaimer": "Questa app è creata e gestita da BlueBoot R&D AS. Funziona nel cloud ed è protetta. I dati degli utenti sono cifrati e fuori dalla portata di noi, del fornitore cloud o di chiunque altro. BlueBoot R&D AS non ha accordi con terze parti sull’uso o sul funzionamento di questa app, tranne Google e il suo uso di Google Cloud. Resterà piccola e indipendente.",
   "contact": "Domande? Scrivi a",
   "scene1a": "47 nuovi post",
@@ -60,5 +60,10 @@
   "circlesBuddies": "Compagni: i tuoi compagni e chi condivide un hobby con te.",
   "circlesFamily": "Famiglia: le persone di casa e i tuoi parenti.",
   "sleepTitle": "Decidi tu chi ti raggiunge",
-  "sleepText": "Hai bisogno di una pausa da qualcuno? Mettilo nella tua lista di riposo: restate amici, ma non lo senti più. Se qualcosa non può aspettare, un ping arriva comunque."
+  "sleepText": "Hai bisogno di una pausa da qualcuno? Mettilo nella tua lista del sonno: restate amici, ma non senti più nulla da lui. Se qualcosa non può aspettare, un poke arriva comunque.",
+  "pokeHeadline": "Quelli che vuoi ti raggiungono sempre",
+  "pokeLine": "Un poke, e il telefono del tuo amico suona come una sveglia. Anche in silenzioso. Anche di notte. Possono farlo solo gli amici a cui hai dato un posto.",
+  "pokeScene": "{{ name }} ti manda un poke",
+  "pokeTitle": "Il poke",
+  "pokeText": "Quando non può aspettare, premi la campanella su un amico. Il suo telefono suona come una sveglia, anche in silenzioso, e dice chi manda il poke. Può farlo solo un amico che ha un posto per te. Hai bisogno di quiete? Metti in pausa i poke fino a 24 ore; i tuoi amici vedono Silenzioso."
 }

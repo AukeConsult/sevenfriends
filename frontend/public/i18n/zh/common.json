@@ -311,7 +311,11 @@
     "cancel": "取消",
     "notMe": "不是我",
     "newKeyDecline": "拒绝",
-    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later."
+    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later.",
+    "slogan_default": "你想联系的人，一定能找到你。",
+    "slogan_buddies": "你的伙伴能联系到你。其他人不行。",
+    "slogan_work": "你需要的联系人能联系到你。",
+    "slogan_family": "你的家人总能联系到你。"
   },
   "needsYourHelp": "{{ friendName }} 需要你的帮助",
   "openToUnlockTheir": "打开应用，重新解锁对方的旧消息。",

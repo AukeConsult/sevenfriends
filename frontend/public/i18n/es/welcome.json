@@ -17,7 +17,7 @@
   "start1": "Crea tu cuenta. Lleva un minuto.",
   "start2": "Escribe tu nombre para que tus amigos sepan quién eres.",
   "start3": "Toca una plaza libre para añadir un amigo. Envía una solicitud de amistad o comparte un enlace.",
-  "start4": "Tu amigo dice que sí y se abre una sala privada, solo para vosotros dos. Di hola.",
+  "start4": "Tu amigo dice que sí y se abre una sala privada, solo para los dos. Saluda, o da un toque.",
   "disclaimer": "Esta app la crea y la opera BlueBoot R&D AS. Funciona en la nube y está protegida. Los datos de los usuarios están cifrados y fuera del alcance de nosotros, del proveedor de la nube o de cualquier otra persona. BlueBoot R&D AS no tiene acuerdos con terceros sobre el uso o la operación de esta app, salvo con Google y el uso de Google Cloud. Seguirá siendo pequeña e independiente.",
   "contact": "¿Preguntas? Escribe a",
   "scene1a": "47 publicaciones nuevas",
@@ -60,5 +60,10 @@
   "circlesBuddies": "Colegas: tus colegas y quienes comparten una afición contigo.",
   "circlesFamily": "Familia: la gente de casa y tus parientes.",
   "sleepTitle": "Tú decides quién te alcanza",
-  "sleepText": "¿Necesitas un descanso de alguien? Ponlo en tu lista de descanso: seguís siendo amigos, pero dejas de saber de él. Si algo no puede esperar, un ping llega igualmente."
+  "sleepText": "¿Necesitas un descanso de alguien? Ponlo en tu lista de sueño: seguís siendo amigos, pero dejas de saber de él. Si algo no puede esperar, un toque aún llega.",
+  "pokeHeadline": "Las personas que quieres siempre llegan hasta ti",
+  "pokeLine": "Un toque, y el teléfono de tu amigo suena como una alarma. Incluso en silencio. Incluso de noche. Solo pueden hacerlo los amigos a los que diste un asiento.",
+  "pokeScene": "{{ name }} te da un toque",
+  "pokeTitle": "El toque",
+  "pokeText": "Cuando no puede esperar, pulsa la campana de un amigo. Su teléfono suena como una alarma, incluso en silencio, y dice quién da el toque. Solo puede hacerlo un amigo que tiene un asiento para ti. ¿Necesitas calma? Pausa los toques hasta 24 horas; tus amigos verán Silencio."
 }

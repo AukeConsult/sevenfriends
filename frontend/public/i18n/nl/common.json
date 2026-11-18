@@ -311,7 +311,11 @@
     "cancel": "Annuleren",
     "notMe": "Niet ik",
     "newKeyDecline": "Weigeren",
-    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later."
+    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later.",
+    "slogan_default": "Wie jij wilt, komt altijd door.",
+    "slogan_buddies": "Je maatjes komen door. Niemand anders.",
+    "slogan_work": "De contacten die je nodig hebt, komen door.",
+    "slogan_family": "Je familie komt altijd door."
   },
   "needsYourHelp": "{{ friendName }} heeft je hulp nodig",
   "openToUnlockTheir": "Open de app om hun oude berichten weer te ontgrendelen.",

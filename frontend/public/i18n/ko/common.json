@@ -311,7 +311,11 @@
     "cancel": "취소",
     "notMe": "내가 아니에요",
     "newKeyDecline": "거절",
-    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later."
+    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later.",
+    "slogan_default": "원하는 사람은 반드시 닿습니다.",
+    "slogan_buddies": "버디는 닿습니다. 다른 사람은 아니에요.",
+    "slogan_work": "필요한 연락처는 닿습니다.",
+    "slogan_family": "가족은 언제나 닿습니다."
   },
   "needsYourHelp": "{{ friendName }}님이 도움을 필요로 해요",
   "openToUnlockTheir": "앱을 열어 상대의 이전 메시지를 다시 잠금 해제하세요.",

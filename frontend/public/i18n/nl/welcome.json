@@ -17,7 +17,7 @@
   "start1": "Maak je account aan. Het duurt een minuut.",
   "start2": "Vul je naam in, zodat je vrienden weten wie je bent.",
   "start3": "Tik op een lege plek om een vriend toe te voegen. Stuur een vriendschapsverzoek of deel een link.",
-  "start4": "Je vriend zegt ja en er opent een privékamer, alleen voor jullie tweeën. Zeg hoi.",
+  "start4": "Je vriend zegt ja, en er opent een privékamer, alleen voor jullie tweeën. Zeg hallo, of geef een por.",
   "disclaimer": "Deze app wordt gemaakt en beheerd door BlueBoot R&D AS. Hij draait in de cloud en is beveiligd. Gebruikersgegevens zijn versleuteld en buiten bereik voor ons, de cloudaanbieder en ieder ander. BlueBoot R&D AS heeft geen afspraken met derden over het gebruik of de werking van deze app, behalve met Google en het gebruik van Google Cloud. Hij blijft klein en onafhankelijk.",
   "contact": "Vragen? Schrijf naar",
   "scene1a": "47 nieuwe berichten",
@@ -60,5 +60,10 @@
   "circlesBuddies": "Maatjes: je maten en mensen met wie je een hobby deelt.",
   "circlesFamily": "Familie: de mensen thuis en je familieleden.",
   "sleepTitle": "Jij bepaalt wie je bereikt",
-  "sleepText": "Even genoeg van iemand? Zet hem op je slaaplijst: jullie blijven vrienden, maar je hoort niets meer van hem. Kan iets niet wachten, dan komt een ping er toch door."
+  "sleepText": "Even rust van iemand nodig? Zet die persoon op je slaaplijst: jullie blijven vrienden, maar je hoort niets meer. Kan iets niet wachten, dan komt een por toch door.",
+  "pokeHeadline": "Wie jij wilt, komt altijd door",
+  "pokeLine": "Eén por, en de telefoon van je vriend gaat als een wekker. Ook op stil. Ook ’s nachts. Alleen vrienden aan wie je een plek gaf, kunnen dat.",
+  "pokeScene": "{{ name }} port je aan",
+  "pokeTitle": "De por",
+  "pokeText": "Kan het niet wachten, druk dan bij een vriend op de bel. Zijn telefoon gaat als een wekker, ook op stil, en toont wie er port. Alleen een vriend die een plek voor jou heeft, kan dat. Rust nodig? Zet porren tot 24 uur op pauze; je vrienden zien Stil."
 }

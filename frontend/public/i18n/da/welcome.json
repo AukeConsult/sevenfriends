@@ -17,7 +17,7 @@
   "start1": "Opret din konto. Det tager et minut.",
   "start2": "Skriv dit navn, så dine venner ved, hvem du er.",
   "start3": "Tryk på en tom plads for at tilføje en ven. Send en venneanmodning eller del et link.",
-  "start4": "Din ven siger ja, og et privat rum åbner sig, kun til jer to. Sig hej.",
+  "start4": "Din ven siger ja, og et privat rum åbner, kun for jer to. Sig hej, eller giv et skub.",
   "disclaimer": "Denne app er lavet og drevet af BlueBoot R&D AS. Den kører i skyen og er sikret. Brugerdata er krypteret og uden for rækkevidde for os, cloududbyderen eller andre. BlueBoot R&D AS har ingen aftaler med tredjeparter om brug eller drift af appen, bortset fra Google og brugen af Google Cloud. Den forbliver lille og uafhængig.",
   "contact": "Spørgsmål? Skriv til",
   "scene1a": "47 nye opslag",
@@ -60,5 +60,10 @@
   "circlesBuddies": "Kammerater: dine kammerater og dem, du deler en hobby med.",
   "circlesFamily": "Familie: dem derhjemme og dine slægtninge.",
   "sleepTitle": "Du bestemmer, hvem der når dig",
-  "sleepText": "Har du brug for en pause fra nogen? Sæt dem på din søvnliste: I er stadig venner, men du hører ikke fra dem. Kan noget ikke vente, kommer et ping stadig igennem."
+  "sleepText": "Brug for en pause fra nogen? Sæt dem på din sovelisten: I er stadig venner, men du hører ikke fra dem. Hvis noget ikke kan vente, kommer et skub stadig igennem.",
+  "pokeHeadline": "De, du vil have fat i dig, kommer igennem",
+  "pokeLine": "Ét skub, og din vens telefon ringer som en alarm. Selv på lydløs. Selv om natten. Kun de venner, du har givet en plads, kan gøre det.",
+  "pokeScene": "{{ name }} giver dig et skub",
+  "pokeTitle": "Skubbet",
+  "pokeText": "Når det ikke kan vente, så tryk på klokken ved en ven. Deres telefon ringer som en alarm, selv på lydløs, og den viser, hvem der skubber. Kun en ven, der har en plads til dig, kan gøre det. Brug for ro? Sæt skub på pause i op til 24 timer; dine venner ser Stille."
 }

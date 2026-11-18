@@ -17,7 +17,7 @@
   "start1": "Hesabını oluştur. Bir dakika sürer.",
   "start2": "Adını yaz, arkadaşların kim olduğunu bilsin.",
   "start3": "Arkadaş eklemek için boş bir yere dokun. Arkadaşlık isteği gönder veya bir bağlantı paylaş.",
-  "start4": "Arkadaşın evet der ve yalnızca ikinize ait özel bir oda açılır. Merhaba de.",
+  "start4": "Arkadaşın evet der ve yalnızca ikinize özel bir oda açılır. Merhaba de ya da bir dürtme gönder.",
   "disclaimer": "Bu uygulama BlueBoot R&D AS tarafından yapılır ve işletilir. Bulutta çalışır ve güvenlidir. Kullanıcı verileri şifrelidir ve bizim, bulut sağlayıcısının veya başkasının erişemeyeceği yerdedir. BlueBoot R&D AS’nin, Google ve Google Cloud kullanımı dışında, bu uygulamanın kullanımı veya işletimi konusunda üçüncü taraflarla anlaşması yoktur. Küçük ve bağımsız kalacaktır.",
   "contact": "Sorun mu var? Şuraya yaz:",
   "scene1a": "47 yeni gönderi",
@@ -60,5 +60,10 @@
   "circlesBuddies": "Dostlar: dostların ve seninle bir hobiyi paylaşanlar.",
   "circlesFamily": "Aile: evdekiler ve akrabaların.",
   "sleepTitle": "Sana kimin ulaşacağına sen karar verirsin",
-  "sleepText": "Birinden mola mı lazım? Onu uyku listene al: arkadaş kalırsınız ama ondan haber almazsın. Bir şey beklemeyecekse, bir ping yine de ulaşır."
+  "sleepText": "Birinden mola mı lazım? Onu uyku listene ekle: arkadaş kalırsınız ama ondan haber almazsın. Bekleyemeyecek bir şey olursa, dürtme yine de ulaşır.",
+  "pokeHeadline": "İstediğin kişiler sana her zaman ulaşır",
+  "pokeLine": "Bir dürtme, ve arkadaşının telefonu alarm gibi çalar. Sessizdeyken bile. Gece bile. Bunu yalnızca koltuk verdiğin arkadaşlar yapabilir.",
+  "pokeScene": "{{ name }} seni dürtüyor",
+  "pokeTitle": "Dürtme",
+  "pokeText": "Beklemesi mümkün değilse, bir arkadaşın yanındaki zile bas. Telefonu sessizdeyken bile alarm gibi çalar ve kimin dürttüğünü gösterir. Bunu yalnızca senin için koltuğu olan bir arkadaş yapabilir. Sessizlik mi lazım? Dürtmeleri 24 saate kadar duraklat; arkadaşların Sessiz görür."
 }

@@ -17,7 +17,7 @@
   "start1": "Załóż konto. To zajmie minutę.",
   "start2": "Wpisz swoje imię, żeby znajomi wiedzieli, kim jesteś.",
   "start3": "Dotknij wolnego miejsca, aby dodać znajomego. Wyślij zaproszenie do znajomych lub udostępnij link.",
-  "start4": "Twój przyjaciel mówi tak i otwiera się prywatny pokój, tylko dla was dwojga. Powiedz cześć.",
+  "start4": "Twój przyjaciel mówi tak i otwiera się prywatny pokój, tylko dla was dwojga. Przywitaj się albo szturchnij.",
   "disclaimer": "Tę aplikację tworzy i prowadzi BlueBoot R&D AS. Działa w chmurze i jest zabezpieczona. Dane użytkowników są zaszyfrowane i niedostępne dla nas, dostawcy chmury ani nikogo innego. BlueBoot R&D AS nie ma umów z osobami trzecimi dotyczących użytkowania ani działania tej aplikacji, poza Google i korzystaniem z Google Cloud. Pozostanie mała i niezależna.",
   "contact": "Pytania? Napisz na",
   "scene1a": "47 nowych postów",
@@ -60,5 +60,10 @@
   "circlesBuddies": "Kumple: twoi kumple i ludzie, z którymi dzielisz hobby.",
   "circlesFamily": "Rodzina: domownicy i krewni.",
   "sleepTitle": "To ty decydujesz, kto się z tobą skontaktuje",
-  "sleepText": "Potrzebujesz przerwy od kogoś? Dodaj go do listy uśpionych: nadal jesteście znajomymi, ale nie słyszysz o nim. Jeśli coś nie może czekać, ping i tak dotrze."
+  "sleepText": "Potrzebujesz przerwy od kogoś? Dodaj go do listy snu: nadal jesteście przyjaciółmi, ale nic od niego nie słyszysz. Jeśli coś nie może czekać, szturchnięcie i tak dotrze.",
+  "pokeHeadline": "Ci, na których ci zależy, zawsze się do ciebie dodzwonią",
+  "pokeLine": "Jedno szturchnięcie i telefon twojego przyjaciela dzwoni jak budzik. Nawet na wyciszeniu. Nawet w nocy. Mogą to zrobić tylko przyjaciele, którym dałeś miejsce.",
+  "pokeScene": "{{ name }} cię szturcha",
+  "pokeTitle": "Szturchnięcie",
+  "pokeText": "Gdy to nie może czekać, naciśnij dzwonek przy przyjacielu. Jego telefon dzwoni jak budzik, nawet na wyciszeniu, i pokazuje, kto szturcha. Może to zrobić tylko przyjaciel, który ma dla ciebie miejsce. Potrzebujesz ciszy? Wstrzymaj szturchnięcia do 24 godzin; przyjaciele zobaczą Cisza."
 }

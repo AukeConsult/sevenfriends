@@ -30,10 +30,10 @@ export interface CircleWords {
 }
 
 const BASE: Record<string, Omit<CircleWords, 'One' | 'Many'>> = {
-  default: { app: 'Seven Friends', one: 'friend', many: 'friends', hello: 'Hi! I would like to have you as a close friend.', slogan: 'Stay close to the friends who matter most.' },
-  buddies: { app: 'Seven Buddies', one: 'buddy', many: 'buddies', hello: 'Hey! Want to be my buddy?', slogan: 'Stay close to your buddies.' },
-  work: { app: 'Seven Work', one: 'contact', many: 'contacts', hello: 'Hi! I would like to have you as a contact.', slogan: 'Keep the contacts that matter close.' },
-  family: { app: 'Seven Family', one: 'member', many: 'members', hello: 'Hi! I would like you in my family circle.', slogan: 'Keep your family close.' },
+  default: { app: 'Seven Friends', one: 'friend', many: 'friends', hello: 'Hi! I would like to have you as a close friend.', slogan: 'The ones you want shall get through.' },
+  buddies: { app: 'Seven Buddies', one: 'buddy', many: 'buddies', hello: 'Hey! Want to be my buddy?', slogan: 'Your buddies get through. Nobody else.' },
+  work: { app: 'Seven Work', one: 'contact', many: 'contacts', hello: 'Hi! I would like to have you as a contact.', slogan: 'The contacts you need get through.' },
+  family: { app: 'Seven Family', one: 'member', many: 'members', hello: 'Hi! I would like you in my family circle.', slogan: 'Your family always gets through.' },
 };
 
 /** The name of a circle in the language of the app (Friends, Buddies, Work, Family). */

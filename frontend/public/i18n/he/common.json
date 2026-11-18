@@ -311,7 +311,11 @@
     "cancel": "ביטול",
     "notMe": "זה לא אני",
     "newKeyDecline": "דחה",
-    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later."
+    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later.",
+    "slogan_default": "מי שאתה רוצה יגיע אליך תמיד.",
+    "slogan_buddies": "החברים שלך מגיעים אליך. אף אחד אחר.",
+    "slogan_work": "אנשי הקשר שאתה צריך מגיעים אליך.",
+    "slogan_family": "המשפחה שלך תמיד מגיעה אליך."
   },
   "needsYourHelp": "{{ friendName }} צריך/ה את העזרה שלך",
   "openToUnlockTheir": "פתח/י את האפליקציה כדי לשחרר שוב את ההודעות הישנות שלו/ה.",

@@ -17,7 +17,7 @@
   "start1": "Créez votre compte. Cela prend une minute.",
   "start2": "Écrivez votre nom, pour que vos amis sachent qui vous êtes.",
   "start3": "Touchez une place libre pour ajouter un ami. Envoyez une demande d’ami ou partagez un lien.",
-  "start4": "Votre ami dit oui, et une pièce privée s’ouvre, rien que pour vous deux. Dites bonjour.",
+  "start4": "Votre ami dit oui, et une pièce privée s’ouvre, rien que pour vous deux. Dites bonjour, ou envoyez un poke.",
   "disclaimer": "Cette appli est créée et exploitée par BlueBoot R&D AS. Elle fonctionne dans le cloud et elle est sécurisée. Les données des utilisateurs sont chiffrées et hors de portée pour nous, pour le fournisseur de cloud ou pour quiconque. BlueBoot R&D AS n’a aucun accord avec un tiers concernant l’utilisation ou l’exploitation de cette appli, hormis Google et son utilisation de Google Cloud. Elle restera petite et indépendante.",
   "contact": "Des questions ? Écrivez à",
   "scene1a": "47 nouvelles publications",
@@ -60,5 +60,10 @@
   "circlesBuddies": "Potes : vos potes et ceux avec qui vous partagez un loisir.",
   "circlesFamily": "Famille : les gens de la maison et vos proches.",
   "sleepTitle": "Vous décidez qui peut vous joindre",
-  "sleepText": "Besoin d’une pause avec quelqu’un ? Mettez-le sur votre liste de veille : vous restez amis, mais vous n’entendez plus parler de lui. Si quelque chose ne peut pas attendre, un ping passe quand même."
+  "sleepText": "Besoin de souffler loin de quelqu’un ? Mettez-le sur votre liste de sommeil : vous restez amis, mais vous n’entendez plus parler de lui. Si quelque chose ne peut pas attendre, un poke passe quand même.",
+  "pokeHeadline": "Ceux que vous voulez vous joignent toujours",
+  "pokeLine": "Un poke, et le téléphone de votre ami sonne comme une alarme. Même en silencieux. Même la nuit. Seuls les amis à qui vous avez donné une place peuvent le faire.",
+  "pokeScene": "{{ name }} vous envoie un poke",
+  "pokeTitle": "Le poke",
+  "pokeText": "Quand ça ne peut pas attendre, appuyez sur la cloche chez un ami. Son téléphone sonne comme une alarme, même en silencieux, et indique qui envoie le poke. Seul un ami qui a une place pour vous peut le faire. Besoin de calme ? Mettez les pokes en pause jusqu’à 24 heures ; vos amis voient Silencieux."
 }

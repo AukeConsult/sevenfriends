@@ -311,7 +311,11 @@
     "cancel": "Скасувати",
     "notMe": "Це не я",
     "newKeyDecline": "Відхилити",
-    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later."
+    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later.",
+    "slogan_default": "Ті, кого ти чекаєш, завжди додзвоняться до тебе.",
+    "slogan_buddies": "Твої приятелі додзвоняться. Ніхто інший.",
+    "slogan_work": "Потрібні тобі контакти додзвоняться.",
+    "slogan_family": "Твоя родина завжди додзвониться."
   },
   "needsYourHelp": "{{ friendName }} потрібна твоя допомога",
   "openToUnlockTheir": "Відкрий застосунок, щоб знову розблокувати старі повідомлення.",

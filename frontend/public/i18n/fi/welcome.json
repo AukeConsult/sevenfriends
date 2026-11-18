@@ -17,7 +17,7 @@
   "start1": "Luo tilisi. Siihen menee minuutti.",
   "start2": "Kirjoita nimesi, jotta ystäväsi tietävät, kuka olet.",
   "start3": "Napauta vapaata paikkaa lisätäksesi ystävän. Lähetä kaveripyyntö tai jaa linkki.",
-  "start4": "Ystäväsi sanoo kyllä, ja yksityinen huone aukeaa vain teille kahdelle. Sano hei.",
+  "start4": "Ystäväsi sanoo kyllä, ja yksityinen huone aukeaa vain teille kahdelle. Sano hei tai töytäise.",
   "disclaimer": "Tämän sovelluksen on tehnyt ja sitä ylläpitää BlueBoot R&D AS. Se toimii pilvessä ja on suojattu. Käyttäjätiedot on salattu, eikä meillä, pilvipalvelun tarjoajalla tai kenelläkään muulla ole pääsyä niihin. BlueBoot R&D AS:llä ei ole sopimuksia kolmansien osapuolten kanssa sovelluksen käytöstä tai ylläpidosta, paitsi Googlen ja Google Cloudin käytön osalta. Se pysyy pienenä ja riippumattomana.",
   "contact": "Kysyttävää? Kirjoita osoitteeseen",
   "scene1a": "47 uutta julkaisua",
@@ -60,5 +60,10 @@
   "circlesBuddies": "Kaverit: kaverisi ja ihmiset, joiden kanssa jaat harrastuksen.",
   "circlesFamily": "Perhe: kotiväki ja sukulaisesi.",
   "sleepTitle": "Sinä päätät, ketkä tavoittavat sinut",
-  "sleepText": "Tarvitsetko taukoa jostakusta? Laita hänet uinuvien listalle: olette yhä ystäviä, mutta et kuule hänestä. Jos jokin ei voi odottaa, ping menee silti läpi."
+  "sleepText": "Tarvitsetko taukoa jostakusta? Laita hänet unilistallesi: pysytte ystävinä, mutta et kuule hänestä. Jos jokin ei voi odottaa, töytäisy pääsee silti läpi.",
+  "pokeHeadline": "Ne, jotka haluat, pääsevät läpi",
+  "pokeLine": "Yksi töytäisy, ja ystäväsi puhelin soi kuin herätyskello. Vaikka äänettömällä. Vaikka yöllä. Vain ystävät, joille annoit paikan, voivat tehdä sen.",
+  "pokeScene": "{{ name }} töytäisee sinua",
+  "pokeTitle": "Töytäisy",
+  "pokeText": "Kun asia ei voi odottaa, paina ystävän kohdalla kelloa. Hänen puhelimensa soi kuin herätyskello, vaikka äänettömällä, ja siinä näkyy, kuka töytäisee. Vain ystävä, jolla on paikka sinulle, voi tehdä sen. Tarvitsetko rauhaa? Keskeytä töytäisyt enintään 24 tunniksi; ystäväsi näkevät Hiljainen."
 }

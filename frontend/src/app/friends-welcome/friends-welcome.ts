@@ -7,29 +7,29 @@ import { Inviter } from '../inviter/inviter';
 
 /** a text of a welcome page: the translation key and the English words */
 type Text = readonly [key: string, en: string];
-/** one page: a headline, one picture (`dots` = the seven seats, `card` = a message, `lock` = a locked room) and one line */
-interface Page { head: Text; kind: 'dots' | 'card' | 'lock'; name?: Text; card?: Text; line: Text }
+/** one page: a headline, one picture (`dots` = the seven seats, `card` = a message, `poke` = a friend poking you, `lock` = a locked room) and one line */
+interface Page { head: Text; kind: 'dots' | 'card' | 'lock' | 'poke'; name?: Text; card?: Text; line: Text }
 
 /** the words of every welcome page (the texts live in friendsWelcome.json, buddy.json, work.json and family.json) */
 const PAGES: Record<string, Page[]> = {
   default: [
     { head: ['friendsWelcome.headline', 'Your seven closest people.'], kind: 'dots', line: ['friendsWelcome.line', 'One calm place. No feeds, no ads.'] },
-    { head: ['friendsWelcome.headlineB', 'Your phone, finally quiet.'], kind: 'card', name: ['friendsWelcome.mia', 'Mia'], card: ['friendsWelcome.coffeeAt', 'Coffee at 5?'], line: ['friendsWelcome.lineB', 'Only your seven can reach you.'] },
+    { head: ['friendsWelcome.headlineP', 'The ones you want shall get through'], kind: 'poke', card: ['friendsWelcome.cardP', 'Mia is poking you'], line: ['friendsWelcome.lineP', 'One poke rings their phone like an alarm.'] },
     { head: ['friendsWelcome.headlineC', 'A locked room for every friend.'], kind: 'lock', card: ['friendsWelcome.boxC', 'Only you two can open it'], line: ['friendsWelcome.lineC', 'Not even we can read it.'] },
   ],
   buddies: [
     { head: ['buddy.closeBuddiesOnlyBr', 'Close buddies only.<br>Seven seats.'], kind: 'dots', line: ['buddy.keepYourPeopleClose', 'Keep your people close and the noise away.'] },
-    { head: ['buddy.yourPeopleBrOnly', 'Your people.<br>Only the close ones.'], kind: 'card', card: ['buddy.youUp', 'you up?'], line: ['buddy.privateNoAdsNo', 'Private. No ads. No feed.'] },
+    { head: ['buddy.headlineP', 'Your buddies get through.<br>Nobody else.'], kind: 'poke', card: ['buddy.cardP', 'Jonas is poking you'], line: ['buddy.lineP', 'One poke rings your buddy’s phone like an alarm.'] },
     { head: ['buddy.yourInnerCircle', 'Your inner circle'], kind: 'lock', card: ['buddy.picsVideosVoiceJust', 'Pics, videos, voice. Just you two.'], line: ['buddy.sevenCloseFriendsAround', 'Seven close friends around you.'] },
   ],
   work: [
     { head: ['work.yourSevenKeyBr', 'Your seven key<br>business contacts'], kind: 'dots', line: ['work.theFewPeopleYour', 'The few people your work depends on. Close, clear, always reachable.'] },
-    { head: ['work.stayCloseToThe', 'Stay close to the people your work needs'], kind: 'card', card: ['work.seeWhoYouHaven', 'See who you haven’t spoken to in a while'], line: ['work.privateNoAdsNo', 'Private. No ads. No feed.'] },
+    { head: ['work.headlineP', 'The contacts you need get through'], kind: 'poke', card: ['work.cardP', 'Lisa is poking you'], line: ['work.lineP', 'One poke rings their phone, when work cannot wait.'] },
     { head: ['work.onePrivateSpaceFor', 'One private space for each business relation'], kind: 'lock', card: ['work.bSharedFilesB', '<b>Shared files.</b> Only you and your contact can open them.'], line: ['work.noBigChannelsJust', 'No big channels. Just you and one contact.'] },
   ],
   family: [
     { head: ['family.yourSevenClosestBr', 'Your seven closest.<br>Always in reach.'], kind: 'dots', line: ['family.theFamilyYouCall', 'The family you call first, in one calm place.'] },
-    { head: ['family.aSafePlaceBr', 'A safe place<br>for your family'], kind: 'card', card: ['family.onlyThePeopleYou', 'Only the people you invite. No strangers.'], line: ['family.noAdsNoFeed', 'No ads. No feed. Nothing sold.'] },
+    { head: ['family.headlineP', 'Your family always<br>gets through'], kind: 'poke', card: ['family.cardP', 'Mom is poking you'], line: ['family.lineP', 'Quiet at night. A poke rings the phone if it is urgent.'] },
     { head: ['family.closeEvenWhenBr', 'Close, even when<br>far apart'], kind: 'lock', card: ['family.voiceVideoAndPhotos', 'Voice, video and photos, just for you.'], line: ['family.quietAtNightA', 'Quiet at night. A poke if it is urgent.'] },
   ],
 };

@@ -311,7 +311,11 @@
     "cancel": "Batal",
     "notMe": "Bukan saya",
     "newKeyDecline": "Tolak",
-    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later."
+    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later.",
+    "slogan_default": "Orang-orang yang kamu inginkan pasti sampai padamu.",
+    "slogan_buddies": "Sahabatmu sampai padamu. Tidak ada yang lain.",
+    "slogan_work": "Kontak yang kamu butuhkan sampai padamu.",
+    "slogan_family": "Keluargamu selalu sampai padamu."
   },
   "needsYourHelp": "{{ friendName }} butuh bantuanmu",
   "openToUnlockTheir": "Buka aplikasi untuk membuka kunci pesan lamanya lagi.",

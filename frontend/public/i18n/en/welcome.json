@@ -15,7 +15,7 @@
   "start1": "Make your account. It takes a minute.",
   "start2": "Write your name, so your friends know who you are.",
   "start3": "Press an empty seat to add a friend. Send a friend request, or share a link with them.",
-  "start4": "Your friend says yes, and a private room opens, just for the two of you. Say hi.",
+  "start4": "Your friend says yes, and a private room opens, just for the two of you. Say hi, or give a poke.",
   "scene1a": "47 new posts",
   "scene1b": "Someone liked…",
   "scene1c": "Don’t miss out!",
@@ -60,5 +60,10 @@
   "circlesBuddies": "Buddies: your mates and the people you share a hobby with.",
   "circlesFamily": "Family: the people at home and your relatives.",
   "sleepTitle": "You decide who reaches you",
-  "sleepText": "Need a break from someone? Put them on your sleep list: you stay friends, but you stop hearing from them. If something cannot wait, a ping still gets through."
+  "sleepText": "Need a break from someone? Put them on your sleep list: you stay friends, but you stop hearing from them. If something cannot wait, a poke still gets through.",
+  "pokeHeadline": "The ones you want shall get through",
+  "pokeLine": "One poke, and your friend’s phone rings like an alarm. Even on silent. Even at night. Only the friends you gave a seat can do it.",
+  "pokeScene": "{{ name }} is poking you",
+  "pokeTitle": "The poke",
+  "pokeText": "When it cannot wait, press the bell on a friend. Their phone rings like an alarm, even on silent, and it says who is poking. Only a friend who has a seat for you can do it. Need quiet? Pause pokes for up to 24 hours; your friends see Silent."
 }

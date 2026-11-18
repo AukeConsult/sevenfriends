@@ -7,9 +7,9 @@
   <div class="sf-hero text-center">
     <div class="sf-logo sf-logo-lg">7</div>
     <p class="sf-welcome-name m-0 mt-2">Seven Friends</p>
-    <h1 class="sf-welcome-title">{{ t('welcome.tiredOfPings') || 'Tired of pings from everywhere?' }}</h1>
+    <h1 class="sf-welcome-title">{{ t('welcome.pokeHeadline') || 'The ones you want shall get through' }}</h1>
     <app-inviter />
-    <p class="sf-welcome-statement">{{ t('welcome.statement') || 'This is an app for people who are tired of too many pings from all directions, and want one calm place to stay close to their closest friends, connections and buddies, or their family.' }}</p>
+    <p class="sf-welcome-statement">{{ t('welcome.pokeLine') || 'One poke, and your friend’s phone rings like an alarm. Even on silent. Even at night. Only the friends you gave a seat can do it.' }}</p>
     <!-- the noise (crossed out) and the one message that matters -->
     <div class="sf-pings" aria-hidden="true">
       @for (s of [scene()]; track s.n) {
@@ -20,7 +20,7 @@
             }
           </div>
           <span class="sf-pings-arrow">↓</span>
-          <span class="sf-ping sf-ping-calm">{{ t('welcome.scene' + s.n + 'm') || s.calm }}</span>
+          <span class="sf-ping sf-ping-calm"><span aria-hidden="true">🔔</span> {{ t('welcome.pokeScene', { name: s.calm }) || (s.calm + ' is poking you') }}</span>
         </div>
       }
     </div>
@@ -50,7 +50,7 @@
     @if (!explainOnly) { <h2 class="sf-section-title m-0">{{ t('welcome.explainTitle') || 'How does it work?' }}</h2> }
     @for (b of explain; track b.key) {
       <section class="vstack gap-2">
-        <h3 class="sf-section-title m-0 d-flex align-items-center gap-2"><span class="sf-chapter-icon" aria-hidden="true">{{ b.icon }}</span>{{ t('welcome.' + b.key + 'Title') || b.title }}</h3>
+        <h3 class="sf-section-title m-0 d-flex align-items-center gap-2"><span class="sf-chapter-icon" [class.sf-chapter-hot]="b.key === 'poke'" aria-hidden="true">{{ b.icon }}</span>{{ t('welcome.' + b.key + 'Title') || b.title }}</h3>
         <p class="m-0">{{ t('welcome.' + b.key + 'Text') || b.text }}</p>
         @if (b.key === 'circles') {
           <ul class="m-0 vstack gap-1">

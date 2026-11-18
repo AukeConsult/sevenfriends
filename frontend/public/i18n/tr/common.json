@@ -311,7 +311,11 @@
     "cancel": "İptal",
     "notMe": "Ben değilim",
     "newKeyDecline": "Reddet",
-    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later."
+    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later.",
+    "slogan_default": "İstediğin kişiler sana her zaman ulaşır.",
+    "slogan_buddies": "Dostların sana ulaşır. Başkası değil.",
+    "slogan_work": "İhtiyacın olan kişiler sana ulaşır.",
+    "slogan_family": "Ailen sana her zaman ulaşır."
   },
   "needsYourHelp": "{{ friendName }} yardımına ihtiyaç duyuyor",
   "openToUnlockTheir": "Eski mesajlarının kilidini yeniden açmak için uygulamayı aç.",

@@ -17,7 +17,7 @@
   "start1": "Buat akunmu. Hanya butuh semenit.",
   "start2": "Tulis namamu agar teman-temanmu tahu siapa kamu.",
   "start3": "Ketuk tempat kosong untuk menambah teman. Kirim permintaan pertemanan atau bagikan tautan.",
-  "start4": "Temanmu bilang ya, lalu sebuah ruang pribadi terbuka, hanya untuk kalian berdua. Sapa dia.",
+  "start4": "Temanmu bilang ya, dan ruang pribadi terbuka, hanya untuk kalian berdua. Ucapkan halo, atau beri colekan.",
   "disclaimer": "Aplikasi ini dibuat dan dijalankan oleh BlueBoot R&D AS. Aplikasi berjalan di cloud dan diamankan. Data pengguna dienkripsi dan di luar jangkauan kami, penyedia cloud, atau siapa pun. BlueBoot R&D AS tidak memiliki perjanjian dengan pihak ketiga mana pun tentang penggunaan atau pengoperasian aplikasi ini, selain Google dan penggunaan Google Cloud. Aplikasi ini akan tetap kecil dan mandiri.",
   "contact": "Ada pertanyaan? Tulis ke",
   "scene1a": "47 postingan baru",
@@ -60,5 +60,10 @@
   "circlesBuddies": "Kawan: kawan-kawanmu dan orang yang punya hobi yang sama denganmu.",
   "circlesFamily": "Keluarga: orang di rumah dan kerabatmu.",
   "sleepTitle": "Kamu yang menentukan siapa yang bisa menghubungimu",
-  "sleepText": "Butuh jeda dari seseorang? Masukkan dia ke daftar tidur: kalian tetap berteman, tapi kamu tidak mendengar kabarnya. Kalau ada yang tidak bisa menunggu, ping tetap sampai."
+  "sleepText": "Butuh istirahat dari seseorang? Taruh di daftar tidur: kalian tetap berteman, tapi kamu tidak mendengar kabarnya. Jika ada yang tidak bisa menunggu, colekan tetap sampai.",
+  "pokeHeadline": "Orang-orang yang kamu inginkan pasti sampai padamu",
+  "pokeLine": "Satu colekan, dan ponsel temanmu berdering seperti alarm. Bahkan saat senyap. Bahkan di malam hari. Hanya teman yang kamu beri kursi yang bisa melakukannya.",
+  "pokeScene": "{{ name }} mencolekmu",
+  "pokeTitle": "Colekan",
+  "pokeText": "Saat tidak bisa menunggu, tekan lonceng pada seorang teman. Ponselnya berdering seperti alarm, bahkan saat senyap, dan terlihat siapa yang mencolek. Hanya teman yang punya kursi untukmu yang bisa melakukannya. Butuh tenang? Jeda colekan hingga 24 jam; temanmu melihat Senyap."
 }

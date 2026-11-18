@@ -311,7 +311,11 @@
     "cancel": "Cancelar",
     "notMe": "Não sou eu",
     "newKeyDecline": "Recusar",
-    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later."
+    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later.",
+    "slogan_default": "Quem você quer sempre chega até você.",
+    "slogan_buddies": "Seus parceiros chegam até você. Mais ninguém.",
+    "slogan_work": "Os contatos de que você precisa chegam até você.",
+    "slogan_family": "Sua família sempre chega até você."
   },
   "needsYourHelp": "{{ friendName }} precisa da sua ajuda",
   "openToUnlockTheir": "Abra o app para desbloquear de novo as mensagens antigas.",

@@ -311,7 +311,11 @@
     "cancel": "Abbrechen",
     "notMe": "Nicht ich",
     "newKeyDecline": "Ablehnen",
-    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later."
+    "keyDoesNotMatch": "Not sent: a key of this conversation does not match its ID, so nothing can be locked for it. Try again later.",
+    "slogan_default": "Die, die du willst, kommen durch.",
+    "slogan_buddies": "Deine Kumpels kommen durch. Sonst niemand.",
+    "slogan_work": "Die Kontakte, die du brauchst, kommen durch.",
+    "slogan_family": "Deine Familie kommt immer durch."
   },
   "needsYourHelp": "{{ friendName }} braucht deine Hilfe",
   "openToUnlockTheir": "Öffne die App, um die alten Nachrichten wieder zu entsperren.",
