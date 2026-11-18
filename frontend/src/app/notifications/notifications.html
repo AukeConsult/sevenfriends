@@ -16,7 +16,6 @@
       <app-medal [show]="notifications.profile()?.earlyAdopter === true" />
       <div>
         <h1 class="sf-home-hi">{{ greeting() }}</h1>
-        <p class="sf-home-sub">{{ around() }}</p>
       </div>
       @if (premiumInviter()) {
         <app-medal kind="inviter" [show]="true" />
@@ -25,6 +24,8 @@
         <a class="sf-medal-hint" routerLink="/share"><span>{{ t('notifications.inviterHint') || 'Invite and be a premium inviter' }}</span> <b>{{ shares() }} / {{ premiumShares }}</b></a>
       }
     </div>
+    <!-- the line under it has the whole width of the page -->
+    <p class="sf-home-sub">{{ around() }}</p>
 
     <!-- my mood, small, right under the greeting (from the same call) -->
     <app-mood-editor class="d-block mb-3" [profile]="notifications.profile()" />

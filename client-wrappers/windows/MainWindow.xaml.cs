@@ -197,6 +197,10 @@ public partial class MainWindow : Window
         var web = Web.CoreWebView2;
         web.Settings.AreDevToolsEnabled = false;
         web.Settings.IsStatusBarEnabled = false;
+        // the app looks the same here as on a phone: no zoom (Ctrl + wheel, pinch) and always 100%, so a zoom set once cannot make the texts bigger or smaller for good
+        web.Settings.IsZoomControlEnabled = false;
+        web.Settings.IsPinchZoomEnabled = false;
+        Web.ZoomFactor = 1.0;
         // the web app tells the Windows app from the browser by this name (it then skips the welcome page, which is the install step)
         web.Settings.UserAgent += " SevenFriendsWindows/1.0";
         // the name of this computer, for the list of keys (device-name.ts reads it from the user agent)
