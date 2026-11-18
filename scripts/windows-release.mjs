@@ -44,9 +44,30 @@ if (!iscc) {
 }
 run("2/4 Pack the installer", iscc, [join(root, "client-wrappers", "windows", "installer", "SevenFriends.iss")]);
 
+/**
+ * Copies a file, and tries again for a while when Windows says it is busy (EBUSY / EPERM / EACCES): the virus scanner opens a freshly made .exe, and a dev server
+ * (`ng serve`), the installer itself or an Explorer preview can hold the file for a moment. Gives up after about a minute, with what to close.
+ */
+function copyWithRetry(from, to, tries = 30) {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      copyFileSync(from, to);
+      return;
+    } catch (error) {
+      const busy = ["EBUSY", "EPERM", "EACCES"].includes(error.code);
+      if (!busy || attempt >= tries) {
+        if (busy) console.error("\nThe file stays locked. Close what may hold it (SevenFriendsSetup.exe if it is open or running, the dev server, an Explorer window showing the folder), wait for the virus scanner, and run again.");
+        throw error;
+      }
+      if (attempt === 1) console.log("The file is busy (the virus scanner or a program holds it): trying again for a minute...");
+      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 2000); // wait two seconds
+    }
+  }
+}
+
 console.log("\n== 3/4 Copy to the website downloads");
 mkdirSync(dirname(target), { recursive: true });
-copyFileSync(installer, target);
+copyWithRetry(installer, target);
 console.log(`${(statSync(target).size / 1024 / 1024).toFixed(1)} MB in frontend/public/downloads/SevenFriendsSetup.exe`);
 
 if (msix) {
