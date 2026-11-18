@@ -70,6 +70,7 @@ paymentsRouter.post("/intent", requireAuth, asyncHandler(async (req, res) => {
 /** GET /payments/status: is donating on, and the donations of this account (the ones that were paid or refunded), newest first. */
 paymentsRouter.get("/status", requireAuth, asyncHandler(async (_req, res) => {
   const uid = uidOf(res);
+  await checkPending(uid);
   const snap = await donationCol(uid).where("status", "in", ["completed", "refunded"]).get();
   const donations = snap.docs
     .map((d) => ({ id: d.id, amount: d.data().amount as number, currency: d.data().currency as string, status: d.data().status as string, paidAt: (d.data().paidAt ?? d.data().createdAt) as number }))
@@ -105,25 +106,46 @@ async function setSupporter(t: FirebaseFirestore.Transaction, uid: string, value
   t.set(userDoc(uid), value ? { supporter: true } : { supporter: false }, { merge: true });
 }
 
+/** A PaymentIntent that Stripe says has succeeded: completes its donation. Safe to run twice. */
+async function completeDonation(intent: Stripe.PaymentIntent): Promise<void> {
+  const uid = intent.metadata?.uid;
+  if (!uid || intent.status !== "succeeded") return;
+  await getFirestore().runTransaction(async (t) => {
+    const ref = donationCol(uid).doc(intent.id);
+    const data = (await t.get(ref)).data();
+    // A payment we did not start, or one that does not match what we recorded, is not honoured.
+    if (!data || data.amount !== intent.amount_received || data.currency !== intent.currency) {
+      console.error("Payment does not match its record:", intent.id);
+      return;
+    }
+    if (data.status === "completed") return;
+    t.update(ref, { status: "completed", paidAt: Date.now() });
+    await setSupporter(t, uid, true);
+  });
+}
+
+/**
+ * The webhook is the main way a donation is completed. This is the safety net for a webhook that did not arrive (or has not yet): the recent donations that are
+ * still pending are asked about at Stripe itself (never taken from the browser), and the ones that succeeded are completed the same way the webhook does it.
+ */
+async function checkPending(uid: string): Promise<void> {
+  if (!process.env.STRIPE_SECRET_KEY) return;
+  const since = Date.now() - 24 * 60 * 60 * 1000;
+  const pending = await donationCol(uid).where("status", "==", "pending").get();
+  for (const doc of pending.docs.filter((d) => (d.data().createdAt ?? 0) > since).slice(0, 5)) {
+    try {
+      await completeDonation(await stripe().paymentIntents.retrieve(doc.id));
+    } catch (err) {
+      console.error("Could not check a pending donation:", (err as Error).message);
+    }
+  }
+}
+
 /** One Stripe event. Safe to run twice (Stripe repeats events): the transaction looks at the state first. */
 export async function handleEvent(event: Stripe.Event): Promise<void> {
   const db = getFirestore();
   if (event.type === "payment_intent.succeeded") {
-    const intent = event.data.object as Stripe.PaymentIntent;
-    const uid = intent.metadata?.uid;
-    if (!uid) return;
-    await db.runTransaction(async (t) => {
-      const ref = donationCol(uid).doc(intent.id);
-      const data = (await t.get(ref)).data();
-      // A payment we did not start, or one that does not match what we recorded, is not honoured.
-      if (!data || data.amount !== intent.amount_received || data.currency !== intent.currency) {
-        console.error("Payment does not match its record:", intent.id);
-        return;
-      }
-      if (data.status === "completed") return;
-      t.update(ref, { status: "completed", paidAt: Date.now() });
-      await setSupporter(t, uid, true);
-    });
+    await completeDonation(event.data.object as Stripe.PaymentIntent);
   } else if (event.type === "payment_intent.payment_failed") {
     const intent = event.data.object as Stripe.PaymentIntent;
     const uid = intent.metadata?.uid;
