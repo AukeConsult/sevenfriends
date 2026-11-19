@@ -66,10 +66,5 @@
   "confirmationSent": "Terkirim. Buka tautan di email, lalu kembali ke sini.",
   "confirmationFailed": "Email tidak dapat dikirim. Coba lagi.",
   "iosInstallNow": "Taruh Seven Friends di layar utama sekarang: ketuk Bagikan, lalu Tambah ke Layar Utama. Lalu buka aplikasi dari ikonnya, masuk, dan kembali ke sini untuk mengetuk Setujui. Safari dapat menghapus yang tersimpan di sini jika tidak dibuka selama seminggu.",
-  "waitingApproval": "Perangkat ini menunggu persetujuan. Buka Seven Friends di perangkat Anda yang lain (di iPhone, di Safari) dan ketuk Setujui.",
-  "earlyAdopter": "Pengguna awal",
-  "medalGold": "Emas",
-  "medalPremium": "Premium",
-  "inviter": "Pengundang",
-  "inviterHint": "Undang dan jadi pengundang premium"
+  "waitingApproval": "Perangkat ini menunggu persetujuan. Buka Seven Friends di perangkat Anda yang lain (di iPhone, di Safari) dan ketuk Setujui."
 }

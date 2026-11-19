@@ -19,7 +19,6 @@ import { FriendAvatar } from '../friend-avatar/friend-avatar';
 import { FriendContext } from '../friend-page/friend-context';
 import { tr } from '../core/i18n';
 import { PageBar } from '../page-bar/page-bar';
-import { Badges } from '../badges/badges';
 
 /**
  * The profile of one friend (`/friends/:id/profile`, opened with the friend's picture): who they are and how to reach them, under the header of the friend page.
@@ -27,7 +26,7 @@ import { Badges } from '../badges/badges';
  */
 @Component({
   selector: 'app-friend-profile',
-  imports: [Badges, PageBar, AppDatePipe, FriendAvatar, TranslocoDirective, RouterLink, NgTemplateOutlet],
+  imports: [PageBar, AppDatePipe, FriendAvatar, TranslocoDirective, RouterLink, NgTemplateOutlet],
   templateUrl: './friend-profile.html',
   providers: [provideTranslocoScope('friendProfile')],
 })

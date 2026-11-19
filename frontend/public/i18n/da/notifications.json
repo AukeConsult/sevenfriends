@@ -66,10 +66,5 @@
   "confirmationSent": "Sendt. Åbn linket i mailen, og kom tilbage hertil.",
   "confirmationFailed": "Mailen kunne ikke sendes. Prøv igen.",
   "iosInstallNow": "Læg Seven Friends på din hjemmeskærm nu: tryk på Del og derefter Føj til hjemmeskærm. Åbn derefter appen fra ikonet, log ind og kom tilbage hertil for at trykke Godkend. Safari kan slette det, der er gemt her, hvis du ikke åbner den i en uge.",
-  "waitingApproval": "Denne enhed venter på godkendelse. Åbn Seven Friends på en anden af dine enheder (på iPhone i Safari) og tryk Godkend.",
-  "earlyAdopter": "Tidlig bruger",
-  "medalGold": "Guld",
-  "medalPremium": "Premium",
-  "inviter": "Inviterende",
-  "inviterHint": "Invitér og bliv premium-inviter"
+  "waitingApproval": "Denne enhed venter på godkendelse. Åbn Seven Friends på en anden af dine enheder (på iPhone i Safari) og tryk Godkend."
 }

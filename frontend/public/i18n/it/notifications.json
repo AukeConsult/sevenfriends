@@ -66,10 +66,5 @@
   "confirmationSent": "Inviata. Apri il link nell’e-mail, poi torna qui.",
   "confirmationFailed": "Impossibile inviare l’e-mail. Riprova.",
   "iosInstallNow": "Metti Seven Friends sulla schermata Home adesso: tocca Condividi, poi Aggiungi alla schermata Home. Poi apri l'app dalla sua icona, accedi e torna qui per toccare Approva. Safari può cancellare ciò che è salvato qui se non lo apri per una settimana.",
-  "waitingApproval": "Questo dispositivo attende l'approvazione. Apri Seven Friends su un altro tuo dispositivo (su iPhone, in Safari) e tocca Approva.",
-  "earlyAdopter": "Pioniere",
-  "medalGold": "Oro",
-  "medalPremium": "Premium",
-  "inviter": "Invitante",
-  "inviterHint": "Invita e diventa un invitante premium"
+  "waitingApproval": "Questo dispositivo attende l'approvazione. Apri Seven Friends su un altro tuo dispositivo (su iPhone, in Safari) e tocca Approva."
 }

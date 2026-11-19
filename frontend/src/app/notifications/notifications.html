@@ -11,19 +11,7 @@
   <app-home-top />
   <!-- all of this waits for the one Home call, so the page draws once, complete (no mood, count or seats that appear one by one) -->
   @if (loaded()) {
-    <!-- the medal sits left of the greeting -->
-    <div class="sf-home-greet">
-      <app-medal [show]="notifications.profile()?.earlyAdopter === true" />
-      <div>
-        <h1 class="sf-home-hi">{{ greeting() }}</h1>
-      </div>
-      @if (premiumInviter()) {
-        <app-medal kind="inviter" [show]="true" />
-      } @else {
-        <!-- not yet: a small square frame, same spot as the medal but on the other side, that leads to the invite link -->
-        <a class="sf-medal-hint" routerLink="/share"><span>{{ t('notifications.inviterHint') || 'Invite and be a premium inviter' }}</span> <b>{{ shares() }} / {{ premiumShares }}</b></a>
-      }
-    </div>
+    <h1 class="sf-home-hi">{{ greeting() }}</h1>
     <!-- the line under it has the whole width of the page -->
     <p class="sf-home-sub">{{ around() }}</p>
 

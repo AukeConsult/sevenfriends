@@ -66,10 +66,5 @@
   "confirmationSent": "已发送。请打开邮件中的链接，然后回到这里。",
   "confirmationFailed": "无法发送邮件。请重试。",
   "iosInstallNow": "现在就把 Seven Friends 添加到主屏幕：点按“分享”，再选“添加到主屏幕”。然后从图标打开应用并登录，再回到这里点按“批准”。如果一周不打开，Safari 可能会清除这里保存的内容。",
-  "waitingApproval": "此设备正在等待批准。请在你的另一台设备上（iPhone 上用 Safari）打开 Seven Friends 并点按“批准”。",
-  "earlyAdopter": "早期用户",
-  "medalGold": "金牌",
-  "medalPremium": "高级",
-  "inviter": "邀请者",
-  "inviterHint": "邀请好友，成为高级邀请者"
+  "waitingApproval": "此设备正在等待批准。请在你的另一台设备上（iPhone 上用 Safari）打开 Seven Friends 并点按“批准”。"
 }

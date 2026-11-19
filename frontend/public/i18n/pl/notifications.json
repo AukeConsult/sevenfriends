@@ -66,10 +66,5 @@
   "confirmationSent": "Wysłano. Otwórz link w wiadomości i wróć tutaj.",
   "confirmationFailed": "Nie udało się wysłać wiadomości. Spróbuj ponownie.",
   "iosInstallNow": "Dodaj teraz Seven Friends do ekranu głównego: dotknij Udostępnij, potem Dodaj do ekranu głównego. Następnie otwórz aplikację z ikony, zaloguj się i wróć tutaj, aby dotknąć Zatwierdź. Safari może usunąć to, co tu zapisano, jeśli nie otworzysz go przez tydzień.",
-  "waitingApproval": "To urządzenie czeka na zatwierdzenie. Otwórz Seven Friends na innym swoim urządzeniu (na iPhonie w Safari) i dotknij Zatwierdź.",
-  "earlyAdopter": "Wczesny użytkownik",
-  "medalGold": "Złoto",
-  "medalPremium": "Premium",
-  "inviter": "Zapraszający",
-  "inviterHint": "Zapraszaj i zostań premium zapraszającym"
+  "waitingApproval": "To urządzenie czeka na zatwierdzenie. Otwórz Seven Friends na innym swoim urządzeniu (na iPhonie w Safari) i dotknij Zatwierdź."
 }

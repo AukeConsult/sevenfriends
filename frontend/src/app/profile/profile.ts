@@ -14,8 +14,7 @@ import { PresenceService } from '../core/presence.service';
 import { PushService } from '../core/push.service';
 import { defaultLanguage, languagesFor } from '../models/shared/languages';
 import { countries, dialCode, fullNumber, isValidPhone, nationalNumber } from '../core/countries';
-import { PREMIUM_INVITER_SHARES, ProfileDetails, ProfileDraft, ProfilePicture, SaveState, profileColorHex } from '../models';
-import { Badges } from '../badges/badges';
+import { ProfileDetails, ProfileDraft, ProfilePicture, SaveState, profileColorHex } from '../models';
 
 /** Changes are saved by themselves: a moment after you stop typing, and when you leave a field or the page. */
 const AUTOSAVE_MS = 800;
@@ -24,7 +23,7 @@ const RETRY_MS = 5000;
 
 @Component({
   selector: 'app-profile',
-  imports: [Badges, RouterLink, TranslocoDirective],
+  imports: [RouterLink, TranslocoDirective],
   providers: [provideTranslocoScope('profile'), provideTranslocoScope('phoneAuth')],
   templateUrl: './profile.html',
 })
@@ -53,9 +52,6 @@ export class Profile {
   protected readonly loading = signal(true);
   /** the seat icon (1-7) chosen as my own picture, when I have no photo; null = none */
   protected readonly icon = signal<number | null>(null);
-  /** the medals my friends see: the early adopter mark, and 10 shares of my invite link */
-  protected readonly earlyAdopter = signal(false);
-  protected readonly premiumInviter = signal(false);
   /** the colour I chose for my profile (a key of PROFILE_COLORS), shown to my friends; null = none */
   protected readonly color = signal<string | null>(null);
   protected readonly colorHex = computed(() => profileColorHex(this.color()));
@@ -343,8 +339,6 @@ export class Profile {
       this.phoneVerified.set(res.phoneVerified);
       this.emailVerified.set(res.emailVerified);
       this.icon.set(res.icon);
-      this.earlyAdopter.set(res.earlyAdopter === true);
-      this.premiumInviter.set((res.inviteShares ?? 0) >= PREMIUM_INVITER_SHARES);
       this.color.set(res.color);
       this.picture.set(res.hasPicture ? (await this.api.request<ProfilePicture>('/profile/picture').catch(() => null))?.image ?? null : null);
     } catch {
@@ -362,8 +356,6 @@ export class Profile {
       this.phoneVerified.set(res.phoneVerified);
       this.emailVerified.set(res.emailVerified);
       this.icon.set(res.icon);
-      this.earlyAdopter.set(res.earlyAdopter === true);
-      this.premiumInviter.set((res.inviteShares ?? 0) >= PREMIUM_INVITER_SHARES);
       this.color.set(res.color);
       this.picture.set(image);
       this.form.set({ name: res.name ?? '', phone: res.phone ?? '', country: res.country ?? '', language: res.language ?? '', pronoun: res.pronoun ?? '', visibility: res.visibility ?? 'searchable' });

@@ -66,10 +66,5 @@
   "confirmationSent": "Gönderildi. E-postadaki bağlantıyı aç ve buraya dön.",
   "confirmationFailed": "E-posta gönderilemedi. Lütfen tekrar dene.",
   "iosInstallNow": "Seven Friends'i şimdi ana ekrana ekleyin: Paylaş'a, sonra Ana Ekrana Ekle'ye dokunun. Sonra uygulamayı simgesinden açın, giriş yapın ve Onayla'ya dokunmak için buraya dönün. Bir hafta açmazsanız Safari burada saklananları silebilir.",
-  "waitingApproval": "Bu cihaz onay bekliyor. Seven Friends'i diğer cihazlarınızdan birinde (iPhone'da Safari'de) açın ve Onayla'ya dokunun.",
-  "earlyAdopter": "Erken kullanıcı",
-  "medalGold": "Altın",
-  "medalPremium": "Premium",
-  "inviter": "Davetçi",
-  "inviterHint": "Davet et ve premium davetçi ol"
+  "waitingApproval": "Bu cihaz onay bekliyor. Seven Friends'i diğer cihazlarınızdan birinde (iPhone'da Safari'de) açın ve Onayla'ya dokunun."
 }
