@@ -1,13 +1,11 @@
 package io.sevenfriends.app;
 
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.ServiceWorkerController;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
@@ -74,23 +72,8 @@ public class MainActivity extends BridgeActivity {
             // the page has its own themes (light, dark, ...): a phone in dark mode must not darken it again (that turns the colours and the text colours wrong)
             getBridge().getWebView().getSettings().setForceDark(WebSettings.FORCE_DARK_OFF);
         }
-        if ((getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0) loadFresh();
         if (CHECK_BAR) addCheckBar(); else trackStatusBar();
         openPageFromIntent(getIntent(), 2500); // cold start: wait for the page to load
-    }
-
-    /**
-     * A debug build (what Android Studio and the publishApk task make) always reads the web app fresh when the app opens: the app shows
-     * the live website (capacitor.config.json: server.url), and a cached copy of an older version would hide what was just deployed.
-     * The cache of the page and of its service worker is emptied and not used; the sign-in and the stored settings are NOT cleared.
-     */
-    private void loadFresh() {
-        final WebView web = getBridge() != null ? getBridge().getWebView() : null;
-        if (web == null) return;
-        web.clearCache(true);
-        web.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
-        ServiceWorkerController.getInstance().getServiceWorkerWebSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
-        web.reload(); // the first load may already have started with the old cache
     }
 
     /** No bar of ours: the page draws under the status bar, so it is told how high the status bar is (it pads its header by that). */

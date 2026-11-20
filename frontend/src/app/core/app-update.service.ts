@@ -9,6 +9,9 @@ const CHECK_EVERY_MS = 20 * 1000;
 const HOURLY_MS = 60 * 60 * 1000;
 /** A new version that could not be loaded yet (the person was busy) is tried again this often. */
 const RETRY_MS = 60 * 1000;
+/** The same new version is loaded again at the earliest after this long: a page that still looks old after a reload (a cache that has not caught up) must not reload at every start. */
+const NO_REPEAT_MS = 10 * 60 * 1000;
+const TRIED_KEY = 'sf-update-tried';
 /** Pages where a reload would throw away what the person is busy with (a picture being sent). */
 const BUSY_PAGE = /^\/friends\/[^/]+\/(image|video|audio)$/;
 
@@ -22,8 +25,8 @@ const BUSY_PAGE = /^\/friends\/[^/]+\/(image|video|audio)$/;
 export class AppUpdateService {
   private lastCheck = 0;
   private checking = false;
-  /** a newer version exists but the page could not be reloaded yet */
-  private waiting = false;
+  /** a newer version (its main script) exists but the page could not be reloaded yet */
+  private waiting: string | null = null;
 
   constructor() {
     document.addEventListener('visibilitychange', () => {
@@ -34,7 +37,7 @@ export class AppUpdateService {
     void this.check();
     setInterval(() => void this.check(true), HOURLY_MS);
     setInterval(() => {
-      if (this.waiting && this.safeToReload()) this.reload();
+      if (this.waiting && this.safeToReload()) this.reload(this.waiting);
     }, RETRY_MS);
   }
 
@@ -54,9 +57,9 @@ export class AppUpdateService {
       const res = await fetch(`/index.html?check=${now}`, { cache: 'no-store' });
       if (!res.ok) return;
       const latest = /<script[^>]+src="([^"]*main-[^"]+\.js)"/.exec(await res.text())?.[1]?.split('/').pop();
-      if (latest && latest !== mine) {
-        if (this.safeToReload()) this.reload();
-        else this.waiting = true;
+      if (latest && latest !== mine && !this.triedRecently(latest)) {
+        if (this.safeToReload()) this.reload(latest);
+        else this.waiting = latest;
       }
     } catch {
       /* offline or the server is busy: the next time the app comes forward */
@@ -65,7 +68,22 @@ export class AppUpdateService {
     }
   }
 
-  private reload(): void {
+  /** This version was loaded for a moment ago already (and the page still shows the old one): not again now. */
+  private triedRecently(latest: string): boolean {
+    try {
+      const [name, time] = (sessionStorage.getItem(TRIED_KEY) ?? '').split('|');
+      return name === latest && Date.now() - Number(time) < NO_REPEAT_MS;
+    } catch {
+      return false;
+    }
+  }
+
+  private reload(latest: string): void {
+    try {
+      sessionStorage.setItem(TRIED_KEY, `${latest}|${Date.now()}`);
+    } catch {
+      /* no storage: the reload still happens */
+    }
     appIsUpdating.value = true;
     location.reload();
   }
